@@ -16,25 +16,13 @@ VoiceAgentToolChoice = Union[
     Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
 ]
 VoiceAgentTurnDetection = Union[
-    "_models.VoiceServerVadTurnDetection",
+    "_models.VoiceAgentServerVadTurnDetection",
     "_models.VoiceAgentSemanticVadTurnDetection",
-    "_models.VoiceAzureSemanticVadTurnDetection",
-    "_models.VoiceAzureSemanticVadEnTurnDetection",
-    "_models.VoiceAzureSemanticVadMultilingualTurnDetection",
+    "_models.VoiceAgentAzureSemanticVadTurnDetection",
+    "_models.VoiceAgentAzureSemanticVadEnTurnDetection",
+    "_models.VoiceAgentAzureSemanticVadMultilingualTurnDetection",
 ]
 VoiceAgentMaxOutputTokens = Union[int, Literal["inf"]]
-VoiceAgentInterimResponse = Union[
-    "_models.VoiceAgentStaticInterimResponseConfig", "_models.VoiceAgentLlmInterimResponseConfig"
-]
-VoiceConversationItem = Union[
-    "_models.VoiceSystemMessageItem",
-    "_models.VoiceUserMessageItem",
-    "_models.VoiceAssistantMessageItem",
-    "_models.VoiceFunctionCallItem",
-    "_models.VoiceFunctionCallOutputItem",
-    "_models.VoiceMcpListToolsItem",
-    "_models.VoiceMcpCallItem",
-    "_models.VoiceMcpApprovalRequestItem",
-    "_models.VoiceMcpApprovalResponseItem",
-]
+VoiceAgentSessionUpdate = "_models.VoiceAgentSessionUpdateConfig"
+VoiceAgentSessionResponse = "_models.VoiceAgentSessionResponseConfig"
 GenerateAgentRequest = "_models.GenerateVoiceAgentRequest"

@@ -47,6 +47,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MODELS_V1_PREVIEW."""
     AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
     """AGENTS_OPTIMIZATION_V2_PREVIEW."""
+    MODEL_ROUTER_CONTROLS_V1_PREVIEW = "ModelRouterControls=V1Preview"
+    """MODEL_ROUTER_CONTROLS_V1_PREVIEW."""
 
 
 class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -54,6 +56,47 @@ class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     V1_0 = "1.0"
     """A2A protocol version 1.0."""
+
+
+class ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An access boundary for the activity protocol."""
+
+    READ1_ON1_DEVELOPERS = "read.1on1.developers"
+    """Allows read access to one-on-one developer conversations."""
+    READ1_ON1_MANAGER = "read.1on1.manager"
+    """Allows read access to one-on-one manager conversations."""
+    READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
+    """Allows read access to allowlisted one-on-one conversations."""
+    READ1_ON1_TENANT = "read.1on1.tenant"
+    """Allows read access to tenant-wide one-on-one conversations."""
+    WRITE1_ON1_DEVELOPERS = "write.1on1.developers"
+    """Allows write access to one-on-one developer conversations."""
+    WRITE1_ON1_MANAGER = "write.1on1.manager"
+    """Allows write access to one-on-one manager conversations."""
+    WRITE1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
+    """Allows write access to allowlisted one-on-one conversations."""
+    WRITE1_ON1_TENANT = "write.1on1.tenant"
+    """Allows write access to tenant-wide one-on-one conversations."""
+    READ_GROUP_DEVELOPERS = "read.group.developers"
+    """Allows read access to developer group conversations."""
+    READ_GROUP_ALLOWLISTED = "read.group.allowlisted"
+    """Allows read access to allowlisted group conversations."""
+    READ_GROUP_MANAGER_INVITED = "read.group.manager-invited"
+    """Allows read access to group conversations where a manager is invited."""
+    READ_GROUP_MANAGER_PRESENT = "read.group.manager-present"
+    """Allows read access to group conversations where a manager is present."""
+    READ_GROUP_TENANT = "read.group.tenant"
+    """Allows read access to tenant-wide group conversations."""
+    WRITE_GROUP_DEVELOPERS = "write.group.developers"
+    """Allows write access to developer group conversations."""
+    WRITE_GROUP_ALLOWLISTED = "write.group.allowlisted"
+    """Allows write access to allowlisted group conversations."""
+    WRITE_GROUP_MANAGER_INVITED = "write.group.manager-invited"
+    """Allows write access to group conversations where a manager is invited."""
+    WRITE_GROUP_MANAGER_PRESENT = "write.group.manager-present"
+    """Allows write access to group conversations where a manager is present."""
+    WRITE_GROUP_TENANT = "write.group.tenant"
+    """Allows write access to tenant-wide group conversations."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -916,17 +959,8 @@ class RealtimeClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSE_CREATE."""
     SESSION_UPDATE = "session.update"
     """SESSION_UPDATE."""
-
-
-class RealtimeConversationItemMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of RealtimeConversationItemMessageType."""
-
-    SYSTEM = "system"
-    """SYSTEM."""
-    USER = "user"
-    """USER."""
-    ASSISTANT = "assistant"
-    """ASSISTANT."""
+    SESSION_AVATAR_CONNECT = "session.avatar.connect"
+    """SESSION_AVATAR_CONNECT."""
 
 
 class RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1069,6 +1103,28 @@ class RealtimeServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSE_MCP_CALL_COMPLETED."""
     RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
     """RESPONSE_MCP_CALL_FAILED."""
+    WARNING = "warning"
+    """WARNING."""
+    SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
+    """SESSION_AVATAR_CONNECTING."""
+    SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
+    """SESSION_AVATAR_SWITCH_TO_SPEAKING."""
+    SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
+    """SESSION_AVATAR_SWITCH_TO_IDLE."""
+    RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
+    """RESPONSE_AUDIO_TIMESTAMP_DELTA."""
+    RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
+    """RESPONSE_AUDIO_TIMESTAMP_DONE."""
+    RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
+    """RESPONSE_ANIMATION_BLENDSHAPES_DELTA."""
+    RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
+    """RESPONSE_ANIMATION_BLENDSHAPES_DONE."""
+    RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
+    """RESPONSE_ANIMATION_VISEME_DELTA."""
+    RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
+    """RESPONSE_ANIMATION_VISEME_DONE."""
+    RESPONSE_VIDEO_DELTA = "response.video.delta"
+    """RESPONSE_VIDEO_DELTA."""
 
 
 class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1379,6 +1435,8 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FILE_SEARCH."""
     WEB_SEARCH = "web_search"
     """WEB_SEARCH."""
+    SHELL = "shell"
+    """SHELL."""
     MCP = "mcp"
     """MCP."""
     AZURE_AI_SEARCH = "azure_ai_search"
@@ -1578,6 +1636,33 @@ class VoiceAgentAnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """VISEME_ID."""
 
 
+class VoiceAgentAudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An output-audio timestamp kind supported by a voice agent."""
+
+    WORD = "word"
+    """Word-level timestamps."""
+
+
+class VoiceAgentAvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport used to deliver the avatar video stream."""
+
+    WEBRTC = "webrtc"
+    """WEBRTC."""
+    WEBSOCKET = "websocket"
+    """WEBSOCKET."""
+    WEBSOCKET_BINARY = "websocket-binary"
+    """Binary WebSocket transport."""
+
+
+class VoiceAgentAvatarType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The avatar type."""
+
+    VIDEO_AVATAR = "video_avatar"
+    """VIDEO_AVATAR."""
+    PHOTO_AVATAR = "photo_avatar"
+    """PHOTO_AVATAR."""
+
+
 class VoiceAgentEchoCancellationReferenceSource(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
@@ -1589,6 +1674,59 @@ class VoiceAgentEchoCancellationReferenceSource(  # pylint: disable=name-too-lon
     """CLIENT."""
 
 
+class VoiceAgentEndOfUtteranceDetectionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The semantic end-of-utterance detection model."""
+
+    SEMANTIC_DETECTION_V1 = "semantic_detection_v1"
+    """The default semantic detection model."""
+    SEMANTIC_DETECTION_V1_EN = "semantic_detection_v1_en"
+    """The English-optimized semantic detection model."""
+    SEMANTIC_DETECTION_V1_MULTILINGUAL = "semantic_detection_v1_multilingual"
+    """The multilingual semantic detection model."""
+    SMART_END_OF_TURN_DETECTION = "smart_end_of_turn_detection"
+    """The smart end-of-turn detection model."""
+
+
+class VoiceAgentEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The sensitivity threshold for semantic end-of-utterance detection."""
+
+    LOW = "low"
+    """The low sensitivity threshold."""
+    MEDIUM = "medium"
+    """The medium sensitivity threshold."""
+    HIGH = "high"
+    """The high sensitivity threshold."""
+    DEFAULT = "default"
+    """The service-selected sensitivity threshold."""
+
+
+class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The input-audio transcription model identifier. This is a model name, not a Foundry deployment
+    name. Mirrors the transcription models supported by the managed voice backend, covering the
+    OpenAI Realtime transcription models plus the Azure and MAI models. Additional values may be
+    added over time.
+    """
+
+    WHISPER1 = "whisper-1"
+    """OpenAI Whisper."""
+    GPT_REALTIME_WHISPER = "gpt-realtime-whisper"
+    """OpenAI GPT Realtime Whisper."""
+    GPT4_O_TRANSCRIBE = "gpt-4o-transcribe"
+    """OpenAI GPT-4o transcribe."""
+    GPT4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
+    """OpenAI GPT-4o mini transcribe."""
+    GPT4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
+    """OpenAI GPT-4o transcribe with speaker diarization."""
+    GPT_TRANSCRIBE = "gpt-transcribe"
+    """OpenAI GPT Transcribe."""
+    GPT_LIVE_TRANSCRIBE = "gpt-live-transcribe"
+    """OpenAI GPT Live Transcribe."""
+    MAI_TRANSCRIBE = "mai-transcribe"
+    """MAI transcription."""
+    AZURE_SPEECH = "azure-speech"
+    """Azure AI Speech to text."""
+
+
 class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A condition that may trigger an interim response."""
 
@@ -1596,6 +1734,17 @@ class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumM
     """LATENCY."""
     TOOL = "tool"
     """TOOL."""
+
+
+class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The input audio noise reduction mode."""
+
+    NEAR_FIELD = "near_field"
+    """NEAR_FIELD."""
+    FAR_FIELD = "far_field"
+    """FAR_FIELD."""
+    AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
+    """Azure deep noise suppression."""
 
 
 class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1609,6 +1758,15 @@ class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMet
     """FILE_SEARCH_CALL_RESULTS."""
 
 
+class VoiceAgentSystemToolName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A service-managed voice-session control action. Known values are stable; additional values may
+    be added over time.
+    """
+
+    END_CONVERSATION = "end_conversation"
+    """Ends the active conversation."""
+
+
 class VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """When a tool invocation creates a follow-up response. Additional values may be added over time."""
 
@@ -1620,6 +1778,21 @@ class VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumM
     """Interrupt the active response and create a follow-up response."""
     SKIP_IF_BUSY = "skip_if_busy"
     """Create a follow-up response only when no response is active."""
+
+
+class VoiceAgentTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The turn-detection strategy. Additional values may be added over time."""
+
+    SERVER_VAD = "server_vad"
+    """Server-side voice activity detection."""
+    SEMANTIC_VAD = "semantic_vad"
+    """Semantic voice activity detection."""
+    AZURE_SEMANTIC_VAD = "azure_semantic_vad"
+    """Azure semantic voice activity detection."""
+    AZURE_SEMANTIC_VAD_EN = "azure_semantic_vad_en"
+    """English-optimized Azure semantic voice activity detection."""
+    AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"
+    """Multilingual Azure semantic voice activity detection."""
 
 
 class VoiceAgentWebSocketSubprotocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1647,19 +1820,6 @@ class VoiceAudioContainerFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Waveform Audio File Format."""
 
 
-class VoiceAudioFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The audio format type. Values follow the OpenAI Realtime wire schema and are exempt from the
-    snake_case enum-value rule.
-    """
-
-    PCM = "audio/pcm"
-    """16-bit PCM."""
-    PCMU = "audio/pcmu"
-    """G.711 mu-law (telephony)."""
-    PCMA = "audio/pcma"
-    """G.711 A-law (telephony)."""
-
-
 class VoiceAudioRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A voice-audio participant role. Additional values may be added over time."""
 
@@ -1667,33 +1827,6 @@ class VoiceAudioRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Audio produced by the user."""
     AGENT = "agent"
     """Audio produced by the agent."""
-
-
-class VoiceAudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """An output-audio timestamp kind supported by a voice agent."""
-
-    WORD = "word"
-    """Word-level timestamps."""
-
-
-class VoiceAvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The transport used to deliver the avatar video stream."""
-
-    WEBRTC = "webrtc"
-    """WEBRTC."""
-    WEBSOCKET = "websocket"
-    """WEBSOCKET."""
-    WEBSOCKET_BINARY = "websocket-binary"
-    """Binary WebSocket transport."""
-
-
-class VoiceAvatarType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The avatar type."""
-
-    VIDEO_AVATAR = "video_avatar"
-    """VIDEO_AVATAR."""
-    PHOTO_AVATAR = "photo_avatar"
-    """PHOTO_AVATAR."""
 
 
 class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1719,59 +1852,6 @@ class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     finalization."""
 
 
-class VoiceEndOfUtteranceDetectionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The semantic end-of-utterance detection model."""
-
-    SEMANTIC_DETECTION_V1 = "semantic_detection_v1"
-    """The default semantic detection model."""
-    SEMANTIC_DETECTION_V1_EN = "semantic_detection_v1_en"
-    """The English-optimized semantic detection model."""
-    SEMANTIC_DETECTION_V1_MULTILINGUAL = "semantic_detection_v1_multilingual"
-    """The multilingual semantic detection model."""
-    SMART_END_OF_TURN_DETECTION = "smart_end_of_turn_detection"
-    """The smart end-of-turn detection model."""
-
-
-class VoiceEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The sensitivity threshold for semantic end-of-utterance detection."""
-
-    LOW = "low"
-    """The low sensitivity threshold."""
-    MEDIUM = "medium"
-    """The medium sensitivity threshold."""
-    HIGH = "high"
-    """The high sensitivity threshold."""
-    DEFAULT = "default"
-    """The service-selected sensitivity threshold."""
-
-
-class VoiceInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The input-audio transcription model identifier. This is a model name, not a Foundry deployment
-    name. Mirrors the transcription models supported by the managed voice backend, covering the
-    OpenAI Realtime transcription models plus the Azure and MAI models. Additional values may be
-    added over time.
-    """
-
-    WHISPER1 = "whisper-1"
-    """OpenAI Whisper."""
-    GPT_REALTIME_WHISPER = "gpt-realtime-whisper"
-    """OpenAI GPT Realtime Whisper."""
-    GPT4_O_TRANSCRIBE = "gpt-4o-transcribe"
-    """OpenAI GPT-4o transcribe."""
-    GPT4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
-    """OpenAI GPT-4o mini transcribe."""
-    GPT4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
-    """OpenAI GPT-4o transcribe with speaker diarization."""
-    GPT_TRANSCRIBE = "gpt-transcribe"
-    """OpenAI GPT Transcribe."""
-    GPT_LIVE_TRANSCRIBE = "gpt-live-transcribe"
-    """OpenAI GPT Live Transcribe."""
-    MAI_TRANSCRIBE = "mai-transcribe"
-    """MAI transcription."""
-    AZURE_SPEECH = "azure-speech"
-    """Azure AI Speech to text."""
-
-
 class VoiceModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """How the model backing a voice agent is served. This is independent of the architecture
     (realtime or cascaded), which the service derives from the selected model.
@@ -1781,17 +1861,6 @@ class VoiceModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The service hosts and manages the named model, for example ``gpt-realtime``."""
     SELF_DEPLOYED = "self_deployed"
     """The service uses the customer's own Foundry deployment named by ``model``."""
-
-
-class VoiceNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The input audio noise reduction mode."""
-
-    NEAR_FIELD = "near_field"
-    """NEAR_FIELD."""
-    FAR_FIELD = "far_field"
-    """FAR_FIELD."""
-    AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
-    """Azure deep noise suppression."""
 
 
 class VoiceOutputModality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1807,30 +1876,6 @@ class VoiceOutputModality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ANIMATION."""
     AVATAR = "avatar"
     """AVATAR."""
-
-
-class VoiceSystemToolName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A service-managed voice-session control action. Known values are stable; additional values may
-    be added over time.
-    """
-
-    END_CONVERSATION = "end_conversation"
-    """Ends the active conversation."""
-
-
-class VoiceTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The turn-detection strategy. Additional values may be added over time."""
-
-    SERVER_VAD = "server_vad"
-    """Server-side voice activity detection."""
-    SEMANTIC_VAD = "semantic_vad"
-    """Semantic voice activity detection."""
-    AZURE_SEMANTIC_VAD = "azure_semantic_vad"
-    """Azure semantic voice activity detection."""
-    AZURE_SEMANTIC_VAD_EN = "azure_semantic_vad_en"
-    """English-optimized Azure semantic voice activity detection."""
-    AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"
-    """Multilingual Azure semantic voice activity detection."""
 
 
 class VoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

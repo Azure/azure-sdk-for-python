@@ -18,7 +18,6 @@ from .models._enums import (
     AgentOptimizationDatasetInputType,
     ContainerNetworkPolicyParamType,
     ContainerSkillType,
-    CreateTranscriptionResponseJsonUsageType,
     CustomToolParamFormatType,
     DataGenerationJobOutputType,
     DataGenerationJobSourceType,
@@ -35,11 +34,6 @@ from .models._enums import (
     OpenApiAuthType,
     PendingUploadType,
     RealtimeAudioFormatsType,
-    RealtimeClientEventType,
-    RealtimeConversationItemMessageType,
-    RealtimeConversationItemType,
-    RealtimeMcpErrorType,
-    RealtimeServerEventType,
     RecurrenceType,
     RoutineActionType,
     RoutineDispatchPayloadType,
@@ -55,13 +49,14 @@ from .models._enums import (
     TriggerType,
     VersionIndicatorType,
     VersionSelectorType,
-    VoiceTurnDetectionType,
+    VoiceAgentTurnDetectionType,
 )
 
 if TYPE_CHECKING:
     from . import _unions
     from .models import (
         A2AProtocolVersion,
+        ActivityProtocolAccessBoundary,
         AgentEndpointProtocol,
         AttackStrategy,
         AzureAISearchQueryType,
@@ -91,7 +86,6 @@ if TYPE_CHECKING:
         MemoryItemKind,
         OperationState,
         RankerVersionType,
-        RealtimeReasoningEffort,
         ReasoningEffort,
         ReasoningModeEnum,
         RiskCategory,
@@ -104,25 +98,22 @@ if TYPE_CHECKING:
         SimpleQnAFineTuningQuestionType,
         TelemetryDataKind,
         TelemetryTransportProtocol,
-        ToolChoiceOptions,
         ToolSearchExecutionType,
         TreatmentEffectType,
-        VoiceAgentAnimationOutputType,
+        VoiceAgentAudioTimestampType,
+        VoiceAgentAvatarOutputProtocol,
+        VoiceAgentAvatarType,
         VoiceAgentEchoCancellationReferenceSource,
+        VoiceAgentEndOfUtteranceDetectionModel,
+        VoiceAgentEndOfUtteranceThresholdLevel,
+        VoiceAgentInputTranscriptionModel,
         VoiceAgentInterimResponseTrigger,
+        VoiceAgentNoiseReductionType,
         VoiceAgentSessionIncludeOption,
+        VoiceAgentSystemToolName,
         VoiceAgentToolResponseScheduling,
-        VoiceAudioFormatType,
-        VoiceAudioTimestampType,
-        VoiceAvatarOutputProtocol,
-        VoiceAvatarType,
-        VoiceEndOfUtteranceDetectionModel,
-        VoiceEndOfUtteranceThresholdLevel,
-        VoiceInputTranscriptionModel,
         VoiceModelType,
-        VoiceNoiseReductionType,
         VoiceOutputModality,
-        VoiceSystemToolName,
         VoiceType,
     )
 
@@ -169,7 +160,7 @@ class _CreateAgentVersionFromCodeMetadata(TypedDict, total=False):
     """Set of 16 key-value pairs that can be attached to an object. This can be
      useful for storing additional information about the object in a structured
      format, and querying for objects via API or the dashboard.
-     
+
      Keys are strings with a maximum length of 64 characters. Values are strings
      with a maximum length of 512 characters."""
     definition: Required["HostedAgentDefinition"]
@@ -367,10 +358,14 @@ class ActivityProtocolConfiguration(TypedDict, total=False):
     :ivar enable_m365_public_endpoint: Whether to enable the M365 public endpoint for the activity
      protocol.
     :vartype enable_m365_public_endpoint: bool
+    :ivar access_boundaries: The access boundaries for the activity protocol.
+    :vartype access_boundaries: list[Union[str, "ActivityProtocolAccessBoundary"]]
     """
 
     enable_m365_public_endpoint: bool
     """Whether to enable the M365 public endpoint for the activity protocol."""
+    access_boundaries: list[Union[str, "ActivityProtocolAccessBoundary"]]
+    """The access boundaries for the activity protocol."""
 
 
 class AgentCard(TypedDict, total=False):
@@ -424,10 +419,10 @@ class AgentClusterInsightRequest(TypedDict, total=False):
 
     :ivar type: The type of request. Required. Cluster Insight on an Agent.
     :vartype type: Literal[InsightType.AGENT_CLUSTER_INSIGHT]
-    :ivar agent_name: Identifier for the agent. Required.
-    :vartype agent_name: str
-    :ivar model_configuration: Configuration of the model used in the insight generation.
-    :vartype model_configuration: "InsightModelConfiguration"
+    :ivar agentName: Identifier for the agent. Required.
+    :vartype agentName: str
+    :ivar modelConfiguration: Configuration of the model used in the insight generation.
+    :vartype modelConfiguration: "InsightModelConfiguration"
     """
 
     type: Required[Literal[InsightType.AGENT_CLUSTER_INSIGHT]]
@@ -443,8 +438,8 @@ class AgentClusterInsightResult(TypedDict, total=False):
 
     :ivar type: The type of insights result. Required. Cluster Insight on an Agent.
     :vartype type: Literal[InsightType.AGENT_CLUSTER_INSIGHT]
-    :ivar cluster_insight: Required.
-    :vartype cluster_insight: "ClusterInsightResult"
+    :ivar clusterInsight: Required.
+    :vartype clusterInsight: "ClusterInsightResult"
     """
 
     type: Required[Literal[InsightType.AGENT_CLUSTER_INSIGHT]]
@@ -630,8 +625,8 @@ class AgentOptimizationInlineDatasetInput(TypedDict, total=False):
     :ivar type: Dataset input type discriminator. Required. Inline dataset — items are provided
      directly in the request body.
     :vartype type: Literal[AgentOptimizationDatasetInputType.INLINE]
-    :ivar dataset_items: Dataset items. Required.
-    :vartype dataset_items: list["AgentOptimizationDatasetItem"]
+    :ivar items: Dataset items. Required.
+    :vartype items: list["AgentOptimizationDatasetItem"]
     """
 
     type: Required[Literal[AgentOptimizationDatasetInputType.INLINE]]
@@ -842,8 +837,8 @@ class AgentTaxonomyInput(TypedDict, total=False):
     :vartype type: Literal[EvaluationTaxonomyInputType.AGENT]
     :ivar target: Target configuration for the agent. Required.
     :vartype target: "EvaluationTarget"
-    :ivar risk_categories: List of risk categories to evaluate against. Required.
-    :vartype risk_categories: list[Union[str, "RiskCategory"]]
+    :ivar riskCategories: List of risk categories to evaluate against. Required.
+    :vartype riskCategories: list[Union[str, "RiskCategory"]]
     """
 
     type: Required[Literal[EvaluationTaxonomyInputType.AGENT]]
@@ -902,10 +897,10 @@ class ApiError(TypedDict, total=False):
     :vartype type: str
     :ivar details:
     :vartype details: list["ApiError"]
-    :ivar additional_info:
-    :vartype additional_info: dict[str, Any]
-    :ivar debug_info:
-    :vartype debug_info: dict[str, Any]
+    :ivar additionalInfo:
+    :vartype additionalInfo: dict[str, Any]
+    :ivar debugInfo:
+    :vartype debugInfo: dict[str, Any]
     """
 
     code: Required[Optional[str]]
@@ -1061,12 +1056,12 @@ class AzureAISearchIndex(TypedDict, total=False):
     :vartype tags: dict[str, str]
     :ivar type: Type of index. Required. Azure search.
     :vartype type: Literal[IndexType.AZURE_SEARCH]
-    :ivar connection_name: Name of connection to Azure AI Search. Required.
-    :vartype connection_name: str
-    :ivar index_name: Name of index in Azure AI Search resource to attach. Required.
-    :vartype index_name: str
-    :ivar field_mapping: Field mapping configuration.
-    :vartype field_mapping: "FieldMapping"
+    :ivar connectionName: Name of connection to Azure AI Search. Required.
+    :vartype connectionName: str
+    :ivar indexName: Name of index in Azure AI Search resource to attach. Required.
+    :vartype indexName: str
+    :ivar fieldMapping: Field mapping configuration.
+    :vartype fieldMapping: "FieldMapping"
     """
 
     id: str
@@ -1266,10 +1261,10 @@ class AzureOpenAIModelConfiguration(TypedDict, total=False):
 
     :ivar type: Required. Default value is "AzureOpenAIModel".
     :vartype type: Literal["AzureOpenAIModel"]
-    :ivar model_deployment_name: Deployment name for AOAI model. Example: gpt-4o if in AIServices
-     or connection based ``connection_name/deployment_name`` (e.g. ``my-aoai-connection/gpt-4o``).
+    :ivar modelDeploymentName: Deployment name for AOAI model. Example: gpt-4o if in AIServices or
+     connection based ``connection_name/deployment_name`` (e.g. ``my-aoai-connection/gpt-4o``).
      Required.
-    :vartype model_deployment_name: str
+    :vartype modelDeploymentName: str
     """
 
     type: Required[Literal["AzureOpenAIModel"]]
@@ -1605,22 +1600,22 @@ class ClusterInsightResult(TypedDict, total=False):
     """List of clusters identified in the insights. Required."""
     coordinates: dict[str, "ChartCoordinate"]
     """  Optional mapping of IDs to 2D coordinates used by the UX for visualization.
-     
+
        The map keys are string identifiers (for example, a cluster id or a sample id)
        and the values are the coordinates and visual size for rendering on a 2D chart.
-     
+
        This property is omitted unless the client requests coordinates (for example,
        by passing ``includeCoordinates=true`` as a query parameter).
-     
+
        Example:
-     
+
      .. code-block::
-     
+
         {
           \"cluster-1\": { \"x\": 12, \"y\": 34, \"size\": 8 },
           \"sample-123\": { \"x\": 18, \"y\": 22, \"size\": 4 }
         }
-     
+
        Coordinates are intended only for client-side visualization and do not
        modify the canonical insights results."""
 
@@ -1628,12 +1623,12 @@ class ClusterInsightResult(TypedDict, total=False):
 class ClusterTokenUsage(TypedDict, total=False):
     """Token usage for cluster analysis.
 
-    :ivar input_token_usage: input token usage. Required.
-    :vartype input_token_usage: int
-    :ivar output_token_usage: output token usage. Required.
-    :vartype output_token_usage: int
-    :ivar total_token_usage: total token usage. Required.
-    :vartype total_token_usage: int
+    :ivar inputTokenUsage: input token usage. Required.
+    :vartype inputTokenUsage: int
+    :ivar outputTokenUsage: output token usage. Required.
+    :vartype outputTokenUsage: int
+    :ivar totalTokenUsage: total token usage. Required.
+    :vartype totalTokenUsage: int
     """
 
     inputTokenUsage: Required[int]
@@ -1830,7 +1825,7 @@ class ComparisonFilter(TypedDict, total=False):
     type: Required[Literal["eq", "ne", "gt", "gte", "lt", "lte", "in", "nin"]]
     """Specifies the comparison operator: ``eq``, ``ne``, ``gt``, ``gte``, ``lt``, ``lte``, ``in``,
       ``nin``.
- 
+
       * `eq`: equals
       * `ne`: not equal
       * `gt`: greater than
@@ -2011,14 +2006,14 @@ class ContinuousEvaluationRuleAction(TypedDict, total=False):
 
     :ivar type: Required. Continuous evaluation.
     :vartype type: Literal[EvaluationRuleActionType.CONTINUOUS_EVALUATION]
-    :ivar eval_id: Eval Id to add continuous evaluation runs to. Required.
-    :vartype eval_id: str
-    :ivar max_hourly_runs: Maximum number of evaluation runs allowed per hour.
-    :vartype max_hourly_runs: int
-    :ivar sampling_rate: Percentage (0-100] chance that a matching event triggers an evaluation.
+    :ivar evalId: Eval Id to add continuous evaluation runs to. Required.
+    :vartype evalId: str
+    :ivar maxHourlyRuns: Maximum number of evaluation runs allowed per hour.
+    :vartype maxHourlyRuns: int
+    :ivar samplingRate: Percentage (0-100] chance that a matching event triggers an evaluation.
      When omitted, the service-default is to evaluate every event, which is equivalent to setting a
      sampling rate of 100.
-    :vartype sampling_rate: float
+    :vartype samplingRate: float
     """
 
     type: Required[Literal[EvaluationRuleActionType.CONTINUOUS_EVALUATION]]
@@ -2048,16 +2043,16 @@ class CosmosDBIndex(TypedDict, total=False):
     :vartype tags: dict[str, str]
     :ivar type: Type of index. Required. CosmosDB.
     :vartype type: Literal[IndexType.COSMOS_DB]
-    :ivar connection_name: Name of connection to CosmosDB. Required.
-    :vartype connection_name: str
-    :ivar database_name: Name of the CosmosDB Database. Required.
-    :vartype database_name: str
-    :ivar container_name: Name of CosmosDB Container. Required.
-    :vartype container_name: str
-    :ivar embedding_configuration: Embedding model configuration. Required.
-    :vartype embedding_configuration: "EmbeddingConfiguration"
-    :ivar field_mapping: Field mapping configuration. Required.
-    :vartype field_mapping: "FieldMapping"
+    :ivar connectionName: Name of connection to CosmosDB. Required.
+    :vartype connectionName: str
+    :ivar databaseName: Name of the CosmosDB Database. Required.
+    :vartype databaseName: str
+    :ivar containerName: Name of CosmosDB Container. Required.
+    :vartype containerName: str
+    :ivar embeddingConfiguration: Embedding model configuration. Required.
+    :vartype embeddingConfiguration: "EmbeddingConfiguration"
+    :ivar fieldMapping: Field mapping configuration. Required.
+    :vartype fieldMapping: "FieldMapping"
     """
 
     id: str
@@ -2110,12 +2105,12 @@ class CronTrigger(TypedDict, total=False):
     :vartype type: Literal[TriggerType.CRON]
     :ivar expression: Cron expression that defines the schedule frequency. Required.
     :vartype expression: str
-    :ivar time_zone: Time zone for the cron schedule. Defaults to ``UTC``.
-    :vartype time_zone: str
-    :ivar start_time: Start time for the cron schedule in ISO 8601 format.
-    :vartype start_time: str
-    :ivar end_time: End time for the cron schedule in ISO 8601 format.
-    :vartype end_time: str
+    :ivar timeZone: Time zone for the cron schedule. Defaults to ``UTC``.
+    :vartype timeZone: str
+    :ivar startTime: Start time for the cron schedule in ISO 8601 format.
+    :vartype startTime: str
+    :ivar endTime: End time for the cron schedule in ISO 8601 format.
+    :vartype endTime: str
     """
 
     type: Required[Literal[TriggerType.CRON]]
@@ -2497,11 +2492,11 @@ class Dimension(TypedDict, total=False):
 class EmbeddingConfiguration(TypedDict, total=False):
     """Embedding configuration class.
 
-    :ivar model_deployment_name: Deployment name of embedding model. It can point to a model
+    :ivar modelDeploymentName: Deployment name of embedding model. It can point to a model
      deployment either in the parent AIServices or a connection. Required.
-    :vartype model_deployment_name: str
-    :ivar embedding_field: Embedding field. Required.
-    :vartype embedding_field: str
+    :vartype modelDeploymentName: str
+    :ivar embeddingField: Embedding field. Required.
+    :vartype embeddingField: str
     """
 
     modelDeploymentName: Required[str]
@@ -2595,17 +2590,17 @@ class EvalResult(TypedDict, total=False):
 class EvalRunResultCompareItem(TypedDict, total=False):
     """Metric comparison for a treatment against the baseline.
 
-    :ivar treatment_run_id: The treatment run ID. Required.
-    :vartype treatment_run_id: str
-    :ivar treatment_run_summary: Summary statistics of the treatment run. Required.
-    :vartype treatment_run_summary: "EvalRunResultSummary"
-    :ivar delta_estimate: Estimated difference between treatment and baseline. Required.
-    :vartype delta_estimate: float
-    :ivar p_value: P-value for the treatment effect. Required.
-    :vartype p_value: float
-    :ivar treatment_effect: Type of treatment effect. Required. Known values are: "TooFewSamples",
+    :ivar treatmentRunId: The treatment run ID. Required.
+    :vartype treatmentRunId: str
+    :ivar treatmentRunSummary: Summary statistics of the treatment run. Required.
+    :vartype treatmentRunSummary: "EvalRunResultSummary"
+    :ivar deltaEstimate: Estimated difference between treatment and baseline. Required.
+    :vartype deltaEstimate: float
+    :ivar pValue: P-value for the treatment effect. Required.
+    :vartype pValue: float
+    :ivar treatmentEffect: Type of treatment effect. Required. Known values are: "TooFewSamples",
      "Inconclusive", "Changed", "Improved", and "Degraded".
-    :vartype treatment_effect: Union[str, "TreatmentEffectType"]
+    :vartype treatmentEffect: Union[str, "TreatmentEffectType"]
     """
 
     treatmentRunId: Required[str]
@@ -2624,16 +2619,16 @@ class EvalRunResultCompareItem(TypedDict, total=False):
 class EvalRunResultComparison(TypedDict, total=False):
     """Comparison results for treatment runs against the baseline.
 
-    :ivar testing_criteria: Name of the testing criteria. Required.
-    :vartype testing_criteria: str
+    :ivar testingCriteria: Name of the testing criteria. Required.
+    :vartype testingCriteria: str
     :ivar metric: Metric being evaluated. Required.
     :vartype metric: str
     :ivar evaluator: Name of the evaluator for this testing criteria. Required.
     :vartype evaluator: str
-    :ivar baseline_run_summary: Summary statistics of the baseline run. Required.
-    :vartype baseline_run_summary: "EvalRunResultSummary"
-    :ivar compare_items: List of comparison results for each treatment run. Required.
-    :vartype compare_items: list["EvalRunResultCompareItem"]
+    :ivar baselineRunSummary: Summary statistics of the baseline run. Required.
+    :vartype baselineRunSummary: "EvalRunResultSummary"
+    :ivar compareItems: List of comparison results for each treatment run. Required.
+    :vartype compareItems: list["EvalRunResultCompareItem"]
     """
 
     testingCriteria: Required[str]
@@ -2651,14 +2646,14 @@ class EvalRunResultComparison(TypedDict, total=False):
 class EvalRunResultSummary(TypedDict, total=False):
     """Summary statistics of a metric in an evaluation run.
 
-    :ivar run_id: The evaluation run ID. Required.
-    :vartype run_id: str
-    :ivar sample_count: Number of samples in the evaluation run. Required.
-    :vartype sample_count: int
+    :ivar runId: The evaluation run ID. Required.
+    :vartype runId: str
+    :ivar sampleCount: Number of samples in the evaluation run. Required.
+    :vartype sampleCount: int
     :ivar average: Average value of the metric in the evaluation run. Required.
     :vartype average: float
-    :ivar standard_deviation: Standard deviation of the metric in the evaluation run. Required.
-    :vartype standard_deviation: float
+    :ivar standardDeviation: Standard deviation of the metric in the evaluation run. Required.
+    :vartype standardDeviation: float
     """
 
     runId: Required[str]
@@ -2676,12 +2671,12 @@ class EvaluationComparisonInsightRequest(TypedDict, total=False):
 
     :ivar type: The type of request. Required. Evaluation Comparison.
     :vartype type: Literal[InsightType.EVALUATION_COMPARISON]
-    :ivar eval_id: Identifier for the evaluation. Required.
-    :vartype eval_id: str
-    :ivar baseline_run_id: The baseline run ID for comparison. Required.
-    :vartype baseline_run_id: str
-    :ivar treatment_run_ids: List of treatment run IDs for comparison. Required.
-    :vartype treatment_run_ids: list[str]
+    :ivar evalId: Identifier for the evaluation. Required.
+    :vartype evalId: str
+    :ivar baselineRunId: The baseline run ID for comparison. Required.
+    :vartype baselineRunId: str
+    :ivar treatmentRunIds: List of treatment run IDs for comparison. Required.
+    :vartype treatmentRunIds: list[str]
     """
 
     type: Required[Literal[InsightType.EVALUATION_COMPARISON]]
@@ -2720,12 +2715,12 @@ class EvaluationResultSample(TypedDict, total=False):
     :vartype id: str
     :ivar features: Features to help with additional filtering of data in UX. Required.
     :vartype features: dict[str, Any]
-    :ivar correlation_info: Info about the correlation for the analysis sample. Required.
-    :vartype correlation_info: dict[str, Any]
+    :ivar correlationInfo: Info about the correlation for the analysis sample. Required.
+    :vartype correlationInfo: dict[str, Any]
     :ivar type: Evaluation Result Sample Type. Required. A sample from the evaluation result.
     :vartype type: Literal[SampleType.EVALUATION_RESULT_SAMPLE]
-    :ivar evaluation_result: Evaluation result for the analysis sample. Required.
-    :vartype evaluation_result: "EvalResult"
+    :ivar evaluationResult: Evaluation result for the analysis sample. Required.
+    :vartype evaluationResult: "EvalResult"
     """
 
     id: Required[str]
@@ -2745,21 +2740,21 @@ class EvaluationRule(TypedDict, total=False):
 
     :ivar id: Unique identifier for the evaluation rule. Required.
     :vartype id: str
-    :ivar display_name: Display Name for the evaluation rule.
-    :vartype display_name: str
+    :ivar displayName: Display Name for the evaluation rule.
+    :vartype displayName: str
     :ivar description: Description for the evaluation rule.
     :vartype description: str
     :ivar action: Definition of the evaluation rule action. Required.
     :vartype action: "EvaluationRuleAction"
     :ivar filter: Filter condition of the evaluation rule.
     :vartype filter: "EvaluationRuleFilter"
-    :ivar event_type: Event type that the evaluation rule applies to. Required. Known values are:
+    :ivar eventType: Event type that the evaluation rule applies to. Required. Known values are:
      "responseCompleted" and "manual".
-    :vartype event_type: Union[str, "EvaluationRuleEventType"]
+    :vartype eventType: Union[str, "EvaluationRuleEventType"]
     :ivar enabled: Indicates whether the evaluation rule is enabled. Default is true. Required.
     :vartype enabled: bool
-    :ivar system_data: System metadata for the evaluation rule. Required.
-    :vartype system_data: dict[str, str]
+    :ivar systemData: System metadata for the evaluation rule. Required.
+    :vartype systemData: dict[str, str]
     """
 
     id: Required[str]
@@ -2784,8 +2779,8 @@ class EvaluationRule(TypedDict, total=False):
 class EvaluationRuleFilter(TypedDict, total=False):
     """Evaluation filter model.
 
-    :ivar agent_name: Filter by agent name. Required.
-    :vartype agent_name: str
+    :ivar agentName: Filter by agent name. Required.
+    :vartype agentName: str
     """
 
     agentName: Required[str]
@@ -2797,12 +2792,12 @@ class EvaluationRunClusterInsightRequest(TypedDict, total=False):
 
     :ivar type: The type of insights request. Required. Insights on an Evaluation run result.
     :vartype type: Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]
-    :ivar eval_id: Evaluation Id for the insights. Required.
-    :vartype eval_id: str
-    :ivar run_ids: List of evaluation run IDs for the insights. Required.
-    :vartype run_ids: list[str]
-    :ivar model_configuration: Configuration of the model used in the insight generation.
-    :vartype model_configuration: "InsightModelConfiguration"
+    :ivar evalId: Evaluation Id for the insights. Required.
+    :vartype evalId: str
+    :ivar runIds: List of evaluation run IDs for the insights. Required.
+    :vartype runIds: list[str]
+    :ivar modelConfiguration: Configuration of the model used in the insight generation.
+    :vartype modelConfiguration: "InsightModelConfiguration"
     """
 
     type: Required[Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]]
@@ -2820,8 +2815,8 @@ class EvaluationRunClusterInsightResult(TypedDict, total=False):
 
     :ivar type: The type of insights result. Required. Insights on an Evaluation run result.
     :vartype type: Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]
-    :ivar cluster_insight: Required.
-    :vartype cluster_insight: "ClusterInsightResult"
+    :ivar clusterInsight: Required.
+    :vartype clusterInsight: "ClusterInsightResult"
     """
 
     type: Required[Literal[InsightType.EVALUATION_RUN_CLUSTER_INSIGHT]]
@@ -2837,10 +2832,10 @@ class EvaluationScheduleTask(TypedDict, total=False):
     :vartype configuration: dict[str, str]
     :ivar type: Required. Evaluation task.
     :vartype type: Literal[ScheduleTaskType.EVALUATION]
-    :ivar eval_id: Identifier of the evaluation group. Required.
-    :vartype eval_id: str
-    :ivar eval_run: The evaluation run payload. Required.
-    :vartype eval_run: dict[str, Any]
+    :ivar evalId: Identifier of the evaluation group. Required.
+    :vartype evalId: str
+    :ivar evalRun: The evaluation run payload. Required.
+    :vartype evalRun: dict[str, Any]
     """
 
     configuration: dict[str, str]
@@ -2866,10 +2861,10 @@ class EvaluationTaxonomy(TypedDict, total=False):
     :vartype description: str
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
-    :ivar taxonomy_input: Input configuration for the evaluation taxonomy. Required.
-    :vartype taxonomy_input: "EvaluationTaxonomyInput"
-    :ivar taxonomy_categories: List of taxonomy categories.
-    :vartype taxonomy_categories: list["TaxonomyCategory"]
+    :ivar taxonomyInput: Input configuration for the evaluation taxonomy. Required.
+    :vartype taxonomyInput: "EvaluationTaxonomyInput"
+    :ivar taxonomyCategories: List of taxonomy categories.
+    :vartype taxonomyCategories: list["TaxonomyCategory"]
     :ivar properties: Additional properties for the evaluation taxonomy.
     :vartype properties: dict[str, str]
     """
@@ -3330,18 +3325,18 @@ class FabricIQPreviewToolboxTool(TypedDict, total=False):
 class FieldMapping(TypedDict, total=False):
     """Field mapping configuration class.
 
-    :ivar content_fields: List of fields with text content. Required.
-    :vartype content_fields: list[str]
-    :ivar filepath_field: Path of file to be used as a source of text content.
-    :vartype filepath_field: str
-    :ivar title_field: Field containing the title of the document.
-    :vartype title_field: str
-    :ivar url_field: Field containing the url of the document.
-    :vartype url_field: str
-    :ivar vector_fields: List of fields with vector content.
-    :vartype vector_fields: list[str]
-    :ivar metadata_fields: List of fields with metadata content.
-    :vartype metadata_fields: list[str]
+    :ivar contentFields: List of fields with text content. Required.
+    :vartype contentFields: list[str]
+    :ivar filepathField: Path of file to be used as a source of text content.
+    :vartype filepathField: str
+    :ivar titleField: Field containing the title of the document.
+    :vartype titleField: str
+    :ivar urlField: Field containing the url of the document.
+    :vartype urlField: str
+    :ivar vectorFields: List of fields with vector content.
+    :vartype vectorFields: list[str]
+    :ivar metadataFields: List of fields with metadata content.
+    :vartype metadataFields: list[str]
     """
 
     contentFields: Required[list[str]]
@@ -3403,16 +3398,16 @@ class FileDataGenerationJobSource(TypedDict, total=False):
 class FileDatasetVersion(TypedDict, total=False):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data (`example <https://go.microsoft.com/fwlink/?linkid=2202330>`_).
+    :ivar dataUri: URI of the data (`example <https://go.microsoft.com/fwlink/?linkid=2202330>`_).
      Required.
-    :vartype data_uri: str
-    :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
+    :vartype dataUri: str
+    :ivar isReference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
      version is deleted.
-    :vartype is_reference: bool
-    :ivar connection_name: The Azure Storage Account connection name. Required if
+    :vartype isReference: bool
+    :ivar connectionName: The Azure Storage Account connection name. Required if
      startPendingUploadVersion was not called before creating the Dataset.
-    :vartype connection_name: str
+    :vartype connectionName: str
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -3558,16 +3553,16 @@ class FixedRatioVersionSelectionRule(TypedDict, total=False):
 class FolderDatasetVersion(TypedDict, total=False):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data (`example <https://go.microsoft.com/fwlink/?linkid=2202330>`_).
+    :ivar dataUri: URI of the data (`example <https://go.microsoft.com/fwlink/?linkid=2202330>`_).
      Required.
-    :vartype data_uri: str
-    :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
+    :vartype dataUri: str
+    :ivar isReference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
      version is deleted.
-    :vartype is_reference: bool
-    :ivar connection_name: The Azure Storage Account connection name. Required if
+    :vartype isReference: bool
+    :ivar connectionName: The Azure Storage Account connection name. Required if
      startPendingUploadVersion was not called before creating the Dataset.
-    :vartype connection_name: str
+    :vartype connectionName: str
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -3752,70 +3747,6 @@ class FunctionToolParam(TypedDict, total=False):
     allowed_callers: Optional[list[Union[str, "CallableToolAllowedCaller"]]]
 
 
-class GenerateVoiceAgentRequest(TypedDict, total=False):
-    """The inputs for generating a voice agent. Only ``kind`` and ``name`` are always required. The
-    authoring service expands these inputs into a full, editable ``VoiceAgentDefinition``, which is
-    then created through ``POST /agents``. The generated ``instructions`` and audio/voice settings
-    are stored as separate fields on the resulting agent definition, so the caller can edit or
-    override any of them afterward via standard agent versioning.
-
-    :ivar kind: The agent kind. Always ``voice``. Required. VOICE.
-    :vartype kind: Literal[AgentKind.VOICE]
-    :ivar name: The unique name for the agent to create. Must be a non-empty DNS-like agent name.
-     Required.
-    :vartype name: str
-    :ivar model_type: Optional inference mode. When omitted, the authoring service uses
-     ``managed``. When supplied, use ``managed`` or ``self_deployed``. Known values are: "managed"
-     and "self_deployed".
-    :vartype model_type: Union[str, "VoiceModelType"]
-    :ivar model: Optional model identifier. Required when ``model_type`` is ``self_deployed``;
-     optional when ``model_type`` is ``managed`` or omitted. The service never invents a customer
-     deployment name.
-    :vartype model: str
-    :ivar use_case: An optional authoring use case. An empty string is accepted.
-    :vartype use_case: str
-    :ivar goal: An optional natural-language description of what the agent should do. When
-     supplied, it seeds the generated instructions.
-    :vartype goal: str
-    :ivar description: An optional agent description. The authoring service resolves its fallback
-     when omitted.
-    :vartype description: str
-    :ivar tools: Optional tools carried through verbatim onto the generated agent (see
-     ``VoiceAgentTool``).
-    :vartype tools: list["VoiceAgentTool"]
-    :ivar draft: (Preview) When ``true``, the generated voice agent is created as a draft — an
-     editable, unpublished version the caller can review and refine before publishing it via the
-     standard create/version path. The service defaults to ``false`` if a value is not specified by
-     the caller, in which case the agent is created and published normally.
-    :vartype draft: bool
-    """
-
-    kind: Required[Literal[AgentKind.VOICE]]
-    """The agent kind. Always ``voice``. Required. VOICE."""
-    name: Required[str]
-    """The unique name for the agent to create. Must be a non-empty DNS-like agent name. Required."""
-    model_type: Union[str, "VoiceModelType"]
-    """Optional inference mode. When omitted, the authoring service uses ``managed``. When supplied,
-     use ``managed`` or ``self_deployed``. Known values are: \"managed\" and \"self_deployed\"."""
-    model: str
-    """Optional model identifier. Required when ``model_type`` is ``self_deployed``; optional when
-     ``model_type`` is ``managed`` or omitted. The service never invents a customer deployment name."""
-    use_case: str
-    """An optional authoring use case. An empty string is accepted."""
-    goal: str
-    """An optional natural-language description of what the agent should do. When supplied, it seeds
-     the generated instructions."""
-    description: str
-    """An optional agent description. The authoring service resolves its fallback when omitted."""
-    tools: list["VoiceAgentTool"]
-    """Optional tools carried through verbatim onto the generated agent (see ``VoiceAgentTool``)."""
-    draft: bool
-    """(Preview) When ``true``, the generated voice agent is created as a draft — an editable,
-     unpublished version the caller can review and refine before publishing it via the standard
-     create/version path. The service defaults to ``false`` if a value is not specified by the
-     caller, in which case the agent is created and published normally."""
-
-
 class GitHubIssueRoutineTrigger(TypedDict, total=False):
     """A GitHub issue routine trigger.
 
@@ -3948,8 +3879,8 @@ class HumanEvaluationPreviewRuleAction(TypedDict, total=False):
 
     :ivar type: Required. Human evaluation preview.
     :vartype type: Literal[EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW]
-    :ivar template_id: Human evaluation template Id. Required.
-    :vartype template_id: str
+    :ivar templateId: Human evaluation template Id. Required.
+    :vartype templateId: str
     """
 
     type: Required[Literal[EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW]]
@@ -4145,15 +4076,15 @@ class InlineSkillSourceParam(TypedDict, total=False):
 class Insight(TypedDict, total=False):
     """The response body for cluster insights.
 
-    :ivar insight_id: The unique identifier for the insights report. Required.
-    :vartype insight_id: str
+    :ivar id: The unique identifier for the insights report. Required.
+    :vartype id: str
     :ivar metadata: Metadata about the insights report. Required.
     :vartype metadata: "InsightsMetadata"
     :ivar state: The current state of the insights. Required. Known values are: "NotStarted",
      "Running", "Succeeded", "Failed", and "Canceled".
     :vartype state: Union[str, "OperationState"]
-    :ivar display_name: User friendly display name for the insight. Required.
-    :vartype display_name: str
+    :ivar displayName: User friendly display name for the insight. Required.
+    :vartype displayName: str
     :ivar request: Request for the insights analysis. Required.
     :vartype request: "InsightRequest"
     :ivar result: The result of the insights report.
@@ -4184,15 +4115,15 @@ class InsightCluster(TypedDict, total=False):
     :vartype label: str
     :ivar suggestion: Suggestion for the cluster. Required.
     :vartype suggestion: str
-    :ivar suggestion_title: The title of the suggestion for the cluster. Required.
-    :vartype suggestion_title: str
+    :ivar suggestionTitle: The title of the suggestion for the cluster. Required.
+    :vartype suggestionTitle: str
     :ivar description: Description of the analysis cluster. Required.
     :vartype description: str
     :ivar weight: The weight of the analysis cluster. This indicate number of samples in the
      cluster. Required.
     :vartype weight: int
-    :ivar sub_clusters: List of subclusters within this cluster. Empty if no subclusters exist.
-    :vartype sub_clusters: list["InsightCluster"]
+    :ivar subClusters: List of subclusters within this cluster. Empty if no subclusters exist.
+    :vartype subClusters: list["InsightCluster"]
     :ivar samples: List of samples that belong to this cluster. Empty if samples are part of
      subclusters.
     :vartype samples: list["InsightSample"]
@@ -4219,10 +4150,9 @@ class InsightCluster(TypedDict, total=False):
 class InsightModelConfiguration(TypedDict, total=False):
     """Configuration of the model used in the insight generation.
 
-    :ivar model_deployment_name: The model deployment to be evaluated. Accepts either the
-     deployment name alone or with the connection name as '{connectionName}/<modelDeploymentName>'.
-     Required.
-    :vartype model_deployment_name: str
+    :ivar modelDeploymentName: The model deployment to be evaluated. Accepts either the deployment
+     name alone or with the connection name as '{connectionName}/<modelDeploymentName>'. Required.
+    :vartype modelDeploymentName: str
     """
 
     modelDeploymentName: Required[str]
@@ -4252,10 +4182,10 @@ class InsightScheduleTask(TypedDict, total=False):
 class InsightsMetadata(TypedDict, total=False):
     """Metadata about the insights.
 
-    :ivar created_at: The timestamp when the insights were created. Required.
-    :vartype created_at: str
-    :ivar completed_at: The timestamp when the insights were completed.
-    :vartype completed_at: str
+    :ivar createdAt: The timestamp when the insights were created. Required.
+    :vartype createdAt: str
+    :ivar completedAt: The timestamp when the insights were completed.
+    :vartype completedAt: str
     """
 
     createdAt: Required[str]
@@ -4267,12 +4197,12 @@ class InsightsMetadata(TypedDict, total=False):
 class InsightSummary(TypedDict, total=False):
     """Summary of the error cluster analysis.
 
-    :ivar sample_count: Total number of samples analyzed. Required.
-    :vartype sample_count: int
-    :ivar unique_subcluster_count: Total number of unique subcluster labels. Required.
-    :vartype unique_subcluster_count: int
-    :ivar unique_cluster_count: Total number of unique clusters. Required.
-    :vartype unique_cluster_count: int
+    :ivar sampleCount: Total number of samples analyzed. Required.
+    :vartype sampleCount: int
+    :ivar uniqueSubclusterCount: Total number of unique subcluster labels. Required.
+    :vartype uniqueSubclusterCount: int
+    :ivar uniqueClusterCount: Total number of unique clusters. Required.
+    :vartype uniqueClusterCount: int
     :ivar method: Method used for clustering. Required.
     :vartype method: str
     :ivar usage: Token usage while performing clustering analysis. Required.
@@ -4400,29 +4330,6 @@ class InvokeAgentResponsesApiRoutineAction(TypedDict, total=False):
     """An optional existing conversation identifier to continue during the downstream dispatch."""
 
 
-class LlmGeneratedVoiceGreetingConfig(TypedDict, total=False):
-    """A greeting authored by the session model from a scoped opening-turn prompt.
-
-    :ivar type: Required. Default value is "llm_generated".
-    :vartype type: Literal["llm_generated"]
-    :ivar prompt: The Handlebars prompt that guides the opening turn. Required.
-    :vartype prompt: str
-    :ivar tool_choice: The tool-selection policy for the opening response. Defaults to ``none``. Is
-     one of the following types: Literal["none"], Literal["auto"], Literal["required"],
-     ToolChoiceFunction, ToolChoiceMCP
-    :vartype tool_choice: "_unions.VoiceAgentToolChoice"
-    """
-
-    type: Required[Literal["llm_generated"]]
-    """Required. Default value is \"llm_generated\"."""
-    prompt: Required[str]
-    """The Handlebars prompt that guides the opening turn. Required."""
-    tool_choice: "_unions.VoiceAgentToolChoice"
-    """The tool-selection policy for the opening response. Defaults to ``none``. Is one of the
-     following types: Literal[\"none\"], Literal[\"auto\"], Literal[\"required\"],
-     ToolChoiceFunction, ToolChoiceMCP"""
-
-
 class LocalShellToolParam(TypedDict, total=False):
     """Local shell tool.
 
@@ -4467,25 +4374,6 @@ class LocalSkillParam(TypedDict, total=False):
     """The path to the directory containing the skill. Required."""
 
 
-class LogProbProperties(TypedDict, total=False):
-    """A log probability object.
-
-    :ivar token: The token that was used to generate the log probability. Required.
-    :vartype token: str
-    :ivar logprob: The log probability of the token. Required.
-    :vartype logprob: float
-    :ivar bytes: The bytes that were used to generate the log probability. Required.
-    :vartype bytes: list[int]
-    """
-
-    token: Required[str]
-    """The token that was used to generate the log probability. Required."""
-    logprob: Required[float]
-    """The log probability of the token. Required."""
-    bytes: Required[list[int]]
-    """The bytes that were used to generate the log probability. Required."""
-
-
 class LoraConfig(TypedDict, total=False):
     """Adapter-specific metadata for LoRA models. Drives serving engine configuration at deployment
     time.
@@ -4494,9 +4382,9 @@ class LoraConfig(TypedDict, total=False):
     :vartype rank: int
     :ivar alpha: LoRA scaling factor (α). Positive integer; typically 2× the rank.
     :vartype alpha: int
-    :ivar target_modules: Model layers modified by the adapter (e.g., q_proj, v_proj).
-     Auto-detected from adapter_config.json if omitted.
-    :vartype target_modules: list[str]
+    :ivar targetModules: Model layers modified by the adapter (e.g., q_proj, v_proj). Auto-detected
+     from adapter_config.json if omitted.
+    :vartype targetModules: list[str]
     :ivar dropout: Dropout rate used during training. Informational — not used at serving time.
     :vartype dropout: float
     """
@@ -4542,8 +4430,8 @@ class ManagedAzureAISearchIndex(TypedDict, total=False):
     :vartype tags: dict[str, str]
     :ivar type: Type of index. Required. Managed Azure Search.
     :vartype type: Literal[IndexType.MANAGED_AZURE_SEARCH]
-    :ivar vector_store_id: Vector store id of managed index. Required.
-    :vartype vector_store_id: str
+    :ivar vectorStoreId: Vector store id of managed index. Required.
+    :vartype vectorStoreId: str
     """
 
     id: str
@@ -4560,35 +4448,6 @@ class ManagedAzureAISearchIndex(TypedDict, total=False):
     """Type of index. Required. Managed Azure Search."""
     vectorStoreId: Required[str]
     """Vector store id of managed index. Required."""
-
-
-class MCPListToolsTool(TypedDict, total=False):
-    """MCP list tools tool.
-
-    :ivar name: The name of the tool. Required.
-    :vartype name: str
-    :ivar description:
-    :vartype description: str
-    :ivar input_schema: The JSON schema describing the tool's input. Required.
-    :vartype input_schema: "MCPListToolsToolInputSchema"
-    :ivar annotations:
-    :vartype annotations: "MCPListToolsToolAnnotations"
-    """
-
-    name: Required[str]
-    """The name of the tool. Required."""
-    description: Optional[str]
-    input_schema: Required["MCPListToolsToolInputSchema"]
-    """The JSON schema describing the tool's input. Required."""
-    annotations: Optional["MCPListToolsToolAnnotations"]
-
-
-class MCPListToolsToolAnnotations(TypedDict, total=False):
-    """MCPListToolsToolAnnotations."""
-
-
-class MCPListToolsToolInputSchema(TypedDict, total=False):
-    """MCPListToolsToolInputSchema."""
 
 
 class McpProtocolConfiguration(TypedDict, total=False):
@@ -4674,7 +4533,7 @@ class MCPTool(TypedDict, total=False):
     """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
       ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
       </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
- 
+
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
       * Google Calendar: `connector_googlecalendar`
@@ -4803,7 +4662,7 @@ class MCPToolboxTool(TypedDict, total=False):
     """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
       ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
       </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
- 
+
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
       * Google Calendar: `connector_googlecalendar`
@@ -4976,15 +4835,6 @@ class MemoryStoreDefaultOptions(TypedDict, total=False):
      not expire. Defaults to ``0``."""
 
 
-class Metadata(TypedDict, total=False):
-    """Set of 16 key-value pairs that can be attached to an object. This can be useful for storing
-    additional information about the object in a structured format, and querying for objects via
-    API or the dashboard. Keys are strings with a maximum length of 64 characters. Values are
-    strings with a maximum length of 512 characters.
-
-    """
-
-
 class MicrosoftFabricPreviewTool(TypedDict, total=False):
     """The input definition information for a Microsoft Fabric tool as used to configure an agent.
 
@@ -5005,8 +4855,8 @@ class MicrosoftFabricPreviewTool(TypedDict, total=False):
 class ModelCredentialRequest(TypedDict, total=False):
     """Request to fetch credentials for a model asset.
 
-    :ivar blob_uri: Blob URI of the model asset to fetch credentials for. Required.
-    :vartype blob_uri: str
+    :ivar blobUri: Blob URI of the model asset to fetch credentials for. Required.
+    :vartype blobUri: str
     """
 
     blobUri: Required[str]
@@ -5016,14 +4866,14 @@ class ModelCredentialRequest(TypedDict, total=False):
 class ModelPendingUploadRequest(TypedDict, total=False):
     """Represents a request for a pending upload of a model version.
 
-    :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
-    :vartype pending_upload_id: str
-    :ivar connection_name: Azure Storage Account connection name to use for generating temporary
-     SAS token.
-    :vartype connection_name: str
-    :ivar pending_upload_type: The type of pending upload. Only TemporaryBlobReference is supported
+    :ivar pendingUploadId: If PendingUploadId is not provided, a random GUID will be used.
+    :vartype pendingUploadId: str
+    :ivar connectionName: Azure Storage Account connection name to use for generating temporary SAS
+     token.
+    :vartype connectionName: str
+    :ivar pendingUploadType: The type of pending upload. Only TemporaryBlobReference is supported
      for models. Required. Temporary blob reference.
-    :vartype pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE]
+    :vartype pendingUploadType: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE]
     """
 
     pendingUploadId: str
@@ -5062,11 +4912,11 @@ class ModelSamplingParams(TypedDict, total=False):
 class ModelSourceData(TypedDict, total=False):
     """Source information for the model.
 
-    :ivar source_type: The source type of the model. Known values are: "LocalUpload" and
+    :ivar sourceType: The source type of the model. Known values are: "LocalUpload" and
      "TrainingJob".
-    :vartype source_type: Union[str, "FoundryModelSourceType"]
-    :ivar job_id: The job ID that produced this model.
-    :vartype job_id: str
+    :vartype sourceType: Union[str, "FoundryModelSourceType"]
+    :ivar jobId: The job ID that produced this model.
+    :vartype jobId: str
     """
 
     sourceType: Union[str, "FoundryModelSourceType"]
@@ -5078,21 +4928,21 @@ class ModelSourceData(TypedDict, total=False):
 class ModelVersion(TypedDict, total=False):
     """Model Version Definition.
 
-    :ivar blob_uri: URI of the model artifact in blob storage. Required.
-    :vartype blob_uri: str
-    :ivar weight_type: The weight type of the model. Known values are: "FullWeight", "LoRA", and
+    :ivar blobUri: URI of the model artifact in blob storage. Required.
+    :vartype blobUri: str
+    :ivar weightType: The weight type of the model. Known values are: "FullWeight", "LoRA", and
      "DraftModel".
-    :vartype weight_type: Union[str, "FoundryModelWeightType"]
-    :ivar base_model: Base model asset ID.
-    :vartype base_model: str
+    :vartype weightType: Union[str, "FoundryModelWeightType"]
+    :ivar baseModel: Base model asset ID.
+    :vartype baseModel: str
     :ivar source: The source of the model.
     :vartype source: "ModelSourceData"
-    :ivar lora_config: Adapter-specific configuration. Required when weight_type is lora; ignored
+    :ivar loraConfig: Adapter-specific configuration. Required when weight_type is lora; ignored
      otherwise. May be auto-populated from adapter_config.json when present in the uploaded files —
      user-provided values take precedence over auto-detected values.
-    :vartype lora_config: "LoraConfig"
-    :ivar artifact_profile: The artifact profile of the model.
-    :vartype artifact_profile: "ArtifactProfile"
+    :vartype loraConfig: "LoraConfig"
+    :ivar artifactProfile: The artifact profile of the model.
+    :vartype artifactProfile: "ArtifactProfile"
     :ivar warnings: Service-computed advisory warnings derived from the artifact profile.
     :vartype warnings: list["FoundryModelWarning"]
     :ivar id: Asset ID, a unique identifier for the asset.
@@ -5140,8 +4990,8 @@ class MonthlyRecurrenceSchedule(TypedDict, total=False):
 
     :ivar type: Monthly recurrence type. Required. Monthly recurrence pattern.
     :vartype type: Literal[RecurrenceType.MONTHLY]
-    :ivar days_of_month: Days of the month for the recurrence schedule. Required.
-    :vartype days_of_month: list[int]
+    :ivar daysOfMonth: Days of the month for the recurrence schedule. Required.
+    :vartype daysOfMonth: list[int]
     """
 
     type: Required[Literal[RecurrenceType.MONTHLY]]
@@ -5173,83 +5023,15 @@ class NamespaceToolParam(TypedDict, total=False):
     """The function/custom tools available inside this namespace. Required."""
 
 
-class OmitPropertiesRealtimeResponse1(TypedDict, total=False):
-    """The template for omitting properties.
-
-    :ivar id: The unique ID of the response, will look like ``resp_1234``.
-    :vartype id: str
-    :ivar object: The object type, must be ``realtime.response``. Default value is
-     "realtime.response".
-    :vartype object: Literal["realtime.response"]
-    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
-     ``incomplete``, ``in_progress``). Is one of the following types: Literal["completed"],
-     Literal["cancelled"], Literal["failed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]
-    :ivar status_details: Additional details about the status.
-    :vartype status_details: "RealtimeResponseStatusDetails"
-    :ivar metadata:
-    :vartype metadata: "Metadata"
-    :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
-     session will maintain a conversation context and append new Items to the Conversation, thus
-     output from previous turns (text and audio tokens) will become the input for later turns.
-    :vartype usage: "RealtimeResponseUsage"
-    :ivar conversation_id: Which conversation the response is added to, determined by the
-     ``conversation`` field in the ``response.create`` event. If ``auto``, the response will be
-     added to the default conversation and the value of ``conversation_id`` will be an id like
-     ``conv_1234``. If ``none``, the response will not be added to any conversation and the value of
-     ``conversation_id`` will be ``null``. If responses are being triggered automatically by VAD the
-     response will be added to the default conversation.
-    :vartype conversation_id: str
-    :ivar output_modalities: The set of modalities the model used to respond, currently the only
-     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
-     transcript. Setting the output to mode ``text`` will disable audio output from the model.
-    :vartype output_modalities: list[Literal["text", "audio"]]
-    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls, that was used in this response. Is either a int type or a
-     Literal["inf"] type.
-    :vartype max_output_tokens: Union[int, Literal["inf"]]
-    """
-
-    id: str
-    """The unique ID of the response, will look like ``resp_1234``."""
-    object: Literal["realtime.response"]
-    """The object type, must be ``realtime.response``. Default value is \"realtime.response\"."""
-    status: Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]
-    """The final status of the response (``completed``, ``cancelled``, ``failed``, or ``incomplete``,
-     ``in_progress``). Is one of the following types: Literal[\"completed\"],
-     Literal[\"cancelled\"], Literal[\"failed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    status_details: "RealtimeResponseStatusDetails"
-    """Additional details about the status."""
-    metadata: Optional["Metadata"]
-    usage: "RealtimeResponseUsage"
-    """Usage statistics for the Response, this will correspond to billing. A Realtime API session will
-     maintain a conversation context and append new Items to the Conversation, thus output from
-     previous turns (text and audio tokens) will become the input for later turns."""
-    conversation_id: str
-    """Which conversation the response is added to, determined by the ``conversation`` field in the
-     ``response.create`` event. If ``auto``, the response will be added to the default conversation
-     and the value of ``conversation_id`` will be an id like ``conv_1234``. If ``none``, the
-     response will not be added to any conversation and the value of ``conversation_id`` will be
-     ``null``. If responses are being triggered automatically by VAD the response will be added to
-     the default conversation."""
-    output_modalities: list[Literal["text", "audio"]]
-    """The set of modalities the model used to respond, currently the only possible values are
-     ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text transcript. Setting the
-     output to mode ``text`` will disable audio output from the model."""
-    max_output_tokens: Union[int, Literal["inf"]]
-    """Maximum number of output tokens for a single assistant response, inclusive of tool calls, that
-     was used in this response. Is either a int type or a Literal[\"inf\"] type."""
-
-
 class OneTimeTrigger(TypedDict, total=False):
     """One-time trigger.
 
     :ivar type: Required. One-time trigger.
     :vartype type: Literal[TriggerType.ONE_TIME]
-    :ivar trigger_at: Date and time for the one-time trigger in ISO 8601 format. Required.
-    :vartype trigger_at: str
-    :ivar time_zone: Time zone for the one-time trigger. Defaults to ``UTC``.
-    :vartype time_zone: str
+    :ivar triggerAt: Date and time for the one-time trigger in ISO 8601 format. Required.
+    :vartype triggerAt: str
+    :ivar timeZone: Time zone for the one-time trigger. Defaults to ``UTC``.
+    :vartype timeZone: str
     """
 
     type: Required[Literal[TriggerType.ONE_TIME]]
@@ -5481,14 +5263,14 @@ class OtlpTelemetryEndpoint(TypedDict, total=False):
 class PendingUploadRequest(TypedDict, total=False):
     """Represents a request for a pending upload.
 
-    :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
-    :vartype pending_upload_id: str
-    :ivar connection_name: Azure Storage Account connection name to use for generating temporary
-     SAS token.
-    :vartype connection_name: str
-    :ivar pending_upload_type: The type of pending upload. Required. Deprecated: the service never
+    :ivar pendingUploadId: If PendingUploadId is not provided, a random GUID will be used.
+    :vartype pendingUploadId: str
+    :ivar connectionName: Azure Storage Account connection name to use for generating temporary SAS
+     token.
+    :vartype connectionName: str
+    :ivar pendingUploadType: The type of pending upload. Required. Deprecated: the service never
      read this value and silently ignored it. Use TemporaryBlobReference instead.
-    :vartype pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE]
+    :vartype pendingUploadType: Literal[PendingUploadType.BLOB_REFERENCE]
     """
 
     pendingUploadId: str
@@ -5498,17 +5280,6 @@ class PendingUploadRequest(TypedDict, total=False):
     pendingUploadType: Required[Literal[PendingUploadType.BLOB_REFERENCE]]
     """The type of pending upload. Required. Deprecated: the service never read this value and
      silently ignored it. Use TemporaryBlobReference instead."""
-
-
-class PickPropertiesVoiceAudioConfig(TypedDict, total=False):
-    """The template for picking properties.
-
-    :ivar output: Output (agent speech) audio configuration.
-    :vartype output: "VoiceAudioOutputConfig"
-    """
-
-    output: "VoiceAudioOutputConfig"
-    """Output (agent speech) audio configuration."""
 
 
 class ProgrammaticToolCallingParam(TypedDict, total=False):
@@ -5827,717 +5598,8 @@ class RealtimeAudioFormatsAudioPcmu(TypedDict, total=False):
     """Required. AUDIO_PCMU."""
 
 
-class RealtimeConversationItemFunctionCall(TypedDict, total=False):
-    """Realtime function call item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``function_call``. Required. FUNCTION_CALL.
-    :vartype type: Literal[RealtimeConversationItemType.FUNCTION_CALL]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar call_id: The ID of the function call.
-    :vartype call_id: str
-    :ivar name: The name of the function being called. Required.
-    :vartype name: str
-    :ivar arguments: The arguments of the function call. This is a JSON-encoded string representing
-     the arguments passed to the function, for example ``{"arg1": "value1", "arg2": 42}``. Required.
-    :vartype arguments: str
-    """
-
-    id: str
-    """The unique ID of the item. This may be provided by the client or generated by the server."""
-    object: Literal["realtime.item"]
-    """Identifier for the API object being returned - always ``realtime.item``. Optional when creating
-     a new item. Default value is \"realtime.item\"."""
-    type: Required[Literal[RealtimeConversationItemType.FUNCTION_CALL]]
-    """The type of the item. Always ``function_call``. Required. FUNCTION_CALL."""
-    status: Literal["completed", "incomplete", "in_progress"]
-    """The status of the item. Has no effect on the conversation. Is one of the following types:
-     Literal[\"completed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    call_id: str
-    """The ID of the function call."""
-    name: Required[str]
-    """The name of the function being called. Required."""
-    arguments: Required[str]
-    """The arguments of the function call. This is a JSON-encoded string representing the arguments
-     passed to the function, for example ``{\"arg1\": \"value1\", \"arg2\": 42}``. Required."""
-
-
-class RealtimeConversationItemFunctionCallOutput(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Realtime function call output item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``function_call_output``. Required.
-     FUNCTION_CALL_OUTPUT.
-    :vartype type: Literal[RealtimeConversationItemType.FUNCTION_CALL_OUTPUT]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar call_id: The ID of the function call this output is for. Required.
-    :vartype call_id: str
-    :ivar output: The output of the function call, this is free text and can contain any
-     information or simply be empty. Required.
-    :vartype output: str
-    """
-
-    id: str
-    """The unique ID of the item. This may be provided by the client or generated by the server."""
-    object: Literal["realtime.item"]
-    """Identifier for the API object being returned - always ``realtime.item``. Optional when creating
-     a new item. Default value is \"realtime.item\"."""
-    type: Required[Literal[RealtimeConversationItemType.FUNCTION_CALL_OUTPUT]]
-    """The type of the item. Always ``function_call_output``. Required. FUNCTION_CALL_OUTPUT."""
-    status: Literal["completed", "incomplete", "in_progress"]
-    """The status of the item. Has no effect on the conversation. Is one of the following types:
-     Literal[\"completed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    call_id: Required[str]
-    """The ID of the function call this output is for. Required."""
-    output: Required[str]
-    """The output of the function call, this is free text and can contain any information or simply be
-     empty. Required."""
-
-
-class RealtimeConversationItemMessageAssistant(TypedDict, total=False):
-    """Realtime assistant message item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``message``. Required. Default value is "message".
-    :vartype type: Literal["message"]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar role: The role of the message sender. Always ``assistant``. Required. ASSISTANT.
-    :vartype role: Literal[RealtimeConversationItemMessageType.ASSISTANT]
-    :ivar content: The content of the message. Required.
-    :vartype content: list["RealtimeConversationItemMessageAssistantContent"]
-    """
-
-    id: str
-    """The unique ID of the item. This may be provided by the client or generated by the server."""
-    object: Literal["realtime.item"]
-    """Identifier for the API object being returned - always ``realtime.item``. Optional when creating
-     a new item. Default value is \"realtime.item\"."""
-    type: Required[Literal["message"]]
-    """The type of the item. Always ``message``. Required. Default value is \"message\"."""
-    status: Literal["completed", "incomplete", "in_progress"]
-    """The status of the item. Has no effect on the conversation. Is one of the following types:
-     Literal[\"completed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    role: Required[Literal[RealtimeConversationItemMessageType.ASSISTANT]]
-    """The role of the message sender. Always ``assistant``. Required. ASSISTANT."""
-    content: Required[list["RealtimeConversationItemMessageAssistantContent"]]
-    """The content of the message. Required."""
-
-
-class RealtimeConversationItemMessageAssistantContent(TypedDict, total=False):  # pylint: disable=name-too-long
-    """RealtimeConversationItemMessageAssistantContent.
-
-    :ivar type: Is either a Literal["output_text"] type or a Literal["output_audio"] type.
-    :vartype type: Literal["output_text", "output_audio"]
-    :ivar text:
-    :vartype text: str
-    :ivar audio:
-    :vartype audio: str
-    :ivar transcript:
-    :vartype transcript: str
-    """
-
-    type: Literal["output_text", "output_audio"]
-    """Is either a Literal[\"output_text\"] type or a Literal[\"output_audio\"] type."""
-    text: str
-    audio: str
-    transcript: str
-
-
-class RealtimeConversationItemMessageSystem(TypedDict, total=False):
-    """Realtime system message item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``message``. Required. Default value is "message".
-    :vartype type: Literal["message"]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar role: The role of the message sender. Always ``system``. Required. SYSTEM.
-    :vartype role: Literal[RealtimeConversationItemMessageType.SYSTEM]
-    :ivar content: The content of the message. Required.
-    :vartype content: list["RealtimeConversationItemMessageSystemContent"]
-    """
-
-    id: str
-    """The unique ID of the item. This may be provided by the client or generated by the server."""
-    object: Literal["realtime.item"]
-    """Identifier for the API object being returned - always ``realtime.item``. Optional when creating
-     a new item. Default value is \"realtime.item\"."""
-    type: Required[Literal["message"]]
-    """The type of the item. Always ``message``. Required. Default value is \"message\"."""
-    status: Literal["completed", "incomplete", "in_progress"]
-    """The status of the item. Has no effect on the conversation. Is one of the following types:
-     Literal[\"completed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    role: Required[Literal[RealtimeConversationItemMessageType.SYSTEM]]
-    """The role of the message sender. Always ``system``. Required. SYSTEM."""
-    content: Required[list["RealtimeConversationItemMessageSystemContent"]]
-    """The content of the message. Required."""
-
-
-class RealtimeConversationItemMessageSystemContent(TypedDict, total=False):  # pylint: disable=name-too-long
-    """RealtimeConversationItemMessageSystemContent.
-
-    :ivar type: Default value is "input_text".
-    :vartype type: Literal["input_text"]
-    :ivar text:
-    :vartype text: str
-    """
-
-    type: Literal["input_text"]
-    """Default value is \"input_text\"."""
-    text: str
-
-
-class RealtimeConversationItemMessageUser(TypedDict, total=False):
-    """Realtime user message item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``message``. Required. Default value is "message".
-    :vartype type: Literal["message"]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar role: The role of the message sender. Always ``user``. Required. USER.
-    :vartype role: Literal[RealtimeConversationItemMessageType.USER]
-    :ivar content: The content of the message. Required.
-    :vartype content: list["RealtimeConversationItemMessageUserContent"]
-    """
-
-    id: str
-    """The unique ID of the item. This may be provided by the client or generated by the server."""
-    object: Literal["realtime.item"]
-    """Identifier for the API object being returned - always ``realtime.item``. Optional when creating
-     a new item. Default value is \"realtime.item\"."""
-    type: Required[Literal["message"]]
-    """The type of the item. Always ``message``. Required. Default value is \"message\"."""
-    status: Literal["completed", "incomplete", "in_progress"]
-    """The status of the item. Has no effect on the conversation. Is one of the following types:
-     Literal[\"completed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    role: Required[Literal[RealtimeConversationItemMessageType.USER]]
-    """The role of the message sender. Always ``user``. Required. USER."""
-    content: Required[list["RealtimeConversationItemMessageUserContent"]]
-    """The content of the message. Required."""
-
-
-class RealtimeConversationItemMessageUserContent(TypedDict, total=False):  # pylint: disable=name-too-long
-    """RealtimeConversationItemMessageUserContent.
-
-    :ivar type: Is one of the following types: Literal["input_text"], Literal["input_audio"],
-     Literal["input_image"]
-    :vartype type: Literal["input_text", "input_audio", "input_image"]
-    :ivar text:
-    :vartype text: str
-    :ivar audio:
-    :vartype audio: str
-    :ivar image_url:
-    :vartype image_url: str
-    :ivar detail: Is one of the following types: Literal["auto"], Literal["low"], Literal["high"]
-    :vartype detail: Literal["auto", "low", "high"]
-    :ivar transcript:
-    :vartype transcript: str
-    """
-
-    type: Literal["input_text", "input_audio", "input_image"]
-    """Is one of the following types: Literal[\"input_text\"], Literal[\"input_audio\"],
-     Literal[\"input_image\"]"""
-    text: str
-    audio: str
-    image_url: str
-    detail: Literal["auto", "low", "high"]
-    """Is one of the following types: Literal[\"auto\"], Literal[\"low\"], Literal[\"high\"]"""
-    transcript: str
-
-
-class RealtimeFunctionTool(TypedDict, total=False):
-    """Function tool.
-
-    :ivar type: The type of the tool, i.e. ``function``. Default value is "function".
-    :vartype type: Literal["function"]
-    :ivar name: The name of the function.
-    :vartype name: str
-    :ivar description: The description of the function, including guidance on when and how to call
-     it, and guidance about what to tell the user when calling (if anything).
-    :vartype description: str
-    :ivar parameters: Parameters of the function in JSON Schema.
-    :vartype parameters: "RealtimeFunctionToolParameters"
-    """
-
-    type: Literal["function"]
-    """The type of the tool, i.e. ``function``. Default value is \"function\"."""
-    name: str
-    """The name of the function."""
-    description: str
-    """The description of the function, including guidance on when and how to call it, and guidance
-     about what to tell the user when calling (if anything)."""
-    parameters: "RealtimeFunctionToolParameters"
-    """Parameters of the function in JSON Schema."""
-
-
 class RealtimeFunctionToolParameters(TypedDict, total=False):
     """RealtimeFunctionToolParameters."""
-
-
-class RealtimeMCPApprovalRequest(TypedDict, total=False):
-    """Realtime MCP approval request.
-
-    :ivar type: The type of the item. Always ``mcp_approval_request``. Required.
-     MCP_APPROVAL_REQUEST.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_APPROVAL_REQUEST]
-    :ivar id: The unique ID of the approval request. Required.
-    :vartype id: str
-    :ivar server_label: The label of the MCP server making the request. Required.
-    :vartype server_label: str
-    :ivar name: The name of the tool to run. Required.
-    :vartype name: str
-    :ivar arguments: A JSON string of arguments for the tool. Required.
-    :vartype arguments: str
-    """
-
-    type: Required[Literal[RealtimeConversationItemType.MCP_APPROVAL_REQUEST]]
-    """The type of the item. Always ``mcp_approval_request``. Required. MCP_APPROVAL_REQUEST."""
-    id: Required[str]
-    """The unique ID of the approval request. Required."""
-    server_label: Required[str]
-    """The label of the MCP server making the request. Required."""
-    name: Required[str]
-    """The name of the tool to run. Required."""
-    arguments: Required[str]
-    """A JSON string of arguments for the tool. Required."""
-
-
-class RealtimeMCPApprovalResponse(TypedDict, total=False):
-    """Realtime MCP approval response.
-
-    :ivar type: The type of the item. Always ``mcp_approval_response``. Required.
-     MCP_APPROVAL_RESPONSE.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_APPROVAL_RESPONSE]
-    :ivar id: The unique ID of the approval response. Required.
-    :vartype id: str
-    :ivar approval_request_id: The ID of the approval request being answered. Required.
-    :vartype approval_request_id: str
-    :ivar approve: Whether the request was approved. Required.
-    :vartype approve: bool
-    :ivar reason:
-    :vartype reason: str
-    """
-
-    type: Required[Literal[RealtimeConversationItemType.MCP_APPROVAL_RESPONSE]]
-    """The type of the item. Always ``mcp_approval_response``. Required. MCP_APPROVAL_RESPONSE."""
-    id: Required[str]
-    """The unique ID of the approval response. Required."""
-    approval_request_id: Required[str]
-    """The ID of the approval request being answered. Required."""
-    approve: Required[bool]
-    """Whether the request was approved. Required."""
-    reason: Optional[str]
-
-
-class RealtimeMCPHTTPError(TypedDict, total=False):
-    """Realtime MCP HTTP error.
-
-    :ivar type: Required. HTTP_ERROR.
-    :vartype type: Literal[RealtimeMcpErrorType.HTTP_ERROR]
-    :ivar code: Required.
-    :vartype code: int
-    :ivar message: Required.
-    :vartype message: str
-    """
-
-    type: Required[Literal[RealtimeMcpErrorType.HTTP_ERROR]]
-    """Required. HTTP_ERROR."""
-    code: Required[int]
-    """Required."""
-    message: Required[str]
-    """Required."""
-
-
-class RealtimeMCPListTools(TypedDict, total=False):
-    """Realtime MCP list tools.
-
-    :ivar type: The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_LIST_TOOLS]
-    :ivar id: The unique ID of the list.
-    :vartype id: str
-    :ivar server_label: The label of the MCP server. Required.
-    :vartype server_label: str
-    :ivar tools: The tools available on the server. Required.
-    :vartype tools: list["MCPListToolsTool"]
-    """
-
-    type: Required[Literal[RealtimeConversationItemType.MCP_LIST_TOOLS]]
-    """The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS."""
-    id: str
-    """The unique ID of the list."""
-    server_label: Required[str]
-    """The label of the MCP server. Required."""
-    tools: Required[list["MCPListToolsTool"]]
-    """The tools available on the server. Required."""
-
-
-class RealtimeMCPProtocolError(TypedDict, total=False):
-    """Realtime MCP protocol error.
-
-    :ivar type: Required. PROTOCOL_ERROR.
-    :vartype type: Literal[RealtimeMcpErrorType.PROTOCOL_ERROR]
-    :ivar code: Required.
-    :vartype code: int
-    :ivar message: Required.
-    :vartype message: str
-    """
-
-    type: Required[Literal[RealtimeMcpErrorType.PROTOCOL_ERROR]]
-    """Required. PROTOCOL_ERROR."""
-    code: Required[int]
-    """Required."""
-    message: Required[str]
-    """Required."""
-
-
-class RealtimeMCPToolCall(TypedDict, total=False):
-    """Realtime MCP tool call.
-
-    :ivar type: The type of the item. Always ``mcp_call``. Required. MCP_CALL.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_CALL]
-    :ivar id: The unique ID of the tool call. Required.
-    :vartype id: str
-    :ivar server_label: The label of the MCP server running the tool. Required.
-    :vartype server_label: str
-    :ivar name: The name of the tool that was run. Required.
-    :vartype name: str
-    :ivar arguments: A JSON string of the arguments passed to the tool. Required.
-    :vartype arguments: str
-    :ivar approval_request_id:
-    :vartype approval_request_id: str
-    :ivar output:
-    :vartype output: str
-    :ivar error:
-    :vartype error: "RealtimeMCPError"
-    """
-
-    type: Required[Literal[RealtimeConversationItemType.MCP_CALL]]
-    """The type of the item. Always ``mcp_call``. Required. MCP_CALL."""
-    id: Required[str]
-    """The unique ID of the tool call. Required."""
-    server_label: Required[str]
-    """The label of the MCP server running the tool. Required."""
-    name: Required[str]
-    """The name of the tool that was run. Required."""
-    arguments: Required[str]
-    """A JSON string of the arguments passed to the tool. Required."""
-    approval_request_id: Optional[str]
-    output: Optional[str]
-    error: "RealtimeMCPError"
-
-
-class RealtimeMCPToolExecutionError(TypedDict, total=False):
-    """Realtime MCP tool execution error.
-
-    :ivar type: Required. TOOL_EXECUTION_ERROR.
-    :vartype type: Literal[RealtimeMcpErrorType.TOOL_EXECUTION_ERROR]
-    :ivar message: Required.
-    :vartype message: str
-    """
-
-    type: Required[Literal[RealtimeMcpErrorType.TOOL_EXECUTION_ERROR]]
-    """Required. TOOL_EXECUTION_ERROR."""
-    message: Required[str]
-    """Required."""
-
-
-class RealtimeReasoning(TypedDict, total=False):
-    """Realtime reasoning configuration.
-
-    :ivar effort: Known values are: "minimal", "low", "medium", "high", and "xhigh".
-    :vartype effort: Union[str, "RealtimeReasoningEffort"]
-    """
-
-    effort: Union[str, "RealtimeReasoningEffort"]
-    """Known values are: \"minimal\", \"low\", \"medium\", \"high\", and \"xhigh\"."""
-
-
-class RealtimeResponseStatusDetails(TypedDict, total=False):
-    """RealtimeResponseStatusDetails.
-
-    :ivar type: Is one of the following types: Literal["completed"], Literal["cancelled"],
-     Literal["failed"], Literal["incomplete"]
-    :vartype type: Literal["completed", "cancelled", "failed", "incomplete"]
-    :ivar reason: Is one of the following types: Literal["turn_detected"],
-     Literal["client_cancelled"], Literal["max_output_tokens"], Literal["content_filter"]
-    :vartype reason: Literal["turn_detected", "client_cancelled", "max_output_tokens",
-     "content_filter"]
-    :ivar error:
-    :vartype error: "RealtimeResponseStatusDetailsError"
-    """
-
-    type: Literal["completed", "cancelled", "failed", "incomplete"]
-    """Is one of the following types: Literal[\"completed\"], Literal[\"cancelled\"],
-     Literal[\"failed\"], Literal[\"incomplete\"]"""
-    reason: Literal["turn_detected", "client_cancelled", "max_output_tokens", "content_filter"]
-    """Is one of the following types: Literal[\"turn_detected\"], Literal[\"client_cancelled\"],
-     Literal[\"max_output_tokens\"], Literal[\"content_filter\"]"""
-    error: "RealtimeResponseStatusDetailsError"
-
-
-class RealtimeResponseStatusDetailsError(TypedDict, total=False):
-    """RealtimeResponseStatusDetailsError.
-
-    :ivar type:
-    :vartype type: str
-    :ivar code:
-    :vartype code: str
-    """
-
-    type: str
-    code: str
-
-
-class RealtimeResponseUsage(TypedDict, total=False):
-    """RealtimeResponseUsage.
-
-    :ivar total_tokens:
-    :vartype total_tokens: int
-    :ivar input_tokens:
-    :vartype input_tokens: int
-    :ivar output_tokens:
-    :vartype output_tokens: int
-    :ivar input_token_details:
-    :vartype input_token_details: "RealtimeResponseUsageInputTokenDetails"
-    :ivar output_token_details:
-    :vartype output_token_details: "RealtimeResponseUsageOutputTokenDetails"
-    """
-
-    total_tokens: int
-    input_tokens: int
-    output_tokens: int
-    input_token_details: "RealtimeResponseUsageInputTokenDetails"
-    output_token_details: "RealtimeResponseUsageOutputTokenDetails"
-
-
-class RealtimeResponseUsageInputTokenDetails(TypedDict, total=False):
-    """RealtimeResponseUsageInputTokenDetails.
-
-    :ivar cached_tokens:
-    :vartype cached_tokens: int
-    :ivar text_tokens:
-    :vartype text_tokens: int
-    :ivar image_tokens:
-    :vartype image_tokens: int
-    :ivar audio_tokens:
-    :vartype audio_tokens: int
-    :ivar cached_tokens_details:
-    :vartype cached_tokens_details: "RealtimeResponseUsageInputTokenDetailsCachedTokensDetails"
-    """
-
-    cached_tokens: int
-    text_tokens: int
-    image_tokens: int
-    audio_tokens: int
-    cached_tokens_details: "RealtimeResponseUsageInputTokenDetailsCachedTokensDetails"
-
-
-class RealtimeResponseUsageInputTokenDetailsCachedTokensDetails(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """RealtimeResponseUsageInputTokenDetailsCachedTokensDetails.
-
-    :ivar text_tokens:
-    :vartype text_tokens: int
-    :ivar image_tokens:
-    :vartype image_tokens: int
-    :ivar audio_tokens:
-    :vartype audio_tokens: int
-    """
-
-    text_tokens: int
-    image_tokens: int
-    audio_tokens: int
-
-
-class RealtimeResponseUsageOutputTokenDetails(TypedDict, total=False):
-    """RealtimeResponseUsageOutputTokenDetails.
-
-    :ivar text_tokens:
-    :vartype text_tokens: int
-    :ivar audio_tokens:
-    :vartype audio_tokens: int
-    """
-
-    text_tokens: int
-    audio_tokens: int
-
-
-class RealtimeServerEventConversationItemInputAudioTranscriptionFailedError(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """RealtimeServerEventConversationItemInputAudioTranscriptionFailedError.
-
-    :ivar type:
-    :vartype type: str
-    :ivar code:
-    :vartype code: str
-    :ivar message:
-    :vartype message: str
-    :ivar param:
-    :vartype param: str
-    """
-
-    type: str
-    code: str
-    message: str
-    param: str
-
-
-class RealtimeServerEventError(TypedDict, total=False):
-    """Returned when an error occurs, which could be a client problem or a server problem. Most errors
-    are recoverable and the session will stay open, we recommend to implementors to monitor and log
-    error messages by default.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``error``. Required. Default value is "error".
-    :vartype type: Literal["error"]
-    :ivar error: Details of the error. Required.
-    :vartype error: "RealtimeServerEventErrorError"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal["error"]]
-    """The event type, must be ``error``. Required. Default value is \"error\"."""
-    error: Required["RealtimeServerEventErrorError"]
-    """Details of the error. Required."""
-
-
-class RealtimeServerEventErrorError(TypedDict, total=False):
-    """RealtimeServerEventErrorError.
-
-    :ivar type: Required.
-    :vartype type: str
-    :ivar code:
-    :vartype code: str
-    :ivar message: Required.
-    :vartype message: str
-    :ivar param:
-    :vartype param: str
-    :ivar event_id:
-    :vartype event_id: str
-    """
-
-    type: Required[str]
-    """Required."""
-    code: Optional[str]
-    message: Required[str]
-    """Required."""
-    param: Optional[str]
-    event_id: Optional[str]
-
-
-class RealtimeServerEventRateLimitsUpdatedRateLimits(TypedDict, total=False):  # pylint: disable=name-too-long
-    """RealtimeServerEventRateLimitsUpdatedRateLimits.
-
-    :ivar name: Is either a Literal["requests"] type or a Literal["tokens"] type.
-    :vartype name: Literal["requests", "tokens"]
-    :ivar limit:
-    :vartype limit: int
-    :ivar remaining:
-    :vartype remaining: int
-    :ivar reset_seconds:
-    :vartype reset_seconds: float
-    """
-
-    name: Literal["requests", "tokens"]
-    """Is either a Literal[\"requests\"] type or a Literal[\"tokens\"] type."""
-    limit: int
-    remaining: int
-    reset_seconds: float
-
-
-class RealtimeServerEventResponseContentPartAdded(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Returned when a new content part is added to an assistant message item during response
-    generation.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.content_part.added``. Required.
-     RESPONSE_CONTENT_PART_ADDED.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_ADDED]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the item to which the content part was added. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar content_index: The index of the content part in the item's content array. Required.
-    :vartype content_index: int
-    :ivar part: The content part that was added. Required.
-    :vartype part: "RealtimeServerEventResponseContentPartAddedPart"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_ADDED]]
-    """The event type, must be ``response.content_part.added``. Required. RESPONSE_CONTENT_PART_ADDED."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the item to which the content part was added. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    content_index: Required[int]
-    """The index of the content part in the item's content array. Required."""
-    part: Required["RealtimeServerEventResponseContentPartAddedPart"]
-    """The content part that was added. Required."""
-
-
-class RealtimeServerEventResponseContentPartAddedPart(TypedDict, total=False):  # pylint: disable=name-too-long
-    """RealtimeServerEventResponseContentPartAddedPart.
-
-    :ivar type: Is either a Literal["audio"] type or a Literal["text"] type.
-    :vartype type: Literal["audio", "text"]
-    :ivar text:
-    :vartype text: str
-    :ivar audio:
-    :vartype audio: str
-    :ivar transcript:
-    :vartype transcript: str
-    """
-
-    type: Literal["audio", "text"]
-    """Is either a Literal[\"audio\"] type or a Literal[\"text\"] type."""
-    text: str
-    audio: str
-    transcript: str
 
 
 class Reasoning(TypedDict, total=False):
@@ -6578,12 +5640,12 @@ class RecurrenceTrigger(TypedDict, total=False):
 
     :ivar type: Type of the trigger. Required. Recurrence based trigger.
     :vartype type: Literal[TriggerType.RECURRENCE]
-    :ivar start_time: Start time for the recurrence schedule in ISO 8601 format.
-    :vartype start_time: str
-    :ivar end_time: End time for the recurrence schedule in ISO 8601 format.
-    :vartype end_time: str
-    :ivar time_zone: Time zone for the recurrence schedule. Defaults to ``UTC``.
-    :vartype time_zone: str
+    :ivar startTime: Start time for the recurrence schedule in ISO 8601 format.
+    :vartype startTime: str
+    :ivar endTime: End time for the recurrence schedule in ISO 8601 format.
+    :vartype endTime: str
+    :ivar timeZone: Time zone for the recurrence schedule. Defaults to ``UTC``.
+    :vartype timeZone: str
     :ivar interval: Interval for the recurrence schedule. Required.
     :vartype interval: int
     :ivar schedule: Recurrence schedule for the recurrence trigger. Required.
@@ -6607,23 +5669,23 @@ class RecurrenceTrigger(TypedDict, total=False):
 class RedTeam(TypedDict, total=False):
     """Red team details.
 
-    :ivar name: Identifier of the red team run. Required.
-    :vartype name: str
-    :ivar display_name: Name of the red-team run.
-    :vartype display_name: str
-    :ivar num_turns: Number of simulation rounds.
-    :vartype num_turns: int
-    :ivar attack_strategies: List of attack strategies or nested lists of attack strategies.
-    :vartype attack_strategies: list[Union[str, "AttackStrategy"]]
-    :ivar simulation_only: Simulation-only or Simulation + Evaluation. If ``true`` the scan outputs
+    :ivar id: Identifier of the red team run. Required.
+    :vartype id: str
+    :ivar displayName: Name of the red-team run.
+    :vartype displayName: str
+    :ivar numTurns: Number of simulation rounds.
+    :vartype numTurns: int
+    :ivar attackStrategies: List of attack strategies or nested lists of attack strategies.
+    :vartype attackStrategies: list[Union[str, "AttackStrategy"]]
+    :ivar simulationOnly: Simulation-only or Simulation + Evaluation. If ``true`` the scan outputs
      conversation not evaluation result. The service defaults to ``false`` if a value is not
      specified by the caller.
-    :vartype simulation_only: bool
-    :ivar risk_categories: List of risk categories to generate attack objectives for.
-    :vartype risk_categories: list[Union[str, "RiskCategory"]]
-    :ivar application_scenario: Application scenario for the red team operation, to generate
+    :vartype simulationOnly: bool
+    :ivar riskCategories: List of risk categories to generate attack objectives for.
+    :vartype riskCategories: list[Union[str, "RiskCategory"]]
+    :ivar applicationScenario: Application scenario for the red team operation, to generate
      scenario specific attacks.
-    :vartype application_scenario: str
+    :vartype applicationScenario: str
     :ivar tags: Red team's tags. Unlike properties, tags are fully mutable.
     :vartype tags: dict[str, str]
     :ivar properties: Red team's properties. Unlike tags, properties are add-only. Once added, a
@@ -6791,17 +5853,17 @@ class RubricGenerationInputQualityWarning(TypedDict, total=False):
 class Schedule(TypedDict, total=False):
     """Schedule model.
 
-    :ivar schedule_id: Identifier of the schedule. Required.
-    :vartype schedule_id: str
-    :ivar display_name: Name of the schedule.
-    :vartype display_name: str
+    :ivar id: Identifier of the schedule. Required.
+    :vartype id: str
+    :ivar displayName: Name of the schedule.
+    :vartype displayName: str
     :ivar description: Description of the schedule.
     :vartype description: str
     :ivar enabled: Enabled status of the schedule. Required.
     :vartype enabled: bool
-    :ivar provisioning_status: Provisioning status of the schedule. Known values are: "Creating",
+    :ivar provisioningStatus: Provisioning status of the schedule. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", and "Failed".
-    :vartype provisioning_status: Union[str, "ScheduleProvisioningStatus"]
+    :vartype provisioningStatus: Union[str, "ScheduleProvisioningStatus"]
     :ivar trigger: Trigger for the schedule. Required.
     :vartype trigger: "Trigger"
     :ivar task: Task for the schedule. Required.
@@ -6811,8 +5873,8 @@ class Schedule(TypedDict, total=False):
     :ivar properties: Schedule's properties. Unlike tags, properties are add-only. Once added, a
      property cannot be removed.
     :vartype properties: dict[str, str]
-    :ivar system_data: System metadata for the resource. Required.
-    :vartype system_data: dict[str, str]
+    :ivar systemData: System metadata for the resource. Required.
+    :vartype systemData: dict[str, str]
     """
 
     id: Required[str]
@@ -6904,6 +5966,43 @@ class SharepointPreviewTool(TypedDict, total=False):
     """The sharepoint grounding tool parameters. Required."""
 
 
+class ShellToolboxTool(TypedDict, total=False):
+    """A shell tool stored in a toolbox. This model is additive to toolbox configuration and does not
+    modify the OpenAI tool contract or existing toolbox tool definitions.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, "ToolConfig"]
+    :ivar type: The type of the tool. Always ``shell``. Required. SHELL.
+    :vartype type: Literal[ToolboxToolType.SHELL]
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[Union[str, "CallableToolAllowedCaller"]]
+    :ivar environment: The environment in which shell commands are executed. Specify an
+     automatically provisioned container or an existing container. Required.
+    :vartype environment: "ToolboxShellEnvironment"
+    """
+
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
+     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
+     runtime."""
+    type: Required[Literal[ToolboxToolType.SHELL]]
+    """The type of the tool. Always ``shell``. Required. SHELL."""
+    allowed_callers: Optional[list[Union[str, "CallableToolAllowedCaller"]]]
+    environment: Required["ToolboxShellEnvironment"]
+    """The environment in which shell commands are executed. Specify an automatically provisioned
+     container or an existing container. Required."""
+
+
 class SimpleQnADataGenerationJobOptions(TypedDict, total=False):
     """The options for a data generation job with SimpleQnA type.
 
@@ -6936,7 +6035,7 @@ class SimpleQnADataGenerationJobOptions(TypedDict, total=False):
 
 
 class SimulationSeedDataGenerationJobOptions(TypedDict, total=False):
-    """The options for a simulation seed data generation job. Use with multiturn evaluation scenarios
+    """The options for a task generation data generation job. Use with multiturn evaluation scenarios
     and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
     ``category``, ``test_case_description``, and ``desired_num_turns``.
 
@@ -7112,13 +6211,13 @@ class TaxonomyCategory(TypedDict, total=False):
     :vartype name: str
     :ivar description: Description of the taxonomy category.
     :vartype description: str
-    :ivar risk_category: Risk category associated with this taxonomy category. Required. Known
+    :ivar riskCategory: Risk category associated with this taxonomy category. Required. Known
      values are: "HateUnfairness", "Violence", "Sexual", "SelfHarm", "ProtectedMaterial",
      "CodeVulnerability", "UngroundedAttributes", "ProhibitedActions", "SensitiveDataLeakage", and
      "TaskAdherence".
-    :vartype risk_category: Union[str, "RiskCategory"]
-    :ivar sub_categories: List of taxonomy sub categories. Required.
-    :vartype sub_categories: list["TaxonomySubCategory"]
+    :vartype riskCategory: Union[str, "RiskCategory"]
+    :ivar subCategories: List of taxonomy sub categories. Required.
+    :vartype subCategories: list["TaxonomySubCategory"]
     :ivar properties: Additional properties for the taxonomy category.
     :vartype properties: dict[str, str]
     """
@@ -7176,22 +6275,6 @@ class TelemetryConfig(TypedDict, total=False):
 
     endpoints: Required[list["TelemetryEndpoint"]]
     """Customer-supplied telemetry export endpoint configurations. Required."""
-
-
-class TemplateVoiceGreetingConfig(TypedDict, total=False):
-    """A deterministic greeting rendered with the voice agent's structured inputs and synthesized
-    without model-authored generation.
-
-    :ivar type: Required. Default value is "template".
-    :vartype type: Literal["template"]
-    :ivar text: The Handlebars text template spoken at session start. Required.
-    :vartype text: str
-    """
-
-    type: Required[Literal["template"]]
-    """Required. Default value is \"template\"."""
-    text: Required[str]
-    """The Handlebars text template spoken at session start. Required."""
 
 
 class TextResponseFormatJsonObject(TypedDict, total=False):
@@ -7302,6 +6385,67 @@ class ToolboxSearchPreviewToolboxTool(TypedDict, total=False):
     """The type of the tool. Always ``toolbox_search_preview``. Required. TOOLBOX_SEARCH_PREVIEW."""
 
 
+class ToolboxShellContainerAutoEnvironment(TypedDict, total=False):
+    """An automatically provisioned container environment for a shell tool stored in a toolbox.
+
+    :ivar type: The type of the shell execution environment. Always ``container_auto``. Required.
+     Default value is "container_auto".
+    :vartype type: Literal["container_auto"]
+    :ivar file_ids: An optional list of uploaded files to make available to your code.
+    :vartype file_ids: list[str]
+    :ivar memory_limit: Known values are: "1g", "4g", "16g", and "64g".
+    :vartype memory_limit: Union[str, "ContainerMemoryLimit"]
+    :ivar skills: An optional list of skills referenced by id or inline data.
+    :vartype skills: list["ContainerSkill"]
+    :ivar network_policy: The network access policy for the container. When omitted, the service
+     defaults to disabled outbound network access.
+    :vartype network_policy: "ToolboxShellNetworkPolicy"
+    """
+
+    type: Required[Literal["container_auto"]]
+    """The type of the shell execution environment. Always ``container_auto``. Required. Default value
+     is \"container_auto\"."""
+    file_ids: list[str]
+    """An optional list of uploaded files to make available to your code."""
+    memory_limit: Optional[Union[str, "ContainerMemoryLimit"]]
+    """Known values are: \"1g\", \"4g\", \"16g\", and \"64g\"."""
+    skills: list["ContainerSkill"]
+    """An optional list of skills referenced by id or inline data."""
+    network_policy: "ToolboxShellNetworkPolicy"
+    """The network access policy for the container. When omitted, the service defaults to disabled
+     outbound network access."""
+
+
+class ToolboxShellContainerReferenceEnvironment(TypedDict, total=False):  # pylint: disable=name-too-long
+    """An existing container environment for a shell tool stored in a toolbox.
+
+    :ivar type: The type of the shell execution environment. Always ``container_reference``.
+     Required. Default value is "container_reference".
+    :vartype type: Literal["container_reference"]
+    :ivar container_id: The ID of the referenced container. Required.
+    :vartype container_id: str
+    """
+
+    type: Required[Literal["container_reference"]]
+    """The type of the shell execution environment. Always ``container_reference``. Required. Default
+     value is \"container_reference\"."""
+    container_id: Required[str]
+    """The ID of the referenced container. Required."""
+
+
+class ToolboxShellNetworkPolicyDisabled(TypedDict, total=False):
+    """A network policy that disables outbound access from a toolbox shell container.
+
+    :ivar type: The type of network access policy. Always ``disabled``. Required. Default value is
+     "disabled".
+    :vartype type: Literal["disabled"]
+    """
+
+    type: Required[Literal["disabled"]]
+    """The type of network access policy. Always ``disabled``. Required. Default value is
+     \"disabled\"."""
+
+
 class ToolboxSkillReference(TypedDict, total=False):
     """A reference to an existing skill to include in a toolbox.
 
@@ -7356,9 +6500,9 @@ class ToolChoiceAllowed(TypedDict, total=False):
     tools: Required[list[dict[str, Any]]]
     """Required. A list of tool definitions that the model should be allowed to call. For the
      Responses API, the list of tool definitions might look like:
-     
+
      .. code-block:: json
-     
+
         [
           { \"type\": \"function\", \"name\": \"get_weather\" },
           { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
@@ -7762,62 +6906,6 @@ class TracesEvaluatorGenerationJobSource(TypedDict, total=False):
     """End of the time window (Unix timestamp in seconds). Defaults to current time."""
 
 
-class TranscriptTextUsageDuration(TypedDict, total=False):
-    """Duration Usage.
-
-    :ivar type: The type of the usage object. Always ``duration`` for this variant. Required.
-     DURATION.
-    :vartype type: Literal[CreateTranscriptionResponseJsonUsageType.DURATION]
-    :ivar seconds: Duration of the input audio in seconds. Required.
-    :vartype seconds: str
-    """
-
-    type: Required[Literal[CreateTranscriptionResponseJsonUsageType.DURATION]]
-    """The type of the usage object. Always ``duration`` for this variant. Required. DURATION."""
-    seconds: Required[str]
-    """Duration of the input audio in seconds. Required."""
-
-
-class TranscriptTextUsageTokens(TypedDict, total=False):
-    """Token Usage.
-
-    :ivar type: The type of the usage object. Always ``tokens`` for this variant. Required. TOKENS.
-    :vartype type: Literal[CreateTranscriptionResponseJsonUsageType.TOKENS]
-    :ivar input_tokens: Number of input tokens billed for this request. Required.
-    :vartype input_tokens: int
-    :ivar input_token_details: Details about the input tokens billed for this request.
-    :vartype input_token_details: "TranscriptTextUsageTokensInputTokenDetails"
-    :ivar output_tokens: Number of output tokens generated. Required.
-    :vartype output_tokens: int
-    :ivar total_tokens: Total number of tokens used (input + output). Required.
-    :vartype total_tokens: int
-    """
-
-    type: Required[Literal[CreateTranscriptionResponseJsonUsageType.TOKENS]]
-    """The type of the usage object. Always ``tokens`` for this variant. Required. TOKENS."""
-    input_tokens: Required[int]
-    """Number of input tokens billed for this request. Required."""
-    input_token_details: "TranscriptTextUsageTokensInputTokenDetails"
-    """Details about the input tokens billed for this request."""
-    output_tokens: Required[int]
-    """Number of output tokens generated. Required."""
-    total_tokens: Required[int]
-    """Total number of tokens used (input + output). Required."""
-
-
-class TranscriptTextUsageTokensInputTokenDetails(TypedDict, total=False):  # pylint: disable=name-too-long
-    """TranscriptTextUsageTokensInputTokenDetails.
-
-    :ivar text_tokens:
-    :vartype text_tokens: int
-    :ivar audio_tokens:
-    :vartype audio_tokens: int
-    """
-
-    text_tokens: int
-    audio_tokens: int
-
-
 class UpdateModelVersionRequest(TypedDict, total=False):
     """Request body for updating a model version. Only description and tags can be modified.
 
@@ -7831,19 +6919,6 @@ class UpdateModelVersionRequest(TypedDict, total=False):
     """The asset description text."""
     tags: dict[str, str]
     """Tag dictionary. Tags can be added, removed, and updated."""
-
-
-class UpdateToolboxRequest(TypedDict, total=False):
-    """UpdateToolboxRequest.
-
-    :ivar default_version: The version identifier that the toolbox should point to. When set, the
-     toolbox's default version will resolve to this version instead of the latest. Required.
-    :vartype default_version: str
-    """
-
-    default_version: Required[str]
-    """The version identifier that the toolbox should point to. When set, the toolbox's default
-     version will resolve to this version instead of the latest. Required."""
 
 
 class VersionRefIndicator(TypedDict, total=False):
@@ -7873,36 +6948,210 @@ class VersionSelector(TypedDict, total=False):
     """Required."""
 
 
-class VoiceAgentAnimationConfig(TypedDict, total=False):
-    """Animation settings for a voice-agent session.
+class VoiceAgentAudioConfig(TypedDict, total=False):
+    """The audio configuration for a voice agent. These values are session defaults and may be
+    overridden when connecting.
 
-    :ivar model_name: The animation model name.
-    :vartype model_name: str
-    :ivar outputs: The requested animation output kinds.
-    :vartype outputs: list[Union[str, "VoiceAgentAnimationOutputType"]]
+    :ivar input: Input (microphone) audio configuration.
+    :vartype input: "VoiceAgentAudioInputConfig"
+    :ivar output: Output (agent speech) audio configuration.
+    :vartype output: "VoiceAgentAudioOutputConfig"
     """
 
-    model_name: str
-    """The animation model name."""
-    outputs: list[Union[str, "VoiceAgentAnimationOutputType"]]
-    """The requested animation output kinds."""
+    input: "VoiceAgentAudioInputConfig"
+    """Input (microphone) audio configuration."""
+    output: "VoiceAgentAudioOutputConfig"
+    """Output (agent speech) audio configuration."""
 
 
-class VoiceAgentAvatarIceServer(TypedDict, total=False):
-    """An ICE server used for avatar WebRTC negotiation.
+class VoiceAgentAudioInputConfig(TypedDict, total=False):
+    """Input audio configuration for a voice agent.
 
-    :ivar urls: Required.
-    :vartype urls: list[str]
-    :ivar username:
-    :vartype username: str
-    :ivar credential:
-    :vartype credential: str
+    :ivar format: The input audio format.
+    :vartype format: "RealtimeAudioFormats"
+    :ivar noise_reduction: Input noise reduction. Set to null to disable.
+    :vartype noise_reduction: "VoiceAgentNoiseReduction"
+    :ivar turn_detection: Turn (end-of-speech) detection. Server-side turn detection is enabled by
+     default; set to null to disable it, in which case the client must trigger responses manually.
+     Is one of the following types: VoiceAgentServerVadTurnDetection,
+     VoiceAgentSemanticVadTurnDetection, VoiceAgentAzureSemanticVadTurnDetection,
+     VoiceAgentAzureSemanticVadEnTurnDetection, VoiceAgentAzureSemanticVadMultilingualTurnDetection
+    :vartype turn_detection: "_unions.VoiceAgentTurnDetection"
+    :ivar echo_cancellation: Optional server-side echo cancellation settings.
+    :vartype echo_cancellation: "VoiceAgentEchoCancellation"
+    :ivar transcription: Asynchronous input-audio transcription. Set to null to disable
+     transcription.
+    :vartype transcription: "VoiceAgentInputTranscription"
     """
 
-    urls: Required[list[str]]
-    """Required."""
-    username: Optional[str]
-    credential: Optional[str]
+    format: "RealtimeAudioFormats"
+    """The input audio format."""
+    noise_reduction: Optional["VoiceAgentNoiseReduction"]
+    """Input noise reduction. Set to null to disable."""
+    turn_detection: Optional["_unions.VoiceAgentTurnDetection"]
+    """Turn (end-of-speech) detection. Server-side turn detection is enabled by default; set to null
+     to disable it, in which case the client must trigger responses manually. Is one of the
+     following types: VoiceAgentServerVadTurnDetection, VoiceAgentSemanticVadTurnDetection,
+     VoiceAgentAzureSemanticVadTurnDetection, VoiceAgentAzureSemanticVadEnTurnDetection,
+     VoiceAgentAzureSemanticVadMultilingualTurnDetection"""
+    echo_cancellation: Optional["VoiceAgentEchoCancellation"]
+    """Optional server-side echo cancellation settings."""
+    transcription: Optional["VoiceAgentInputTranscription"]
+    """Asynchronous input-audio transcription. Set to null to disable transcription."""
+
+
+class VoiceAgentAudioOutputConfig(TypedDict, total=False):
+    """Output audio configuration for a voice agent.
+    Provider-specific fields are selected by ``voice_type``:
+
+    * `openai`: `voice` and `speed`.
+    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
+      `custom_lexicon_url`,
+      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
+    * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
+    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
+      `personal_voice_model`; the voice name is derived from the avatar.
+    * `azure-realtime-native`: `voice` and `speed`.
+
+    `format` and `output_audio_timestamp_types` apply to every voice type.
+
+    :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
+     PCM.
+    :vartype format: "RealtimeAudioFormats"
+    :ivar voice: The voice name or identifier. Applies to ``openai``, ``azure-standard``,
+     ``azure-custom``, ``azure-personal``, and ``azure-realtime-native``. It does not apply to
+     ``avatar-voice-sync``, which derives the voice name from the avatar.
+    :vartype voice: str
+    :ivar voice_type: The voice implementation. Known values are: "openai", "azure-standard",
+     "azure-custom", "azure-personal", "avatar-voice-sync", and "azure-realtime-native".
+    :vartype voice_type: Union[str, "VoiceType"]
+    :ivar voice_locale: The enforced BCP-47 output locale. Applies to ``azure-standard``,
+     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype voice_locale: str
+    :ivar speed: The numeric output speed multiplier. Applies to all known ``voice_type`` values
+     and defaults to 1.
+    :vartype speed: float
+    :ivar voice_temperature: The voice variation temperature. Applies to ``azure-standard``,
+     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype voice_temperature: float
+    :ivar custom_lexicon_url: The URL of a custom pronunciation lexicon. Applies to
+     ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype custom_lexicon_url: str
+    :ivar custom_text_normalization_url: The URL of a custom text-normalization configuration.
+     Applies to ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype custom_text_normalization_url: str
+    :ivar prefer_locales: Preferred BCP-47 locales for multilingual synthesis. Applies to
+     ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype prefer_locales: list[str]
+    :ivar style: The voice speaking style. Applies only when ``voice_type`` is ``azure-standard``.
+    :vartype style: str
+    :ivar pitch: The voice pitch adjustment. Applies to ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype pitch: str
+    :ivar volume: The voice volume adjustment. Applies to ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype volume: str
+    :ivar custom_voice_endpoint_id: The Azure custom-voice deployment endpoint identifier. Applies
+     only when ``voice_type`` is ``azure-custom``.
+    :vartype custom_voice_endpoint_id: str
+    :ivar personal_voice_model: The Azure personal or avatar voice model. Applies only when
+     ``voice_type`` is ``azure-personal`` or ``avatar-voice-sync``.
+    :vartype personal_voice_model: str
+    :ivar output_audio_timestamp_types: Timestamp kinds to include with output audio. Applies to
+     every ``voice_type``.
+    :vartype output_audio_timestamp_types: list[Union[str, "VoiceAgentAudioTimestampType"]]
+    """
+
+    format: "RealtimeAudioFormats"
+    """The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz PCM."""
+    voice: str
+    """The voice name or identifier. Applies to ``openai``, ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``azure-realtime-native``. It does not apply to ``avatar-voice-sync``,
+     which derives the voice name from the avatar."""
+    voice_type: Union[str, "VoiceType"]
+    """The voice implementation. Known values are: \"openai\", \"azure-standard\", \"azure-custom\",
+     \"azure-personal\", \"avatar-voice-sync\", and \"azure-realtime-native\"."""
+    voice_locale: str
+    """The enforced BCP-47 output locale. Applies to ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``avatar-voice-sync``."""
+    speed: float
+    """The numeric output speed multiplier. Applies to all known ``voice_type`` values and defaults to
+     1."""
+    voice_temperature: float
+    """The voice variation temperature. Applies to ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``avatar-voice-sync``."""
+    custom_lexicon_url: str
+    """The URL of a custom pronunciation lexicon. Applies to ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``avatar-voice-sync``."""
+    custom_text_normalization_url: str
+    """The URL of a custom text-normalization configuration. Applies to ``azure-standard``,
+     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``."""
+    prefer_locales: list[str]
+    """Preferred BCP-47 locales for multilingual synthesis. Applies to ``azure-standard``,
+     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``."""
+    style: str
+    """The voice speaking style. Applies only when ``voice_type`` is ``azure-standard``."""
+    pitch: str
+    """The voice pitch adjustment. Applies to ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``avatar-voice-sync``."""
+    volume: str
+    """The voice volume adjustment. Applies to ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``avatar-voice-sync``."""
+    custom_voice_endpoint_id: str
+    """The Azure custom-voice deployment endpoint identifier. Applies only when ``voice_type`` is
+     ``azure-custom``."""
+    personal_voice_model: str
+    """The Azure personal or avatar voice model. Applies only when ``voice_type`` is
+     ``azure-personal`` or ``avatar-voice-sync``."""
+    output_audio_timestamp_types: list[Union[str, "VoiceAgentAudioTimestampType"]]
+    """Timestamp kinds to include with output audio. Applies to every ``voice_type``."""
+
+
+class VoiceAgentAvatarConfig(TypedDict, total=False):
+    """Avatar configuration for a voice agent. These values are session defaults and may be overridden
+    when connecting.
+
+    :ivar type: The avatar type. Required. Known values are: "video_avatar" and "photo_avatar".
+    :vartype type: Union[str, "VoiceAgentAvatarType"]
+    :ivar character: The avatar character identifier, e.g. 'lisa'. Required.
+    :vartype character: str
+    :ivar style: The avatar style, e.g. 'casual-sitting'.
+    :vartype style: str
+    :ivar customized: Whether the avatar is a customer-customized avatar. Defaults to false.
+    :vartype customized: bool
+    :ivar output_protocol: The transport used to deliver the avatar video stream. Known values are:
+     "webrtc", "websocket", and "websocket-binary".
+    :vartype output_protocol: Union[str, "VoiceAgentAvatarOutputProtocol"]
+    :ivar model: The avatar model identifier.
+    :vartype model: str
+    :ivar video: Avatar video encoder and presentation settings.
+    :vartype video: "VoiceAgentAvatarVideoParams"
+    :ivar scene: Avatar placement and motion settings.
+    :vartype scene: "VoiceAgentAvatarScene"
+    :ivar output_audit_audio: Whether audit audio is emitted with avatar output. Defaults to false.
+    :vartype output_audit_audio: bool
+    """
+
+    type: Required[Union[str, "VoiceAgentAvatarType"]]
+    """The avatar type. Required. Known values are: \"video_avatar\" and \"photo_avatar\"."""
+    character: Required[str]
+    """The avatar character identifier, e.g. 'lisa'. Required."""
+    style: str
+    """The avatar style, e.g. 'casual-sitting'."""
+    customized: bool
+    """Whether the avatar is a customer-customized avatar. Defaults to false."""
+    output_protocol: Union[str, "VoiceAgentAvatarOutputProtocol"]
+    """The transport used to deliver the avatar video stream. Known values are: \"webrtc\",
+     \"websocket\", and \"websocket-binary\"."""
+    model: str
+    """The avatar model identifier."""
+    video: "VoiceAgentAvatarVideoParams"
+    """Avatar video encoder and presentation settings."""
+    scene: "VoiceAgentAvatarScene"
+    """Avatar placement and motion settings."""
+    output_audit_audio: bool
+    """Whether audit audio is emitted with avatar output. Defaults to false."""
 
 
 class VoiceAgentAvatarScene(TypedDict, total=False):
@@ -7964,7 +7213,7 @@ class VoiceAgentAvatarVideoCrop(TypedDict, total=False):
 class VoiceAgentAvatarVideoParams(TypedDict, total=False):
     """Avatar video encoder and presentation settings.
 
-    :ivar bitrate:
+    :ivar bitrate: The target video bitrate in bits per second.
     :vartype bitrate: int
     :ivar crop:
     :vartype crop: "VoiceAgentAvatarVideoCrop"
@@ -7977,6 +7226,7 @@ class VoiceAgentAvatarVideoParams(TypedDict, total=False):
     """
 
     bitrate: int
+    """The target video bitrate in bits per second."""
     crop: "VoiceAgentAvatarVideoCrop"
     resolution: "VoiceAgentAvatarVideoResolution"
     background: "VoiceAgentAvatarVideoBackground"
@@ -7998,269 +7248,174 @@ class VoiceAgentAvatarVideoResolution(TypedDict, total=False):
     """Required."""
 
 
-class VoiceAgentClientEventConversationItemCreate(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``conversation.item.create`` client event.
+class VoiceAgentAzureSemanticVadEnTurnDetection(TypedDict, total=False):  # pylint: disable=name-too-long
+    """English-optimized Azure semantic voice activity detection.
 
-    :ivar event_id: Optional client-generated ID used to identify this event.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.create``. Required.
-     CONVERSATION_ITEM_CREATE.
-    :vartype type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_CREATE]
-    :ivar previous_item_id: The ID of the preceding item after which the new item will be inserted.
-     If not set, the new item will be appended to the end of the conversation. If set to ``root``,
-     the new item will be added to the beginning of the conversation. If set to an existing ID, it
-     allows an item to be inserted mid-conversation. If the ID cannot be found, an error will be
-     returned and the item will not be added.
-    :vartype previous_item_id: str
-    :ivar item: The conversation item to create. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceConversationItem"
+    :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
+     stops.
+    :vartype auto_truncate: bool
+    :ivar type: Required. English-optimized Azure semantic voice activity detection.
+    :vartype type: Literal[VoiceAgentTurnDetectionType.AZURE_SEMANTIC_VAD_EN]
+    :ivar threshold: Activation threshold for voice activity detection, from 0 to 1.
+    :vartype threshold: float
+    :ivar prefix_padding_ms: Audio to include before detected speech, in milliseconds.
+    :vartype prefix_padding_ms: str
+    :ivar silence_duration_ms: Silence required to end speech detection, in milliseconds.
+    :vartype silence_duration_ms: str
+    :ivar idle_timeout_ms: Maximum idle time before the detector ends the turn, in milliseconds.
+    :vartype idle_timeout_ms: str
+    :ivar end_of_utterance_detection: Semantic end-of-utterance detection configuration. Set to
+     null to disable it.
+    :vartype end_of_utterance_detection: "VoiceAgentEndOfUtteranceDetection"
+    :ivar speech_duration_ms: Minimum speech duration required to trigger detection, in
+     milliseconds.
+    :vartype speech_duration_ms: str
+    :ivar remove_filler_words: Whether filler words are removed from transcription.
+    :vartype remove_filler_words: bool
+    :ivar create_response: Whether a response is created automatically when speech stops.
+    :vartype create_response: bool
+    :ivar interrupt_response: Whether user speech may interrupt the agent's response.
+    :vartype interrupt_response: bool
     """
 
-    event_id: str
-    """Optional client-generated ID used to identify this event."""
-    type: Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_CREATE]]
-    """The event type, must be ``conversation.item.create``. Required. CONVERSATION_ITEM_CREATE."""
-    previous_item_id: str
-    """The ID of the preceding item after which the new item will be inserted. If not set, the new
-     item will be appended to the end of the conversation. If set to ``root``, the new item will be
-     added to the beginning of the conversation. If set to an existing ID, it allows an item to be
-     inserted mid-conversation. If the ID cannot be found, an error will be returned and the item
-     will not be added."""
-    item: Required["_unions.VoiceConversationItem"]
-    """The conversation item to create. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem"""
+    auto_truncate: bool
+    """Whether the input audio buffer is truncated automatically when speech stops."""
+    type: Required[Literal[VoiceAgentTurnDetectionType.AZURE_SEMANTIC_VAD_EN]]
+    """Required. English-optimized Azure semantic voice activity detection."""
+    threshold: float
+    """Activation threshold for voice activity detection, from 0 to 1."""
+    prefix_padding_ms: str
+    """Audio to include before detected speech, in milliseconds."""
+    silence_duration_ms: str
+    """Silence required to end speech detection, in milliseconds."""
+    idle_timeout_ms: str
+    """Maximum idle time before the detector ends the turn, in milliseconds."""
+    end_of_utterance_detection: Optional["VoiceAgentEndOfUtteranceDetection"]
+    """Semantic end-of-utterance detection configuration. Set to null to disable it."""
+    speech_duration_ms: str
+    """Minimum speech duration required to trigger detection, in milliseconds."""
+    remove_filler_words: bool
+    """Whether filler words are removed from transcription."""
+    create_response: bool
+    """Whether a response is created automatically when speech stops."""
+    interrupt_response: bool
+    """Whether user speech may interrupt the agent's response."""
 
 
-class VoiceAgentClientEventConversationItemDelete(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``conversation.item.delete`` client event.
+class VoiceAgentAzureSemanticVadMultilingualTurnDetection(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Multilingual Azure semantic voice activity detection.
 
-    :ivar event_id: Optional client-generated ID used to identify this event.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.delete``. Required.
-     CONVERSATION_ITEM_DELETE.
-    :vartype type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_DELETE]
-    :ivar item_id: The ID of the item to delete. Required.
-    :vartype item_id: str
+    :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
+     stops.
+    :vartype auto_truncate: bool
+    :ivar type: Required. Multilingual Azure semantic voice activity detection.
+    :vartype type: Literal[VoiceAgentTurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL]
+    :ivar threshold: Activation threshold for voice activity detection, from 0 to 1.
+    :vartype threshold: float
+    :ivar prefix_padding_ms: Audio to include before detected speech, in milliseconds.
+    :vartype prefix_padding_ms: str
+    :ivar silence_duration_ms: Silence required to end speech detection, in milliseconds.
+    :vartype silence_duration_ms: str
+    :ivar idle_timeout_ms: Maximum idle time before the detector ends the turn, in milliseconds.
+    :vartype idle_timeout_ms: str
+    :ivar end_of_utterance_detection: Semantic end-of-utterance detection configuration. Set to
+     null to disable it.
+    :vartype end_of_utterance_detection: "VoiceAgentEndOfUtteranceDetection"
+    :ivar speech_duration_ms: Minimum speech duration required to trigger detection, in
+     milliseconds.
+    :vartype speech_duration_ms: str
+    :ivar remove_filler_words: Whether filler words are removed from transcription.
+    :vartype remove_filler_words: bool
+    :ivar create_response: Whether a response is created automatically when speech stops.
+    :vartype create_response: bool
+    :ivar interrupt_response: Whether user speech may interrupt the agent's response.
+    :vartype interrupt_response: bool
+    :ivar languages: BCP-47 language codes used for speech detection.
+    :vartype languages: list[str]
     """
 
-    event_id: str
-    """Optional client-generated ID used to identify this event."""
-    type: Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_DELETE]]
-    """The event type, must be ``conversation.item.delete``. Required. CONVERSATION_ITEM_DELETE."""
-    item_id: Required[str]
-    """The ID of the item to delete. Required."""
+    auto_truncate: bool
+    """Whether the input audio buffer is truncated automatically when speech stops."""
+    type: Required[Literal[VoiceAgentTurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL]]
+    """Required. Multilingual Azure semantic voice activity detection."""
+    threshold: float
+    """Activation threshold for voice activity detection, from 0 to 1."""
+    prefix_padding_ms: str
+    """Audio to include before detected speech, in milliseconds."""
+    silence_duration_ms: str
+    """Silence required to end speech detection, in milliseconds."""
+    idle_timeout_ms: str
+    """Maximum idle time before the detector ends the turn, in milliseconds."""
+    end_of_utterance_detection: Optional["VoiceAgentEndOfUtteranceDetection"]
+    """Semantic end-of-utterance detection configuration. Set to null to disable it."""
+    speech_duration_ms: str
+    """Minimum speech duration required to trigger detection, in milliseconds."""
+    remove_filler_words: bool
+    """Whether filler words are removed from transcription."""
+    create_response: bool
+    """Whether a response is created automatically when speech stops."""
+    interrupt_response: bool
+    """Whether user speech may interrupt the agent's response."""
+    languages: list[str]
+    """BCP-47 language codes used for speech detection."""
 
 
-class VoiceAgentClientEventConversationItemRetrieve(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``conversation.item.retrieve`` client event.
+class VoiceAgentAzureSemanticVadTurnDetection(TypedDict, total=False):
+    """Azure semantic voice activity detection.
 
-    :ivar event_id: Optional client-generated ID used to identify this event.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.retrieve``. Required.
-     CONVERSATION_ITEM_RETRIEVE.
-    :vartype type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_RETRIEVE]
-    :ivar item_id: The ID of the item to retrieve. Required.
-    :vartype item_id: str
+    :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
+     stops.
+    :vartype auto_truncate: bool
+    :ivar type: Required. Azure semantic voice activity detection.
+    :vartype type: Literal[VoiceAgentTurnDetectionType.AZURE_SEMANTIC_VAD]
+    :ivar threshold: Activation threshold for voice activity detection, from 0 to 1.
+    :vartype threshold: float
+    :ivar prefix_padding_ms: Audio to include before detected speech, in milliseconds.
+    :vartype prefix_padding_ms: str
+    :ivar silence_duration_ms: Silence required to end speech detection, in milliseconds.
+    :vartype silence_duration_ms: str
+    :ivar idle_timeout_ms: Maximum idle time before the detector ends the turn, in milliseconds.
+    :vartype idle_timeout_ms: str
+    :ivar end_of_utterance_detection: Semantic end-of-utterance detection configuration. Set to
+     null to disable it.
+    :vartype end_of_utterance_detection: "VoiceAgentEndOfUtteranceDetection"
+    :ivar speech_duration_ms: Minimum speech duration required to trigger detection, in
+     milliseconds.
+    :vartype speech_duration_ms: str
+    :ivar remove_filler_words: Whether filler words are removed from transcription.
+    :vartype remove_filler_words: bool
+    :ivar create_response: Whether a response is created automatically when speech stops.
+    :vartype create_response: bool
+    :ivar interrupt_response: Whether user speech may interrupt the agent's response.
+    :vartype interrupt_response: bool
+    :ivar languages: BCP-47 language codes used for speech detection.
+    :vartype languages: list[str]
     """
 
-    event_id: str
-    """Optional client-generated ID used to identify this event."""
-    type: Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_RETRIEVE]]
-    """The event type, must be ``conversation.item.retrieve``. Required. CONVERSATION_ITEM_RETRIEVE."""
-    item_id: Required[str]
-    """The ID of the item to retrieve. Required."""
-
-
-class VoiceAgentClientEventConversationItemTruncate(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``conversation.item.truncate`` client event.
-
-    :ivar event_id: Optional client-generated ID used to identify this event.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.truncate``. Required.
-     CONVERSATION_ITEM_TRUNCATE.
-    :vartype type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_TRUNCATE]
-    :ivar item_id: The ID of the assistant message item to truncate. Only assistant message items
-     can be truncated. Required.
-    :vartype item_id: str
-    :ivar content_index: The index of the content part to truncate. Set this to ``0``. Required.
-    :vartype content_index: int
-    :ivar audio_end_ms: Inclusive duration up to which audio is truncated, in milliseconds. If the
-     audio_end_ms is greater than the actual audio duration, the server will respond with an error.
-     Required.
-    :vartype audio_end_ms: int
-    """
-
-    event_id: str
-    """Optional client-generated ID used to identify this event."""
-    type: Required[Literal[RealtimeClientEventType.CONVERSATION_ITEM_TRUNCATE]]
-    """The event type, must be ``conversation.item.truncate``. Required. CONVERSATION_ITEM_TRUNCATE."""
-    item_id: Required[str]
-    """The ID of the assistant message item to truncate. Only assistant message items can be
-     truncated. Required."""
-    content_index: Required[int]
-    """The index of the content part to truncate. Set this to ``0``. Required."""
-    audio_end_ms: Required[int]
-    """Inclusive duration up to which audio is truncated, in milliseconds. If the audio_end_ms is
-     greater than the actual audio duration, the server will respond with an error. Required."""
-
-
-class VoiceAgentClientEventInputAudioBufferAppend(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``input_audio_buffer.append`` client event.
-
-    :ivar event_id: Optional client-generated ID used to identify this event.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``input_audio_buffer.append``. Required.
-     INPUT_AUDIO_BUFFER_APPEND.
-    :vartype type: Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_APPEND]
-    :ivar audio: Base64-encoded audio bytes. This must be in the format specified by the
-     ``input_audio_format`` field in the session configuration. Required.
-    :vartype audio: str
-    """
-
-    event_id: str
-    """Optional client-generated ID used to identify this event."""
-    type: Required[Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_APPEND]]
-    """The event type, must be ``input_audio_buffer.append``. Required. INPUT_AUDIO_BUFFER_APPEND."""
-    audio: Required[str]
-    """Base64-encoded audio bytes. This must be in the format specified by the ``input_audio_format``
-     field in the session configuration. Required."""
-
-
-class VoiceAgentClientEventInputAudioBufferClear(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``input_audio_buffer.clear`` client event.
-
-    :ivar event_id: Optional client-generated ID used to identify this event.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``input_audio_buffer.clear``. Required.
-     INPUT_AUDIO_BUFFER_CLEAR.
-    :vartype type: Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_CLEAR]
-    """
-
-    event_id: str
-    """Optional client-generated ID used to identify this event."""
-    type: Required[Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_CLEAR]]
-    """The event type, must be ``input_audio_buffer.clear``. Required. INPUT_AUDIO_BUFFER_CLEAR."""
-
-
-class VoiceAgentClientEventInputAudioBufferCommit(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``input_audio_buffer.commit`` client event.
-
-    :ivar event_id: Optional client-generated ID used to identify this event.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``input_audio_buffer.commit``. Required.
-     INPUT_AUDIO_BUFFER_COMMIT.
-    :vartype type: Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_COMMIT]
-    """
-
-    event_id: str
-    """Optional client-generated ID used to identify this event."""
-    type: Required[Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_COMMIT]]
-    """The event type, must be ``input_audio_buffer.commit``. Required. INPUT_AUDIO_BUFFER_COMMIT."""
-
-
-class VoiceAgentClientEventOutputAudioBufferClear(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``output_audio_buffer.clear`` client event.
-
-    :ivar event_id: The unique ID of the client event used for error handling.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``output_audio_buffer.clear``. Required.
-     OUTPUT_AUDIO_BUFFER_CLEAR.
-    :vartype type: Literal[RealtimeClientEventType.OUTPUT_AUDIO_BUFFER_CLEAR]
-    """
-
-    event_id: str
-    """The unique ID of the client event used for error handling."""
-    type: Required[Literal[RealtimeClientEventType.OUTPUT_AUDIO_BUFFER_CLEAR]]
-    """The event type, must be ``output_audio_buffer.clear``. Required. OUTPUT_AUDIO_BUFFER_CLEAR."""
-
-
-class VoiceAgentClientEventResponseCancel(TypedDict, total=False):
-    """The ``response.cancel`` client event.
-
-    :ivar event_id: Optional client-generated ID used to identify this event.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.cancel``. Required. RESPONSE_CANCEL.
-    :vartype type: Literal[RealtimeClientEventType.RESPONSE_CANCEL]
-    :ivar response_id: A specific response ID to cancel - if not provided, will cancel an
-     in-progress response in the default conversation.
-    :vartype response_id: str
-    """
-
-    event_id: str
-    """Optional client-generated ID used to identify this event."""
-    type: Required[Literal[RealtimeClientEventType.RESPONSE_CANCEL]]
-    """The event type, must be ``response.cancel``. Required. RESPONSE_CANCEL."""
-    response_id: str
-    """A specific response ID to cancel - if not provided, will cancel an in-progress response in the
-     default conversation."""
-
-
-class VoiceAgentClientEventResponseCreate(TypedDict, total=False):
-    """The ``response.create`` client event.
-
-    :ivar event_id: Optional client-generated ID used to identify this event.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.create``. Required. RESPONSE_CREATE.
-    :vartype type: Literal[RealtimeClientEventType.RESPONSE_CREATE]
-    :ivar response: Parameters for the new response.
-    :vartype response: "VoiceAgentResponseCreateParams"
-    """
-
-    event_id: str
-    """Optional client-generated ID used to identify this event."""
-    type: Required[Literal[RealtimeClientEventType.RESPONSE_CREATE]]
-    """The event type, must be ``response.create``. Required. RESPONSE_CREATE."""
-    response: "VoiceAgentResponseCreateParams"
-    """Parameters for the new response."""
-
-
-class VoiceAgentClientEventSessionAvatarConnect(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``session.avatar.connect`` client event.
-
-    :ivar type: The event type. Always ``session.avatar.connect``. Required. Default value is
-     "session.avatar.connect".
-    :vartype type: Literal["session.avatar.connect"]
-    :ivar event_id: An optional client-generated event identifier.
-    :vartype event_id: str
-    :ivar client_sdp: The client's SDP offer for avatar media negotiation. Required.
-    :vartype client_sdp: str
-    """
-
-    type: Required[Literal["session.avatar.connect"]]
-    """The event type. Always ``session.avatar.connect``. Required. Default value is
-     \"session.avatar.connect\"."""
-    event_id: str
-    """An optional client-generated event identifier."""
-    client_sdp: Required[str]
-    """The client's SDP offer for avatar media negotiation. Required."""
-
-
-class VoiceAgentClientEventSessionUpdate(TypedDict, total=False):
-    """The ``session.update`` client event.
-
-    :ivar event_id: Optional client-generated ID used to identify this event. This is an arbitrary
-     string that a client may assign. It will be passed back if there is an error with the event,
-     but the corresponding ``session.updated`` event will not include it.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``session.update``. Required. SESSION_UPDATE.
-    :vartype type: Literal[RealtimeClientEventType.SESSION_UPDATE]
-    :ivar session: The stable realtime session fields to update. Required.
-    :vartype session: "VoiceAgentSessionUpdateConfig"
-    """
-
-    event_id: str
-    """Optional client-generated ID used to identify this event. This is an arbitrary string that a
-     client may assign. It will be passed back if there is an error with the event, but the
-     corresponding ``session.updated`` event will not include it."""
-    type: Required[Literal[RealtimeClientEventType.SESSION_UPDATE]]
-    """The event type, must be ``session.update``. Required. SESSION_UPDATE."""
-    session: Required["VoiceAgentSessionUpdateConfig"]
-    """The stable realtime session fields to update. Required."""
+    auto_truncate: bool
+    """Whether the input audio buffer is truncated automatically when speech stops."""
+    type: Required[Literal[VoiceAgentTurnDetectionType.AZURE_SEMANTIC_VAD]]
+    """Required. Azure semantic voice activity detection."""
+    threshold: float
+    """Activation threshold for voice activity detection, from 0 to 1."""
+    prefix_padding_ms: str
+    """Audio to include before detected speech, in milliseconds."""
+    silence_duration_ms: str
+    """Silence required to end speech detection, in milliseconds."""
+    idle_timeout_ms: str
+    """Maximum idle time before the detector ends the turn, in milliseconds."""
+    end_of_utterance_detection: Optional["VoiceAgentEndOfUtteranceDetection"]
+    """Semantic end-of-utterance detection configuration. Set to null to disable it."""
+    speech_duration_ms: str
+    """Minimum speech duration required to trigger detection, in milliseconds."""
+    remove_filler_words: bool
+    """Whether filler words are removed from transcription."""
+    create_response: bool
+    """Whether a response is created automatically when speech stops."""
+    interrupt_response: bool
+    """Whether user speech may interrupt the agent's response."""
+    languages: list[str]
+    """BCP-47 language codes used for speech detection."""
 
 
 class VoiceAgentDefinition(TypedDict, total=False):
@@ -8292,11 +7447,11 @@ class VoiceAgentDefinition(TypedDict, total=False):
     :ivar greeting: Optional session-start greeting. Template mode speaks exact rendered text;
      LLM-generated mode asks the session model to author the opening response and may use configured
      tools.
-    :vartype greeting: "VoiceGreetingConfig"
+    :vartype greeting: "VoiceAgentGreetingConfig"
     :ivar audio: The audio configuration, including input and output formats, voice, turn
      detection, noise reduction, and transcription. These values are session defaults; a client may
      override supported fields when connecting.
-    :vartype audio: "VoiceAudioConfig"
+    :vartype audio: "VoiceAgentAudioConfig"
     :ivar output_modalities: The output modalities the agent produces. Defaults to ``["audio"]``.
      ``animation`` and ``avatar`` are available when an avatar is configured.
     :vartype output_modalities: list[Union[str, "VoiceOutputModality"]]
@@ -8305,12 +7460,11 @@ class VoiceAgentDefinition(TypedDict, total=False):
     :vartype max_output_tokens: "_unions.VoiceAgentMaxOutputTokens"
     :ivar include: Additional fields to include in service outputs.
     :vartype include: list[Union[str, "VoiceAgentSessionIncludeOption"]]
-    :ivar interim_response: Interim-response settings for latency and tool execution. Is either a
-     VoiceAgentStaticInterimResponseConfig type or a VoiceAgentLlmInterimResponseConfig type.
-    :vartype interim_response: "_unions.VoiceAgentInterimResponse"
+    :ivar interim_response: Interim-response settings for latency and tool execution.
+    :vartype interim_response: "VoiceAgentInterimResponseConfig"
     :ivar avatar: Optional avatar configuration. These values are session defaults and may be
      overridden when connecting.
-    :vartype avatar: "VoiceAvatarConfig"
+    :vartype avatar: "VoiceAgentAvatarConfig"
     :ivar tools: The tools the voice agent may use. Supported tool kinds are ``function`` (executed
      by the client), ``mcp``, ``system`` (service-managed session controls), and ``toolbox``.
      Server-side tools such as ``web_search``, ``azure_ai_search``, and ``openapi`` are provided
@@ -8355,10 +7509,10 @@ class VoiceAgentDefinition(TypedDict, total=False):
     instructions: str
     """A system (or developer) message inserted into the model's context. Supports template
      substitution via ``structured_inputs``, rendered per session before the live session starts."""
-    greeting: "VoiceGreetingConfig"
+    greeting: "VoiceAgentGreetingConfig"
     """Optional session-start greeting. Template mode speaks exact rendered text; LLM-generated mode
      asks the session model to author the opening response and may use configured tools."""
-    audio: "VoiceAudioConfig"
+    audio: "VoiceAgentAudioConfig"
     """The audio configuration, including input and output formats, voice, turn detection, noise
      reduction, and transcription. These values are session defaults; a client may override
      supported fields when connecting."""
@@ -8370,10 +7524,9 @@ class VoiceAgentDefinition(TypedDict, total=False):
      type."""
     include: list[Union[str, "VoiceAgentSessionIncludeOption"]]
     """Additional fields to include in service outputs."""
-    interim_response: "_unions.VoiceAgentInterimResponse"
-    """Interim-response settings for latency and tool execution. Is either a
-     VoiceAgentStaticInterimResponseConfig type or a VoiceAgentLlmInterimResponseConfig type."""
-    avatar: "VoiceAvatarConfig"
+    interim_response: "VoiceAgentInterimResponseConfig"
+    """Interim-response settings for latency and tool execution."""
+    avatar: "VoiceAgentAvatarConfig"
     """Optional avatar configuration. These values are session defaults and may be overridden when
      connecting."""
     tools: list["VoiceAgentTool"]
@@ -8426,6 +7579,30 @@ class VoiceAgentEchoCancellation(TypedDict, total=False):
      ``client``."""
 
 
+class VoiceAgentEndOfUtteranceDetection(TypedDict, total=False):
+    """Semantic end-of-utterance detection configuration.
+
+    :ivar model: The semantic detection model. Required. Known values are: "semantic_detection_v1",
+     "semantic_detection_v1_en", "semantic_detection_v1_multilingual", and
+     "smart_end_of_turn_detection".
+    :vartype model: Union[str, "VoiceAgentEndOfUtteranceDetectionModel"]
+    :ivar threshold_level: The sensitivity threshold. Known values are: "low", "medium", "high",
+     and "default".
+    :vartype threshold_level: Union[str, "VoiceAgentEndOfUtteranceThresholdLevel"]
+    :ivar timeout_ms: The detection timeout in milliseconds.
+    :vartype timeout_ms: str
+    """
+
+    model: Required[Union[str, "VoiceAgentEndOfUtteranceDetectionModel"]]
+    """The semantic detection model. Required. Known values are: \"semantic_detection_v1\",
+     \"semantic_detection_v1_en\", \"semantic_detection_v1_multilingual\", and
+     \"smart_end_of_turn_detection\"."""
+    threshold_level: Union[str, "VoiceAgentEndOfUtteranceThresholdLevel"]
+    """The sensitivity threshold. Known values are: \"low\", \"medium\", \"high\", and \"default\"."""
+    timeout_ms: str
+    """The detection timeout in milliseconds."""
+
+
 class VoiceAgentFunctionTool(TypedDict, total=False):
     """A native function tool executed by the client.
 
@@ -8449,6 +7626,85 @@ class VoiceAgentFunctionTool(TypedDict, total=False):
     """Required. Default value is \"function\"."""
     name: Required[str]
     """The function name. Required."""
+
+
+class VoiceAgentInputTranscription(TypedDict, total=False):
+    """Asynchronous input-audio transcription configuration. Extends the OpenAI Realtime transcription
+    options with the Azure and MAI transcription models, custom speech models, and phrase hints.
+
+    :ivar language: The language of the input audio. Supplying the input language in `ISO-639-1
+     <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ (e.g. ``en``) format will improve
+     accuracy and latency.
+    :vartype language: str
+    :ivar prompt: An optional text to guide the model's style or continue a previous audio segment.
+     For ``whisper-1``, the `prompt is a list of keywords </docs/guides/speech-to-text#prompting>`_.
+     For ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a
+     free text string, for example "expect words related to technology". Prompt is not supported
+     with ``gpt-realtime-whisper`` in GA Realtime sessions.
+    :vartype prompt: str
+    :ivar delay: Controls how long the model waits before emitting transcription text. Higher
+     values can improve transcription accuracy at the cost of latency. Only supported with
+     ``gpt-realtime-whisper`` in GA Realtime sessions. Is one of the following types:
+     Literal["minimal"], Literal["low"], Literal["medium"], Literal["high"], Literal["xhigh"]
+    :vartype delay: Literal["minimal", "low", "medium", "high", "xhigh"]
+    :ivar model: The transcription model identifier. Configure customer custom speech deployments
+     in ``custom_speech``. Required. Known values are: "whisper-1", "gpt-realtime-whisper",
+     "gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize", "gpt-transcribe",
+     "gpt-live-transcribe", "mai-transcribe", and "azure-speech".
+    :vartype model: Union[str, "VoiceAgentInputTranscriptionModel"]
+    :ivar custom_speech: Optional customer custom speech deployment configuration, keyed by locale.
+    :vartype custom_speech: dict[str, str]
+    :ivar phrase_list: Optional phrase hints that bias recognition toward domain terms.
+    :vartype phrase_list: list[str]
+    """
+
+    language: str
+    """The language of the input audio. Supplying the input language in `ISO-639-1
+     <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ (e.g. ``en``) format will improve
+     accuracy and latency."""
+    prompt: str
+    """An optional text to guide the model's style or continue a previous audio segment. For
+     ``whisper-1``, the `prompt is a list of keywords </docs/guides/speech-to-text#prompting>`_. For
+     ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a free
+     text string, for example \"expect words related to technology\". Prompt is not supported with
+     ``gpt-realtime-whisper`` in GA Realtime sessions."""
+    delay: Literal["minimal", "low", "medium", "high", "xhigh"]
+    """Controls how long the model waits before emitting transcription text. Higher values can improve
+     transcription accuracy at the cost of latency. Only supported with ``gpt-realtime-whisper`` in
+     GA Realtime sessions. Is one of the following types: Literal[\"minimal\"], Literal[\"low\"],
+     Literal[\"medium\"], Literal[\"high\"], Literal[\"xhigh\"]"""
+    model: Required[Union[str, "VoiceAgentInputTranscriptionModel"]]
+    """The transcription model identifier. Configure customer custom speech deployments in
+     ``custom_speech``. Required. Known values are: \"whisper-1\", \"gpt-realtime-whisper\",
+     \"gpt-4o-transcribe\", \"gpt-4o-mini-transcribe\", \"gpt-4o-transcribe-diarize\",
+     \"gpt-transcribe\", \"gpt-live-transcribe\", \"mai-transcribe\", and \"azure-speech\"."""
+    custom_speech: dict[str, str]
+    """Optional customer custom speech deployment configuration, keyed by locale."""
+    phrase_list: list[str]
+    """Optional phrase hints that bias recognition toward domain terms."""
+
+
+class VoiceAgentLlmGeneratedGreetingConfig(TypedDict, total=False):
+    """A greeting authored by the session model from a scoped opening-turn prompt.
+
+    :ivar type: Required. Default value is "llm_generated".
+    :vartype type: Literal["llm_generated"]
+    :ivar prompt: The Handlebars prompt that guides the opening turn. Required.
+    :vartype prompt: str
+    :ivar tool_choice: The tool-selection policy for the opening response. Defaults to ``none``. Is
+     one of the following types: Literal["none"], Literal["auto"], Literal["required"],
+     ToolChoiceFunction, ToolChoiceMCP
+    :vartype tool_choice: "_unions.VoiceAgentToolChoice"
+    """
+
+    type: Required[Literal["llm_generated"]]
+    """Required. Default value is \"llm_generated\"."""
+    prompt: Required[str]
+    """The Handlebars prompt that guides the opening turn. Required."""
+    tool_choice: "_unions.VoiceAgentToolChoice"
+    """The tool-selection policy for the opening response. Defaults to ``none``. Is one of the
+     following types: Literal[\"none\"], Literal[\"auto\"], Literal[\"required\"],
+     ToolChoiceFunction, ToolChoiceMCP"""
 
 
 class VoiceAgentLlmInterimResponseConfig(TypedDict, total=False):
@@ -8550,172 +7806,17 @@ class VoiceAgentMcpTool(TypedDict, total=False):
      are: \"silent\", \"when_idle\", \"interrupt\", and \"skip_if_busy\"."""
 
 
-class VoiceAgentRealtimeResponse(OmitPropertiesRealtimeResponse1):
-    """A live realtime response returned by the voice-agent service in both ``response.created`` and
-    ``response.done`` events.
+class VoiceAgentNoiseReduction(TypedDict, total=False):
+    """Input audio noise reduction configuration.
 
-    :ivar id: The unique ID of the response, will look like ``resp_1234``.
-    :vartype id: str
-    :ivar object: The object type, must be ``realtime.response``. Default value is
-     "realtime.response".
-    :vartype object: Literal["realtime.response"]
-    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
-     ``incomplete``, ``in_progress``). Is one of the following types: Literal["completed"],
-     Literal["cancelled"], Literal["failed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]
-    :ivar status_details: Additional details about the status.
-    :vartype status_details: "RealtimeResponseStatusDetails"
-    :ivar metadata:
-    :vartype metadata: "Metadata"
-    :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
-     session will maintain a conversation context and append new Items to the Conversation, thus
-     output from previous turns (text and audio tokens) will become the input for later turns.
-    :vartype usage: "RealtimeResponseUsage"
-    :ivar conversation_id: Which conversation the response is added to, determined by the
-     ``conversation`` field in the ``response.create`` event. If ``auto``, the response will be
-     added to the default conversation and the value of ``conversation_id`` will be an id like
-     ``conv_1234``. If ``none``, the response will not be added to any conversation and the value of
-     ``conversation_id`` will be ``null``. If responses are being triggered automatically by VAD the
-     response will be added to the default conversation.
-    :vartype conversation_id: str
-    :ivar output_modalities: The set of modalities the model used to respond, currently the only
-     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
-     transcript. Setting the output to mode ``text`` will disable audio output from the model.
-    :vartype output_modalities: list[Literal["text", "audio"]]
-    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls, that was used in this response. Is either a int type or a
-     Literal["inf"] type.
-    :vartype max_output_tokens: Union[int, Literal["inf"]]
-    :ivar audio: The audio configuration used by the live response, including flat voice provider,
-     locale, and format fields under ``output``.
-    :vartype audio: "VoiceResponseAudio"
-    :ivar output: The items produced by the live response.
-    :vartype output: list["_unions.VoiceConversationItem"]
+    :ivar type: The noise reduction mode. Required. Known values are: "near_field", "far_field",
+     and "azure_deep_noise_suppression".
+    :vartype type: Union[str, "VoiceAgentNoiseReductionType"]
     """
 
-    audio: "VoiceResponseAudio"
-    """The audio configuration used by the live response, including flat voice provider, locale, and
-     format fields under ``output``."""
-    output: list["_unions.VoiceConversationItem"]
-    """The items produced by the live response."""
-
-
-class VoiceAgentResponseCreateParams(TypedDict, total=False):
-    """Parameters accepted by a voice-agent ``response.create`` event.
-
-    :ivar instructions: The default system instructions (i.e. system message) prepended to model
-     calls. This field allows the client to guide the model on desired responses. The model can be
-     instructed on response content and format, (e.g. "be extremely succinct", "act friendly", "here
-     are examples of good responses") and on audio behavior (e.g. "talk quickly", "inject emotion
-     into your voice", "laugh frequently"). The instructions are not guaranteed to be followed by
-     the model, but they provide guidance to the model on the desired behavior. Note that the server
-     sets default instructions which will be used if this field is not set and are visible in the
-     ``session.created`` event at the start of the session.
-    :vartype instructions: str
-    :ivar tools: Tools available to the model.
-    :vartype tools: list[Union["RealtimeFunctionTool", "MCPTool"]]
-    :ivar tool_choice: How the model chooses tools. Provide one of the string modes or force a
-     specific function/MCP tool. Is one of the following types: Union[str,
-     "_models.ToolChoiceOptions"], ToolChoiceFunction, ToolChoiceMCP
-    :vartype tool_choice: Union[str, "ToolChoiceOptions", "ToolChoiceFunction", "ToolChoiceMCP"]
-    :ivar parallel_tool_calls: Whether the model may call multiple tools in parallel. Only
-     supported by reasoning Realtime models such as ``gpt-realtime-2``.
-    :vartype parallel_tool_calls: bool
-    :ivar reasoning:
-    :vartype reasoning: "RealtimeReasoning"
-    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls. Provide an integer between 1 and 4096 to limit output tokens, or
-     ``inf`` for the maximum available tokens for a given model. Defaults to ``inf``. Is either a
-     int type or a Literal["inf"] type.
-    :vartype max_output_tokens: Union[int, Literal["inf"]]
-    :ivar conversation: Controls which conversation the response is added to. Currently supports
-     ``auto`` and ``none``, with ``auto`` as the default value. The ``auto`` value means that the
-     contents of the response will be added to the default conversation. Set this to ``none`` to
-     create an out-of-band response which will not add items to default conversation. Is one of the
-     following types: Literal["auto"], Literal["none"], str
-    :vartype conversation: Union[Literal["auto"], Literal["none"], str]
-    :ivar metadata:
-    :vartype metadata: "Metadata"
-    :ivar output_modalities: Modalities that the response may return.
-    :vartype output_modalities: list[Union[str, "VoiceOutputModality"]]
-    :ivar audio: Response-specific audio settings.
-    :vartype audio: "PickPropertiesVoiceAudioConfig"
-    :ivar input: Conversation items used as inline response input.
-    :vartype input: list["_unions.VoiceConversationItem"]
-    :ivar pre_generated_assistant_message: A pre-generated assistant message used to begin the
-     response.
-    :vartype pre_generated_assistant_message: "VoiceAssistantMessageItem"
-    :ivar interim_response: Interim-response settings for this response. Is either a
-     VoiceAgentStaticInterimResponseConfig type or a VoiceAgentLlmInterimResponseConfig type.
-    :vartype interim_response: "_unions.VoiceAgentInterimResponse"
-    """
-
-    instructions: str
-    """The default system instructions (i.e. system message) prepended to model calls. This field
-     allows the client to guide the model on desired responses. The model can be instructed on
-     response content and format, (e.g. \"be extremely succinct\", \"act friendly\", \"here are
-     examples of good responses\") and on audio behavior (e.g. \"talk quickly\", \"inject emotion
-     into your voice\", \"laugh frequently\"). The instructions are not guaranteed to be followed by
-     the model, but they provide guidance to the model on the desired behavior. Note that the server
-     sets default instructions which will be used if this field is not set and are visible in the
-     ``session.created`` event at the start of the session."""
-    tools: list[Union["RealtimeFunctionTool", "MCPTool"]]
-    """Tools available to the model."""
-    tool_choice: Union[str, "ToolChoiceOptions", "ToolChoiceFunction", "ToolChoiceMCP"]
-    """How the model chooses tools. Provide one of the string modes or force a specific function/MCP
-     tool. Is one of the following types: Union[str, \"_models.ToolChoiceOptions\"],
-     ToolChoiceFunction, ToolChoiceMCP"""
-    parallel_tool_calls: bool
-    """Whether the model may call multiple tools in parallel. Only supported by reasoning Realtime
-     models such as ``gpt-realtime-2``."""
-    reasoning: "RealtimeReasoning"
-    max_output_tokens: Union[int, Literal["inf"]]
-    """Maximum number of output tokens for a single assistant response, inclusive of tool calls.
-     Provide an integer between 1 and 4096 to limit output tokens, or ``inf`` for the maximum
-     available tokens for a given model. Defaults to ``inf``. Is either a int type or a
-     Literal[\"inf\"] type."""
-    conversation: Union[Literal["auto"], Literal["none"], str]
-    """Controls which conversation the response is added to. Currently supports ``auto`` and ``none``,
-     with ``auto`` as the default value. The ``auto`` value means that the contents of the response
-     will be added to the default conversation. Set this to ``none`` to create an out-of-band
-     response which will not add items to default conversation. Is one of the following types:
-     Literal[\"auto\"], Literal[\"none\"], str"""
-    metadata: Optional["Metadata"]
-    output_modalities: list[Union[str, "VoiceOutputModality"]]
-    """Modalities that the response may return."""
-    audio: "PickPropertiesVoiceAudioConfig"
-    """Response-specific audio settings."""
-    input: list["_unions.VoiceConversationItem"]
-    """Conversation items used as inline response input."""
-    pre_generated_assistant_message: Optional["VoiceAssistantMessageItem"]
-    """A pre-generated assistant message used to begin the response."""
-    interim_response: Optional["_unions.VoiceAgentInterimResponse"]
-    """Interim-response settings for this response. Is either a VoiceAgentStaticInterimResponseConfig
-     type or a VoiceAgentLlmInterimResponseConfig type."""
-
-
-class VoiceAgentResponseEventContentPart(TypedDict, total=False):
-    """A content part carried by a ``response.content_part.*`` server event.
-
-    :ivar type: Is either a Literal["audio"] type or a Literal["text"] type.
-    :vartype type: Literal["audio", "text"]
-    :ivar text:
-    :vartype text: str
-    :ivar audio:
-    :vartype audio: str
-    :ivar transcript:
-    :vartype transcript: str
-    :ivar format: The audio format, when this is an audio content part.
-    :vartype format: "VoiceAudioFormat"
-    """
-
-    type: Literal["audio", "text"]
-    """Is either a Literal[\"audio\"] type or a Literal[\"text\"] type."""
-    text: str
-    audio: str
-    transcript: str
-    format: "VoiceAudioFormat"
-    """The audio format, when this is an audio content part."""
+    type: Required[Union[str, "VoiceAgentNoiseReductionType"]]
+    """The noise reduction mode. Required. Known values are: \"near_field\", \"far_field\", and
+     \"azure_deep_noise_suppression\"."""
 
 
 class VoiceAgentSemanticVadTurnDetection(TypedDict, total=False):
@@ -8732,7 +7833,7 @@ class VoiceAgentSemanticVadTurnDetection(TypedDict, total=False):
     :ivar interrupt_response:
     :vartype interrupt_response: bool
     :ivar type: Required. Semantic voice activity detection.
-    :vartype type: Literal[VoiceTurnDetectionType.SEMANTIC_VAD]
+    :vartype type: Literal[VoiceAgentTurnDetectionType.SEMANTIC_VAD]
     """
 
     auto_truncate: bool
@@ -8742,1764 +7843,52 @@ class VoiceAgentSemanticVadTurnDetection(TypedDict, total=False):
      Literal[\"auto\"]"""
     create_response: bool
     interrupt_response: bool
-    type: Required[Literal[VoiceTurnDetectionType.SEMANTIC_VAD]]
+    type: Required[Literal[VoiceAgentTurnDetectionType.SEMANTIC_VAD]]
     """Required. Semantic voice activity detection."""
 
 
-class VoiceAgentServerEventConversationItemAdded(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``conversation.item.added`` server event.
+class VoiceAgentServerVadTurnDetection(TypedDict, total=False):
+    """Server-side voice activity detection.
 
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.added``. Required.
-     CONVERSATION_ITEM_ADDED.
-    :vartype type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_ADDED]
-    :ivar previous_item_id:
-    :vartype previous_item_id: str
-    :ivar item: The item added to the conversation. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceConversationItem"
+    :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
+     stops.
+    :vartype auto_truncate: bool
+    :ivar threshold:
+    :vartype threshold: float
+    :ivar prefix_padding_ms:
+    :vartype prefix_padding_ms: int
+    :ivar silence_duration_ms:
+    :vartype silence_duration_ms: int
+    :ivar create_response:
+    :vartype create_response: bool
+    :ivar interrupt_response:
+    :vartype interrupt_response: bool
+    :ivar idle_timeout_ms:
+    :vartype idle_timeout_ms: int
+    :ivar type: Required. Server-side voice activity detection.
+    :vartype type: Literal[VoiceAgentTurnDetectionType.SERVER_VAD]
+    :ivar speech_duration_ms: Minimum speech duration required to trigger detection, in
+     milliseconds.
+    :vartype speech_duration_ms: str
+    :ivar end_of_utterance_detection: Semantic end-of-utterance detection configuration. Set to
+     null to disable it.
+    :vartype end_of_utterance_detection: "VoiceAgentEndOfUtteranceDetection"
     """
 
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_ADDED]]
-    """The event type, must be ``conversation.item.added``. Required. CONVERSATION_ITEM_ADDED."""
-    previous_item_id: Optional[str]
-    item: Required["_unions.VoiceConversationItem"]
-    """The item added to the conversation. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem"""
-
-
-class VoiceAgentServerEventConversationItemCreated(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``conversation.item.created`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.created``. Required.
-     CONVERSATION_ITEM_CREATED.
-    :vartype type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_CREATED]
-    :ivar previous_item_id:
-    :vartype previous_item_id: str
-    :ivar item: The created conversation item. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceConversationItem"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_CREATED]]
-    """The event type, must be ``conversation.item.created``. Required. CONVERSATION_ITEM_CREATED."""
-    previous_item_id: Optional[str]
-    item: Required["_unions.VoiceConversationItem"]
-    """The created conversation item. Required. Is one of the following types: VoiceSystemMessageItem,
-     VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem"""
-
-
-class VoiceAgentServerEventConversationItemDeleted(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``conversation.item.deleted`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.deleted``. Required.
-     CONVERSATION_ITEM_DELETED.
-    :vartype type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_DELETED]
-    :ivar item_id: The ID of the item that was deleted. Required.
-    :vartype item_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_DELETED]]
-    """The event type, must be ``conversation.item.deleted``. Required. CONVERSATION_ITEM_DELETED."""
-    item_id: Required[str]
-    """The ID of the item that was deleted. Required."""
-
-
-class VoiceAgentServerEventConversationItemDone(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``conversation.item.done`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.done``. Required.
-     CONVERSATION_ITEM_DONE.
-    :vartype type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_DONE]
-    :ivar previous_item_id:
-    :vartype previous_item_id: str
-    :ivar item: The completed conversation item. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceConversationItem"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_DONE]]
-    """The event type, must be ``conversation.item.done``. Required. CONVERSATION_ITEM_DONE."""
-    previous_item_id: Optional[str]
-    item: Required["_unions.VoiceConversationItem"]
-    """The completed conversation item. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem"""
-
-
-class VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """The ``conversation.item.input_audio_transcription.completed`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.input_audio_transcription.completed``.
-     Required. CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED.
-    :vartype type:
-     Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED]
-    :ivar item_id: The ID of the item containing the audio that is being transcribed. Required.
-    :vartype item_id: str
-    :ivar content_index: The index of the content part containing the audio. Required.
-    :vartype content_index: int
-    :ivar transcript: The transcribed text. Required.
-    :vartype transcript: str
-    :ivar logprobs:
-    :vartype logprobs: list["LogProbProperties"]
-    :ivar usage: Usage statistics for the transcription, this is billed according to the ASR
-     model's pricing rather than the realtime model's pricing. Required. Is either a
-     TranscriptTextUsageTokens type or a TranscriptTextUsageDuration type.
-    :vartype usage: Union["TranscriptTextUsageTokens", "TranscriptTextUsageDuration"]
-    :ivar phrases: Phrase-level transcription timing and confidence details.
-    :vartype phrases: list["VoiceAgentTranscriptionPhrase"]
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED]]
-    """The event type, must be ``conversation.item.input_audio_transcription.completed``. Required.
-     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED."""
-    item_id: Required[str]
-    """The ID of the item containing the audio that is being transcribed. Required."""
-    content_index: Required[int]
-    """The index of the content part containing the audio. Required."""
-    transcript: Required[str]
-    """The transcribed text. Required."""
-    logprobs: Optional[list["LogProbProperties"]]
-    usage: Required[Union["TranscriptTextUsageTokens", "TranscriptTextUsageDuration"]]
-    """Usage statistics for the transcription, this is billed according to the ASR model's pricing
-     rather than the realtime model's pricing. Required. Is either a TranscriptTextUsageTokens type
-     or a TranscriptTextUsageDuration type."""
-    phrases: Optional[list["VoiceAgentTranscriptionPhrase"]]
-    """Phrase-level transcription timing and confidence details."""
-
-
-class VoiceAgentServerEventConversationItemInputAudioTranscriptionDelta(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """The ``conversation.item.input_audio_transcription.delta`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.input_audio_transcription.delta``.
-     Required. CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA.
-    :vartype type:
-     Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA]
-    :ivar item_id: The ID of the item containing the audio that is being transcribed. Required.
-    :vartype item_id: str
-    :ivar content_index: The index of the content part in the item's content array.
-    :vartype content_index: int
-    :ivar delta: The text delta.
-    :vartype delta: str
-    :ivar logprobs:
-    :vartype logprobs: list["LogProbProperties"]
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA]]
-    """The event type, must be ``conversation.item.input_audio_transcription.delta``. Required.
-     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA."""
-    item_id: Required[str]
-    """The ID of the item containing the audio that is being transcribed. Required."""
-    content_index: int
-    """The index of the content part in the item's content array."""
-    delta: str
-    """The text delta."""
-    logprobs: Optional[list["LogProbProperties"]]
-
-
-class VoiceAgentServerEventConversationItemInputAudioTranscriptionFailed(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """The ``conversation.item.input_audio_transcription.failed`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.input_audio_transcription.failed``.
-     Required. CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED.
-    :vartype type:
-     Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED]
-    :ivar item_id: The ID of the user message item. Required.
-    :vartype item_id: str
-    :ivar content_index: The index of the content part containing the audio. Required.
-    :vartype content_index: int
-    :ivar error: Details of the transcription error. Required.
-    :vartype error: "RealtimeServerEventConversationItemInputAudioTranscriptionFailedError"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED]]
-    """The event type, must be ``conversation.item.input_audio_transcription.failed``. Required.
-     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED."""
-    item_id: Required[str]
-    """The ID of the user message item. Required."""
-    content_index: Required[int]
-    """The index of the content part containing the audio. Required."""
-    error: Required["RealtimeServerEventConversationItemInputAudioTranscriptionFailedError"]
-    """Details of the transcription error. Required."""
-
-
-class VoiceAgentServerEventConversationItemInputAudioTranscriptionSegment(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """The ``conversation.item.input_audio_transcription.segment`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.input_audio_transcription.segment``.
-     Required. CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT.
-    :vartype type:
-     Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT]
-    :ivar item_id: The ID of the item containing the input audio content. Required.
-    :vartype item_id: str
-    :ivar content_index: The index of the input audio content part within the item. Required.
-    :vartype content_index: int
-    :ivar text: The text for this segment. Required.
-    :vartype text: str
-    :ivar id: The segment identifier. Required.
-    :vartype id: str
-    :ivar speaker: The detected speaker label for this segment. Required.
-    :vartype speaker: str
-    :ivar start: Start time of the segment in seconds. Required.
-    :vartype start: float
-    :ivar end: End time of the segment in seconds. Required.
-    :vartype end: float
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT]]
-    """The event type, must be ``conversation.item.input_audio_transcription.segment``. Required.
-     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT."""
-    item_id: Required[str]
-    """The ID of the item containing the input audio content. Required."""
-    content_index: Required[int]
-    """The index of the input audio content part within the item. Required."""
-    text: Required[str]
-    """The text for this segment. Required."""
-    id: Required[str]
-    """The segment identifier. Required."""
-    speaker: Required[str]
-    """The detected speaker label for this segment. Required."""
-    start: Required[float]
-    """Start time of the segment in seconds. Required."""
-    end: Required[float]
-    """End time of the segment in seconds. Required."""
-
-
-class VoiceAgentServerEventConversationItemRetrieved(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``conversation.item.retrieved`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.retrieved``. Required.
-     CONVERSATION_ITEM_RETRIEVED.
-    :vartype type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_RETRIEVED]
-    :ivar item: The retrieved conversation item. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceConversationItem"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_RETRIEVED]]
-    """The event type, must be ``conversation.item.retrieved``. Required. CONVERSATION_ITEM_RETRIEVED."""
-    item: Required["_unions.VoiceConversationItem"]
-    """The retrieved conversation item. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem"""
-
-
-class VoiceAgentServerEventConversationItemTruncated(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``conversation.item.truncated`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``conversation.item.truncated``. Required.
-     CONVERSATION_ITEM_TRUNCATED.
-    :vartype type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_TRUNCATED]
-    :ivar item_id: The ID of the assistant message item that was truncated. Required.
-    :vartype item_id: str
-    :ivar content_index: The index of the content part that was truncated. Required.
-    :vartype content_index: int
-    :ivar audio_end_ms: The duration up to which the audio was truncated, in milliseconds.
-     Required.
-    :vartype audio_end_ms: int
-    :ivar item: The assistant message after truncation, when the service returns the updated item.
-    :vartype item: "VoiceAssistantMessageItem"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.CONVERSATION_ITEM_TRUNCATED]]
-    """The event type, must be ``conversation.item.truncated``. Required. CONVERSATION_ITEM_TRUNCATED."""
-    item_id: Required[str]
-    """The ID of the assistant message item that was truncated. Required."""
-    content_index: Required[int]
-    """The index of the content part that was truncated. Required."""
-    audio_end_ms: Required[int]
-    """The duration up to which the audio was truncated, in milliseconds. Required."""
-    item: "VoiceAssistantMessageItem"
-    """The assistant message after truncation, when the service returns the updated item."""
-
-
-class VoiceAgentServerEventInputAudioBufferCleared(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``input_audio_buffer.cleared`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``input_audio_buffer.cleared``. Required.
-     INPUT_AUDIO_BUFFER_CLEARED.
-    :vartype type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_CLEARED]
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_CLEARED]]
-    """The event type, must be ``input_audio_buffer.cleared``. Required. INPUT_AUDIO_BUFFER_CLEARED."""
-
-
-class VoiceAgentServerEventInputAudioBufferCommitted(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``input_audio_buffer.committed`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``input_audio_buffer.committed``. Required.
-     INPUT_AUDIO_BUFFER_COMMITTED.
-    :vartype type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_COMMITTED]
-    :ivar previous_item_id:
-    :vartype previous_item_id: str
-    :ivar item_id: The ID of the user message item that will be created. Required.
-    :vartype item_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_COMMITTED]]
-    """The event type, must be ``input_audio_buffer.committed``. Required.
-     INPUT_AUDIO_BUFFER_COMMITTED."""
-    previous_item_id: Optional[str]
-    item_id: Required[str]
-    """The ID of the user message item that will be created. Required."""
-
-
-class VoiceAgentServerEventInputAudioBufferSpeechStarted(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``input_audio_buffer.speech_started`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``input_audio_buffer.speech_started``. Required.
-     INPUT_AUDIO_BUFFER_SPEECH_STARTED.
-    :vartype type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED]
-    :ivar audio_start_ms: Milliseconds from the start of all audio written to the buffer during the
-     session when speech was first detected. This will correspond to the beginning of audio sent to
-     the model, and thus includes the ``prefix_padding_ms`` configured in the Session. Required.
-    :vartype audio_start_ms: int
-    :ivar item_id: The ID of the user message item that will be created when speech stops.
-     Required.
-    :vartype item_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED]]
-    """The event type, must be ``input_audio_buffer.speech_started``. Required.
-     INPUT_AUDIO_BUFFER_SPEECH_STARTED."""
-    audio_start_ms: Required[int]
-    """Milliseconds from the start of all audio written to the buffer during the session when speech
-     was first detected. This will correspond to the beginning of audio sent to the model, and thus
-     includes the ``prefix_padding_ms`` configured in the Session. Required."""
-    item_id: Required[str]
-    """The ID of the user message item that will be created when speech stops. Required."""
-
-
-class VoiceAgentServerEventInputAudioBufferSpeechStopped(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``input_audio_buffer.speech_stopped`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``input_audio_buffer.speech_stopped``. Required.
-     INPUT_AUDIO_BUFFER_SPEECH_STOPPED.
-    :vartype type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED]
-    :ivar audio_end_ms: Milliseconds since the session started when speech stopped. This will
-     correspond to the end of audio sent to the model, and thus includes the
-     ``min_silence_duration_ms`` configured in the Session. Required.
-    :vartype audio_end_ms: int
-    :ivar item_id: The ID of the user message item that will be created. Required.
-    :vartype item_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED]]
-    """The event type, must be ``input_audio_buffer.speech_stopped``. Required.
-     INPUT_AUDIO_BUFFER_SPEECH_STOPPED."""
-    audio_end_ms: Required[int]
-    """Milliseconds since the session started when speech stopped. This will correspond to the end of
-     audio sent to the model, and thus includes the ``min_silence_duration_ms`` configured in the
-     Session. Required."""
-    item_id: Required[str]
-    """The ID of the user message item that will be created. Required."""
-
-
-class VoiceAgentServerEventInputAudioBufferTimeoutTriggered(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``input_audio_buffer.timeout_triggered`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``input_audio_buffer.timeout_triggered``. Required.
-     INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED.
-    :vartype type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED]
-    :ivar audio_start_ms: Millisecond offset of audio written to the input audio buffer that was
-     after the playback time of the last model response. Required.
-    :vartype audio_start_ms: int
-    :ivar audio_end_ms: Millisecond offset of audio written to the input audio buffer at the time
-     the timeout was triggered. Required.
-    :vartype audio_end_ms: int
-    :ivar item_id: The ID of the item associated with this segment. Required.
-    :vartype item_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED]]
-    """The event type, must be ``input_audio_buffer.timeout_triggered``. Required.
-     INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED."""
-    audio_start_ms: Required[int]
-    """Millisecond offset of audio written to the input audio buffer that was after the playback time
-     of the last model response. Required."""
-    audio_end_ms: Required[int]
-    """Millisecond offset of audio written to the input audio buffer at the time the timeout was
-     triggered. Required."""
-    item_id: Required[str]
-    """The ID of the item associated with this segment. Required."""
-
-
-class VoiceAgentServerEventMcpListToolsCompleted(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``mcp_list_tools.completed`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``mcp_list_tools.completed``. Required.
-     MCP_LIST_TOOLS_COMPLETED.
-    :vartype type: Literal[RealtimeServerEventType.MCP_LIST_TOOLS_COMPLETED]
-    :ivar item_id: The ID of the MCP list tools item. Required.
-    :vartype item_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.MCP_LIST_TOOLS_COMPLETED]]
-    """The event type, must be ``mcp_list_tools.completed``. Required. MCP_LIST_TOOLS_COMPLETED."""
-    item_id: Required[str]
-    """The ID of the MCP list tools item. Required."""
-
-
-class VoiceAgentServerEventMcpListToolsFailed(TypedDict, total=False):
-    """The ``mcp_list_tools.failed`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``mcp_list_tools.failed``. Required. MCP_LIST_TOOLS_FAILED.
-    :vartype type: Literal[RealtimeServerEventType.MCP_LIST_TOOLS_FAILED]
-    :ivar item_id: The ID of the MCP list tools item. Required.
-    :vartype item_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.MCP_LIST_TOOLS_FAILED]]
-    """The event type, must be ``mcp_list_tools.failed``. Required. MCP_LIST_TOOLS_FAILED."""
-    item_id: Required[str]
-    """The ID of the MCP list tools item. Required."""
-
-
-class VoiceAgentServerEventMcpListToolsInProgress(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``mcp_list_tools.in_progress`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``mcp_list_tools.in_progress``. Required.
-     MCP_LIST_TOOLS_IN_PROGRESS.
-    :vartype type: Literal[RealtimeServerEventType.MCP_LIST_TOOLS_IN_PROGRESS]
-    :ivar item_id: The ID of the MCP list tools item. Required.
-    :vartype item_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.MCP_LIST_TOOLS_IN_PROGRESS]]
-    """The event type, must be ``mcp_list_tools.in_progress``. Required. MCP_LIST_TOOLS_IN_PROGRESS."""
-    item_id: Required[str]
-    """The ID of the MCP list tools item. Required."""
-
-
-class VoiceAgentServerEventOutputAudioBufferCleared(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``output_audio_buffer.cleared`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``output_audio_buffer.cleared``. Required.
-     OUTPUT_AUDIO_BUFFER_CLEARED.
-    :vartype type: Literal[RealtimeServerEventType.OUTPUT_AUDIO_BUFFER_CLEARED]
-    :ivar response_id: The unique ID of the response that produced the audio. Required.
-    :vartype response_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.OUTPUT_AUDIO_BUFFER_CLEARED]]
-    """The event type, must be ``output_audio_buffer.cleared``. Required. OUTPUT_AUDIO_BUFFER_CLEARED."""
-    response_id: Required[str]
-    """The unique ID of the response that produced the audio. Required."""
-
-
-class VoiceAgentServerEventRateLimitsUpdated(TypedDict, total=False):
-    """The ``rate_limits.updated`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``rate_limits.updated``. Required. RATE_LIMITS_UPDATED.
-    :vartype type: Literal[RealtimeServerEventType.RATE_LIMITS_UPDATED]
-    :ivar rate_limits: List of rate limit information. Required.
-    :vartype rate_limits: list["RealtimeServerEventRateLimitsUpdatedRateLimits"]
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RATE_LIMITS_UPDATED]]
-    """The event type, must be ``rate_limits.updated``. Required. RATE_LIMITS_UPDATED."""
-    rate_limits: Required[list["RealtimeServerEventRateLimitsUpdatedRateLimits"]]
-    """List of rate limit information. Required."""
-
-
-class VoiceAgentServerEventResponseAnimationBlendshapesDelta(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.animation_blendshapes.delta`` server event.
-
-    :ivar type: Required. Default value is "response.animation_blendshapes.delta".
-    :vartype type: Literal["response.animation_blendshapes.delta"]
-    :ivar event_id: Required.
-    :vartype event_id: str
-    :ivar response_id: Required.
-    :vartype response_id: str
-    :ivar item_id: Required.
-    :vartype item_id: str
-    :ivar output_index: Required.
-    :vartype output_index: int
-    :ivar content_index: Required.
-    :vartype content_index: int
-    :ivar frames: Animation frames as numeric blendshape weights. Required.
-    :vartype frames: list[list[float]]
-    :ivar frame_index: The index of the first frame in this delta. Required.
-    :vartype frame_index: int
-    """
-
-    type: Required[Literal["response.animation_blendshapes.delta"]]
-    """Required. Default value is \"response.animation_blendshapes.delta\"."""
-    event_id: Required[str]
-    """Required."""
-    response_id: Required[str]
-    """Required."""
-    item_id: Required[str]
-    """Required."""
-    output_index: Required[int]
-    """Required."""
-    content_index: Required[int]
-    """Required."""
-    frames: Required[list[list[float]]]
-    """Animation frames as numeric blendshape weights. Required."""
-    frame_index: Required[int]
-    """The index of the first frame in this delta. Required."""
-
-
-class VoiceAgentServerEventResponseAnimationBlendshapesDone(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.animation_blendshapes.done`` server event.
-
-    :ivar type: Required. Default value is "response.animation_blendshapes.done".
-    :vartype type: Literal["response.animation_blendshapes.done"]
-    :ivar event_id: Required.
-    :vartype event_id: str
-    :ivar response_id: Required.
-    :vartype response_id: str
-    :ivar item_id: Required.
-    :vartype item_id: str
-    :ivar output_index: Required.
-    :vartype output_index: int
-    """
-
-    type: Required[Literal["response.animation_blendshapes.done"]]
-    """Required. Default value is \"response.animation_blendshapes.done\"."""
-    event_id: Required[str]
-    """Required."""
-    response_id: Required[str]
-    """Required."""
-    item_id: Required[str]
-    """Required."""
-    output_index: Required[int]
-    """Required."""
-
-
-class VoiceAgentServerEventResponseAnimationVisemeDelta(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.animation_viseme.delta`` server event.
-
-    :ivar type: Required. Default value is "response.animation_viseme.delta".
-    :vartype type: Literal["response.animation_viseme.delta"]
-    :ivar event_id: Required.
-    :vartype event_id: str
-    :ivar response_id: Required.
-    :vartype response_id: str
-    :ivar item_id: Required.
-    :vartype item_id: str
-    :ivar output_index: Required.
-    :vartype output_index: int
-    :ivar content_index: Required.
-    :vartype content_index: int
-    :ivar audio_offset_ms: Required.
-    :vartype audio_offset_ms: str
-    :ivar viseme_id: Required.
-    :vartype viseme_id: int
-    """
-
-    type: Required[Literal["response.animation_viseme.delta"]]
-    """Required. Default value is \"response.animation_viseme.delta\"."""
-    event_id: Required[str]
-    """Required."""
-    response_id: Required[str]
-    """Required."""
-    item_id: Required[str]
-    """Required."""
-    output_index: Required[int]
-    """Required."""
-    content_index: Required[int]
-    """Required."""
-    audio_offset_ms: Required[str]
-    """Required."""
-    viseme_id: Required[int]
-    """Required."""
-
-
-class VoiceAgentServerEventResponseAnimationVisemeDone(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.animation_viseme.done`` server event.
-
-    :ivar type: Required. Default value is "response.animation_viseme.done".
-    :vartype type: Literal["response.animation_viseme.done"]
-    :ivar event_id: Required.
-    :vartype event_id: str
-    :ivar response_id: Required.
-    :vartype response_id: str
-    :ivar item_id: Required.
-    :vartype item_id: str
-    :ivar output_index: Required.
-    :vartype output_index: int
-    :ivar content_index: Required.
-    :vartype content_index: int
-    """
-
-    type: Required[Literal["response.animation_viseme.done"]]
-    """Required. Default value is \"response.animation_viseme.done\"."""
-    event_id: Required[str]
-    """Required."""
-    response_id: Required[str]
-    """Required."""
-    item_id: Required[str]
-    """Required."""
-    output_index: Required[int]
-    """Required."""
-    content_index: Required[int]
-    """Required."""
-
-
-class VoiceAgentServerEventResponseAudioDelta(TypedDict, total=False):
-    """The ``response.output_audio.delta`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.output_audio.delta``. Required.
-     RESPONSE_OUTPUT_AUDIO_DELTA.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DELTA]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the item. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar content_index: The index of the content part in the item's content array. Required.
-    :vartype content_index: int
-    :ivar delta: Base64-encoded audio data delta. Required.
-    :vartype delta: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DELTA]]
-    """The event type, must be ``response.output_audio.delta``. Required. RESPONSE_OUTPUT_AUDIO_DELTA."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the item. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    content_index: Required[int]
-    """The index of the content part in the item's content array. Required."""
-    delta: Required[str]
-    """Base64-encoded audio data delta. Required."""
-
-
-class VoiceAgentServerEventResponseAudioDone(TypedDict, total=False):
-    """The ``response.output_audio.done`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.output_audio.done``. Required.
-     RESPONSE_OUTPUT_AUDIO_DONE.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DONE]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the item. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar content_index: The index of the content part in the item's content array. Required.
-    :vartype content_index: int
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DONE]]
-    """The event type, must be ``response.output_audio.done``. Required. RESPONSE_OUTPUT_AUDIO_DONE."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the item. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    content_index: Required[int]
-    """The index of the content part in the item's content array. Required."""
-
-
-class VoiceAgentServerEventResponseAudioTimestampDelta(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.audio_timestamp.delta`` server event.
-
-    :ivar type: Required. Default value is "response.audio_timestamp.delta".
-    :vartype type: Literal["response.audio_timestamp.delta"]
-    :ivar event_id: Required.
-    :vartype event_id: str
-    :ivar response_id: Required.
-    :vartype response_id: str
-    :ivar item_id: Required.
-    :vartype item_id: str
-    :ivar output_index: Required.
-    :vartype output_index: int
-    :ivar content_index: Required.
-    :vartype content_index: int
-    :ivar audio_offset_ms: Required.
-    :vartype audio_offset_ms: str
-    :ivar audio_duration_ms: Required.
-    :vartype audio_duration_ms: str
-    :ivar text: Required.
-    :vartype text: str
-    :ivar timestamp_type: Required. Default value is "word".
-    :vartype timestamp_type: Literal["word"]
-    """
-
-    type: Required[Literal["response.audio_timestamp.delta"]]
-    """Required. Default value is \"response.audio_timestamp.delta\"."""
-    event_id: Required[str]
-    """Required."""
-    response_id: Required[str]
-    """Required."""
-    item_id: Required[str]
-    """Required."""
-    output_index: Required[int]
-    """Required."""
-    content_index: Required[int]
-    """Required."""
-    audio_offset_ms: Required[str]
-    """Required."""
-    audio_duration_ms: Required[str]
-    """Required."""
-    text: Required[str]
-    """Required."""
-    timestamp_type: Required[Literal["word"]]
-    """Required. Default value is \"word\"."""
-
-
-class VoiceAgentServerEventResponseAudioTimestampDone(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.audio_timestamp.done`` server event.
-
-    :ivar type: Required. Default value is "response.audio_timestamp.done".
-    :vartype type: Literal["response.audio_timestamp.done"]
-    :ivar event_id: Required.
-    :vartype event_id: str
-    :ivar response_id: Required.
-    :vartype response_id: str
-    :ivar item_id: Required.
-    :vartype item_id: str
-    :ivar output_index: Required.
-    :vartype output_index: int
-    :ivar content_index: Required.
-    :vartype content_index: int
-    """
-
-    type: Required[Literal["response.audio_timestamp.done"]]
-    """Required. Default value is \"response.audio_timestamp.done\"."""
-    event_id: Required[str]
-    """Required."""
-    response_id: Required[str]
-    """Required."""
-    item_id: Required[str]
-    """Required."""
-    output_index: Required[int]
-    """Required."""
-    content_index: Required[int]
-    """Required."""
-
-
-class VoiceAgentServerEventResponseAudioTranscriptDelta(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.output_audio_transcript.delta`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.output_audio_transcript.delta``. Required.
-     RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the item. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar content_index: The index of the content part in the item's content array. Required.
-    :vartype content_index: int
-    :ivar delta: The transcript delta. Required.
-    :vartype delta: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA]]
-    """The event type, must be ``response.output_audio_transcript.delta``. Required.
-     RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the item. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    content_index: Required[int]
-    """The index of the content part in the item's content array. Required."""
-    delta: Required[str]
-    """The transcript delta. Required."""
-
-
-class VoiceAgentServerEventResponseAudioTranscriptDone(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.output_audio_transcript.done`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.output_audio_transcript.done``. Required.
-     RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the item. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar content_index: The index of the content part in the item's content array. Required.
-    :vartype content_index: int
-    :ivar transcript: The final transcript of the audio. Required.
-    :vartype transcript: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE]]
-    """The event type, must be ``response.output_audio_transcript.done``. Required.
-     RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the item. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    content_index: Required[int]
-    """The index of the content part in the item's content array. Required."""
-    transcript: Required[str]
-    """The final transcript of the audio. Required."""
-
-
-class VoiceAgentServerEventResponseContentPartDone(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.content_part.done`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.content_part.done``. Required.
-     RESPONSE_CONTENT_PART_DONE.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_DONE]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the item. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar content_index: The index of the content part in the item's content array. Required.
-    :vartype content_index: int
-    :ivar part: The content part that finished streaming. Required.
-    :vartype part: "VoiceAgentResponseEventContentPart"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_DONE]]
-    """The event type, must be ``response.content_part.done``. Required. RESPONSE_CONTENT_PART_DONE."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the item. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    content_index: Required[int]
-    """The index of the content part in the item's content array. Required."""
-    part: Required["VoiceAgentResponseEventContentPart"]
-    """The content part that finished streaming. Required."""
-
-
-class VoiceAgentServerEventResponseCreated(TypedDict, total=False):
-    """The ``response.created`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.created``. Required. RESPONSE_CREATED.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_CREATED]
-    :ivar response: The created voice-agent response. Required.
-    :vartype response: "VoiceAgentRealtimeResponse"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_CREATED]]
-    """The event type, must be ``response.created``. Required. RESPONSE_CREATED."""
-    response: Required["VoiceAgentRealtimeResponse"]
-    """The created voice-agent response. Required."""
-
-
-class VoiceAgentServerEventResponseDone(TypedDict, total=False):
-    """The ``response.done`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.done``. Required. RESPONSE_DONE.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_DONE]
-    :ivar response: The completed voice-agent response. Required.
-    :vartype response: "VoiceAgentRealtimeResponse"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_DONE]]
-    """The event type, must be ``response.done``. Required. RESPONSE_DONE."""
-    response: Required["VoiceAgentRealtimeResponse"]
-    """The completed voice-agent response. Required."""
-
-
-class VoiceAgentServerEventResponseFunctionCallArgumentsDelta(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.function_call_arguments.delta`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.function_call_arguments.delta``. Required.
-     RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the function call item. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar call_id: The ID of the function call. Required.
-    :vartype call_id: str
-    :ivar delta: The arguments delta as a JSON string. Required.
-    :vartype delta: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA]]
-    """The event type, must be ``response.function_call_arguments.delta``. Required.
-     RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the function call item. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    call_id: Required[str]
-    """The ID of the function call. Required."""
-    delta: Required[str]
-    """The arguments delta as a JSON string. Required."""
-
-
-class VoiceAgentServerEventResponseFunctionCallArgumentsDone(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.function_call_arguments.done`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.function_call_arguments.done``. Required.
-     RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the function call item. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar call_id: The ID of the function call. Required.
-    :vartype call_id: str
-    :ivar name: The name of the function that was called. Required.
-    :vartype name: str
-    :ivar arguments: The final arguments as a JSON string. Required.
-    :vartype arguments: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE]]
-    """The event type, must be ``response.function_call_arguments.done``. Required.
-     RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the function call item. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    call_id: Required[str]
-    """The ID of the function call. Required."""
-    name: Required[str]
-    """The name of the function that was called. Required."""
-    arguments: Required[str]
-    """The final arguments as a JSON string. Required."""
-
-
-class VoiceAgentServerEventResponseMcpCallArgumentsDelta(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.mcp_call_arguments.delta`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.mcp_call_arguments.delta``. Required.
-     RESPONSE_MCP_CALL_ARGUMENTS_DELTA.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the MCP tool call item. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar delta: The JSON-encoded arguments delta. Required.
-    :vartype delta: str
-    :ivar obfuscation:
-    :vartype obfuscation: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA]]
-    """The event type, must be ``response.mcp_call_arguments.delta``. Required.
-     RESPONSE_MCP_CALL_ARGUMENTS_DELTA."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the MCP tool call item. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    delta: Required[str]
-    """The JSON-encoded arguments delta. Required."""
-    obfuscation: Optional[str]
-
-
-class VoiceAgentServerEventResponseMcpCallArgumentsDone(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.mcp_call_arguments.done`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.mcp_call_arguments.done``. Required.
-     RESPONSE_MCP_CALL_ARGUMENTS_DONE.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the MCP tool call item. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar arguments: The final JSON-encoded arguments string. Required.
-    :vartype arguments: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE]]
-    """The event type, must be ``response.mcp_call_arguments.done``. Required.
-     RESPONSE_MCP_CALL_ARGUMENTS_DONE."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the MCP tool call item. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    arguments: Required[str]
-    """The final JSON-encoded arguments string. Required."""
-
-
-class VoiceAgentServerEventResponseMcpCallCompleted(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.mcp_call.completed`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.mcp_call.completed``. Required.
-     RESPONSE_MCP_CALL_COMPLETED.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_COMPLETED]
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar item_id: The ID of the MCP tool call item. Required.
-    :vartype item_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_COMPLETED]]
-    """The event type, must be ``response.mcp_call.completed``. Required. RESPONSE_MCP_CALL_COMPLETED."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    item_id: Required[str]
-    """The ID of the MCP tool call item. Required."""
-
-
-class VoiceAgentServerEventResponseMcpCallFailed(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.mcp_call.failed`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.mcp_call.failed``. Required.
-     RESPONSE_MCP_CALL_FAILED.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_FAILED]
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar item_id: The ID of the MCP tool call item. Required.
-    :vartype item_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_FAILED]]
-    """The event type, must be ``response.mcp_call.failed``. Required. RESPONSE_MCP_CALL_FAILED."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    item_id: Required[str]
-    """The ID of the MCP tool call item. Required."""
-
-
-class VoiceAgentServerEventResponseMcpCallInProgress(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.mcp_call.in_progress`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.mcp_call.in_progress``. Required.
-     RESPONSE_MCP_CALL_IN_PROGRESS.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_IN_PROGRESS]
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar item_id: The ID of the MCP tool call item. Required.
-    :vartype item_id: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_IN_PROGRESS]]
-    """The event type, must be ``response.mcp_call.in_progress``. Required.
-     RESPONSE_MCP_CALL_IN_PROGRESS."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    item_id: Required[str]
-    """The ID of the MCP tool call item. Required."""
-
-
-class VoiceAgentServerEventResponseOutputItemAdded(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.output_item.added`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.output_item.added``. Required.
-     RESPONSE_OUTPUT_ITEM_ADDED.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_ADDED]
-    :ivar response_id: The ID of the Response to which the item belongs. Required.
-    :vartype response_id: str
-    :ivar output_index: The index of the output item in the Response. Required.
-    :vartype output_index: int
-    :ivar item: The output item that was added. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceConversationItem"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_ADDED]]
-    """The event type, must be ``response.output_item.added``. Required. RESPONSE_OUTPUT_ITEM_ADDED."""
-    response_id: Required[str]
-    """The ID of the Response to which the item belongs. Required."""
-    output_index: Required[int]
-    """The index of the output item in the Response. Required."""
-    item: Required["_unions.VoiceConversationItem"]
-    """The output item that was added. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem"""
-
-
-class VoiceAgentServerEventResponseOutputItemDone(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``response.output_item.done`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.output_item.done``. Required.
-     RESPONSE_OUTPUT_ITEM_DONE.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_DONE]
-    :ivar response_id: The ID of the Response to which the item belongs. Required.
-    :vartype response_id: str
-    :ivar output_index: The index of the output item in the Response. Required.
-    :vartype output_index: int
-    :ivar item: The output item that finished streaming. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem
-    :vartype item: "_unions.VoiceConversationItem"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_DONE]]
-    """The event type, must be ``response.output_item.done``. Required. RESPONSE_OUTPUT_ITEM_DONE."""
-    response_id: Required[str]
-    """The ID of the Response to which the item belongs. Required."""
-    output_index: Required[int]
-    """The index of the output item in the Response. Required."""
-    item: Required["_unions.VoiceConversationItem"]
-    """The output item that finished streaming. Required. Is one of the following types:
-     VoiceSystemMessageItem, VoiceUserMessageItem, VoiceAssistantMessageItem, VoiceFunctionCallItem,
-     VoiceFunctionCallOutputItem, VoiceMcpListToolsItem, VoiceMcpCallItem,
-     VoiceMcpApprovalRequestItem, VoiceMcpApprovalResponseItem"""
-
-
-class VoiceAgentServerEventResponseTextDelta(TypedDict, total=False):
-    """The ``response.output_text.delta`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.output_text.delta``. Required.
-     RESPONSE_OUTPUT_TEXT_DELTA.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DELTA]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the item. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar content_index: The index of the content part in the item's content array. Required.
-    :vartype content_index: int
-    :ivar delta: The text delta. Required.
-    :vartype delta: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DELTA]]
-    """The event type, must be ``response.output_text.delta``. Required. RESPONSE_OUTPUT_TEXT_DELTA."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the item. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    content_index: Required[int]
-    """The index of the content part in the item's content array. Required."""
-    delta: Required[str]
-    """The text delta. Required."""
-
-
-class VoiceAgentServerEventResponseTextDone(TypedDict, total=False):
-    """The ``response.output_text.done`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``response.output_text.done``. Required.
-     RESPONSE_OUTPUT_TEXT_DONE.
-    :vartype type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DONE]
-    :ivar response_id: The ID of the response. Required.
-    :vartype response_id: str
-    :ivar item_id: The ID of the item. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output item in the response. Required.
-    :vartype output_index: int
-    :ivar content_index: The index of the content part in the item's content array. Required.
-    :vartype content_index: int
-    :ivar text: The final text content. Required.
-    :vartype text: str
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DONE]]
-    """The event type, must be ``response.output_text.done``. Required. RESPONSE_OUTPUT_TEXT_DONE."""
-    response_id: Required[str]
-    """The ID of the response. Required."""
-    item_id: Required[str]
-    """The ID of the item. Required."""
-    output_index: Required[int]
-    """The index of the output item in the response. Required."""
-    content_index: Required[int]
-    """The index of the content part in the item's content array. Required."""
-    text: Required[str]
-    """The final text content. Required."""
-
-
-class VoiceAgentServerEventResponseVideoDelta(TypedDict, total=False):
-    """The ``response.video.delta`` server event.
-
-    :ivar type: Required. Default value is "response.video.delta".
-    :vartype type: Literal["response.video.delta"]
-    :ivar event_id: Required.
-    :vartype event_id: str
-    :ivar output_index: Required.
-    :vartype output_index: int
-    :ivar codec: Required.
-    :vartype codec: str
-    :ivar delta: The base64-encoded video frame data. Required.
-    :vartype delta: str
-    """
-
-    type: Required[Literal["response.video.delta"]]
-    """Required. Default value is \"response.video.delta\"."""
-    event_id: Required[str]
-    """Required."""
-    output_index: Required[int]
-    """Required."""
-    codec: Required[str]
-    """Required."""
-    delta: Required[str]
-    """The base64-encoded video frame data. Required."""
-
-
-class VoiceAgentServerEventSessionAvatarConnecting(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``session.avatar.connecting`` server event.
-
-    :ivar type: Required. Default value is "session.avatar.connecting".
-    :vartype type: Literal["session.avatar.connecting"]
-    :ivar event_id: Required.
-    :vartype event_id: str
-    :ivar server_sdp: The server's SDP answer for avatar media negotiation. Required.
-    :vartype server_sdp: str
-    """
-
-    type: Required[Literal["session.avatar.connecting"]]
-    """Required. Default value is \"session.avatar.connecting\"."""
-    event_id: Required[str]
-    """Required."""
-    server_sdp: Required[str]
-    """The server's SDP answer for avatar media negotiation. Required."""
-
-
-class VoiceAgentServerEventSessionAvatarSwitchToIdle(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``session.avatar.switch_to_idle`` server event.
-
-    :ivar type: Required. Default value is "session.avatar.switch_to_idle".
-    :vartype type: Literal["session.avatar.switch_to_idle"]
-    :ivar event_id: Required.
-    :vartype event_id: str
-    :ivar turn_id:
-    :vartype turn_id: str
-    """
-
-    type: Required[Literal["session.avatar.switch_to_idle"]]
-    """Required. Default value is \"session.avatar.switch_to_idle\"."""
-    event_id: Required[str]
-    """Required."""
-    turn_id: str
-
-
-class VoiceAgentServerEventSessionAvatarSwitchToSpeaking(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The ``session.avatar.switch_to_speaking`` server event.
-
-    :ivar type: Required. Default value is "session.avatar.switch_to_speaking".
-    :vartype type: Literal["session.avatar.switch_to_speaking"]
-    :ivar event_id: Required.
-    :vartype event_id: str
-    :ivar turn_id:
-    :vartype turn_id: str
-    """
-
-    type: Required[Literal["session.avatar.switch_to_speaking"]]
-    """Required. Default value is \"session.avatar.switch_to_speaking\"."""
-    event_id: Required[str]
-    """Required."""
-    turn_id: str
-
-
-class VoiceAgentServerEventSessionCreated(TypedDict, total=False):
-    """The ``session.created`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``session.created``. Required. SESSION_CREATED.
-    :vartype type: Literal[RealtimeServerEventType.SESSION_CREATED]
-    :ivar conversation_id: The id of the persisted conversation. Only present when conversation
-     persistence is enabled for the session.
-    :vartype conversation_id: str
-    :ivar session: The initial effective voice-agent session configuration. Required.
-    :vartype session: "VoiceAgentSessionResponseConfig"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.SESSION_CREATED]]
-    """The event type, must be ``session.created``. Required. SESSION_CREATED."""
-    conversation_id: str
-    """The id of the persisted conversation. Only present when conversation persistence is enabled for
-     the session."""
-    session: Required["VoiceAgentSessionResponseConfig"]
-    """The initial effective voice-agent session configuration. Required."""
-
-
-class VoiceAgentServerEventSessionUpdated(TypedDict, total=False):
-    """The ``session.updated`` server event.
-
-    :ivar event_id: The unique ID of the server event. Required.
-    :vartype event_id: str
-    :ivar type: The event type, must be ``session.updated``. Required. SESSION_UPDATED.
-    :vartype type: Literal[RealtimeServerEventType.SESSION_UPDATED]
-    :ivar session: The effective voice-agent session configuration after the update. Required.
-    :vartype session: "VoiceAgentSessionResponseConfig"
-    """
-
-    event_id: Required[str]
-    """The unique ID of the server event. Required."""
-    type: Required[Literal[RealtimeServerEventType.SESSION_UPDATED]]
-    """The event type, must be ``session.updated``. Required. SESSION_UPDATED."""
-    session: Required["VoiceAgentSessionResponseConfig"]
-    """The effective voice-agent session configuration after the update. Required."""
-
-
-class VoiceAgentServerEventWarning(TypedDict, total=False):
-    """The ``warning`` server event.
-
-    :ivar type: Required. Default value is "warning".
-    :vartype type: Literal["warning"]
-    :ivar event_id: Required.
-    :vartype event_id: str
-    :ivar warning: Required.
-    :vartype warning: "VoiceAgentServerEventWarningDetails"
-    """
-
-    type: Required[Literal["warning"]]
-    """Required. Default value is \"warning\"."""
-    event_id: Required[str]
-    """Required."""
-    warning: Required["VoiceAgentServerEventWarningDetails"]
-    """Required."""
-
-
-class VoiceAgentServerEventWarningDetails(TypedDict, total=False):
-    """Details of a non-fatal warning.
-
-    :ivar message: Required.
-    :vartype message: str
-    :ivar code:
-    :vartype code: str
-    :ivar param:
-    :vartype param: str
-    """
-
-    message: Required[str]
-    """Required."""
-    code: str
-    param: str
-
-
-class VoiceAvatarConfig(TypedDict, total=False):
-    """Avatar configuration for a voice agent. These values are session defaults and may be overridden
-    when connecting.
-
-    :ivar type: The avatar type. Required. Known values are: "video_avatar" and "photo_avatar".
-    :vartype type: Union[str, "VoiceAvatarType"]
-    :ivar character: The avatar character identifier, e.g. 'lisa'. Required.
-    :vartype character: str
-    :ivar style: The avatar style, e.g. 'casual-sitting'.
-    :vartype style: str
-    :ivar customized: Whether the avatar is a customer-customized avatar. Defaults to false.
-    :vartype customized: bool
-    :ivar output_protocol: The transport used to deliver the avatar video stream. Known values are:
-     "webrtc", "websocket", and "websocket-binary".
-    :vartype output_protocol: Union[str, "VoiceAvatarOutputProtocol"]
-    :ivar model: The avatar model identifier.
-    :vartype model: str
-    :ivar video: Avatar video encoder and presentation settings.
-    :vartype video: "VoiceAgentAvatarVideoParams"
-    :ivar scene: Avatar placement and motion settings.
-    :vartype scene: "VoiceAgentAvatarScene"
-    :ivar output_audit_audio: Whether audit audio is emitted with avatar output. Defaults to false.
-    :vartype output_audit_audio: bool
-    """
-
-    type: Required[Union[str, "VoiceAvatarType"]]
-    """The avatar type. Required. Known values are: \"video_avatar\" and \"photo_avatar\"."""
-    character: Required[str]
-    """The avatar character identifier, e.g. 'lisa'. Required."""
-    style: str
-    """The avatar style, e.g. 'casual-sitting'."""
-    customized: bool
-    """Whether the avatar is a customer-customized avatar. Defaults to false."""
-    output_protocol: Union[str, "VoiceAvatarOutputProtocol"]
-    """The transport used to deliver the avatar video stream. Known values are: \"webrtc\",
-     \"websocket\", and \"websocket-binary\"."""
-    model: str
-    """The avatar model identifier."""
-    video: "VoiceAgentAvatarVideoParams"
-    """Avatar video encoder and presentation settings."""
-    scene: "VoiceAgentAvatarScene"
-    """Avatar placement and motion settings."""
-    output_audit_audio: bool
-    """Whether audit audio is emitted with avatar output. Defaults to false."""
-
-
-class VoiceAgentSessionAvatarConfig(VoiceAvatarConfig):
-    """Avatar settings accepted by the stable voice-agent WebSocket contract.
-
-    :ivar type: The avatar type. Required. Known values are: "video_avatar" and "photo_avatar".
-    :vartype type: Union[str, "VoiceAvatarType"]
-    :ivar character: The avatar character identifier, e.g. 'lisa'. Required.
-    :vartype character: str
-    :ivar style: The avatar style, e.g. 'casual-sitting'.
-    :vartype style: str
-    :ivar customized: Whether the avatar is a customer-customized avatar. Defaults to false.
-    :vartype customized: bool
-    :ivar output_protocol: The transport used to deliver the avatar video stream. Known values are:
-     "webrtc", "websocket", and "websocket-binary".
-    :vartype output_protocol: Union[str, "VoiceAvatarOutputProtocol"]
-    :ivar model: The avatar model identifier.
-    :vartype model: str
-    :ivar video: Avatar video encoder and presentation settings.
-    :vartype video: "VoiceAgentAvatarVideoParams"
-    :ivar scene: Avatar placement and motion settings.
-    :vartype scene: "VoiceAgentAvatarScene"
-    :ivar output_audit_audio: Whether audit audio is emitted with avatar output. Defaults to false.
-    :vartype output_audit_audio: bool
-    :ivar ice_servers:
-    :vartype ice_servers: list["VoiceAgentAvatarIceServer"]
-    """
-
-    ice_servers: Optional[list["VoiceAgentAvatarIceServer"]]
-
-
-class VoiceAgentSessionResponseConfig(TypedDict, total=False):
-    """The effective stable realtime session settings returned by the voice-agent service.
-
-    :ivar type: The session type. Always ``realtime``. Required. Default value is "realtime".
-    :vartype type: Literal["realtime"]
-    :ivar instructions: Instructions applied throughout the session.
-    :vartype instructions: str
-    :ivar temperature: The sampling temperature for compatible cascaded pipelines.
-    :vartype temperature: float
-    :ivar max_output_tokens: The maximum output-token count for one response. Is either a int type
-     or a Literal["inf"] type.
-    :vartype max_output_tokens: "_unions.VoiceAgentMaxOutputTokens"
-    :ivar output_modalities: The output modalities enabled for the session.
-    :vartype output_modalities: list[Union[str, "VoiceOutputModality"]]
-    :ivar audio: The input- and output-audio settings for the session.
-    :vartype audio: "VoiceAudioConfig"
-    :ivar avatar: The avatar settings for the session.
-    :vartype avatar: "VoiceAgentSessionAvatarConfig"
-    :ivar animation: Animation settings for the session.
-    :vartype animation: "VoiceAgentAnimationConfig"
-    :ivar tools: Tools available to the session.
-    :vartype tools: list["VoiceAgentTool"]
-    :ivar tool_choice: Tool-selection behavior for the session. Is one of the following types:
-     Literal["none"], Literal["auto"], Literal["required"], ToolChoiceFunction, ToolChoiceMCP
-    :vartype tool_choice: "_unions.VoiceAgentToolChoice"
-    :ivar reasoning: Reasoning settings for compatible realtime models.
-    :vartype reasoning: "RealtimeReasoning"
-    :ivar parallel_tool_calls: Whether the model may call multiple tools in parallel.
-    :vartype parallel_tool_calls: bool
-    :ivar include: Additional fields to include in service outputs.
-    :vartype include: list[Union[str, "VoiceAgentSessionIncludeOption"]]
-    :ivar metadata: Up to 16 string key-value pairs attached to the session.
-    :vartype metadata: dict[str, str]
-    :ivar interim_response: Interim-response settings for latency and tool execution. Is either a
-     VoiceAgentStaticInterimResponseConfig type or a VoiceAgentLlmInterimResponseConfig type.
-    :vartype interim_response: "_unions.VoiceAgentInterimResponse"
-    :ivar greeting: A proactive assistant greeting started after session configuration.
-    :vartype greeting: "VoiceGreetingConfig"
-    :ivar object: The object type. Always ``realtime.session``. Required. Default value is
-     "realtime.session".
-    :vartype object: Literal["realtime.session"]
-    :ivar id: The session identifier. Required.
-    :vartype id: str
-    :ivar model: The selected model. Required.
-    :vartype model: str
-    :ivar expires_at: The session expiration time as a Unix timestamp in seconds.
-    :vartype expires_at: int
-    """
-
-    type: Required[Literal["realtime"]]
-    """The session type. Always ``realtime``. Required. Default value is \"realtime\"."""
-    instructions: str
-    """Instructions applied throughout the session."""
-    temperature: float
-    """The sampling temperature for compatible cascaded pipelines."""
-    max_output_tokens: "_unions.VoiceAgentMaxOutputTokens"
-    """The maximum output-token count for one response. Is either a int type or a Literal[\"inf\"]
-     type."""
-    output_modalities: list[Union[str, "VoiceOutputModality"]]
-    """The output modalities enabled for the session."""
-    audio: "VoiceAudioConfig"
-    """The input- and output-audio settings for the session."""
-    avatar: "VoiceAgentSessionAvatarConfig"
-    """The avatar settings for the session."""
-    animation: "VoiceAgentAnimationConfig"
-    """Animation settings for the session."""
-    tools: list["VoiceAgentTool"]
-    """Tools available to the session."""
-    tool_choice: "_unions.VoiceAgentToolChoice"
-    """Tool-selection behavior for the session. Is one of the following types: Literal[\"none\"],
-     Literal[\"auto\"], Literal[\"required\"], ToolChoiceFunction, ToolChoiceMCP"""
-    reasoning: "RealtimeReasoning"
-    """Reasoning settings for compatible realtime models."""
-    parallel_tool_calls: bool
-    """Whether the model may call multiple tools in parallel."""
-    include: list[Union[str, "VoiceAgentSessionIncludeOption"]]
-    """Additional fields to include in service outputs."""
-    metadata: dict[str, str]
-    """Up to 16 string key-value pairs attached to the session."""
-    interim_response: "_unions.VoiceAgentInterimResponse"
-    """Interim-response settings for latency and tool execution. Is either a
-     VoiceAgentStaticInterimResponseConfig type or a VoiceAgentLlmInterimResponseConfig type."""
-    greeting: "VoiceGreetingConfig"
-    """A proactive assistant greeting started after session configuration."""
-    object: Required[Literal["realtime.session"]]
-    """The object type. Always ``realtime.session``. Required. Default value is \"realtime.session\"."""
-    id: Required[str]
-    """The session identifier. Required."""
-    model: Required[str]
-    """The selected model. Required."""
-    expires_at: Optional[int]
-    """The session expiration time as a Unix timestamp in seconds."""
-
-
-class VoiceAgentSessionUpdateConfig(TypedDict, total=False):
-    """The stable realtime session settings accepted in a ``session.update`` client event.
-
-    :ivar type: The session type. Always ``realtime``. Required. Default value is "realtime".
-    :vartype type: Literal["realtime"]
-    :ivar instructions: Instructions applied throughout the session.
-    :vartype instructions: str
-    :ivar temperature: The sampling temperature for compatible cascaded pipelines.
-    :vartype temperature: float
-    :ivar max_output_tokens: The maximum output-token count for one response. Is either a int type
-     or a Literal["inf"] type.
-    :vartype max_output_tokens: "_unions.VoiceAgentMaxOutputTokens"
-    :ivar output_modalities: The output modalities enabled for the session.
-    :vartype output_modalities: list[Union[str, "VoiceOutputModality"]]
-    :ivar audio: The input- and output-audio settings for the session.
-    :vartype audio: "VoiceAudioConfig"
-    :ivar avatar: The avatar settings for the session.
-    :vartype avatar: "VoiceAgentSessionAvatarConfig"
-    :ivar animation: Animation settings for the session.
-    :vartype animation: "VoiceAgentAnimationConfig"
-    :ivar tools: Tools available to the session.
-    :vartype tools: list["VoiceAgentTool"]
-    :ivar tool_choice: Tool-selection behavior for the session. Is one of the following types:
-     Literal["none"], Literal["auto"], Literal["required"], ToolChoiceFunction, ToolChoiceMCP
-    :vartype tool_choice: "_unions.VoiceAgentToolChoice"
-    :ivar reasoning: Reasoning settings for compatible realtime models.
-    :vartype reasoning: "RealtimeReasoning"
-    :ivar parallel_tool_calls: Whether the model may call multiple tools in parallel.
-    :vartype parallel_tool_calls: bool
-    :ivar include: Additional fields to include in service outputs.
-    :vartype include: list[Union[str, "VoiceAgentSessionIncludeOption"]]
-    :ivar metadata: Up to 16 string key-value pairs attached to the session.
-    :vartype metadata: dict[str, str]
-    :ivar interim_response: Interim-response settings for latency and tool execution. Is either a
-     VoiceAgentStaticInterimResponseConfig type or a VoiceAgentLlmInterimResponseConfig type.
-    :vartype interim_response: "_unions.VoiceAgentInterimResponse"
-    :ivar greeting: A proactive assistant greeting started after session configuration.
-    :vartype greeting: "VoiceGreetingConfig"
-    """
-
-    type: Required[Literal["realtime"]]
-    """The session type. Always ``realtime``. Required. Default value is \"realtime\"."""
-    instructions: str
-    """Instructions applied throughout the session."""
-    temperature: float
-    """The sampling temperature for compatible cascaded pipelines."""
-    max_output_tokens: "_unions.VoiceAgentMaxOutputTokens"
-    """The maximum output-token count for one response. Is either a int type or a Literal[\"inf\"]
-     type."""
-    output_modalities: list[Union[str, "VoiceOutputModality"]]
-    """The output modalities enabled for the session."""
-    audio: "VoiceAudioConfig"
-    """The input- and output-audio settings for the session."""
-    avatar: "VoiceAgentSessionAvatarConfig"
-    """The avatar settings for the session."""
-    animation: "VoiceAgentAnimationConfig"
-    """Animation settings for the session."""
-    tools: list["VoiceAgentTool"]
-    """Tools available to the session."""
-    tool_choice: "_unions.VoiceAgentToolChoice"
-    """Tool-selection behavior for the session. Is one of the following types: Literal[\"none\"],
-     Literal[\"auto\"], Literal[\"required\"], ToolChoiceFunction, ToolChoiceMCP"""
-    reasoning: "RealtimeReasoning"
-    """Reasoning settings for compatible realtime models."""
-    parallel_tool_calls: bool
-    """Whether the model may call multiple tools in parallel."""
-    include: list[Union[str, "VoiceAgentSessionIncludeOption"]]
-    """Additional fields to include in service outputs."""
-    metadata: dict[str, str]
-    """Up to 16 string key-value pairs attached to the session."""
-    interim_response: "_unions.VoiceAgentInterimResponse"
-    """Interim-response settings for latency and tool execution. Is either a
-     VoiceAgentStaticInterimResponseConfig type or a VoiceAgentLlmInterimResponseConfig type."""
-    greeting: "VoiceGreetingConfig"
-    """A proactive assistant greeting started after session configuration."""
+    auto_truncate: bool
+    """Whether the input audio buffer is truncated automatically when speech stops."""
+    threshold: float
+    prefix_padding_ms: int
+    silence_duration_ms: int
+    create_response: bool
+    interrupt_response: bool
+    idle_timeout_ms: Optional[int]
+    type: Required[Literal[VoiceAgentTurnDetectionType.SERVER_VAD]]
+    """Required. Server-side voice activity detection."""
+    speech_duration_ms: str
+    """Minimum speech duration required to trigger detection, in milliseconds."""
+    end_of_utterance_detection: Optional["VoiceAgentEndOfUtteranceDetection"]
+    """Semantic end-of-utterance detection configuration. Set to null to disable it."""
 
 
 class VoiceAgentStaticInterimResponseConfig(TypedDict, total=False):
@@ -10525,825 +7914,7 @@ class VoiceAgentStaticInterimResponseConfig(TypedDict, total=False):
     """Candidate text values for the interim response."""
 
 
-class VoiceAgentTranscriptionPhrase(TypedDict, total=False):
-    """A transcribed phrase with timing information.
-
-    :ivar offset_milliseconds: The phrase offset from the beginning of the audio, in milliseconds.
-     Required.
-    :vartype offset_milliseconds: str
-    :ivar duration_milliseconds: The phrase duration in milliseconds. Required.
-    :vartype duration_milliseconds: str
-    :ivar text: The transcribed phrase text. Required.
-    :vartype text: str
-    :ivar words: Word-level timing details, when available.
-    :vartype words: list["VoiceAgentTranscriptionWord"]
-    :ivar locale: The detected locale.
-    :vartype locale: str
-    :ivar confidence: The transcription confidence score.
-    :vartype confidence: float
-    """
-
-    offset_milliseconds: Required[str]
-    """The phrase offset from the beginning of the audio, in milliseconds. Required."""
-    duration_milliseconds: Required[str]
-    """The phrase duration in milliseconds. Required."""
-    text: Required[str]
-    """The transcribed phrase text. Required."""
-    words: Optional[list["VoiceAgentTranscriptionWord"]]
-    """Word-level timing details, when available."""
-    locale: Optional[str]
-    """The detected locale."""
-    confidence: Optional[float]
-    """The transcription confidence score."""
-
-
-class VoiceAgentTranscriptionWord(TypedDict, total=False):
-    """A time-stamped word in an input-audio transcription.
-
-    :ivar text: The transcribed word text. Required.
-    :vartype text: str
-    :ivar offset_milliseconds: The word offset from the beginning of the audio, in milliseconds.
-     Required.
-    :vartype offset_milliseconds: str
-    :ivar duration_milliseconds: The word duration in milliseconds. Required.
-    :vartype duration_milliseconds: str
-    """
-
-    text: Required[str]
-    """The transcribed word text. Required."""
-    offset_milliseconds: Required[str]
-    """The word offset from the beginning of the audio, in milliseconds. Required."""
-    duration_milliseconds: Required[str]
-    """The word duration in milliseconds. Required."""
-
-
-class VoiceAssistantMessageItem(RealtimeConversationItemMessageAssistant):
-    """An assistant message item. Only ``output_text`` and ``output_audio`` content are valid for
-    assistant messages.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``message``. Required. Default value is "message".
-    :vartype type: Literal["message"]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar role: The role of the message sender. Always ``assistant``. Required. ASSISTANT.
-    :vartype role: Literal[RealtimeConversationItemMessageType.ASSISTANT]
-    :ivar content: The content of the message. Required.
-    :vartype content: list["RealtimeConversationItemMessageAssistantContent"]
-    :ivar created_at: The Unix timestamp (in seconds) for when the item was persisted.
-    :vartype created_at: int
-    :ivar response_id: The id of the response that produced this item, when applicable.
-    :vartype response_id: str
-    """
-
-    created_at: int
-    """The Unix timestamp (in seconds) for when the item was persisted."""
-    response_id: str
-    """The id of the response that produced this item, when applicable."""
-
-
-class VoiceAudioConfig(TypedDict, total=False):
-    """The audio configuration for a voice agent. These values are session defaults and may be
-    overridden when connecting.
-
-    :ivar input: Input (microphone) audio configuration.
-    :vartype input: "VoiceAudioInputConfig"
-    :ivar output: Output (agent speech) audio configuration.
-    :vartype output: "VoiceAudioOutputConfig"
-    """
-
-    input: "VoiceAudioInputConfig"
-    """Input (microphone) audio configuration."""
-    output: "VoiceAudioOutputConfig"
-    """Output (agent speech) audio configuration."""
-
-
-class VoiceAudioFormat(TypedDict, total=False):
-    """An audio format. Follows the OpenAI Realtime session schema; ``type`` carries the media
-    subtype.
-
-    :ivar type: The audio format type, e.g. 'audio/pcm' (16-bit PCM), 'audio/pcmu' (G.711 mu-law),
-     or 'audio/pcma' (G.711 A-law). Required. Known values are: "audio/pcm", "audio/pcmu", and
-     "audio/pcma".
-    :vartype type: Union[str, "VoiceAudioFormatType"]
-    :ivar rate: The sample rate in Hz. Applies to 'audio/pcm' (e.g. 24000); omit for telephony
-     G.711 formats (8 kHz).
-    :vartype rate: int
-    """
-
-    type: Required[Union[str, "VoiceAudioFormatType"]]
-    """The audio format type, e.g. 'audio/pcm' (16-bit PCM), 'audio/pcmu' (G.711 mu-law), or
-     'audio/pcma' (G.711 A-law). Required. Known values are: \"audio/pcm\", \"audio/pcmu\", and
-     \"audio/pcma\"."""
-    rate: int
-    """The sample rate in Hz. Applies to 'audio/pcm' (e.g. 24000); omit for telephony G.711 formats (8
-     kHz)."""
-
-
-class VoiceAudioInputConfig(TypedDict, total=False):
-    """Input audio configuration for a voice agent.
-
-    :ivar format: The input audio format.
-    :vartype format: "VoiceAudioFormat"
-    :ivar noise_reduction: Input noise reduction. Set to null to disable.
-    :vartype noise_reduction: "VoiceNoiseReduction"
-    :ivar turn_detection: Turn (end-of-speech) detection. Server-side turn detection is enabled by
-     default; set to null to disable it, in which case the client must trigger responses manually.
-     Is one of the following types: VoiceServerVadTurnDetection, VoiceAgentSemanticVadTurnDetection,
-     VoiceAzureSemanticVadTurnDetection, VoiceAzureSemanticVadEnTurnDetection,
-     VoiceAzureSemanticVadMultilingualTurnDetection
-    :vartype turn_detection: "_unions.VoiceAgentTurnDetection"
-    :ivar echo_cancellation: Optional server-side echo cancellation settings.
-    :vartype echo_cancellation: "VoiceAgentEchoCancellation"
-    :ivar transcription: Asynchronous input-audio transcription. Set to null to disable
-     transcription.
-    :vartype transcription: "VoiceInputTranscription"
-    """
-
-    format: "VoiceAudioFormat"
-    """The input audio format."""
-    noise_reduction: Optional["VoiceNoiseReduction"]
-    """Input noise reduction. Set to null to disable."""
-    turn_detection: Optional["_unions.VoiceAgentTurnDetection"]
-    """Turn (end-of-speech) detection. Server-side turn detection is enabled by default; set to null
-     to disable it, in which case the client must trigger responses manually. Is one of the
-     following types: VoiceServerVadTurnDetection, VoiceAgentSemanticVadTurnDetection,
-     VoiceAzureSemanticVadTurnDetection, VoiceAzureSemanticVadEnTurnDetection,
-     VoiceAzureSemanticVadMultilingualTurnDetection"""
-    echo_cancellation: Optional["VoiceAgentEchoCancellation"]
-    """Optional server-side echo cancellation settings."""
-    transcription: Optional["VoiceInputTranscription"]
-    """Asynchronous input-audio transcription. Set to null to disable transcription."""
-
-
-class VoiceAudioOutputConfig(TypedDict, total=False):
-    """Output audio configuration for a voice agent.
-    Provider-specific fields are selected by ``voice_type``:
-
-    * `openai`: `voice` and `speed`.
-    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
-      `custom_lexicon_url`,
-      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
-    * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
-    * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
-    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
-      `personal_voice_model`; the voice name is derived from the avatar.
-    * `azure-realtime-native`: `voice` and `speed`.
-
-    `format` and `output_audio_timestamp_types` apply to every voice type.
-
-    :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
-     PCM.
-    :vartype format: "VoiceAudioFormat"
-    :ivar voice: The voice name or identifier. Applies to ``openai``, ``azure-standard``,
-     ``azure-custom``, ``azure-personal``, and ``azure-realtime-native``. It does not apply to
-     ``avatar-voice-sync``, which derives the voice name from the avatar.
-    :vartype voice: str
-    :ivar voice_type: The voice implementation. Known values are: "openai", "azure-standard",
-     "azure-custom", "azure-personal", "avatar-voice-sync", and "azure-realtime-native".
-    :vartype voice_type: Union[str, "VoiceType"]
-    :ivar voice_locale: The enforced BCP-47 output locale. Applies to ``azure-standard``,
-     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
-    :vartype voice_locale: str
-    :ivar speed: The numeric output speed multiplier. Applies to all known ``voice_type`` values
-     and defaults to 1.
-    :vartype speed: float
-    :ivar voice_temperature: The voice variation temperature. Applies to ``azure-standard``,
-     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
-    :vartype voice_temperature: float
-    :ivar custom_lexicon_url: The URL of a custom pronunciation lexicon. Applies to
-     ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
-    :vartype custom_lexicon_url: str
-    :ivar custom_text_normalization_url: The URL of a custom text-normalization configuration.
-     Applies to ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
-    :vartype custom_text_normalization_url: str
-    :ivar prefer_locales: Preferred BCP-47 locales for multilingual synthesis. Applies to
-     ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
-    :vartype prefer_locales: list[str]
-    :ivar style: The voice speaking style. Applies only when ``voice_type`` is ``azure-standard``.
-    :vartype style: str
-    :ivar pitch: The voice pitch adjustment. Applies to ``azure-standard``, ``azure-custom``,
-     ``azure-personal``, and ``avatar-voice-sync``.
-    :vartype pitch: str
-    :ivar volume: The voice volume adjustment. Applies to ``azure-standard``, ``azure-custom``,
-     ``azure-personal``, and ``avatar-voice-sync``.
-    :vartype volume: str
-    :ivar custom_voice_endpoint_id: The Azure custom-voice deployment endpoint identifier. Applies
-     only when ``voice_type`` is ``azure-custom``.
-    :vartype custom_voice_endpoint_id: str
-    :ivar personal_voice_model: The Azure personal or avatar voice model. Applies only when
-     ``voice_type`` is ``azure-personal`` or ``avatar-voice-sync``.
-    :vartype personal_voice_model: str
-    :ivar output_audio_timestamp_types: Timestamp kinds to include with output audio. Applies to
-     every ``voice_type``.
-    :vartype output_audio_timestamp_types: list[Union[str, "VoiceAudioTimestampType"]]
-    """
-
-    format: "VoiceAudioFormat"
-    """The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz PCM."""
-    voice: str
-    """The voice name or identifier. Applies to ``openai``, ``azure-standard``, ``azure-custom``,
-     ``azure-personal``, and ``azure-realtime-native``. It does not apply to ``avatar-voice-sync``,
-     which derives the voice name from the avatar."""
-    voice_type: Union[str, "VoiceType"]
-    """The voice implementation. Known values are: \"openai\", \"azure-standard\", \"azure-custom\",
-     \"azure-personal\", \"avatar-voice-sync\", and \"azure-realtime-native\"."""
-    voice_locale: str
-    """The enforced BCP-47 output locale. Applies to ``azure-standard``, ``azure-custom``,
-     ``azure-personal``, and ``avatar-voice-sync``."""
-    speed: float
-    """The numeric output speed multiplier. Applies to all known ``voice_type`` values and defaults to
-     1."""
-    voice_temperature: float
-    """The voice variation temperature. Applies to ``azure-standard``, ``azure-custom``,
-     ``azure-personal``, and ``avatar-voice-sync``."""
-    custom_lexicon_url: str
-    """The URL of a custom pronunciation lexicon. Applies to ``azure-standard``, ``azure-custom``,
-     ``azure-personal``, and ``avatar-voice-sync``."""
-    custom_text_normalization_url: str
-    """The URL of a custom text-normalization configuration. Applies to ``azure-standard``,
-     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``."""
-    prefer_locales: list[str]
-    """Preferred BCP-47 locales for multilingual synthesis. Applies to ``azure-standard``,
-     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``."""
-    style: str
-    """The voice speaking style. Applies only when ``voice_type`` is ``azure-standard``."""
-    pitch: str
-    """The voice pitch adjustment. Applies to ``azure-standard``, ``azure-custom``,
-     ``azure-personal``, and ``avatar-voice-sync``."""
-    volume: str
-    """The voice volume adjustment. Applies to ``azure-standard``, ``azure-custom``,
-     ``azure-personal``, and ``avatar-voice-sync``."""
-    custom_voice_endpoint_id: str
-    """The Azure custom-voice deployment endpoint identifier. Applies only when ``voice_type`` is
-     ``azure-custom``."""
-    personal_voice_model: str
-    """The Azure personal or avatar voice model. Applies only when ``voice_type`` is
-     ``azure-personal`` or ``avatar-voice-sync``."""
-    output_audio_timestamp_types: list[Union[str, "VoiceAudioTimestampType"]]
-    """Timestamp kinds to include with output audio. Applies to every ``voice_type``."""
-
-
-class VoiceAzureSemanticVadEnTurnDetection(TypedDict, total=False):
-    """English-optimized Azure semantic voice activity detection.
-
-    :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
-     stops.
-    :vartype auto_truncate: bool
-    :ivar type: Required. English-optimized Azure semantic voice activity detection.
-    :vartype type: Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD_EN]
-    :ivar threshold: Activation threshold for voice activity detection, from 0 to 1.
-    :vartype threshold: float
-    :ivar prefix_padding_ms: Audio to include before detected speech, in milliseconds.
-    :vartype prefix_padding_ms: str
-    :ivar silence_duration_ms: Silence required to end speech detection, in milliseconds.
-    :vartype silence_duration_ms: str
-    :ivar idle_timeout_ms: Maximum idle time before the detector ends the turn, in milliseconds.
-    :vartype idle_timeout_ms: str
-    :ivar end_of_utterance_detection: Semantic end-of-utterance detection configuration. Set to
-     null to disable it.
-    :vartype end_of_utterance_detection: "VoiceEndOfUtteranceDetection"
-    :ivar speech_duration_ms: Minimum speech duration required to trigger detection, in
-     milliseconds.
-    :vartype speech_duration_ms: str
-    :ivar remove_filler_words: Whether filler words are removed from transcription.
-    :vartype remove_filler_words: bool
-    :ivar create_response: Whether a response is created automatically when speech stops.
-    :vartype create_response: bool
-    :ivar interrupt_response: Whether user speech may interrupt the agent's response.
-    :vartype interrupt_response: bool
-    """
-
-    auto_truncate: bool
-    """Whether the input audio buffer is truncated automatically when speech stops."""
-    type: Required[Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD_EN]]
-    """Required. English-optimized Azure semantic voice activity detection."""
-    threshold: float
-    """Activation threshold for voice activity detection, from 0 to 1."""
-    prefix_padding_ms: str
-    """Audio to include before detected speech, in milliseconds."""
-    silence_duration_ms: str
-    """Silence required to end speech detection, in milliseconds."""
-    idle_timeout_ms: str
-    """Maximum idle time before the detector ends the turn, in milliseconds."""
-    end_of_utterance_detection: Optional["VoiceEndOfUtteranceDetection"]
-    """Semantic end-of-utterance detection configuration. Set to null to disable it."""
-    speech_duration_ms: str
-    """Minimum speech duration required to trigger detection, in milliseconds."""
-    remove_filler_words: bool
-    """Whether filler words are removed from transcription."""
-    create_response: bool
-    """Whether a response is created automatically when speech stops."""
-    interrupt_response: bool
-    """Whether user speech may interrupt the agent's response."""
-
-
-class VoiceAzureSemanticVadMultilingualTurnDetection(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Multilingual Azure semantic voice activity detection.
-
-    :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
-     stops.
-    :vartype auto_truncate: bool
-    :ivar type: Required. Multilingual Azure semantic voice activity detection.
-    :vartype type: Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL]
-    :ivar threshold: Activation threshold for voice activity detection, from 0 to 1.
-    :vartype threshold: float
-    :ivar prefix_padding_ms: Audio to include before detected speech, in milliseconds.
-    :vartype prefix_padding_ms: str
-    :ivar silence_duration_ms: Silence required to end speech detection, in milliseconds.
-    :vartype silence_duration_ms: str
-    :ivar idle_timeout_ms: Maximum idle time before the detector ends the turn, in milliseconds.
-    :vartype idle_timeout_ms: str
-    :ivar end_of_utterance_detection: Semantic end-of-utterance detection configuration. Set to
-     null to disable it.
-    :vartype end_of_utterance_detection: "VoiceEndOfUtteranceDetection"
-    :ivar speech_duration_ms: Minimum speech duration required to trigger detection, in
-     milliseconds.
-    :vartype speech_duration_ms: str
-    :ivar remove_filler_words: Whether filler words are removed from transcription.
-    :vartype remove_filler_words: bool
-    :ivar create_response: Whether a response is created automatically when speech stops.
-    :vartype create_response: bool
-    :ivar interrupt_response: Whether user speech may interrupt the agent's response.
-    :vartype interrupt_response: bool
-    :ivar languages: BCP-47 language codes used for speech detection.
-    :vartype languages: list[str]
-    """
-
-    auto_truncate: bool
-    """Whether the input audio buffer is truncated automatically when speech stops."""
-    type: Required[Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL]]
-    """Required. Multilingual Azure semantic voice activity detection."""
-    threshold: float
-    """Activation threshold for voice activity detection, from 0 to 1."""
-    prefix_padding_ms: str
-    """Audio to include before detected speech, in milliseconds."""
-    silence_duration_ms: str
-    """Silence required to end speech detection, in milliseconds."""
-    idle_timeout_ms: str
-    """Maximum idle time before the detector ends the turn, in milliseconds."""
-    end_of_utterance_detection: Optional["VoiceEndOfUtteranceDetection"]
-    """Semantic end-of-utterance detection configuration. Set to null to disable it."""
-    speech_duration_ms: str
-    """Minimum speech duration required to trigger detection, in milliseconds."""
-    remove_filler_words: bool
-    """Whether filler words are removed from transcription."""
-    create_response: bool
-    """Whether a response is created automatically when speech stops."""
-    interrupt_response: bool
-    """Whether user speech may interrupt the agent's response."""
-    languages: list[str]
-    """BCP-47 language codes used for speech detection."""
-
-
-class VoiceAzureSemanticVadTurnDetection(TypedDict, total=False):
-    """Azure semantic voice activity detection.
-
-    :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
-     stops.
-    :vartype auto_truncate: bool
-    :ivar type: Required. Azure semantic voice activity detection.
-    :vartype type: Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD]
-    :ivar threshold: Activation threshold for voice activity detection, from 0 to 1.
-    :vartype threshold: float
-    :ivar prefix_padding_ms: Audio to include before detected speech, in milliseconds.
-    :vartype prefix_padding_ms: str
-    :ivar silence_duration_ms: Silence required to end speech detection, in milliseconds.
-    :vartype silence_duration_ms: str
-    :ivar idle_timeout_ms: Maximum idle time before the detector ends the turn, in milliseconds.
-    :vartype idle_timeout_ms: str
-    :ivar end_of_utterance_detection: Semantic end-of-utterance detection configuration. Set to
-     null to disable it.
-    :vartype end_of_utterance_detection: "VoiceEndOfUtteranceDetection"
-    :ivar speech_duration_ms: Minimum speech duration required to trigger detection, in
-     milliseconds.
-    :vartype speech_duration_ms: str
-    :ivar remove_filler_words: Whether filler words are removed from transcription.
-    :vartype remove_filler_words: bool
-    :ivar create_response: Whether a response is created automatically when speech stops.
-    :vartype create_response: bool
-    :ivar interrupt_response: Whether user speech may interrupt the agent's response.
-    :vartype interrupt_response: bool
-    :ivar languages: BCP-47 language codes used for speech detection.
-    :vartype languages: list[str]
-    """
-
-    auto_truncate: bool
-    """Whether the input audio buffer is truncated automatically when speech stops."""
-    type: Required[Literal[VoiceTurnDetectionType.AZURE_SEMANTIC_VAD]]
-    """Required. Azure semantic voice activity detection."""
-    threshold: float
-    """Activation threshold for voice activity detection, from 0 to 1."""
-    prefix_padding_ms: str
-    """Audio to include before detected speech, in milliseconds."""
-    silence_duration_ms: str
-    """Silence required to end speech detection, in milliseconds."""
-    idle_timeout_ms: str
-    """Maximum idle time before the detector ends the turn, in milliseconds."""
-    end_of_utterance_detection: Optional["VoiceEndOfUtteranceDetection"]
-    """Semantic end-of-utterance detection configuration. Set to null to disable it."""
-    speech_duration_ms: str
-    """Minimum speech duration required to trigger detection, in milliseconds."""
-    remove_filler_words: bool
-    """Whether filler words are removed from transcription."""
-    create_response: bool
-    """Whether a response is created automatically when speech stops."""
-    interrupt_response: bool
-    """Whether user speech may interrupt the agent's response."""
-    languages: list[str]
-    """BCP-47 language codes used for speech detection."""
-
-
-class VoiceEndOfUtteranceDetection(TypedDict, total=False):
-    """Semantic end-of-utterance detection configuration.
-
-    :ivar model: The semantic detection model. Required. Known values are: "semantic_detection_v1",
-     "semantic_detection_v1_en", "semantic_detection_v1_multilingual", and
-     "smart_end_of_turn_detection".
-    :vartype model: Union[str, "VoiceEndOfUtteranceDetectionModel"]
-    :ivar threshold_level: The sensitivity threshold. Known values are: "low", "medium", "high",
-     and "default".
-    :vartype threshold_level: Union[str, "VoiceEndOfUtteranceThresholdLevel"]
-    :ivar timeout_ms: The detection timeout in milliseconds.
-    :vartype timeout_ms: str
-    """
-
-    model: Required[Union[str, "VoiceEndOfUtteranceDetectionModel"]]
-    """The semantic detection model. Required. Known values are: \"semantic_detection_v1\",
-     \"semantic_detection_v1_en\", \"semantic_detection_v1_multilingual\", and
-     \"smart_end_of_turn_detection\"."""
-    threshold_level: Union[str, "VoiceEndOfUtteranceThresholdLevel"]
-    """The sensitivity threshold. Known values are: \"low\", \"medium\", \"high\", and \"default\"."""
-    timeout_ms: str
-    """The detection timeout in milliseconds."""
-
-
-class VoiceFunctionCallItem(RealtimeConversationItemFunctionCall):
-    """A function call request item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``function_call``. Required. FUNCTION_CALL.
-    :vartype type: Literal[RealtimeConversationItemType.FUNCTION_CALL]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar call_id: The ID of the function call.
-    :vartype call_id: str
-    :ivar name: The name of the function being called. Required.
-    :vartype name: str
-    :ivar arguments: The arguments of the function call. This is a JSON-encoded string representing
-     the arguments passed to the function, for example ``{"arg1": "value1", "arg2": 42}``. Required.
-    :vartype arguments: str
-    :ivar created_at: The Unix timestamp (in seconds) for when the item was persisted.
-    :vartype created_at: int
-    :ivar response_id: The id of the response that produced this item, when applicable.
-    :vartype response_id: str
-    """
-
-    created_at: int
-    """The Unix timestamp (in seconds) for when the item was persisted."""
-    response_id: str
-    """The id of the response that produced this item, when applicable."""
-
-
-class VoiceFunctionCallOutputItem(RealtimeConversationItemFunctionCallOutput):
-    """A function call output item.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``function_call_output``. Required.
-     FUNCTION_CALL_OUTPUT.
-    :vartype type: Literal[RealtimeConversationItemType.FUNCTION_CALL_OUTPUT]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar call_id: The ID of the function call this output is for. Required.
-    :vartype call_id: str
-    :ivar output: The output of the function call, this is free text and can contain any
-     information or simply be empty. Required.
-    :vartype output: str
-    :ivar created_at: The Unix timestamp (in seconds) for when the item was persisted.
-    :vartype created_at: int
-    :ivar response_id: The id of the response that produced this item, when applicable.
-    :vartype response_id: str
-    :ivar name: The name of the function that was called. A Foundry extension: OpenAI's
-     function_call_output does not carry the function name, only ``call_id``.
-    :vartype name: str
-    """
-
-    created_at: int
-    """The Unix timestamp (in seconds) for when the item was persisted."""
-    response_id: str
-    """The id of the response that produced this item, when applicable."""
-    name: str
-    """The name of the function that was called. A Foundry extension: OpenAI's function_call_output
-     does not carry the function name, only ``call_id``."""
-
-
-class VoiceInputTranscription(TypedDict, total=False):
-    """Asynchronous input-audio transcription configuration. Extends the OpenAI Realtime transcription
-    options with the Azure and MAI transcription models, custom speech models, and phrase hints.
-
-    :ivar language: The language of the input audio. Supplying the input language in `ISO-639-1
-     <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ (e.g. ``en``) format will improve
-     accuracy and latency.
-    :vartype language: str
-    :ivar prompt: An optional text to guide the model's style or continue a previous audio segment.
-     For ``whisper-1``, the `prompt is a list of keywords </docs/guides/speech-to-text#prompting>`_.
-     For ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a
-     free text string, for example "expect words related to technology". Prompt is not supported
-     with ``gpt-realtime-whisper`` in GA Realtime sessions.
-    :vartype prompt: str
-    :ivar delay: Controls how long the model waits before emitting transcription text. Higher
-     values can improve transcription accuracy at the cost of latency. Only supported with
-     ``gpt-realtime-whisper`` in GA Realtime sessions. Is one of the following types:
-     Literal["minimal"], Literal["low"], Literal["medium"], Literal["high"], Literal["xhigh"]
-    :vartype delay: Literal["minimal", "low", "medium", "high", "xhigh"]
-    :ivar model: The transcription model identifier. Configure customer custom speech deployments
-     in ``custom_speech``. Required. Known values are: "whisper-1", "gpt-realtime-whisper",
-     "gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize", "gpt-transcribe",
-     "gpt-live-transcribe", "mai-transcribe", and "azure-speech".
-    :vartype model: Union[str, "VoiceInputTranscriptionModel"]
-    :ivar custom_speech: Optional customer custom speech deployment configuration, keyed by locale.
-    :vartype custom_speech: dict[str, str]
-    :ivar phrase_list: Optional phrase hints that bias recognition toward domain terms.
-    :vartype phrase_list: list[str]
-    """
-
-    language: str
-    """The language of the input audio. Supplying the input language in `ISO-639-1
-     <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ (e.g. ``en``) format will improve
-     accuracy and latency."""
-    prompt: str
-    """An optional text to guide the model's style or continue a previous audio segment. For
-     ``whisper-1``, the `prompt is a list of keywords </docs/guides/speech-to-text#prompting>`_. For
-     ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a free
-     text string, for example \"expect words related to technology\". Prompt is not supported with
-     ``gpt-realtime-whisper`` in GA Realtime sessions."""
-    delay: Literal["minimal", "low", "medium", "high", "xhigh"]
-    """Controls how long the model waits before emitting transcription text. Higher values can improve
-     transcription accuracy at the cost of latency. Only supported with ``gpt-realtime-whisper`` in
-     GA Realtime sessions. Is one of the following types: Literal[\"minimal\"], Literal[\"low\"],
-     Literal[\"medium\"], Literal[\"high\"], Literal[\"xhigh\"]"""
-    model: Required[Union[str, "VoiceInputTranscriptionModel"]]
-    """The transcription model identifier. Configure customer custom speech deployments in
-     ``custom_speech``. Required. Known values are: \"whisper-1\", \"gpt-realtime-whisper\",
-     \"gpt-4o-transcribe\", \"gpt-4o-mini-transcribe\", \"gpt-4o-transcribe-diarize\",
-     \"gpt-transcribe\", \"gpt-live-transcribe\", \"mai-transcribe\", and \"azure-speech\"."""
-    custom_speech: dict[str, str]
-    """Optional customer custom speech deployment configuration, keyed by locale."""
-    phrase_list: list[str]
-    """Optional phrase hints that bias recognition toward domain terms."""
-
-
-class VoiceMcpApprovalRequestItem(RealtimeMCPApprovalRequest):
-    """An MCP approval request item.
-
-    :ivar type: The type of the item. Always ``mcp_approval_request``. Required.
-     MCP_APPROVAL_REQUEST.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_APPROVAL_REQUEST]
-    :ivar id: The unique ID of the approval request. Required.
-    :vartype id: str
-    :ivar server_label: The label of the MCP server making the request. Required.
-    :vartype server_label: str
-    :ivar name: The name of the tool to run. Required.
-    :vartype name: str
-    :ivar arguments: A JSON string of arguments for the tool. Required.
-    :vartype arguments: str
-    :ivar created_at: The Unix timestamp (in seconds) for when the item was persisted.
-    :vartype created_at: int
-    :ivar response_id: The id of the response that produced this item, when applicable.
-    :vartype response_id: str
-    """
-
-    created_at: int
-    """The Unix timestamp (in seconds) for when the item was persisted."""
-    response_id: str
-    """The id of the response that produced this item, when applicable."""
-
-
-class VoiceMcpApprovalResponseItem(RealtimeMCPApprovalResponse):
-    """An MCP approval response item (client-created).
-
-    :ivar type: The type of the item. Always ``mcp_approval_response``. Required.
-     MCP_APPROVAL_RESPONSE.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_APPROVAL_RESPONSE]
-    :ivar id: The unique ID of the approval response. Required.
-    :vartype id: str
-    :ivar approval_request_id: The ID of the approval request being answered. Required.
-    :vartype approval_request_id: str
-    :ivar approve: Whether the request was approved. Required.
-    :vartype approve: bool
-    :ivar reason:
-    :vartype reason: str
-    :ivar created_at: The Unix timestamp (in seconds) for when the item was persisted.
-    :vartype created_at: int
-    :ivar response_id: The id of the response that produced this item, when applicable.
-    :vartype response_id: str
-    """
-
-    created_at: int
-    """The Unix timestamp (in seconds) for when the item was persisted."""
-    response_id: str
-    """The id of the response that produced this item, when applicable."""
-
-
-class VoiceMcpCallItem(RealtimeMCPToolCall):
-    """An MCP call item.
-
-    :ivar type: The type of the item. Always ``mcp_call``. Required. MCP_CALL.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_CALL]
-    :ivar id: The unique ID of the tool call. Required.
-    :vartype id: str
-    :ivar server_label: The label of the MCP server running the tool. Required.
-    :vartype server_label: str
-    :ivar name: The name of the tool that was run. Required.
-    :vartype name: str
-    :ivar arguments: A JSON string of the arguments passed to the tool. Required.
-    :vartype arguments: str
-    :ivar approval_request_id:
-    :vartype approval_request_id: str
-    :ivar output:
-    :vartype output: str
-    :ivar error:
-    :vartype error: "RealtimeMCPError"
-    :ivar created_at: The Unix timestamp (in seconds) for when the item was persisted.
-    :vartype created_at: int
-    :ivar response_id: The id of the response that produced this item, when applicable.
-    :vartype response_id: str
-    """
-
-    created_at: int
-    """The Unix timestamp (in seconds) for when the item was persisted."""
-    response_id: str
-    """The id of the response that produced this item, when applicable."""
-
-
-class VoiceMcpListToolsItem(RealtimeMCPListTools):
-    """An MCP list-tools item.
-
-    :ivar type: The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS.
-    :vartype type: Literal[RealtimeConversationItemType.MCP_LIST_TOOLS]
-    :ivar id: The unique ID of the list.
-    :vartype id: str
-    :ivar server_label: The label of the MCP server. Required.
-    :vartype server_label: str
-    :ivar tools: The tools available on the server. Required.
-    :vartype tools: list["MCPListToolsTool"]
-    :ivar created_at: The Unix timestamp (in seconds) for when the item was persisted.
-    :vartype created_at: int
-    :ivar response_id: The id of the response that produced this item, when applicable.
-    :vartype response_id: str
-    """
-
-    created_at: int
-    """The Unix timestamp (in seconds) for when the item was persisted."""
-    response_id: str
-    """The id of the response that produced this item, when applicable."""
-
-
-class VoiceNoiseReduction(TypedDict, total=False):
-    """Input audio noise reduction configuration.
-
-    :ivar type: The noise reduction mode. Required. Known values are: "near_field", "far_field",
-     and "azure_deep_noise_suppression".
-    :vartype type: Union[str, "VoiceNoiseReductionType"]
-    """
-
-    type: Required[Union[str, "VoiceNoiseReductionType"]]
-    """The noise reduction mode. Required. Known values are: \"near_field\", \"far_field\", and
-     \"azure_deep_noise_suppression\"."""
-
-
-class VoiceResponseAudio(TypedDict, total=False):
-    """Audio configuration for a response. Follows the OpenAI Realtime GA ``audio`` object shape.
-
-    :ivar output: The audio output configuration used for the response.
-    :vartype output: "VoiceResponseAudioOutput"
-    """
-
-    output: "VoiceResponseAudioOutput"
-    """The audio output configuration used for the response."""
-
-
-class VoiceResponseAudioOutput(TypedDict, total=False):
-    """The flat response audio-output projection, with optional ``voice``, ``voice_type``,
-    ``voice_locale``, and ``format`` fields.
-
-    :ivar voice: The voice name used for the response's audio output.
-    :vartype voice: str
-    :ivar voice_type: The extensible provider/type of the voice used for the response's audio
-     output. Known values are: "openai", "azure-standard", "azure-custom", "azure-personal",
-     "avatar-voice-sync", and "azure-realtime-native".
-    :vartype voice_type: Union[str, "VoiceType"]
-    :ivar voice_locale: The BCP-47 locale of the voice used for the response's audio output.
-    :vartype voice_locale: str
-    :ivar format: The audio format used for the response's audio output.
-    :vartype format: "RealtimeAudioFormats"
-    """
-
-    voice: str
-    """The voice name used for the response's audio output."""
-    voice_type: Union[str, "VoiceType"]
-    """The extensible provider/type of the voice used for the response's audio output. Known values
-     are: \"openai\", \"azure-standard\", \"azure-custom\", \"azure-personal\",
-     \"avatar-voice-sync\", and \"azure-realtime-native\"."""
-    voice_locale: str
-    """The BCP-47 locale of the voice used for the response's audio output."""
-    format: "RealtimeAudioFormats"
-    """The audio format used for the response's audio output."""
-
-
-class VoiceServerVadTurnDetection(TypedDict, total=False):
-    """Server-side voice activity detection.
-
-    :ivar auto_truncate: Whether the input audio buffer is truncated automatically when speech
-     stops.
-    :vartype auto_truncate: bool
-    :ivar threshold:
-    :vartype threshold: float
-    :ivar prefix_padding_ms:
-    :vartype prefix_padding_ms: int
-    :ivar silence_duration_ms:
-    :vartype silence_duration_ms: int
-    :ivar create_response:
-    :vartype create_response: bool
-    :ivar interrupt_response:
-    :vartype interrupt_response: bool
-    :ivar idle_timeout_ms:
-    :vartype idle_timeout_ms: int
-    :ivar type: Required. Server-side voice activity detection.
-    :vartype type: Literal[VoiceTurnDetectionType.SERVER_VAD]
-    :ivar speech_duration_ms: Minimum speech duration required to trigger detection, in
-     milliseconds.
-    :vartype speech_duration_ms: str
-    :ivar end_of_utterance_detection: Semantic end-of-utterance detection configuration. Set to
-     null to disable it.
-    :vartype end_of_utterance_detection: "VoiceEndOfUtteranceDetection"
-    """
-
-    auto_truncate: bool
-    """Whether the input audio buffer is truncated automatically when speech stops."""
-    threshold: float
-    prefix_padding_ms: int
-    silence_duration_ms: int
-    create_response: bool
-    interrupt_response: bool
-    idle_timeout_ms: Optional[int]
-    type: Required[Literal[VoiceTurnDetectionType.SERVER_VAD]]
-    """Required. Server-side voice activity detection."""
-    speech_duration_ms: str
-    """Minimum speech duration required to trigger detection, in milliseconds."""
-    end_of_utterance_detection: Optional["VoiceEndOfUtteranceDetection"]
-    """Semantic end-of-utterance detection configuration. Set to null to disable it."""
-
-
-class VoiceSystemMessageItem(RealtimeConversationItemMessageSystem):
-    """A system message item. Only ``input_text`` content is valid for system messages.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``message``. Required. Default value is "message".
-    :vartype type: Literal["message"]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar role: The role of the message sender. Always ``system``. Required. SYSTEM.
-    :vartype role: Literal[RealtimeConversationItemMessageType.SYSTEM]
-    :ivar content: The content of the message. Required.
-    :vartype content: list["RealtimeConversationItemMessageSystemContent"]
-    :ivar created_at: The Unix timestamp (in seconds) for when the item was persisted.
-    :vartype created_at: int
-    :ivar response_id: The id of the response that produced this item, when applicable.
-    :vartype response_id: str
-    """
-
-    created_at: int
-    """The Unix timestamp (in seconds) for when the item was persisted."""
-    response_id: str
-    """The id of the response that produced this item, when applicable."""
-
-
-class VoiceSystemTool(TypedDict, total=False):
+class VoiceAgentSystemTool(TypedDict, total=False):
     """A service-managed control that acts on the active voice session without customer code or
     external authentication.
 
@@ -11351,21 +7922,37 @@ class VoiceSystemTool(TypedDict, total=False):
     :vartype type: Literal["system"]
     :ivar name: The service-managed control action. Known values are stable; additional values may
      be added over time. Required. "end_conversation"
-    :vartype name: Union[str, "VoiceSystemToolName"]
+    :vartype name: Union[str, "VoiceAgentSystemToolName"]
     :ivar description: An optional description of the system tool.
     :vartype description: str
     """
 
     type: Required[Literal["system"]]
     """The type of the tool. Always ``system``. Required. Default value is \"system\"."""
-    name: Required[Union[str, "VoiceSystemToolName"]]
+    name: Required[Union[str, "VoiceAgentSystemToolName"]]
     """The service-managed control action. Known values are stable; additional values may be added
      over time. Required. \"end_conversation\""""
     description: str
     """An optional description of the system tool."""
 
 
-class VoiceToolboxTool(TypedDict, total=False):
+class VoiceAgentTemplateGreetingConfig(TypedDict, total=False):
+    """A deterministic greeting rendered with the voice agent's structured inputs and synthesized
+    without model-authored generation.
+
+    :ivar type: Required. Default value is "template".
+    :vartype type: Literal["template"]
+    :ivar text: The Handlebars text template spoken at session start. Required.
+    :vartype text: str
+    """
+
+    type: Required[Literal["template"]]
+    """Required. Default value is \"template\"."""
+    text: Required[str]
+    """The Handlebars text template spoken at session start. Required."""
+
+
+class VoiceAgentToolboxTool(TypedDict, total=False):
     """A reference to a Foundry toolbox, which is a versioned bundle of tools executed through its MCP
     endpoint.
 
@@ -11389,37 +7976,6 @@ class VoiceToolboxTool(TypedDict, total=False):
     response_scheduling: Union[str, "VoiceAgentToolResponseScheduling"]
     """When the toolbox invocation creates a follow-up response. Defaults to ``when_idle``. Known
      values are: \"silent\", \"when_idle\", \"interrupt\", and \"skip_if_busy\"."""
-
-
-class VoiceUserMessageItem(RealtimeConversationItemMessageUser):
-    """A user message item. ``input_text``, ``input_audio``, and ``input_image`` content are valid for
-    user messages.
-
-    :ivar id: The unique ID of the item. This may be provided by the client or generated by the
-     server.
-    :vartype id: str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Optional
-     when creating a new item. Default value is "realtime.item".
-    :vartype object: Literal["realtime.item"]
-    :ivar type: The type of the item. Always ``message``. Required. Default value is "message".
-    :vartype type: Literal["message"]
-    :ivar status: The status of the item. Has no effect on the conversation. Is one of the
-     following types: Literal["completed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: Literal["completed", "incomplete", "in_progress"]
-    :ivar role: The role of the message sender. Always ``user``. Required. USER.
-    :vartype role: Literal[RealtimeConversationItemMessageType.USER]
-    :ivar content: The content of the message. Required.
-    :vartype content: list["RealtimeConversationItemMessageUserContent"]
-    :ivar created_at: The Unix timestamp (in seconds) for when the item was persisted.
-    :vartype created_at: int
-    :ivar response_id: The id of the response that produced this item, when applicable.
-    :vartype response_id: str
-    """
-
-    created_at: int
-    """The Unix timestamp (in seconds) for when the item was persisted."""
-    response_id: str
-    """The id of the response that produced this item, when applicable."""
 
 
 class WebIQPreviewTool(TypedDict, total=False):
@@ -11671,8 +8227,8 @@ class WeeklyRecurrenceSchedule(TypedDict, total=False):
 
     :ivar type: Weekly recurrence type. Required. Weekly recurrence pattern.
     :vartype type: Literal[RecurrenceType.WEEKLY]
-    :ivar days_of_week: Days of the week for the recurrence schedule. Required.
-    :vartype days_of_week: list[Union[str, "DayOfWeek"]]
+    :ivar daysOfWeek: Days of the week for the recurrence schedule. Required.
+    :vartype daysOfWeek: list[Union[str, "DayOfWeek"]]
     """
 
     type: Required[Literal[RecurrenceType.WEEKLY]]
@@ -11819,8 +8375,8 @@ class UpdateMemoriesRequest(TypedDict, total=False):
     :ivar scope: The namespace that logically groups and isolates memories, such as a user ID.
      Required.
     :vartype scope: str
-    :ivar items_property: Conversation items to be stored in memory.
-    :vartype items_property: list[dict[str, Any]]
+    :ivar items: Conversation items to be stored in memory.
+    :vartype items: list[dict[str, Any]]
     :ivar previous_update_id: The unique ID of the previous update request, enabling incremental
      memory updates from where the last operation left off.
     :vartype previous_update_id: str
@@ -11992,7 +8548,7 @@ class CreateAgentVersionRequest(TypedDict, total=False):
     """Set of 16 key-value pairs that can be attached to an object. This can be
      useful for storing additional information about the object in a structured
      format, and querying for objects via API or the dashboard.
-     
+
      Keys are strings with a maximum length of 64 characters. Values are strings
      with a maximum length of 512 characters."""
     description: str
@@ -12031,7 +8587,7 @@ class CreateAgentVersionFromManifestRequest(TypedDict, total=False):
     """Set of 16 key-value pairs that can be attached to an object. This can be
      useful for storing additional information about the object in a structured
      format, and querying for objects via API or the dashboard.
-     
+
      Keys are strings with a maximum length of 64 characters. Values are strings
      with a maximum length of 512 characters."""
     description: str
@@ -12161,6 +8717,7 @@ ToolboxTool = Union[
     MCPToolboxTool,
     OpenApiToolboxTool,
     ReminderPreviewToolboxTool,
+    ShellToolboxTool,
     ToolSearchToolboxTool,
     ToolboxSearchPreviewToolboxTool,
     WebIQPreviewToolboxTool,
@@ -12212,7 +8769,6 @@ FunctionShellToolParamEnvironment = Union[
 ContainerNetworkPolicyParam = Union[ContainerNetworkPolicyAllowlistParam, ContainerNetworkPolicyDisabledParam]
 ContainerSkill = Union[InlineSkillParam, SkillReferenceParam]
 EvaluationRuleAction = Union[ContinuousEvaluationRuleAction, HumanEvaluationPreviewRuleAction]
-CreateTranscriptionResponseJsonUsage = Union[TranscriptTextUsageDuration, TranscriptTextUsageTokens]
 Trigger = Union[CronTrigger, OneTimeTrigger, RecurrenceTrigger]
 CustomToolParamFormat = Union[CustomGrammarFormatParam, CustomTextFormatParam]
 RoutineTrigger = Union[CustomRoutineTrigger, GitHubIssueRoutineTrigger, ScheduleRoutineTrigger, TimerRoutineTrigger]
@@ -12233,24 +8789,10 @@ VersionSelectionRule = Union[FixedRatioVersionSelectionRule]
 TelemetryEndpointAuth = Union[HeaderTelemetryEndpointAuth]
 RoutineDispatchPayload = Union[InvokeAgentInvocationsApiDispatchPayload, InvokeAgentResponsesApiDispatchPayload]
 RoutineAction = Union[InvokeAgentInvocationsApiRoutineAction, InvokeAgentResponsesApiRoutineAction]
-VoiceGreetingConfig = Union[LlmGeneratedVoiceGreetingConfig, TemplateVoiceGreetingConfig]
 MemoryStoreDefinition = Union[MemoryStoreDefaultDefinition]
 OpenApiAuthDetails = Union[OpenApiAnonymousAuthDetails, OpenApiManagedAuthDetails, OpenApiProjectConnectionAuthDetails]
 TelemetryEndpoint = Union[OtlpTelemetryEndpoint]
 RealtimeAudioFormats = Union[RealtimeAudioFormatsAudioPcm, RealtimeAudioFormatsAudioPcma, RealtimeAudioFormatsAudioPcmu]
-RealtimeConversationItem = Union[
-    RealtimeConversationItemFunctionCall,
-    RealtimeConversationItemFunctionCallOutput,
-    RealtimeMCPApprovalRequest,
-    RealtimeMCPApprovalResponse,
-    RealtimeMCPToolCall,
-    RealtimeMCPListTools,
-]
-RealtimeConversationItemMessage = Union[
-    RealtimeConversationItemMessageAssistant, RealtimeConversationItemMessageSystem, RealtimeConversationItemMessageUser
-]
-RealtimeMCPError = Union[RealtimeMCPHTTPError, RealtimeMCPProtocolError, RealtimeMCPToolExecutionError]
-RealtimeServerEvent = Union[RealtimeServerEventResponseContentPartAdded]
 ToolChoiceParam = Union[
     ToolChoiceAllowed,
     SpecificApplyPatchParam,
@@ -12269,14 +8811,17 @@ ToolChoiceParam = Union[
     ToolChoiceWebSearchPreview20250311,
 ]
 TextResponseFormat = Union[TextResponseFormatJsonObject, TextResponseFormatJsonSchema, TextResponseFormatText]
+ToolboxShellEnvironment = Union[ToolboxShellContainerAutoEnvironment, ToolboxShellContainerReferenceEnvironment]
+ToolboxShellNetworkPolicy = Union[ToolboxShellNetworkPolicyDisabled]
 ToolboxSkill = Union[ToolboxSkillReference]
 VersionIndicator = Union[VersionRefIndicator]
-VoiceAgentTool = Union[VoiceAgentFunctionTool, VoiceAgentMcpTool, VoiceSystemTool, VoiceToolboxTool]
-VoiceAgentInterimResponseConfig = Union[VoiceAgentLlmInterimResponseConfig, VoiceAgentStaticInterimResponseConfig]
-VoiceTurnDetection = Union[
-    VoiceAzureSemanticVadTurnDetection,
-    VoiceAzureSemanticVadEnTurnDetection,
-    VoiceAzureSemanticVadMultilingualTurnDetection,
+VoiceAgentTurnDetectionConfig = Union[
+    VoiceAgentAzureSemanticVadTurnDetection,
+    VoiceAgentAzureSemanticVadEnTurnDetection,
+    VoiceAgentAzureSemanticVadMultilingualTurnDetection,
     VoiceAgentSemanticVadTurnDetection,
-    VoiceServerVadTurnDetection,
+    VoiceAgentServerVadTurnDetection,
 ]
+VoiceAgentTool = Union[VoiceAgentFunctionTool, VoiceAgentMcpTool, VoiceAgentSystemTool, VoiceAgentToolboxTool]
+VoiceAgentGreetingConfig = Union[VoiceAgentLlmGeneratedGreetingConfig, VoiceAgentTemplateGreetingConfig]
+VoiceAgentInterimResponseConfig = Union[VoiceAgentLlmInterimResponseConfig, VoiceAgentStaticInterimResponseConfig]

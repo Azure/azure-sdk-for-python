@@ -38,9 +38,9 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentKind,
+    VoiceAgentAudioConfig,
+    VoiceAgentAudioOutputConfig,
     VoiceAgentDefinition,
-    VoiceAudioConfig,
-    VoiceAudioOutputConfig,
     VoiceModelType,
     VoiceOutputModality,
     VoiceType,
@@ -63,8 +63,8 @@ with (
             model_type=VoiceModelType.MANAGED,
             model=model,
             instructions="You are a friendly voice assistant. Keep replies short and natural.",
-            audio=VoiceAudioConfig(
-                output=VoiceAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
+            audio=VoiceAgentAudioConfig(
+                output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
             ),
             output_modalities=[VoiceOutputModality.AUDIO],
             # Persist conversations so the transcript and audio can be read back later

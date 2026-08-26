@@ -347,6 +347,23 @@ $c = $c -replace '(id: str = rest_field\(visibility=\["read", "create", "update"
 $c = $c -replace '(conversation_id: str = rest_field\(visibility=\["read", "create", "update", "delete", "query"\]\))(\r?\n    """The id of the conversation this response belongs to\. Required\.""")', '$1  # type: ignore[reportIncompatibleVariableOverride]$2'
 Set-Content $f $c -NoNewline
 
+# VoiceAgentSessionResponse and VoiceAgentSessionUpdate are single-member unions. The emitter
+# represents them as string-valued aliases in _unions.py, which mypy cannot use as annotations.
+# Reference the concrete models directly while retaining forward references for their later
+# definitions in this generated module.
+$f = 'azure\ai\projects\models\_models.py'
+$c = Get-Content $f -Raw
+$c = $c.Replace('"_unions.VoiceAgentSessionResponse"', '"VoiceAgentSessionResponseConfig"')
+$c = $c.Replace('"_unions.VoiceAgentSessionUpdate"', '"VoiceAgentSessionUpdateConfig"')
+Set-Content $f $c -NoNewline
+
+# Strip whitespace emitted on otherwise blank docstring lines so generated files pass diff checks.
+foreach ($f in @('azure\ai\projects\models\_models.py', 'azure\ai\projects\types.py')) {
+    $c = Get-Content $f -Raw
+    $c = [regex]::Replace($c, '[ \t]+(?=\r?\n|$)', '')
+    Set-Content $f $c -NoNewline
+}
+
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .

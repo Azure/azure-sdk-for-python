@@ -11,9 +11,9 @@ from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     AgentDetails,
     AgentVersionDetails,
+    VoiceAgentAudioConfig,
+    VoiceAgentAudioOutputConfig,
     VoiceAgentDefinition,
-    VoiceAudioConfig,
-    VoiceAudioOutputConfig,
     VoiceOutputModality,
 )
 
@@ -70,8 +70,8 @@ class TestVoiceAgentCrudAsync(TestBase):
                 model_type="managed",
                 model=model,
                 instructions=instructions,
-                audio=VoiceAudioConfig(
-                    output=VoiceAudioOutputConfig(voice="en-US-AvaNeural", voice_type="azure-standard")
+                audio=VoiceAgentAudioConfig(
+                    output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type="azure-standard")
                 ),
                 output_modalities=[VoiceOutputModality.AUDIO],
             )
@@ -153,8 +153,8 @@ class TestVoiceAgentCrudAsync(TestBase):
                     model_type="managed",
                     model=model,
                     instructions="You are a helpful voice assistant.",
-                    audio=VoiceAudioConfig(
-                        output=VoiceAudioOutputConfig(voice="en-US-AvaNeural", voice_type="azure-standard")
+                    audio=VoiceAgentAudioConfig(
+                        output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type="azure-standard")
                     ),
                     output_modalities=[VoiceOutputModality.AUDIO],
                 ),
