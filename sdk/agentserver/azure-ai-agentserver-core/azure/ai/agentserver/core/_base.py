@@ -219,12 +219,6 @@ class AgentServerHost(Starlette):
         export.  Pass a custom callable to override the setup, or ``None``
         to skip all SDK-managed observability configuration.
     :type configure_observability: Optional[Callable[..., None]]
-    :param instrumentation_options: Per-library OpenTelemetry instrumentation
-        options. HTTPX, Requests, urllib, and urllib3 instrumentation are disabled
-        by default; set a library's ``enabled`` option to ``True`` to enable it.
-        When a custom ``configure_observability`` callback is used, this keyword
-        is forwarded only when explicitly provided.
-    :type instrumentation_options: Optional[dict[str, dict[str, Any]]]
     """
 
     _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
@@ -240,7 +234,6 @@ class AgentServerHost(Starlette):
         configure_observability: Optional[
             Callable[..., None]
         ] = _tracing.configure_observability,
-        instrumentation_options: Optional[dict[str, dict[str, Any]]] = None,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
@@ -275,16 +268,11 @@ class AgentServerHost(Starlette):
         _sensitive_data = _env_val.lower() not in ("false", "0")
         if configure_observability is not None:
             try:
-                _observability_kwargs: dict[str, Any] = {
-                    "connection_string": _conn_str,
-                    "log_level": log_level,
-                    "enable_sensitive_data": _sensitive_data,
-                }
-                if instrumentation_options is not None:
-                    _observability_kwargs["instrumentation_options"] = (
-                        instrumentation_options
-                    )
-                configure_observability(**_observability_kwargs)
+                configure_observability(
+                    connection_string=_conn_str,
+                    log_level=log_level,
+                    enable_sensitive_data=_sensitive_data,
+                )
             except ValueError:
                 raise  # invalid log_level etc. — user should fix their config
             except Exception:  # pylint: disable=broad-exception-caught

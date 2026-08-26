@@ -183,15 +183,22 @@ sampling only; exporter queues, process termination, and transport or ingestion
 failures can still prevent trace delivery.
 
 HTTPX, Requests, urllib, and urllib3 instrumentation are disabled by default to
-avoid automatically tracing every outbound HTTP request. Enable selected
-instrumentations when constructing the host:
+avoid automatically tracing every outbound HTTP request. To enable selected
+instrumentations, configure the host's observability callback:
 
 ```python
+from functools import partial
+
+from azure.ai.agentserver.core import AgentServerHost, configure_observability
+
 app = AgentServerHost(
-    instrumentation_options={
-        "httpx": {"enabled": True},
-        "requests": {"enabled": True},
-    },
+    configure_observability=partial(
+        configure_observability,
+        instrumentation_options={
+            "httpx": {"enabled": True},
+            "requests": {"enabled": True},
+        },
+    )
 )
 ```
 

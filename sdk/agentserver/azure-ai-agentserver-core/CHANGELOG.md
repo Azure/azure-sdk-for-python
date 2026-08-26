@@ -5,7 +5,7 @@
 ### Other Changes
 
 - Changed the default Azure Monitor trace sampling rate to 100%. Explicit OpenTelemetry sampler environment variables continue to take precedence.
-- Disabled HTTPX, Requests, urllib, and urllib3 instrumentation by default. Use `instrumentation_options` to enable individual libraries.
+- Disabled HTTPX, Requests, urllib, and urllib3 instrumentation by default. Pass `instrumentation_options` to `configure_observability` to enable individual libraries.
 
 ## 2.1.0 (2026-08-24)
 

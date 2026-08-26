@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
+
 import os
+from functools import partial
 from threading import Event, Thread
 from typing import Any, Optional
 from unittest import mock
@@ -83,16 +85,20 @@ class TestTracingToggle:
             enable_sensitive_data=True,
         )
 
-    def test_observability_receives_explicit_instrumentation_options(self) -> None:
+    def test_observability_accepts_configured_callback(self) -> None:
         mock_configure = mock.MagicMock()
         instrumentation_options = {"httpx": {"enabled": True}}
         AgentServerHost(
-            configure_observability=mock_configure,
-            instrumentation_options=instrumentation_options,
+            configure_observability=partial(
+                mock_configure,
+                instrumentation_options=instrumentation_options,
+            ),
         )
-        assert (
-            mock_configure.call_args.kwargs["instrumentation_options"]
-            is instrumentation_options
+        mock_configure.assert_called_once_with(
+            connection_string="",
+            log_level=None,
+            enable_sensitive_data=True,
+            instrumentation_options=instrumentation_options,
         )
 
     def test_observability_disabled_when_none(self) -> None:
