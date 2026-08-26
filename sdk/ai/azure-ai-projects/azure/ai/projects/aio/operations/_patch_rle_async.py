@@ -134,8 +134,8 @@ async def _acquire_instance(
     instance_id = instance.instance_id
 
     # The initial (possibly 202) response may carry a Retry-After hint for the first poll.
-    retry_after = _parse_retry_after(captured.get("response"))
-    next_wait = retry_after if retry_after is not None else poll_interval_s
+    initial_retry_after = _parse_retry_after(captured.get("response"))
+    next_wait = initial_retry_after if initial_retry_after is not None else poll_interval_s
     try:
         while not _status_matches(instance.status, RLEInstanceStatus.RUNNING):
             if any(
