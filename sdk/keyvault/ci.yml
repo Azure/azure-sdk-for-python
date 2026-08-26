@@ -32,6 +32,11 @@ extends:
     ServiceDirectory: keyvault
     TestTimeoutInMinutes: 120
     TestProxy: true
+    # Hotfix branch: scope build/analyze/test to the certificates package only.
+    # Sibling KeyVault packages on this old base fail current eng tooling and are not
+    # shipped from this branch. Artifacts controls packaging; BuildTargetingString
+    # controls which packages the Build/Analyze/Test matrix targets.
+    BuildTargetingString: azure-keyvault-certificates
     Artifacts:
     - name: azure-keyvault-certificates
       safeName: azurekeyvaultcertificates
