@@ -1,5 +1,28 @@
 # Release History
 
+## 41.6.0 (2026-08-25)
+
+### Features Added
+
+  - Model `AgentPoolNetworkProfile` added property `dranet`
+  - Enum `AgentPoolSSHAccess` added member `ENTRA_ID`
+  - Model `ManagedClusterAzureMonitorProfile` added property `container_insights`
+  - Model `ManagedClusterAzureMonitorProfileAppMonitoring` added property `open_telemetry_logs_and_traces`
+  - Model `ManagedClusterAzureMonitorProfileAppMonitoring` added property `open_telemetry_metrics`
+  - Model `ManagedClusterManagedOutboundIPProfile` added property `count_ipv6`
+  - Model `ManagedClusterNATGatewayProfile` added property `outbound_i_ps`
+  - Model `ManagedClusterNATGatewayProfile` added property `outbound_ip_prefixes`
+  - Model `ManagedClusterNATGatewayProfile` added property `sku`
+  - Added enum `ContainerNetworkLogs`
+  - Added enum `DRANETMode`
+  - Added model `DRANETProfile`
+  - Added model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces`
+  - Added model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics`
+  - Added model `ManagedClusterAzureMonitorProfileContainerInsights`
+  - Added model `ManagedClusterNATGatewayProfileOutboundIPs`
+  - Added model `ManagedClusterNATGatewayProfileOutboundIpPrefixes`
+  - Added enum `ManagedClusterNATGatewaySku`
+
 ## 41.6.0b1 (2026-07-24)
 
 ### Features Added
