@@ -241,9 +241,7 @@ class TestJobOperations:
             with pytest.raises(Exception):
                 mock_job_operation.create_or_update(job=job)
 
-    def test_append_tid_to_studio_url_caches_tenant_id_across_jobs(
-        self, mock_job_operation: JobOperations
-    ) -> None:
+    def test_append_tid_to_studio_url_caches_tenant_id_across_jobs(self, mock_job_operation: JobOperations) -> None:
         # Regression test for issue #48415: the tenant id is decoded from the credential once per
         # JobOperations instance and reused across subsequent jobs, so ``list()`` iteration no
         # longer pays a ``get_token()`` cost per item.
@@ -256,9 +254,7 @@ class TestJobOperations:
         job_b = Mock(services={"Studio": studio_b})
 
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
-            mock_get_token.return_value = AccessToken(
-                token=jwt.encode({"tid": tid}, key="utf-8"), expires_on=1234
-            )
+            mock_get_token.return_value = AccessToken(token=jwt.encode({"tid": tid}, key="utf-8"), expires_on=1234)
             mock_job_operation._append_tid_to_studio_url(job_a)
             mock_job_operation._append_tid_to_studio_url(job_b)
 
