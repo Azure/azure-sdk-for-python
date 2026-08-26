@@ -11,6 +11,7 @@ from typing import Optional, List
 from subprocess import CalledProcessError
 
 from .Check import Check
+from ._tool_reqs import load_requirements, pinned_version
 from ci_tools.functions import install_into_venv
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
@@ -18,7 +19,9 @@ from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.functions import get_pip_command
 from ci_tools.logging import logger
 
-PYRIGHT_VERSION = "1.1.407"
+# verifytypes uses the same pyright pin as the pyright check; the version is
+# pinned in eng/tool_requirements/pyright.txt (single source of truth).
+PYRIGHT_VERSION = pinned_version("pyright", "pyright")
 REPO_ROOT = discover_repo_root()
 
 
@@ -64,7 +67,7 @@ class verifytypes(Check):
 
             # install pyright
             try:
-                install_into_venv(executable, [f"pyright=={PYRIGHT_VERSION}"], package_dir)
+                install_into_venv(executable, load_requirements("pyright"), package_dir)
             except CalledProcessError as e:
                 logger.error(f"Failed to install pyright: {e}")
                 return e.returncode

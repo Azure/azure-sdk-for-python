@@ -7,6 +7,7 @@ from typing import Optional, List
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
+from ._tool_reqs import pin, pinned_version
 from ci_tools.functions import install_into_venv
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
@@ -14,10 +15,12 @@ from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.logging import logger, run_logged
 
 REPO_ROOT = discover_repo_root()
-PYLINT_VERSION = "4.0.4"
-PYLINT_GUIDELINES_CHECKER_VERSION = "0.5.7"
-NEXT_PYLINT_VERSION = "4.0.6"
-NEXT_PYLINT_GUIDELINES_CHECKER_VERSION = "0.5.9"
+# Tool versions are pinned in eng/tool_requirements/{pylint,pylint_next}.txt
+# (single source of truth). Constants are derived for backwards compatibility.
+PYLINT_VERSION = pinned_version("pylint", "pylint")
+PYLINT_GUIDELINES_CHECKER_VERSION = pinned_version("pylint", "azure-pylint-guidelines-checker")
+NEXT_PYLINT_VERSION = pinned_version("pylint_next", "pylint")
+NEXT_PYLINT_GUIDELINES_CHECKER_VERSION = pinned_version("pylint_next", "azure-pylint-guidelines-checker")
 # README snippet files can contain independent code blocks, so imports may be
 # repeated or appear after executable statements when the blocks share a file.
 SNIPPET_SAMPLE_IMPORT_DISABLES = (
@@ -100,15 +103,10 @@ class pylint(Check):
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
             try:
-                if args.next:
-                    # use latest version of azure-pylint-guidelines-checker for next pylint checks
-                    cmds = [
-                        f"azure-pylint-guidelines-checker=={NEXT_PYLINT_GUIDELINES_CHECKER_VERSION}",
-                    ]
-                else:
-                    cmds = [
-                        f"azure-pylint-guidelines-checker=={PYLINT_GUIDELINES_CHECKER_VERSION}",
-                    ]
+                req_file = "pylint_next" if args.next else "pylint"
+                cmds = [
+                    pin(req_file, "azure-pylint-guidelines-checker"),
+                ]
                 cmds.append(
                     "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
                 )
@@ -136,11 +134,7 @@ class pylint(Check):
 
             # install pylint
             try:
-                if args.next:
-                    # use latest version of pylint
-                    install_into_venv(executable, [f"pylint=={NEXT_PYLINT_VERSION}"], package_dir)
-                else:
-                    install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"], package_dir)
+                install_into_venv(executable, [pin(req_file, "pylint")], package_dir)
             except CalledProcessError as e:
                 logger.error(f"Failed to install pylint: {e}")
                 return e.returncode
