@@ -15,7 +15,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python list_available_container_service_vm_skus.py
+    python managed_clusters_list_cluster_monitoring_user_credentials.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.vm_skus.list(
-        location="westus",
+    response = client.managed_clusters.list_cluster_monitoring_user_credentials(
+        resource_group_name="rg1",
+        resource_name="clustername1",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2026-05-02-preview/ListAvailableContainerServiceVmSkus.json
+# x-ms-original-file: 2026-06-01/ManagedClustersListClusterMonitoringUserCredentials.json
 if __name__ == "__main__":
     main()
