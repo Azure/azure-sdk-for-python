@@ -1,6 +1,6 @@
 # Release History
 
-## 18.0.0b3 (2026-08-14)
+## 18.0.0b3 (2026-08-26)
 
 ### Features Added
 
