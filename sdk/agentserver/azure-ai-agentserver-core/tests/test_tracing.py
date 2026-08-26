@@ -464,6 +464,38 @@ class TestAzureMonitorDistroExport:
             "urllib3": {"enabled": False},
         }
 
+    def test_azure_sdk_policy_does_not_start_span_by_default(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+        from azure.core.pipeline import PipelineContext, PipelineRequest
+        from azure.core.pipeline.policies import DistributedTracingPolicy
+        from azure.core.rest import HttpRequest
+        from azure.core.settings import settings
+        from microsoft.opentelemetry._azure_monitor._configure import (
+            _setup_azure_instrumentations,
+        )
+
+        # Isolate the process-global Azure Core tracing configuration.
+        with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(
+            settings.tracing_implementation, "_user_value", None
+        ):
+            _setup_azure_instrumentations(
+                {
+                    "disable_tracing": False,
+                    "instrumentation_options": _tracing._resolve_instrumentation_options(
+                        None
+                    ),
+                }
+            )
+            request = PipelineRequest(
+                HttpRequest("GET", "https://example.test"),
+                PipelineContext(None),
+            )
+            policy = DistributedTracingPolicy()
+
+            policy.on_request(request)
+
+            assert policy.TRACING_CONTEXT not in request.context
+
     def test_customer_can_enable_disabled_instrumentations(self) -> None:
         kwargs = self._run(
             {},
