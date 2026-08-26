@@ -231,9 +231,7 @@ class AgentServerHost(Starlette):
         log_level: Optional[str] = None,
         access_log: Optional[logging.Logger] = _SENTINEL_ACCESS_LOG,  # type: ignore[assignment]
         access_log_format: Optional[str] = None,
-        configure_observability: Optional[
-            Callable[..., None]
-        ] = _tracing.configure_observability,
+        configure_observability: Optional[Callable[..., None]] = _tracing.configure_observability,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
@@ -258,13 +256,8 @@ class AgentServerHost(Starlette):
         self.config: _config.AgentConfig = _config.AgentConfig.from_env()
 
         # Observability (logging + tracing) --------------------------------
-        _conn_str = (
-            applicationinsights_connection_string
-            or self.config.appinsights_connection_string
-        )
-        _env_val = os.environ.get(
-            "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true"
-        )
+        _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
+        _env_val = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
         _sensitive_data = _env_val.lower() not in ("false", "0")
         if configure_observability is not None:
             try:
