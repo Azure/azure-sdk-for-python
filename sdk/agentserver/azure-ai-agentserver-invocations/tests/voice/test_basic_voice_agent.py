@@ -76,7 +76,7 @@ def test_sample_includes_setup_run_and_bridge_manifest():
     assert "python -m pip install -r requirements.txt" in readme
     assert "python basic_voice_agent.py" in readme
     assert "/invocations_ws" in readme
-    assert requirements == ["azure-ai-agentserver-invocations>=1.1.0b2"]
+    assert requirements == ["azure-ai-agentserver-invocations>=1.1.0b2,<2.0.0"]
 
     manifest = yaml.safe_load((_SAMPLE_ROOT / "agent.manifest.yaml").read_text(encoding="utf-8"))
     assert manifest["protocols"] == ["invocations_ws"]

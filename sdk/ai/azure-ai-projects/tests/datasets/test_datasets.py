@@ -5,12 +5,15 @@
 # ------------------------------------
 import os
 import re
+from unittest.mock import MagicMock
+
 import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, is_live, is_live_and_not_recording, add_general_regex_sanitizer
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import DatasetVersion, DatasetType
+from azure.ai.projects.models import DatasetGenerationLROPoller, DatasetVersion, DatasetType
 from azure.ai.projects.models._enums import ConnectionType
+from azure.ai.projects.operations._patch_datasets import BetaDatasetsOperations
 from azure.core.exceptions import HttpResponseError
 
 # Construct the paths to the data folder and data file used in this test
@@ -18,6 +21,27 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "../test_data/datasets"))
 data_file1 = os.path.join(data_folder, "data_file1.txt")
 data_file2 = os.path.join(data_folder, "data_file2.txt")
+
+
+def test_begin_create_generation_job_exposes_job_id():
+    """The sync create operation exposes its job ID without SDK polling."""
+    operation = BetaDatasetsOperations.__new__(BetaDatasetsOperations)
+    operation._client = MagicMock()  # pylint: disable=protected-access
+    operation._config = MagicMock(polling_interval=0)  # pylint: disable=protected-access
+    operation._serialize = MagicMock()  # pylint: disable=protected-access
+    operation._serialize.url.return_value = "https://example.test"  # pylint: disable=protected-access
+    operation._deserialize = MagicMock()  # pylint: disable=protected-access
+
+    initial_response = MagicMock()
+    initial_response.http_response.json.return_value = {"id": "job-sync"}
+    operation._create_generation_job_initial = MagicMock(  # pylint: disable=protected-access
+        return_value=initial_response
+    )
+
+    poller = operation.begin_create_generation_job(job={}, polling=False)
+
+    assert isinstance(poller, DatasetGenerationLROPoller)
+    assert poller.details["job_id"] == "job-sync"
 
 
 @pytest.mark.skipif(
