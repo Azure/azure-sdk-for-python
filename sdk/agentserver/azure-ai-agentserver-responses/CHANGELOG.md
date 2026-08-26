@@ -1,5 +1,14 @@
 # Release History
 
+## 2.1.0b2 (Unreleased)
+
+### Bugs Fixed
+
+- Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
+  available, preventing recreated same-name sessions from colliding with task
+  tombstones. Existing pre-rollout active chains remain resumable through a
+  legacy-ID lookup.
+
 ## 2.1.0b1 (2026-08-11)
 
 ### Breaking Changes
