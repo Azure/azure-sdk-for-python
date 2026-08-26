@@ -126,6 +126,11 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": "[1, 2]"}), {})
         self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": 42}), {})
 
+    def test_filter_custom_measurements_deeply_nested_json(self):
+        # Deeply nested payloads raise RecursionError from json.loads and must be ignored
+        deeply_nested = "[" * 200000 + "]" * 200000
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": deeply_nested}), {})
+
     def test_filter_custom_measurements_drops_invalid_entries(self):
         measurements = _utils._filter_custom_measurements(
             {

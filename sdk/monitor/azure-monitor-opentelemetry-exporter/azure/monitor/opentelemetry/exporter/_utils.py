@@ -460,7 +460,7 @@ def _filter_custom_measurements(attributes: Attributes) -> Dict[str, float]:
     if isinstance(value, str):
         try:
             value = json.loads(value)
-        except ValueError:
+        except (ValueError, RecursionError):
             return processed_measurements
     if not isinstance(value, Mapping):
         return processed_measurements
@@ -470,7 +470,6 @@ def _filter_custom_measurements(attributes: Attributes) -> Dict[str, float]:
         if isinstance(val, bool) or not isinstance(val, (int, float)):
             continue
         try:
-
             measurement = float(val)
         except OverflowError:
             continue
