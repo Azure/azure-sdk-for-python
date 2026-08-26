@@ -56,6 +56,7 @@ from .policies import (
     StorageRequestHook,
     StorageResponseHook,
     StorageSensitiveHeaderCleanupPolicy,
+    StorageSessionPolicy,
 )
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .response_handlers import PartialBatchErrorException, process_storage_error
@@ -328,12 +329,45 @@ class StorageAccountHostsMixin(object):
             config.headers_policy,
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            config.logging_policy,
-            StorageResponseHook(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
             StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
+        use_session = bool(kwargs.pop("use_session", False))
+        session_options = kwargs.pop("session_options", None)
+        if use_session:
+            if not hasattr(credential, "get_token"):
+                raise ValueError(
+                    "use_session=True requires a TokenCredential; received "
+                    f"{type(credential).__name__ if credential is not None else 'None'}."
+                )
+
+            session_provider = getattr(session_options, "session_provider", None)
+            if session_provider is None:
+                from .session_provider import ContainerSessionProvider  # module-level import would cycle
+
+                sub_kwargs = dict(kwargs)
+                sub_kwargs.pop("_configuration", None)
+                sub_kwargs.pop("pipeline", None)
+                sub_kwargs["transport"] = transport
+                session_provider = ContainerSessionProvider(
+                    f"{self.scheme}://{self.primary_hostname}",
+                    cast(TokenCredential, credential),
+                    **sub_kwargs,
+                )
+
+            policies.append(
+                StorageSessionPolicy(
+                    account_name=self.account_name,
+                    session_provider=session_provider,
+                )
+            )
+        policies.extend(
+            [
+                config.logging_policy,
+                StorageResponseHook(**kwargs),
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs),
+            ]
+        )
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         config.transport = transport  # type: ignore

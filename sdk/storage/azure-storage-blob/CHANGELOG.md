@@ -4,6 +4,11 @@
 
 ### Features Added
 - Added `list` support to `BlobSasPermissions` for use with directory-scoped SAS tokens.
+- Added opt-in session-based authentication for `ContainerClient` via the new
+`use_session` keyword argument. When enabled, it must be used with a
+`TokenCredential`. Eligible GET requests issued through the client
+are authenticated using a short-lived session credential obtained from the
+service instead of the bearer token.
 
 ### Bugs Fixed
 - Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.

@@ -27,6 +27,7 @@ from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.models import PageList
+    from ._shared.session import SessionProvider
 
 
 # Parse a generated PageList into a single list of PageRange sorted by start.
@@ -1554,3 +1555,19 @@ class BlobQueryError(object):
         self.is_fatal = is_fatal
         self.description = description
         self.position = position
+
+
+class SessionOptions(object):
+    """Options for session-based authentication.
+
+    :keyword session_provider: Creates, caches, and invalidates per-container sessions.
+        When omitted, one is created and scoped to the client. Supply a shared instance
+        to reuse the session cache across multiple clients.
+    :paramtype session_provider: ~azure.storage.blob.SessionProvider or None
+    """
+
+    session_provider: Optional["SessionProvider"]
+    """Creates, caches, and invalidates per-container sessions."""
+
+    def __init__(self, *, session_provider: Optional["SessionProvider"] = None) -> None:
+        self.session_provider = session_provider
