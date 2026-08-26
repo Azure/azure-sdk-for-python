@@ -71,7 +71,7 @@
 ### Bugs Fixed
 
 - Improved large document upload and merge performance by avoiding redundant serialization. #46860
-- Made `SearchFieldDataType.Collection` visible to static type checkers.
+- Made `SearchFieldDataType.Collection` visible to static type checkers. #47929
 - Normalized `SearchIndexClient.update_knowledge_source_file` and its asynchronous equivalent to
   use the name-first signature `(name, file_id, body)`, consistent with the other File knowledge
   source operations.
