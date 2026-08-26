@@ -21,6 +21,8 @@ from ._enums import (
 if TYPE_CHECKING:
     from enum import Enum
 
+    from azure.core import CaseInsensitiveEnumMeta
+
     from ._models import (
         AzureActiveDirectoryApplicationCredentials,
         DataChangeDetectionPolicy,
@@ -174,7 +176,7 @@ def _collection_helper(typ: Any) -> str:
 # The Collection method is added at runtime via monkey-patching
 if TYPE_CHECKING:
 
-    class SearchFieldDataType(str, Enum):
+    class SearchFieldDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         STRING = "Edm.String"
         INT32 = "Edm.Int32"
         INT64 = "Edm.Int64"
@@ -188,15 +190,6 @@ if TYPE_CHECKING:
         INT16 = "Edm.Int16"
         S_BYTE = "Edm.SByte"
         BYTE = "Edm.Byte"
-        String = "Edm.String"
-        Int32 = "Edm.Int32"
-        Int64 = "Edm.Int64"
-        Single = "Edm.Single"
-        Double = "Edm.Double"
-        Boolean = "Edm.Boolean"
-        DateTimeOffset = "Edm.DateTimeOffset"
-        GeographyPoint = "Edm.GeographyPoint"
-        ComplexType = "Edm.ComplexType"
 
         @staticmethod
         def Collection(typ: Union[str, "SearchFieldDataType"]) -> str:
@@ -207,15 +200,15 @@ else:
     SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore[attr-defined]
 
 # Backward-compatible aliases (old camelCase names -> new UPPER_CASE names)
-SearchFieldDataType.String = SearchFieldDataType.STRING  # type: ignore[attr-defined]
-SearchFieldDataType.Int32 = SearchFieldDataType.INT32  # type: ignore[attr-defined]
-SearchFieldDataType.Int64 = SearchFieldDataType.INT64  # type: ignore[attr-defined]
-SearchFieldDataType.Single = SearchFieldDataType.SINGLE  # type: ignore[attr-defined]
-SearchFieldDataType.Double = SearchFieldDataType.DOUBLE  # type: ignore[attr-defined]
-SearchFieldDataType.Boolean = SearchFieldDataType.BOOLEAN  # type: ignore[attr-defined]
-SearchFieldDataType.DateTimeOffset = SearchFieldDataType.DATE_TIME_OFFSET  # type: ignore[attr-defined]
-SearchFieldDataType.GeographyPoint = SearchFieldDataType.GEOGRAPHY_POINT  # type: ignore[attr-defined]
-SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
+SearchFieldDataType.String = SearchFieldDataType.STRING  # type: ignore[misc]
+SearchFieldDataType.Int32 = SearchFieldDataType.INT32  # type: ignore[misc]
+SearchFieldDataType.Int64 = SearchFieldDataType.INT64  # type: ignore[misc]
+SearchFieldDataType.Single = SearchFieldDataType.SINGLE  # type: ignore[misc]
+SearchFieldDataType.Double = SearchFieldDataType.DOUBLE  # type: ignore[misc]
+SearchFieldDataType.Boolean = SearchFieldDataType.BOOLEAN  # type: ignore[misc]
+SearchFieldDataType.DateTimeOffset = SearchFieldDataType.DATE_TIME_OFFSET  # type: ignore[misc]
+SearchFieldDataType.GeographyPoint = SearchFieldDataType.GEOGRAPHY_POINT  # type: ignore[misc]
+SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[misc]
 
 
 def Collection(typ: Any) -> str:
