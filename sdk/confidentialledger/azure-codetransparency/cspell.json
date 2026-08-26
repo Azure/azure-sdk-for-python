@@ -1,0 +1,8 @@
+{
+  "ignoreWords": [],
+  "ignorePaths": [
+    "*.cose",
+    "*/samples/*",
+    "*/test_files/*"
+  ]
+}
