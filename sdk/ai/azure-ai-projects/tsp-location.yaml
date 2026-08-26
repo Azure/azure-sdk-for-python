@@ -1,5 +1,5 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-js-azure-ai-projects
-commit: 9a1ee382eb32ff2af52911bf3106d97d0a6ab226
+commit: 592d36dbd539e1365d0e8c0e993daf8ffeda29ef
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 
 - specification/ai-foundry/data-plane/Foundry/src/agents
