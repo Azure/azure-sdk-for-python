@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.computes.begin_create_or_update(
+    response = client.computes.begin_create_or_update(
         resource_group_name="rgcognitiveservices",
         account_name="myAccount",
         compute_name="myCompute",
@@ -45,6 +45,7 @@ def main():
             },
         },
     ).result()
+    print(response)
 
 
 # x-ms-original-file: 2026-07-15-preview/PutCompute.json

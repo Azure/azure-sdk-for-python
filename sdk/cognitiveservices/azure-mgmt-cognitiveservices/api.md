@@ -1309,7 +1309,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
+            ) -> AsyncLROPoller[Compute]: ...
 
         @overload
         async def begin_create_or_update(
@@ -1321,7 +1321,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
+            ) -> AsyncLROPoller[Compute]: ...
 
         @overload
         async def begin_create_or_update(
@@ -1333,7 +1333,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
+            ) -> AsyncLROPoller[Compute]: ...
 
         @distributed_trace_async
         @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview'])
@@ -10055,7 +10055,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[None]: ...
+            ) -> LROPoller[Compute]: ...
 
         @overload
         def begin_create_or_update(
@@ -10067,7 +10067,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[None]: ...
+            ) -> LROPoller[Compute]: ...
 
         @overload
         def begin_create_or_update(
@@ -10079,7 +10079,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[None]: ...
+            ) -> LROPoller[Compute]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview'])
