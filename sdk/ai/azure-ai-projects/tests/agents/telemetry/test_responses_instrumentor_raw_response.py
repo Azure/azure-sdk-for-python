@@ -27,7 +27,6 @@ from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.ai.projects.telemetry import AIProjectInstrumentor
 from openai import AsyncOpenAI, AsyncStream, OpenAI, Stream
 
-
 CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
 EXPERIMENTAL_ENABLE_GENAI_TRACING_ENV_VARIABLE = "AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"
 

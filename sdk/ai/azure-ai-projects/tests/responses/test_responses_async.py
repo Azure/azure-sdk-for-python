@@ -42,7 +42,7 @@ class TestResponsesAsync(TestBase):
     # To run this test:
     # pytest tests\responses\test_responses_async.py::TestResponsesAsync::test_responses_async -s
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.HTTPX2)
     async def test_responses_async(self, **kwargs):
 
         model = kwargs.get("foundry_model_name")

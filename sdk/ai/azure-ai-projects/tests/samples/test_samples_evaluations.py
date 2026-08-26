@@ -176,7 +176,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_evaluation_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(
@@ -205,7 +205,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agentic_evaluator_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(
@@ -221,7 +221,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     # To run this test, use:
     # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_generic_agentic_evaluator_sample
     @evaluationsPreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_generic_agentic_evaluator_sample(self, **kwargs) -> None:
         # Manually construct path to nested sample
         current_dir = os.path.dirname(os.path.abspath(__file__))
