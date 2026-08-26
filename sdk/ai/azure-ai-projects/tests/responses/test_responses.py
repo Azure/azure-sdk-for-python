@@ -46,7 +46,7 @@ class TestResponses(TestBase):
     # To run this test:
     # pytest tests\responses\test_responses.py::TestResponses::test_responses -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.HTTPX2)
     def test_responses(self, **kwargs):
         """
         Test creating a responses call (no Agents, no Conversation).
