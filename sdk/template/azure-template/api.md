@@ -6,6 +6,9 @@ namespace azure.template
 
 namespace azure.template.template_code
 
+    def azure.template.template_code.template_alt() -> bool: ...
+
+
     def azure.template.template_code.template_main() -> bool: ...
 
 
