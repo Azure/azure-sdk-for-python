@@ -454,6 +454,15 @@ class TestAzureMonitorDistroExport:
         )
         assert "sampling_ratio" not in kwargs
 
+    def test_rate_limited_sampler_env_overrides_full_sampling(self) -> None:
+        kwargs = self._run(
+            {
+                "OTEL_TRACES_SAMPLER": "microsoft.rate_limited",
+                "OTEL_TRACES_PER_SECOND": "5",
+            }
+        )
+        assert "sampling_ratio" not in kwargs
+
     def test_http_and_azure_sdk_instrumentations_disabled_by_default(self) -> None:
         kwargs = self._run({})
         assert kwargs["instrumentation_options"] == {
