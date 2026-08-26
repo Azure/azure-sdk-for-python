@@ -194,6 +194,7 @@ def test_rle_symbols_exported_from_public_namespace():
     # OpenEnv client/instance types are reachable via the operations namespaces but are intentionally
     # not top-level package exports. Only ``RLEError`` is surfaced at the package root (for excepts).
     assert getattr(projects, "RLEError")
+    assert not hasattr(operations, "RLEError")
     assert getattr(operations, "OpenEnvClient")
     assert getattr(operations, "OpenEnvInstance")
     assert getattr(operations, "RLEInstanceAcquireTimeoutError")

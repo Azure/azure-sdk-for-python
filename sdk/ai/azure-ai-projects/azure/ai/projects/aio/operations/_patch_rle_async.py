@@ -670,11 +670,14 @@ class AsyncOpenEnvClient:
         group_id = self._instance_group_id
         if group_id is None:
             return
+        environment_version = self._version
+        if environment_version is None:
+            raise RLEError("service did not resolve the instance group's environment version")
         self._instance_group_id = None
         try:
             await self._instance_groups.delete_instance_group(
                 self._name,
-                self._version,
+                environment_version,
                 group_id,
             )
         except AzureError:
