@@ -1,5 +1,15 @@
 # Release History
 
+## 2.6.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 2.6.0b1 (2026-08-25)
 
 ### Features Added
