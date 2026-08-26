@@ -1,4 +1,7 @@
+import logging
 import os
+import time
+
 from devtools_testutils import (
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
@@ -7,12 +10,18 @@ from devtools_testutils import (
     remove_batch_sanitizers,
     add_remove_header_sanitizer,
     add_uri_string_sanitizer,
+    get_credential,
     is_live,
 )
 import pytest
 from azure.appconfiguration import AzureAppConfigurationClient
-from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
 from testcase import setup_configs, cleanup_test_resources
+
+
+_LOGGER = logging.getLogger(__name__)
+_RBAC_PROPAGATION_TIMEOUT = 15 * 60
+_MAX_RETRY_DELAY = 30
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 
@@ -20,9 +29,52 @@ from testcase import setup_configs, cleanup_test_resources
 snapshot_names = {}
 
 
+def _wait_for_data_plane_access(client, timeout=_RBAC_PROPAGATION_TIMEOUT):
+    deadline = time.monotonic() + timeout
+    retry_delay = 1
+
+    while True:
+        try:
+            next(client.list_configuration_settings(key_filter="__rbac_readiness_probe__"), None)
+            return
+        except HttpResponseError as error:
+            if error.status_code != 403:
+                raise
+
+            remaining_time = deadline - time.monotonic()
+            if remaining_time <= 0:
+                raise TimeoutError("App Configuration data-plane role assignment did not propagate in time.") from error
+
+            sleep_time = min(retry_delay, remaining_time)
+            _LOGGER.info(
+                "Waiting %.0f seconds for the App Configuration data-plane role assignment to propagate.",
+                sleep_time,
+            )
+            time.sleep(sleep_time)
+            retry_delay = min(retry_delay * 2, _MAX_RETRY_DELAY)
+
+
 @pytest.fixture(scope="session", autouse=True)
-def setup_app_config_keys():
+def wait_for_data_plane_access():
+    if not is_live():
+        return
+
+    endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
+    if not endpoint:
+        pytest.fail("APPCONFIGURATION_ENDPOINT_STRING must be set when running live tests.")
+
+    client = AzureAppConfigurationClient(endpoint, get_credential())
+    try:
+        _wait_for_data_plane_access(client)
+    finally:
+        client.close()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_app_config_keys(wait_for_data_plane_access):
     """Pre-populate App Configuration with test keys and snapshots once per session (live mode only)."""
+    del wait_for_data_plane_access
+
     if not is_live():
         yield
         return
@@ -32,7 +84,7 @@ def setup_app_config_keys():
         yield
         return
 
-    credential = DefaultAzureCredential()
+    credential = get_credential()
     client = AzureAppConfigurationClient(endpoint, credential)
     keyvault_secret_url = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE")
     keyvault_secret_url2 = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE2")
