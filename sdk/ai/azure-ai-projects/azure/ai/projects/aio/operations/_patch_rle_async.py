@@ -90,6 +90,12 @@ async def _acquire_instance(
 
     :param instances: Generated async instance operations bound to the project client.
     :type instances: ~azure.ai.projects.aio.operations.RLEInstancesOperations
+    :param runtime: Generated async instance runtime operations bound to the project client.
+    :type runtime: ~azure.ai.projects.aio.operations.RLEInstanceRuntimeOperations
+    :param environment_name: The environment name that owns the instance group.
+    :type environment_name: str
+    :param environment_version: The resolved environment version.
+    :type environment_version: str
     :param instance_group_id: The instance group to lease an instance from.
     :type instance_group_id: str
     :keyword instance_acquire_timeout: Maximum time to acquire a healthy instance, in seconds.
@@ -215,7 +221,7 @@ async def _acquire_instance(
     return instance
 
 
-class AsyncOpenEnvInstance:
+class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
     """A leased RLE instance that runs episodes under a resolved environment version.
 
     An instance context is obtained from :meth:`AsyncOpenEnvClient.get_instance`. Entering it leases a
@@ -279,17 +285,26 @@ class AsyncOpenEnvInstance:
 
     @property
     def instance_group_id(self) -> str:
-        """The instance group the instance was leased from."""
+        """The instance group the instance was leased from.
+
+        :rtype: str
+        """
         return self._instance_group_id
 
     @property
     def environment_name(self) -> str:
-        """Resolved environment name that owns this instance."""
+        """Resolved environment name that owns this instance.
+
+        :rtype: str
+        """
         return self._environment_name
 
     @property
     def environment_version(self) -> str:
-        """Resolved environment version that owns this instance."""
+        """Resolved environment version that owns this instance.
+
+        :rtype: str
+        """
         return self._environment_version
 
     @property
@@ -465,7 +480,7 @@ class AsyncOpenEnvInstance:
             pass
 
 
-class AsyncOpenEnvClient:
+class AsyncOpenEnvClient:  # pylint: disable=too-many-instance-attributes,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs,client-accepts-api-version-keyword,async-client-bad-name
     """An async client over a hosted RLE (OpenEnv) environment with a reserved concurrency quota.
 
     Created via :meth:`RLEOperations.get_openenv_client`. On entering its context the client creates a
@@ -537,22 +552,34 @@ class AsyncOpenEnvClient:
 
     @property
     def instance_group_id(self) -> Optional[str]:
-        """The instance group id backing this client, once created (else ``None``)."""
+        """The instance group id backing this client, once created (else ``None``).
+
+        :rtype: str or None
+        """
         return self._instance_group_id
 
     @property
     def max_active_instances(self) -> int:
-        """Concurrency the instance group reserves on the service for this client."""
+        """Concurrency the instance group reserves on the service for this client.
+
+        :rtype: int
+        """
         return self._max_active_instances
 
     @property
     def environment_name(self) -> str:
-        """Environment name, resolved from the instance-group response after context entry."""
+        """Environment name, resolved from the instance-group response after context entry.
+
+        :rtype: str
+        """
         return self._name
 
     @property
     def environment_version(self) -> Optional[str]:
-        """Resolved environment version after context entry, otherwise the requested version."""
+        """Resolved environment version after context entry, otherwise the requested version.
+
+        :rtype: str or None
+        """
         return self._version
 
     async def __aenter__(self) -> "AsyncOpenEnvClient":
@@ -716,6 +743,8 @@ class RLEOperations:
         :type name: str
         :param acr_image_path: Azure Container Registry image path that backs the environment. Required.
         :type acr_image_path: str
+        :keyword version_bump: Strategy for bumping the environment version. Default value is None.
+        :paramtype version_bump: str or ~azure.ai.projects.models.RLEnvironmentVersionBump or None
         :return: The created RLEnvironment.
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -750,6 +779,8 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
+        :keyword order: Pagination order. Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.RLEPaginationOrder or None
         :return: An async iterator over hosted RLE environments.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -821,6 +852,8 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
+        :keyword order: Pagination order. Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.RLEPaginationOrder or None
         :return: An async iterator over historical environment versions.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:

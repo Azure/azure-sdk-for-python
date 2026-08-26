@@ -61,12 +61,12 @@ def main() -> int:
 
             environments = project_client.rle.list_environments(limit=100)
             print("\nEnvironments:")
-            for item in environments.data or []:
+            for item in environments:
                 print(f"- {item.name} (version {item.version})")
 
             versions = project_client.rle.list_environment_versions(environment.name, limit=100)
             print(f"\nVersions for {environment.name}:")
-            for item in versions.data or []:
+            for item in versions:
                 print(f"- {item.version}")
 
     return 0
