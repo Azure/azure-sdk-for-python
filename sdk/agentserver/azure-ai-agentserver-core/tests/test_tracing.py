@@ -411,8 +411,17 @@ class TestAzureMonitorDistroExport:
         assert kwargs["azure_monitor_exporter_credential"] is sentinel
 
     def test_azure_monitor_uses_full_sampling(self) -> None:
-        kwargs = self._run({})
+        kwargs = self._run({"OTEL_TRACES_SAMPLER": ""})
         assert kwargs["sampling_ratio"] == 1.0
+
+    def test_otel_sampler_env_overrides_full_sampling(self) -> None:
+        kwargs = self._run(
+            {
+                "OTEL_TRACES_SAMPLER": "trace_id_ratio",
+                "OTEL_TRACES_SAMPLER_ARG": "0.25",
+            }
+        )
+        assert "sampling_ratio" not in kwargs
 
     def test_no_sampling_ratio_without_azure_monitor(self) -> None:
         from azure.ai.agentserver.core import _tracing

@@ -89,6 +89,7 @@ _OTLP_METRICS_ENDPOINT = "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT"
 _OTLP_METRICS_PROTOCOL = "OTEL_EXPORTER_OTLP_METRICS_PROTOCOL"
 _OTLP_LOGS_ENDPOINT = "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT"
 _OTLP_LOGS_PROTOCOL = "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL"
+_OTEL_TRACES_SAMPLER = "OTEL_TRACES_SAMPLER"
 _OTLP_ENV_VARS = (
     _OTLP_ENDPOINT,
     _OTLP_PROTOCOL,
@@ -283,8 +284,9 @@ def _setup_distro_export(
     if connection_string:
         kwargs["enable_azure_monitor"] = True
         kwargs["azure_monitor_connection_string"] = connection_string
-        # Avoid the distro's default rate limit; explicit OTel sampler env vars still take precedence.
-        kwargs["sampling_ratio"] = 1.0
+        # Avoid the distro's default rate limit unless the user selected an OTel sampler.
+        if not os.environ.get(_OTEL_TRACES_SAMPLER):
+            kwargs["sampling_ratio"] = 1.0
 
         # When Entra-based auth is requested, export to Azure Monitor using a
         # system-assigned managed identity (no client id) rather than the
