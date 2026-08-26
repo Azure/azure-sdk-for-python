@@ -22,9 +22,6 @@
   - Enum `MarketplaceType` added member `PROVIDER_HUB`
   - Model `ProviderRegistrationProperties` added property `enable_preset_resource_types`
   - Model `ProviderRegistrationProperties` added property `obo_subscription_id`
-  - Enum `ResourceDeletionPolicy` added member `CASCADE`
-  - Enum `ResourceDeletionPolicy` added member `FORCE`
-  - Enum `ResourceDeletionPolicy` added member `SOFT_DELETE`
   - Model `ResourceProviderManagement` added property `feature_management_owners`
   - Model `ResourceProviderManifest` added property `token_auth_configuration`
   - Model `ResourceProviderManifestManagement` added property `feature_management_owners`
@@ -54,7 +51,6 @@
   - Added model `ManifestInfo`
   - Added model `ManifestInfoProperties`
   - Added model `PrivateEndpointConfiguration`
-  - Added enum `RPaaSResourceDeletionPolicy`
   - Added model `ResourceDeletionPolicyAndProperties`
   - Added model `ResourceDeletionPolicyProperties`
   - Added model `ResourceTypeManagedResourceGroupConfiguration`
@@ -64,9 +60,8 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed enum value `ResourceDeletionPolicy.CASCADE_DELETE_ALL`
-  - Deleted or renamed enum value `ResourceDeletionPolicy.CASCADE_DELETE_PROXY_ONLY_CHILDREN`
-  - Deleted or renamed model `ManifestResourceDeletionPolicy`
+  - Renamed enum `ResourceDeletionPolicy` to `RPaaSResourceDeletionPolicy`
+  - Renamed enum `ManifestResourceDeletionPolicy` to `ResourceDeletionPolicy`
   - Method `Operations.list_by_provider_registration` changed return type from `List[OperationsDefinition]` to `OperationsPutContent`
 
 ## 1.0.0 (2026-07-29)
