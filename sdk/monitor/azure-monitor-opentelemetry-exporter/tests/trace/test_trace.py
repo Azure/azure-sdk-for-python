@@ -1790,6 +1790,45 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
 
+    def test_span_events_to_envelopes_custom_measurements(self):
+        exporter = self._exporter
+        time = 1575494316027613500
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            kind=SpanKind.CLIENT,
+        )
+        span.add_event(
+            "test event",
+            {"test": "asd", "microsoft.custom_measurements": '{"itemsProcessed": 42.0}'},
+            time,
+        )
+        span.add_event(
+            "exception",
+            {
+                "exception.type": "ZeroDivisionError",
+                "exception.message": "zero division error",
+                "microsoft.custom_measurements": '{"itemsProcessed": 42.0}',
+            },
+            time,
+        )
+        span.start()
+        span.end()
+        span._status = Status(status_code=StatusCode.OK)
+        envelopes = exporter._span_events_to_envelopes(span)
+
+        self.assertEqual(len(envelopes), 2)
+        for envelope, base_type in zip(envelopes, ("MessageData", "ExceptionData")):
+            with self.subTest(base_type=base_type):
+                self.assertEqual(envelope.data.base_type, base_type)
+                self.assertEqual(envelope.data.base_data.measurements, {"itemsProcessed": 42.0})
+                self.assertIsNone(envelope.data.base_data.properties.get("microsoft.custom_measurements"))
+
     def test_span_events_to_envelopes_sample_rate(self):
         exporter = self._exporter
         time = 1575494316027613500

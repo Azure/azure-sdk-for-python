@@ -552,6 +552,7 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
         properties = _utils._filter_custom_properties(
             event.attributes, lambda key, val: not _is_standard_attribute(key)
         )
+        measurements = _utils._filter_custom_measurements(event.attributes)
         if event.name == "exception":
             envelope.name = _EXCEPTION_ENVELOPE_NAME
             exc_type = exc_message = stack_trace = None
@@ -573,6 +574,7 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             data = TelemetryExceptionData(
                 version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
                 properties=properties,
+                measurements=measurements,
                 exceptions=[exc_details],
             )
             envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
@@ -582,6 +584,7 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
                 version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
                 message=str(event.name)[:32768],
                 properties=properties,
+                measurements=measurements,
             )
             envelope.data = MonitorBase(base_data=data, base_type="MessageData")
 
