@@ -1,5 +1,11 @@
 [tool.azure-sdk-build]
 pyright = false
+# This hotfix branch ships the 4.7.0-based code plus the challenge-cache security
+# fix. verifytypes compares the type-completeness score against the code in main
+# (the regenerated 4.8.0b line), so the intentionally older code here false-positives
+# as a regression. The type gaps are pre-existing in 4.7.0 (_models.py) and untouched
+# by the fix. Disable verifytypes for this hotfix release only.
+verifytypes = false
 
 [tool.azure-sdk-conda]
 in_bundle = true
