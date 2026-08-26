@@ -57,6 +57,8 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Method `HybridConnectivityMgmtClient.__init__` inserted a `positional_or_keyword` parameter `subscription_id`
   - Model `EndpointAccessResource` moved instance variable `access_key`, `expires_on`, `hybrid_connection_name`, `namespace_name`, `namespace_name_suffix` and `service_configuration_token` under property `relay` whose type is `RelayNamespaceAccessProperties`
   - Model `IngressGatewayResource` moved instance variable `access_key`, `expires_on`, `hybrid_connection_name`, `namespace_name`, `namespace_name_suffix` and `service_configuration_token` under property `relay` whose type is `RelayNamespaceAccessProperties`
