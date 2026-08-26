@@ -210,6 +210,9 @@ class JobOperations(_ScopeDependentOperations):
         self._api_base_url: Optional[str] = None
         self._container = "azureml"
         self._credential = credential
+        # Cache the tenant id decoded from the credential; token acquisition is not cached by
+        # ``get_token`` and dominated ``list()`` iteration cost (see issue #48415).
+        self._tid_cache: Optional[str] = None
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
         self.service_client_01_2024_preview_arm = kwargs.pop("service_client_01_2024_preview_arm", None)
@@ -1876,15 +1879,16 @@ class JobOperations(_ScopeDependentOperations):
                 if studio_endpoint is not None:
                     studio_url = studio_endpoint.endpoint
                     if studio_url is not None:
-                        default_scopes = _resource_to_scopes(_get_base_url_from_metadata())
-                        module_logger.debug("default_scopes used: `%s`\n", default_scopes)
-                        # Extract the tenant id from the credential using PyJWT
-                        decode = jwt.decode(
-                            self._credential.get_token(*default_scopes).token,
-                            options={"verify_signature": False, "verify_aud": False},
-                        )
-                        tid = decode["tid"]
-                        formatted_tid = TID_FMT.format(tid)
+                        if self._tid_cache is None:
+                            default_scopes = _resource_to_scopes(_get_base_url_from_metadata())
+                            module_logger.debug("default_scopes used: `%s`\n", default_scopes)
+                            # Extract the tenant id from the credential using PyJWT
+                            decode = jwt.decode(
+                                self._credential.get_token(*default_scopes).token,
+                                options={"verify_signature": False, "verify_aud": False},
+                            )
+                            self._tid_cache = decode["tid"]
+                        formatted_tid = TID_FMT.format(self._tid_cache)
                         studio_endpoint.endpoint = studio_url + formatted_tid
         except Exception:  # pylint: disable=W0718
             module_logger.info("Proceeding with no tenant id appended to studio URL\n")
