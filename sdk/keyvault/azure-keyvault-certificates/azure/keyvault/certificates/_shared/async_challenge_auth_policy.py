@@ -137,10 +137,6 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
 
             request_authorized = await self.on_challenge(request, response)
             if request_authorized:
-                # if we receive a challenge response, we retrieve a new token
-                # which matches the new target. In this case, we don't want to remove
-                # token from the request so clear the 'insecure_domain_change' tag
-                request.context.options.pop("insecure_domain_change", False)
                 try:
                     response = await self.next.send(request)
                 except Exception:  # pylint:disable=broad-except

@@ -12,6 +12,8 @@
 
 - Fixed a replay bug in challenge authentication policy. The original request is now stored at the request level instead of the client level. [#47742](https://github.com/Azure/azure-sdk-for-python/pull/47742)
 
+- Removed a stale, no-op line from the internal challenge authentication policy for parity with the `azure-core` fix in [#45518](https://github.com/Azure/azure-sdk-for-python/pull/45518). This is an internal cleanup with no functional impact.
+
 ## 4.8.0b1 (2026-05-29)
 
 ### Features Added
