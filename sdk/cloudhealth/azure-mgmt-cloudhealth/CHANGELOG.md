@@ -9,15 +9,11 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed enum value `HealthState.DELETED`
   - Model `ThresholdRuleV2` deleted or renamed its instance variable `look_back_window`
   - Renamed enum `DependenciesAggregationType` to `AggregationType`
   - Renamed enum `DependenciesAggregationUnit` to `AggregationUnit`
-
-### Other Changes
-
-  - Deleted enum `LookBackWindow` which actually were not used by SDK users
+  - Deleted enum `LookBackWindow`
 
 ## 1.0.0b3 (2026-07-07)
 
