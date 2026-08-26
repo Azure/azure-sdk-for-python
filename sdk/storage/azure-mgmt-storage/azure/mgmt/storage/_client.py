@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -25,6 +26,8 @@ from .operations import (
     BlobInventoryPoliciesOperations,
     BlobServicesOperations,
     ConnectorsOperations,
+    ContextCacheContainersOperations,
+    ContextCachesOperations,
     DataSharesOperations,
     DeletedAccountsOperations,
     EncryptionScopesOperations,
@@ -59,7 +62,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class StorageManagementClient:  # pylint: disable=too-many-instance-attributes
+class StorageManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """The Azure Storage Management API.
 
     :ivar operations: Operations operations
@@ -100,6 +103,11 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype connectors: azure.mgmt.storage.operations.ConnectorsOperations
     :ivar data_shares: DataSharesOperations operations
     :vartype data_shares: azure.mgmt.storage.operations.DataSharesOperations
+    :ivar context_caches: ContextCachesOperations operations
+    :vartype context_caches: azure.mgmt.storage.operations.ContextCachesOperations
+    :ivar context_cache_containers: ContextCacheContainersOperations operations
+    :vartype context_cache_containers:
+     azure.mgmt.storage.operations.ContextCacheContainersOperations
     :ivar advanced_platform_metrics: AdvancedPlatformMetricsOperations operations
     :vartype advanced_platform_metrics:
      azure.mgmt.storage.operations.AdvancedPlatformMetricsOperations
@@ -135,9 +143,9 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-08-01"
-     and "2026-04-01". Default value is "2026-04-01". Note that overriding this default value may
-     result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -223,6 +231,10 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes
         )
         self.connectors = ConnectorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_shares = DataSharesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.context_caches = ContextCachesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.context_cache_containers = ContextCacheContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.advanced_platform_metrics = AdvancedPlatformMetricsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

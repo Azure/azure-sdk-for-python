@@ -58,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01/StorageConnectorCRUD/StorageConnectors_Create.json
+# x-ms-original-file: 2026-06-01/StorageConnectorCRUD/StorageConnectors_Create.json
 if __name__ == "__main__":
     main()

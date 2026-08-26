@@ -1,5 +1,38 @@
 # Release History
 
+## 25.2.0 (2026-08-26)
+
+### Features Added
+
+  - Client `StorageManagementClient` added operation group `context_cache_containers`
+  - Client `StorageManagementClient` added operation group `context_caches`
+  - Model `SasPolicy` added property `require_user_bound_user_delegation_sas`
+  - Model `SasPolicy` added property `require_user_bound_user_delegation_sas_action`
+  - Model `StorageAccountProperties` added property `allow_cross_tenant_delegation_sas`
+  - Model `StorageAccountPropertiesCreateParameters` added property `allow_cross_tenant_delegation_sas`
+  - Model `StorageAccountPropertiesUpdateParameters` added property `allow_cross_tenant_delegation_sas`
+  - Added enum `AiProvider`
+  - Added model `ContextCache`
+  - Added enum `ContextCacheAccountKind`
+  - Added model `ContextCacheContainer`
+  - Added model `ContextCacheContainerProperties`
+  - Added model `ContextCacheContainerPropertiesUpdate`
+  - Added model `ContextCacheContainerUpdate`
+  - Added model `ContextCacheProperties`
+  - Added model `ContextCachePropertiesUpdate`
+  - Added enum `ContextCacheProvisioningState`
+  - Added model `ContextCacheUpdate`
+  - Added model `CustomerManagedKeyEncryption`
+  - Added enum `InfrastructureEncryption`
+  - Added model `KeyEncryptionKeyIdentity`
+  - Added enum `KeyEncryptionKeyIdentityType`
+  - Added enum `PolicyViolationAction`
+  - Added model `StorageAccountEncryption`
+  - Added model `SystemAssignedServiceIdentity`
+  - Added enum `SystemAssignedServiceIdentityType`
+  - Added operation group `ContextCacheContainersOperations`
+  - Added operation group `ContextCachesOperations`
+
 ## 25.1.0 (2026-06-01)
 
 ### Features Added
