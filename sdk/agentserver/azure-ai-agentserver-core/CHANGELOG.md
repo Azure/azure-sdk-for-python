@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0 (2026-08-24)
+
+### Other Changes
+
+- Added compatibility bounds to runtime and development dependencies so installation cannot silently resolve to incompatible releases.
+
 ## 2.1.0b2 (2026-08-18)
 
 ### Other Changes
