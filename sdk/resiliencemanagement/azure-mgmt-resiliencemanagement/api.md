@@ -245,6 +245,45 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @overload
+        async def begin_list_report_download_url(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: ListReportDownloadUrlRequest, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_list_report_download_url(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: ListReportDownloadUrlRequest, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_list_report_download_url(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
         async def begin_mark_as_complete(
                 self, 
                 service_group_name: str, 
@@ -349,42 +388,6 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 drill_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[DrillRun]: ...
-
-        @overload
-        async def list_report_download_url(
-                self, 
-                service_group_name: str, 
-                drill_name: str, 
-                drill_run_name: str, 
-                body: Optional[ListReportDownloadUrlRequest] = None, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ListReportDownloadUrlResponse: ...
-
-        @overload
-        async def list_report_download_url(
-                self, 
-                service_group_name: str, 
-                drill_name: str, 
-                drill_run_name: str, 
-                body: Optional[ListReportDownloadUrlRequest] = None, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ListReportDownloadUrlResponse: ...
-
-        @overload
-        async def list_report_download_url(
-                self, 
-                service_group_name: str, 
-                drill_name: str, 
-                drill_run_name: str, 
-                body: Optional[IO[bytes]] = None, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ListReportDownloadUrlResponse: ...
 
 
     class azure.mgmt.resiliencemanagement.aio.operations.DrillsOperations:
@@ -3095,12 +3098,6 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse(_Model):
-        download_url: Optional[str]
-        expiry_timestamp: Optional[datetime]
-        format: Optional[Union[str, DrillReportFormat]]
-
-
     class azure.mgmt.resiliencemanagement.models.ManagedServiceIdentity(_Model):
         principal_id: Optional[str]
         tenant_id: Optional[str]
@@ -4771,6 +4768,45 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @overload
+        def begin_list_report_download_url(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: ListReportDownloadUrlRequest, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_list_report_download_url(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: ListReportDownloadUrlRequest, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_list_report_download_url(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
         def begin_mark_as_complete(
                 self, 
                 service_group_name: str, 
@@ -4875,42 +4911,6 @@ namespace azure.mgmt.resiliencemanagement.operations
                 drill_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[DrillRun]: ...
-
-        @overload
-        def list_report_download_url(
-                self, 
-                service_group_name: str, 
-                drill_name: str, 
-                drill_run_name: str, 
-                body: Optional[ListReportDownloadUrlRequest] = None, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ListReportDownloadUrlResponse: ...
-
-        @overload
-        def list_report_download_url(
-                self, 
-                service_group_name: str, 
-                drill_name: str, 
-                drill_run_name: str, 
-                body: Optional[ListReportDownloadUrlRequest] = None, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ListReportDownloadUrlResponse: ...
-
-        @overload
-        def list_report_download_url(
-                self, 
-                service_group_name: str, 
-                drill_name: str, 
-                drill_run_name: str, 
-                body: Optional[IO[bytes]] = None, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ListReportDownloadUrlResponse: ...
 
 
     class azure.mgmt.resiliencemanagement.operations.DrillsOperations:

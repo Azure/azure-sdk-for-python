@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2026-08-24)
+## 1.0.0b2 (2026-08-26)
 
 ### Features Added
 
@@ -33,7 +33,6 @@
   - Added enum `DrillRunTasks`
   - Added model `HealthModelMonitoringProperties`
   - Added model `ListReportDownloadUrlRequest`
-  - Added model `ListReportDownloadUrlResponse`
   - Added model `ReportStageStatus`
   - Added model `ResiliencyProperties`
   - Added model `ResourceCrossZoneVmRecoveryProtectionSetting`
@@ -47,9 +46,9 @@
   - Added enum `SliType`
   - Added enum `SliTypeMatchState`
   - Added model `UserConfirmationItem`
-  - Operation group `DrillRunsOperations` added parameter `content_type` in method `begin_reprotect`
-  - Operation group `DrillRunsOperations` added method `begin_generate_report`
-  - Operation group `DrillRunsOperations` added method `list_report_download_url`
+  - Model `DrillRunsOperations` added parameter `content_type` in method `begin_reprotect`
+  - Model `DrillRunsOperations` added method `begin_generate_report`
+  - Model `DrillRunsOperations` added method `begin_list_report_download_url`
 
 ### Breaking Changes
 

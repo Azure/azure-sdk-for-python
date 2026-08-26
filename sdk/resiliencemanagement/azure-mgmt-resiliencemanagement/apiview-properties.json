@@ -57,7 +57,6 @@
         "azure.mgmt.resiliencemanagement.models.JobUserComment": "Microsoft.AzureResilienceManagement.JobUserComment",
         "azure.mgmt.resiliencemanagement.models.LastRunProperties": "Microsoft.AzureResilienceManagement.LastRunProperties",
         "azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlRequest": "Microsoft.AzureResilienceManagement.ListReportDownloadUrlRequest",
-        "azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse": "Microsoft.AzureResilienceManagement.ListReportDownloadUrlResponse",
         "azure.mgmt.resiliencemanagement.models.ManagedServiceIdentity": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentity",
         "azure.mgmt.resiliencemanagement.models.MarkAsCompleteRequest": "Microsoft.AzureResilienceManagement.MarkAsCompleteRequest",
         "azure.mgmt.resiliencemanagement.models.MonitoringPropertiesOfDrill": "Microsoft.AzureResilienceManagement.MonitoringPropertiesOfDrill",
@@ -331,8 +330,8 @@
         "azure.mgmt.resiliencemanagement.aio.operations.DrillRunsOperations.begin_mark_as_complete": "Microsoft.AzureResilienceManagement.DrillRuns.markAsComplete",
         "azure.mgmt.resiliencemanagement.operations.DrillRunsOperations.begin_generate_report": "Microsoft.AzureResilienceManagement.DrillRuns.generateReport",
         "azure.mgmt.resiliencemanagement.aio.operations.DrillRunsOperations.begin_generate_report": "Microsoft.AzureResilienceManagement.DrillRuns.generateReport",
-        "azure.mgmt.resiliencemanagement.operations.DrillRunsOperations.list_report_download_url": "Microsoft.AzureResilienceManagement.DrillRuns.listReportDownloadUrl",
-        "azure.mgmt.resiliencemanagement.aio.operations.DrillRunsOperations.list_report_download_url": "Microsoft.AzureResilienceManagement.DrillRuns.listReportDownloadUrl",
+        "azure.mgmt.resiliencemanagement.operations.DrillRunsOperations.begin_list_report_download_url": "Microsoft.AzureResilienceManagement.DrillRuns.listReportDownloadUrl",
+        "azure.mgmt.resiliencemanagement.aio.operations.DrillRunsOperations.begin_list_report_download_url": "Microsoft.AzureResilienceManagement.DrillRuns.listReportDownloadUrl",
         "azure.mgmt.resiliencemanagement.operations.DrillRunResourcesOperations.get": "Microsoft.AzureResilienceManagement.DrillRunResources.get",
         "azure.mgmt.resiliencemanagement.aio.operations.DrillRunResourcesOperations.get": "Microsoft.AzureResilienceManagement.DrillRunResources.get",
         "azure.mgmt.resiliencemanagement.operations.DrillRunResourcesOperations.list": "Microsoft.AzureResilienceManagement.DrillRunResources.list",
@@ -362,5 +361,5 @@
         "azure.mgmt.resiliencemanagement.operations.EnrollmentsOperations.list": "Microsoft.AzureResilienceManagement.Enrollments.list",
         "azure.mgmt.resiliencemanagement.aio.operations.EnrollmentsOperations.list": "Microsoft.AzureResilienceManagement.Enrollments.list"
     },
-    "CrossLanguageVersion": "966171c2b49e"
+    "CrossLanguageVersion": "49b89c27d4f4"
 }

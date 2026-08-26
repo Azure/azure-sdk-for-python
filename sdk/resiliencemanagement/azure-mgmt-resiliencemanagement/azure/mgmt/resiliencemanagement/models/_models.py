@@ -3090,27 +3090,6 @@ class ListReportDownloadUrlRequest(_Model):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
-class ListReportDownloadUrlResponse(_Model):
-    """Response containing a short-lived, read-only download URL for a Drill Run report.
-
-    :ivar format: Format of the report the download URL refers to. "Html"
-    :vartype format: str or ~azure.mgmt.resiliencemanagement.models.DrillReportFormat
-    :ivar download_url: Short-lived, read-only URL to download the report.
-    :vartype download_url: str
-    :ivar expiry_timestamp: Timestamp at which the download URL expires.
-    :vartype expiry_timestamp: ~datetime.datetime
-    """
-
-    format: Optional[Union[str, "_models.DrillReportFormat"]] = rest_field(visibility=["read"])
-    """Format of the report the download URL refers to. \"Html\""""
-    download_url: Optional[str] = rest_field(name="downloadUrl", visibility=["read"])
-    """Short-lived, read-only URL to download the report."""
-    expiry_timestamp: Optional[datetime.datetime] = rest_field(
-        name="expiryTimestamp", visibility=["read"], format="rfc3339"
-    )
-    """Timestamp at which the download URL expires."""
-
-
 class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 

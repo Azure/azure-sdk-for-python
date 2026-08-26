@@ -1889,7 +1889,7 @@ def build_drill_runs_generate_report_request(
 
 
 def build_drill_runs_list_report_download_url_request(  # pylint: disable=name-too-long
-    service_group_name: str, drill_name: str, drill_run_name: str, **kwargs: Any
+    service_group_name: str, drill_name: str, drill_run_name: str, *, operation_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1912,6 +1912,7 @@ def build_drill_runs_list_report_download_url_request(  # pylint: disable=name-t
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["operation-id"] = _SERIALIZER.header("operation_id", operation_id, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -13681,106 +13682,13 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    @overload
-    def list_report_download_url(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: Optional[_models.ListReportDownloadUrlRequest] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ListReportDownloadUrlResponse:
-        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
-        expires at the returned expiryTimestamp and grants access to that single report only.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :param body: The content of the action request. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ListReportDownloadUrlResponse. The ListReportDownloadUrlResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def list_report_download_url(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: Optional[_types.ListReportDownloadUrlRequest] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ListReportDownloadUrlResponse:
-        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
-        expires at the returned expiryTimestamp and grants access to that single report only.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :param body: The content of the action request. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.types.ListReportDownloadUrlRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ListReportDownloadUrlResponse. The ListReportDownloadUrlResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def list_report_download_url(
-        self,
-        service_group_name: str,
-        drill_name: str,
-        drill_run_name: str,
-        body: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ListReportDownloadUrlResponse:
-        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
-        expires at the returned expiryTimestamp and grants access to that single report only.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :param body: The content of the action request. Default value is None.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ListReportDownloadUrlResponse. The ListReportDownloadUrlResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
     @api_version_validation(
         method_added_on="2026-08-31-preview",
         params_added_on={
             "2026-08-31-preview": [
                 "service_group_name",
                 "api_version",
+                "operation_id",
                 "drill_name",
                 "drill_run_name",
                 "content_type",
@@ -13789,34 +13697,16 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         },
         api_versions_list=["2026-08-31-preview"],
     )
-    def list_report_download_url(
+    def _list_report_download_url_initial(
         self,
         service_group_name: str,
         drill_name: str,
         drill_run_name: str,
-        body: Optional[
-            Union[_models.ListReportDownloadUrlRequest, _types.ListReportDownloadUrlRequest, IO[bytes]]
-        ] = None,
+        body: Union[_models.ListReportDownloadUrlRequest, _types.ListReportDownloadUrlRequest, IO[bytes]],
+        *,
+        operation_id: str,
         **kwargs: Any
-    ) -> _models.ListReportDownloadUrlResponse:
-        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
-        expires at the returned expiryTimestamp and grants access to that single report only.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param drill_name: The name of the Drill. Required.
-        :type drill_name: str
-        :param drill_run_name: The name of the DrillRun (GUID). Required.
-        :type drill_run_name: str
-        :param body: The content of the action request. Is either a ListReportDownloadUrlRequest type
-         or a IO[bytes] type. Default value is None.
-        :type body: ~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlRequest or
-         ~azure.mgmt.resiliencemanagement.types.ListReportDownloadUrlRequest or IO[bytes]
-        :return: ListReportDownloadUrlResponse. The ListReportDownloadUrlResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -13829,23 +13719,20 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if body else None
-        cls: ClsType[_models.ListReportDownloadUrlResponse] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json" if body else None
+        content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            if body is not None:
-                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_drill_runs_list_report_download_url_request(
             service_group_name=service_group_name,
             drill_name=drill_name,
             drill_run_name=drill_run_name,
+            operation_id=operation_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -13858,19 +13745,18 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ErrorResponse,
@@ -13878,15 +13764,213 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ListReportDownloadUrlResponse, response.json())
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
+
+    @overload
+    def begin_list_report_download_url(
+        self,
+        service_group_name: str,
+        drill_name: str,
+        drill_run_name: str,
+        body: _models.ListReportDownloadUrlRequest,
+        *,
+        operation_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
+        expires at the returned expiryTimestamp and grants access to that single report only.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param drill_name: The name of the Drill. Required.
+        :type drill_name: str
+        :param drill_run_name: The name of the DrillRun (GUID). Required.
+        :type drill_run_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlRequest
+        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_list_report_download_url(
+        self,
+        service_group_name: str,
+        drill_name: str,
+        drill_run_name: str,
+        body: _types.ListReportDownloadUrlRequest,
+        *,
+        operation_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
+        expires at the returned expiryTimestamp and grants access to that single report only.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param drill_name: The name of the Drill. Required.
+        :type drill_name: str
+        :param drill_run_name: The name of the DrillRun (GUID). Required.
+        :type drill_run_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.resiliencemanagement.types.ListReportDownloadUrlRequest
+        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_list_report_download_url(
+        self,
+        service_group_name: str,
+        drill_name: str,
+        drill_run_name: str,
+        body: IO[bytes],
+        *,
+        operation_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
+        expires at the returned expiryTimestamp and grants access to that single report only.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param drill_name: The name of the Drill. Required.
+        :type drill_name: str
+        :param drill_run_name: The name of the DrillRun (GUID). Required.
+        :type drill_run_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "service_group_name",
+                "api_version",
+                "operation_id",
+                "drill_name",
+                "drill_run_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    def begin_list_report_download_url(
+        self,
+        service_group_name: str,
+        drill_name: str,
+        drill_run_name: str,
+        body: Union[_models.ListReportDownloadUrlRequest, _types.ListReportDownloadUrlRequest, IO[bytes]],
+        *,
+        operation_id: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
+        expires at the returned expiryTimestamp and grants access to that single report only.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param drill_name: The name of the Drill. Required.
+        :type drill_name: str
+        :param drill_run_name: The name of the DrillRun (GUID). Required.
+        :type drill_run_name: str
+        :param body: The content of the action request. Is either a ListReportDownloadUrlRequest type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlRequest or
+         ~azure.mgmt.resiliencemanagement.types.ListReportDownloadUrlRequest or IO[bytes]
+        :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
+        :paramtype operation_id: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._list_report_download_url_initial(
+                service_group_name=service_group_name,
+                drill_name=drill_name,
+                drill_run_name=drill_run_name,
+                body=body,
+                operation_id=operation_id,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
 class DrillRunResourcesOperations:  # pylint: disable=docstring-missing-param

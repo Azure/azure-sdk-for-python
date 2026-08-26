@@ -30,12 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.drill_runs.list_report_download_url(
+    client.drill_runs.begin_list_report_download_url(
         service_group_name="sampleServiceGroupName",
         drill_name="drill1",
         drill_run_name="ca92602e-53bf-43d2-ae62-d3fc940474b3",
-    )
-    print(response)
+        body={"format": "Html"},
+        operation_id="3f2b1c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+    ).result()
 
 
 # x-ms-original-file: 2026-08-31-preview/DrillRuns_ListReportDownloadUrl_MaximumSet_Gen.json
