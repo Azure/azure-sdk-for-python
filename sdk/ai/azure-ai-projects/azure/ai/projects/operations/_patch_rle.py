@@ -26,6 +26,7 @@ import time
 from typing import Any, Dict, Mapping, Optional, Tuple, Union
 
 from azure.core.exceptions import AzureError, HttpResponseError
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ..models import (
@@ -870,7 +871,7 @@ class RLEOperations:
         continuation_token: Optional[str] = None,
         order: Optional[Union[str, RLEPaginationOrder]] = None,
         **kwargs: Any,
-    ) -> ListRLEnvironmentsResponse:
+    ) -> ItemPaged[RLEnvironment]:
         """List all hosted RLE environments in the project.
 
         :keyword name: Optional environment name filter. When set, returns at most a single matching
@@ -880,18 +881,30 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
-        :return: The list of hosted RLE environments.
-        :rtype: ~azure.ai.projects.models.ListRLEnvironmentsResponse
+        :return: An iterator over hosted RLE environments.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _validate_pagination_limit(limit)
-        return self._environments.list_environments(
-            name=name,
-            limit=limit,
-            continuation_token_parameter=continuation_token,
-            order=order,
-            **kwargs,
-        )
+        operation_kwargs = dict(kwargs)
+
+        def get_next(next_token: Optional[str] = None) -> ListRLEnvironmentsResponse:
+            return self._environments.list_environments(
+                name=name,
+                limit=limit,
+                continuation_token_parameter=(
+                    continuation_token if next_token is None else next_token
+                ),
+                order=order,
+                **operation_kwargs,
+            )
+
+        def extract_data(
+            response: ListRLEnvironmentsResponse,
+        ) -> Tuple[Optional[str], Any]:
+            return response.next_continuation_token, iter(response.data)
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def get_environment(self, name: str, **kwargs: Any) -> RLEnvironment:
@@ -930,7 +943,7 @@ class RLEOperations:
         continuation_token: Optional[str] = None,
         order: Optional[Union[str, RLEPaginationOrder]] = None,
         **kwargs: Any,
-    ) -> ListRLEnvironmentVersionsResponse:
+    ) -> ItemPaged[RLEnvironment]:
         """List historical versions of a hosted RLE environment.
 
         :param name: Environment name. Required.
@@ -939,18 +952,32 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
-        :return: A page of environment versions.
-        :rtype: ~azure.ai.projects.models.ListRLEnvironmentVersionsResponse
+        :return: An iterator over historical environment versions.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _validate_pagination_limit(limit)
-        return self._environments.list_rl_environment_versions(
-            name,
-            limit=limit,
-            continuation_token_parameter=continuation_token,
-            order=order,
-            **kwargs,
-        )
+        operation_kwargs = dict(kwargs)
+
+        def get_next(
+            next_token: Optional[str] = None,
+        ) -> ListRLEnvironmentVersionsResponse:
+            return self._environments.list_rl_environment_versions(
+                name,
+                limit=limit,
+                continuation_token_parameter=(
+                    continuation_token if next_token is None else next_token
+                ),
+                order=order,
+                **operation_kwargs,
+            )
+
+        def extract_data(
+            response: ListRLEnvironmentVersionsResponse,
+        ) -> Tuple[Optional[str], Any]:
+            return response.next_continuation_token, iter(response.data)
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def delete_environment_version(

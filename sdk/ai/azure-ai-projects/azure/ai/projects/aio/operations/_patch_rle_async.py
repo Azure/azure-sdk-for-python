@@ -16,7 +16,9 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import time
 from typing import Any, Callable, Dict, Optional, Union
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import AzureError, HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ...models import (
@@ -726,8 +728,8 @@ class RLEOperations:
             **kwargs,
         )
 
-    @distributed_trace_async
-    async def list_environments(
+    @distributed_trace
+    def list_environments(
         self,
         *,
         name: Optional[str] = None,
@@ -735,7 +737,7 @@ class RLEOperations:
         continuation_token: Optional[str] = None,
         order: Optional[Union[str, RLEPaginationOrder]] = None,
         **kwargs: Any,
-    ) -> ListRLEnvironmentsResponse:
+    ) -> AsyncItemPaged[RLEnvironment]:
         """List all hosted RLE environments in the project.
 
         :keyword name: Optional environment name filter. When set, returns at most a single matching
@@ -745,18 +747,30 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
-        :return: The list of hosted RLE environments.
-        :rtype: ~azure.ai.projects.models.ListRLEnvironmentsResponse
+        :return: An async iterator over hosted RLE environments.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _validate_pagination_limit(limit)
-        return await self._environments.list_environments(
-            name=name,
-            limit=limit,
-            continuation_token_parameter=continuation_token,
-            order=order,
-            **kwargs,
-        )
+        operation_kwargs = dict(kwargs)
+
+        async def get_next(next_token: Optional[str] = None) -> ListRLEnvironmentsResponse:
+            return await self._environments.list_environments(
+                name=name,
+                limit=limit,
+                continuation_token_parameter=(
+                    continuation_token if next_token is None else next_token
+                ),
+                order=order,
+                **operation_kwargs,
+            )
+
+        async def extract_data(
+            response: ListRLEnvironmentsResponse,
+        ) -> tuple[Optional[str], AsyncList[RLEnvironment]]:
+            return response.next_continuation_token, AsyncList(response.data)
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get_environment(self, name: str, **kwargs: Any) -> RLEnvironment:
@@ -786,8 +800,8 @@ class RLEOperations:
         """
         return await self._environments.get_environment_version(name, version, **kwargs)
 
-    @distributed_trace_async
-    async def list_environment_versions(
+    @distributed_trace
+    def list_environment_versions(
         self,
         name: str,
         *,
@@ -795,7 +809,7 @@ class RLEOperations:
         continuation_token: Optional[str] = None,
         order: Optional[Union[str, RLEPaginationOrder]] = None,
         **kwargs: Any,
-    ) -> ListRLEnvironmentVersionsResponse:
+    ) -> AsyncItemPaged[RLEnvironment]:
         """List historical versions of a hosted RLE environment.
 
         :param name: Environment name. Required.
@@ -804,18 +818,32 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
-        :return: A page of environment versions.
-        :rtype: ~azure.ai.projects.models.ListRLEnvironmentVersionsResponse
+        :return: An async iterator over historical environment versions.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _validate_pagination_limit(limit)
-        return await self._environments.list_rl_environment_versions(
-            name,
-            limit=limit,
-            continuation_token_parameter=continuation_token,
-            order=order,
-            **kwargs,
-        )
+        operation_kwargs = dict(kwargs)
+
+        async def get_next(
+            next_token: Optional[str] = None,
+        ) -> ListRLEnvironmentVersionsResponse:
+            return await self._environments.list_rl_environment_versions(
+                name,
+                limit=limit,
+                continuation_token_parameter=(
+                    continuation_token if next_token is None else next_token
+                ),
+                order=order,
+                **operation_kwargs,
+            )
+
+        async def extract_data(
+            response: ListRLEnvironmentVersionsResponse,
+        ) -> tuple[Optional[str], AsyncList[RLEnvironment]]:
+            return response.next_continuation_token, AsyncList(response.data)
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def delete_environment_version(

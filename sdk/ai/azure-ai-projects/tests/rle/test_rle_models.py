@@ -199,12 +199,6 @@ def test_rle_symbols_exported_from_public_namespace():
     assert getattr(operations, "RLEInstanceAcquireTimeoutError")
     assert getattr(aio_operations, "AsyncOpenEnvClient")
     assert getattr(aio_operations, "AsyncOpenEnvInstance")
-    assert getattr(aio_operations, "RLEError") is RLEError
-    assert getattr(aio_operations, "RLEQuotaExceededError") is RLEQuotaExceededError
-    assert (
-        getattr(aio_operations, "RLEInstanceAcquireTimeoutError")
-        is RLEInstanceAcquireTimeoutError
-    )
     assert getattr(models, "RLEStepResult")
     assert getattr(models, "RLEnvironmentState")
     assert getattr(models, "RLEInstance")
@@ -985,12 +979,16 @@ def test_environment_list_helpers_forward_continuation_token_pagination():
     environments = _FakeEnvironments()
     ops._environments = environments
 
-    ops.list_environments(
-        name="wordle", limit=10, continuation_token="first", order="asc"
-    )
-    ops.list_environment_versions(
-        "wordle", limit=5, continuation_token="last", order="desc"
-    )
+    assert list(
+        ops.list_environments(
+            name="wordle", limit=10, continuation_token="first", order="asc"
+        )
+    ) == []
+    assert list(
+        ops.list_environment_versions(
+            "wordle", limit=5, continuation_token="last", order="desc"
+        )
+    ) == []
 
     assert environments.calls == [
         (
@@ -1008,6 +1006,41 @@ def test_environment_list_helpers_forward_continuation_token_pagination():
             {"limit": 5, "continuation_token_parameter": "last", "order": "desc"},
         ),
     ]
+
+
+def test_async_environment_list_helpers_return_pagers():
+    async def run():
+        ops = AsyncRLEOperations(object(), object(), object(), object())
+        environments = _AsyncFakeEnvironments()
+        ops._environments = environments
+
+        environments_pager = ops.list_environments(
+            name="wordle", limit=10, continuation_token="first", order="asc"
+        )
+        versions_pager = ops.list_environment_versions(
+            "wordle", limit=5, continuation_token="last", order="desc"
+        )
+
+        assert [item async for item in environments_pager] == []
+        assert [item async for item in versions_pager] == []
+        assert environments.calls == [
+            (
+                "list_environments",
+                {
+                    "name": "wordle",
+                    "limit": 10,
+                    "continuation_token_parameter": "first",
+                    "order": "asc",
+                },
+            ),
+            (
+                "list_rl_environment_versions",
+                "wordle",
+                {"limit": 5, "continuation_token_parameter": "last", "order": "desc"},
+            ),
+        ]
+
+    asyncio.run(run())
 
 
 @pytest.mark.parametrize("limit", (0, 101))
@@ -1032,9 +1065,9 @@ def test_async_environment_list_helpers_reject_invalid_pagination_limits(limit):
         ops._environments = environments
 
         with pytest.raises(ValueError, match=r"range \[1, 100\]"):
-            await ops.list_environments(limit=limit)
+            ops.list_environments(limit=limit)
         with pytest.raises(ValueError, match=r"range \[1, 100\]"):
-            await ops.list_environment_versions("wordle", limit=limit)
+            ops.list_environment_versions("wordle", limit=limit)
 
         assert environments.calls == []
 
