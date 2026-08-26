@@ -4,6 +4,7 @@
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
 import os
 from threading import Event, Thread
+from typing import Any, Optional
 from unittest import mock
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
@@ -82,9 +83,26 @@ class TestTracingToggle:
             enable_sensitive_data=True,
         )
 
+    def test_observability_receives_explicit_instrumentation_options(self) -> None:
+        mock_configure = mock.MagicMock()
+        instrumentation_options = {"httpx": {"enabled": True}}
+        AgentServerHost(
+            configure_observability=mock_configure,
+            instrumentation_options=instrumentation_options,
+        )
+        assert (
+            mock_configure.call_args.kwargs["instrumentation_options"]
+            is instrumentation_options
+        )
+
     def test_observability_disabled_when_none(self) -> None:
         """Passing configure_observability=None disables all SDK-managed observability."""
-        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with mock.patch.dict(
+            os.environ,
+            {
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+            },
+        ):
             # Should not raise even with App Insights configured
             AgentServerHost(configure_observability=None)
 
@@ -384,18 +402,25 @@ class TestSetupDistroExport:
 
 
 class TestAzureMonitorDistroExport:
-    """Verify Azure Monitor sampling and authentication configuration."""
+    """Verify Azure Monitor sampling, authentication, and instrumentation configuration."""
 
-    def _run(self, env: dict) -> dict:
+    def _run(
+        self,
+        env: dict,
+        instrumentation_options: Optional[dict[str, dict[str, Any]]] = None,
+    ) -> dict:
         from azure.ai.agentserver.core import _tracing
-        with mock.patch("microsoft.opentelemetry.use_microsoft_opentelemetry") as mock_use, \
-                mock.patch.dict(os.environ, env, clear=False):
+
+        with mock.patch(
+            "microsoft.opentelemetry.use_microsoft_opentelemetry"
+        ) as mock_use, mock.patch.dict(os.environ, env, clear=False):
             _tracing._setup_distro_export(
                 resource=Resource.create({}),
                 span_processors=[],
                 metric_readers=[],
                 log_record_processors=[],
                 connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000",
+                instrumentation_options=instrumentation_options,
             )
             mock_use.assert_called_once()
             return mock_use.call_args[1]
@@ -422,6 +447,23 @@ class TestAzureMonitorDistroExport:
             }
         )
         assert "sampling_ratio" not in kwargs
+
+    def test_http_client_instrumentations_disabled_by_default(self) -> None:
+        kwargs = self._run({})
+        assert kwargs["instrumentation_options"] == {
+            "httpx": {"enabled": False},
+            "requests": {"enabled": False},
+            "urllib": {"enabled": False},
+            "urllib3": {"enabled": False},
+        }
+
+    def test_customer_can_enable_disabled_instrumentation(self) -> None:
+        kwargs = self._run(
+            {},
+            instrumentation_options={"httpx": {"enabled": True}},
+        )
+        assert kwargs["instrumentation_options"]["httpx"]["enabled"] is True
+        assert kwargs["instrumentation_options"]["requests"]["enabled"] is False
 
     def test_no_sampling_ratio_without_azure_monitor(self) -> None:
         from azure.ai.agentserver.core import _tracing

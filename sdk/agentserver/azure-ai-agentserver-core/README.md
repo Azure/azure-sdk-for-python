@@ -182,6 +182,19 @@ sampling configuration through `OTEL_TRACES_SAMPLER` and
 sampling only; exporter queues, process termination, and transport or ingestion
 failures can still prevent trace delivery.
 
+HTTPX, Requests, urllib, and urllib3 instrumentation are disabled by default to
+avoid automatically tracing every outbound HTTP request. Enable selected
+instrumentations when constructing the host:
+
+```python
+app = AgentServerHost(
+    instrumentation_options={
+        "httpx": {"enabled": True},
+        "requests": {"enabled": True},
+    },
+)
+```
+
 OTLP export is enabled when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. HTTP/protobuf
 is the default protocol. To use an OTLP/gRPC collector, install the optional
 gRPC extra and set `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`:

@@ -8,6 +8,7 @@ namespace azure.ai.agentserver.core
             *, 
             connection_string: Optional[str] = ..., 
             enable_sensitive_data: bool = False, 
+            instrumentation_options: Optional[dict[str, dict[str, Any]]] = ...,
             log_level: Optional[str] = ...
         ) -> None: ...
 
@@ -99,6 +100,7 @@ namespace azure.ai.agentserver.core
                 applicationinsights_connection_string: Optional[str] = ..., 
                 configure_observability: Optional[Callable[, None]] = _tracing.configure_observability, 
                 graceful_shutdown_timeout: Optional[int] = ..., 
+                instrumentation_options: Optional[dict[str, dict[str, Any]]] = ...,
                 log_level: Optional[str] = ..., 
                 routes: Optional[list[Route]] = ..., 
                 **kwargs: Any

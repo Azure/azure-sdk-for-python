@@ -102,6 +102,7 @@ _OTLP_ENV_VARS = (
 )
 _DISTRO_OTLP_SUPPRESSION_LOCK = threading.RLock()
 _DISTRO_OTLP_SUPPRESSION_STATE = threading.local()
+_DISABLED_INSTRUMENTATIONS = ("httpx", "requests", "urllib", "urllib3")
 
 
 # ======================================================================
@@ -124,6 +125,7 @@ def configure_observability(
     connection_string: Optional[str] = None,
     log_level: Optional[str] = None,
     enable_sensitive_data: bool = False,
+    instrumentation_options: Optional[dict[str, dict[str, Any]]] = None,
 ) -> None:
     """Default observability setup: console logging + tracing/OTel export.
 
@@ -144,6 +146,10 @@ def configure_observability(
         (prompts, tool arguments, results) for Agent Framework SDK
         instrumentation. Defaults to False.
     :paramtype enable_sensitive_data: bool
+    :keyword instrumentation_options: Per-library OpenTelemetry instrumentation
+        options. HTTPX, Requests, urllib, and urllib3 instrumentation are disabled
+        by default; set a library's ``enabled`` option to ``True`` to enable it.
+    :paramtype instrumentation_options: dict[str, dict[str, Any]] or None
     """
     # Console logging on the root logger so user logs are also visible.
     resolved_level = _config.resolve_log_level(log_level)
@@ -176,12 +182,14 @@ def configure_observability(
     _configure_tracing(
         connection_string=connection_string,
         enable_sensitive_data=enable_sensitive_data,
+        instrumentation_options=instrumentation_options,
     )
 
 
 def _configure_tracing(
     connection_string: Optional[str] = None,
     enable_sensitive_data: bool = False,
+    instrumentation_options: Optional[dict[str, dict[str, Any]]] = None,
 ) -> None:
     """Configure OpenTelemetry exporters via the microsoft-opentelemetry distro.
 
@@ -193,6 +201,8 @@ def _configure_tracing(
     :param enable_sensitive_data: Enable sensitive data recording for
         Agent Framework SDK instrumentation.
     :type enable_sensitive_data: bool
+    :param instrumentation_options: Per-library OpenTelemetry instrumentation options.
+    :type instrumentation_options: dict[str, dict[str, Any]] or None
     """
     resource = _create_resource()
     if resource is None:
@@ -239,10 +249,15 @@ def _configure_tracing(
                 log_record_processors=log_record_processors,
                 connection_string=connection_string,
                 enable_sensitive_data=enable_sensitive_data,
+                instrumentation_options=instrumentation_options,
             )
-        logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
+        logger.info(
+            "Tracing configured successfully via microsoft-opentelemetry distro."
+        )
     except ImportError:
-        logger.warning("microsoft-opentelemetry is not installed — tracing export disabled.")
+        logger.warning(
+            "microsoft-opentelemetry is not installed — tracing export disabled."
+        )
         # Still set up TracerProvider with enrichment processor so spans are created
         _ensure_trace_provider(resource, resolved_span_processors)
 
@@ -255,6 +270,7 @@ def _setup_distro_export(
     log_record_processors: list[Any],
     connection_string: Optional[str] = None,
     enable_sensitive_data: bool = False,
+    instrumentation_options: Optional[dict[str, dict[str, Any]]] = None,
 ) -> None:
     """Delegate to microsoft-opentelemetry distro for exporter configuration.
 
@@ -268,6 +284,7 @@ def _setup_distro_export(
     :keyword connection_string: Application Insights connection string.
     :keyword enable_sensitive_data: Enable sensitive data recording for
         Agent Framework SDK instrumentation.
+    :keyword instrumentation_options: Per-library OpenTelemetry instrumentation options.
     """
     from microsoft.opentelemetry import use_microsoft_opentelemetry
 
@@ -277,6 +294,9 @@ def _setup_distro_export(
         "metric_readers": metric_readers,
         "log_record_processors": log_record_processors,
         "enable_sensitive_data": enable_sensitive_data,
+        "instrumentation_options": _resolve_instrumentation_options(
+            instrumentation_options
+        ),
     }
 
     # Azure Monitor export is off by default in the distro — enable it
@@ -308,6 +328,15 @@ def _setup_distro_export(
         kwargs["a365_observability_scope_override"] = "api://9b975845-388f-4429-889e-eab1ef63949c/.default"
 
     use_microsoft_opentelemetry(**kwargs)
+
+
+def _resolve_instrumentation_options(
+    instrumentation_options: Optional[dict[str, dict[str, Any]]],
+) -> dict[str, dict[str, Any]]:
+    resolved = {name: {"enabled": False} for name in _DISABLED_INSTRUMENTATIONS}
+    for name, options in (instrumentation_options or {}).items():
+        resolved.setdefault(name, {}).update(options)
+    return resolved
 
 
 def _append_managed_otlp_components(
