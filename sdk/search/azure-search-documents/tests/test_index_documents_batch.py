@@ -6,9 +6,12 @@
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 from azure.search.documents import IndexDocumentsBatch
+from azure.search.documents._utils.model_base import SdkJSONEncoder
 from azure.search.documents.models import IndexAction
 
 METHOD_NAMES = [
@@ -74,6 +77,27 @@ class TestIndexDocumentsBatch:
         ]
         assert [action.as_dict() for action in added_actions] == expected
         assert [action.as_dict() for action in batch.actions] == expected
+
+    @pytest.mark.parametrize("method_name", METHOD_NAMES)
+    def test_add_method_defers_vector_serialization(self, method_name):
+        vector = [0.1] * 3072
+        batch = IndexDocumentsBatch()
+        method = getattr(batch, method_name)
+
+        added_actions = method([{"id": "1", "content_vector": vector}])
+
+        assert added_actions[0]["content_vector"] is vector
+        assert json.loads(
+            json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)
+        ) == {
+            "value": [
+                {
+                    "@search.action": METHOD_MAP[method_name],
+                    "id": "1",
+                    "content_vector": vector,
+                }
+            ]
+        }
 
     def test_constructor_accepts_existing_actions(self):
         actions = [

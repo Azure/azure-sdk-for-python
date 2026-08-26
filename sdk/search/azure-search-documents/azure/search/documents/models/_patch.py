@@ -190,9 +190,8 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
 
         new_actions = []
         for doc in documents:
-            action_dict = {"@search.action": action_type}
-            action_dict.update(doc)
-            action = IndexAction(action_dict)
+            action = IndexAction(action_type=action_type)
+            action.update(doc)
             new_actions.append(action)
 
         self._actions.extend(new_actions)
