@@ -16,10 +16,6 @@
   - Model `DeploymentExtensionConfigItem` deleted or renamed its instance variable `type`
   - Deleted or renamed model `ExtensionConfigPropertyType`
 
-## 1.1.0 (2026-08-25)
-
-tool can't generate changelog for this release, please update manually.
-
 ## 1.0.0 (2026-07-20)
 
 ### Other Changes
