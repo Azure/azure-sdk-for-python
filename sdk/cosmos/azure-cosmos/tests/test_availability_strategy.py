@@ -9,6 +9,7 @@ import unittest
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional, Any, Union
+from unittest.mock import patch
 
 import pytest
 from azure.core.exceptions import ServiceResponseError
@@ -716,9 +717,12 @@ class TestAvailabilityStrategy:
     @pytest.mark.parametrize("operation", [READ, QUERY_PK, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     def test_per_partition_circular_breaker_with_cancelled_first_future(self, operation):
         # QUERY, READ_ALL are not included because currently they are not targeting to a specific pkRange
-        os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
-        os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"] = "5"
-        os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"] = "5"
+        env_patch = patch.dict(os.environ, {
+            "AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER": "True",
+            "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE": "5",
+            "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ": "5",
+        })
+        env_patch.start()
 
         try:
             """Test that when per partition circular breaker is enabled and after hitting the threshold, subsequent requests go directly to second region.
@@ -799,9 +803,7 @@ class TestAvailabilityStrategy:
                     availability_strategy=strategy)
 
         finally:
-            del os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"]
-            del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"]
-            del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"]
+            env_patch.stop()
 
         self._clean_up_container(setup_with_fault_injection['db'].id, setup_with_fault_injection['col'].id)
 
