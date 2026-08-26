@@ -44,23 +44,35 @@ class TestHorizonDBMgmtHorizonDbPrivateEndpointConnectionsOperationsAsync(AzureM
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_horizon_db_private_endpoint_connections_begin_update(self, resource_group):
-        response = await (
-            await self.client.horizon_db_private_endpoint_connections.begin_update(
-                resource_group_name=resource_group.name,
-                private_endpoint_connection_name="str",
-                properties={
-                    "properties": {
-                        "privateEndpoint": {"id": "str"},
-                        "privateLinkServiceConnectionState": {
-                            "actionsRequired": "str",
-                            "description": "str",
-                            "status": "str",
-                        },
-                    }
+    async def test_horizon_db_private_endpoint_connections_update_status(self, resource_group):
+        response = await self.client.horizon_db_private_endpoint_connections.update_status(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            private_endpoint_connection_name="str",
+            resource={
+                "id": "str",
+                "name": "str",
+                "properties": {
+                    "privateLinkServiceConnectionState": {
+                        "actionsRequired": "str",
+                        "description": "str",
+                        "status": "str",
+                    },
+                    "groupIds": ["str"],
+                    "privateEndpoint": {"id": "str"},
+                    "provisioningState": "str",
                 },
-            )
-        ).result()  # call '.result()' to poll until service return final result
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+        )
 
         # please add some check logic here by yourself
         # ...
@@ -71,6 +83,7 @@ class TestHorizonDBMgmtHorizonDbPrivateEndpointConnectionsOperationsAsync(AzureM
         response = await (
             await self.client.horizon_db_private_endpoint_connections.begin_delete(
                 resource_group_name=resource_group.name,
+                cluster_name="str",
                 private_endpoint_connection_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result

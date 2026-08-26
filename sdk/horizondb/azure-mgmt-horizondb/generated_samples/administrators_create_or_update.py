@@ -15,7 +15,7 @@ from azure.mgmt.horizondb import HorizonDBMgmtClient
     pip install azure-identity
     pip install azure-mgmt-horizondb
 # USAGE
-    python parameter_groups_get.py
+    python administrators_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,21 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.horizon_db_parameter_groups.get(
+    response = client.horizon_db_administrators.begin_create_or_update(
         resource_group_name="exampleresourcegroup",
-        parameter_group_name="exampleparametergroup",
-    )
+        cluster_name="examplecluster",
+        object_id="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        resource={
+            "properties": {
+                "principalName": "admin@contoso.com",
+                "principalType": "User",
+                "tenantId": "11111111-2222-3333-4444-555555555555",
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/ParameterGroups_Get.json
+# x-ms-original-file: 2026-05-01-preview/Administrators_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
