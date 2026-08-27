@@ -43,6 +43,7 @@ class TestServiceNetworkingMgmtTrafficControllerInterfaceOperations(AzureMgmtRec
                     "associations": [{"id": "str"}],
                     "configurationEndpoints": ["str"],
                     "frontends": [{"id": "str"}],
+                    "privateEndpointConnections": [{"id": "str"}],
                     "provisioningState": "str",
                     "securityPolicies": [{"id": "str"}],
                     "securityPolicyConfigurations": {
