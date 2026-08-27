@@ -6,6 +6,10 @@
 
 * Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
 
+### Sample updates
+
+* Added `sample_synthetic_multiturn_evaluation.py`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+
 ## 2.5.0 (2026-08-20)
 
 ### Dependency update
