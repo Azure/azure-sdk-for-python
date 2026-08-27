@@ -8,6 +8,12 @@
 ### Bugs Fixed
 - Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
 
+## 12.30.1 (2026-08-24)
+
+### Bugs Fixed
+- Fixed a bug where client-side encryption 2.0 could not detect a rearrangement of otherwise-untampered authenticated regions in blob content. This is now detected and exceptions are thrown. For data recovery purposes, this behavior can be reverted by setting the "AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS" environment variable.
+- Fixed a bug in client-side encryption where version downgrades, and other metadata tampering, was only detected at the start of a download.
+
 ## 12.31.0b1 (2026-08-10)
 
 ### Features Added
