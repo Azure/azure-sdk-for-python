@@ -1,5 +1,16 @@
 # Release History
 
+## 1.19.0 (2026-08-27)
+
+### Features Added
+
+- Added support for bare `messages=[...]` input, with optional top-level `context`, `ground_truth`, and
+  `tool_definitions`, to `RelevanceEvaluator`, `SimilarityEvaluator`, `FluencyEvaluator`, `RetrievalEvaluator`,
+  `ResponseCompletenessEvaluator`, `ViolenceEvaluator`, `HateUnfairnessEvaluator`, `SelfHarmEvaluator`,
+  `SexualEvaluator`, `ProtectedMaterialEvaluator`, `IndirectAttackEvaluator`, `CodeVulnerabilityEvaluator`,
+  and `ECIEvaluator`. Existing scalar and `conversation={...}` input paths remain supported.
+  [#48629](https://github.com/Azure/azure-sdk-for-python/pull/48629)
+
 ## 1.18.3 (2026-07-28)
 
 ### Features Added
