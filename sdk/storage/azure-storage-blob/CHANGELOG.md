@@ -2,6 +2,8 @@
 
 ## 12.31.0 (Unreleased)
 
+This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
+
 ### Features Added
 - Stable release of features from 12.31.0b1
 - Added `list` support to `BlobSasPermissions` for use with directory-scoped SAS tokens.

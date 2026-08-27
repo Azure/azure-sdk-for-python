@@ -76,7 +76,7 @@ setup(
             "tests",
         ]
     ),
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=[
         "azure-core>=1.37.0",
         "azure-storage-blob>=12.31.0",

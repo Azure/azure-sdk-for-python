@@ -2,6 +2,8 @@
 
 ## 12.27.0 (Unreleased)
 
+This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
+
 ### Breaking Changes
 - Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.
 
