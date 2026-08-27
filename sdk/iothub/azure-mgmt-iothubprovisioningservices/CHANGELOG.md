@@ -27,85 +27,48 @@
   - Added model `ProxyResource`
   - Added model `TrackedResource`
   - Added model `UserAssignedIdentity`
-  - Model `DpsCertificateOperations` added parameter `kwargs` in method `__init__`
-  - Model `DpsCertificateOperations` added parameter `content_type` in method `create_or_update`
-  - Model `DpsCertificateOperations` added parameter `etag` in method `create_or_update`
-  - Model `DpsCertificateOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `DpsCertificateOperations` added parameter `etag` in method `delete`
-  - Model `DpsCertificateOperations` added parameter `match_condition` in method `delete`
-  - Model `DpsCertificateOperations` added parameter `etag` in method `generate_verification_code`
-  - Model `DpsCertificateOperations` added parameter `match_condition` in method `generate_verification_code`
-  - Model `DpsCertificateOperations` added parameter `etag` in method `get`
-  - Model `DpsCertificateOperations` added parameter `match_condition` in method `get`
-  - Model `DpsCertificateOperations` added parameter `content_type` in method `verify_certificate`
-  - Model `DpsCertificateOperations` added parameter `etag` in method `verify_certificate`
-  - Model `DpsCertificateOperations` added parameter `match_condition` in method `verify_certificate`
-  - Model `IotDpsResourceOperations` added parameter `kwargs` in method `__init__`
-  - Model `IotDpsResourceOperations` added parameter `content_type` in method `begin_create_or_update`
-  - Model `IotDpsResourceOperations` added parameter `content_type` in method `begin_create_or_update_private_endpoint_connection`
-  - Model `IotDpsResourceOperations` added parameter `content_type` in method `begin_update`
-  - Model `IotDpsResourceOperations` added parameter `content_type` in method `check_provisioning_service_name_availability`
-  - Model `Operations` added parameter `kwargs` in method `__init__`
+  - Operation group `DpsCertificateOperations` added parameter `kwargs` in method `__init__`
+  - Operation group `DpsCertificateOperations` added parameter `content_type` in method `create_or_update`
+  - Operation group `DpsCertificateOperations` added parameter `content_type` in method `verify_certificate`
+  - Operation group `IotDpsResourceOperations` added parameter `kwargs` in method `__init__`
+  - Operation group `IotDpsResourceOperations` added parameter `content_type` in method `begin_create_or_update`
+  - Operation group `IotDpsResourceOperations` added parameter `content_type` in method `begin_create_or_update_private_endpoint_connection`
+  - Operation group `IotDpsResourceOperations` added parameter `content_type` in method `begin_update`
+  - Operation group `IotDpsResourceOperations` added parameter `content_type` in method `check_provisioning_service_name_availability`
+  - Operation group `Operations` added parameter `kwargs` in method `__init__`
 
 ### Breaking Changes
 
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `Resource` deleted or renamed its instance variable `location`
   - Model `Resource` deleted or renamed its instance variable `tags`
   - Deleted or renamed model `CertificateBodyDescription`
   - Deleted or renamed model `ErrorMesssage`
-  - Deleted or renamed model `IotDpsSkuDefinitionListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `ProvisioningServiceDescriptionListResult`
-  - Deleted or renamed model `SharedAccessSignatureAuthorizationRuleListResult`
   - Method `DpsCertificateOperations.create_or_update` changed type of its parameter `certificate_description` from `CertificateBodyDescription` to `CertificateResponse`
-  - Method `DpsCertificateOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_created` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_has_private_key` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_is_verified` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_last_updated` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_name1` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_nonce` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_purpose` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_created`/`certificate_has_private_key`/`certificate_is_verified`/`certificate_last_updated`/`certificate_name1`/`certificate_nonce`/`certificate_purpose`/`certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
   - Method `DpsCertificateOperations.delete` changed type of its parameter `certificate_raw_bytes` from `bytearray` to `bytes`
-  - Method `DpsCertificateOperations.delete` changed its parameter `certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_created` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_has_private_key` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_is_verified` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_last_updated` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_name1` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_nonce` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_purpose` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_created`/`certificate_has_private_key`/`certificate_is_verified`/`certificate_last_updated`/`certificate_name1`/`certificate_nonce`/`certificate_purpose`/`certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
   - Method `DpsCertificateOperations.generate_verification_code` changed type of its parameter `certificate_raw_bytes` from `bytearray` to `bytes`
-  - Method `DpsCertificateOperations.generate_verification_code` changed its parameter `certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.generate_verification_code` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DpsCertificateOperations.get` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_created` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_has_private_key` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_is_verified` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_last_updated` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_name1` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_nonce` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_purpose` from `positional_or_keyword` to `keyword_only`
+  - Method `DpsCertificateOperations.generate_verification_code` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.get` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_created`/`certificate_has_private_key`/`certificate_is_verified`/`certificate_last_updated`/`certificate_name1`/`certificate_nonce`/`certificate_purpose`/`certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
   - Method `DpsCertificateOperations.verify_certificate` changed type of its parameter `certificate_raw_bytes` from `bytearray` to `bytes`
-  - Method `DpsCertificateOperations.verify_certificate` changed its parameter `certificate_raw_bytes` from `positional_or_keyword` to `keyword_only`
-  - Method `DpsCertificateOperations.verify_certificate` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `IotDpsResourceOperations.get_operation_result` parameter `asyncinfo` changed default value from `true` to `none`
+  - Method `DpsCertificateOperations.verify_certificate` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Parameter `asyncinfo` of `IotDpsResourceOperations.get_operation_result` is now optional
   - Method `IotDpsResourceOperations.get_operation_result` changed its parameter `asyncinfo` from `positional_or_keyword` to `keyword_only`
-  - Method `IotDpsResourceOperations.list_by_resource_group` changed return type from `AsyncIterable[ProvisioningServiceDescriptionListResult]` to `AsyncItemPaged[ProvisioningServiceDescription]`
-  - Method `IotDpsResourceOperations.list_by_subscription` changed return type from `AsyncIterable[ProvisioningServiceDescriptionListResult]` to `AsyncItemPaged[ProvisioningServiceDescription]`
-  - Method `IotDpsResourceOperations.list_keys` changed return type from `AsyncIterable[SharedAccessSignatureAuthorizationRuleListResult]` to `AsyncItemPaged[SharedAccessSignatureAuthorizationRuleAccessRightsDescription]`
-  - Method `IotDpsResourceOperations.list_valid_skus` changed return type from `AsyncIterable[IotDpsSkuDefinitionListResult]` to `AsyncItemPaged[IotDpsSkuDefinition]`
-  - Method `Operations.list` changed return type from `AsyncIterable[OperationListResult]` to `AsyncItemPaged[Operation]`
   - Method `IotDpsResourceOperations.list_by_resource_group` changed return type from `Iterable[ProvisioningServiceDescriptionListResult]` to `ItemPaged[ProvisioningServiceDescription]`
   - Method `IotDpsResourceOperations.list_by_subscription` changed return type from `Iterable[ProvisioningServiceDescriptionListResult]` to `ItemPaged[ProvisioningServiceDescription]`
   - Method `IotDpsResourceOperations.list_keys` changed return type from `Iterable[SharedAccessSignatureAuthorizationRuleListResult]` to `ItemPaged[SharedAccessSignatureAuthorizationRuleAccessRightsDescription]`
   - Method `IotDpsResourceOperations.list_valid_skus` changed return type from `Iterable[IotDpsSkuDefinitionListResult]` to `ItemPaged[IotDpsSkuDefinition]`
   - Method `Operations.list` changed return type from `Iterable[OperationListResult]` to `ItemPaged[Operation]`
   - Method `IotDpsResourceOperations.check_provisioning_service_name_availability` re-ordered its parameters from `['self', 'arguments', 'cls', 'kwargs']` to `['self', 'arguments', 'content_type', 'kwargs']`
-  - Method `DpsCertificateOperations.get` re-ordered its parameters from `['self', 'certificate_name', 'cls', 'if_match', 'provisioning_service_name', 'resource_group_name', 'kwargs']` to `['self', 'certificate_name', 'etag', 'match_condition', 'provisioning_service_name', 'resource_group_name', 'kwargs']`
-  - Method `DpsCertificateOperations.generate_verification_code` re-ordered its parameters from `['self', 'certificate_created', 'certificate_has_private_key', 'certificate_is_verified', 'certificate_last_updated', 'certificate_name', 'certificate_name1', 'certificate_nonce', 'certificate_purpose', 'certificate_raw_bytes', 'cls', 'if_match', 'provisioning_service_name', 'resource_group_name', 'kwargs']` to `['self', 'certificate_created', 'certificate_has_private_key', 'certificate_is_verified', 'certificate_last_updated', 'certificate_name', 'certificate_name1', 'certificate_nonce', 'certificate_purpose', 'certificate_raw_bytes', 'etag', 'match_condition', 'provisioning_service_name', 'resource_group_name', 'kwargs']`
-  - Method `DpsCertificateOperations.delete` re-ordered its parameters from `['self', 'certificate_created', 'certificate_has_private_key', 'certificate_is_verified', 'certificate_last_updated', 'certificate_name', 'certificate_name1', 'certificate_nonce', 'certificate_purpose', 'certificate_raw_bytes', 'cls', 'if_match', 'provisioning_service_name', 'resource_group_name', 'kwargs']` to `['self', 'certificate_created', 'certificate_has_private_key', 'certificate_is_verified', 'certificate_last_updated', 'certificate_name', 'certificate_name1', 'certificate_nonce', 'certificate_purpose', 'certificate_raw_bytes', 'etag', 'match_condition', 'provisioning_service_name', 'resource_group_name', 'kwargs']`
+
+### Other Changes
+
+  - Deleted model `IotDpsSkuDefinitionListResult`/`OperationListResult`/`ProvisioningServiceDescriptionListResult`/`SharedAccessSignatureAuthorizationRuleListResult` which actually were not used by SDK users
 
 ## 1.2.0b3 (2025-10-09)
 
