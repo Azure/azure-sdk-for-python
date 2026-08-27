@@ -1,6 +1,5 @@
 import sys
 from pathlib import Path
-from types import SimpleNamespace
 
 import yaml
 
@@ -45,7 +44,7 @@ def _write_conda_client(path: Path, checkout: list[dict[str, str]]) -> None:
     path.write_text(yaml.safe_dump(content, sort_keys=False), encoding="utf-8")
 
 
-def test_reconciles_existing_versions_without_date_detection(
+def test_reconciles_outdated_versions_in_conda_client_yml(
     tmp_path: Path, monkeypatch
 ) -> None:
     conda_client_path = tmp_path / "conda-sdk-client.yml"
@@ -116,70 +115,22 @@ def test_release_log_uses_reconciled_checkout_version(
     assert "## 2026.06.01" in content
 
 
-def test_preflight_rejects_package_without_source_metadata(
-    tmp_path: Path, monkeypatch
-) -> None:
-    package_path = tmp_path / "azure-mgmt-deprecated"
-    package_path.mkdir()
-    (package_path / "README.md").write_text("Deprecated", encoding="utf-8")
-    monkeypatch.setattr(update, "get_package_path", lambda _: str(package_path))
-
-    package_imports, failures = update.preflight_new_mgmt_plane_packages(
-        ["azure-mgmt-deprecated"]
-    )
-
-    assert package_imports == {}
-    assert failures == ["azure-mgmt-deprecated"]
-
-
-def test_preflight_rejects_malformed_package_metadata(
-    tmp_path: Path, monkeypatch
-) -> None:
-    package_path = tmp_path / "azure-mgmt-malformed"
-    package_path.mkdir()
-    (package_path / "pyproject.toml").write_text("[project]\n", encoding="utf-8")
-    monkeypatch.setattr(update, "get_package_path", lambda _: str(package_path))
-
-    def raise_parse_error(_path: str) -> None:
-        raise ValueError("missing version")
-
-    monkeypatch.setattr(update.ParsedSetup, "from_path", raise_parse_error)
-
-    package_imports, failures = update.preflight_new_mgmt_plane_packages(
-        ["azure-mgmt-malformed"]
-    )
-
-    assert package_imports == {}
-    assert failures == ["azure-mgmt-malformed"]
-
-
-def test_preflight_collects_imports_for_valid_package(
-    tmp_path: Path, monkeypatch
-) -> None:
-    package_path = tmp_path / "azure-mgmt-example"
-    module_path = package_path / "azure" / "mgmt" / "example"
-    module_path.mkdir(parents=True)
-    (package_path / "pyproject.toml").write_text("[project]\n", encoding="utf-8")
-    monkeypatch.setattr(update, "get_package_path", lambda _: str(package_path))
-    monkeypatch.setattr(
-        update.ParsedSetup,
-        "from_path",
-        lambda _: SimpleNamespace(namespace="azure.mgmt.example"),
-    )
+def test_filters_package_without_parseable_setup(monkeypatch) -> None:
+    packages = [
+        {update.PACKAGE_COL: "azure-mgmt-trustedsigning"},
+        {update.PACKAGE_COL: "azure-mgmt-example"},
+    ]
     monkeypatch.setattr(
         update,
-        "get_valid_package_imports",
-        lambda _: ["azure.mgmt.example", "azure.mgmt.example.models"],
+        "get_package_path",
+        lambda name: f"/repo/{name}",
     )
 
-    package_imports, failures = update.preflight_new_mgmt_plane_packages(
-        ["azure-mgmt-example"]
-    )
+    def parse_setup(path: str) -> object:
+        if path.endswith("azure-mgmt-trustedsigning"):
+            raise FileNotFoundError("setup.py or pyproject.toml not found")
+        return object()
 
-    assert failures == []
-    assert package_imports == {
-        "azure-mgmt-example": [
-            "azure.mgmt.example",
-            "azure.mgmt.example.models",
-        ]
-    }
+    monkeypatch.setattr(update.ParsedSetup, "from_path", parse_setup)
+
+    assert update.filter_packages_with_parseable_setup(packages) == [packages[1]]

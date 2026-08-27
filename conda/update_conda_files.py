@@ -682,99 +682,38 @@ def add_new_data_plane_packages(
     return result
 
 
+def filter_packages_with_parseable_setup(
+    packages: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    """Exclude packages whose repository metadata cannot be parsed."""
+    result = []
+    for package in packages:
+        package_name = package.get(PACKAGE_COL, "")
+        package_path = get_package_path(package_name)
+        try:
+            if not package_path:
+                raise ValueError("package source path was not found")
+            ParsedSetup.from_path(package_path)
+        except (AssertionError, KeyError, OSError, TypeError, ValueError) as error:
+            logger.warning(
+                f"Excluding {package_name} from the Conda update because its package metadata "
+                f"could not be parsed: {error}"
+            )
+            continue
+        result.append(package)
+    return result
+
+
 # =====================================
 # Helpers for adding new mgmt plane packages to azure-mgmt/meta.yaml
 # =====================================
 
 
-def preflight_new_mgmt_plane_packages(
-    new_mgmt_plane_names: list[str],
-) -> tuple[dict[str, list[str]], list[str]]:
-    """Resolve imports for new management packages before changing generated files.
-
-    :param new_mgmt_plane_names: New management package names to validate.
-    :type new_mgmt_plane_names: list[str]
-    :return: Resolved imports by package name and package names that failed validation.
-    :rtype: tuple[dict[str, list[str]], list[str]]
-    """
-    package_imports = {}
-    failed_packages = []
-
-    for package_name in new_mgmt_plane_names:
-        package_path = get_package_path(package_name)
-        if not package_path:
-            logger.error(
-                f"Cannot safely add management package {package_name}: package source path was not found"
-            )
-            failed_packages.append(package_name)
-            continue
-
-        metadata_files = ["pyproject.toml", "setup.py"]
-        if not any(
-            os.path.isfile(os.path.join(package_path, filename))
-            for filename in metadata_files
-        ):
-            logger.error(
-                f"Cannot safely add management package {package_name}: package metadata was not found"
-            )
-            failed_packages.append(package_name)
-            continue
-
-        try:
-            parsed = ParsedSetup.from_path(package_path)
-        except (AssertionError, KeyError, OSError, TypeError, ValueError) as error:
-            logger.error(
-                f"Cannot safely add management package {package_name}: "
-                f"failed to parse package metadata: {error}"
-            )
-            failed_packages.append(package_name)
-            continue
-        if not parsed or not parsed.namespace:
-            logger.error(
-                f"Cannot safely add management package {package_name}: package metadata does not define a namespace"
-            )
-            failed_packages.append(package_name)
-            continue
-
-        module_dir = os.path.join(package_path, *parsed.namespace.split("."))
-        if not os.path.isdir(module_dir):
-            logger.error(
-                f"Cannot safely add management package {package_name}: "
-                f"package module directory was not found at {module_dir}"
-            )
-            failed_packages.append(package_name)
-            continue
-
-        try:
-            imports = get_valid_package_imports(package_name)
-        except (AssertionError, KeyError, OSError, TypeError, ValueError) as error:
-            logger.error(
-                f"Cannot safely add management package {package_name}: "
-                f"failed to discover package imports: {error}"
-            )
-            failed_packages.append(package_name)
-            continue
-        if not imports:
-            logger.error(
-                f"Cannot safely add management package {package_name}: no package imports were discovered"
-            )
-            failed_packages.append(package_name)
-            continue
-        package_imports[package_name] = imports
-
-    return package_imports, failed_packages
-
-
-def add_new_mgmt_plane_packages(
-    new_mgmt_plane_names: list[str],
-    package_imports: dict[str, list[str]],
-) -> list[str]:
+def add_new_mgmt_plane_packages(new_mgmt_plane_names: list[str]) -> list[str]:
     """Update azure-mgmt/meta.yaml with new management libraries and import tests.
 
     :param new_mgmt_plane_names: New management package names to add.
     :type new_mgmt_plane_names: list[str]
-    :param package_imports: Preflighted imports for each new package.
-    :type package_imports: dict[str, list[str]]
     :return: Package names that could not be added.
     :rtype: list[str]
     """
@@ -801,14 +740,12 @@ def add_new_mgmt_plane_packages(
         for line in existing_imports_text.strip().split("\n")
         if line.strip().startswith("-")
     ]
-
     new_imports = []
     for package_name in new_mgmt_plane_names:
-        imports = package_imports.get(package_name)
-        if not imports:
-            logger.error(
-                f"No preflighted imports found for {package_name}, skipping addition"
-            )
+        try:
+            imports = get_valid_package_imports(package_name)
+        except (AssertionError, KeyError, OSError, TypeError, ValueError) as error:
+            logger.error(f"Failed to get valid imports for {package_name}: {error}")
             result.append(package_name)
             continue
         formatted = [f"- {imp}" for imp in imports]
@@ -1173,6 +1110,9 @@ if __name__ == "__main__":
     ]
     logger.info(f"Filtered to {len(packages)} GA packages")
 
+    packages = filter_packages_with_parseable_setup(packages)
+    logger.info(f"Filtered to {len(packages)} packages with parseable metadata")
+
     data_pkgs, mgmt_pkgs = separate_packages_by_type(packages)
 
     outdated_data_plane_names = [
@@ -1250,13 +1190,6 @@ if __name__ == "__main__":
     # map package name to csv row for easy lookup
     package_dict = {pkg.get(PACKAGE_COL, ""): pkg for pkg in packages}
 
-    new_mgmt_package_imports, invalid_new_mgmt_names = (
-        preflight_new_mgmt_plane_packages(new_mgmt_plane_names)
-    )
-    new_mgmt_plane_names = [
-        name for name in new_mgmt_plane_names if name in new_mgmt_package_imports
-    ]
-
     outdated_package_names = outdated_data_plane_names + outdated_mgmt_plane_names
 
     # update conda-sdk-client.yml
@@ -1279,9 +1212,7 @@ if __name__ == "__main__":
     )
 
     # handle new mgmt plane libraries
-    new_mgmt_plane_results = invalid_new_mgmt_names + add_new_mgmt_plane_packages(
-        new_mgmt_plane_names, new_mgmt_package_imports
-    )
+    new_mgmt_plane_results = add_new_mgmt_plane_packages(new_mgmt_plane_names)
 
     # add/update release logs
     conda_package_versions = get_conda_client_package_versions()
