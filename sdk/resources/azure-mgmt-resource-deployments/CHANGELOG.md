@@ -13,7 +13,6 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `DeploymentExtensionConfigItem` deleted or renamed its instance variable `type`
   - Deleted or renamed model `ExtensionConfigPropertyType`
 
