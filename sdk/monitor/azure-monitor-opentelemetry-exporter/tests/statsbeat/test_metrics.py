@@ -32,6 +32,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _shorten_host,
+    _ENDPOINT_TYPES,
     _FEATURE_TYPES,
     _StatsbeatFeature,
     _StatsbeatMetrics,
@@ -971,6 +972,27 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_shorten_host(url), "fakehost")
         url = "http://fakehost-5/"
         self.assertEqual(_shorten_host(url), "fakehost-5")
+
+    def test_update_endpoint_refreshes_host_dimension(self):
+        """An accepted redirect updates the host dimension but keeps endpoint as breeze."""
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            "https://dc.services.visualstudio.com",
+            True,
+            0,
+            False,
+        )
+        self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["host"], "dc")
+
+        metric.update_endpoint("https://westeurope-5.in.applicationinsights.azure.com/")
+
+        # The full regional ingestion stamp is recorded in host...
+        self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["host"], "westeurope-5")
+        # ...while the endpoint dimension stays "breeze".
+        self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["endpoint"], _ENDPOINT_TYPES[0])
 
 
 # pylint: disable=protected-access

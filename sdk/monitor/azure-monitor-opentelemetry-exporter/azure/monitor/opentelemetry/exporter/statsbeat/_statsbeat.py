@@ -63,3 +63,9 @@ def get_statsbeat_configuration_callback(settings: Dict[str, str]):
 
 def shutdown_statsbeat_metrics() -> bool:
     return get_statsbeat_manager().shutdown()
+
+
+def update_statsbeat_endpoint(endpoint: str) -> bool:
+    # Point statsbeat at the customer's effective ingestion route after an accepted redirect.
+
+    return get_statsbeat_manager().update_endpoint(endpoint)
