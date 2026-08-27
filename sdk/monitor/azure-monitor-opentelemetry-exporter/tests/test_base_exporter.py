@@ -990,6 +990,79 @@ class TestBaseExporter(unittest.TestCase):
             self.assertEqual(post.call_count, 1)
             self.assertEqual(self._base.client._config.host, prev_host)
 
+    def test_transmit_redirect_updates_statsbeat_endpoint(self):
+        """An accepted redirect repoints internal statsbeat at the customer's effective route."""
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location": "https://westeurope-5.in.applicationinsights.azure.com"}
+        prev_redirects = self._base.client._config.redirect_policy.max_redirects
+        self._base.client._config.redirect_policy.max_redirects = 2
+        self._base._consecutive_redirects = 0
+        prev_host = self._base.client._config.host
+        error = HttpResponseError(response=response)
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.update_statsbeat_endpoint"
+        ) as update_mock:
+            with mock.patch.object(AzureMonitorClient, "track") as post:
+                post.side_effect = error
+                self._base._transmit(self._envelopes_to_export)
+        update_mock.assert_called_with("https://westeurope-5.in.applicationinsights.azure.com")
+        self._base.client._config.redirect_policy.max_redirects = prev_redirects
+        self._base.client._config.host = prev_host
+
+    def test_transmit_refused_redirect_does_not_update_statsbeat_endpoint(self):
+        """A redirect that fails the trust check must not move the statsbeat route."""
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location": "https://attacker.example.invalid"}
+        self._base._consecutive_redirects = 0
+        prev_host = self._base.client._config.host
+        error = HttpResponseError(response=response)
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.update_statsbeat_endpoint"
+        ) as update_mock:
+            with mock.patch.object(AzureMonitorClient, "track") as post:
+                post.side_effect = error
+                result = self._base._transmit(self._envelopes_to_export)
+        update_mock.assert_not_called()
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        self.assertEqual(self._base.client._config.host, prev_host)
+
+    def test_transmit_redirect_statsbeat_update_failure_does_not_break_export(self):
+        """Statsbeat routing is best-effort and must never break customer telemetry export."""
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location": "https://westus.services.visualstudio.com"}
+        prev_redirects = self._base.client._config.redirect_policy.max_redirects
+        self._base.client._config.redirect_policy.max_redirects = 2
+        self._base._consecutive_redirects = 0
+        prev_host = self._base.client._config.host
+        error = HttpResponseError(response=response)
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.update_statsbeat_endpoint",
+            side_effect=Exception("statsbeat boom"),
+        ):
+            with mock.patch.object(AzureMonitorClient, "track") as post:
+                post.side_effect = error
+                result = self._base._transmit(self._envelopes_to_export)
+        # The redirect was still followed and the export completed without raising.
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        self.assertEqual(self._base.client._config.host, "https://westus.services.visualstudio.com")
+        self._base.client._config.redirect_policy.max_redirects = prev_redirects
+        self._base.client._config.host = prev_host
+
+    def test_transmit_statsbeat_exporter_does_not_update_statsbeat_endpoint(self):
+        """Statsbeat must never re-route itself off the back of its own redirect."""
+        self._base._is_sdkstats = True
+        try:
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.update_statsbeat_endpoint"
+            ) as update_mock:
+                self._base._update_statsbeat_endpoint("https://westeurope-5.in.applicationinsights.azure.com")
+            update_mock.assert_not_called()
+        finally:
+            self._base._is_sdkstats = False
+
     def test_is_same_registered_domain(self):
         same = self._base._is_same_registered_domain
         # Same host (exact match) is always safe, even when not under a
@@ -1012,8 +1085,22 @@ class TestBaseExporter(unittest.TestCase):
         # suffix (and vice versa).
         self.assertFalse(same("dc.services.visualstudio.com", "attacker.example.invalid"))
         self.assertFalse(same("legit-ingestion.example.invalid", "dc.services.visualstudio.com"))
-        # Mixing two different trusted suffixes is rejected.
-        self.assertFalse(same("dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com"))
+        # Mixing two trusted suffixes within the same cloud is permitted -- this is the
+        # global-to-regional ingestion redirect (dc.services.visualstudio.com -> regional stamp).
+        self.assertTrue(same("dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("dc.services.visualstudio.com", "westeurope-5.in.applicationinsights.azure.com"))
+        self.assertTrue(same("foo.monitor.azure.com", "bar.livediagnostics.monitor.azure.com"))
+        self.assertTrue(same("foo.monitor.azure.us", "bar.applicationinsights.azure.us"))
+        self.assertTrue(same("foo.monitor.azure.cn", "bar.applicationinsights.azure.cn"))
+        # Crossing into a different sovereign cloud is rejected.
+        self.assertFalse(same("dc.services.visualstudio.com", "foo.applicationinsights.azure.us"))
+        self.assertFalse(same("foo.applicationinsights.azure.us", "bar.applicationinsights.azure.cn"))
+        self.assertFalse(same("foo.applicationinsights.azure.cn", "westus-0.in.applicationinsights.azure.com"))
+        # Ports are ignored; only the host is compared.
+        self.assertTrue(same("westus-0.in.applicationinsights.azure.com:443", "westus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("custom-ingestion.example.invalid:8080", "custom-ingestion.example.invalid:8080"))
+        # Userinfo and trailing dots are normalized away.
+        self.assertTrue(same("user@dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com."))
         # Empty inputs are treated as not-same.
         self.assertFalse(same("", "applicationinsights.azure.com"))
         self.assertFalse(same("applicationinsights.azure.com", ""))
