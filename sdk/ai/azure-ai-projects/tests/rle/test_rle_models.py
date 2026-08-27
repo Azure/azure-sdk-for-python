@@ -1608,6 +1608,39 @@ def test_async_openenv_instance_release_ignores_transport_failures():
     asyncio.run(run())
 
 
+def test_async_openenv_instance_release_can_retry_after_cancellation():
+    class _CancellationOnceInstances(_AsyncFakeInstances):
+        def __init__(self):
+            super().__init__()
+            self.delete_attempts = 0
+
+        async def delete_instance(
+            self, environment_name, environment_version, instance_group_id, instance_id
+        ):
+            self.delete_attempts += 1
+            if self.delete_attempts == 1:
+                raise asyncio.CancelledError
+            await super().delete_instance(
+                environment_name, environment_version, instance_group_id, instance_id
+            )
+
+    async def run():
+        instances = _CancellationOnceInstances()
+        client, _groups, _instances = _make_async_openenv_client(instances=instances)
+        async with client:
+            instance = client.get_instance()
+            await instance.__aenter__()
+            with pytest.raises(asyncio.CancelledError):
+                await instance.release()
+            assert instance.id == "inst-0"
+            await instance.release()
+
+        assert instances.delete_attempts == 2
+        assert instances.released == ["inst-0"]
+
+    asyncio.run(run())
+
+
 def test_async_openenv_close_ignores_transport_failures():
     class _TransportFailingGroups(_AsyncFakeInstanceGroups):
         async def delete_instance_group(
@@ -1621,6 +1654,37 @@ def test_async_openenv_close_ignores_transport_failures():
         )
         async with client:
             pass
+
+    asyncio.run(run())
+
+
+def test_async_openenv_close_can_retry_after_cancellation():
+    class _CancellationOnceGroups(_AsyncFakeInstanceGroups):
+        def __init__(self):
+            super().__init__()
+            self.delete_attempts = 0
+
+        async def delete_instance_group(
+            self, environment_name, environment_version, instance_group_id
+        ):
+            self.delete_attempts += 1
+            if self.delete_attempts == 1:
+                raise asyncio.CancelledError
+            await super().delete_instance_group(
+                environment_name, environment_version, instance_group_id
+            )
+
+    async def run():
+        groups = _CancellationOnceGroups()
+        client, _groups, _instances = _make_async_openenv_client(groups=groups)
+        await client.__aenter__()
+        with pytest.raises(asyncio.CancelledError):
+            await client.close()
+        assert client.instance_group_id == "grp-1"
+        await client.close()
+
+        assert groups.delete_attempts == 2
+        assert groups.deleted == ["grp-1"]
 
     asyncio.run(run())
 

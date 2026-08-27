@@ -451,9 +451,6 @@ class AsyncOpenEnvInstance:
         instance_id = self._instance_id
         if instance_id is None:
             return
-        self._instance = None
-        self._instance_id = None
-        self._released = True
         try:
             await self._instances.delete_instance(
                 self._environment_name,
@@ -463,6 +460,9 @@ class AsyncOpenEnvInstance:
             )
         except AzureError:
             pass
+        self._instance = None
+        self._instance_id = None
+        self._released = True
 
 
 class AsyncOpenEnvClient:
@@ -664,7 +664,11 @@ class AsyncOpenEnvClient:
             if self._closed:
                 return
             self._closed = True
-            await self._close_group_locked()
+            try:
+                await self._close_group_locked()
+            except asyncio.CancelledError:
+                self._closed = False
+                raise
 
     async def _close_group_locked(self) -> None:
         group_id = self._instance_group_id
@@ -673,7 +677,6 @@ class AsyncOpenEnvClient:
         environment_version = self._version
         if environment_version is None:
             raise RLEError("service did not resolve the instance group's environment version")
-        self._instance_group_id = None
         try:
             await self._instance_groups.delete_instance_group(
                 self._name,
@@ -682,6 +685,7 @@ class AsyncOpenEnvClient:
             )
         except AzureError:
             pass
+        self._instance_group_id = None
 
 
 class RLEOperations:
