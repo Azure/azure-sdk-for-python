@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Compute": "2026-09-05-preview"
   },
-  "commit": "e86fadcae9dc3552bf56d669d43716419080317e",
+  "commit": "3fbff828a405632668f197b4c30466a0b8dc2cef",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/compute/resource-manager/Microsoft.Compute/Recommender",
   "emitterVersion": "0.63.5",

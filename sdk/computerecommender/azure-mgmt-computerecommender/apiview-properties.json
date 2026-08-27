@@ -49,5 +49,5 @@
         "azure.mgmt.computerecommender.operations.SpotPlacementScoresOperations.post": "Microsoft.Compute.ComputeDiagnosticBases.post",
         "azure.mgmt.computerecommender.aio.operations.SpotPlacementScoresOperations.post": "Microsoft.Compute.ComputeDiagnosticBases.post"
     },
-    "CrossLanguageVersion": "c49fe8aec93e"
+    "CrossLanguageVersion": "6abdb790f35f"
 }

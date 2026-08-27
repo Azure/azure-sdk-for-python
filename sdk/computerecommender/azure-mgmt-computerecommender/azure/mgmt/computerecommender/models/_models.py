@@ -494,8 +494,7 @@ class SkuMixPlacementCapacityProfile(_Model):  # pylint: disable=docstring-keywo
     :ivar priority: The priority of the VMs to allocate. Required. Known values are: "Regular" and
      "Spot".
     :vartype priority: str or ~azure.mgmt.computerecommender.models.SkuMixPlacementPriority
-    :ivar spot_priority_profile: Required when priority is Spot. Contains spot-specific
-     configuration.
+    :ivar spot_priority_profile: Contains spot-specific configuration.
     :vartype spot_priority_profile:
      ~azure.mgmt.computerecommender.models.SkuMixPlacementSpotPriorityProfile
     :ivar allocation_strategy: The allocation strategy for determining the optimal SKU split. Known
@@ -523,7 +522,7 @@ class SkuMixPlacementCapacityProfile(_Model):  # pylint: disable=docstring-keywo
     spot_priority_profile: Optional["_models.SkuMixPlacementSpotPriorityProfile"] = rest_field(
         name="spotPriorityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required when priority is Spot. Contains spot-specific configuration."""
+    """Contains spot-specific configuration."""
     allocation_strategy: Optional[Union[str, "_models.SkuMixPlacementAllocationStrategy"]] = rest_field(
         name="allocationStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -827,7 +826,7 @@ class SkuMixPlacementResponse(_Model):  # pylint: disable=docstring-keyword-shou
 
 
 class SkuMixPlacementSpotPriorityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Spot priority configuration. Required when priority is Spot.
+    """Spot priority configuration.
 
     :ivar max_price_per_vm: Maximum price per VM the customer is willing to pay. Default: -1 (no
      price restriction).
