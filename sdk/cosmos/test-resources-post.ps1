@@ -75,7 +75,7 @@ if (-not [string]::IsNullOrWhiteSpace($secondaryAccountKey)) {
 }
 
 Write-Host "Reapplying fixed Cosmos test account '$selector' after resource deployment."
-Write-PublicVariable 'ACCOUNT_HOST' $accountHost
+Write-SecretVariable 'ACCOUNT_HOST' $accountHost
 Write-SecretVariable 'ACCOUNT_KEY' $accountKey
 if (-not [string]::IsNullOrWhiteSpace($secondaryAccountKey)) {
     Write-SecretVariable 'SECONDARY_ACCOUNT_KEY' $secondaryAccountKey

@@ -43,6 +43,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         # (control-plane). Tests query through the AAD data client below.
         cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.test_db = cls.key_client.create_database(test_config.unique_database_id("hybrid-search"))
+        cls.addClassCleanup(test_config.TestConfig.try_delete_database_with_id, cls.key_client, cls.test_db.id)
         key_container = cls.test_db.create_container(
             id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
@@ -598,4 +599,3 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

@@ -222,7 +222,8 @@ Test-Case 'emits ADO logging commands, using the double-set convention for secre
         )
         $stdout = (& pwsh @arguments 2>$stderrFile | Out-String)
         Assert-True ($LASTEXITCODE -eq 0) "expected exit 0, got $LASTEXITCODE"
-        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=COSMOS_FIXED_ACCOUNT_HOST;issecret=false\]') 'prefixed ACCOUNT_HOST must be public'
+        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=_COSMOS_FIXED_ACCOUNT_HOST;issecret=true\]') 'prefixed ACCOUNT_HOST must be registered with the log scrubber'
+        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=COSMOS_FIXED_ACCOUNT_HOST;issecret=false\]') 'prefixed ACCOUNT_HOST must also be set plainly so it reaches the post-deployment hook'
         Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=_COSMOS_FIXED_ACCOUNT_KEY;issecret=true\]') 'prefixed ACCOUNT_KEY must be registered with the log scrubber'
         Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=COSMOS_FIXED_ACCOUNT_KEY;issecret=false\]') 'prefixed ACCOUNT_KEY must also be set plainly so it reaches the post-deployment hook'
         Assert-True ($stdout -notmatch 'key=primary-key-mm') 'the summary line must not echo the key'

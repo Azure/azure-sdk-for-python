@@ -23,8 +23,10 @@
     would clobber the matrix values.
 
 .PARAMETER AccountsJson
-    Raw JSON matching live-test-accounts.schema.json (the value of the
-    sub-config-cosmos-azure-cloud-test-resources variable). Defaults to $env:COSMOS_TEST_ACCOUNTS_JSON.
+    Raw JSON matching Azure/azure-sdk-for-java's
+    sdk/cosmos/pipeline/live-test-accounts.schema.json (the value of the
+    sub-config-cosmos-azure-cloud-test-resources variable). Defaults to
+    $env:COSMOS_TEST_ACCOUNTS_JSON.
 
 .PARAMETER Selector
     Logical account name to select, e.g. multimaster-multiregion-session.
@@ -178,7 +180,7 @@ if (-not $endpoint.StartsWith('https://', [System.StringComparison]::Ordinal)) {
 Assert-SingleLine 'endpoint' $endpoint
 Assert-SingleLine 'key' $key
 
-Write-PublicVariable 'ACCOUNT_HOST' $endpoint
+Write-SecretVariable 'ACCOUNT_HOST' $endpoint
 Write-SecretVariable 'ACCOUNT_KEY' $key
 if (-not [string]::IsNullOrWhiteSpace($secondaryKey)) {
     Assert-SingleLine 'secondaryKey' $secondaryKey

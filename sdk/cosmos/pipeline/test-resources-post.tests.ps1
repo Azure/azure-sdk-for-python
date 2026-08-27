@@ -96,6 +96,7 @@ Test-Case 'reapplies selected credentials through the production Out-Null caller
         -AccountHost 'https://single-session.example.com:443/' `
         -AccountKey 'primary-key-single'
     Assert-True ($result.ExitCode -eq 0) "expected exit 0, got $($result.ExitCode): $($result.StdErr)"
+    Assert-True ($result.StdOut -match '\#\#vso\[task\.setvariable variable=_ACCOUNT_HOST;issecret=true\]https://single-session\.example\.com:443/') 'ACCOUNT_HOST was not registered as a secret'
     Assert-True ($result.StdOut -match '\#\#vso\[task\.setvariable variable=ACCOUNT_HOST;issecret=false\]https://single-session\.example\.com:443/') 'ACCOUNT_HOST logging command did not survive Out-Null'
     Assert-True ($result.StdOut -match '\#\#vso\[task\.setvariable variable=_ACCOUNT_KEY;issecret=true\]primary-key-single') 'ACCOUNT_KEY was not registered as a secret'
     Assert-True ($result.StdOut -match '\#\#vso\[task\.setvariable variable=ACCOUNT_KEY;issecret=false\]primary-key-single') 'ACCOUNT_KEY logging command did not survive Out-Null'

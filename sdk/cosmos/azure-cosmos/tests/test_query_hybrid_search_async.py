@@ -38,6 +38,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
         cls.sync_client = CosmosSyncClient(cls.host, cls.masterKey)
         cls.test_db = cls.sync_client.create_database(test_config.unique_database_id("hybrid-search"))
+        cls.addClassCleanup(test_config.TestConfig.try_delete_database_with_id, cls.sync_client, cls.test_db.id)
         cls.test_container = cls.test_db.create_container(
             id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
@@ -592,4 +593,3 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

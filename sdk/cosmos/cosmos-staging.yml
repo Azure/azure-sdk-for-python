@@ -61,7 +61,7 @@ jobs:
         if ($null -ne $res) {
             $account = Get-AzCosmosDBAccount -ResourceId $res.ResourceId
 
-            $dbs = Get-AzCosmosDBSqlDatabase -ParentObject $account | Where-Object { $_.Name.StartsWith($prefix) }
+            $dbs = Get-AzCosmosDBSqlDatabase -ParentObject $account | Where-Object { $_.Name.TrimStart().StartsWith($prefix) }
 
             $dbs | Write-Output
 
@@ -102,7 +102,7 @@ jobs:
         client = cosmos_client.CosmosClient(host, key)
 
         for db in client.list_databases():
-            if db["id"].startswith(prefix):
+            if db["id"].lstrip().startswith(prefix):
                 client.delete_database(db["id"])
     env:
       ACCOUNT_KEY: $(ACCOUNT_KEY) # Maps the secret variable $(token) from my-var-group
