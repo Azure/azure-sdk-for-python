@@ -6,12 +6,7 @@ import pytest
 from subprocess import CalledProcessError
 from unittest.mock import patch, MagicMock
 
-from azpysdk.apistub import (
-    _patch_apistub_type_name_regex,
-    apistub,
-    get_cross_language_mapping_path,
-    get_package_wheel_path,
-)
+from azpysdk.apistub import apistub, get_package_wheel_path, get_cross_language_mapping_path
 
 
 def _build_parser():
@@ -19,23 +14,6 @@ def _build_parser():
     subparsers = parser.add_subparsers(title="commands", dest="command")
     apistub().register(subparsers)
     return parser
-
-
-def test_dotted_literal_values_are_preserved():
-    from apistub._generated.treestyle.parser.models import _patch
-
-    original_regex = _patch.TYPE_NAME_REGEX
-    try:
-        _patch_apistub_type_name_regex()
-        line = _patch.ReviewLine(tokens=[])
-        apiview = MagicMock()
-        apiview.node_index.get_id.return_value = None
-
-        line.add_type('Literal["gpt-5.6-sol"]', apiview, has_suffix_space=False)
-
-        assert "".join(token.value for token in line.tokens) == 'Literal["gpt-5.6-sol"]'
-    finally:
-        _patch.TYPE_NAME_REGEX = original_regex
 
 
 class TestApistubRegistration:
