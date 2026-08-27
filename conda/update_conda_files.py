@@ -690,9 +690,10 @@ def add_new_data_plane_packages(
 
 def filter_packages_with_parseable_setup(
     packages: list[dict[str, str]],
-) -> list[dict[str, str]]:
+) -> tuple[list[dict[str, str]], list[str]]:
     """Exclude packages whose repository metadata cannot be parsed."""
     result = []
+    filtered = []
     for package in packages:
         package_name = package.get(PACKAGE_COL, "")
         package_path = get_package_path(package_name)
@@ -705,9 +706,10 @@ def filter_packages_with_parseable_setup(
                 f"Excluding {package_name} from the Conda update because its package metadata "
                 f"could not be parsed: {error}"
             )
+            result.append(package_name)
             continue
-        result.append(package)
-    return result
+        filtered.append(package)
+    return filtered, result
 
 
 # =====================================
@@ -965,11 +967,6 @@ def update_data_plane_release_logs(
                 logger.error(f"Failed to create release log for {display_name}: {e}")
                 result.append(display_name)
 
-        else:
-            logger.info(
-                f"Release log for {display_name} already exists, check that new package {package_name} is included"
-            )
-
     return result
 
 
@@ -1117,7 +1114,7 @@ if __name__ == "__main__":
     ]
     logger.info(f"Filtered to {len(packages)} GA packages")
 
-    packages = filter_packages_with_parseable_setup(packages)
+    packages, pkgs_without_metadata = filter_packages_with_parseable_setup(packages)
     logger.info(f"Filtered to {len(packages)} packages with parseable metadata")
 
     data_pkgs, mgmt_pkgs = separate_packages_by_type(packages)
@@ -1248,6 +1245,13 @@ if __name__ == "__main__":
     )
 
     print("=== REPORT ===")
+
+    if pkgs_without_metadata:
+        print(
+            "The following packages were excluded from processing because their repository metadata could not be parsed, they may be deprecated:"
+        )
+        for pkg_name in pkgs_without_metadata:
+            print(f"- {pkg_name}")
 
     if conda_sdk_client_pkgs_result:
         print(

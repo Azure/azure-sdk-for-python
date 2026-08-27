@@ -154,7 +154,7 @@ def test_filters_package_without_parseable_setup(monkeypatch) -> None:
 
     monkeypatch.setattr(update.ParsedSetup, "from_path", parse_setup)
 
-    assert update.filter_packages_with_parseable_setup(packages) == [packages[1]]
+    assert update.filter_packages_with_parseable_setup(packages)[0] == [packages[1]]
 
 
 def test_mgmt_write_failure_returns_unique_package_names(
