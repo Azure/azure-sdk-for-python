@@ -122,9 +122,13 @@ def get_existing_conda_client_packages() -> set[str]:
     return set(build_package_index(conda_artifacts).keys())
 
 
-def get_conda_client_package_versions() -> dict[str, str]:
+def get_conda_client_package_versions(
+    artifact_name: Optional[str] = None,
+) -> dict[str, str]:
     """Return package versions configured in conda-sdk-client.yml.
 
+    :param artifact_name: Limit results to one Conda artifact.
+    :type artifact_name: str or None
     :return: Mapping of package names to configured versions.
     :rtype: dict[str, str]
     """
@@ -137,6 +141,8 @@ def get_conda_client_package_versions() -> dict[str, str]:
 
     package_versions = {}
     for artifact in conda_artifacts:
+        if artifact_name and artifact.get("name") != artifact_name:
+            continue
         for checkout_item in artifact.get("checkout", []):
             package_name = checkout_item.get("package")
             version = checkout_item.get("version")
@@ -771,10 +777,11 @@ def add_new_mgmt_plane_packages(new_mgmt_plane_names: list[str]) -> list[str]:
             file.write(updated_content)
     except Exception as e:
         logger.error(f"Failed to update {CONDA_MGMT_META_YAML_PATH}: {e}")
-        result.extend(new_mgmt_plane_names)
+        return list(dict.fromkeys(new_mgmt_plane_names))
 
+    result = list(dict.fromkeys(result))
     logger.info(
-        f"Added {len(new_mgmt_plane_names) - len(result)} new management plane packages to meta.yaml"
+        f"Added {len(set(new_mgmt_plane_names)) - len(result)} new management plane packages to meta.yaml"
     )
     return result
 
@@ -1232,11 +1239,9 @@ if __name__ == "__main__":
         conda_package_versions, bundle_map, all_data_plane_names, new_version
     )
 
-    all_mgmt_plane_names = [
-        pkg.get(PACKAGE_COL, "")
-        for pkg in mgmt_pkgs
-        if pkg.get(PACKAGE_COL, "") in conda_package_versions
-    ]
+    all_mgmt_plane_names = list(
+        get_conda_client_package_versions(artifact_name="azure-mgmt")
+    )
 
     mgmt_plane_release_log_results = update_mgmt_plane_release_log(
         conda_package_versions, all_mgmt_plane_names, new_version

@@ -1,3 +1,4 @@
+import builtins
 import sys
 from pathlib import Path
 
@@ -9,7 +10,11 @@ sys.path.insert(0, str(CONDA_DIR))
 import update_conda_files as update  # pylint: disable=wrong-import-position
 
 
-def _write_conda_client(path: Path, checkout: list[dict[str, str]]) -> None:
+def _write_conda_client(
+    path: Path,
+    checkout: list[dict[str, str]],
+    mgmt_checkout: list[dict[str, str]] | None = None,
+) -> None:
     content = {
         "parameters": [],
         "extends": {
@@ -28,7 +33,7 @@ def _write_conda_client(path: Path, checkout: list[dict[str, str]]) -> None:
                                                 },
                                                 {
                                                     "name": "azure-mgmt",
-                                                    "checkout": [],
+                                                    "checkout": mgmt_checkout or [],
                                                 },
                                             ]
                                         }
@@ -64,6 +69,22 @@ def test_reconciles_outdated_versions_in_conda_client_yml(
 
     package_versions = update.get_conda_client_package_versions()
     assert package_versions["azure-example"] == "2.0.0"
+
+
+def test_gets_management_versions_from_configured_artifact(
+    tmp_path: Path, monkeypatch
+) -> None:
+    conda_client_path = tmp_path / "conda-sdk-client.yml"
+    _write_conda_client(
+        conda_client_path,
+        [{"package": "azure-example", "version": "1.0.0"}],
+        [{"package": "azure-mgmt-batchai", "version": "7.0.0"}],
+    )
+    monkeypatch.setattr(update, "CONDA_CLIENT_YAML_PATH", str(conda_client_path))
+
+    assert update.get_conda_client_package_versions(artifact_name="azure-mgmt") == {
+        "azure-mgmt-batchai": "7.0.0"
+    }
 
 
 def test_creates_release_log_for_existing_package(tmp_path: Path, monkeypatch) -> None:
@@ -134,3 +155,39 @@ def test_filters_package_without_parseable_setup(monkeypatch) -> None:
     monkeypatch.setattr(update.ParsedSetup, "from_path", parse_setup)
 
     assert update.filter_packages_with_parseable_setup(packages) == [packages[1]]
+
+
+def test_mgmt_write_failure_returns_unique_package_names(
+    tmp_path: Path, monkeypatch
+) -> None:
+    meta_path = tmp_path / "meta.yaml"
+    meta_path.write_text(
+        "test:\n  imports:\n    - azure.mgmt.existing\n\nabout:\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(update, "CONDA_MGMT_META_YAML_PATH", str(meta_path))
+
+    def get_imports(package_name: str) -> list[str]:
+        if package_name == "azure-mgmt-invalid":
+            raise ValueError("invalid imports")
+        return [package_name.replace("-", ".")]
+
+    monkeypatch.setattr(update, "get_valid_package_imports", get_imports)
+    real_open = builtins.open
+
+    def fail_write(path, mode="r", *args, **kwargs):
+        if path == str(meta_path) and "w" in mode:
+            raise OSError("write failed")
+        return real_open(path, mode, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "open", fail_write)
+
+    package_names = [
+        "azure-mgmt-invalid",
+        "azure-mgmt-invalid",
+        "azure-mgmt-example",
+    ]
+    assert update.add_new_mgmt_plane_packages(package_names) == [
+        "azure-mgmt-invalid",
+        "azure-mgmt-example",
+    ]
