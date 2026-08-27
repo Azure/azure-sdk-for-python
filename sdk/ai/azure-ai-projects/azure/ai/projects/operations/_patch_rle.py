@@ -239,6 +239,12 @@ def _acquire_instance(
 
     :param instances: Generated instance operations bound to the project client.
     :type instances: ~azure.ai.projects.operations.RLEInstancesOperations
+    :param runtime: Generated instance runtime operations bound to the project client.
+    :type runtime: ~azure.ai.projects.operations.RLEInstanceRuntimeOperations
+    :param environment_name: The environment name for the instance.
+    :type environment_name: str
+    :param environment_version: The environment version for the instance.
+    :type environment_version: str
     :param instance_group_id: The instance group to lease an instance from.
     :type instance_group_id: str
     :keyword instance_acquire_timeout: Maximum time to acquire a healthy instance, in seconds.
@@ -418,29 +424,44 @@ class OpenEnvInstance:
 
     @property
     def id(self) -> str:
-        """Identifier of the leased instance that backs this object."""
+        """Identifier of the leased instance that backs this object.
+
+        :rtype: str
+        """
         if self._instance_id is None:
             raise RLEError("instance has been released")
         return self._instance_id
 
     @property
     def instance_group_id(self) -> str:
-        """The instance group the instance was leased from."""
+        """The instance group the instance was leased from.
+
+        :rtype: str
+        """
         return self._instance_group_id
 
     @property
     def environment_name(self) -> str:
-        """Resolved environment name that owns this instance."""
+        """Resolved environment name that owns this instance.
+
+        :rtype: str
+        """
         return self._environment_name
 
     @property
     def environment_version(self) -> str:
-        """Resolved environment version that owns this instance."""
+        """Resolved environment version that owns this instance.
+
+        :rtype: str
+        """
         return self._environment_version
 
     @property
     def instance(self) -> RLEInstance:
-        """The underlying leased instance model."""
+        """The underlying leased instance model.
+
+        :rtype: ~azure.ai.projects.models.RLEInstance
+        """
         if self._instance is None:
             raise RLEError("instance has been released")
         return self._instance
@@ -586,7 +607,7 @@ class OpenEnvInstance:
             pass
 
 
-class OpenEnvClient:
+class OpenEnvClient:  # pylint: disable=too-many-instance-attributes
     """A client over a hosted RLE (OpenEnv) environment with a reserved concurrency quota.
 
     Created via :meth:`RLEOperations.get_openenv_client`. On entering its context the client creates a
@@ -622,11 +643,14 @@ class OpenEnvClient:
     :paramtype instance_acquire_timeout: float
     :keyword poll_interval_s: Interval between instance readiness polls, in seconds. Default value is 5.
     :paramtype poll_interval_s: float
+    :keyword api_version: API version to use for the request. Default value is None.
+    :paramtype api_version: str or None
     """
 
     def __init__(
         self,
         *,
+        credential: Any = None,
         environments: _RLEnvironmentsOperationsGenerated,
         instance_groups: RLEInstanceGroupsOperations,
         instances: RLEInstancesOperations,
@@ -636,6 +660,8 @@ class OpenEnvClient:
         max_active_instances: int = 1,
         instance_acquire_timeout: float = _DEFAULT_INSTANCE_ACQUIRE_TIMEOUT_S,
         poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
+        api_version: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         if not name:
             raise ValueError("name is required")
@@ -658,22 +684,34 @@ class OpenEnvClient:
 
     @property
     def instance_group_id(self) -> Optional[str]:
-        """The instance group id backing this client, once created (else ``None``)."""
+        """The instance group id backing this client, once created (else ``None``).
+
+        :rtype: str or None
+        """
         return self._instance_group_id
 
     @property
     def max_active_instances(self) -> int:
-        """Concurrency the instance group reserves on the service for this client."""
+        """Concurrency the instance group reserves on the service for this client.
+
+        :rtype: int
+        """
         return self._max_active_instances
 
     @property
     def environment_name(self) -> str:
-        """Environment name, resolved from the instance-group response after context entry."""
+        """Environment name, resolved from the instance-group response after context entry.
+
+        :rtype: str
+        """
         return self._name
 
     @property
     def environment_version(self) -> Optional[str]:
-        """Resolved environment version after context entry, otherwise the requested version."""
+        """Resolved environment version after context entry, otherwise the requested version.
+
+        :rtype: str or None
+        """
         return self._version
 
     def __enter__(self) -> "OpenEnvClient":
@@ -850,6 +888,8 @@ class RLEOperations:
         :type name: str
         :param acr_image_path: Azure Container Registry image path that backs the environment. Required.
         :type acr_image_path: str
+        :keyword version_bump: Optional version bump strategy for the environment. Default value is None.
+        :paramtype version_bump: str or ~azure.ai.projects.models.RLEnvironmentVersionBump or None
         :return: The created RLEnvironment.
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -884,6 +924,8 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
+        :keyword order: Sort order for the results. Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.RLEPaginationOrder or None
         :return: An iterator over hosted RLE environments.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -955,6 +997,8 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
+        :keyword order: Sort order for the results. Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.RLEPaginationOrder or None
         :return: An iterator over historical environment versions.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:

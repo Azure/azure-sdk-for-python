@@ -273,7 +273,10 @@ class AsyncOpenEnvInstance:
 
     @property
     def id(self) -> str:
-        """Identifier of the leased instance that backs this object."""
+        """Identifier of the leased instance that backs this object.
+
+        :rtype: str
+        """
         instance = self._instance
         if instance is None:
             if self._released:
@@ -481,7 +484,7 @@ class AsyncOpenEnvInstance:
         self._released = True
 
 
-class AsyncOpenEnvClient:
+class OpenEnvClient:  # pylint: disable=too-many-instance-attributes
     """An async client over a hosted RLE (OpenEnv) environment with a reserved concurrency quota.
 
     Created via :meth:`RLEOperations.get_openenv_client`. On entering its context the client creates a
@@ -517,11 +520,14 @@ class AsyncOpenEnvClient:
     :paramtype instance_acquire_timeout: float
     :keyword poll_interval_s: Interval between instance readiness polls, in seconds. Default value is 5.
     :paramtype poll_interval_s: float
+    :keyword api_version: API version to use for the request. Default value is None.
+    :paramtype api_version: str or None
     """
 
     def __init__(
         self,
         *,
+        credential: Any = None,
         environments: _RLEnvironmentsOperationsGenerated,
         instance_groups: RLEInstanceGroupsOperations,
         instances: RLEInstancesOperations,
@@ -531,6 +537,8 @@ class AsyncOpenEnvClient:
         max_active_instances: int = 1,
         instance_acquire_timeout: float = _DEFAULT_INSTANCE_ACQUIRE_TIMEOUT_S,
         poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
+        api_version: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         if not name:
             raise ValueError("name is required")
@@ -553,25 +561,37 @@ class AsyncOpenEnvClient:
 
     @property
     def instance_group_id(self) -> Optional[str]:
-        """The instance group id backing this client, once created (else ``None``)."""
+        """The instance group id backing this client, once created (else ``None``).
+
+        :rtype: str or None
+        """
         return self._instance_group_id
 
     @property
     def max_active_instances(self) -> int:
-        """Concurrency the instance group reserves on the service for this client."""
+        """Concurrency the instance group reserves on the service for this client.
+
+        :rtype: int
+        """
         return self._max_active_instances
 
     @property
     def environment_name(self) -> str:
-        """Environment name, resolved from the instance-group response after context entry."""
+        """Environment name, resolved from the instance-group response after context entry.
+
+        :rtype: str
+        """
         return self._name
 
     @property
     def environment_version(self) -> Optional[str]:
-        """Resolved environment version after context entry, otherwise the requested version."""
+        """Resolved environment version after context entry, otherwise the requested version.
+
+        :rtype: str or None
+        """
         return self._version
 
-    async def __aenter__(self) -> "AsyncOpenEnvClient":
+    async def __aenter__(self) -> "OpenEnvClient":
         await self._ensure_group()
         return self
 
@@ -736,6 +756,8 @@ class RLEOperations:
         :type name: str
         :param acr_image_path: Azure Container Registry image path that backs the environment. Required.
         :type acr_image_path: str
+        :keyword version_bump: Optional version bump strategy for the environment. Default value is None.
+        :paramtype version_bump: str or ~azure.ai.projects.models.RLEnvironmentVersionBump or None
         :return: The created RLEnvironment.
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -770,6 +792,8 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
+        :keyword order: Sort order for the results. Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.RLEPaginationOrder or None
         :return: An async iterator over hosted RLE environments.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -841,6 +865,8 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
+        :keyword order: Sort order for the results. Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.RLEPaginationOrder or None
         :return: An async iterator over historical environment versions.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -892,15 +918,15 @@ class RLEOperations:
         max_active_instances: int = 1,
         instance_acquire_timeout: float = _DEFAULT_INSTANCE_ACQUIRE_TIMEOUT_S,
         poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
-    ) -> AsyncOpenEnvClient:
-        """Create an :class:`AsyncOpenEnvClient` over a hosted RLE environment.
+    ) -> "OpenEnvClient":
+        """Create an :class:`OpenEnvClient` over a hosted RLE environment.
 
         This constructs the client without any network I/O (no awaiting needed), so callers can write
         ``async with client.rle.get_openenv_client(...) as openenv_client:``. The returned client is an
         async context manager: entering it creates an instance group under ``name`` (and ``version``
         when supplied) -- so a missing or invalid environment fails on entry -- and reserves its
         concurrency on the service, failing fast if that quota cannot be
-        granted (v1 does not queue). :meth:`AsyncOpenEnvClient.get_instance` then leases running
+        granted (v1 does not queue). :meth:`OpenEnvClient.get_instance` then leases running
         :class:`AsyncOpenEnvInstance` objects from the group on demand to run episodes on.
 
         :keyword name: The hosted RLE environment name to resolve. Required.
@@ -917,11 +943,11 @@ class RLEOperations:
         :keyword poll_interval_s: Interval between instance readiness polls, in seconds. Default value is 5.
         :paramtype poll_interval_s: float
         :return: An async OpenEnv client bound to this client.
-        :rtype: ~azure.ai.projects.aio.operations.AsyncOpenEnvClient
+        :rtype: ~azure.ai.projects.aio.operations.OpenEnvClient
         """
         if not name:
             raise ValueError("name is required")
-        return AsyncOpenEnvClient(
+        return OpenEnvClient(
             environments=self._environments,
             instance_groups=self._instance_groups,
             instances=self._instances,
@@ -937,9 +963,12 @@ class RLEOperations:
 __all__ = [
     "AsyncOpenEnvClient",
     "AsyncOpenEnvInstance",
+    "OpenEnvClient",
     "RLEError",
     "RLEQuotaExceededError",
     "RLEInstanceAcquireTimeoutError",
     "RLEOperations",
     "coerce_action",
 ]
+
+AsyncOpenEnvClient = OpenEnvClient  # backward-compatible alias

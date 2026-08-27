@@ -20,6 +20,7 @@ from ._patch_models_async import BetaModelsOperations
 from ._patch_rle_async import (
     AsyncOpenEnvClient,
     AsyncOpenEnvInstance,
+    OpenEnvClient,
     RLEError,
     RLEInstanceAcquireTimeoutError,
     RLEOperations,
@@ -110,7 +111,11 @@ __all__: List[str] = [
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",
+    "OpenEnvClient",
+    "RLEError",
+    "RLEInstanceAcquireTimeoutError",
     "RLEOperations",
+    "RLEQuotaExceededError",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

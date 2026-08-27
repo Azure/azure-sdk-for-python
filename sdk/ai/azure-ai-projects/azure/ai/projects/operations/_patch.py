@@ -166,8 +166,9 @@ __all__: List[str] = [
     "OpenEnvClient",
     "OpenEnvInstance",
     "RLEOperations",
-    "RLEQuotaExceededError",
+    "RLEError",
     "RLEInstanceAcquireTimeoutError",
+    "RLEQuotaExceededError",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
