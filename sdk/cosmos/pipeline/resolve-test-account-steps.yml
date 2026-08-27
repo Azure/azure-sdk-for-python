@@ -1,9 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 #
-# Reusable pre-deployment step that validates and resolves one fixed Cosmos live-test account
-# from the single JSON secret. The ARM deployment later overwrites ACCOUNT_HOST / ACCOUNT_KEY;
-# sdk/cosmos/test-resources-post.ps1 reapplies these values before the test task runs.
+# Reusable pre-deployment step that validates and selects one fixed Cosmos live-test account
+# from the single JSON secret. Selected credentials use a COSMOS_FIXED_ prefix so the ARM
+# deployment cannot overwrite them; sdk/cosmos/test-resources-post.ps1 rebinds them afterward.
 #
 # The account JSON lives in the ADO variable group secret referenced by AccountsJsonVar. That
 # variable group must be listed in the pipeline's VariableGroups, otherwise $(<AccountsJsonVar>)
@@ -25,7 +25,7 @@ parameters:
 
 steps:
   - pwsh: |
-      ./sdk/cosmos/pipeline/resolve-cosmos-test-account.ps1
+      ./sdk/cosmos/pipeline/resolve-cosmos-test-account.ps1 -VariablePrefix 'COSMOS_FIXED_'
     displayName: 'Resolve fixed Cosmos test account (${{ parameters.AccountSelector }})'
     # Legs that still provision their own account (the AAD lanes, which need a per-tenant
     # sqlRoleAssignment) do not set AccountSelector. Skip rather than fail for them.

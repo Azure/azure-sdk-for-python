@@ -30,6 +30,11 @@
     Logical account name to select, e.g. multimaster-multiregion-session.
     Defaults to $env:COSMOS_ACCOUNT_SELECTOR.
 
+.PARAMETER VariablePrefix
+    Optional prefix for emitted variable names. The live-test pipeline uses COSMOS_FIXED_
+    so deployment outputs can overwrite ACCOUNT_HOST / ACCOUNT_KEY without losing the
+    selected fixed-account credentials.
+
 .PARAMETER Local
     Print NAME=VALUE to stdout instead of emitting Azure DevOps ##vso logging commands.
     Used by the tests and for local troubleshooting. Also honours
@@ -45,6 +50,8 @@
 param(
     [string] $AccountsJson = $env:COSMOS_TEST_ACCOUNTS_JSON,
     [string] $Selector = $env:COSMOS_ACCOUNT_SELECTOR,
+    [ValidatePattern('^[A-Z0-9_]*$')]
+    [string] $VariablePrefix = '',
     [switch] $Local
 )
 
@@ -73,11 +80,12 @@ function Assert-SingleLine {
 
 function Write-PublicVariable {
     param([string] $Name, [string] $Value)
+    $variableName = "$VariablePrefix$Name"
     if ($Local) {
-        Write-Output "$Name=$Value"
+        Write-Output "$variableName=$Value"
     }
     else {
-        Write-Host "##vso[task.setvariable variable=$Name;issecret=false]$Value"
+        Write-Host "##vso[task.setvariable variable=$variableName;issecret=false]$Value"
     }
 }
 
@@ -89,12 +97,13 @@ function Write-PublicVariable {
 # the tests would see no key at all.
 function Write-SecretVariable {
     param([string] $Name, [string] $Value)
+    $variableName = "$VariablePrefix$Name"
     if ($Local) {
-        Write-Output "$Name=$Value"
+        Write-Output "$variableName=$Value"
     }
     else {
-        Write-Host "##vso[task.setvariable variable=_$Name;issecret=true]$Value"
-        Write-Host "##vso[task.setvariable variable=$Name;issecret=false]$Value"
+        Write-Host "##vso[task.setvariable variable=_$variableName;issecret=true]$Value"
+        Write-Host "##vso[task.setvariable variable=$variableName;issecret=false]$Value"
     }
 }
 
@@ -176,6 +185,6 @@ if (-not [string]::IsNullOrWhiteSpace($secondaryKey)) {
     Write-SecretVariable 'SECONDARY_ACCOUNT_KEY' $secondaryKey
 }
 
-# Masked, secret-free summary for the build log.
-Write-Host "Resolved Cosmos test account '$Selector': endpoint=$endpoint key=***"
+# Secret-free summary for the build log.
+Write-Host "Resolved Cosmos test account '$Selector'."
 exit 0

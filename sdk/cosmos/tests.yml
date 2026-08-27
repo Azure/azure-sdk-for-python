@@ -19,10 +19,10 @@ extends:
       VariableGroups:
         - 'Test Secrets for Cosmos Live Tests - user administered'
       # Key-auth legs bind to fixed accounts instead of the account this pipeline provisions.
-      # PreSteps validates the selector before deployment;
-      # sdk/cosmos/test-resources-post.ps1 reapplies the fixed credentials after deployment
-      # overwrites them. AAD legs set no AccountSelector, so the post script leaves their
-      # provisioned account credentials untouched.
+      # PreSteps selects one account and preserves only its credentials under COSMOS_FIXED_*;
+      # sdk/cosmos/test-resources-post.ps1 rebinds them after deployment overwrites ACCOUNT_*.
+      # AAD legs set no AccountSelector, so the post script leaves their provisioned account
+      # credentials untouched.
       # Provisioning stays on for now; turning it off for the key legs is the follow-up that
       # actually makes them survive the ~90-day tenant rotation.
       PreSteps:
@@ -30,8 +30,5 @@ extends:
           parameters:
             AccountSelector: $(AccountSelector)
       EnvVars:
-        # New-TestResources invokes test-resources-post.ps1 inside its deployment task. Secret
-        # variables are not automatically exported, so pass the shared accounts JSON explicitly.
-        COSMOS_TEST_ACCOUNTS_JSON: $(sub-config-cosmos-azure-cloud-test-resources)
         GSI_ACCOUNT_HOST: $(gsi-pipeline-uri)
         GSI_ACCOUNT_KEY: $(gsi-pipeline-key)

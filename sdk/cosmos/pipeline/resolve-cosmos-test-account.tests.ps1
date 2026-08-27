@@ -51,7 +51,7 @@ $script:ValidJson = @'
 '@
 
 function Invoke-Resolver {
-    param([string] $Json, [string] $Selector)
+    param([string] $Json, [string] $Selector, [string] $VariablePrefix = '')
 
     $stderrFile = [System.IO.Path]::GetTempFileName()
     try {
@@ -62,6 +62,9 @@ function Invoke-Resolver {
             '-Selector', $Selector,
             '-Local'
         )
+        if (-not [string]::IsNullOrEmpty($VariablePrefix)) {
+            $arguments += @('-VariablePrefix', $VariablePrefix)
+        }
         $stdout = & pwsh @arguments 2>$stderrFile
         return [pscustomobject]@{
             ExitCode = $LASTEXITCODE
@@ -109,6 +112,15 @@ Test-Case 'emits SECONDARY_ACCOUNT_KEY only when the account defines one' {
 
     $withoutSecondary = Invoke-Resolver -Json $script:ValidJson -Selector 'single-session'
     Assert-True ($withoutSecondary.StdOut -notmatch 'SECONDARY_ACCOUNT_KEY') 'SECONDARY_ACCOUNT_KEY emitted when absent'
+}
+
+Test-Case 'prefixes selected credentials for transport across deployment' {
+    $r = Invoke-Resolver -Json $script:ValidJson -Selector 'multimaster-multiregion-session' -VariablePrefix 'COSMOS_FIXED_'
+    Assert-True ($r.ExitCode -eq 0) "expected exit 0, got $($r.ExitCode): $($r.StdErr)"
+    Assert-True ($r.StdOut -match '(?m)^COSMOS_FIXED_ACCOUNT_HOST=https://multi-region\.example\.com:443/\r?$') 'prefixed host not emitted'
+    Assert-True ($r.StdOut -match '(?m)^COSMOS_FIXED_ACCOUNT_KEY=primary-key-mm\r?$') 'prefixed primary key not emitted'
+    Assert-True ($r.StdOut -match '(?m)^COSMOS_FIXED_SECONDARY_ACCOUNT_KEY=secondary-key-mm\r?$') 'prefixed secondary key not emitted'
+    Assert-True ($r.StdOut -notmatch '(?m)^ACCOUNT_HOST=') 'unprefixed host must not be emitted'
 }
 
 # Python-specific: the circuit breaker flag is a client-side SDK setting owned by
@@ -205,13 +217,14 @@ Test-Case 'emits ADO logging commands, using the double-set convention for secre
             '-NoLogo', '-NoProfile', '-NonInteractive',
             '-File', $script:Resolver,
             '-AccountsJson', $script:ValidJson,
-            '-Selector', 'multimaster-multiregion-session'
+            '-Selector', 'multimaster-multiregion-session',
+            '-VariablePrefix', 'COSMOS_FIXED_'
         )
         $stdout = (& pwsh @arguments 2>$stderrFile | Out-String)
         Assert-True ($LASTEXITCODE -eq 0) "expected exit 0, got $LASTEXITCODE"
-        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=ACCOUNT_HOST;issecret=false\]') 'ACCOUNT_HOST must be public'
-        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=_ACCOUNT_KEY;issecret=true\]') 'ACCOUNT_KEY must be registered with the log scrubber'
-        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=ACCOUNT_KEY;issecret=false\]') 'ACCOUNT_KEY must also be set plainly so it reaches the test task env'
+        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=COSMOS_FIXED_ACCOUNT_HOST;issecret=false\]') 'prefixed ACCOUNT_HOST must be public'
+        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=_COSMOS_FIXED_ACCOUNT_KEY;issecret=true\]') 'prefixed ACCOUNT_KEY must be registered with the log scrubber'
+        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=COSMOS_FIXED_ACCOUNT_KEY;issecret=false\]') 'prefixed ACCOUNT_KEY must also be set plainly so it reaches the post-deployment hook'
         Assert-True ($stdout -notmatch 'key=primary-key-mm') 'the summary line must not echo the key'
     }
     finally {
