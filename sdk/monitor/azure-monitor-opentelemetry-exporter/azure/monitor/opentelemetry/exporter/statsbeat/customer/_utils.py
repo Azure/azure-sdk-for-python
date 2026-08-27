@@ -111,7 +111,7 @@ def _determine_client_retry_code(
         ConnectionError,
         OSError,
     )
-    if hasattr(error, "status_code") and error.status_code in [401, 403, 408, 429, 500, 502, 503, 504]:
+    if hasattr(error, "status_code") and error.status_code in [401, 403, 408, 413, 429, 500, 502, 503, 504]:
         # For specific status codes, preserve the custom message if available
         error_message = getattr(error, "message", None) if hasattr(error, "message") else None
         return (error.status_code, error_message or _UNKNOWN)
