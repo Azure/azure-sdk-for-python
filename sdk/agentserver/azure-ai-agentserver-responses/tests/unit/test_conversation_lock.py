@@ -200,7 +200,10 @@ class TestSessionGuidTaskMigration:
 
     @pytest.mark.asyncio
     async def test_no_existing_task_uses_guid_scoped_id(self) -> None:
-        from azure.ai.agentserver.responses.hosting._task_id import derive_task_id
+        from azure.ai.agentserver.responses.hosting._task_id import (
+            derive_task_id,
+            derive_task_session_scope,
+        )
 
         orchestrator = self._orchestrator()
         orchestrator._multi_turn_task_fn._get.side_effect = [None, None]
@@ -211,7 +214,10 @@ class TestSessionGuidTaskMigration:
             response_id="resp-turn-2",
             agent_name="agent",
             session_id="same-public-name",
-            task_session_id="1" * 32,
+            task_session_id=derive_task_session_scope(
+                session_id="same-public-name",
+                session_guid="1" * 32,
+            ),
             steerable=True,
         )
 
@@ -225,7 +231,10 @@ class TestSessionGuidTaskMigration:
 
     @pytest.mark.asyncio
     async def test_existing_guid_task_is_preferred_when_both_ids_exist(self) -> None:
-        from azure.ai.agentserver.responses.hosting._task_id import derive_task_id
+        from azure.ai.agentserver.responses.hosting._task_id import (
+            derive_task_id,
+            derive_task_session_scope,
+        )
 
         orchestrator = self._orchestrator()
         orchestrator._multi_turn_task_fn._get.side_effect = [
@@ -239,7 +248,10 @@ class TestSessionGuidTaskMigration:
             response_id="resp-turn-2",
             agent_name="agent",
             session_id="same-public-name",
-            task_session_id="1" * 32,
+            task_session_id=derive_task_session_scope(
+                session_id="same-public-name",
+                session_guid="1" * 32,
+            ),
             steerable=True,
         )
 
@@ -253,7 +265,10 @@ class TestSessionGuidTaskMigration:
 
     @pytest.mark.asyncio
     async def test_completed_legacy_task_is_not_reused(self) -> None:
-        from azure.ai.agentserver.responses.hosting._task_id import derive_task_id
+        from azure.ai.agentserver.responses.hosting._task_id import (
+            derive_task_id,
+            derive_task_session_scope,
+        )
 
         orchestrator = self._orchestrator()
         orchestrator._multi_turn_task_fn._get.side_effect = [
@@ -267,7 +282,10 @@ class TestSessionGuidTaskMigration:
             response_id="resp-turn-2",
             agent_name="agent",
             session_id="same-public-name",
-            task_session_id="1" * 32,
+            task_session_id=derive_task_session_scope(
+                session_id="same-public-name",
+                session_guid="1" * 32,
+            ),
             steerable=True,
         )
 

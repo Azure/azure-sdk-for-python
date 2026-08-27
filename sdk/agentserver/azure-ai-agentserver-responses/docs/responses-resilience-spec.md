@@ -234,13 +234,19 @@ mode, when `FOUNDRY_AGENT_SESSION_GUID` is available, its session-incarnation
 scope replaces the public session scope:
 
 ```
-task_scope = FOUNDRY_AGENT_SESSION_GUID or public_session_id
+task_scope = (
+    FOUNDRY_AGENT_SESSION_GUID + "\x1f" + public_session_id
+    if FOUNDRY_AGENT_SESSION_GUID
+    else public_session_id
+)
 task_id = derive_chain_id(agent_name, task_scope, chain_anchor)
 ```
 
 This prevents a recreated same-name session from colliding with a task
 tombstone left by the deleted session. The handler-facing
-`conversation_chain_id` remains based on the public session identity. One-shot
+`conversation_chain_id` remains based on the public session identity. Including
+that public identity in the private scope also prevents two resolved logical
+sessions under one hosted process from collapsing onto the same task. One-shot
 task IDs remain the response ID.
 
 During migration, a multi-turn start computes both GUID-scoped and legacy

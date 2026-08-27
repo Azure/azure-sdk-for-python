@@ -33,7 +33,7 @@ from azure.ai.agentserver.core.tasks import (
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
 from ._dispatch import DISPOSITION_MARK_FAILED
-from ._task_id import derive_task_id
+from ._task_id import derive_task_id, derive_task_session_scope
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
@@ -1260,7 +1260,10 @@ class ResilientResponseOrchestrator:
         task_id = derive_task_id(
             agent_name=_extract_agent_identity(resilient_input.agent_reference)[0],
             session_id=resilient_input.agent_session_id or "",
-            task_session_id=resilient_input.agent_session_guid or resilient_input.agent_session_id or "",
+            task_session_id=derive_task_session_scope(
+                session_id=resilient_input.agent_session_id or "",
+                session_guid=resilient_input.agent_session_guid,
+            ),
             conversation_id=conversation_id,
             previous_response_id=previous_response_id,
             response_id=response_id,

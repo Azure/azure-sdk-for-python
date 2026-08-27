@@ -21,6 +21,26 @@ from ._chain_id import derive_conversation_chain_id
 #: validated upstream (not charset-validated), so we enforce the strict
 #: contract here.
 _TASK_ID_RE = re.compile(r"^[a-zA-Z0-9_-]{1,128}$")
+_TASK_SESSION_SCOPE_SEPARATOR = "\x1f"
+
+
+def derive_task_session_scope(*, session_id: str, session_guid: str | None) -> str:
+    """Compose the private task namespace for a hosted session incarnation.
+
+    The GUID is fixed-format lowercase hexadecimal and therefore cannot contain
+    the separator. Including the resolved public session ID preserves distinct
+    task namespaces if a hosted process accepts multiple logical session IDs.
+
+    :keyword session_id: Resolved public session identity.
+    :paramtype session_id: str
+    :keyword session_guid: System-generated session incarnation GUID.
+    :paramtype session_guid: str | None
+    :returns: The injective private task session scope.
+    :rtype: str
+    """
+    if not session_guid:
+        return session_id
+    return f"{session_guid}{_TASK_SESSION_SCOPE_SEPARATOR}{session_id}"
 
 
 def derive_task_id(
@@ -54,7 +74,9 @@ def derive_task_id(
     :paramtype task_session_id: str | None
     :keyword steerable: Whether steerable conversations are enabled.
     :paramtype steerable: bool
-    :returns: A deterministic resilient-task id (== the conversation chain id).
+    :returns: A deterministic physical task ID. It equals the public
+        conversation chain ID only when ``task_session_id`` is omitted or
+        equals ``session_id``.
     :rtype: str
     """
     task_id = derive_conversation_chain_id(

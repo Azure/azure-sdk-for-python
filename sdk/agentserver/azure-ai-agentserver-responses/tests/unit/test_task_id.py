@@ -6,7 +6,10 @@ from __future__ import annotations
 
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.hosting._chain_id import derive_conversation_chain_id
-from azure.ai.agentserver.responses.hosting._task_id import derive_task_id
+from azure.ai.agentserver.responses.hosting._task_id import (
+    derive_task_id,
+    derive_task_session_scope,
+)
 
 
 class TestTaskIdDerivation:
@@ -184,6 +187,21 @@ class TestTaskIdDerivation:
         )
 
         assert derive_task_id(**kwargs) == derive_task_id(**kwargs, task_session_id=None)
+
+    def test_task_session_scope_includes_guid_and_public_session(self) -> None:
+        """One GUID cannot collapse distinct resolved public sessions."""
+        guid = "1" * 32
+
+        first = derive_task_session_scope(session_id="session-a", session_guid=guid)
+        second = derive_task_session_scope(session_id="session-b", session_guid=guid)
+
+        assert first != second
+
+    def test_task_session_scope_without_guid_is_legacy_session(self) -> None:
+        assert (
+            derive_task_session_scope(session_id="public-session", session_guid=None)
+            == "public-session"
+        )
 
     def test_parallel_forks_get_distinct_ids(self) -> None:
         """Two requests with same previous_response_id but steerable=False
