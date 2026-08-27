@@ -2393,6 +2393,17 @@ class ConversationParam_2(TypedDict, total=False):
     """The unique ID of the conversation. Required."""
 
 
+class ConversationReference(TypedDict, total=False):
+    """Conversation.
+
+    :ivar id: The unique ID of the conversation that this response was associated with. Required.
+    :vartype id: str
+    """
+
+    id: Required[str]
+    """The unique ID of the conversation that this response was associated with. Required."""
+
+
 class CoordParam(TypedDict, total=False):
     """Coordinate.
 
@@ -8170,17 +8181,6 @@ class ResponseContentPartDoneEvent(TypedDict, total=False):
     """The content part that is done. Required."""
 
 
-class ResponseConversation(TypedDict, total=False):
-    """Conversation.
-
-    :ivar id: The unique ID of the conversation that this response was associated with. Required.
-    :vartype id: str
-    """
-
-    id: Required[str]
-    """The unique ID of the conversation that this response was associated with. Required."""
-
-
 class ResponseCreatedEvent(TypedDict, total=False):
     """An event that is emitted when a response is created.
 
@@ -8976,7 +8976,7 @@ class ResponseObject(TypedDict, total=False):
     :ivar parallel_tool_calls: Whether to allow the model to run tool calls in parallel. Required.
     :vartype parallel_tool_calls: bool
     :ivar conversation:
-    :vartype conversation: "ResponseConversation"
+    :vartype conversation: "ConversationReference"
     :ivar max_output_tokens:
     :vartype max_output_tokens: int
     :ivar agent_reference: The agent used for this response. Required.
@@ -9041,7 +9041,7 @@ class ResponseObject(TypedDict, total=False):
     moderation: Optional["Moderation"]
     parallel_tool_calls: Required[bool]
     """Whether to allow the model to run tool calls in parallel. Required."""
-    conversation: Optional["ResponseConversation"]
+    conversation: Optional["ConversationReference"]
     max_output_tokens: Optional[int]
     agent_reference: Required[Optional["AgentReference"]]
     """The agent used for this response. Required."""

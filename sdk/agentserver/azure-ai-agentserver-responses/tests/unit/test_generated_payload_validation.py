@@ -7,7 +7,9 @@ from __future__ import annotations
 import pytest
 
 from azure.ai.agentserver.responses.hosting._validation import parse_create_response
-from azure.ai.agentserver.responses.models._validators import validate_create_response_payload
+from azure.ai.agentserver.responses.models._validators import (
+    validate_create_response_payload,
+)
 from azure.ai.agentserver.responses.models._errors import RequestValidationError
 
 # ---------------------------------------------------------------------------
@@ -51,18 +53,94 @@ def test_generated_create_response_validator_accepts_string_input() -> None:
 def test_generated_create_response_validator_accepts_array_input_items() -> None:
     # ItemMessage requires role + content in addition to type (GAP-01: type is
     # optional on input, but role/content remain required by the spec).
-    errors = validate_create_response_payload({"input": [{"type": "message", "role": "user", "content": "hello"}]})
+    errors = validate_create_response_payload(
+        {"input": [{"type": "message", "role": "user", "content": "hello"}]}
+    )
     assert errors == []
 
 
-def test_generated_create_response_validator_accepts_output_text_without_logprobs() -> None:
+def test_generated_create_response_validator_accepts_output_text_without_logprobs() -> (
+    None
+):
     errors = validate_create_response_payload(
         {
             "input": [
                 {
                     "type": "message",
                     "role": "assistant",
-                    "content": [{"type": "output_text", "text": "hello", "annotations": []}],
+                    "content": [
+                        {"type": "output_text", "text": "hello", "annotations": []}
+                    ],
+                }
+            ]
+        }
+    )
+    assert errors == []
+
+
+@pytest.mark.parametrize(
+    "prompt_cache_options",
+    [
+        {"mode": 123},
+        {"mode": "invalid"},
+        {"ttl": "invalid"},
+    ],
+)
+def test_generated_create_response_validator_rejects_invalid_prompt_cache_options(
+    prompt_cache_options: dict,
+) -> None:
+    errors = validate_create_response_payload(
+        {"prompt_cache_options": prompt_cache_options}
+    )
+    assert errors
+
+
+@pytest.mark.parametrize(
+    "caller",
+    [
+        {},
+        {"type": "unknown"},
+        {"type": "program"},
+    ],
+)
+def test_generated_create_response_validator_rejects_invalid_tool_call_caller(
+    caller: dict,
+) -> None:
+    errors = validate_create_response_payload(
+        {
+            "input": [
+                {
+                    "type": "function_call",
+                    "call_id": "call_123",
+                    "name": "get_weather",
+                    "arguments": "{}",
+                    "caller": caller,
+                }
+            ]
+        }
+    )
+    assert errors
+
+
+@pytest.mark.parametrize(
+    "caller",
+    [
+        {"type": "direct"},
+        {"type": "program", "caller_id": "program_123"},
+    ],
+)
+def test_generated_create_response_validator_accepts_valid_tool_call_caller(
+    caller: dict,
+) -> None:
+    errors = validate_create_response_payload(
+        {
+            "input": [
+                {
+                    "type": "function_call",
+                    "call_id": "call_123",
+                    "name": "get_weather",
+                    "arguments": "{}",
+                    "caller": caller,
                 }
             ]
         }
@@ -71,7 +149,9 @@ def test_generated_create_response_validator_accepts_output_text_without_logprob
 
 
 def test_generated_create_response_validator_accepts_scale_service_tier() -> None:
-    errors = validate_create_response_payload({"input": "hello world", "service_tier": "scale"})
+    errors = validate_create_response_payload(
+        {"input": "hello world", "service_tier": "scale"}
+    )
     assert errors == []
 
 
@@ -87,31 +167,50 @@ def test_generated_create_response_validator_accepts_nullable_literal_fields() -
 
 
 def test_generated_create_response_validator_rejects_unknown_service_tier() -> None:
-    errors = validate_create_response_payload({"input": "hello world", "service_tier": "unknown"})
+    errors = validate_create_response_payload(
+        {"input": "hello world", "service_tier": "unknown"}
+    )
     assert any(
-        e["path"] == "$.service_tier" and "Allowed: auto, default, flex, scale, priority" in e["message"]
+        e["path"] == "$.service_tier"
+        and "Allowed: auto, default, flex, scale, priority" in e["message"]
         for e in errors
     )
 
 
-def test_generated_create_response_validator_rejects_non_string_non_array_input() -> None:
+def test_generated_create_response_validator_rejects_non_string_non_array_input() -> (
+    None
+):
     errors = validate_create_response_payload({"input": 123})
-    assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
+    assert any(
+        e["path"] == "$.input" and "Expected one of: string, array" in e["message"]
+        for e in errors
+    )
 
 
 def test_generated_create_response_validator_rejects_non_object_input_item() -> None:
     errors = validate_create_response_payload({"input": [123]})
-    assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
+    assert any(
+        e["path"] == "$.input" and "Expected one of: string, array" in e["message"]
+        for e in errors
+    )
 
 
 def test_generated_create_response_validator_rejects_input_item_missing_type() -> None:
     errors = validate_create_response_payload({"input": [{}]})
-    assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
+    assert any(
+        e["path"] == "$.input" and "Expected one of: string, array" in e["message"]
+        for e in errors
+    )
 
 
-def test_generated_create_response_validator_rejects_input_item_type_with_wrong_primitive() -> None:
+def test_generated_create_response_validator_rejects_input_item_type_with_wrong_primitive() -> (
+    None
+):
     errors = validate_create_response_payload({"input": [{"type": 1}]})
-    assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
+    assert any(
+        e["path"] == "$.input" and "Expected one of: string, array" in e["message"]
+        for e in errors
+    )
 
 
 @pytest.mark.parametrize(
@@ -123,7 +222,9 @@ def test_generated_create_response_validator_rejects_input_item_type_with_wrong_
         ({"text": {"format": {"type": "not_a_format"}}}, "$.text.format.type"),
     ],
 )
-def test_generated_create_response_validator_rejects_invalid_literal_values(payload: dict, path: str) -> None:
+def test_generated_create_response_validator_rejects_invalid_literal_values(
+    payload: dict, path: str
+) -> None:
     errors = validate_create_response_payload(payload)
     assert any(e["path"] == path for e in errors)
 
@@ -132,19 +233,31 @@ def test_generated_create_response_validator_rejects_invalid_literal_values(payl
 _VALID_INPUT_ITEMS: dict[str, dict] = {
     "message": {"type": "message", "role": "user", "content": "hello"},
     "item_reference": {"type": "item_reference", "id": "ref_123"},
-    "function_call_output": {"type": "function_call_output", "call_id": "call_123", "output": "result"},
+    "function_call_output": {
+        "type": "function_call_output",
+        "call_id": "call_123",
+        "output": "result",
+    },
     "computer_call_output": {
         "type": "computer_call_output",
         "call_id": "call_123",
         "output": {"type": "computer_screenshot"},
     },
-    "apply_patch_call_output": {"type": "apply_patch_call_output", "call_id": "call_123", "status": "completed"},
+    "apply_patch_call_output": {
+        "type": "apply_patch_call_output",
+        "call_id": "call_123",
+        "status": "completed",
+    },
 }
 
 
 @pytest.mark.parametrize("item_type", list(_VALID_INPUT_ITEMS))
-def test_generated_create_response_validator_accepts_multiple_input_item_types(item_type: str) -> None:
-    errors = validate_create_response_payload({"input": [_VALID_INPUT_ITEMS[item_type]]})
+def test_generated_create_response_validator_accepts_multiple_input_item_types(
+    item_type: str,
+) -> None:
+    errors = validate_create_response_payload(
+        {"input": [_VALID_INPUT_ITEMS[item_type]]}
+    )
     assert errors == []
 
 

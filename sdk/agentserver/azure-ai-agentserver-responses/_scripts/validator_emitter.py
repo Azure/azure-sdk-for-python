@@ -45,7 +45,11 @@ def _schema_kind(schema: dict[str, Any]) -> str | None:
     schema_type = schema.get("type")
     if isinstance(schema_type, str):
         return schema_type
-    if "properties" in schema or "additionalProperties" in schema or "discriminator" in schema:
+    if (
+        "properties" in schema
+        or "additionalProperties" in schema
+        or "discriminator" in schema
+    ):
         return "object"
     if "oneOf" in schema or "anyOf" in schema:
         return "union"
@@ -168,7 +172,9 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                 function_order.append(fn_name)
         return fn_name
 
-    def ensure_anonymous_function(schema: dict[str, Any], hint: str | None = None) -> str:
+    def ensure_anonymous_function(
+        schema: dict[str, Any], hint: str | None = None
+    ) -> str:
         key = repr(_ordered(schema))
         if key in anonymous_by_key:
             existing = anonymous_by_key[key]
@@ -229,7 +235,12 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                 ref_name = _resolve_ref(str(branch["$ref"]))
                 ref_schema = ordered_schemas.get(ref_name)
                 if isinstance(ref_schema, dict):
-                    branch_funcs.append((ensure_schema_function(ref_name), _schema_kind(ref_schema) or "value"))
+                    branch_funcs.append(
+                        (
+                            ensure_schema_function(ref_name),
+                            _schema_kind(ref_schema) or "value",
+                        )
+                    )
                     expected_labels.append(ref_name)
                 continue
 
@@ -239,11 +250,23 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                 has_inline_enum_branch = True
             else:
                 raw_type = branch.get("type")
-                branch_type = raw_type if isinstance(raw_type, str) else (_schema_kind(branch) or "branch")
-                branch_hint = f"{schema_name_hint}_{branch_type}" if schema_name_hint else str(branch_type)
+                branch_type = (
+                    raw_type
+                    if isinstance(raw_type, str)
+                    else (_schema_kind(branch) or "branch")
+                )
+                branch_hint = (
+                    f"{schema_name_hint}_{branch_type}"
+                    if schema_name_hint
+                    else str(branch_type)
+                )
             fn_name = ensure_anonymous_function(branch, hint=branch_hint)
             branch_funcs.append((fn_name, _schema_kind(branch) or "value"))
-            label = branch.get("type") if isinstance(branch.get("type"), str) else (_schema_kind(branch) or "value")
+            label = (
+                branch.get("type")
+                if isinstance(branch.get("type"), str)
+                else (_schema_kind(branch) or "value")
+            )
             expected_labels.append(str(label))
 
         if not branch_funcs:
@@ -251,10 +274,19 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
 
         emit_line(block, indent, "_matched_union = False")
         for idx, (fn_name, kind) in enumerate(branch_funcs):
-            condition = "True" if kind in ("value", "union", None) else f"_is_type({value_expr}, {kind!r})"
-            emit_line(block, indent, f"if not _matched_union and {condition}:")
-            emit_line(block, indent + 1, f"_branch_errors_{idx}: list[dict[str, str]] = []")
-            emit_line(block, indent + 1, f"{fn_name}({value_expr}, {path_expr}, _branch_errors_{idx})")
+            if kind in ("value", "union", None):
+                condition = "not _matched_union"
+            else:
+                condition = f"not _matched_union and _is_type({value_expr}, {kind!r})"
+            emit_line(block, indent, f"if {condition}:")
+            emit_line(
+                block, indent + 1, f"_branch_errors_{idx}: list[dict[str, str]] = []"
+            )
+            emit_line(
+                block,
+                indent + 1,
+                f"{fn_name}({value_expr}, {path_expr}, _branch_errors_{idx})",
+            )
             emit_line(block, indent + 1, f"if not _branch_errors_{idx}:")
             emit_line(block, indent + 2, "_matched_union = True")
 
@@ -272,9 +304,17 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                     f'got {{_type_label({value_expr})}}")',
                 )
             else:
-                emit_line(block, indent + 1, f"_append_error({errors_expr}, {path_expr}, 'Expected {only_label}')")
+                emit_line(
+                    block,
+                    indent + 1,
+                    f"_append_error({errors_expr}, {path_expr}, 'Expected {only_label}')",
+                )
         else:
-            expected = ", ".join(unique_expected_labels) if unique_expected_labels else "valid branch"
+            expected = (
+                ", ".join(unique_expected_labels)
+                if unique_expected_labels
+                else "valid branch"
+            )
             emit_line(
                 block,
                 indent + 1,
@@ -300,7 +340,11 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
             ref_name = _resolve_ref(str(schema["$ref"]))
             ref_schema = ordered_schemas.get(ref_name)
             if isinstance(ref_schema, dict):
-                field_target = field_target_from_hint(schema_name_hint) if is_enum_like_schema(ref_schema) else None
+                field_target = (
+                    field_target_from_hint(schema_name_hint)
+                    if is_enum_like_schema(ref_schema)
+                    else None
+                )
                 if field_target is not None:
                     type_name, field_name = field_target
                     emit_line(
@@ -308,8 +352,14 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                         indent,
                         f"_allowed_values = _field_literal_values({type_name!r}, {field_name!r})",
                     )
-                    emit_line(block, indent, f"if _allowed_values is not None and {value_expr} is not None:")
-                    emit_line(block, indent + 1, f"if {value_expr} not in _allowed_values:")
+                    emit_line(
+                        block,
+                        indent,
+                        f"if _allowed_values is not None and {value_expr} is not None:",
+                    )
+                    emit_line(
+                        block, indent + 1, f"if {value_expr} not in _allowed_values:"
+                    )
                     emit_line(
                         block,
                         indent + 2,
@@ -319,10 +369,16 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                     )
                     emit_line(block, indent + 1, "return")
                 fn = ensure_schema_function(ref_name)
-                emit_line(block, indent, f"{fn}({value_expr}, {path_expr}, {errors_expr})")
+                emit_line(
+                    block, indent, f"{fn}({value_expr}, {path_expr}, {errors_expr})"
+                )
             return
 
-        if is_enum_like_schema(schema) and schema_name_hint and schema_name_hint in ordered_schemas:
+        if (
+            is_enum_like_schema(schema)
+            and schema_name_hint
+            and schema_name_hint in ordered_schemas
+        ):
             literal_alias_name = schema_name_hint.rsplit(".", 1)[-1]
             if literal_alias_name and literal_alias_name[0].isalpha():
                 emit_line(
@@ -331,7 +387,11 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                     f"_allowed_values, _literal_error = _schema_literal_values({literal_alias_name!r})",
                 )
                 emit_line(block, indent, "if _literal_error is not None:")
-                emit_line(block, indent + 1, f"_append_error({errors_expr}, {path_expr}, _literal_error)")
+                emit_line(
+                    block,
+                    indent + 1,
+                    f"_append_error({errors_expr}, {path_expr}, _literal_error)",
+                )
                 emit_line(block, indent + 1, "return")
                 emit_line(block, indent, "if _allowed_values is not None:")
                 emit_line(block, indent + 1, f"if {value_expr} not in _allowed_values:")
@@ -342,7 +402,9 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                     f"f\"Invalid value '{{{value_expr}}}'. "
                     f"Allowed: {{', '.join(str(v) for v in _allowed_values)}}\")",
                 )
-                emit_line(block, indent + 1, f"if not _is_type({value_expr}, 'string'):")
+                emit_line(
+                    block, indent + 1, f"if not _is_type({value_expr}, 'string'):"
+                )
                 emit_line(
                     block,
                     indent + 2,
@@ -357,7 +419,9 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
             literal_alias_name = None
             if schema_name_hint:
                 hint_schema = ordered_schemas.get(schema_name_hint)
-                hint_is_enum_like = isinstance(hint_schema, dict) and is_enum_like_schema(hint_schema)
+                hint_is_enum_like = isinstance(
+                    hint_schema, dict
+                ) and is_enum_like_schema(hint_schema)
                 if hint_is_enum_like:
                     candidate = schema_name_hint.rsplit(".", 1)[-1]
                     if candidate and candidate[0].isalpha():
@@ -370,7 +434,11 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                     f"_allowed_values, _literal_error = _schema_literal_values({literal_alias_name!r})",
                 )
                 emit_line(block, indent, "if _literal_error is not None:")
-                emit_line(block, indent + 1, f"_append_error({errors_expr}, {path_expr}, _literal_error)")
+                emit_line(
+                    block,
+                    indent + 1,
+                    f"_append_error({errors_expr}, {path_expr}, _literal_error)",
+                )
                 emit_line(block, indent + 1, "return")
                 emit_line(block, indent, "if _allowed_values is None:")
                 emit_line(block, indent + 1, "return")
@@ -386,14 +454,26 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
             )
 
         if "oneOf" in schema or "anyOf" in schema:
-            emit_union(schema, block, indent, value_expr, path_expr, errors_expr, schema_name_hint)
+            emit_union(
+                schema,
+                block,
+                indent,
+                value_expr,
+                path_expr,
+                errors_expr,
+                schema_name_hint,
+            )
             return
 
         schema_type = schema.get("type")
-        effective_type = schema_type if isinstance(schema_type, str) else _schema_kind(schema)
+        effective_type = (
+            schema_type if isinstance(schema_type, str) else _schema_kind(schema)
+        )
 
         if isinstance(effective_type, str) and effective_type not in ("value", "union"):
-            emit_line(block, indent, f"if not _is_type({value_expr}, {effective_type!r}):")
+            emit_line(
+                block, indent, f"if not _is_type({value_expr}, {effective_type!r}):"
+            )
             emit_line(
                 block,
                 indent + 1,
@@ -401,13 +481,37 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
             )
             emit_line(block, indent + 1, "return")
 
+        # Anonymous property wrappers commonly combine type/nullable constraints
+        # with an allOf reference. Named models skip inherited allOf branches to
+        # avoid recursing from a discriminator subtype back into its base model.
+        all_of = schema.get("allOf")
+        if isinstance(all_of, list) and schema_name_hint not in ordered_schemas:
+            for branch_index, branch in enumerate(all_of):
+                if not isinstance(branch, dict):
+                    continue
+                branch_hint = (
+                    f"{schema_name_hint}_all_of_{branch_index}"
+                    if schema_name_hint
+                    else None
+                )
+                branch_fn = ensure_anonymous_function(branch, hint=branch_hint)
+                emit_line(
+                    block,
+                    indent,
+                    f"{branch_fn}({value_expr}, {path_expr}, {errors_expr})",
+                )
+
         if effective_type == "array":
             items = schema.get("items")
             if isinstance(items, dict):
                 item_hint = f"{schema_name_hint}_item" if schema_name_hint else "item"
                 item_fn = ensure_anonymous_function(items, hint=item_hint)
                 emit_line(block, indent, f"for _idx, _item in enumerate({value_expr}):")
-                emit_line(block, indent + 1, f'{item_fn}(_item, f"{{{path_expr}}}[{{_idx}}]", {errors_expr})')
+                emit_line(
+                    block,
+                    indent + 1,
+                    f'{item_fn}(_item, f"{{{path_expr}}}[{{_idx}}]", {errors_expr})',
+                )
             return
 
         if effective_type == "object":
@@ -434,7 +538,9 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                 for field, field_schema in sorted(properties.items()):
                     if not isinstance(field_schema, dict):
                         continue
-                    field_hint = f"{schema_name_hint}_{field}" if schema_name_hint else field
+                    field_hint = (
+                        f"{schema_name_hint}_{field}" if schema_name_hint else field
+                    )
                     field_fn = ensure_anonymous_function(field_schema, hint=field_hint)
                     emit_line(block, indent, f"if {field!r} in {value_expr}:")
                     emit_line(
@@ -445,12 +551,24 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
 
             addl = schema.get("additionalProperties")
             if isinstance(addl, dict):
-                addl_hint = f"{schema_name_hint}_additional_property" if schema_name_hint else "additional_property"
+                addl_hint = (
+                    f"{schema_name_hint}_additional_property"
+                    if schema_name_hint
+                    else "additional_property"
+                )
                 addl_fn = ensure_anonymous_function(addl, hint=addl_hint)
-                known = tuple(sorted(properties.keys())) if isinstance(properties, dict) else tuple()
+                known = (
+                    tuple(sorted(properties.keys()))
+                    if isinstance(properties, dict)
+                    else tuple()
+                )
                 emit_line(block, indent, f"for _key, _item in {value_expr}.items():")
                 emit_line(block, indent + 1, f"if _key not in {known!r}:")
-                emit_line(block, indent + 2, f'{addl_fn}(_item, f"{{{path_expr}}}.{{_key}}", {errors_expr})')
+                emit_line(
+                    block,
+                    indent + 2,
+                    f'{addl_fn}(_item, f"{{{path_expr}}}.{{_key}}", {errors_expr})',
+                )
 
             disc = schema.get("discriminator")
             if isinstance(disc, dict):
@@ -462,10 +580,14 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                     # as a fallback instead of rejecting missing values.
                     # Mirrors ResolveDefaultDiscriminator.
                     emit_line(block, indent, f"if {prop!r} in {value_expr}:")
-                    field_hint = f"{schema_name_hint}_{prop}" if schema_name_hint else prop
+                    field_hint = (
+                        f"{schema_name_hint}_{prop}" if schema_name_hint else prop
+                    )
                     for fld, fld_schema in sorted(properties.items()):
                         if fld == prop and isinstance(fld_schema, dict):
-                            fld_fn = ensure_anonymous_function(fld_schema, hint=field_hint)
+                            fld_fn = ensure_anonymous_function(
+                                fld_schema, hint=field_hint
+                            )
                             emit_line(
                                 block,
                                 indent + 1,
@@ -486,7 +608,9 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                     )
                     emit_line(block, indent + 1, "return")
                 else:
-                    emit_line(block, indent, f"_disc_value = {value_expr}.get({prop!r})")
+                    emit_line(
+                        block, indent, f"_disc_value = {value_expr}.get({prop!r})"
+                    )
                     emit_line(block, indent, "if not isinstance(_disc_value, str):")
                     disc_err = f"Required discriminator '{prop}' is missing or invalid"
                     emit_line(
@@ -505,13 +629,19 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                         continue
                     ref_fn = ensure_schema_function(ref_name)
                     emit_line(block, indent, f"if _disc_value == {disc_value!r}:")
-                    emit_line(block, indent + 1, f"{ref_fn}({value_expr}, {path_expr}, {errors_expr})")
+                    emit_line(
+                        block,
+                        indent + 1,
+                        f"{ref_fn}({value_expr}, {path_expr}, {errors_expr})",
+                    )
                     emit_line(block, indent + 1, "return")
-                allowed_disc_values = tuple(sorted(str(value) for value in mapping if isinstance(value, str)))
+                allowed_disc_values = tuple(
+                    sorted(str(value) for value in mapping if isinstance(value, str))
+                )
                 emit_line(
                     block,
                     indent,
-                    f"_append_error({errors_expr}, f\"{{{path_expr}}}.{prop}\", "
+                    f'_append_error({errors_expr}, f"{{{path_expr}}}.{prop}", '
                     f"f\"Invalid discriminator '{{_disc_value}}'. "
                     f"Allowed: {', '.join(allowed_disc_values)}\")",
                 )
@@ -522,9 +652,19 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
         fn_name = function_order[idx]
         idx += 1
         schema = function_schemas[fn_name]
-        block: list[str] = [f"def {fn_name}(value: Any, path: str, errors: list[dict[str, str]]) -> None:"]
+        block: list[str] = [
+            f"def {fn_name}(value: Any, path: str, errors: list[dict[str, str]]) -> None:"
+        ]
         schema_name_hint = function_hints.get(fn_name)
-        emit_schema_body(schema, block, 1, "value", "path", "errors", schema_name_hint=schema_name_hint)
+        emit_schema_body(
+            schema,
+            block,
+            1,
+            "value",
+            "path",
+            "errors",
+            schema_name_hint=schema_name_hint,
+        )
         if len(block) == 1:
             emit_line(block, 1, "return")
         rendered_blocks[fn_name] = block

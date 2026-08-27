@@ -2,9 +2,14 @@
 
 ## 2.2.0b1 (2026-08-27)
 
+### Features Added
+
+- Added prompt caching and programmatic tool-calling models from the latest AgentServer contract.
+
 ### Bugs Fixed
 
 - Made `logprobs` optional in assistant output-text content to match the OpenAI Responses API runtime behavior.
+- Added validation for prompt-cache options and tool-call caller discriminators.
 
 ## 2.1.0 (2026-08-24)
 
