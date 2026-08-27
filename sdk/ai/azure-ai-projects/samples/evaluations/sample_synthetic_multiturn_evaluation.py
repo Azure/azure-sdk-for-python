@@ -208,7 +208,7 @@ def main() -> None:
                 run = client.evals.runs.retrieve(
                     run_id=eval_run.id, eval_id=eval_object.id
                 )
-                if run.status in ("completed", "failed"):
+                if run.status in ("completed", "failed", "canceled"):
                     break
                 print(
                     f"Waiting for simulation to complete... current status: {run.status}"
@@ -220,8 +220,16 @@ def main() -> None:
 
             print("\nSynthetic multi-turn evaluation completed successfully.")
             print(f"Result Counts: {run.result_counts}")
+            if run.result_counts.errored:
+                raise RuntimeError(
+                    f"{run.result_counts.errored} evaluation item(s) errored"
+                )
+
+            expected_conversations = (
+                generation_result.generated_samples * CONVERSATIONS_PER_SEED
+            )
             print(
-                f"Expected: {generation_result.generated_samples * CONVERSATIONS_PER_SEED} conversations "
+                f"Expected: {expected_conversations} conversations "
                 f"({generation_result.generated_samples} generated scenarios x "
                 f"{CONVERSATIONS_PER_SEED} per scenario)"
             )
@@ -231,6 +239,15 @@ def main() -> None:
                     run_id=run.id, eval_id=eval_object.id
                 )
             )
+            if (
+                run.result_counts.total != expected_conversations
+                or len(output_items) != expected_conversations
+            ):
+                raise RuntimeError(
+                    f"Expected {expected_conversations} conversations, got "
+                    f"{run.result_counts.total} results and {len(output_items)} output items"
+                )
+
             print(f"\nOutput items: {len(output_items)}")
             if output_items:
                 print("First output item:")
