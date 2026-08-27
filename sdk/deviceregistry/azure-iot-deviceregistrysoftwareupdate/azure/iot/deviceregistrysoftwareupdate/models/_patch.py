@@ -32,6 +32,7 @@ def patch_sdk():
         visibility=["read", "create", "update", "delete", "query"],
         default=False,
     )
-    Model._calculated.discard(
+    # Recalculate the model metadata so the patched field default is applied.
+    Model._calculated.discard(  # pylint: disable=protected-access
         f"{_models.ImportUpdateRequest.__module__}.{_models.ImportUpdateRequest.__qualname__}"
     )
