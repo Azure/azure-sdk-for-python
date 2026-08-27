@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/createPolicyAssignmentWithEnrollEnforcement.json
+# x-ms-original-file: 2026-07-01/createPolicyAssignmentWithEnrollEnforcement.json
 if __name__ == "__main__":
     main()

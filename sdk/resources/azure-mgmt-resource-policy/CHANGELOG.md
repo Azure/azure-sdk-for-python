@@ -1,8 +1,41 @@
 # Release History
 
-## 1.0.0b4 (2026-08-25)
+## 1.0.0b4 (2026-08-27)
 
-tool can't generate changelog for this release, please update manually.
+### Features Added
+
+  - Model `ExternalEvaluationEndpointInvocationResult` added property `compliance_state`
+  - Model `Selector` added property `progress`
+  - Enum `SelectorKind` added member `RESOURCE_ROLLOUT_PERCENTAGE`
+  - Added enum `ComplianceState`
+  - Model `PolicyTokensOperations` added method `acquire_at_resource_group`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `PolicyClient.policy_enrollments`
+  - Deleted or renamed client operation group `PolicyClient.policy_exemptions`
+  - Deleted or renamed client operation group `PolicyClient.variable_values`
+  - Deleted or renamed client operation group `PolicyClient.variables`
+  - Deleted or renamed model `AssignmentScopeValidation`
+  - Deleted or renamed model `ExemptionCategory`
+  - Deleted or renamed model `PolicyEnrollment`
+  - Deleted or renamed model `PolicyEnrollmentProperties`
+  - Deleted or renamed model `PolicyEnrollmentUpdate`
+  - Deleted or renamed model `PolicyEnrollmentUpdateProperties`
+  - Deleted or renamed model `PolicyExemption`
+  - Deleted or renamed model `PolicyExemptionProperties`
+  - Deleted or renamed model `PolicyExemptionUpdate`
+  - Deleted or renamed model `PolicyExemptionUpdateProperties`
+  - Deleted or renamed model `PolicyVariableColumn`
+  - Deleted or renamed model `PolicyVariableProperties`
+  - Deleted or renamed model `PolicyVariableValueColumnValue`
+  - Deleted or renamed model `PolicyVariableValueProperties`
+  - Deleted or renamed model `Variable`
+  - Deleted or renamed model `VariableValue`
+  - Deleted or renamed model `PolicyEnrollmentsOperations`
+  - Deleted or renamed model `PolicyExemptionsOperations`
+  - Deleted or renamed model `VariableValuesOperations`
+  - Deleted or renamed model `VariablesOperations`
 
 ## 1.0.0b3 (2026-05-26)
 
