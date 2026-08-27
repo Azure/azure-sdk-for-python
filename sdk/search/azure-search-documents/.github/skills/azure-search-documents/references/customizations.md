@@ -90,15 +90,13 @@ Note: Occasionally, types.py might import packages incorrectly. Verify that the 
 - `._models.IndexDocumentsBatch` as `IndexDocumentsBatchGenerated` (base class)
 - `._models.IndexAction`
 - `._enums.IndexActionType`
-- `.._utils.model_base.SdkJSONEncoder`
 
 ### Defines
 | Symbol | Type | What It Does |
 |--------|------|-------------|
 | `RequestEntityTooLargeError` | class | `HttpResponseError` subclass for 413 |
-| `IndexDocumentsBatch` | class | Adds action helpers and queues document fields without eagerly serializing large vectors |
+| `IndexDocumentsBatch` | class | Adds `add_upload_actions`, `add_delete_actions`, `add_merge_actions`, `add_merge_or_upload_actions`, `dequeue_actions`, `enqueue_actions`, `actions` property |
 | `_flatten_args(...)` | function | Flattens variadic doc args (supports both `fn([doc1, doc2])` and `fn(doc1, doc2)`) |
-| `_patch_sdk_json_encoder()` | function | Idempotently adds final-boundary serialization for plain and nested `Enum` values |
 
 Sets `IndexDocumentsBatch.__module__ = "azure.search.documents"` so Sphinx documents it at the public namespace and avoids duplicate object-description warnings.
 
@@ -110,8 +108,6 @@ Sets `IndexDocumentsBatch.__module__ = "azure.search.documents"` so Sphinx docum
 ### After Regeneration, Verify
 - [ ] `IndexDocumentsBatchGenerated` base constructor still accepts `actions=` (stored under key `"value"`)
 - [ ] `IndexAction` + `IndexActionType` still exist with same action type values (`upload`, `delete`, `merge`, `mergeOrUpload`)
-- [ ] `IndexAction(action_type=...)` plus `action.update(document)` preserves the final wire payload without eager recursive conversion
-- [ ] Generated operations still serialize requests with the patched root `SdkJSONEncoder`
 
 ---
 
@@ -282,10 +278,6 @@ SearchFieldDataType.GeographyPoint  = SearchFieldDataType.GEOGRAPHY_POINT
 SearchFieldDataType.ComplexType     = SearchFieldDataType.COMPLEX
 ```
 
-Static analyzers see a `TYPE_CHECKING`-only mirror enum that declares every generated member, the
-legacy aliases, and `Collection`. Runtime alias assignments remain in the `else` branch so mypy does
-not treat them as reassignment of final Enum members.
-
 ### `__all__`
 ```python
 ["KnowledgeBase", "SearchField", "SearchFieldDataType",
@@ -293,7 +285,6 @@ not treat them as reassignment of final Enum members.
 ```
 
 ### After Regeneration, Verify
-- [ ] The `TYPE_CHECKING` mirror contains every generated `SearchFieldDataType` member
 - [ ] All right-hand-side UPPER_CASE enum members (`STRING`, `INT32`, `INT64`, `SINGLE`, `DOUBLE`, `BOOLEAN`, `DATE_TIME_OFFSET`, `GEOGRAPHY_POINT`, `COMPLEX`) still exist on generated `SearchFieldDataType`
 - [ ] `_SearchField`, `_SearchIndexerDataSourceConnection`, `_KnowledgeBase` base constructors unchanged
 - [ ] `SearchField.retrievable` still exists (the `hidden` property inverts it)
