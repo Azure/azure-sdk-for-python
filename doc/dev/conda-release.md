@@ -18,8 +18,8 @@ This section covers instructions for managing a quarterly conda release, which r
 
 The **[Conda Update Pipeline](https://dev.azure.com/azure-sdk/internal/_build?definitionId=8044&_a=summary)**  (`conda-update-pipeline.yml`) runs automatically about one week before each quarterly release date. It:
 
-- Detects new GA packages and reconciles every configured package version with the [Python Packages CSV](https://github.com/Azure/azure-sdk/blob/main/_data/releases/latest/python-packages.csv), which is the source of truth.
-- Updates package versions across the repo's conda configuration files
+- Detects which packages have new GA versions since the last conda release, using the [Python Packages CSV](https://github.com/Azure/azure-sdk/blob/main/_data/releases/latest/python-packages.csv) as the source of truth.
+- Updates package versions across the repo's conda configuration files.
 - Opens a PR on `main` with all the necessary changes.
    - The PR link can be found in the pipeline output for the "Create pull request" step
 
@@ -52,7 +52,7 @@ The auto-generated PR includes:
 ### Review, Approve, and Cleanup (manual)
 
 1. **Review the PR.** Check the report in the pipeline output for any packages that encountered unexpected behavior and may need manual fixes.
-   - To validate the Conda recipe changes, manually queue a run of the internal **[Conda Build/Release Pipeline](https://dev.azure.com/azure-sdk/internal/_build?definitionId=6321)** against the PR branch.
+   - The PR triggers a [public build](https://dev.azure.com/azure-sdk/public/_build?definitionId=8092) which validates the changes to the Conda recipes.
 
 2. **Merge the PR** into `main`.
 
