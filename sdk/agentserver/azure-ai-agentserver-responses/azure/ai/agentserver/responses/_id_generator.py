@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 """ID generation utilities for deterministic response and item IDs."""
+# cspell:ignore progo
 
 from __future__ import annotations
 

@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 """Unit tests for ID generation behavior."""
+# cspell:ignore progo
 
 from __future__ import annotations
 

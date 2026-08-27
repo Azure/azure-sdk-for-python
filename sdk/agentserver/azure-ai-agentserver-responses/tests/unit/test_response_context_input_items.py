@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 """Unit tests for ResponseContext.get_input_items() item-reference resolution."""
+# cspell:ignore progo
 
 from __future__ import annotations
 
