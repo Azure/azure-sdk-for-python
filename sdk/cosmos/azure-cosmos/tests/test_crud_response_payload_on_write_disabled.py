@@ -2507,9 +2507,8 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
         # Id can begin with space
         db = self.key_client.create_database(id=' ' + test_config.unique_database_id("id-begin-space"))
+        self.addCleanup(self.configs.try_delete_database_with_id, self.key_client, db.id)
         self.assertTrue(True)
-
-        self.key_client.delete_database(db.id)
 
     def test_get_resource_with_dictionary_and_object(self):
         created_db = self.databaseForTest
