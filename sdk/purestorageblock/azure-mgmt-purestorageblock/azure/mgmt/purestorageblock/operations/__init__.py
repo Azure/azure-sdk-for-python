@@ -19,6 +19,11 @@ from ._operations import AvsStorageContainersOperations  # type: ignore
 from ._operations import AvsStorageContainerVolumesOperations  # type: ignore
 from ._operations import AvsVmsOperations  # type: ignore
 from ._operations import AvsVmVolumesOperations  # type: ignore
+from ._operations import VolumeGroupsOperations  # type: ignore
+from ._operations import VolumesOperations  # type: ignore
+from ._operations import RecoverableVolumeGroupsOperations  # type: ignore
+from ._operations import SaaSOperationGroupOperations  # type: ignore
+from ._operations import VolumeGroupSnapshotsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -32,6 +37,11 @@ __all__ = [
     "AvsStorageContainerVolumesOperations",
     "AvsVmsOperations",
     "AvsVmVolumesOperations",
+    "VolumeGroupsOperations",
+    "VolumesOperations",
+    "RecoverableVolumeGroupsOperations",
+    "SaaSOperationGroupOperations",
+    "VolumeGroupSnapshotsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

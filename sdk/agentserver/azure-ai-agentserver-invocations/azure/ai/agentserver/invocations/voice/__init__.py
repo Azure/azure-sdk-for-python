@@ -34,7 +34,8 @@ from ._models import (
     new_message_id,
     new_response_id,
 )
-from ._session import Session
+from ._session import Session, SessionTermination
+from ._turn import TargetTurn, TargetTurnOrigin, TargetTurnOutcome
 from ._voice_host import (
     BargeInCallback,
     ConnectionTerminatingCallback,
@@ -85,6 +86,10 @@ __all__ = [
     "SessionRejected",
     "SessionStart",
     "SessionStartCallback",
+    "SessionTermination",
+    "TargetTurn",
+    "TargetTurnOrigin",
+    "TargetTurnOutcome",
     "UserMessage",
     "UserMessageCallback",
     "UserNoInput",
