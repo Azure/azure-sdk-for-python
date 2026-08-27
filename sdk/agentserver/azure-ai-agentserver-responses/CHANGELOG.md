@@ -2,6 +2,10 @@
 
 ## 2.2.0b1 (2026-08-27)
 
+### Breaking Changes
+
+- `ResponseUsageInputTokensDetails.cache_write_tokens` is now required by the latest AgentServer contract.
+
 ### Features Added
 
 - Added prompt caching and programmatic tool-calling models from the latest AgentServer contract.

@@ -3788,6 +3788,32 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[message]
 
 
+    class azure.ai.agentserver.responses.models.ItemProgram(TypedDict, total=False):
+        key "call_id": Required[str]
+        key "code": Required[str]
+        key "fingerprint": Required[str]
+        key "id": Required[str]
+        key "type": Required[Literal["program"]]
+        call_id: str
+        code: str
+        fingerprint: str
+        id: str
+        type: Literal[program]
+
+
+    class azure.ai.agentserver.responses.models.ItemProgramOutput(TypedDict, total=False):
+        key "call_id": Required[str]
+        key "id": Required[str]
+        key "result": Required[str]
+        key "status": Required[Literal["completed", "incomplete"]]
+        key "type": Required[Literal["program_output"]]
+        call_id: str
+        id: str
+        result: str
+        status: ProgramOutputStatus
+        type: Literal[program_output]
+
+
     class azure.ai.agentserver.responses.models.ItemReasoningItem(TypedDict, total=False):
         key "encrypted_content": Optional[str]
         key "id": Required[str]

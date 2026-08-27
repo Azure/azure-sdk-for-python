@@ -352,6 +352,28 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         return IdGenerator.new_id("om", partition_key_hint)
 
     @staticmethod
+    def new_program_item_id(partition_key_hint: str | None = "") -> str:
+        """Generate a new program item ID with the ``prog`` prefix.
+
+        :param partition_key_hint: An existing ID to extract the partition key from for co-location.
+        :type partition_key_hint: str | None
+        :returns: A new unique program item ID string.
+        :rtype: str
+        """
+        return IdGenerator.new_id("prog", partition_key_hint)
+
+    @staticmethod
+    def new_program_output_item_id(partition_key_hint: str | None = "") -> str:
+        """Generate a new program output item ID with the ``progo`` prefix.
+
+        :param partition_key_hint: An existing ID to extract the partition key from for co-location.
+        :type partition_key_hint: str | None
+        :returns: A new unique program output item ID string.
+        :rtype: str
+        """
+        return IdGenerator.new_id("progo", partition_key_hint)
+
+    @staticmethod
     def new_item_id(
         item: Mapping[str, Any], partition_key_hint: str | None = ""
     ) -> str | None:
@@ -393,6 +415,8 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
             "mcp_approval_request": IdGenerator.new_mcp_approval_request_item_id,
             "mcp_approval_response": IdGenerator.new_mcp_approval_response_item_id,
             "reasoning": IdGenerator.new_reasoning_item_id,
+            "program": IdGenerator.new_program_item_id,
+            "program_output": IdGenerator.new_program_output_item_id,
             "compaction": IdGenerator.new_compaction_item_id,
             "compaction_summary": IdGenerator.new_compaction_item_id,
             "structured_outputs": IdGenerator.new_structured_output_item_id,

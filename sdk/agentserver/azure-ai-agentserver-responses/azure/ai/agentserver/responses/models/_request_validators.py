@@ -1302,6 +1302,12 @@ def _validate_OpenAI_Item(value: Any, path: str, errors: list[dict[str, str]]) -
     if _disc_value == 'output_message':
         _validate_OpenAI_ItemOutputMessage(value, path, errors)
         return
+    if _disc_value == 'program':
+        _validate_OpenAI_ItemProgram(value, path, errors)
+        return
+    if _disc_value == 'program_output':
+        _validate_OpenAI_ItemProgramOutput(value, path, errors)
+        return
     if _disc_value == 'reasoning':
         _validate_OpenAI_ItemReasoningItem(value, path, errors)
         return
@@ -1320,7 +1326,7 @@ def _validate_OpenAI_Item(value: Any, path: str, errors: list[dict[str, str]]) -
     if _disc_value == 'web_search_call':
         _validate_OpenAI_ItemWebSearchToolCall(value, path, errors)
         return
-    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: additional_tools, apply_patch_call, apply_patch_call_output, code_interpreter_call, compaction, computer_call, computer_call_output, custom_tool_call, custom_tool_call_output, file_search_call, function_call, function_call_output, image_generation_call, item_reference, local_shell_call, local_shell_call_output, mcp_approval_request, mcp_approval_response, mcp_call, mcp_list_tools, memory_search_call, message, output_message, reasoning, shell_call, shell_call_output, tool_search_call, tool_search_output, web_search_call")
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: additional_tools, apply_patch_call, apply_patch_call_output, code_interpreter_call, compaction, computer_call, computer_call_output, custom_tool_call, custom_tool_call_output, file_search_call, function_call, function_call_output, image_generation_call, item_reference, local_shell_call, local_shell_call_output, mcp_approval_request, mcp_approval_response, mcp_call, mcp_list_tools, memory_search_call, message, output_message, program, program_output, reasoning, shell_call, shell_call_output, tool_search_call, tool_search_output, web_search_call")
 
 def _validate_OpenAI_ModerationParam_policy_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_ModerationPolicyParam(value, path, errors)
@@ -1972,12 +1978,20 @@ def _validate_WorkIQPreviewTool(value: Any, path: str, errors: list[dict[str, st
         _validate_WorkIQPreviewTool_work_iq_preview(value['work_iq_preview'], f"{path}.work_iq_preview", errors)
 
 def _validate_OpenAI_Item_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values = _field_literal_values('Item', 'type')
-    if _allowed_values is not None and value is not None:
-        if value not in _allowed_values:
-            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+    _matched_union = False
+    if not _matched_union:
+        _branch_errors_0: list[dict[str, str]] = []
+        _validate_OpenAI_ItemType(value, path, _branch_errors_0)
+        if not _branch_errors_0:
+            _matched_union = True
+    if not _matched_union and _is_type(value, 'string'):
+        _branch_errors_1: list[dict[str, str]] = []
+        _validate_OpenAI_Item_type_2(value, path, _branch_errors_1)
+        if not _branch_errors_1:
+            _matched_union = True
+    if not _matched_union:
+        _append_error(errors, path, f"Expected one of: OpenAI.ItemType, string; got {_type_label(value)}")
         return
-    _validate_OpenAI_ItemType(value, path, errors)
 
 def _validate_OpenAI_AdditionalToolsItemParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -2499,6 +2513,56 @@ def _validate_OpenAI_ItemOutputMessage(value: Any, path: str, errors: list[dict[
         _validate_OpenAI_ItemOutputMessage_status(value['status'], f"{path}.status", errors)
     if 'type' in value:
         _validate_OpenAI_ItemOutputMessage_type(value['type'], f"{path}.type", errors)
+
+def _validate_OpenAI_ItemProgram(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'object'):
+        _append_type_mismatch(errors, path, 'object', value)
+        return
+    if 'type' not in value:
+        _append_error(errors, f"{path}.type", "Required property 'type' is missing")
+    if 'id' not in value:
+        _append_error(errors, f"{path}.id", "Required property 'id' is missing")
+    if 'call_id' not in value:
+        _append_error(errors, f"{path}.call_id", "Required property 'call_id' is missing")
+    if 'code' not in value:
+        _append_error(errors, f"{path}.code", "Required property 'code' is missing")
+    if 'fingerprint' not in value:
+        _append_error(errors, f"{path}.fingerprint", "Required property 'fingerprint' is missing")
+    if 'call_id' in value:
+        _validate_OpenAI_ItemProgram_call_id(value['call_id'], f"{path}.call_id", errors)
+    if 'code' in value:
+        _validate_OpenAI_ItemProgram_code(value['code'], f"{path}.code", errors)
+    if 'fingerprint' in value:
+        _validate_OpenAI_ItemProgram_fingerprint(value['fingerprint'], f"{path}.fingerprint", errors)
+    if 'id' in value:
+        _validate_OpenAI_ItemProgram_id(value['id'], f"{path}.id", errors)
+    if 'type' in value:
+        _validate_OpenAI_ItemProgram_type(value['type'], f"{path}.type", errors)
+
+def _validate_OpenAI_ItemProgramOutput(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'object'):
+        _append_type_mismatch(errors, path, 'object', value)
+        return
+    if 'type' not in value:
+        _append_error(errors, f"{path}.type", "Required property 'type' is missing")
+    if 'id' not in value:
+        _append_error(errors, f"{path}.id", "Required property 'id' is missing")
+    if 'call_id' not in value:
+        _append_error(errors, f"{path}.call_id", "Required property 'call_id' is missing")
+    if 'result' not in value:
+        _append_error(errors, f"{path}.result", "Required property 'result' is missing")
+    if 'status' not in value:
+        _append_error(errors, f"{path}.status", "Required property 'status' is missing")
+    if 'call_id' in value:
+        _validate_OpenAI_ItemProgramOutput_call_id(value['call_id'], f"{path}.call_id", errors)
+    if 'id' in value:
+        _validate_OpenAI_ItemProgramOutput_id(value['id'], f"{path}.id", errors)
+    if 'result' in value:
+        _validate_OpenAI_ItemProgramOutput_result(value['result'], f"{path}.result", errors)
+    if 'status' in value:
+        _validate_OpenAI_ItemProgramOutput_status(value['status'], f"{path}.status", errors)
+    if 'type' in value:
+        _validate_OpenAI_ItemProgramOutput_type(value['type'], f"{path}.type", errors)
 
 def _validate_OpenAI_ItemReasoningItem(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -3425,6 +3489,14 @@ def _validate_OpenAI_ItemType(value: Any, path: str, errors: list[dict[str, str]
             return
         return
 
+def _validate_OpenAI_Item_type_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = ('program', 'program_output')
+    if value not in _allowed_values:
+        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
 def _validate_OpenAI_AdditionalToolsItemParam_role(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('developer',)
     if value not in _allowed_values:
@@ -4047,6 +4119,60 @@ def _validate_OpenAI_ItemOutputMessage_status(value: Any, path: str, errors: lis
 
 def _validate_OpenAI_ItemOutputMessage_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('output_message',)
+    if value not in _allowed_values:
+        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_OpenAI_ItemProgram_call_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_OpenAI_ItemProgram_code(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_OpenAI_ItemProgram_fingerprint(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_OpenAI_ItemProgram_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_OpenAI_ItemProgram_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = ('program',)
+    if value not in _allowed_values:
+        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_OpenAI_ItemProgramOutput_call_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_OpenAI_ItemProgramOutput_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_OpenAI_ItemProgramOutput_result(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_OpenAI_ItemProgramOutput_status(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _validate_OpenAI_ItemProgramOutput_status_all_of_0(value, path, errors)
+
+def _validate_OpenAI_ItemProgramOutput_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = ('program_output',)
     if value not in _allowed_values:
         _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
     if not _is_type(value, 'string'):
@@ -4682,6 +4808,14 @@ def _validate_OpenAI_ItemMessage_role_all_of_0(value: Any, path: str, errors: li
 
 def _validate_OpenAI_ItemOutputMessage_content_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_OutputMessageContent(value, path, errors)
+
+def _validate_OpenAI_ItemProgramOutput_status_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('ItemProgramOutput', 'status_all_of_0')
+    if _allowed_values is not None and value is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
+    _validate_OpenAI_ProgramOutputStatus(value, path, errors)
 
 def _validate_OpenAI_ItemReasoningItem_content_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_ReasoningTextContent(value, path, errors)
@@ -5770,6 +5904,19 @@ def _validate_OpenAI_OutputMessageContent(value: Any, path: str, errors: list[di
         _validate_OpenAI_OutputMessageContentRefusalContent(value, path, errors)
         return
     _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: output_text, refusal")
+
+def _validate_OpenAI_ProgramOutputStatus(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values, _literal_error = _schema_literal_values('ProgramOutputStatus')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
+        return
 
 def _validate_OpenAI_ReasoningTextContent(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):

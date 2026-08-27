@@ -272,3 +272,51 @@ def test_generated_create_response_validator_accepts_mixed_input_item_types() ->
         }
     )
     assert errors == []
+
+
+@pytest.mark.parametrize(
+    "item",
+    [
+        {
+            "type": "program",
+            "id": "prog_123",
+            "call_id": "call_123",
+            "code": "return 1;",
+            "fingerprint": "fp_123",
+        },
+        {
+            "type": "program_output",
+            "id": "progo_123",
+            "call_id": "call_123",
+            "result": "1",
+            "status": "completed",
+        },
+    ],
+)
+def test_generated_create_response_validator_accepts_program_items(
+    item: dict[str, str],
+) -> None:
+    assert validate_create_response_payload({"input": [item]}) == []
+
+
+@pytest.mark.parametrize(
+    "item",
+    [
+        {
+            "type": "program",
+            "id": "prog_123",
+            "call_id": "call_123",
+            "code": "return 1;",
+        },
+        {
+            "type": "program_output",
+            "id": "progo_123",
+            "call_id": "call_123",
+            "status": "completed",
+        },
+    ],
+)
+def test_generated_create_response_validator_rejects_incomplete_program_items(
+    item: dict[str, str],
+) -> None:
+    assert validate_create_response_payload({"input": [item]})
