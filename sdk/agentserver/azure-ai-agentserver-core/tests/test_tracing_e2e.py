@@ -33,6 +33,7 @@ pytestmark = pytest.mark.tracing_e2e
 # Ingestion delay: App Insights may take a few minutes to make data queryable.
 _APPINSIGHTS_POLL_TIMEOUT = 300
 _APPINSIGHTS_POLL_INTERVAL = 15
+_AZURE_SDK_DEPENDENCY_NAME = "LogsQueryClient.query_resource"
 
 
 def _flush_provider():
@@ -65,13 +66,15 @@ def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_P
     return []
 
 
-def _create_trace_with_azure_sdk_request(logs_client, resource_id):
+def _create_trace_with_azure_sdk_request(logs_client, resource_id, *, azure_sdk_enabled):
     """Create an exported control span containing a real Azure SDK request."""
     suffix = uuid.uuid4().hex[:8]
-    control_name = f"AzureSdkControl-{suffix}"
+    scenario = "Enabled" if azure_sdk_enabled else "Disabled"
+    control_name = f"AzureSdk{scenario}Control-{suffix}"
     tracer = trace.get_tracer("test.azure_sdk.instrumentation")
 
     with tracer.start_as_current_span(control_name) as control_span:
+        control_span.set_attribute("test.azure_sdk.enabled", azure_sdk_enabled)
         trace_id = format(control_span.get_span_context().trace_id, "032x")
         control_span_id = format(control_span.get_span_context().span_id, "016x")
         response = logs_client.query_resource(
@@ -379,6 +382,7 @@ class TestAppInsightsIngestionE2E:
         control_name, control_span_id, trace_id = _create_trace_with_azure_sdk_request(
             logs_query_client,
             appinsights_resource_id,
+            azure_sdk_enabled=False,
         )
 
         control_query = f"dependencies | where operation_Id == '{trace_id}' | where name == '{control_name}' | take 1"
@@ -391,6 +395,7 @@ class TestAppInsightsIngestionE2E:
             "dependencies "
             f"| where operation_Id == '{trace_id}' "
             f"| where operation_ParentId == '{control_span_id}' "
+            f"| where name == '{_AZURE_SDK_DEPENDENCY_NAME}' "
             "| take 1"
         )
         response = logs_query_client.query_resource(
@@ -417,12 +422,14 @@ class TestAppInsightsIngestionE2E:
         _control_name, control_span_id, trace_id = _create_trace_with_azure_sdk_request(
             logs_query_client,
             appinsights_resource_id,
+            azure_sdk_enabled=True,
         )
 
         dependency_query = (
             "dependencies "
             f"| where operation_Id == '{trace_id}' "
             f"| where operation_ParentId == '{control_span_id}' "
+            f"| where name == '{_AZURE_SDK_DEPENDENCY_NAME}' "
             "| take 1"
         )
         dependency_rows = _poll_appinsights(logs_query_client, appinsights_resource_id, dependency_query)
