@@ -221,7 +221,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -331,7 +331,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-long
+class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -374,6 +374,8 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -469,6 +471,8 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     def list(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncItemPaged["_models.QuotaItem"]:
@@ -572,7 +576,7 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VolumeGroupsOperations:
+class VolumeGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1144,7 +1148,7 @@ class VolumeGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BackupsOperations:
+class BackupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2175,7 +2179,7 @@ class BackupsOperations:
         return deserialized  # type: ignore
 
 
-class VolumesOperations:  # pylint: disable=too-many-public-methods
+class VolumesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3999,6 +4003,8 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _list_get_group_id_list_for_ldap_user_initial(  # pylint: disable=name-too-long
@@ -4216,6 +4222,8 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_list_get_group_id_list_for_ldap_user(  # pylint: disable=name-too-long
@@ -5027,6 +5035,8 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     def list_replications(
@@ -7283,6 +7293,8 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _list_quota_report_initial(
@@ -7499,6 +7511,8 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_list_quota_report(
@@ -7593,7 +7607,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class SnapshotsOperations:
+class SnapshotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8784,7 +8798,7 @@ class SnapshotsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class SnapshotPoliciesOperations:
+class SnapshotPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9613,7 +9627,7 @@ class SnapshotPoliciesOperations:
         return deserialized  # type: ignore
 
 
-class BackupPoliciesOperations:
+class BackupPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10440,7 +10454,7 @@ class BackupPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VolumeQuotaRulesOperations:
+class VolumeQuotaRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11357,7 +11371,7 @@ class VolumeQuotaRulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RansomwareReportsOperations:
+class RansomwareReportsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11400,6 +11414,8 @@ class RansomwareReportsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -11517,6 +11533,8 @@ class RansomwareReportsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     def list(
@@ -11656,6 +11674,8 @@ class RansomwareReportsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _clear_suspects_initial(
@@ -11884,6 +11904,8 @@ class RansomwareReportsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_clear_suspects(
@@ -11972,7 +11994,7 @@ class RansomwareReportsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class BackupVaultsOperations:
+class BackupVaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12793,7 +12815,7 @@ class BackupVaultsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BucketsOperations:
+class BucketsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12835,6 +12857,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -12949,6 +12973,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -13177,6 +13203,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -13291,6 +13319,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _update_initial(
@@ -13517,6 +13547,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_update(
@@ -13629,6 +13661,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(
@@ -13728,6 +13762,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(
@@ -13827,6 +13863,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     def list(
@@ -14080,6 +14118,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def generate_credentials(
@@ -14209,6 +14249,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _generate_akv_credentials_initial(
@@ -14430,6 +14472,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_generate_akv_credentials(
@@ -14537,6 +14581,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _refresh_certificate_initial(
@@ -14635,6 +14681,8 @@ class BucketsOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_refresh_certificate(
@@ -14712,7 +14760,7 @@ class BucketsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class CachesOperations:
+class CachesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14753,6 +14801,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -14856,6 +14906,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -15066,6 +15118,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -15173,6 +15227,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _update_initial(
@@ -15384,6 +15440,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_update(
@@ -15491,6 +15549,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(
@@ -15579,6 +15639,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(
@@ -15667,6 +15729,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     def list(
@@ -15797,6 +15861,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def list_peering_passphrases(
@@ -15901,6 +15967,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _pool_change_initial(
@@ -16109,6 +16177,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_pool_change(
@@ -16217,6 +16287,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _reset_smb_password_initial(
@@ -16306,6 +16378,8 @@ class CachesOperations:
             "2026-04-15-preview",
             "2026-05-01",
             "2026-05-15-preview",
+            "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_reset_smb_password(
@@ -16379,7 +16453,7 @@ class CachesOperations:
         )
 
 
-class ElasticAccountsOperations:
+class ElasticAccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16408,6 +16482,7 @@ class ElasticAccountsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def get(self, resource_group_name: str, account_name: str, **kwargs: Any) -> _models.ElasticAccount:
@@ -16497,6 +16572,7 @@ class ElasticAccountsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -16679,6 +16755,7 @@ class ElasticAccountsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -16774,6 +16851,7 @@ class ElasticAccountsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _update_initial(
@@ -16957,6 +17035,7 @@ class ElasticAccountsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_update(
@@ -17045,6 +17124,7 @@ class ElasticAccountsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
@@ -17118,6 +17198,7 @@ class ElasticAccountsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -17186,6 +17267,7 @@ class ElasticAccountsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_by_resource_group(
@@ -17296,6 +17378,7 @@ class ElasticAccountsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ElasticAccount"]:
@@ -17391,7 +17474,7 @@ class ElasticAccountsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ElasticCapacityPoolsOperations:
+class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17427,6 +17510,7 @@ class ElasticCapacityPoolsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -17522,6 +17606,7 @@ class ElasticCapacityPoolsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -17719,6 +17804,7 @@ class ElasticCapacityPoolsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -17820,6 +17906,7 @@ class ElasticCapacityPoolsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _update_initial(
@@ -18015,6 +18102,7 @@ class ElasticCapacityPoolsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_update(
@@ -18107,6 +18195,7 @@ class ElasticCapacityPoolsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(
@@ -18183,6 +18272,7 @@ class ElasticCapacityPoolsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(
@@ -18258,6 +18348,7 @@ class ElasticCapacityPoolsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_by_elastic_account(
@@ -18380,6 +18471,7 @@ class ElasticCapacityPoolsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _change_zone_initial(
@@ -18572,6 +18664,7 @@ class ElasticCapacityPoolsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_change_zone(
@@ -18766,6 +18859,7 @@ class ElasticCapacityPoolsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def check_volume_file_path_availability(
@@ -18867,7 +18961,7 @@ class ElasticCapacityPoolsOperations:
         return deserialized  # type: ignore
 
 
-class ElasticVolumesOperations:
+class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18904,6 +18998,7 @@ class ElasticVolumesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -19003,6 +19098,7 @@ class ElasticVolumesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -19209,6 +19305,7 @@ class ElasticVolumesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -19314,6 +19411,7 @@ class ElasticVolumesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _update_initial(
@@ -19521,6 +19619,7 @@ class ElasticVolumesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_update(
@@ -19624,6 +19723,7 @@ class ElasticVolumesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(
@@ -19708,6 +19808,7 @@ class ElasticVolumesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(
@@ -19793,6 +19894,7 @@ class ElasticVolumesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_by_elastic_pool(
@@ -19919,6 +20021,7 @@ class ElasticVolumesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _revert_initial(
@@ -20123,6 +20226,7 @@ class ElasticVolumesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_revert(
@@ -20209,7 +20313,7 @@ class ElasticVolumesOperations:
         )
 
 
-class ElasticSnapshotsOperations:
+class ElasticSnapshotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20247,6 +20351,7 @@ class ElasticSnapshotsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -20356,6 +20461,7 @@ class ElasticSnapshotsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -20574,6 +20680,7 @@ class ElasticSnapshotsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -20682,6 +20789,7 @@ class ElasticSnapshotsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(
@@ -20774,6 +20882,7 @@ class ElasticSnapshotsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(
@@ -20869,6 +20978,7 @@ class ElasticSnapshotsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_by_elastic_volume(
@@ -20979,7 +21089,7 @@ class ElasticSnapshotsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ElasticSnapshotPoliciesOperations:
+class ElasticSnapshotPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21015,6 +21125,7 @@ class ElasticSnapshotPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -21110,6 +21221,7 @@ class ElasticSnapshotPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -21304,6 +21416,7 @@ class ElasticSnapshotPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -21404,6 +21517,7 @@ class ElasticSnapshotPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _update_initial(
@@ -21599,6 +21713,7 @@ class ElasticSnapshotPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_update(
@@ -21697,6 +21812,7 @@ class ElasticSnapshotPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(
@@ -21779,6 +21895,7 @@ class ElasticSnapshotPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(
@@ -21854,6 +21971,7 @@ class ElasticSnapshotPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_by_elastic_account(
@@ -21977,6 +22095,7 @@ class ElasticSnapshotPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_elastic_volumes(
@@ -22084,7 +22203,7 @@ class ElasticSnapshotPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ElasticBackupVaultsOperations:
+class ElasticBackupVaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22120,6 +22239,7 @@ class ElasticBackupVaultsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -22215,6 +22335,7 @@ class ElasticBackupVaultsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -22409,6 +22530,7 @@ class ElasticBackupVaultsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -22509,6 +22631,7 @@ class ElasticBackupVaultsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _update_initial(
@@ -22704,6 +22827,7 @@ class ElasticBackupVaultsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_update(
@@ -22802,6 +22926,7 @@ class ElasticBackupVaultsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(
@@ -22884,6 +23009,7 @@ class ElasticBackupVaultsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(
@@ -22959,6 +23085,7 @@ class ElasticBackupVaultsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_by_elastic_account(
@@ -23063,7 +23190,7 @@ class ElasticBackupVaultsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ElasticBackupPoliciesOperations:
+class ElasticBackupPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23099,6 +23226,7 @@ class ElasticBackupPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -23194,6 +23322,7 @@ class ElasticBackupPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -23388,6 +23517,7 @@ class ElasticBackupPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -23488,6 +23618,7 @@ class ElasticBackupPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _update_initial(
@@ -23680,6 +23811,7 @@ class ElasticBackupPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_update(
@@ -23778,6 +23910,7 @@ class ElasticBackupPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(
@@ -23860,6 +23993,7 @@ class ElasticBackupPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(
@@ -23935,6 +24069,7 @@ class ElasticBackupPoliciesOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_by_elastic_account(
@@ -24039,7 +24174,7 @@ class ElasticBackupPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ElasticBackupsOperations:
+class ElasticBackupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24076,6 +24211,7 @@ class ElasticBackupsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -24175,6 +24311,7 @@ class ElasticBackupsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -24381,6 +24518,7 @@ class ElasticBackupsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -24486,6 +24624,7 @@ class ElasticBackupsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _update_initial(
@@ -24693,6 +24832,7 @@ class ElasticBackupsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_update(
@@ -24796,6 +24936,7 @@ class ElasticBackupsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(
@@ -24880,6 +25021,7 @@ class ElasticBackupsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(
@@ -24965,6 +25107,7 @@ class ElasticBackupsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_by_vault(
@@ -25072,7 +25215,7 @@ class ElasticBackupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ActiveDirectoryConfigsOperations:
+class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25107,6 +25250,7 @@ class ActiveDirectoryConfigsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -25198,6 +25342,7 @@ class ActiveDirectoryConfigsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -25380,6 +25525,7 @@ class ActiveDirectoryConfigsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -25475,6 +25621,7 @@ class ActiveDirectoryConfigsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _update_initial(
@@ -25658,6 +25805,7 @@ class ActiveDirectoryConfigsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_update(
@@ -25751,6 +25899,7 @@ class ActiveDirectoryConfigsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(
@@ -25831,6 +25980,7 @@ class ActiveDirectoryConfigsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(
@@ -25901,6 +26051,7 @@ class ActiveDirectoryConfigsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_by_resource_group(
@@ -26012,6 +26163,7 @@ class ActiveDirectoryConfigsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ActiveDirectoryConfig"]:
@@ -26108,7 +26260,7 @@ class ActiveDirectoryConfigsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetAppResourceQuotaLimitsOperations:
+class NetAppResourceQuotaLimitsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26291,7 +26443,7 @@ class NetAppResourceQuotaLimitsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetAppResourceRegionInfosOperations:
+class NetAppResourceRegionInfosOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26471,7 +26623,7 @@ class NetAppResourceRegionInfosOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AccountsOperations:
+class AccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26813,6 +26965,7 @@ class AccountsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def _update_initial(
@@ -26993,6 +27146,7 @@ class AccountsOperations:
             "2026-03-15-preview",
             "2026-04-15-preview",
             "2026-05-15-preview",
+            "2026-06-15-preview",
         ],
     )
     async def begin_update(
@@ -28119,7 +28273,7 @@ class AccountsOperations:
         params_added_on={
             "2026-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
         },
-        api_versions_list=["2026-04-15-preview", "2026-05-15-preview"],
+        api_versions_list=["2026-04-15-preview", "2026-05-15-preview", "2026-06-15-preview"],
     )
     async def _refresh_ldap_bind_password_initial(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -28190,7 +28344,7 @@ class AccountsOperations:
         params_added_on={
             "2026-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
         },
-        api_versions_list=["2026-04-15-preview", "2026-05-15-preview"],
+        api_versions_list=["2026-04-15-preview", "2026-05-15-preview", "2026-06-15-preview"],
     )
     async def begin_refresh_ldap_bind_password(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -28251,7 +28405,7 @@ class AccountsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class BackupsUnderAccountOperations:
+class BackupsUnderAccountOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28497,7 +28651,7 @@ class BackupsUnderAccountOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class PoolsOperations:
+class PoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29316,7 +29470,7 @@ class PoolsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BackupsUnderBackupVaultOperations:
+class BackupsUnderBackupVaultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29589,7 +29743,7 @@ class BackupsUnderBackupVaultOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class BackupsUnderVolumeOperations:
+class BackupsUnderVolumeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29865,7 +30019,7 @@ class BackupsUnderVolumeOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class SubvolumesOperations:
+class SubvolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30069,7 +30223,8 @@ class SubvolumesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SubvolumeInfo]:
-        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath.
+        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath Deprecated.
+        This operation will be removed in a future API version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -30106,7 +30261,8 @@ class SubvolumesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SubvolumeInfo]:
-        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath.
+        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath Deprecated.
+        This operation will be removed in a future API version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -30143,7 +30299,8 @@ class SubvolumesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SubvolumeInfo]:
-        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath.
+        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath Deprecated.
+        This operation will be removed in a future API version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -30178,7 +30335,8 @@ class SubvolumesOperations:
         body: Union[_models.SubvolumeInfo, _types.SubvolumeInfo, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SubvolumeInfo]:
-        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath.
+        """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath Deprecated.
+        This operation will be removed in a future API version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -30950,7 +31108,7 @@ class SubvolumesOperations:
         )
 
 
-class NetAppResourceOperations:
+class NetAppResourceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31895,7 +32053,7 @@ class NetAppResourceOperations:
         )
 
 
-class NetAppResourceUsagesOperations:
+class NetAppResourceUsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
