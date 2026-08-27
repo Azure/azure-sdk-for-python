@@ -1,6 +1,10 @@
 # Release History
 
-## 1.18.4 (2026-08-27)
+## 1.18.3 (2026-08-27)
+
+### Features Added
+
+- Added support for Entra authentication for evaluation results emitted to Application Insights.
 
 ### Bugs Fixed
 
@@ -11,12 +15,6 @@
   `ProtectedMaterialEvaluator`, `IndirectAttackEvaluator`, `CodeVulnerabilityEvaluator`, and `ECIEvaluator`.
   Existing scalar and `conversation={...}` input semantics are unchanged.
   [#48629](https://github.com/Azure/azure-sdk-for-python/pull/48629)
-
-## 1.18.3 (2026-07-28)
-
-### Features Added
-
-- Added support for Entra authentication for evaluation results emitted to Application Insights.
 
 ## 1.18.2 (2026-07-21)
 
