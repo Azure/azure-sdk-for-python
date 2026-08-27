@@ -9,6 +9,9 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed global-to-regional ingestion redirects so they are followed across trusted Azure Monitor host suffixes within
+  the same cloud, and updated internal statsbeat routing to follow the customer's effective ingestion route after an
+  accepted redirect so EU SDK statistics are reported to the EU statsbeat destination.
 
 ### Other Changes
 - Extend OneSettings configuration evaluation to parse JSON-encoded feature settings and support explicit string

@@ -49,15 +49,27 @@ _REDIRECT_STATUS_CODES = (
     308,  # Permanent redirect
 )
 
-_ALLOWED_REDIRECT_DOMAIN_SUFFIXES = (
-    ".livediagnostics.monitor.azure.com",
-    ".monitor.azure.com",
-    ".services.visualstudio.com",
-    ".applicationinsights.azure.com",
-    ".monitor.azure.us",
-    ".applicationinsights.azure.us",
-    ".monitor.azure.cn",
-    ".applicationinsights.azure.cn",
+_ALLOWED_REDIRECT_DOMAIN_SUFFIX_GROUPS = (
+    (
+        ".livediagnostics.monitor.azure.com",
+        ".monitor.azure.com",
+        ".services.visualstudio.com",
+        ".applicationinsights.azure.com",
+    ),
+    (
+        ".monitor.azure.us",
+        ".applicationinsights.azure.us",
+    ),
+    (
+        ".monitor.azure.cn",
+        ".applicationinsights.azure.cn",
+    ),
+)
+
+# Flattened view of the groups above, used where only a single target host is validated and no
+# cross-host trust decision is being made (e.g. the Quickpulse redirect policy).
+_ALLOWED_REDIRECT_DOMAIN_SUFFIXES = tuple(
+    suffix for group in _ALLOWED_REDIRECT_DOMAIN_SUFFIX_GROUPS for suffix in group
 )
 
 _RETRYABLE_STATUS_CODES = (
@@ -155,6 +167,7 @@ _EU_ENDPOINTS = [
     "northeurope",
     "francecentral",
     "francesouth",
+    "germanynorth",
     "germanywestcentral",
     "norwayeast",
     "norwaywest",
