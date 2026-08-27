@@ -53,18 +53,14 @@ def _run_worker(python: Path, arguments: argparse.Namespace) -> dict[str, object
     return json.loads(output)
 
 
-def _install_and_run(
-    root: Path, label: str, package: str, arguments: argparse.Namespace
-) -> dict[str, object]:
+def _install_and_run(root: Path, label: str, package: str, arguments: argparse.Namespace) -> dict[str, object]:
     environment = root / label
     print(f"Creating {label} environment", file=sys.stderr)
     venv.EnvBuilder(with_pip=True).create(environment)
     python = _python_executable(environment)
     package = _package_spec(package)
     print(f"Installing {package}", file=sys.stderr)
-    subprocess.run(
-        [str(python), "-m", "pip", "install", "--quiet", package], check=True
-    )
+    subprocess.run([str(python), "-m", "pip", "install", "--quiet", package], check=True)
     return _run_worker(python, arguments)
 
 
@@ -129,9 +125,7 @@ def _worker(arguments: argparse.Namespace) -> int:
         }
         for index in range(arguments.num_documents)
     ]
-    client = SearchClient(
-        "https://localhost", "perf-index", AzureKeyCredential("perf-test-key")
-    )
+    client = SearchClient("https://localhost", "perf-index", AzureKeyCredential("perf-test-key"))
 
     with patch.object(SearchClient, "index_documents", return_value=[]):
         for _ in range(arguments.warmups):
@@ -178,9 +172,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--num-documents", type=int, default=100)
     parser.add_argument("--vector-dimensions", type=int, default=3072)
     parser.add_argument("--text-length", type=int, default=4000)
-    parser.add_argument(
-        "--output-json", help="Optional path for machine-readable results."
-    )
+    parser.add_argument("--output-json", help="Optional path for machine-readable results.")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     arguments = parser.parse_args()
     if arguments.repeats < 1:

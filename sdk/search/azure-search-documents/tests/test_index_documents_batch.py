@@ -7,11 +7,13 @@
 from __future__ import annotations
 
 import json
+from enum import Enum
 
 import pytest
 
 from azure.search.documents import IndexDocumentsBatch
 from azure.search.documents._utils.model_base import SdkJSONEncoder
+from azure.search.documents.models._patch import _patch_sdk_json_encoder
 from azure.search.documents.models import IndexAction
 
 METHOD_NAMES = [
@@ -22,6 +24,10 @@ METHOD_NAMES = [
 ]
 
 METHOD_MAP = dict(zip(METHOD_NAMES, ["upload", "delete", "merge", "mergeOrUpload"]))
+
+
+class DocumentStatus(Enum):
+    READY = "ready"
 
 
 class TestIndexDocumentsBatch:
@@ -87,9 +93,7 @@ class TestIndexDocumentsBatch:
         added_actions = method([{"id": "1", "content_vector": vector}])
 
         assert added_actions[0]["content_vector"] is vector
-        assert json.loads(
-            json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)
-        ) == {
+        assert json.loads(json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)) == {
             "value": [
                 {
                     "@search.action": METHOD_MAP[method_name],
@@ -98,6 +102,37 @@ class TestIndexDocumentsBatch:
                 }
             ]
         }
+
+    def test_add_upload_actions_serializes_nested_enum_values(self):
+        batch = IndexDocumentsBatch()
+        batch.add_upload_actions(
+            [
+                {
+                    "id": "1",
+                    "status": DocumentStatus.READY,
+                    "metadata": {"statuses": [DocumentStatus.READY]},
+                }
+            ]
+        )
+
+        assert json.loads(json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)) == {
+            "value": [
+                {
+                    "@search.action": "upload",
+                    "id": "1",
+                    "status": "ready",
+                    "metadata": {"statuses": ["ready"]},
+                }
+            ]
+        }
+
+    def test_sdk_json_encoder_patch_is_idempotent(self):
+        patched_default = SdkJSONEncoder.default
+
+        _patch_sdk_json_encoder()
+        _patch_sdk_json_encoder()
+
+        assert SdkJSONEncoder.default is patched_default
 
     def test_constructor_accepts_existing_actions(self):
         actions = [

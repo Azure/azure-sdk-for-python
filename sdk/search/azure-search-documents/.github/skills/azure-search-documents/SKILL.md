@@ -146,7 +146,7 @@ git diff azure/search/documents/indexes/models/_models.py azure/search/documents
 ```
 
 Watch for:
-- **Renamed enum values** — `indexes/models/_patch.py` monkey-patches camelCase aliases onto `SearchFieldDataType` (`String`, `Int32`, `Int64`, `Single`, `Double`, `Boolean`, `DateTimeOffset`, `GeographyPoint`, `ComplexType`). All right-hand-side UPPER_CASE members must still exist.
+- **Renamed enum values** — `indexes/models/_patch.py` declares a `TYPE_CHECKING` mirror and monkey-patches camelCase aliases onto `SearchFieldDataType` at runtime (`String`, `Int32`, `Int64`, `Single`, `Double`, `Boolean`, `DateTimeOffset`, `GeographyPoint`, `ComplexType`). Keep the mirror synchronized with every generated enum member, and verify all right-hand-side UPPER_CASE members still exist.
 - **Changed model constructors** — `IndexDocumentsBatch`, `SearchField`, `SearchIndexerDataSourceConnection`, `KnowledgeBase` are subclassed in `_patch.py`; base-class constructor changes break them.
 - **New fields on `SearchResult`** — `_convert_search_result()` extracts `@search.*` metadata (`score`, `reranker_score`, `highlights`, `captions`, `document_debug_info`, `reranker_boosted_score`). New metadata fields must be added there.
 - **Changed `SearchRequest`** — `_build_search_request()` constructs this model directly; new query parameters must be wired through, including any new pipe-delimited semantic encoding.
@@ -218,6 +218,8 @@ New semantic-search parameters follow this pattern.
 
 `index_documents()` in `_operations/_patch.py` recursively splits an `IndexDocumentsBatch` in half when the service returns `RequestEntityTooLargeError` (413). Retry-on-split uses `is_retryable_status_code()` (409/422/503).
 
+`models/_patch.py` constructs each `IndexAction` with only its action type, then adds document fields through `update()`. This avoids recursively copying large vectors before final request serialization. Its idempotent `SdkJSONEncoder` customization converts plain `Enum` values at the final JSON boundary, including nested values. Do not pass the complete document mapping back through `IndexAction(...)`; that reintroduces the upload performance regression.
+
 ## SearchIndexingBufferedSender
 
 Entirely hand-authored in `_patch.py` (sync) and `aio/_patch.py` (async); not generated. Wraps `SearchClient` with:
@@ -233,11 +235,12 @@ Entirely hand-authored in `_patch.py` (sync) and `aio/_patch.py` (async); not ge
 - `SearchableField(...)` — auto-types to `String` / `Collection(String)`.
 - `ComplexField(...)` — sets type to `Complex` / `Collection(Complex)`.
 - `SearchField` subclass adds `hidden` property (inverse of `retrievable`).
-- `SearchFieldDataType.Collection = staticmethod(_collection_helper)` — monkey-patched onto the generated enum.
+- A `TYPE_CHECKING`-only `SearchFieldDataType` mirror declares all generated members, legacy aliases, and the callable `Collection` helper for static analyzers.
+- At runtime, `SearchFieldDataType.Collection = staticmethod(_collection_helper)` is monkey-patched onto the generated enum.
 
 ## Backward-Compatible Enum Aliases
 
-Applied at module load in `indexes/models/_patch.py`:
+Applied only in the runtime branch of `indexes/models/_patch.py`:
 
 ```python
 SearchFieldDataType.Int32 = SearchFieldDataType.INT32   # camelCase → UPPER

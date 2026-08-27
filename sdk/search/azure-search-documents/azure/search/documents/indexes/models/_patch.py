@@ -174,6 +174,7 @@ def _collection_helper(typ: Any) -> str:
 # The Collection method is added at runtime via monkey-patching
 if TYPE_CHECKING:
 
+    # pylint: disable=enum-must-inherit-case-insensitive-enum-meta,enum-must-be-uppercase
     class SearchFieldDataType(str, Enum):
         STRING = "Edm.String"
         INT32 = "Edm.Int32"
@@ -202,20 +203,21 @@ if TYPE_CHECKING:
         def Collection(typ: Union[str, "SearchFieldDataType"]) -> str:
             return _collection_helper(typ)
 
+    # pylint: enable=enum-must-inherit-case-insensitive-enum-meta,enum-must-be-uppercase
+
 else:
     SearchFieldDataType = _SearchFieldDataType
     SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore[attr-defined]
-
-# Backward-compatible aliases (old camelCase names -> new UPPER_CASE names)
-SearchFieldDataType.String = SearchFieldDataType.STRING  # type: ignore[attr-defined]
-SearchFieldDataType.Int32 = SearchFieldDataType.INT32  # type: ignore[attr-defined]
-SearchFieldDataType.Int64 = SearchFieldDataType.INT64  # type: ignore[attr-defined]
-SearchFieldDataType.Single = SearchFieldDataType.SINGLE  # type: ignore[attr-defined]
-SearchFieldDataType.Double = SearchFieldDataType.DOUBLE  # type: ignore[attr-defined]
-SearchFieldDataType.Boolean = SearchFieldDataType.BOOLEAN  # type: ignore[attr-defined]
-SearchFieldDataType.DateTimeOffset = SearchFieldDataType.DATE_TIME_OFFSET  # type: ignore[attr-defined]
-SearchFieldDataType.GeographyPoint = SearchFieldDataType.GEOGRAPHY_POINT  # type: ignore[attr-defined]
-SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
+    # Backward-compatible aliases (old camelCase names -> new UPPER_CASE names)
+    SearchFieldDataType.String = SearchFieldDataType.STRING  # type: ignore[attr-defined]
+    SearchFieldDataType.Int32 = SearchFieldDataType.INT32  # type: ignore[attr-defined]
+    SearchFieldDataType.Int64 = SearchFieldDataType.INT64  # type: ignore[attr-defined]
+    SearchFieldDataType.Single = SearchFieldDataType.SINGLE  # type: ignore[attr-defined]
+    SearchFieldDataType.Double = SearchFieldDataType.DOUBLE  # type: ignore[attr-defined]
+    SearchFieldDataType.Boolean = SearchFieldDataType.BOOLEAN  # type: ignore[attr-defined]
+    SearchFieldDataType.DateTimeOffset = SearchFieldDataType.DATE_TIME_OFFSET  # type: ignore[attr-defined]
+    SearchFieldDataType.GeographyPoint = SearchFieldDataType.GEOGRAPHY_POINT  # type: ignore[attr-defined]
+    SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
 
 
 def Collection(typ: Any) -> str:

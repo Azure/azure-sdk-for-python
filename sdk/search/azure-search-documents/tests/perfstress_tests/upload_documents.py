@@ -16,17 +16,13 @@ from azure.search.documents.aio import SearchClient as AsyncClient
 
 
 class _SyncSerializationClient(SyncClient):
-    def _index(
-        self, batch: Any, **kwargs: Any
-    ) -> Any:  # pylint: disable=unused-argument
+    def _index(self, batch: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
         json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)
         return SimpleNamespace(results=[])
 
 
 class _AsyncSerializationClient(AsyncClient):
-    async def _index(
-        self, batch: Any, **kwargs: Any
-    ) -> Any:  # pylint: disable=unused-argument
+    async def _index(self, batch: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
         json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)
         return SimpleNamespace(results=[])
 
@@ -37,16 +33,10 @@ class UploadDocumentsTest(PerfStressTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         credential = AzureKeyCredential("perf-test-key")
-        self.service_client = _SyncSerializationClient(
-            "https://localhost", "perf-index", credential
-        )
-        self.async_service_client = _AsyncSerializationClient(
-            "https://localhost", "perf-index", credential
-        )
+        self.service_client = _SyncSerializationClient("https://localhost", "perf-index", credential)
+        self.async_service_client = _AsyncSerializationClient("https://localhost", "perf-index", credential)
 
-        vector = [
-            float(index % 10) / 10 for index in range(self.args.vector_dimensions)
-        ]
+        vector = [float(index % 10) / 10 for index in range(self.args.vector_dimensions)]
         content = "x" * self.args.text_length
         self.documents = [
             {
