@@ -88,6 +88,15 @@ def _create_trace_with_azure_sdk_request(logs_client, resource_id, *, azure_sdk_
     return control_name, control_span_id, trace_id
 
 
+def _assert_control_span_in_appinsights(logs_client, resource_id, control_name, trace_id):
+    """Verify the control span for an Azure SDK instrumentation scenario was ingested."""
+    control_query = f"dependencies | where operation_Id == '{trace_id}' | where name == '{control_name}' | take 1"
+    control_rows = _poll_appinsights(logs_client, resource_id, control_query)
+    assert (
+        len(control_rows) > 0
+    ), f"Control span (trace_id={trace_id}) not found in App Insights after {_APPINSIGHTS_POLL_TIMEOUT}s"
+
+
 # ---------------------------------------------------------------------------
 # Warm-up fixture: initialize app and wait for App Insights to be ready
 # ---------------------------------------------------------------------------
@@ -384,12 +393,12 @@ class TestAppInsightsIngestionE2E:
             appinsights_resource_id,
             azure_sdk_enabled=False,
         )
-
-        control_query = f"dependencies | where operation_Id == '{trace_id}' | where name == '{control_name}' | take 1"
-        control_rows = _poll_appinsights(logs_query_client, appinsights_resource_id, control_query)
-        assert (
-            len(control_rows) > 0
-        ), f"Control span (trace_id={trace_id}) not found in App Insights after {_APPINSIGHTS_POLL_TIMEOUT}s"
+        _assert_control_span_in_appinsights(
+            logs_query_client,
+            appinsights_resource_id,
+            control_name,
+            trace_id,
+        )
 
         dependency_query = (
             "dependencies "
@@ -419,10 +428,16 @@ class TestAppInsightsIngestionE2E:
                 instrumentation_options={"azure_sdk": {"enabled": True}},
             )
         )
-        _control_name, control_span_id, trace_id = _create_trace_with_azure_sdk_request(
+        control_name, control_span_id, trace_id = _create_trace_with_azure_sdk_request(
             logs_query_client,
             appinsights_resource_id,
             azure_sdk_enabled=True,
+        )
+        _assert_control_span_in_appinsights(
+            logs_query_client,
+            appinsights_resource_id,
+            control_name,
+            trace_id,
         )
 
         dependency_query = (
