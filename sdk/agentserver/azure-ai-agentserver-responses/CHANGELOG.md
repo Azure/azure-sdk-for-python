@@ -9,6 +9,12 @@
   tombstones. Existing pre-rollout active chains remain resumable through a
   legacy-ID lookup.
 
+### Other Changes
+
+- Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b1`,
+  which provides the session GUID configuration and legacy task lookup used by
+  resilient Responses.
+
 ## 2.1.0 (2026-08-24)
 
 ### Other Changes
