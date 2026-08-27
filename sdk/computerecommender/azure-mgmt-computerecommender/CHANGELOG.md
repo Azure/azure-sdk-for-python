@@ -1,5 +1,19 @@
 # Release History
 
+## 1.0.0b3 (2026-08-27)
+
+### Features Added
+
+  - Model `SkuMixPlacementResponse` added property `capacity_limits`
+  - Model `SkuMixPlacementResponse` added property `id`
+  - Added model `SkuMixPlacementCapacityLimit`
+  - Added enum `SkuMixPlacementCapacityLimitReason`
+
+### Breaking Changes
+
+  - Model `SkuMixPlacementDeploymentChoice` deleted or renamed its instance variable `id`
+  - Model `SkuMixPlacementItem` deleted or renamed its instance variable `capacity_max`
+
 ## 1.0.0b2 (2026-08-03)
 
 ### Features Added
