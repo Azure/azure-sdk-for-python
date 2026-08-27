@@ -42,7 +42,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         # DB + container create + item seeding go through key-auth setup client
         # (control-plane). Tests query through the AAD data client below.
         cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.test_db = cls.key_client.create_database(str(uuid.uuid4()))
+        cls.test_db = cls.key_client.create_database(test_config.unique_database_id("hybrid-search"))
         key_container = cls.test_db.create_container(
             id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),

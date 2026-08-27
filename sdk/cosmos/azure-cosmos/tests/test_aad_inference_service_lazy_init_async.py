@@ -66,7 +66,7 @@ class CosmosEmulatorCredential(object):
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
 class TestAADInferenceServiceLazyInitAsync(unittest.IsolatedAsyncioTestCase):
     """Verify async AAD client construction succeeds without the semantic reranker env var.
 

@@ -46,7 +46,32 @@ jobs:
     inputs:
       ConnectedServiceNameARM: d71e80c4-c3df-4a27-9fc7-f25563bbb0d1
       ScriptType: InlineScript
-      Inline: "$uri = New-Object System.Uri(\"${env:ACCOUNT_HOST}\")\n\n$accountName = $uri.Host.Split('.')[0]\nWrite-Host \"Clean up databases from $accountName\"\n\n$res = Get-AzResource -Name $accountName -ResourceType \"Microsoft.DocumentDb/databaseAccounts\"\n\nif ($res -ne $null) {\n\n    $account = Get-AzCosmosDBAccount -ResourceId $res.ResourceId\n\n    $dbs = Get-AzCosmosDBSqlDatabase -ParentObject $account\n\n    $dbs | Write-Output\n\n    $dbs | Remove-AzCosmosDBSqlDatabase\n    \n    Write-Host \"$accountName is cleaned\"\n}\nelse {\n   Write-Host \"Unable to find $accountName\"\n}"
+      Inline: |
+        $uri = New-Object System.Uri("${env:ACCOUNT_HOST}")
+        $accountName = $uri.Host.Split('.')[0]
+
+        # Only remove databases this pipeline run created. The account is long lived and
+        # shared with other languages' CI and with concurrent runs of this suite, so an
+        # unfiltered sweep would delete resources that are still in use.
+        $prefix = "PythonSDKTest-$($env:BUILD_BUILDID)-"
+        Write-Host "Clean up databases matching '$prefix*' from $accountName"
+
+        $res = Get-AzResource -Name $accountName -ResourceType "Microsoft.DocumentDb/databaseAccounts"
+
+        if ($null -ne $res) {
+            $account = Get-AzCosmosDBAccount -ResourceId $res.ResourceId
+
+            $dbs = Get-AzCosmosDBSqlDatabase -ParentObject $account | Where-Object { $_.Name.StartsWith($prefix) }
+
+            $dbs | Write-Output
+
+            $dbs | Remove-AzCosmosDBSqlDatabase
+
+            Write-Host "$accountName is cleaned"
+        }
+        else {
+           Write-Host "Unable to find $accountName"
+        }
       errorActionPreference: continue
       TargetAzurePs: LatestVersion
   - task: Bash@3
@@ -60,24 +85,25 @@ jobs:
     condition: succeededOrFailed()
     inputs:
       scriptSource: inline
-      script: >-
-        # python tests creates databases with special characters (!@$%^&*()-~`'_[]{}|;:,.<>) and PS and Portal unable to remove them. This task additionally clean resource that couldn't be removed using previous PS task
-
-
+      script: |
+        # Python tests create databases with special characters (!@$%^&*()-~`'_[]{}|;:,.<>)
+        # that PS and the Portal are unable to remove. This task additionally cleans up
+        # resources that the previous PS task could not.
         import os
 
         import azure.cosmos.cosmos_client as cosmos_client
 
-        host = os.environ.get("ACCOUNT_HOST", "") 
-
+        host = os.environ.get("ACCOUNT_HOST", "")
         key = os.environ.get("ACCOUNT_KEY", "")
+
+        # Scoped to this run for the same reason as the PS task above.
+        prefix = "PythonSDKTest-{}-".format(os.environ.get("BUILD_BUILDID", ""))
 
         client = cosmos_client.CosmosClient(host, key)
 
-
         for db in client.list_databases():
-
-            client.delete_database(db["id"])
+            if db["id"].startswith(prefix):
+                client.delete_database(db["id"])
     env:
       ACCOUNT_KEY: $(ACCOUNT_KEY) # Maps the secret variable $(token) from my-var-group
 ...

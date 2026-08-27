@@ -47,7 +47,7 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.sync_client = CosmosSyncClient(cls.host, cls.masterKey)
-        cls.test_db = cls.sync_client.create_database(str(uuid.uuid4()))
+        cls.test_db = cls.sync_client.create_database(test_config.unique_database_id("vector-similarity"))
         cls.created_quantized_cosine_container = cls.test_db.create_container(
             id="quantized" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
