@@ -158,6 +158,16 @@ def _validate_pagination_limit(limit: Optional[int]) -> None:
         )
 
 
+def _validate_poll_interval(poll_interval_s: float) -> float:
+    try:
+        value = float(poll_interval_s)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("poll_interval_s must be a finite number") from exc
+    if not math.isfinite(value) or value < 0:
+        raise ValueError("poll_interval_s must be a finite number greater than or equal to 0")
+    return value
+
+
 def _is_healthy_response(response: Any) -> bool:
     if not isinstance(response, Mapping):
         return True
@@ -435,12 +445,18 @@ class OpenEnvInstance:
 
     @property
     def environment_version(self) -> str:
-        """Resolved environment version that owns this instance."""
+        """Resolved environment version that owns this instance.
+
+        :rtype: str
+        """
         return self._environment_version
 
     @property
     def instance(self) -> RLEInstance:
-        """The underlying leased instance model."""
+        """The underlying leased instance model.
+
+        :rtype: ~azure.ai.projects.models.RLEInstance
+        """
         if self._instance is None:
             raise RLEError("instance has been released")
         return self._instance
@@ -586,7 +602,7 @@ class OpenEnvInstance:
             pass
 
 
-class OpenEnvClient:
+class OpenEnvClient:  # pylint: disable=too-many-instance-attributes,client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
     """A client over a hosted RLE (OpenEnv) environment with a reserved concurrency quota.
 
     Created via :meth:`RLEOperations.get_openenv_client`. On entering its context the client creates a
@@ -650,7 +666,7 @@ class OpenEnvClient:
         self._max_active_instances = max_active_instances
         self._acquire_settings = (
             _validate_instance_acquire_timeout(instance_acquire_timeout),
-            poll_interval_s,
+            _validate_poll_interval(poll_interval_s),
         )
         self._instance_group_id: Optional[str] = None
         self._lock = threading.Lock()
@@ -663,12 +679,18 @@ class OpenEnvClient:
 
     @property
     def max_active_instances(self) -> int:
-        """Concurrency the instance group reserves on the service for this client."""
+        """Concurrency the instance group reserves on the service for this client.
+
+        :rtype: int
+        """
         return self._max_active_instances
 
     @property
     def environment_name(self) -> str:
-        """Environment name, resolved from the instance-group response after context entry."""
+        """Environment name, resolved from the instance-group response after context entry.
+
+        :rtype: str
+        """
         return self._name
 
     @property
@@ -850,6 +872,8 @@ class RLEOperations:
         :type name: str
         :param acr_image_path: Azure Container Registry image path that backs the environment. Required.
         :type acr_image_path: str
+        :keyword version_bump: Semantic version component to increment. Omit to let the service choose.
+        :paramtype version_bump: str or ~azure.ai.projects.models.RLEnvironmentVersionBump or None
         :return: The created RLEnvironment.
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -884,6 +908,8 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
+        :keyword order: Sort order for the page. Known values are "asc" and "desc".
+        :paramtype order: str or ~azure.ai.projects.models.RLEPaginationOrder or None
         :return: An iterator over hosted RLE environments.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -955,6 +981,8 @@ class RLEOperations:
         :paramtype limit: int or None
         :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
         :paramtype continuation_token: str or None
+        :keyword order: Sort order for the page. Known values are "asc" and "desc".
+        :paramtype order: str or ~azure.ai.projects.models.RLEPaginationOrder or None
         :return: An iterator over historical environment versions.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RLEnvironment]
         :raises ~azure.core.exceptions.HttpResponseError:

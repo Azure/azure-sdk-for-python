@@ -20,10 +20,7 @@ from ._patch_models_async import BetaModelsOperations
 from ._patch_rle_async import (
     AsyncOpenEnvClient,
     AsyncOpenEnvInstance,
-    RLEError,
-    RLEInstanceAcquireTimeoutError,
     RLEOperations,
-    RLEQuotaExceededError,
 )
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (

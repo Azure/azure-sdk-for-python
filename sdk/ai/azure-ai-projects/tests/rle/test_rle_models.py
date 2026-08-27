@@ -959,6 +959,10 @@ def test_get_openenv_client_validates_arguments():
     for timeout in (0, -1, float("inf"), float("nan"), 3601):
         with pytest.raises(ValueError, match="instance_acquire_timeout"):
             ops.get_openenv_client(name="wordle", instance_acquire_timeout=timeout)
+    assert ops.get_openenv_client(name="wordle", poll_interval_s=0)
+    for interval in (-1, float("inf"), float("nan")):
+        with pytest.raises(ValueError, match="poll_interval_s"):
+            ops.get_openenv_client(name="wordle", poll_interval_s=interval)
 
 
 def test_create_environment_builds_request():
@@ -1518,6 +1522,39 @@ def test_async_openenv_client_creates_group_and_runs():
         )
 
     asyncio.run(run())
+
+
+def test_async_openenv_instance_entry_is_atomic():
+    async def run():
+        client, _groups, instances = _make_async_openenv_client()
+        async with client:
+            instance_context = client.get_instance()
+            results = await asyncio.gather(
+                instance_context.__aenter__(),
+                instance_context.__aenter__(),
+                return_exceptions=True,
+            )
+            assert sum(isinstance(result, AsyncOpenEnvInstance) for result in results) == 1
+            assert sum(isinstance(result, RLEError) for result in results) == 1
+            assert instances._next == 1
+            await instance_context.release()
+
+    asyncio.run(run())
+
+
+def test_async_openenv_client_validates_poll_interval():
+    client, _groups, _instances = _make_async_openenv_client()
+    assert client
+    for interval in (-1, float("inf"), float("nan")):
+        with pytest.raises(ValueError, match="poll_interval_s"):
+            AsyncOpenEnvClient(
+                environments=_AsyncFakeEnvironments(),
+                instance_groups=_AsyncFakeInstanceGroups(),
+                instances=_AsyncFakeInstances(),
+                runtime=_AsyncFakeInstances(),
+                name="env-1",
+                poll_interval_s=interval,
+            )
 
 
 def test_async_openenv_runtime_calls_use_runtime_operations_group():
