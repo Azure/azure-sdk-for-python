@@ -1701,16 +1701,6 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
             return None
         return run
 
-    async def _get(self, task_id: str) -> Any:
-        """Return the persisted chain record for internal orchestration.
-
-        :param task_id: The chain task identifier.
-        :type task_id: str
-        :return: The persisted task information, or ``None`` when absent.
-        :rtype: Any
-        """
-        return await self._inner._get(task_id)  # noqa: SLF001  # pylint: disable=protected-access
-
     async def delete(self, task_id: str) -> None:
         """Force-delete the chain record + any queued inputs.
 

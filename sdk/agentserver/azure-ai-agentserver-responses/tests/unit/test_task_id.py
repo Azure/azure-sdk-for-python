@@ -140,51 +140,6 @@ class TestTaskIdDerivation:
         )
         assert id1 != id2
 
-    def test_private_task_session_scope_decouples_public_chain_id(self) -> None:
-        """A session GUID changes only the physical task namespace."""
-        kwargs = dict(
-            conversation_id="conv_123",
-            previous_response_id=None,
-            response_id="resp_456",
-            agent_name="agent",
-            session_id="same-public-name",
-        )
-
-        public_chain_id = derive_conversation_chain_id(**kwargs)
-        task_id = derive_task_id(
-            **kwargs,
-            task_session_id="11111111111111111111111111111111",
-        )
-
-        assert task_id != public_chain_id
-
-    def test_different_session_guids_produce_different_task_ids(self) -> None:
-        """Recreated same-name sessions do not collide with tombstoned task IDs."""
-        kwargs = dict(
-            conversation_id="conv_123",
-            previous_response_id=None,
-            response_id="resp_456",
-            agent_name="agent",
-            session_id="same-public-name",
-        )
-
-        first = derive_task_id(**kwargs, task_session_id="1" * 32)
-        recreated = derive_task_id(**kwargs, task_session_id="2" * 32)
-
-        assert first != recreated
-
-    def test_missing_private_scope_preserves_legacy_task_id(self) -> None:
-        """Absent session GUID keeps the pre-rollout derivation."""
-        kwargs = dict(
-            conversation_id="conv_123",
-            previous_response_id=None,
-            response_id="resp_456",
-            agent_name="agent",
-            session_id="same-public-name",
-        )
-
-        assert derive_task_id(**kwargs) == derive_task_id(**kwargs, task_session_id=None)
-
     def test_parallel_forks_get_distinct_ids(self) -> None:
         """Two requests with same previous_response_id but steerable=False
         use response_id as key → distinct task IDs (FR-013)."""

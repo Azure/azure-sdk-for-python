@@ -418,7 +418,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         response_id: str,
         agent_reference: AgentReference | dict[str, Any],
         agent_session_id: str | None = None,
-        agent_session_guid: str | None = None,
         span: CreateSpan,
         request: Request,
     ) -> _ExecutionContext:
@@ -437,9 +436,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :paramtype agent_reference: AgentReference | dict[str, Any]
         :keyword agent_session_id: Resolved session ID (B39), or ``None``.
         :paramtype agent_session_id: str | None
-        :keyword agent_session_guid: Platform session-incarnation GUID, or
-            ``None`` when unavailable.
-        :paramtype agent_session_guid: str | None
         :keyword span: Active observability span for this request.
         :paramtype span: CreateSpan
         :keyword request: Starlette HTTP request (for headers / query params).
@@ -477,7 +473,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             conversation_id=conversation_id,
             cancellation_signal=cancellation_signal,
             agent_session_id=agent_session_id,
-            agent_session_guid=agent_session_guid,
             span=span,
             parsed=parsed,
             user_id=request.headers.get(USER_ID),
@@ -677,12 +672,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # B39: Resolve session ID
         config_session_id = getattr(getattr(self._host, "config", None), "session_id", "") or ""
-        host_config = getattr(self._host, "config", None)
-        config_session_guid = (
-            getattr(host_config, "session_guid", "") or ""
-            if getattr(host_config, "is_hosted", False)
-            else ""
-        )
         agent_session_id = _resolve_session_id(
             parsed, payload, env_session_id=config_session_id, agent_reference=agent_reference
         )
@@ -692,7 +681,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             response_id=response_id,
             agent_reference=agent_reference,
             agent_session_id=agent_session_id,
-            agent_session_guid=config_session_guid or None,
             span=span,
             request=request,
         )

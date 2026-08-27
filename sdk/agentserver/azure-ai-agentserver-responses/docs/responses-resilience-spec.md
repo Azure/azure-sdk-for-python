@@ -197,8 +197,9 @@ value that is stable across every turn of the chain.
 
 Since Spec 038 the chain id is a **native IdGenerator-convention id** — the
 prefix acts as the discriminator, the embedded partition key co-locates the
-chain with its responses, and a deterministic `(agent, public session)` scope
-fills the "entropy" slot. The three cases:
+chain with its responses, and a deterministic `(agent, session)` scope fills the
+"entropy" slot. `task_id == conversation_chain_id` exactly (no wrapper prefix).
+The three cases:
 
 1. `conversation_id` present → `cchain_{partition(conversation_id)}{scope}`
    (partition extracted from the id, or derived deterministically when it is not
@@ -229,24 +230,15 @@ API charset/limit (`^[a-zA-Z0-9_-]{1,128}$`).
 
 ### §4.2 — The `task_id`
 
-The physical task ID uses the same chain selection and native shape. In hosted
-mode, when `FOUNDRY_AGENT_SESSION_GUID` is available, its session-incarnation
-scope replaces the public session scope:
+Since Spec 038 the chain id is itself a native, self-prefixed id, so the
+resilient task is keyed directly on it:
 
 ```
-task_scope = FOUNDRY_AGENT_SESSION_GUID or public_session_id
-task_id = derive_chain_id(agent_name, task_scope, chain_anchor)
+task_id = chain_id      # e.g. "rchain_<partitionKey><scope>" (see §4.1)
 ```
 
-This prevents a recreated same-name session from colliding with a task
-tombstone left by the deleted session. The handler-facing
-`conversation_chain_id` remains based on the public session identity. One-shot
-task IDs remain the response ID.
-
-During migration, a multi-turn start computes both GUID-scoped and legacy
-public-session-scoped IDs. It prefers an existing GUID-scoped task, otherwise
-continues an existing pending/in-progress/suspended legacy task, and creates
-under the GUID-scoped ID only when neither exists.
+The task that backs a conversation and the handler-facing chain id therefore
+**are one and the same identity** and can never drift apart.
 
 ### §4.3 — Public surface
 
