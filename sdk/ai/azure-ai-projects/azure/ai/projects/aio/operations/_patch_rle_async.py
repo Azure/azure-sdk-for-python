@@ -90,6 +90,12 @@ async def _acquire_instance(
 
     :param instances: Generated async instance operations bound to the project client.
     :type instances: ~azure.ai.projects.aio.operations.RLEInstancesOperations
+    :param runtime: Generated async instance runtime operations bound to the project client.
+    :type runtime: ~azure.ai.projects.aio.operations.RLEInstanceRuntimeOperations
+    :param environment_name: The environment that owns the instance group.
+    :type environment_name: str
+    :param environment_version: Resolved environment version that owns the instance group.
+    :type environment_version: str
     :param instance_group_id: The instance group to lease an instance from.
     :type instance_group_id: str
     :keyword instance_acquire_timeout: Maximum time to acquire a healthy instance, in seconds.
@@ -263,33 +269,44 @@ class AsyncOpenEnvInstance:
         self._poll_interval_s = poll_interval_s
         self._is_client_closed = is_client_closed
         self._instance: Optional[RLEInstance] = None
-        self._instance_id: Optional[str] = None
         self._released = False
 
     @property
     def id(self) -> str:
         """Identifier of the leased instance that backs this object."""
-        if self._instance_id is None:
+        instance = self._instance
+        if instance is None:
             if self._released:
                 raise RLEError("instance has been released")
             raise RLEError(
                 "enter the AsyncOpenEnvInstance context before accessing the instance"
             )
-        return self._instance_id
+        if not instance.instance_id:
+            raise RLEError("service did not return an instance id")
+        return instance.instance_id
 
     @property
     def instance_group_id(self) -> str:
-        """The instance group the instance was leased from."""
+        """The instance group the instance was leased from.
+
+        :rtype: str
+        """
         return self._instance_group_id
 
     @property
     def environment_name(self) -> str:
-        """Resolved environment name that owns this instance."""
+        """Resolved environment name that owns this instance.
+
+        :rtype: str
+        """
         return self._environment_name
 
     @property
     def environment_version(self) -> str:
-        """Resolved environment version that owns this instance."""
+        """Resolved environment version that owns this instance.
+
+        :rtype: str
+        """
         return self._environment_version
 
     @property
@@ -320,7 +337,6 @@ class AsyncOpenEnvInstance:
             poll_interval_s=self._poll_interval_s,
         )
         self._instance = instance
-        self._instance_id = instance.instance_id
         if self._is_client_closed():
             await self._release()
             raise RLEError("OpenEnv client is closed")
@@ -448,9 +464,10 @@ class AsyncOpenEnvInstance:
 
     async def _release(self) -> None:
         """Release the underlying instance, best effort."""
-        instance_id = self._instance_id
-        if instance_id is None:
+        instance = self._instance
+        if instance is None:
             return
+        instance_id = self.id
         try:
             await self._instances.delete_instance(
                 self._environment_name,
@@ -461,7 +478,6 @@ class AsyncOpenEnvInstance:
         except AzureError:
             pass
         self._instance = None
-        self._instance_id = None
         self._released = True
 
 
