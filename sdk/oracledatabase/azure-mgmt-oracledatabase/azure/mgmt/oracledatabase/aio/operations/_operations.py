@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -153,11 +153,10 @@ from .._configuration import OracleDatabaseMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -221,7 +220,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -234,7 +236,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -250,7 +255,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -258,7 +266,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CloudExadataInfrastructuresOperations:
+class CloudExadataInfrastructuresOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -324,7 +332,10 @@ class CloudExadataInfrastructuresOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -337,7 +348,10 @@ class CloudExadataInfrastructuresOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CloudExadataInfrastructure], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CloudExadataInfrastructure],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -353,7 +367,10 @@ class CloudExadataInfrastructuresOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -364,7 +381,7 @@ class CloudExadataInfrastructuresOperations:
         self,
         resource_group_name: str,
         cloudexadatainfrastructurename: str,
-        resource: Union[_models.CloudExadataInfrastructure, JSON, IO[bytes]],
+        resource: Union[_models.CloudExadataInfrastructure, _types.CloudExadataInfrastructure, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -403,6 +420,7 @@ class CloudExadataInfrastructuresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -416,7 +434,10 @@ class CloudExadataInfrastructuresOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -426,7 +447,7 @@ class CloudExadataInfrastructuresOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -467,7 +488,7 @@ class CloudExadataInfrastructuresOperations:
         self,
         resource_group_name: str,
         cloudexadatainfrastructurename: str,
-        resource: JSON,
+        resource: _types.CloudExadataInfrastructure,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -480,7 +501,7 @@ class CloudExadataInfrastructuresOperations:
         :param cloudexadatainfrastructurename: CloudExadataInfrastructure name. Required.
         :type cloudexadatainfrastructurename: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.oracledatabase.types.CloudExadataInfrastructure
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -525,7 +546,7 @@ class CloudExadataInfrastructuresOperations:
         self,
         resource_group_name: str,
         cloudexadatainfrastructurename: str,
-        resource: Union[_models.CloudExadataInfrastructure, JSON, IO[bytes]],
+        resource: Union[_models.CloudExadataInfrastructure, _types.CloudExadataInfrastructure, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CloudExadataInfrastructure]:
         """Create a CloudExadataInfrastructure.
@@ -535,10 +556,10 @@ class CloudExadataInfrastructuresOperations:
         :type resource_group_name: str
         :param cloudexadatainfrastructurename: CloudExadataInfrastructure name. Required.
         :type cloudexadatainfrastructurename: str
-        :param resource: Resource create parameters. Is one of the following types:
-         CloudExadataInfrastructure, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.oracledatabase.models.CloudExadataInfrastructure or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a CloudExadataInfrastructure type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.CloudExadataInfrastructure or
+         ~azure.mgmt.oracledatabase.types.CloudExadataInfrastructure or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CloudExadataInfrastructure. The
          CloudExadataInfrastructure is compatible with MutableMapping
         :rtype:
@@ -639,6 +660,7 @@ class CloudExadataInfrastructuresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -653,11 +675,14 @@ class CloudExadataInfrastructuresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CloudExadataInfrastructure, response.json())
 
@@ -670,7 +695,7 @@ class CloudExadataInfrastructuresOperations:
         self,
         resource_group_name: str,
         cloudexadatainfrastructurename: str,
-        properties: Union[_models.CloudExadataInfrastructureUpdate, JSON, IO[bytes]],
+        properties: Union[_models.CloudExadataInfrastructureUpdate, _types.CloudExadataInfrastructureUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -709,6 +734,7 @@ class CloudExadataInfrastructuresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -722,7 +748,10 @@ class CloudExadataInfrastructuresOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -730,7 +759,7 @@ class CloudExadataInfrastructuresOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -771,7 +800,7 @@ class CloudExadataInfrastructuresOperations:
         self,
         resource_group_name: str,
         cloudexadatainfrastructurename: str,
-        properties: JSON,
+        properties: _types.CloudExadataInfrastructureUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -784,7 +813,7 @@ class CloudExadataInfrastructuresOperations:
         :param cloudexadatainfrastructurename: CloudExadataInfrastructure name. Required.
         :type cloudexadatainfrastructurename: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.oracledatabase.types.CloudExadataInfrastructureUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -829,7 +858,7 @@ class CloudExadataInfrastructuresOperations:
         self,
         resource_group_name: str,
         cloudexadatainfrastructurename: str,
-        properties: Union[_models.CloudExadataInfrastructureUpdate, JSON, IO[bytes]],
+        properties: Union[_models.CloudExadataInfrastructureUpdate, _types.CloudExadataInfrastructureUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CloudExadataInfrastructure]:
         """Update a CloudExadataInfrastructure.
@@ -839,10 +868,10 @@ class CloudExadataInfrastructuresOperations:
         :type resource_group_name: str
         :param cloudexadatainfrastructurename: CloudExadataInfrastructure name. Required.
         :type cloudexadatainfrastructurename: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         CloudExadataInfrastructureUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.oracledatabase.models.CloudExadataInfrastructureUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         CloudExadataInfrastructureUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.CloudExadataInfrastructureUpdate or
+         ~azure.mgmt.oracledatabase.types.CloudExadataInfrastructureUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CloudExadataInfrastructure. The
          CloudExadataInfrastructure is compatible with MutableMapping
         :rtype:
@@ -930,6 +959,7 @@ class CloudExadataInfrastructuresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -943,7 +973,10 @@ class CloudExadataInfrastructuresOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -951,7 +984,7 @@ class CloudExadataInfrastructuresOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1072,7 +1105,10 @@ class CloudExadataInfrastructuresOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1085,7 +1121,10 @@ class CloudExadataInfrastructuresOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CloudExadataInfrastructure], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CloudExadataInfrastructure],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1101,7 +1140,10 @@ class CloudExadataInfrastructuresOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1137,6 +1179,7 @@ class CloudExadataInfrastructuresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1150,7 +1193,10 @@ class CloudExadataInfrastructuresOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1158,7 +1204,7 @@ class CloudExadataInfrastructuresOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1202,14 +1248,10 @@ class CloudExadataInfrastructuresOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CloudExadataInfrastructure, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -1247,13 +1289,17 @@ class CloudExadataInfrastructuresOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=["2025-08-01-preview", "2025-08-15-preview", "2025-09-01", "2025-11-01-preview"],
     )
     async def _configure_exascale_initial(
         self,
         resource_group_name: str,
         cloudexadatainfrastructurename: str,
-        body: Union[_models.ConfigureExascaleCloudExadataInfrastructureDetails, JSON, IO[bytes]],
+        body: Union[
+            _models.ConfigureExascaleCloudExadataInfrastructureDetails,
+            _types.ConfigureExascaleCloudExadataInfrastructureDetails,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1292,6 +1338,7 @@ class CloudExadataInfrastructuresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1305,7 +1352,10 @@ class CloudExadataInfrastructuresOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1313,7 +1363,7 @@ class CloudExadataInfrastructuresOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1355,7 +1405,7 @@ class CloudExadataInfrastructuresOperations:
         self,
         resource_group_name: str,
         cloudexadatainfrastructurename: str,
-        body: JSON,
+        body: _types.ConfigureExascaleCloudExadataInfrastructureDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1368,7 +1418,7 @@ class CloudExadataInfrastructuresOperations:
         :param cloudexadatainfrastructurename: CloudExadataInfrastructure name. Required.
         :type cloudexadatainfrastructurename: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.ConfigureExascaleCloudExadataInfrastructureDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1421,13 +1471,17 @@ class CloudExadataInfrastructuresOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=["2025-08-01-preview", "2025-08-15-preview", "2025-09-01", "2025-11-01-preview"],
     )
     async def begin_configure_exascale(
         self,
         resource_group_name: str,
         cloudexadatainfrastructurename: str,
-        body: Union[_models.ConfigureExascaleCloudExadataInfrastructureDetails, JSON, IO[bytes]],
+        body: Union[
+            _models.ConfigureExascaleCloudExadataInfrastructureDetails,
+            _types.ConfigureExascaleCloudExadataInfrastructureDetails,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CloudExadataInfrastructure]:
         """Configures Exascale on Cloud exadata infrastructure resource.
@@ -1437,10 +1491,11 @@ class CloudExadataInfrastructuresOperations:
         :type resource_group_name: str
         :param cloudexadatainfrastructurename: CloudExadataInfrastructure name. Required.
         :type cloudexadatainfrastructurename: str
-        :param body: The content of the action request. Is one of the following types:
-         ConfigureExascaleCloudExadataInfrastructureDetails, JSON, IO[bytes] Required.
+        :param body: The content of the action request. Is either a
+         ConfigureExascaleCloudExadataInfrastructureDetails type or a IO[bytes] type. Required.
         :type body:
-         ~azure.mgmt.oracledatabase.models.ConfigureExascaleCloudExadataInfrastructureDetails or JSON or
+         ~azure.mgmt.oracledatabase.models.ConfigureExascaleCloudExadataInfrastructureDetails or
+         ~azure.mgmt.oracledatabase.types.ConfigureExascaleCloudExadataInfrastructureDetails or
          IO[bytes]
         :return: An instance of AsyncLROPoller that returns CloudExadataInfrastructure. The
          CloudExadataInfrastructure is compatible with MutableMapping
@@ -1471,14 +1526,10 @@ class CloudExadataInfrastructuresOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CloudExadataInfrastructure, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -1505,7 +1556,7 @@ class CloudExadataInfrastructuresOperations:
         )
 
 
-class DbServersOperations:
+class DbServersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1566,6 +1617,7 @@ class DbServersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1580,11 +1632,14 @@ class DbServersOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DbServer, response.json())
 
@@ -1650,7 +1705,10 @@ class DbServersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1663,7 +1721,10 @@ class DbServersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DbServer], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DbServer],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1679,7 +1740,10 @@ class DbServersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1687,7 +1751,7 @@ class DbServersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CloudVmClustersOperations:
+class CloudVmClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1753,7 +1817,10 @@ class CloudVmClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1766,7 +1833,10 @@ class CloudVmClustersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CloudVmCluster], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CloudVmCluster],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1782,7 +1852,10 @@ class CloudVmClustersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1793,7 +1866,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        resource: Union[_models.CloudVmCluster, JSON, IO[bytes]],
+        resource: Union[_models.CloudVmCluster, _types.CloudVmCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1832,6 +1905,7 @@ class CloudVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1845,7 +1919,10 @@ class CloudVmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1855,7 +1932,7 @@ class CloudVmClustersOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1895,7 +1972,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        resource: JSON,
+        resource: _types.CloudVmCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1908,7 +1985,7 @@ class CloudVmClustersOperations:
         :param cloudvmclustername: CloudVmCluster name. Required.
         :type cloudvmclustername: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.oracledatabase.types.CloudVmCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1951,7 +2028,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        resource: Union[_models.CloudVmCluster, JSON, IO[bytes]],
+        resource: Union[_models.CloudVmCluster, _types.CloudVmCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CloudVmCluster]:
         """Create a CloudVmCluster.
@@ -1961,9 +2038,10 @@ class CloudVmClustersOperations:
         :type resource_group_name: str
         :param cloudvmclustername: CloudVmCluster name. Required.
         :type cloudvmclustername: str
-        :param resource: Resource create parameters. Is one of the following types: CloudVmCluster,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.oracledatabase.models.CloudVmCluster or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a CloudVmCluster type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.CloudVmCluster or
+         ~azure.mgmt.oracledatabase.types.CloudVmCluster or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CloudVmCluster. The CloudVmCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.CloudVmCluster]
@@ -2060,6 +2138,7 @@ class CloudVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2074,11 +2153,14 @@ class CloudVmClustersOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CloudVmCluster, response.json())
 
@@ -2091,7 +2173,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        properties: Union[_models.CloudVmClusterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.CloudVmClusterUpdate, _types.CloudVmClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2130,6 +2212,7 @@ class CloudVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2143,7 +2226,10 @@ class CloudVmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2151,7 +2237,7 @@ class CloudVmClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2191,7 +2277,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        properties: JSON,
+        properties: _types.CloudVmClusterUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2204,7 +2290,7 @@ class CloudVmClustersOperations:
         :param cloudvmclustername: CloudVmCluster name. Required.
         :type cloudvmclustername: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.oracledatabase.types.CloudVmClusterUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2247,7 +2333,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        properties: Union[_models.CloudVmClusterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.CloudVmClusterUpdate, _types.CloudVmClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CloudVmCluster]:
         """Update a CloudVmCluster.
@@ -2257,9 +2343,10 @@ class CloudVmClustersOperations:
         :type resource_group_name: str
         :param cloudvmclustername: CloudVmCluster name. Required.
         :type cloudvmclustername: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         CloudVmClusterUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.oracledatabase.models.CloudVmClusterUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a CloudVmClusterUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.CloudVmClusterUpdate or
+         ~azure.mgmt.oracledatabase.types.CloudVmClusterUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CloudVmCluster. The CloudVmCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.CloudVmCluster]
@@ -2346,6 +2433,7 @@ class CloudVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2359,7 +2447,10 @@ class CloudVmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2367,7 +2458,7 @@ class CloudVmClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2488,7 +2579,10 @@ class CloudVmClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2501,7 +2595,10 @@ class CloudVmClustersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CloudVmCluster], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CloudVmCluster],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2517,7 +2614,10 @@ class CloudVmClustersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2528,7 +2628,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        body: Union[_models.AddRemoveDbNode, JSON, IO[bytes]],
+        body: Union[_models.AddRemoveDbNode, _types.AddRemoveDbNode, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2567,6 +2667,7 @@ class CloudVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2580,7 +2681,10 @@ class CloudVmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2588,7 +2692,7 @@ class CloudVmClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2628,7 +2732,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        body: JSON,
+        body: _types.AddRemoveDbNode,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2641,7 +2745,7 @@ class CloudVmClustersOperations:
         :param cloudvmclustername: CloudVmCluster name. Required.
         :type cloudvmclustername: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.AddRemoveDbNode
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2684,7 +2788,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        body: Union[_models.AddRemoveDbNode, JSON, IO[bytes]],
+        body: Union[_models.AddRemoveDbNode, _types.AddRemoveDbNode, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CloudVmCluster]:
         """Add VMs to the VM Cluster.
@@ -2694,9 +2798,10 @@ class CloudVmClustersOperations:
         :type resource_group_name: str
         :param cloudvmclustername: CloudVmCluster name. Required.
         :type cloudvmclustername: str
-        :param body: The content of the action request. Is one of the following types: AddRemoveDbNode,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.AddRemoveDbNode or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a AddRemoveDbNode type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AddRemoveDbNode or
+         ~azure.mgmt.oracledatabase.types.AddRemoveDbNode or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CloudVmCluster. The CloudVmCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.CloudVmCluster]
@@ -2725,14 +2830,10 @@ class CloudVmClustersOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CloudVmCluster, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -2762,7 +2863,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        body: Union[_models.AddRemoveDbNode, JSON, IO[bytes]],
+        body: Union[_models.AddRemoveDbNode, _types.AddRemoveDbNode, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2801,6 +2902,7 @@ class CloudVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2814,7 +2916,10 @@ class CloudVmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2822,7 +2927,7 @@ class CloudVmClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2862,7 +2967,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        body: JSON,
+        body: _types.AddRemoveDbNode,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2875,7 +2980,7 @@ class CloudVmClustersOperations:
         :param cloudvmclustername: CloudVmCluster name. Required.
         :type cloudvmclustername: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.AddRemoveDbNode
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2918,7 +3023,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        body: Union[_models.AddRemoveDbNode, JSON, IO[bytes]],
+        body: Union[_models.AddRemoveDbNode, _types.AddRemoveDbNode, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CloudVmCluster]:
         """Remove VMs from the VM Cluster.
@@ -2928,9 +3033,10 @@ class CloudVmClustersOperations:
         :type resource_group_name: str
         :param cloudvmclustername: CloudVmCluster name. Required.
         :type cloudvmclustername: str
-        :param body: The content of the action request. Is one of the following types: AddRemoveDbNode,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.AddRemoveDbNode or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a AddRemoveDbNode type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AddRemoveDbNode or
+         ~azure.mgmt.oracledatabase.types.AddRemoveDbNode or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CloudVmCluster. The CloudVmCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.CloudVmCluster]
@@ -2959,14 +3065,10 @@ class CloudVmClustersOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CloudVmCluster, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3024,7 +3126,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        body: JSON,
+        body: _types.PrivateIpAddressesFilter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3037,7 +3139,7 @@ class CloudVmClustersOperations:
         :param cloudvmclustername: CloudVmCluster name. Required.
         :type cloudvmclustername: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.PrivateIpAddressesFilter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3078,7 +3180,7 @@ class CloudVmClustersOperations:
         self,
         resource_group_name: str,
         cloudvmclustername: str,
-        body: Union[_models.PrivateIpAddressesFilter, JSON, IO[bytes]],
+        body: Union[_models.PrivateIpAddressesFilter, _types.PrivateIpAddressesFilter, IO[bytes]],
         **kwargs: Any
     ) -> List[_models.PrivateIpAddressProperties]:
         """List Private IP Addresses by the provided filter.
@@ -3088,9 +3190,10 @@ class CloudVmClustersOperations:
         :type resource_group_name: str
         :param cloudvmclustername: CloudVmCluster name. Required.
         :type cloudvmclustername: str
-        :param body: The content of the action request. Is one of the following types:
-         PrivateIpAddressesFilter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.PrivateIpAddressesFilter or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a PrivateIpAddressesFilter type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.PrivateIpAddressesFilter or
+         ~azure.mgmt.oracledatabase.types.PrivateIpAddressesFilter or IO[bytes]
         :return: list of PrivateIpAddressProperties
         :rtype: list[~azure.mgmt.oracledatabase.models.PrivateIpAddressProperties]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3131,6 +3234,7 @@ class CloudVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3145,11 +3249,14 @@ class CloudVmClustersOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(List[_models.PrivateIpAddressProperties], response.json())
 
@@ -3159,7 +3266,7 @@ class CloudVmClustersOperations:
         return deserialized  # type: ignore
 
 
-class VirtualNetworkAddressesOperations:
+class VirtualNetworkAddressesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3181,7 +3288,7 @@ class VirtualNetworkAddressesOperations:
         resource_group_name: str,
         cloudvmclustername: str,
         virtualnetworkaddressname: str,
-        resource: Union[_models.VirtualNetworkAddress, JSON, IO[bytes]],
+        resource: Union[_models.VirtualNetworkAddress, _types.VirtualNetworkAddress, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3221,6 +3328,7 @@ class VirtualNetworkAddressesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3234,7 +3342,10 @@ class VirtualNetworkAddressesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3244,7 +3355,7 @@ class VirtualNetworkAddressesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3289,7 +3400,7 @@ class VirtualNetworkAddressesOperations:
         resource_group_name: str,
         cloudvmclustername: str,
         virtualnetworkaddressname: str,
-        resource: JSON,
+        resource: _types.VirtualNetworkAddress,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3304,7 +3415,7 @@ class VirtualNetworkAddressesOperations:
         :param virtualnetworkaddressname: Virtual IP address hostname. Required.
         :type virtualnetworkaddressname: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.oracledatabase.types.VirtualNetworkAddress
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3353,7 +3464,7 @@ class VirtualNetworkAddressesOperations:
         resource_group_name: str,
         cloudvmclustername: str,
         virtualnetworkaddressname: str,
-        resource: Union[_models.VirtualNetworkAddress, JSON, IO[bytes]],
+        resource: Union[_models.VirtualNetworkAddress, _types.VirtualNetworkAddress, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkAddress]:
         """Create a VirtualNetworkAddress.
@@ -3365,9 +3476,10 @@ class VirtualNetworkAddressesOperations:
         :type cloudvmclustername: str
         :param virtualnetworkaddressname: Virtual IP address hostname. Required.
         :type virtualnetworkaddressname: str
-        :param resource: Resource create parameters. Is one of the following types:
-         VirtualNetworkAddress, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.oracledatabase.models.VirtualNetworkAddress or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a VirtualNetworkAddress type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.VirtualNetworkAddress or
+         ~azure.mgmt.oracledatabase.types.VirtualNetworkAddress or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualNetworkAddress. The
          VirtualNetworkAddress is compatible with MutableMapping
         :rtype:
@@ -3471,6 +3583,7 @@ class VirtualNetworkAddressesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3485,11 +3598,14 @@ class VirtualNetworkAddressesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VirtualNetworkAddress, response.json())
 
@@ -3528,6 +3644,7 @@ class VirtualNetworkAddressesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3541,7 +3658,10 @@ class VirtualNetworkAddressesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3549,7 +3669,7 @@ class VirtualNetworkAddressesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3676,7 +3796,10 @@ class VirtualNetworkAddressesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3689,7 +3812,10 @@ class VirtualNetworkAddressesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VirtualNetworkAddress], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.VirtualNetworkAddress],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3705,7 +3831,10 @@ class VirtualNetworkAddressesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3713,7 +3842,7 @@ class VirtualNetworkAddressesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SystemVersionsOperations:
+class SystemVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3768,6 +3897,7 @@ class SystemVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3782,11 +3912,14 @@ class SystemVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SystemVersion, response.json())
 
@@ -3847,7 +3980,10 @@ class SystemVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3860,7 +3996,10 @@ class SystemVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SystemVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SystemVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3876,7 +4015,10 @@ class SystemVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3884,7 +4026,7 @@ class SystemVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class OracleSubscriptionsOperations:
+class OracleSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3950,7 +4092,10 @@ class OracleSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3963,7 +4108,10 @@ class OracleSubscriptionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OracleSubscription], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OracleSubscription],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3979,7 +4127,10 @@ class OracleSubscriptionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3987,7 +4138,7 @@ class OracleSubscriptionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     async def _create_or_update_initial(
-        self, resource: Union[_models.OracleSubscription, JSON, IO[bytes]], **kwargs: Any
+        self, resource: Union[_models.OracleSubscription, _types.OracleSubscription, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4023,6 +4174,7 @@ class OracleSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4036,7 +4188,10 @@ class OracleSubscriptionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4046,7 +4201,7 @@ class OracleSubscriptionsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4073,12 +4228,12 @@ class OracleSubscriptionsOperations:
 
     @overload
     async def begin_create_or_update(
-        self, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, resource: _types.OracleSubscription, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.OracleSubscription]:
         """Create a OracleSubscription.
 
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.oracledatabase.types.OracleSubscription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4109,13 +4264,14 @@ class OracleSubscriptionsOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource: Union[_models.OracleSubscription, JSON, IO[bytes]], **kwargs: Any
+        self, resource: Union[_models.OracleSubscription, _types.OracleSubscription, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.OracleSubscription]:
         """Create a OracleSubscription.
 
-        :param resource: Resource create parameters. Is one of the following types: OracleSubscription,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.oracledatabase.models.OracleSubscription or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a OracleSubscription type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.OracleSubscription or
+         ~azure.mgmt.oracledatabase.types.OracleSubscription or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OracleSubscription. The OracleSubscription
          is compatible with MutableMapping
         :rtype:
@@ -4204,6 +4360,7 @@ class OracleSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4218,11 +4375,14 @@ class OracleSubscriptionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OracleSubscription, response.json())
 
@@ -4232,7 +4392,9 @@ class OracleSubscriptionsOperations:
         return deserialized  # type: ignore
 
     async def _update_initial(
-        self, properties: Union[_models.OracleSubscriptionUpdate, JSON, IO[bytes]], **kwargs: Any
+        self,
+        properties: Union[_models.OracleSubscriptionUpdate, _types.OracleSubscriptionUpdate, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4268,6 +4430,7 @@ class OracleSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4281,7 +4444,10 @@ class OracleSubscriptionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4289,7 +4455,7 @@ class OracleSubscriptionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4316,12 +4482,12 @@ class OracleSubscriptionsOperations:
 
     @overload
     async def begin_update(
-        self, properties: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, properties: _types.OracleSubscriptionUpdate, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.OracleSubscription]:
         """Update a OracleSubscription.
 
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.oracledatabase.types.OracleSubscriptionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4352,14 +4518,16 @@ class OracleSubscriptionsOperations:
 
     @distributed_trace_async
     async def begin_update(
-        self, properties: Union[_models.OracleSubscriptionUpdate, JSON, IO[bytes]], **kwargs: Any
+        self,
+        properties: Union[_models.OracleSubscriptionUpdate, _types.OracleSubscriptionUpdate, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.OracleSubscription]:
         """Update a OracleSubscription.
 
-        :param properties: The resource properties to be updated. Is one of the following types:
-         OracleSubscriptionUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.oracledatabase.models.OracleSubscriptionUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a OracleSubscriptionUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.OracleSubscriptionUpdate or
+         ~azure.mgmt.oracledatabase.types.OracleSubscriptionUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OracleSubscription. The OracleSubscription
          is compatible with MutableMapping
         :rtype:
@@ -4441,6 +4609,7 @@ class OracleSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4454,7 +4623,10 @@ class OracleSubscriptionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4462,7 +4634,7 @@ class OracleSubscriptionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4539,6 +4711,7 @@ class OracleSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4552,7 +4725,10 @@ class OracleSubscriptionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4560,7 +4736,7 @@ class OracleSubscriptionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4646,6 +4822,7 @@ class OracleSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4659,7 +4836,10 @@ class OracleSubscriptionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4667,7 +4847,7 @@ class OracleSubscriptionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4755,6 +4935,7 @@ class OracleSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4768,7 +4949,10 @@ class OracleSubscriptionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4776,7 +4960,7 @@ class OracleSubscriptionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4853,10 +5037,11 @@ class OracleSubscriptionsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _add_azure_subscriptions_initial(
-        self, body: Union[_models.AzureSubscriptions, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.AzureSubscriptions, _types.AzureSubscriptions, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4892,6 +5077,7 @@ class OracleSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4905,14 +5091,17 @@ class OracleSubscriptionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4937,12 +5126,12 @@ class OracleSubscriptionsOperations:
 
     @overload
     async def begin_add_azure_subscriptions(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.AzureSubscriptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Add Azure Subscriptions.
 
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.AzureSubscriptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4985,16 +5174,18 @@ class OracleSubscriptionsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_add_azure_subscriptions(
-        self, body: Union[_models.AzureSubscriptions, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.AzureSubscriptions, _types.AzureSubscriptions, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Add Azure Subscriptions.
 
-        :param body: The content of the action request. Is one of the following types:
-         AzureSubscriptions, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.AzureSubscriptions or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a AzureSubscriptions type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AzureSubscriptions or
+         ~azure.mgmt.oracledatabase.types.AzureSubscriptions or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5040,7 +5231,7 @@ class OracleSubscriptionsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DbNodesOperations:
+class DbNodesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5101,6 +5292,7 @@ class DbNodesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5115,11 +5307,14 @@ class DbNodesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DbNode, response.json())
 
@@ -5185,7 +5380,10 @@ class DbNodesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5198,7 +5396,10 @@ class DbNodesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DbNode], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DbNode],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5214,7 +5415,10 @@ class DbNodesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5226,7 +5430,7 @@ class DbNodesOperations:
         resource_group_name: str,
         cloudvmclustername: str,
         dbnodeocid: str,
-        body: Union[_models.DbNodeAction, JSON, IO[bytes]],
+        body: Union[_models.DbNodeAction, _types.DbNodeAction, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5266,6 +5470,7 @@ class DbNodesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5279,7 +5484,10 @@ class DbNodesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5287,7 +5495,7 @@ class DbNodesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5331,7 +5539,7 @@ class DbNodesOperations:
         resource_group_name: str,
         cloudvmclustername: str,
         dbnodeocid: str,
-        body: JSON,
+        body: _types.DbNodeAction,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5346,7 +5554,7 @@ class DbNodesOperations:
         :param dbnodeocid: DbNode OCID. Required.
         :type dbnodeocid: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.DbNodeAction
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5393,7 +5601,7 @@ class DbNodesOperations:
         resource_group_name: str,
         cloudvmclustername: str,
         dbnodeocid: str,
-        body: Union[_models.DbNodeAction, JSON, IO[bytes]],
+        body: Union[_models.DbNodeAction, _types.DbNodeAction, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DbNode]:
         """VM actions on DbNode of VM Cluster by the provided filter.
@@ -5405,9 +5613,10 @@ class DbNodesOperations:
         :type cloudvmclustername: str
         :param dbnodeocid: DbNode OCID. Required.
         :type dbnodeocid: str
-        :param body: The content of the action request. Is one of the following types: DbNodeAction,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.DbNodeAction or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a DbNodeAction type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.DbNodeAction or
+         ~azure.mgmt.oracledatabase.types.DbNodeAction or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DbNode. The DbNode is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.DbNode]
@@ -5437,14 +5646,10 @@ class DbNodesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.DbNode, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -5471,7 +5676,7 @@ class DbNodesOperations:
         )
 
 
-class GiVersionsOperations:
+class GiVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5526,6 +5731,7 @@ class GiVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5540,11 +5746,14 @@ class GiVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GiVersion, response.json())
 
@@ -5570,6 +5779,7 @@ class GiVersionsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_location(
@@ -5641,7 +5851,10 @@ class GiVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5654,7 +5867,10 @@ class GiVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.GiVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.GiVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5670,7 +5886,10 @@ class GiVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5678,7 +5897,7 @@ class GiVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GiMinorVersionsOperations:
+class GiMinorVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5719,6 +5938,7 @@ class GiMinorVersionsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_parent(
@@ -5791,7 +6011,10 @@ class GiMinorVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5804,7 +6027,10 @@ class GiMinorVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.GiMinorVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.GiMinorVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5820,7 +6046,10 @@ class GiMinorVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5850,6 +6079,7 @@ class GiMinorVersionsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def get(
@@ -5894,6 +6124,7 @@ class GiMinorVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5908,11 +6139,14 @@ class GiMinorVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GiMinorVersion, response.json())
 
@@ -5922,7 +6156,7 @@ class GiMinorVersionsOperations:
         return deserialized  # type: ignore
 
 
-class DbSystemShapesOperations:
+class DbSystemShapesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5977,6 +6211,7 @@ class DbSystemShapesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5991,11 +6226,14 @@ class DbSystemShapesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DbSystemShape, response.json())
 
@@ -6021,6 +6259,7 @@ class DbSystemShapesOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_location(
@@ -6083,7 +6322,10 @@ class DbSystemShapesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6096,7 +6338,10 @@ class DbSystemShapesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DbSystemShape], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DbSystemShape],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6112,7 +6357,10 @@ class DbSystemShapesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6120,7 +6368,7 @@ class DbSystemShapesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DnsPrivateViewsOperations:
+class DnsPrivateViewsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6175,6 +6423,7 @@ class DnsPrivateViewsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6189,11 +6438,14 @@ class DnsPrivateViewsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DnsPrivateView, response.json())
 
@@ -6254,7 +6506,10 @@ class DnsPrivateViewsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6267,7 +6522,10 @@ class DnsPrivateViewsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DnsPrivateView], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DnsPrivateView],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6283,7 +6541,10 @@ class DnsPrivateViewsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6291,7 +6552,7 @@ class DnsPrivateViewsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DnsPrivateZonesOperations:
+class DnsPrivateZonesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6346,6 +6607,7 @@ class DnsPrivateZonesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6360,11 +6622,14 @@ class DnsPrivateZonesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DnsPrivateZone, response.json())
 
@@ -6425,7 +6690,10 @@ class DnsPrivateZonesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6438,7 +6706,10 @@ class DnsPrivateZonesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DnsPrivateZone], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DnsPrivateZone],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6454,7 +6725,10 @@ class DnsPrivateZonesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6462,7 +6736,7 @@ class DnsPrivateZonesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FlexComponentsOperations:
+class FlexComponentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6494,6 +6768,7 @@ class FlexComponentsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def get(self, location: str, flex_component_name: str, **kwargs: Any) -> _models.FlexComponent:
@@ -6533,6 +6808,7 @@ class FlexComponentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6547,11 +6823,14 @@ class FlexComponentsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FlexComponent, response.json())
 
@@ -6573,6 +6852,7 @@ class FlexComponentsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_parent(
@@ -6632,7 +6912,10 @@ class FlexComponentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6645,7 +6928,10 @@ class FlexComponentsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.FlexComponent], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.FlexComponent],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6661,7 +6947,10 @@ class FlexComponentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6669,7 +6958,7 @@ class FlexComponentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
+class AutonomousDatabasesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6735,7 +7024,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6748,7 +7040,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AutonomousDatabase], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AutonomousDatabase],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6764,7 +7059,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6775,7 +7073,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        resource: Union[_models.AutonomousDatabase, JSON, IO[bytes]],
+        resource: Union[_models.AutonomousDatabase, _types.AutonomousDatabase, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6814,6 +7112,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6827,7 +7126,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -6837,7 +7139,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6878,7 +7180,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        resource: JSON,
+        resource: _types.AutonomousDatabase,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6891,7 +7193,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.oracledatabase.types.AutonomousDatabase
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6936,7 +7238,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        resource: Union[_models.AutonomousDatabase, JSON, IO[bytes]],
+        resource: Union[_models.AutonomousDatabase, _types.AutonomousDatabase, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AutonomousDatabase]:
         """Create a AutonomousDatabase.
@@ -6946,9 +7248,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
-        :param resource: Resource create parameters. Is one of the following types: AutonomousDatabase,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.oracledatabase.models.AutonomousDatabase or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a AutonomousDatabase type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.AutonomousDatabase or
+         ~azure.mgmt.oracledatabase.types.AutonomousDatabase or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AutonomousDatabase. The AutonomousDatabase
          is compatible with MutableMapping
         :rtype:
@@ -7048,6 +7351,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7062,11 +7366,14 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AutonomousDatabase, response.json())
 
@@ -7104,6 +7411,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7117,7 +7425,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7125,7 +7436,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7195,7 +7506,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        properties: Union[_models.AutonomousDatabaseUpdate, JSON, IO[bytes]],
+        properties: Union[_models.AutonomousDatabaseUpdate, _types.AutonomousDatabaseUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7234,6 +7545,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7247,7 +7559,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7255,7 +7570,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7296,7 +7611,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        properties: JSON,
+        properties: _types.AutonomousDatabaseUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7309,7 +7624,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.oracledatabase.types.AutonomousDatabaseUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7354,7 +7669,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        properties: Union[_models.AutonomousDatabaseUpdate, JSON, IO[bytes]],
+        properties: Union[_models.AutonomousDatabaseUpdate, _types.AutonomousDatabaseUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AutonomousDatabase]:
         """Update a AutonomousDatabase.
@@ -7364,10 +7679,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         AutonomousDatabaseUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.oracledatabase.models.AutonomousDatabaseUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a AutonomousDatabaseUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.AutonomousDatabaseUpdate or
+         ~azure.mgmt.oracledatabase.types.AutonomousDatabaseUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AutonomousDatabase. The AutonomousDatabase
          is compatible with MutableMapping
         :rtype:
@@ -7481,7 +7796,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7494,7 +7812,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AutonomousDatabase], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AutonomousDatabase],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7510,7 +7831,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -7521,7 +7845,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: Union[_models.PeerDbDetails, JSON, IO[bytes]],
+        body: Union[_models.PeerDbDetails, _types.PeerDbDetails, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7560,6 +7884,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7573,7 +7898,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7581,7 +7909,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7622,7 +7950,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: JSON,
+        body: _types.PeerDbDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7635,7 +7963,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.PeerDbDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7680,7 +8008,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: Union[_models.PeerDbDetails, JSON, IO[bytes]],
+        body: Union[_models.PeerDbDetails, _types.PeerDbDetails, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AutonomousDatabase]:
         """Perform switchover action on Autonomous Database.
@@ -7690,9 +8018,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
-        :param body: The content of the action request. Is one of the following types: PeerDbDetails,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.PeerDbDetails or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a PeerDbDetails type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.PeerDbDetails or
+         ~azure.mgmt.oracledatabase.types.PeerDbDetails or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AutonomousDatabase. The AutonomousDatabase
          is compatible with MutableMapping
         :rtype:
@@ -7722,14 +8051,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.AutonomousDatabase, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -7759,7 +8084,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: Union[_models.PeerDbDetails, JSON, IO[bytes]],
+        body: Union[_models.PeerDbDetails, _types.PeerDbDetails, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7798,6 +8123,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7811,7 +8137,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7819,7 +8148,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7860,7 +8189,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: JSON,
+        body: _types.PeerDbDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7873,7 +8202,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.PeerDbDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7918,7 +8247,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: Union[_models.PeerDbDetails, JSON, IO[bytes]],
+        body: Union[_models.PeerDbDetails, _types.PeerDbDetails, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AutonomousDatabase]:
         """Perform failover action on Autonomous Database.
@@ -7928,9 +8257,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
-        :param body: The content of the action request. Is one of the following types: PeerDbDetails,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.PeerDbDetails or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a PeerDbDetails type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.PeerDbDetails or
+         ~azure.mgmt.oracledatabase.types.PeerDbDetails or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AutonomousDatabase. The AutonomousDatabase
          is compatible with MutableMapping
         :rtype:
@@ -7960,14 +8290,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.AutonomousDatabase, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -8026,7 +8352,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: JSON,
+        body: _types.GenerateAutonomousDatabaseWalletDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8039,7 +8365,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.GenerateAutonomousDatabaseWalletDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8082,7 +8408,9 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: Union[_models.GenerateAutonomousDatabaseWalletDetails, JSON, IO[bytes]],
+        body: Union[
+            _models.GenerateAutonomousDatabaseWalletDetails, _types.GenerateAutonomousDatabaseWalletDetails, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AutonomousDatabaseWalletFile:
         """Generate wallet action on Autonomous Database.
@@ -8092,10 +8420,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
-        :param body: The content of the action request. Is one of the following types:
-         GenerateAutonomousDatabaseWalletDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.GenerateAutonomousDatabaseWalletDetails or JSON
-         or IO[bytes]
+        :param body: The content of the action request. Is either a
+         GenerateAutonomousDatabaseWalletDetails type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.GenerateAutonomousDatabaseWalletDetails or
+         ~azure.mgmt.oracledatabase.types.GenerateAutonomousDatabaseWalletDetails or IO[bytes]
         :return: AutonomousDatabaseWalletFile. The AutonomousDatabaseWalletFile is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.oracledatabase.models.AutonomousDatabaseWalletFile
@@ -8137,6 +8465,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8151,11 +8480,14 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AutonomousDatabaseWalletFile, response.json())
 
@@ -8168,7 +8500,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: Union[_models.RestoreAutonomousDatabaseDetails, JSON, IO[bytes]],
+        body: Union[_models.RestoreAutonomousDatabaseDetails, _types.RestoreAutonomousDatabaseDetails, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8207,6 +8539,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8220,7 +8553,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -8228,7 +8564,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8269,7 +8605,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: JSON,
+        body: _types.RestoreAutonomousDatabaseDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8282,7 +8618,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.RestoreAutonomousDatabaseDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8327,7 +8663,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: Union[_models.RestoreAutonomousDatabaseDetails, JSON, IO[bytes]],
+        body: Union[_models.RestoreAutonomousDatabaseDetails, _types.RestoreAutonomousDatabaseDetails, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AutonomousDatabase]:
         """Restores an Autonomous Database based on the provided request parameters.
@@ -8337,10 +8673,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
-        :param body: The content of the action request. Is one of the following types:
-         RestoreAutonomousDatabaseDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.RestoreAutonomousDatabaseDetails or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a RestoreAutonomousDatabaseDetails
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.RestoreAutonomousDatabaseDetails or
+         ~azure.mgmt.oracledatabase.types.RestoreAutonomousDatabaseDetails or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AutonomousDatabase. The AutonomousDatabase
          is compatible with MutableMapping
         :rtype:
@@ -8370,14 +8706,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.AutonomousDatabase, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -8432,6 +8764,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8445,7 +8778,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -8453,7 +8789,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8498,14 +8834,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.AutonomousDatabase, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -8554,13 +8886,16 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _change_disaster_recovery_configuration_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: Union[_models.DisasterRecoveryConfigurationDetails, JSON, IO[bytes]],
+        body: Union[
+            _models.DisasterRecoveryConfigurationDetails, _types.DisasterRecoveryConfigurationDetails, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8599,6 +8934,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8612,7 +8948,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -8620,7 +8959,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8661,7 +9000,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: JSON,
+        body: _types.DisasterRecoveryConfigurationDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8674,7 +9013,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.DisasterRecoveryConfigurationDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8738,13 +9077,16 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_change_disaster_recovery_configuration(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: Union[_models.DisasterRecoveryConfigurationDetails, JSON, IO[bytes]],
+        body: Union[
+            _models.DisasterRecoveryConfigurationDetails, _types.DisasterRecoveryConfigurationDetails, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AutonomousDatabase]:
         """Perform ChangeDisasterRecoveryConfiguration action on Autonomous Database.
@@ -8754,10 +9096,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
-        :param body: The content of the action request. Is one of the following types:
-         DisasterRecoveryConfigurationDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.DisasterRecoveryConfigurationDetails or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a
+         DisasterRecoveryConfigurationDetails type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.DisasterRecoveryConfigurationDetails or
+         ~azure.mgmt.oracledatabase.types.DisasterRecoveryConfigurationDetails or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AutonomousDatabase. The AutonomousDatabase
          is compatible with MutableMapping
         :rtype:
@@ -8787,14 +9129,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.AutonomousDatabase, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -8838,13 +9176,14 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _action_initial(
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: Union[_models.AutonomousDatabaseLifecycleAction, JSON, IO[bytes]],
+        body: Union[_models.AutonomousDatabaseLifecycleAction, _types.AutonomousDatabaseLifecycleAction, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8883,6 +9222,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8896,7 +9236,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -8904,7 +9247,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8945,7 +9288,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: JSON,
+        body: _types.AutonomousDatabaseLifecycleAction,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8958,7 +9301,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.AutonomousDatabaseLifecycleAction
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9017,13 +9360,14 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_action(
         self,
         resource_group_name: str,
         autonomousdatabasename: str,
-        body: Union[_models.AutonomousDatabaseLifecycleAction, JSON, IO[bytes]],
+        body: Union[_models.AutonomousDatabaseLifecycleAction, _types.AutonomousDatabaseLifecycleAction, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AutonomousDatabase]:
         """Perform Lifecycle Management Action on Autonomous Database.
@@ -9033,10 +9377,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param autonomousdatabasename: The database name. Required.
         :type autonomousdatabasename: str
-        :param body: The content of the action request. Is one of the following types:
-         AutonomousDatabaseLifecycleAction, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.AutonomousDatabaseLifecycleAction or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a AutonomousDatabaseLifecycleAction
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AutonomousDatabaseLifecycleAction or
+         ~azure.mgmt.oracledatabase.types.AutonomousDatabaseLifecycleAction or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AutonomousDatabase. The AutonomousDatabase
          is compatible with MutableMapping
         :rtype:
@@ -9066,14 +9410,10 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.AutonomousDatabase, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -9100,7 +9440,7 @@ class AutonomousDatabasesOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class AutonomousDatabaseBackupsOperations:
+class AutonomousDatabaseBackupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9122,7 +9462,7 @@ class AutonomousDatabaseBackupsOperations:
         resource_group_name: str,
         autonomousdatabasename: str,
         adbbackupid: str,
-        resource: Union[_models.AutonomousDatabaseBackup, JSON, IO[bytes]],
+        resource: Union[_models.AutonomousDatabaseBackup, _types.AutonomousDatabaseBackup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9162,6 +9502,7 @@ class AutonomousDatabaseBackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9175,7 +9516,10 @@ class AutonomousDatabaseBackupsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -9185,7 +9529,7 @@ class AutonomousDatabaseBackupsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9230,7 +9574,7 @@ class AutonomousDatabaseBackupsOperations:
         resource_group_name: str,
         autonomousdatabasename: str,
         adbbackupid: str,
-        resource: JSON,
+        resource: _types.AutonomousDatabaseBackup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9245,7 +9589,7 @@ class AutonomousDatabaseBackupsOperations:
         :param adbbackupid: AutonomousDatabaseBackup id. Required.
         :type adbbackupid: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.oracledatabase.types.AutonomousDatabaseBackup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9294,7 +9638,7 @@ class AutonomousDatabaseBackupsOperations:
         resource_group_name: str,
         autonomousdatabasename: str,
         adbbackupid: str,
-        resource: Union[_models.AutonomousDatabaseBackup, JSON, IO[bytes]],
+        resource: Union[_models.AutonomousDatabaseBackup, _types.AutonomousDatabaseBackup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AutonomousDatabaseBackup]:
         """Create a AutonomousDatabaseBackup.
@@ -9306,9 +9650,10 @@ class AutonomousDatabaseBackupsOperations:
         :type autonomousdatabasename: str
         :param adbbackupid: AutonomousDatabaseBackup id. Required.
         :type adbbackupid: str
-        :param resource: Resource create parameters. Is one of the following types:
-         AutonomousDatabaseBackup, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.oracledatabase.models.AutonomousDatabaseBackup or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a AutonomousDatabaseBackup type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.AutonomousDatabaseBackup or
+         ~azure.mgmt.oracledatabase.types.AutonomousDatabaseBackup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AutonomousDatabaseBackup. The
          AutonomousDatabaseBackup is compatible with MutableMapping
         :rtype:
@@ -9413,6 +9758,7 @@ class AutonomousDatabaseBackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9427,11 +9773,14 @@ class AutonomousDatabaseBackupsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AutonomousDatabaseBackup, response.json())
 
@@ -9470,6 +9819,7 @@ class AutonomousDatabaseBackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9483,7 +9833,10 @@ class AutonomousDatabaseBackupsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -9491,7 +9844,7 @@ class AutonomousDatabaseBackupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9565,7 +9918,7 @@ class AutonomousDatabaseBackupsOperations:
         resource_group_name: str,
         autonomousdatabasename: str,
         adbbackupid: str,
-        properties: Union[_models.AutonomousDatabaseBackupUpdate, JSON, IO[bytes]],
+        properties: Union[_models.AutonomousDatabaseBackupUpdate, _types.AutonomousDatabaseBackupUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9605,6 +9958,7 @@ class AutonomousDatabaseBackupsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9618,7 +9972,10 @@ class AutonomousDatabaseBackupsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -9626,7 +9983,7 @@ class AutonomousDatabaseBackupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9671,7 +10028,7 @@ class AutonomousDatabaseBackupsOperations:
         resource_group_name: str,
         autonomousdatabasename: str,
         adbbackupid: str,
-        properties: JSON,
+        properties: _types.AutonomousDatabaseBackupUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9686,7 +10043,7 @@ class AutonomousDatabaseBackupsOperations:
         :param adbbackupid: AutonomousDatabaseBackup id. Required.
         :type adbbackupid: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.oracledatabase.types.AutonomousDatabaseBackupUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9735,7 +10092,7 @@ class AutonomousDatabaseBackupsOperations:
         resource_group_name: str,
         autonomousdatabasename: str,
         adbbackupid: str,
-        properties: Union[_models.AutonomousDatabaseBackupUpdate, JSON, IO[bytes]],
+        properties: Union[_models.AutonomousDatabaseBackupUpdate, _types.AutonomousDatabaseBackupUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AutonomousDatabaseBackup]:
         """Update a AutonomousDatabaseBackup.
@@ -9747,10 +10104,10 @@ class AutonomousDatabaseBackupsOperations:
         :type autonomousdatabasename: str
         :param adbbackupid: AutonomousDatabaseBackup id. Required.
         :type adbbackupid: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         AutonomousDatabaseBackupUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.oracledatabase.models.AutonomousDatabaseBackupUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         AutonomousDatabaseBackupUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.AutonomousDatabaseBackupUpdate or
+         ~azure.mgmt.oracledatabase.types.AutonomousDatabaseBackupUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AutonomousDatabaseBackup. The
          AutonomousDatabaseBackup is compatible with MutableMapping
         :rtype:
@@ -9868,7 +10225,10 @@ class AutonomousDatabaseBackupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9881,7 +10241,10 @@ class AutonomousDatabaseBackupsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AutonomousDatabaseBackup], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AutonomousDatabaseBackup],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -9897,7 +10260,10 @@ class AutonomousDatabaseBackupsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -9905,7 +10271,7 @@ class AutonomousDatabaseBackupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AutonomousDatabaseCharacterSetsOperations:  # pylint: disable=name-too-long
+class AutonomousDatabaseCharacterSetsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9961,6 +10327,7 @@ class AutonomousDatabaseCharacterSetsOperations:  # pylint: disable=name-too-lon
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9975,11 +10342,14 @@ class AutonomousDatabaseCharacterSetsOperations:  # pylint: disable=name-too-lon
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AutonomousDatabaseCharacterSet, response.json())
 
@@ -10042,7 +10412,10 @@ class AutonomousDatabaseCharacterSetsOperations:  # pylint: disable=name-too-lon
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10055,7 +10428,10 @@ class AutonomousDatabaseCharacterSetsOperations:  # pylint: disable=name-too-lon
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AutonomousDatabaseCharacterSet], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AutonomousDatabaseCharacterSet],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -10071,7 +10447,10 @@ class AutonomousDatabaseCharacterSetsOperations:  # pylint: disable=name-too-lon
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -10079,7 +10458,7 @@ class AutonomousDatabaseCharacterSetsOperations:  # pylint: disable=name-too-lon
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AutonomousDatabaseNationalCharacterSetsOperations:  # pylint: disable=name-too-long
+class AutonomousDatabaseNationalCharacterSetsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10137,6 +10516,7 @@ class AutonomousDatabaseNationalCharacterSetsOperations:  # pylint: disable=name
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10151,11 +10531,14 @@ class AutonomousDatabaseNationalCharacterSetsOperations:  # pylint: disable=name
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AutonomousDatabaseNationalCharacterSet, response.json())
 
@@ -10218,7 +10601,10 @@ class AutonomousDatabaseNationalCharacterSetsOperations:  # pylint: disable=name
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10232,7 +10618,8 @@ class AutonomousDatabaseNationalCharacterSetsOperations:  # pylint: disable=name
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AutonomousDatabaseNationalCharacterSet], deserialized.get("value", [])
+                List[_models.AutonomousDatabaseNationalCharacterSet],
+                deserialized.get("value", []),
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -10249,7 +10636,10 @@ class AutonomousDatabaseNationalCharacterSetsOperations:  # pylint: disable=name
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -10257,7 +10647,7 @@ class AutonomousDatabaseNationalCharacterSetsOperations:  # pylint: disable=name
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AutonomousDatabaseVersionsOperations:
+class AutonomousDatabaseVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10312,6 +10702,7 @@ class AutonomousDatabaseVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10326,11 +10717,14 @@ class AutonomousDatabaseVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AutonomousDbVersion, response.json())
 
@@ -10391,7 +10785,10 @@ class AutonomousDatabaseVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10404,7 +10801,10 @@ class AutonomousDatabaseVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AutonomousDbVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AutonomousDbVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -10420,7 +10820,10 @@ class AutonomousDatabaseVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -10428,7 +10831,7 @@ class AutonomousDatabaseVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ExadbVmClustersOperations:
+class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10459,6 +10862,7 @@ class ExadbVmClustersOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ExadbVmCluster"]:
@@ -10509,7 +10913,10 @@ class ExadbVmClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10522,7 +10929,10 @@ class ExadbVmClustersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ExadbVmCluster], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ExadbVmCluster],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -10538,7 +10948,10 @@ class ExadbVmClustersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -10567,13 +10980,14 @@ class ExadbVmClustersOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         exadb_vm_cluster_name: str,
-        resource: Union[_models.ExadbVmCluster, JSON, IO[bytes]],
+        resource: Union[_models.ExadbVmCluster, _types.ExadbVmCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10612,6 +11026,7 @@ class ExadbVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10625,7 +11040,10 @@ class ExadbVmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -10635,7 +11053,7 @@ class ExadbVmClustersOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10675,7 +11093,7 @@ class ExadbVmClustersOperations:
         self,
         resource_group_name: str,
         exadb_vm_cluster_name: str,
-        resource: JSON,
+        resource: _types.ExadbVmCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10688,7 +11106,7 @@ class ExadbVmClustersOperations:
         :param exadb_vm_cluster_name: The name of the ExadbVmCluster. Required.
         :type exadb_vm_cluster_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.oracledatabase.types.ExadbVmCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10749,13 +11167,14 @@ class ExadbVmClustersOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         exadb_vm_cluster_name: str,
-        resource: Union[_models.ExadbVmCluster, JSON, IO[bytes]],
+        resource: Union[_models.ExadbVmCluster, _types.ExadbVmCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExadbVmCluster]:
         """Create a ExadbVmCluster.
@@ -10765,9 +11184,10 @@ class ExadbVmClustersOperations:
         :type resource_group_name: str
         :param exadb_vm_cluster_name: The name of the ExadbVmCluster. Required.
         :type exadb_vm_cluster_name: str
-        :param resource: Resource create parameters. Is one of the following types: ExadbVmCluster,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.oracledatabase.models.ExadbVmCluster or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a ExadbVmCluster type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.ExadbVmCluster or
+         ~azure.mgmt.oracledatabase.types.ExadbVmCluster or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExadbVmCluster. The ExadbVmCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.ExadbVmCluster]
@@ -10847,6 +11267,7 @@ class ExadbVmClustersOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def get(self, resource_group_name: str, exadb_vm_cluster_name: str, **kwargs: Any) -> _models.ExadbVmCluster:
@@ -10887,6 +11308,7 @@ class ExadbVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10901,11 +11323,14 @@ class ExadbVmClustersOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ExadbVmCluster, response.json())
 
@@ -10936,13 +11361,14 @@ class ExadbVmClustersOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _update_initial(
         self,
         resource_group_name: str,
         exadb_vm_cluster_name: str,
-        properties: Union[_models.ExadbVmClusterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.ExadbVmClusterUpdate, _types.ExadbVmClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10981,6 +11407,7 @@ class ExadbVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10994,7 +11421,10 @@ class ExadbVmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -11002,7 +11432,7 @@ class ExadbVmClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11042,7 +11472,7 @@ class ExadbVmClustersOperations:
         self,
         resource_group_name: str,
         exadb_vm_cluster_name: str,
-        properties: JSON,
+        properties: _types.ExadbVmClusterUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11055,7 +11485,7 @@ class ExadbVmClustersOperations:
         :param exadb_vm_cluster_name: The name of the ExadbVmCluster. Required.
         :type exadb_vm_cluster_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.oracledatabase.types.ExadbVmClusterUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11116,13 +11546,14 @@ class ExadbVmClustersOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_update(
         self,
         resource_group_name: str,
         exadb_vm_cluster_name: str,
-        properties: Union[_models.ExadbVmClusterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.ExadbVmClusterUpdate, _types.ExadbVmClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExadbVmCluster]:
         """Update a ExadbVmCluster.
@@ -11132,9 +11563,10 @@ class ExadbVmClustersOperations:
         :type resource_group_name: str
         :param exadb_vm_cluster_name: The name of the ExadbVmCluster. Required.
         :type exadb_vm_cluster_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         ExadbVmClusterUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.oracledatabase.models.ExadbVmClusterUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a ExadbVmClusterUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.ExadbVmClusterUpdate or
+         ~azure.mgmt.oracledatabase.types.ExadbVmClusterUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExadbVmCluster. The ExadbVmCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.ExadbVmCluster]
@@ -11207,6 +11639,7 @@ class ExadbVmClustersOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _delete_initial(
@@ -11238,6 +11671,7 @@ class ExadbVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11251,7 +11685,10 @@ class ExadbVmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -11259,7 +11696,7 @@ class ExadbVmClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11282,6 +11719,7 @@ class ExadbVmClustersOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_delete(
@@ -11356,6 +11794,7 @@ class ExadbVmClustersOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_resource_group(
@@ -11412,7 +11851,10 @@ class ExadbVmClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11425,7 +11867,10 @@ class ExadbVmClustersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ExadbVmCluster], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ExadbVmCluster],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -11441,7 +11886,10 @@ class ExadbVmClustersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -11470,13 +11918,18 @@ class ExadbVmClustersOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _remove_vms_initial(
         self,
         resource_group_name: str,
         exadb_vm_cluster_name: str,
-        body: Union[_models.RemoveVirtualMachineFromExadbVmClusterDetails, JSON, IO[bytes]],
+        body: Union[
+            _models.RemoveVirtualMachineFromExadbVmClusterDetails,
+            _types.RemoveVirtualMachineFromExadbVmClusterDetails,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11515,6 +11968,7 @@ class ExadbVmClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11528,7 +11982,10 @@ class ExadbVmClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -11536,7 +11993,7 @@ class ExadbVmClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11576,7 +12033,7 @@ class ExadbVmClustersOperations:
         self,
         resource_group_name: str,
         exadb_vm_cluster_name: str,
-        body: JSON,
+        body: _types.RemoveVirtualMachineFromExadbVmClusterDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11589,7 +12046,7 @@ class ExadbVmClustersOperations:
         :param exadb_vm_cluster_name: The name of the ExadbVmCluster. Required.
         :type exadb_vm_cluster_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.RemoveVirtualMachineFromExadbVmClusterDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11650,13 +12107,18 @@ class ExadbVmClustersOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_remove_vms(
         self,
         resource_group_name: str,
         exadb_vm_cluster_name: str,
-        body: Union[_models.RemoveVirtualMachineFromExadbVmClusterDetails, JSON, IO[bytes]],
+        body: Union[
+            _models.RemoveVirtualMachineFromExadbVmClusterDetails,
+            _types.RemoveVirtualMachineFromExadbVmClusterDetails,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExadbVmCluster]:
         """Remove VMs from the VM Cluster.
@@ -11666,10 +12128,10 @@ class ExadbVmClustersOperations:
         :type resource_group_name: str
         :param exadb_vm_cluster_name: The name of the ExadbVmCluster. Required.
         :type exadb_vm_cluster_name: str
-        :param body: The content of the action request. Is one of the following types:
-         RemoveVirtualMachineFromExadbVmClusterDetails, JSON, IO[bytes] Required.
+        :param body: The content of the action request. Is either a
+         RemoveVirtualMachineFromExadbVmClusterDetails type or a IO[bytes] type. Required.
         :type body: ~azure.mgmt.oracledatabase.models.RemoveVirtualMachineFromExadbVmClusterDetails or
-         JSON or IO[bytes]
+         ~azure.mgmt.oracledatabase.types.RemoveVirtualMachineFromExadbVmClusterDetails or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExadbVmCluster. The ExadbVmCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.ExadbVmCluster]
@@ -11698,14 +12160,10 @@ class ExadbVmClustersOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ExadbVmCluster, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -11732,7 +12190,7 @@ class ExadbVmClustersOperations:
         )
 
 
-class ExascaleDbNodesOperations:
+class ExascaleDbNodesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11772,6 +12230,7 @@ class ExascaleDbNodesOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def get(
@@ -11817,6 +12276,7 @@ class ExascaleDbNodesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11831,11 +12291,14 @@ class ExascaleDbNodesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ExascaleDbNode, response.json())
 
@@ -11866,6 +12329,7 @@ class ExascaleDbNodesOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_parent(
@@ -11925,7 +12389,10 @@ class ExascaleDbNodesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11938,7 +12405,10 @@ class ExascaleDbNodesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ExascaleDbNode], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ExascaleDbNode],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -11954,7 +12424,10 @@ class ExascaleDbNodesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -11984,6 +12457,7 @@ class ExascaleDbNodesOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _action_initial(
@@ -11991,7 +12465,7 @@ class ExascaleDbNodesOperations:
         resource_group_name: str,
         exadb_vm_cluster_name: str,
         exascale_db_node_name: str,
-        body: Union[_models.DbNodeAction, JSON, IO[bytes]],
+        body: Union[_models.DbNodeAction, _types.DbNodeAction, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12031,6 +12505,7 @@ class ExascaleDbNodesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12044,7 +12519,10 @@ class ExascaleDbNodesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -12052,7 +12530,7 @@ class ExascaleDbNodesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12096,7 +12574,7 @@ class ExascaleDbNodesOperations:
         resource_group_name: str,
         exadb_vm_cluster_name: str,
         exascale_db_node_name: str,
-        body: JSON,
+        body: _types.DbNodeAction,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12111,7 +12589,7 @@ class ExascaleDbNodesOperations:
         :param exascale_db_node_name: The name of the ExascaleDbNode. Required.
         :type exascale_db_node_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.oracledatabase.types.DbNodeAction
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12176,6 +12654,7 @@ class ExascaleDbNodesOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_action(
@@ -12183,7 +12662,7 @@ class ExascaleDbNodesOperations:
         resource_group_name: str,
         exadb_vm_cluster_name: str,
         exascale_db_node_name: str,
-        body: Union[_models.DbNodeAction, JSON, IO[bytes]],
+        body: Union[_models.DbNodeAction, _types.DbNodeAction, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DbActionResponse]:
         """VM actions on DbNode of ExadbVmCluster by the provided filter.
@@ -12195,9 +12674,10 @@ class ExascaleDbNodesOperations:
         :type exadb_vm_cluster_name: str
         :param exascale_db_node_name: The name of the ExascaleDbNode. Required.
         :type exascale_db_node_name: str
-        :param body: The content of the action request. Is one of the following types: DbNodeAction,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.oracledatabase.models.DbNodeAction or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a DbNodeAction type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.DbNodeAction or
+         ~azure.mgmt.oracledatabase.types.DbNodeAction or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DbActionResponse. The DbActionResponse is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.DbActionResponse]
@@ -12227,14 +12707,10 @@ class ExascaleDbNodesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.DbActionResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -12261,7 +12737,7 @@ class ExascaleDbNodesOperations:
         )
 
 
-class ExascaleDbStorageVaultsOperations:
+class ExascaleDbStorageVaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12300,6 +12776,7 @@ class ExascaleDbStorageVaultsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def get(
@@ -12342,6 +12819,7 @@ class ExascaleDbStorageVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12356,11 +12834,14 @@ class ExascaleDbStorageVaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ExascaleDbStorageVault, response.json())
 
@@ -12391,13 +12872,14 @@ class ExascaleDbStorageVaultsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _create_initial(
         self,
         resource_group_name: str,
         exascale_db_storage_vault_name: str,
-        resource: Union[_models.ExascaleDbStorageVault, JSON, IO[bytes]],
+        resource: Union[_models.ExascaleDbStorageVault, _types.ExascaleDbStorageVault, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12436,6 +12918,7 @@ class ExascaleDbStorageVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12449,7 +12932,10 @@ class ExascaleDbStorageVaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -12459,7 +12945,7 @@ class ExascaleDbStorageVaultsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12500,7 +12986,7 @@ class ExascaleDbStorageVaultsOperations:
         self,
         resource_group_name: str,
         exascale_db_storage_vault_name: str,
-        resource: JSON,
+        resource: _types.ExascaleDbStorageVault,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12513,7 +12999,7 @@ class ExascaleDbStorageVaultsOperations:
         :param exascale_db_storage_vault_name: The name of the ExascaleDbStorageVault. Required.
         :type exascale_db_storage_vault_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.oracledatabase.types.ExascaleDbStorageVault
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12576,13 +13062,14 @@ class ExascaleDbStorageVaultsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_create(
         self,
         resource_group_name: str,
         exascale_db_storage_vault_name: str,
-        resource: Union[_models.ExascaleDbStorageVault, JSON, IO[bytes]],
+        resource: Union[_models.ExascaleDbStorageVault, _types.ExascaleDbStorageVault, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExascaleDbStorageVault]:
         """Create a ExascaleDbStorageVault.
@@ -12592,9 +13079,10 @@ class ExascaleDbStorageVaultsOperations:
         :type resource_group_name: str
         :param exascale_db_storage_vault_name: The name of the ExascaleDbStorageVault. Required.
         :type exascale_db_storage_vault_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         ExascaleDbStorageVault, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.oracledatabase.models.ExascaleDbStorageVault or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a ExascaleDbStorageVault type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.ExascaleDbStorageVault or
+         ~azure.mgmt.oracledatabase.types.ExascaleDbStorageVault or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExascaleDbStorageVault. The
          ExascaleDbStorageVault is compatible with MutableMapping
         :rtype:
@@ -12675,13 +13163,14 @@ class ExascaleDbStorageVaultsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _update_initial(
         self,
         resource_group_name: str,
         exascale_db_storage_vault_name: str,
-        properties: Union[_models.ExascaleDbStorageVaultTagsUpdate, JSON, IO[bytes]],
+        properties: Union[_models.ExascaleDbStorageVaultTagsUpdate, _types.ExascaleDbStorageVaultTagsUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12720,6 +13209,7 @@ class ExascaleDbStorageVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12733,7 +13223,10 @@ class ExascaleDbStorageVaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -12741,7 +13234,7 @@ class ExascaleDbStorageVaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12782,7 +13275,7 @@ class ExascaleDbStorageVaultsOperations:
         self,
         resource_group_name: str,
         exascale_db_storage_vault_name: str,
-        properties: JSON,
+        properties: _types.ExascaleDbStorageVaultTagsUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12795,7 +13288,7 @@ class ExascaleDbStorageVaultsOperations:
         :param exascale_db_storage_vault_name: The name of the ExascaleDbStorageVault. Required.
         :type exascale_db_storage_vault_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.oracledatabase.types.ExascaleDbStorageVaultTagsUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12858,13 +13351,14 @@ class ExascaleDbStorageVaultsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_update(
         self,
         resource_group_name: str,
         exascale_db_storage_vault_name: str,
-        properties: Union[_models.ExascaleDbStorageVaultTagsUpdate, JSON, IO[bytes]],
+        properties: Union[_models.ExascaleDbStorageVaultTagsUpdate, _types.ExascaleDbStorageVaultTagsUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExascaleDbStorageVault]:
         """Update a ExascaleDbStorageVault.
@@ -12874,10 +13368,10 @@ class ExascaleDbStorageVaultsOperations:
         :type resource_group_name: str
         :param exascale_db_storage_vault_name: The name of the ExascaleDbStorageVault. Required.
         :type exascale_db_storage_vault_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         ExascaleDbStorageVaultTagsUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.oracledatabase.models.ExascaleDbStorageVaultTagsUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         ExascaleDbStorageVaultTagsUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.ExascaleDbStorageVaultTagsUpdate or
+         ~azure.mgmt.oracledatabase.types.ExascaleDbStorageVaultTagsUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExascaleDbStorageVault. The
          ExascaleDbStorageVault is compatible with MutableMapping
         :rtype:
@@ -12956,6 +13450,7 @@ class ExascaleDbStorageVaultsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _delete_initial(
@@ -12987,6 +13482,7 @@ class ExascaleDbStorageVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13000,7 +13496,10 @@ class ExascaleDbStorageVaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -13008,7 +13507,7 @@ class ExascaleDbStorageVaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13036,6 +13535,7 @@ class ExascaleDbStorageVaultsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_delete(
@@ -13110,6 +13610,7 @@ class ExascaleDbStorageVaultsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_resource_group(
@@ -13166,7 +13667,10 @@ class ExascaleDbStorageVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13179,7 +13683,10 @@ class ExascaleDbStorageVaultsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ExascaleDbStorageVault], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ExascaleDbStorageVault],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -13195,7 +13702,10 @@ class ExascaleDbStorageVaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -13216,6 +13726,7 @@ class ExascaleDbStorageVaultsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ExascaleDbStorageVault"]:
@@ -13266,7 +13777,10 @@ class ExascaleDbStorageVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13279,7 +13793,10 @@ class ExascaleDbStorageVaultsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ExascaleDbStorageVault], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ExascaleDbStorageVault],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -13295,7 +13812,10 @@ class ExascaleDbStorageVaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -13303,7 +13823,7 @@ class ExascaleDbStorageVaultsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkAnchorsOperations:
+class NetworkAnchorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13331,6 +13851,7 @@ class NetworkAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkAnchor"]:
@@ -13381,7 +13902,10 @@ class NetworkAnchorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13394,7 +13918,10 @@ class NetworkAnchorsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NetworkAnchor], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NetworkAnchor],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -13410,7 +13937,10 @@ class NetworkAnchorsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -13436,13 +13966,14 @@ class NetworkAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         network_anchor_name: str,
-        resource: Union[_models.NetworkAnchor, JSON, IO[bytes]],
+        resource: Union[_models.NetworkAnchor, _types.NetworkAnchor, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13481,6 +14012,7 @@ class NetworkAnchorsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13494,7 +14026,10 @@ class NetworkAnchorsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -13504,7 +14039,7 @@ class NetworkAnchorsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13544,7 +14079,7 @@ class NetworkAnchorsOperations:
         self,
         resource_group_name: str,
         network_anchor_name: str,
-        resource: JSON,
+        resource: _types.NetworkAnchor,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13557,7 +14092,7 @@ class NetworkAnchorsOperations:
         :param network_anchor_name: The name of the NetworkAnchor. Required.
         :type network_anchor_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.oracledatabase.types.NetworkAnchor
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13615,13 +14150,14 @@ class NetworkAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         network_anchor_name: str,
-        resource: Union[_models.NetworkAnchor, JSON, IO[bytes]],
+        resource: Union[_models.NetworkAnchor, _types.NetworkAnchor, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkAnchor]:
         """Create a NetworkAnchor.
@@ -13631,9 +14167,10 @@ class NetworkAnchorsOperations:
         :type resource_group_name: str
         :param network_anchor_name: The name of the NetworkAnchor. Required.
         :type network_anchor_name: str
-        :param resource: Resource create parameters. Is one of the following types: NetworkAnchor,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.oracledatabase.models.NetworkAnchor or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a NetworkAnchor type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.NetworkAnchor or
+         ~azure.mgmt.oracledatabase.types.NetworkAnchor or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkAnchor. The NetworkAnchor is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.NetworkAnchor]
@@ -13710,6 +14247,7 @@ class NetworkAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def get(self, resource_group_name: str, network_anchor_name: str, **kwargs: Any) -> _models.NetworkAnchor:
@@ -13750,6 +14288,7 @@ class NetworkAnchorsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13764,11 +14303,14 @@ class NetworkAnchorsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NetworkAnchor, response.json())
 
@@ -13796,13 +14338,14 @@ class NetworkAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _update_initial(
         self,
         resource_group_name: str,
         network_anchor_name: str,
-        properties: Union[_models.NetworkAnchorUpdate, JSON, IO[bytes]],
+        properties: Union[_models.NetworkAnchorUpdate, _types.NetworkAnchorUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13841,6 +14384,7 @@ class NetworkAnchorsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13854,7 +14398,10 @@ class NetworkAnchorsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -13862,7 +14409,7 @@ class NetworkAnchorsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13902,7 +14449,7 @@ class NetworkAnchorsOperations:
         self,
         resource_group_name: str,
         network_anchor_name: str,
-        properties: JSON,
+        properties: _types.NetworkAnchorUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13915,7 +14462,7 @@ class NetworkAnchorsOperations:
         :param network_anchor_name: The name of the NetworkAnchor. Required.
         :type network_anchor_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.oracledatabase.types.NetworkAnchorUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13973,13 +14520,14 @@ class NetworkAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_update(
         self,
         resource_group_name: str,
         network_anchor_name: str,
-        properties: Union[_models.NetworkAnchorUpdate, JSON, IO[bytes]],
+        properties: Union[_models.NetworkAnchorUpdate, _types.NetworkAnchorUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkAnchor]:
         """Update a NetworkAnchor.
@@ -13989,9 +14537,10 @@ class NetworkAnchorsOperations:
         :type resource_group_name: str
         :param network_anchor_name: The name of the NetworkAnchor. Required.
         :type network_anchor_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         NetworkAnchorUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.oracledatabase.models.NetworkAnchorUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a NetworkAnchorUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.NetworkAnchorUpdate or
+         ~azure.mgmt.oracledatabase.types.NetworkAnchorUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkAnchor. The NetworkAnchor is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.NetworkAnchor]
@@ -14061,6 +14610,7 @@ class NetworkAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _delete_initial(
@@ -14092,6 +14642,7 @@ class NetworkAnchorsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14105,7 +14656,10 @@ class NetworkAnchorsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -14113,7 +14667,7 @@ class NetworkAnchorsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14133,6 +14687,7 @@ class NetworkAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_delete(
@@ -14204,6 +14759,7 @@ class NetworkAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_resource_group(
@@ -14260,7 +14816,10 @@ class NetworkAnchorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14273,7 +14832,10 @@ class NetworkAnchorsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NetworkAnchor], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NetworkAnchor],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -14289,7 +14851,10 @@ class NetworkAnchorsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -14297,7 +14862,7 @@ class NetworkAnchorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ResourceAnchorsOperations:
+class ResourceAnchorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14325,6 +14890,7 @@ class ResourceAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ResourceAnchor"]:
@@ -14375,7 +14941,10 @@ class ResourceAnchorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14388,7 +14957,10 @@ class ResourceAnchorsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ResourceAnchor], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ResourceAnchor],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -14404,7 +14976,10 @@ class ResourceAnchorsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -14430,13 +15005,14 @@ class ResourceAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         resource_anchor_name: str,
-        resource: Union[_models.ResourceAnchor, JSON, IO[bytes]],
+        resource: Union[_models.ResourceAnchor, _types.ResourceAnchor, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14475,6 +15051,7 @@ class ResourceAnchorsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14488,7 +15065,10 @@ class ResourceAnchorsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -14498,7 +15078,7 @@ class ResourceAnchorsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14538,7 +15118,7 @@ class ResourceAnchorsOperations:
         self,
         resource_group_name: str,
         resource_anchor_name: str,
-        resource: JSON,
+        resource: _types.ResourceAnchor,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14551,7 +15131,7 @@ class ResourceAnchorsOperations:
         :param resource_anchor_name: The name of the ResourceAnchor. Required.
         :type resource_anchor_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.oracledatabase.types.ResourceAnchor
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14609,13 +15189,14 @@ class ResourceAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         resource_anchor_name: str,
-        resource: Union[_models.ResourceAnchor, JSON, IO[bytes]],
+        resource: Union[_models.ResourceAnchor, _types.ResourceAnchor, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceAnchor]:
         """Create a ResourceAnchor.
@@ -14625,9 +15206,10 @@ class ResourceAnchorsOperations:
         :type resource_group_name: str
         :param resource_anchor_name: The name of the ResourceAnchor. Required.
         :type resource_anchor_name: str
-        :param resource: Resource create parameters. Is one of the following types: ResourceAnchor,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.oracledatabase.models.ResourceAnchor or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a ResourceAnchor type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.ResourceAnchor or
+         ~azure.mgmt.oracledatabase.types.ResourceAnchor or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ResourceAnchor. The ResourceAnchor is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.ResourceAnchor]
@@ -14704,6 +15286,7 @@ class ResourceAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def get(self, resource_group_name: str, resource_anchor_name: str, **kwargs: Any) -> _models.ResourceAnchor:
@@ -14744,6 +15327,7 @@ class ResourceAnchorsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14758,11 +15342,14 @@ class ResourceAnchorsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ResourceAnchor, response.json())
 
@@ -14790,13 +15377,14 @@ class ResourceAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _update_initial(
         self,
         resource_group_name: str,
         resource_anchor_name: str,
-        properties: Union[_models.ResourceAnchorUpdate, JSON, IO[bytes]],
+        properties: Union[_models.ResourceAnchorUpdate, _types.ResourceAnchorUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14835,6 +15423,7 @@ class ResourceAnchorsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14848,7 +15437,10 @@ class ResourceAnchorsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -14856,7 +15448,7 @@ class ResourceAnchorsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14896,7 +15488,7 @@ class ResourceAnchorsOperations:
         self,
         resource_group_name: str,
         resource_anchor_name: str,
-        properties: JSON,
+        properties: _types.ResourceAnchorUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14909,7 +15501,7 @@ class ResourceAnchorsOperations:
         :param resource_anchor_name: The name of the ResourceAnchor. Required.
         :type resource_anchor_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.oracledatabase.types.ResourceAnchorUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14967,13 +15559,14 @@ class ResourceAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_update(
         self,
         resource_group_name: str,
         resource_anchor_name: str,
-        properties: Union[_models.ResourceAnchorUpdate, JSON, IO[bytes]],
+        properties: Union[_models.ResourceAnchorUpdate, _types.ResourceAnchorUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResourceAnchor]:
         """Update a ResourceAnchor.
@@ -14983,9 +15576,10 @@ class ResourceAnchorsOperations:
         :type resource_group_name: str
         :param resource_anchor_name: The name of the ResourceAnchor. Required.
         :type resource_anchor_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         ResourceAnchorUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.oracledatabase.models.ResourceAnchorUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a ResourceAnchorUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.ResourceAnchorUpdate or
+         ~azure.mgmt.oracledatabase.types.ResourceAnchorUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ResourceAnchor. The ResourceAnchor is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.ResourceAnchor]
@@ -15055,6 +15649,7 @@ class ResourceAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def _delete_initial(
@@ -15086,6 +15681,7 @@ class ResourceAnchorsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15099,7 +15695,10 @@ class ResourceAnchorsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -15107,7 +15706,7 @@ class ResourceAnchorsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15127,6 +15726,7 @@ class ResourceAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     async def begin_delete(
@@ -15198,6 +15798,7 @@ class ResourceAnchorsOperations:
             "2025-08-01-preview",
             "2025-08-15-preview",
             "2025-09-01",
+            "2025-11-01-preview",
         ],
     )
     def list_by_resource_group(
@@ -15254,7 +15855,10 @@ class ResourceAnchorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15267,7 +15871,10 @@ class ResourceAnchorsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ResourceAnchor], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ResourceAnchor],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -15283,7 +15890,10 @@ class ResourceAnchorsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -15291,7 +15901,7 @@ class ResourceAnchorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DbSystemsOperations:
+class DbSystemsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15312,7 +15922,13 @@ class DbSystemsOperations:
     @api_version_validation(
         method_added_on="2025-07-01-preview",
         params_added_on={"2025-07-01-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=[
+            "2025-07-01-preview",
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+        ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.DbSystem"]:
         """List DbSystem resources by subscription ID.
@@ -15361,7 +15977,10 @@ class DbSystemsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15374,7 +15993,10 @@ class DbSystemsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DbSystem], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DbSystem],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -15390,7 +16012,10 @@ class DbSystemsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -15409,13 +16034,19 @@ class DbSystemsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=[
+            "2025-07-01-preview",
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+        ],
     )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         db_system_name: str,
-        resource: Union[_models.DbSystem, JSON, IO[bytes]],
+        resource: Union[_models.DbSystem, _types.DbSystem, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15454,6 +16085,7 @@ class DbSystemsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15467,7 +16099,10 @@ class DbSystemsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -15477,7 +16112,7 @@ class DbSystemsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15517,7 +16152,7 @@ class DbSystemsOperations:
         self,
         resource_group_name: str,
         db_system_name: str,
-        resource: JSON,
+        resource: _types.DbSystem,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15530,7 +16165,7 @@ class DbSystemsOperations:
         :param db_system_name: The name of the DbSystem. Required.
         :type db_system_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.oracledatabase.types.DbSystem
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15581,13 +16216,19 @@ class DbSystemsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=[
+            "2025-07-01-preview",
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+        ],
     )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         db_system_name: str,
-        resource: Union[_models.DbSystem, JSON, IO[bytes]],
+        resource: Union[_models.DbSystem, _types.DbSystem, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DbSystem]:
         """Create a DbSystem.
@@ -15597,9 +16238,10 @@ class DbSystemsOperations:
         :type resource_group_name: str
         :param db_system_name: The name of the DbSystem. Required.
         :type db_system_name: str
-        :param resource: Resource create parameters. Is one of the following types: DbSystem, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.oracledatabase.models.DbSystem or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a DbSystem type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.DbSystem or
+         ~azure.mgmt.oracledatabase.types.DbSystem or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DbSystem. The DbSystem is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.DbSystem]
@@ -15663,7 +16305,13 @@ class DbSystemsOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "db_system_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=[
+            "2025-07-01-preview",
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+        ],
     )
     async def get(self, resource_group_name: str, db_system_name: str, **kwargs: Any) -> _models.DbSystem:
         """Get a DbSystem.
@@ -15703,6 +16351,7 @@ class DbSystemsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15717,11 +16366,14 @@ class DbSystemsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DbSystem, response.json())
 
@@ -15742,13 +16394,19 @@ class DbSystemsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=[
+            "2025-07-01-preview",
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+        ],
     )
     async def _update_initial(
         self,
         resource_group_name: str,
         db_system_name: str,
-        properties: Union[_models.DbSystemUpdate, JSON, IO[bytes]],
+        properties: Union[_models.DbSystemUpdate, _types.DbSystemUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15787,6 +16445,7 @@ class DbSystemsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15800,7 +16459,10 @@ class DbSystemsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -15808,7 +16470,7 @@ class DbSystemsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15848,7 +16510,7 @@ class DbSystemsOperations:
         self,
         resource_group_name: str,
         db_system_name: str,
-        properties: JSON,
+        properties: _types.DbSystemUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15861,7 +16523,7 @@ class DbSystemsOperations:
         :param db_system_name: The name of the DbSystem. Required.
         :type db_system_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.oracledatabase.types.DbSystemUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15912,13 +16574,19 @@ class DbSystemsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=[
+            "2025-07-01-preview",
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+        ],
     )
     async def begin_update(
         self,
         resource_group_name: str,
         db_system_name: str,
-        properties: Union[_models.DbSystemUpdate, JSON, IO[bytes]],
+        properties: Union[_models.DbSystemUpdate, _types.DbSystemUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DbSystem]:
         """Update a DbSystem.
@@ -15928,9 +16596,10 @@ class DbSystemsOperations:
         :type resource_group_name: str
         :param db_system_name: The name of the DbSystem. Required.
         :type db_system_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         DbSystemUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.oracledatabase.models.DbSystemUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a DbSystemUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.DbSystemUpdate or
+         ~azure.mgmt.oracledatabase.types.DbSystemUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DbSystem. The DbSystem is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.DbSystem]
@@ -15993,7 +16662,13 @@ class DbSystemsOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "db_system_name"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=[
+            "2025-07-01-preview",
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+        ],
     )
     async def _delete_initial(
         self, resource_group_name: str, db_system_name: str, **kwargs: Any
@@ -16024,6 +16699,7 @@ class DbSystemsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16037,7 +16713,10 @@ class DbSystemsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -16045,7 +16724,7 @@ class DbSystemsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16058,7 +16737,13 @@ class DbSystemsOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "db_system_name"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=[
+            "2025-07-01-preview",
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+        ],
     )
     async def begin_delete(self, resource_group_name: str, db_system_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a DbSystem.
@@ -16120,7 +16805,13 @@ class DbSystemsOperations:
     @api_version_validation(
         method_added_on="2025-07-01-preview",
         params_added_on={"2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=[
+            "2025-07-01-preview",
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+        ],
     )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.DbSystem"]:
         """List DbSystem resources by resource group.
@@ -16173,7 +16864,10 @@ class DbSystemsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16186,7 +16880,10 @@ class DbSystemsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DbSystem], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DbSystem],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -16202,7 +16899,10 @@ class DbSystemsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -16210,7 +16910,7 @@ class DbSystemsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DbVersionsOperations:
+class DbVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16233,7 +16933,13 @@ class DbVersionsOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "location", "dbversionsname", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=[
+            "2025-07-01-preview",
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+        ],
     )
     async def get(self, location: str, dbversionsname: str, **kwargs: Any) -> _models.DbVersion:
         """Get a DbVersion.
@@ -16272,6 +16978,7 @@ class DbVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16286,11 +16993,14 @@ class DbVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DbVersion, response.json())
 
@@ -16316,7 +17026,13 @@ class DbVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-08-01-preview", "2025-08-15-preview", "2025-09-01"],
+        api_versions_list=[
+            "2025-07-01-preview",
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+        ],
     )
     def list_by_location(
         self,
@@ -16407,7 +17123,10 @@ class DbVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16420,7 +17139,10 @@ class DbVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DbVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DbVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -16436,7 +17158,10 @@ class DbVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

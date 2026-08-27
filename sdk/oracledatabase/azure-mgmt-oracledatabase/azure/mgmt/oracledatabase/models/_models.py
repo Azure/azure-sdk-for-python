@@ -37,7 +37,7 @@ class ActivationLinks(_Model):
     """Existing Cloud Account Activation Link."""
 
 
-class AddRemoveDbNode(_Model):
+class AddRemoveDbNode(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Add/Remove (Virtual Machine) DbNode model.
 
     :ivar db_servers: Db servers ocids. Required.
@@ -65,7 +65,7 @@ class AddRemoveDbNode(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllConnectionStringType(_Model):
+class AllConnectionStringType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The connection string profile to allow clients to group, filter and select connection string
     values based on structured metadata.
 
@@ -114,7 +114,7 @@ class AllConnectionStringType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApexDetailsType(_Model):
+class ApexDetailsType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about Oracle APEX Application Development.
 
     :ivar apex_version: The Oracle APEX Application Development version.
@@ -179,7 +179,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -223,7 +223,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabase(TrackedResource):
+class AutonomousDatabase(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Autonomous Database resource model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -287,7 +287,7 @@ class ProxyResource(Resource):
     """
 
 
-class AutonomousDatabaseBackup(ProxyResource):
+class AutonomousDatabaseBackup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutonomousDatabaseBackup resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -328,7 +328,7 @@ class AutonomousDatabaseBackup(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseBackupProperties(_Model):
+class AutonomousDatabaseBackupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutonomousDatabaseBackup resource model.
 
     :ivar autonomous_database_ocid: The OCID of the Autonomous Database.
@@ -435,7 +435,7 @@ class AutonomousDatabaseBackupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseBackupUpdate(_Model):
+class AutonomousDatabaseBackupUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the AutonomousDatabaseBackup.
 
     :ivar properties: The resource-specific properties for this resource.
@@ -465,7 +465,7 @@ class AutonomousDatabaseBackupUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseBackupUpdateProperties(_Model):
+class AutonomousDatabaseBackupUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the AutonomousDatabaseBackup.
 
     :ivar retention_period_in_days: Retention period, in days.
@@ -495,7 +495,7 @@ class AutonomousDatabaseBackupUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseBaseProperties(_Model):
+class AutonomousDatabaseBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Autonomous Database base resource model.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1027,7 +1027,7 @@ class AutonomousDatabaseBaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseCharacterSet(ProxyResource):
+class AutonomousDatabaseCharacterSet(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutonomousDatabaseCharacterSets resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1068,7 +1068,7 @@ class AutonomousDatabaseCharacterSet(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseCharacterSetProperties(_Model):
+class AutonomousDatabaseCharacterSetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutonomousDatabaseCharacterSet resource model.
 
     :ivar character_set: The Oracle Autonomous Database supported character sets. Required.
@@ -1096,7 +1096,9 @@ class AutonomousDatabaseCharacterSetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseCloneProperties(AutonomousDatabaseBaseProperties, discriminator="Clone"):
+class AutonomousDatabaseCloneProperties(
+    AutonomousDatabaseBaseProperties, discriminator="Clone"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Autonomous Database clone resource model.
 
     :ivar admin_password: Admin password.
@@ -1311,7 +1313,7 @@ class AutonomousDatabaseCloneProperties(AutonomousDatabaseBaseProperties, discri
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelisted_ips: list[str]
-    :ivar data_base_type: Database type to be created. Required. Clone DB
+    :ivar data_base_type: Database type to be created. Required. Clone DB.
     :vartype data_base_type: str or ~azure.mgmt.oracledatabase.models.CLONE
     :ivar source: The source of the database. Known values are: "None", "Database", "BackupFromId",
      "BackupFromTimestamp", "CloneToRefreshable", "CrossRegionDataguard", and
@@ -1341,7 +1343,7 @@ class AutonomousDatabaseCloneProperties(AutonomousDatabaseBaseProperties, discri
     """
 
     data_base_type: Literal[DataBaseType.CLONE] = rest_discriminator(name="dataBaseType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Database type to be created. Required. Clone DB"""
+    """Database type to be created. Required. Clone DB."""
     source: Optional[Union[str, "_models.SourceType"]] = rest_field(visibility=["create"])
     """The source of the database. Known values are: \"None\", \"Database\", \"BackupFromId\",
      \"BackupFromTimestamp\", \"CloneToRefreshable\", \"CrossRegionDataguard\", and
@@ -1428,7 +1430,7 @@ class AutonomousDatabaseCloneProperties(AutonomousDatabaseBaseProperties, discri
 
 class AutonomousDatabaseCrossRegionDisasterRecoveryProperties(
     AutonomousDatabaseBaseProperties, discriminator="CrossRegionDisasterRecovery"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Autonomous Database Cross Region Disaster Recovery resource model.
 
     :ivar admin_password: Admin password.
@@ -1643,10 +1645,10 @@ class AutonomousDatabaseCrossRegionDisasterRecoveryProperties(
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelisted_ips: list[str]
-    :ivar data_base_type: Database type to be created. Required. Cross Region Disaster Recovery
+    :ivar data_base_type: Database type to be created. Required. Cross Region Disaster Recovery.
     :vartype data_base_type: str or
      ~azure.mgmt.oracledatabase.models.CROSS_REGION_DISASTER_RECOVERY
-    :ivar source: The source of the database. Required. cross region disaster recovery source
+    :ivar source: The source of the database. Required. cross region disaster recovery source.
     :vartype source: str or ~azure.mgmt.oracledatabase.models.CROSS_REGION_DISASTER_RECOVERY
     :ivar source_id: The Azure ID of the source Autonomous Database that will be used to create a
      new peer database for the DR association. Required.
@@ -1669,9 +1671,9 @@ class AutonomousDatabaseCrossRegionDisasterRecoveryProperties(
     """
 
     data_base_type: Literal[DataBaseType.CROSS_REGION_DISASTER_RECOVERY] = rest_discriminator(name="dataBaseType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Database type to be created. Required. Cross Region Disaster Recovery"""
+    """Database type to be created. Required. Cross Region Disaster Recovery."""
     source: Literal[SourceType.CROSS_REGION_DISASTER_RECOVERY] = rest_field(visibility=["create"])
-    """The source of the database. Required. cross region disaster recovery source"""
+    """The source of the database. Required. cross region disaster recovery source."""
     source_id: str = rest_field(name="sourceId", visibility=["read", "create"])
     """The Azure ID of the source Autonomous Database that will be used to create a new peer database
      for the DR association. Required."""
@@ -1754,7 +1756,7 @@ class AutonomousDatabaseCrossRegionDisasterRecoveryProperties(
 
 class AutonomousDatabaseFromBackupTimestampProperties(
     AutonomousDatabaseBaseProperties, discriminator="CloneFromBackupTimestamp"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Autonomous Database From Backup Timestamp resource model.
 
     :ivar admin_password: Admin password.
@@ -1969,9 +1971,9 @@ class AutonomousDatabaseFromBackupTimestampProperties(
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelisted_ips: list[str]
-    :ivar data_base_type: Database type to be created. Required. Clone DB from backup timestamp
+    :ivar data_base_type: Database type to be created. Required. Clone DB from backup timestamp.
     :vartype data_base_type: str or ~azure.mgmt.oracledatabase.models.CLONE_FROM_BACKUP_TIMESTAMP
-    :ivar source: The source of the database. Required. Backup from timestamp source
+    :ivar source: The source of the database. Required. Backup from timestamp source.
     :vartype source: str or ~azure.mgmt.oracledatabase.models.BACKUP_FROM_TIMESTAMP
     :ivar source_id: The ID of the source Autonomous Database that you will clone to create a new
      Autonomous Database. Required.
@@ -1987,9 +1989,9 @@ class AutonomousDatabaseFromBackupTimestampProperties(
     """
 
     data_base_type: Literal[DataBaseType.CLONE_FROM_BACKUP_TIMESTAMP] = rest_discriminator(name="dataBaseType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Database type to be created. Required. Clone DB from backup timestamp"""
+    """Database type to be created. Required. Clone DB from backup timestamp."""
     source: Literal[SourceType.BACKUP_FROM_TIMESTAMP] = rest_field(visibility=["create"])
-    """The source of the database. Required. Backup from timestamp source"""
+    """The source of the database. Required. Backup from timestamp source."""
     source_id: str = rest_field(name="sourceId", visibility=["read", "create"])
     """The ID of the source Autonomous Database that you will clone to create a new Autonomous
      Database. Required."""
@@ -2060,7 +2062,7 @@ class AutonomousDatabaseFromBackupTimestampProperties(
         self.data_base_type = DataBaseType.CLONE_FROM_BACKUP_TIMESTAMP  # type: ignore
 
 
-class AutonomousDatabaseLifecycleAction(_Model):
+class AutonomousDatabaseLifecycleAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Autonomous Database Action Object.
 
     :ivar action: Autonomous Database lifecycle action. Required. Known values are: "Start",
@@ -2092,7 +2094,9 @@ class AutonomousDatabaseLifecycleAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseNationalCharacterSet(ProxyResource):
+class AutonomousDatabaseNationalCharacterSet(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutonomousDatabaseNationalCharacterSets resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2134,7 +2138,9 @@ class AutonomousDatabaseNationalCharacterSet(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseNationalCharacterSetProperties(_Model):  # pylint: disable=name-too-long
+class AutonomousDatabaseNationalCharacterSetProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AutonomousDatabaseNationalCharacterSet resource model.
 
     :ivar character_set: The Oracle Autonomous Database supported national character sets.
@@ -2163,7 +2169,9 @@ class AutonomousDatabaseNationalCharacterSetProperties(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseProperties(AutonomousDatabaseBaseProperties, discriminator="Regular"):
+class AutonomousDatabaseProperties(
+    AutonomousDatabaseBaseProperties, discriminator="Regular"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Autonomous Database resource model.
 
     :ivar admin_password: Admin password.
@@ -2378,12 +2386,12 @@ class AutonomousDatabaseProperties(AutonomousDatabaseBaseProperties, discriminat
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelisted_ips: list[str]
-    :ivar data_base_type: Database type to be created. Required. Regular DB
+    :ivar data_base_type: Database type to be created. Required. Regular DB.
     :vartype data_base_type: str or ~azure.mgmt.oracledatabase.models.REGULAR
     """
 
     data_base_type: Literal[DataBaseType.REGULAR] = rest_discriminator(name="dataBaseType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Database type to be created. Required. Regular DB"""
+    """Database type to be created. Required. Regular DB."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -2437,7 +2445,7 @@ class AutonomousDatabaseProperties(AutonomousDatabaseBaseProperties, discriminat
         self.data_base_type = DataBaseType.REGULAR  # type: ignore
 
 
-class AutonomousDatabaseStandbySummary(_Model):
+class AutonomousDatabaseStandbySummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Autonomous Disaster Recovery standby database details.
 
     :ivar lag_time_in_seconds: The amount of time, in seconds, that the data of the standby
@@ -2511,7 +2519,7 @@ class AutonomousDatabaseStandbySummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseUpdate(_Model):
+class AutonomousDatabaseUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the AutonomousDatabase.
 
     :ivar tags: Resource tags.
@@ -2546,7 +2554,7 @@ class AutonomousDatabaseUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseUpdateProperties(_Model):
+class AutonomousDatabaseUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the AutonomousDatabase.
 
     :ivar admin_password: Admin password.
@@ -2744,7 +2752,7 @@ class AutonomousDatabaseUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDatabaseWalletFile(_Model):
+class AutonomousDatabaseWalletFile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Autonomous Database Wallet File resource model.
 
     :ivar wallet_files: The base64 encoded wallet files. Required.
@@ -2772,7 +2780,7 @@ class AutonomousDatabaseWalletFile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDbVersion(ProxyResource):
+class AutonomousDbVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutonomousDbVersion resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2813,7 +2821,7 @@ class AutonomousDbVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AutonomousDbVersionProperties(_Model):
+class AutonomousDbVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutonomousDbVersion resource model.
 
     :ivar version: Supported Autonomous Db versions. Required.
@@ -2883,7 +2891,7 @@ class AutonomousDbVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureSubscriptions(_Model):
+class AzureSubscriptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Subscriptions model.
 
     :ivar azure_subscription_ids: Azure Subscription Ids to be updated. Required.
@@ -2928,7 +2936,7 @@ class CloudAccountDetails(_Model):
     """Cloud Account Home region."""
 
 
-class CloudExadataInfrastructure(TrackedResource):
+class CloudExadataInfrastructure(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CloudExadataInfrastructure resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2980,7 +2988,7 @@ class CloudExadataInfrastructure(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class CloudExadataInfrastructureProperties(_Model):
+class CloudExadataInfrastructureProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CloudExadataInfrastructure resource model.
 
     :ivar defined_file_system_configuration: Defined file system configurations.
@@ -3195,7 +3203,7 @@ class CloudExadataInfrastructureProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudExadataInfrastructureUpdate(_Model):
+class CloudExadataInfrastructureUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the CloudExadataInfrastructure.
 
     :ivar zones: CloudExadataInfrastructure zones.
@@ -3236,7 +3244,9 @@ class CloudExadataInfrastructureUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudExadataInfrastructureUpdateProperties(_Model):  # pylint: disable=name-too-long
+class CloudExadataInfrastructureUpdateProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The updatable properties of the CloudExadataInfrastructure.
 
     :ivar compute_count: The number of compute servers for the cloud Exadata infrastructure.
@@ -3296,7 +3306,7 @@ class CloudExadataInfrastructureUpdateProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class CloudVmCluster(TrackedResource):
+class CloudVmCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CloudVmCluster resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3343,7 +3353,7 @@ class CloudVmCluster(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class CloudVmClusterProperties(_Model):
+class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CloudVmCluster resource model.
 
     :ivar ocid: Cloud VM Cluster ocid.
@@ -3372,7 +3382,8 @@ class CloudVmClusterProperties(_Model):
     :vartype time_zone: str
     :ivar zone_id: The OCID of the zone the cloud VM cluster is associated with.
     :vartype zone_id: str
-    :ivar hostname: The hostname for the cloud VM cluster. Required.
+    :ivar hostname: The hostname for the cloud VM cluster. Hostname and domain combined length
+     cannot exceed 112 characters. Required.
     :vartype hostname: str
     :ivar domain: The domain name for the cloud VM cluster.
     :vartype domain: str
@@ -3520,7 +3531,8 @@ class CloudVmClusterProperties(_Model):
     zone_id: Optional[str] = rest_field(name="zoneId", visibility=["read", "create"])
     """The OCID of the zone the cloud VM cluster is associated with."""
     hostname: str = rest_field(visibility=["read", "create"])
-    """The hostname for the cloud VM cluster. Required."""
+    """The hostname for the cloud VM cluster. Hostname and domain combined length cannot exceed 112
+     characters. Required."""
     domain: Optional[str] = rest_field(visibility=["read", "create"])
     """The domain name for the cloud VM cluster."""
     cpu_core_count: int = rest_field(name="cpuCoreCount", visibility=["read", "create", "update", "delete", "query"])
@@ -3695,7 +3707,7 @@ class CloudVmClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudVmClusterUpdate(_Model):
+class CloudVmClusterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the CloudVmCluster.
 
     :ivar tags: Resource tags.
@@ -3730,7 +3742,7 @@ class CloudVmClusterUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudVmClusterUpdateProperties(_Model):
+class CloudVmClusterUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the CloudVmCluster.
 
     :ivar storage_size_in_gbs: The data disk group size to be allocated in GBs per VM.
@@ -3841,7 +3853,9 @@ class CloudVmClusterUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigureExascaleCloudExadataInfrastructureDetails(_Model):  # pylint: disable=name-too-long
+class ConfigureExascaleCloudExadataInfrastructureDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The exascale config request details for the Cloud Exadata infrastructure.
 
     :ivar total_storage_in_gbs: Storage size needed for Exascale in GBs. Required.
@@ -3871,7 +3885,7 @@ class ConfigureExascaleCloudExadataInfrastructureDetails(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class ConnectionStringType(_Model):
+class ConnectionStringType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connection strings to connect to an Oracle Autonomous Database.
 
     :ivar all_connection_strings: Returns all connection strings that can be used to connect to the
@@ -3943,7 +3957,7 @@ class ConnectionStringType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionUrlType(_Model):
+class ConnectionUrlType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The URLs for accessing Oracle Application Express (APEX) and SQL Developer Web with a browser
     from a Compute instance within your VCN or that has a direct connection to your VCN.
 
@@ -4014,7 +4028,7 @@ class ConnectionUrlType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomerContact(_Model):
+class CustomerContact(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CustomerContact resource properties.
 
     :ivar email: The email address used by Oracle to send notifications regarding databases and
@@ -4044,7 +4058,7 @@ class CustomerContact(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCollectionOptions(_Model):
+class DataCollectionOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataCollectionOptions resource properties.
 
     :ivar is_diagnostics_events_enabled: Indicates whether diagnostic collection is enabled for the
@@ -4094,7 +4108,7 @@ class DataCollectionOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DayOfWeek(_Model):
+class DayOfWeek(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DayOfWeek resource properties.
 
     :ivar name: Name of the day of the week. Required. Known values are: "Monday", "Tuesday",
@@ -4124,7 +4138,7 @@ class DayOfWeek(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DayOfWeekUpdate(_Model):
+class DayOfWeekUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DayOfWeek resource properties.
 
     :ivar name: Name of the day of the week. Known values are: "Monday", "Tuesday", "Wednesday",
@@ -4156,7 +4170,7 @@ class DayOfWeekUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DbActionResponse(_Model):
+class DbActionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExascaleDbNode action response.
 
     :ivar provisioning_state: ExascaleDbNode provisioning state. Known values are: "Succeeded",
@@ -4189,7 +4203,7 @@ class DbActionResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DbIormConfig(_Model):
+class DbIormConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DbIormConfig for cloud vm cluster.
 
     :ivar db_name: The database name. For the default DbPlan, the dbName is default.
@@ -4231,7 +4245,7 @@ class DbIormConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DbNode(ProxyResource):
+class DbNode(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The DbNode resource belonging to vmCluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4272,7 +4286,7 @@ class DbNode(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DbNodeAction(_Model):
+class DbNodeAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DbNode action object.
 
     :ivar action: Db action. Required. Known values are: "Start", "Stop", "SoftReset", and "Reset".
@@ -4302,7 +4316,7 @@ class DbNodeAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DbNodeDetails(_Model):
+class DbNodeDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the ExaCS Db node. Applies to Exadata Database Service on Exascale Infrastructure
     only.
 
@@ -4331,7 +4345,7 @@ class DbNodeDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DbNodeProperties(_Model):
+class DbNodeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of DbNodeResource.
 
     :ivar ocid: DbNode OCID. Required.
@@ -4510,7 +4524,7 @@ class DbNodeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DbServer(ProxyResource):
+class DbServer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DbServer resource model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4690,7 +4704,7 @@ class DbServerProperties(_Model):
     """The compute model of the Exadata Infrastructure. Known values are: \"ECPU\" and \"OCPU\"."""
 
 
-class DbSystem(TrackedResource):
+class DbSystem(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DbSystem resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4742,7 +4756,7 @@ class DbSystem(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class DbSystemBaseProperties(_Model):
+class DbSystemBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DbSystem resource base model.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4840,6 +4854,9 @@ class DbSystemBaseProperties(_Model):
     :vartype compute_model: str or ~azure.mgmt.oracledatabase.models.ComputeModel
     :ivar compute_count: The number of compute servers for the DB system.
     :vartype compute_count: int
+    :ivar data_collection_options: Indicates user preferences for the various diagnostic collection
+     options for the Base DB.
+    :vartype data_collection_options: ~azure.mgmt.oracledatabase.models.DataCollectionOptions
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -4942,6 +4959,10 @@ class DbSystemBaseProperties(_Model):
      legacy. Known values are: \"ECPU\" and \"OCPU\"."""
     compute_count: Optional[int] = rest_field(name="computeCount", visibility=["read", "create"])
     """The number of compute servers for the DB system."""
+    data_collection_options: Optional["_models.DataCollectionOptions"] = rest_field(
+        name="dataCollectionOptions", visibility=["read", "create"]
+    )
+    """Indicates user preferences for the various diagnostic collection options for the Base DB."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -4965,6 +4986,7 @@ class DbSystemBaseProperties(_Model):
         time_zone: Optional[str] = None,
         compute_model: Optional[Union[str, "_models.ComputeModel"]] = None,
         compute_count: Optional[int] = None,
+        data_collection_options: Optional["_models.DataCollectionOptions"] = None,
     ) -> None: ...
 
     @overload
@@ -4978,7 +5000,7 @@ class DbSystemBaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DbSystemOptions(_Model):
+class DbSystemOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DbSystemOptions resource properties.
 
     :ivar storage_management: The storage option used in DB system. ASM - Automatic storage
@@ -5010,7 +5032,9 @@ class DbSystemOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DbSystemProperties(DbSystemBaseProperties, discriminator="None"):
+class DbSystemProperties(
+    DbSystemBaseProperties, discriminator="None"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DbSystem resource model.
 
     :ivar provisioning_state: dbSystem provisioning state. Known values are: "Succeeded", "Failed",
@@ -5102,6 +5126,9 @@ class DbSystemProperties(DbSystemBaseProperties, discriminator="None"):
     :vartype compute_model: str or ~azure.mgmt.oracledatabase.models.ComputeModel
     :ivar compute_count: The number of compute servers for the DB system.
     :vartype compute_count: int
+    :ivar data_collection_options: Indicates user preferences for the various diagnostic collection
+     options for the Base DB.
+    :vartype data_collection_options: ~azure.mgmt.oracledatabase.models.DataCollectionOptions
     :ivar source: The source of the database for creating a new database. Required. for creating a
      new database.
     :vartype source: str or ~azure.mgmt.oracledatabase.models.NONE
@@ -5168,6 +5195,7 @@ class DbSystemProperties(DbSystemBaseProperties, discriminator="None"):
         time_zone: Optional[str] = None,
         compute_model: Optional[Union[str, "_models.ComputeModel"]] = None,
         compute_count: Optional[int] = None,
+        data_collection_options: Optional["_models.DataCollectionOptions"] = None,
         admin_password: Optional[str] = None,
         pdb_name: Optional[str] = None,
     ) -> None: ...
@@ -5184,7 +5212,7 @@ class DbSystemProperties(DbSystemBaseProperties, discriminator="None"):
         self.source = DbSystemSourceType.NONE  # type: ignore
 
 
-class DbSystemShape(ProxyResource):
+class DbSystemShape(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DbSystemShape resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5225,7 +5253,7 @@ class DbSystemShape(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DbSystemShapeProperties(_Model):
+class DbSystemShapeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DbSystemShape resource model.
 
     :ivar shape_family: The family of the shape used for the DB system.
@@ -5399,7 +5427,7 @@ class DbSystemShapeProperties(_Model):
     """The shapeAttributes of the DB system shape.."""
 
     @overload
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         shape_name: str,
@@ -5440,7 +5468,7 @@ class DbSystemShapeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DbSystemUpdate(_Model):
+class DbSystemUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the DbSystem.
 
     :ivar zones: The availability zones.
@@ -5480,7 +5508,7 @@ class DbSystemUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DbSystemUpdateProperties(_Model):
+class DbSystemUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the DbSystem.
 
     :ivar source: The source of the database for creating a new database. for creating a new
@@ -5511,7 +5539,7 @@ class DbSystemUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DbVersion(ProxyResource):
+class DbVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Oracle Database DbVersion resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5552,7 +5580,7 @@ class DbVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DbVersionProperties(_Model):
+class DbVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DbVersion resource model.
 
     :ivar version: A valid Oracle Database version. Required.
@@ -5612,7 +5640,7 @@ class DbVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefinedFileSystemConfiguration(_Model):
+class DefinedFileSystemConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Predefined configurations for the file system.
 
     :ivar is_backup_partition: Checks if the data can be backed up.
@@ -5663,7 +5691,7 @@ class DefinedFileSystemConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DisasterRecoveryConfigurationDetails(_Model):
+class DisasterRecoveryConfigurationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configurations of a Disaster Recovery Details.
 
     :ivar disaster_recovery_type: Indicates the disaster recovery (DR) type of the Autonomous
@@ -5735,7 +5763,7 @@ class DisasterRecoveryConfigurationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DnsForwardingRule(_Model):
+class DnsForwardingRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DNS forwarding rule properties.
 
     :ivar domain_names: Comma-separated domain names. Required.
@@ -5768,7 +5796,7 @@ class DnsForwardingRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DnsPrivateView(ProxyResource):
+class DnsPrivateView(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DnsPrivateView resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5809,7 +5837,7 @@ class DnsPrivateView(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DnsPrivateViewProperties(_Model):
+class DnsPrivateViewProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Views resource model.
 
     :ivar ocid: The OCID of the view. Required.
@@ -5886,7 +5914,7 @@ class DnsPrivateViewProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DnsPrivateZone(ProxyResource):
+class DnsPrivateZone(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DnsPrivateZone resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5927,7 +5955,7 @@ class DnsPrivateZone(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DnsPrivateZoneProperties(_Model):
+class DnsPrivateZoneProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Zones resource model.
 
     :ivar ocid: The OCID of the Zone. Required.
@@ -6064,7 +6092,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -6126,7 +6154,7 @@ class EstimatedPatchingTime(_Model):
     """The estimated total time required in minutes for all patching operations."""
 
 
-class ExadataIormConfig(_Model):
+class ExadataIormConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExadataIormConfig for cloud vm cluster.
 
     :ivar db_plans: An array of IORM settings for all the database in the Exadata DB system.
@@ -6181,7 +6209,7 @@ class ExadataIormConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExadbVmCluster(TrackedResource):
+class ExadbVmCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExadbVmCluster resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6233,7 +6261,7 @@ class ExadbVmCluster(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class ExadbVmClusterProperties(_Model):
+class ExadbVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExadbVmCluster resource model.
 
     :ivar ocid: ExadbVmCluster ocid.
@@ -6533,7 +6561,7 @@ class ExadbVmClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExadbVmClusterStorageDetails(_Model):
+class ExadbVmClusterStorageDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage Details on the Exadata VM cluster.
 
     :ivar total_size_in_gbs: Total Capacity. Required.
@@ -6563,7 +6591,7 @@ class ExadbVmClusterStorageDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExadbVmClusterUpdate(_Model):
+class ExadbVmClusterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the ExadbVmCluster.
 
     :ivar zones: The availability zones.
@@ -6603,7 +6631,7 @@ class ExadbVmClusterUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExadbVmClusterUpdateProperties(_Model):
+class ExadbVmClusterUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the ExadbVmCluster.
 
     :ivar node_count: The number of nodes in the Exadata VM cluster on Exascale Infrastructure.
@@ -6631,7 +6659,7 @@ class ExadbVmClusterUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExascaleConfigDetails(_Model):
+class ExascaleConfigDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The exascale config response details for the cloud Exadata infrastructure.
 
     :ivar total_storage_in_gbs: Storage size needed for Exascale in GBs. Required.
@@ -6668,7 +6696,7 @@ class ExascaleConfigDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExascaleDbNode(ProxyResource):
+class ExascaleDbNode(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The DbNode resource belonging to ExadbVmCluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6709,7 +6737,7 @@ class ExascaleDbNode(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ExascaleDbNodeProperties(_Model):
+class ExascaleDbNodeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of DbNodeResource.
 
     :ivar ocid: DbNode OCID. Required.
@@ -6825,7 +6853,7 @@ class ExascaleDbNodeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExascaleDbStorageDetails(_Model):
+class ExascaleDbStorageDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Exadata Database Storage Details.
 
     :ivar available_size_in_gbs: Available Capacity.
@@ -6862,7 +6890,7 @@ class ExascaleDbStorageDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExascaleDbStorageInputDetails(_Model):
+class ExascaleDbStorageInputDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create exadata Database Storage Details model.
 
     :ivar total_size_in_gbs: Total Capacity. Required.
@@ -6892,7 +6920,7 @@ class ExascaleDbStorageInputDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExascaleDbStorageVault(TrackedResource):
+class ExascaleDbStorageVault(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExascaleDbStorageVault resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6944,7 +6972,7 @@ class ExascaleDbStorageVault(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class ExascaleDbStorageVaultProperties(_Model):
+class ExascaleDbStorageVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExascaleDbStorageVault resource model.
 
     :ivar additional_flash_cache_in_percent: The size of additional Flash Cache in percentage of
@@ -7056,7 +7084,7 @@ class ExascaleDbStorageVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExascaleDbStorageVaultTagsUpdate(_Model):
+class ExascaleDbStorageVaultTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for updating tags in ExascaleDbStorageVault resources.
 
     :ivar tags: Resource tags.
@@ -7084,7 +7112,7 @@ class ExascaleDbStorageVaultTagsUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileSystemConfigurationDetails(_Model):
+class FileSystemConfigurationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File configuration options.
 
     :ivar mount_point: Mount path.
@@ -7121,7 +7149,7 @@ class FileSystemConfigurationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FlexComponent(ProxyResource):
+class FlexComponent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FlexComponent Resource Definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7217,7 +7245,7 @@ class FlexComponentProperties(_Model):
     """The description summary for this Flex Component."""
 
 
-class GenerateAutonomousDatabaseWalletDetails(_Model):
+class GenerateAutonomousDatabaseWalletDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Autonomous Database Generate Wallet resource model.
 
     :ivar generate_type: The type of wallet to generate. Known values are: "Single" and "All".
@@ -7261,7 +7289,7 @@ class GenerateAutonomousDatabaseWalletDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GiMinorVersion(ProxyResource):
+class GiMinorVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Oracle Grid Infrastructure (GI) minor version resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7302,7 +7330,7 @@ class GiMinorVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GiMinorVersionProperties(_Model):
+class GiMinorVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Oracle Grid Infrastructure (GI) minor version properties.
 
     :ivar version: A valid Oracle Grid Infrastructure (GI) software version. Required.
@@ -7337,7 +7365,7 @@ class GiMinorVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GiVersion(ProxyResource):
+class GiVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GiVersion resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7378,7 +7406,7 @@ class GiVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GiVersionProperties(_Model):
+class GiVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GiVersion resource model.
 
     :ivar version: A valid Oracle Grid Infrastructure (GI) software version. Required.
@@ -7406,7 +7434,7 @@ class GiVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LongTermBackUpScheduleDetails(_Model):
+class LongTermBackUpScheduleDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details for the long-term backup schedule.
 
     :ivar repeat_cadence: The frequency of the long-term backup schedule. Known values are:
@@ -7463,7 +7491,7 @@ class LongTermBackUpScheduleDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindow(_Model):
+class MaintenanceWindow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MaintenanceWindow resource properties.
 
     :ivar preference: The maintenance window scheduling preference. Known values are:
@@ -7586,7 +7614,7 @@ class MaintenanceWindow(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Month(_Model):
+class Month(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Month resource properties.
 
     :ivar name: Name of the month of the year. Required. Known values are: "January", "February",
@@ -7618,7 +7646,7 @@ class Month(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkAnchor(TrackedResource):
+class NetworkAnchor(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Anchor resource model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7670,7 +7698,7 @@ class NetworkAnchor(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkAnchorProperties(_Model):
+class NetworkAnchorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Anchor properties.
 
     :ivar resource_anchor_id: Corresponding resource anchor Azure ID. Required.
@@ -7809,7 +7837,7 @@ class NetworkAnchorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkAnchorUpdate(_Model):
+class NetworkAnchorUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the NetworkAnchor.
 
     :ivar zones: The availability zones.
@@ -7849,7 +7877,7 @@ class NetworkAnchorUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkAnchorUpdateProperties(_Model):
+class NetworkAnchorUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the NetworkAnchor.
 
     :ivar oci_backup_cidr_block: OCI backup subnet cidr block.
@@ -7903,7 +7931,7 @@ class NetworkAnchorUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NsgCidr(_Model):
+class NsgCidr(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule for allowing inbound (INGRESS) IP packets.
 
     :ivar source: Conceptually, this is the range of IP addresses that a packet coming into the
@@ -7941,7 +7969,7 @@ class NsgCidr(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -7999,7 +8027,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -8029,7 +8057,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OracleSubscription(ProxyResource):
+class OracleSubscription(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OracleSubscription resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8075,7 +8103,7 @@ class OracleSubscription(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class OracleSubscriptionProperties(_Model):
+class OracleSubscriptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Oracle Subscription resource model.
 
     :ivar provisioning_state: OracleSubscriptionProvisioningState provisioning state. Known values
@@ -8159,7 +8187,7 @@ class OracleSubscriptionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OracleSubscriptionUpdate(_Model):
+class OracleSubscriptionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the OracleSubscription.
 
     :ivar plan: Details of the resource plan.
@@ -8194,7 +8222,7 @@ class OracleSubscriptionUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OracleSubscriptionUpdateProperties(_Model):
+class OracleSubscriptionUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the OracleSubscription.
 
     :ivar product_code: Product code for the term unit.
@@ -8227,7 +8255,7 @@ class OracleSubscriptionUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PeerDbDetails(_Model):
+class PeerDbDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PeerDb Details.
 
     :ivar peer_db_id: The Azure resource ID of the Disaster Recovery peer database, which is
@@ -8273,7 +8301,7 @@ class PeerDbDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Plan(_Model):
+class Plan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Plan for the resource.
 
     :ivar name: A user defined name of the 3rd Party Artifact that is being procured. Required.
@@ -8328,7 +8356,7 @@ class Plan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlanUpdate(_Model):
+class PlanUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourcePlanTypeUpdate model definition.
 
     :ivar name: A user defined name of the 3rd Party Artifact that is being procured.
@@ -8382,7 +8410,7 @@ class PlanUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortRange(_Model):
+class PortRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Port Range to specify particular destination ports for TCP rules.
 
     :ivar min: The minimum port number, which must not be greater than the maximum port number.
@@ -8418,7 +8446,7 @@ class PortRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateIpAddressesFilter(_Model):
+class PrivateIpAddressesFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private Ip Addresses filter.
 
     :ivar subnet_id: Subnet OCID. Required.
@@ -8451,7 +8479,7 @@ class PrivateIpAddressesFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateIpAddressProperties(_Model):
+class PrivateIpAddressProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateIpAddress resource properties.
 
     :ivar display_name: PrivateIpAddresses displayName. Required.
@@ -8499,7 +8527,7 @@ class PrivateIpAddressProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProfileType(_Model):
+class ProfileType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The connection string profile to allow clients to group, filter and select connection string
     values based on structured metadata.
 
@@ -8593,7 +8621,9 @@ class ProfileType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemoveVirtualMachineFromExadbVmClusterDetails(_Model):  # pylint: disable=name-too-long
+class RemoveVirtualMachineFromExadbVmClusterDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Details of removing Virtual Machines from the Exadata VM cluster on Exascale Infrastructure.
     Applies to Exadata Database Service on Exascale Infrastructure only.
 
@@ -8626,7 +8656,7 @@ class RemoveVirtualMachineFromExadbVmClusterDetails(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class ResourceAnchor(TrackedResource):
+class ResourceAnchor(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource Anchor model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8696,7 +8726,7 @@ class ResourceAnchorProperties(_Model):
      resource anchor. This compartmentId is different from where resource Anchor lives."""
 
 
-class ResourceAnchorUpdate(_Model):
+class ResourceAnchorUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the ResourceAnchor.
 
     :ivar tags: Resource tags.
@@ -8724,7 +8754,7 @@ class ResourceAnchorUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreAutonomousDatabaseDetails(_Model):
+class RestoreAutonomousDatabaseDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details to restore an Oracle Autonomous Database.
 
     :ivar timestamp: The time to restore the database to. Required.
@@ -8809,7 +8839,7 @@ class SaasSubscriptionDetails(_Model):
     """FreeTrial flag."""
 
 
-class ScheduledOperationsType(_Model):
+class ScheduledOperationsType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of scheduled operations.
 
     :ivar day_of_week: Day of week. Required.
@@ -8853,7 +8883,7 @@ class ScheduledOperationsType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledOperationsTypeUpdate(_Model):
+class ScheduledOperationsTypeUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of scheduled operations.
 
     :ivar day_of_week: Day of week.
@@ -8897,7 +8927,7 @@ class ScheduledOperationsTypeUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -8964,7 +8994,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemVersion(ProxyResource):
+class SystemVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SystemVersion resource Definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9005,7 +9035,7 @@ class SystemVersion(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SystemVersionProperties(_Model):
+class SystemVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """System Version Resource model.
 
     :ivar system_version: A valid Oracle System Version. Required.
@@ -9033,7 +9063,7 @@ class SystemVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualNetworkAddress(ProxyResource):
+class VirtualNetworkAddress(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual IP resource belonging to a vm cluster resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9074,7 +9104,7 @@ class VirtualNetworkAddress(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class VirtualNetworkAddressProperties(_Model):
+class VirtualNetworkAddressProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """virtualNetworkAddress resource properties.
 
     :ivar ip_address: Virtual network Address address.

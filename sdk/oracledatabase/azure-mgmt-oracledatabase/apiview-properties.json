@@ -423,5 +423,6 @@
         "azure.mgmt.oracledatabase.aio.operations.DbVersionsOperations.get": "Oracle.Database.DbVersions.get",
         "azure.mgmt.oracledatabase.operations.DbVersionsOperations.list_by_location": "Oracle.Database.DbVersions.listByLocation",
         "azure.mgmt.oracledatabase.aio.operations.DbVersionsOperations.list_by_location": "Oracle.Database.DbVersions.listByLocation"
-    }
+    },
+    "CrossLanguageVersion": "3bd046aa372c"
 }

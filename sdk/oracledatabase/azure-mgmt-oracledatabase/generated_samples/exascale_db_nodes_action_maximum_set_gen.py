@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/ExascaleDbNodes_Action_MaximumSet_Gen.json
+# x-ms-original-file: 2025-11-01-preview/ExascaleDbNodes_Action_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

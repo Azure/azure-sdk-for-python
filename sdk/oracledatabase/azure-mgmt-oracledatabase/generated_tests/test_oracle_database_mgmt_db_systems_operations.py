@@ -49,6 +49,11 @@ class TestOracleDatabaseMgmtDbSystemsOperations(AzureMgmtRecordedTestCase):
                     "clusterName": "str",
                     "computeCount": 0,
                     "computeModel": "str",
+                    "dataCollectionOptions": {
+                        "isDiagnosticsEventsEnabled": bool,
+                        "isHealthMonitoringEnabled": bool,
+                        "isIncidentLogsEnabled": bool,
+                    },
                     "dataStorageSizeInGbs": 0,
                     "dbSystemOptions": {"storageManagement": "str"},
                     "diskRedundancy": "str",

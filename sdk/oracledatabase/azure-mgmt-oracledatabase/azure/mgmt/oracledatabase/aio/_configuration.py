@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class OracleDatabaseMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class OracleDatabaseMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for OracleDatabaseMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -33,8 +34,10 @@ class OracleDatabaseMgmtClientConfiguration:  # pylint: disable=too-many-instanc
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-09-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2025-11-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
@@ -46,7 +49,7 @@ class OracleDatabaseMgmtClientConfiguration:  # pylint: disable=too-many-instanc
         cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-09-01")
+        api_version: str = kwargs.pop("api_version", "2025-11-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
