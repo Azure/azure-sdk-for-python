@@ -1,5 +1,11 @@
 # Release History
 
+## 2.2.0b1 (2026-08-27)
+
+### Bugs Fixed
+
+- Made `logprobs` optional in assistant output-text content to match the OpenAI Responses API runtime behavior.
+
 ## 2.1.0 (2026-08-24)
 
 ### Other Changes
