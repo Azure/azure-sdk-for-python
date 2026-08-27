@@ -407,12 +407,11 @@ class TestAppInsightsIngestionE2E:
             f"| where name == '{_AZURE_SDK_DEPENDENCY_NAME}' "
             "| take 1"
         )
-        response = logs_query_client.query_resource(
+        dependency_rows = _poll_appinsights(
+            logs_query_client,
             appinsights_resource_id,
             dependency_query,
-            timespan=timedelta(minutes=30),
         )
-        dependency_rows = response.tables[0].rows if response.tables else []
         assert dependency_rows == []
 
     def test_azure_sdk_dependency_span_emitted_when_enabled(
