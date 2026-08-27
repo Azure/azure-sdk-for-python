@@ -24,7 +24,6 @@ from ._patch_rle import (
     OpenEnvClient,
     OpenEnvInstance,
     RLEOperations,
-    RLEError,
     RLEQuotaExceededError,
     RLEInstanceAcquireTimeoutError,
 )

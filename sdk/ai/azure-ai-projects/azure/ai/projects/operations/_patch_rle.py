@@ -249,6 +249,12 @@ def _acquire_instance(
 
     :param instances: Generated instance operations bound to the project client.
     :type instances: ~azure.ai.projects.operations.RLEInstancesOperations
+    :param runtime: Generated instance runtime operations bound to the project client.
+    :type runtime: ~azure.ai.projects.operations.RLEInstanceRuntimeOperations
+    :param environment_name: The environment that owns the instance group.
+    :type environment_name: str
+    :param environment_version: Resolved environment version that owns the instance group.
+    :type environment_version: str
     :param instance_group_id: The instance group to lease an instance from.
     :type instance_group_id: str
     :keyword instance_acquire_timeout: Maximum time to acquire a healthy instance, in seconds.
@@ -428,19 +434,28 @@ class OpenEnvInstance:
 
     @property
     def id(self) -> str:
-        """Identifier of the leased instance that backs this object."""
+        """Identifier of the leased instance that backs this object.
+
+        :rtype: str
+        """
         if self._instance_id is None:
             raise RLEError("instance has been released")
         return self._instance_id
 
     @property
     def instance_group_id(self) -> str:
-        """The instance group the instance was leased from."""
+        """The instance group the instance was leased from.
+
+        :rtype: str
+        """
         return self._instance_group_id
 
     @property
     def environment_name(self) -> str:
-        """Resolved environment name that owns this instance."""
+        """Resolved environment name that owns this instance.
+
+        :rtype: str
+        """
         return self._environment_name
 
     @property
