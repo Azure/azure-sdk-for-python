@@ -1,14 +1,15 @@
 # Release History
 
-## 1.19.0 (2026-08-27)
+## 1.18.4 (2026-08-27)
 
-### Features Added
+### Bugs Fixed
 
-- Added support for bare `messages=[...]` input, with optional top-level `context`, `ground_truth`, and
-  `tool_definitions`, to `RelevanceEvaluator`, `SimilarityEvaluator`, `FluencyEvaluator`, `RetrievalEvaluator`,
-  `ResponseCompletenessEvaluator`, `ViolenceEvaluator`, `HateUnfairnessEvaluator`, `SelfHarmEvaluator`,
-  `SexualEvaluator`, `ProtectedMaterialEvaluator`, `IndirectAttackEvaluator`, `CodeVulnerabilityEvaluator`,
-  and `ECIEvaluator`. Existing scalar and `conversation={...}` input paths remain supported.
+- Fixed keyword argument routing so bare `messages=[...]` input, with optional top-level `context`, `ground_truth`,
+  and `tool_definitions`, is normalized into the already-supported conversation path for `RelevanceEvaluator`,
+  `SimilarityEvaluator`, `FluencyEvaluator`, `RetrievalEvaluator`, `ResponseCompletenessEvaluator`,
+  `ViolenceEvaluator`, `HateUnfairnessEvaluator`, `SelfHarmEvaluator`, `SexualEvaluator`,
+  `ProtectedMaterialEvaluator`, `IndirectAttackEvaluator`, `CodeVulnerabilityEvaluator`, and `ECIEvaluator`.
+  Existing scalar and `conversation={...}` input semantics are unchanged.
   [#48629](https://github.com/Azure/azure-sdk-for-python/pull/48629)
 
 ## 1.18.3 (2026-07-28)
