@@ -303,17 +303,25 @@ def _validate_CreateResponse_text(value: Any, path: str, errors: list[dict[str, 
 
 def _validate_CreateResponse_tool_choice(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_ToolChoiceOptions(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_ToolChoiceParam(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: OpenAI.ToolChoiceOptions, OpenAI.ToolChoiceParam; got {_type_label(value)}")
         return
 
@@ -354,17 +362,25 @@ def _validate_CreateResponse_include_item(value: Any, path: str, errors: list[di
 
 def _validate_OpenAI_InputParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'array'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_array(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: string, array; got {_type_label(value)}")
         return
 
@@ -536,17 +552,25 @@ def _validate_OpenAI_ContextManagementParam(value: Any, path: str, errors: list[
 
 def _validate_OpenAI_ConversationParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_ConversationParam_2(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: string, OpenAI.ConversationParam-2; got {_type_label(value)}")
         return
 
@@ -1979,6 +2003,7 @@ def _validate_WorkIQPreviewTool(value: Any, path: str, errors: list[dict[str, st
 
 def _validate_OpenAI_Item_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union:
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_ItemType(value, path, _branch_errors_0)
@@ -1989,7 +2014,12 @@ def _validate_OpenAI_Item_type(value: Any, path: str, errors: list[dict[str, str
         _validate_OpenAI_Item_type_2(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: OpenAI.ItemType, string; got {_type_label(value)}")
         return
 
@@ -2711,27 +2741,39 @@ def _validate_OpenAI_ModerationPolicyParam(value: Any, path: str, errors: list[d
 
 def _validate_OpenAI_ResponsePromptVariables_additional_property(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_InputTextContent(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_2: list[dict[str, str]] = []
         _validate_OpenAI_InputImageContent(value, path, _branch_errors_2)
         if not _branch_errors_2:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_2) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_2
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_3: list[dict[str, str]] = []
         _validate_OpenAI_InputFileContent(value, path, _branch_errors_3)
         if not _branch_errors_3:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_3) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_3
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: string, OpenAI.InputTextContent, OpenAI.InputImageContent, OpenAI.InputFileContent; got {_type_label(value)}")
         return
 
@@ -2942,17 +2984,25 @@ def _validate_CaptureStructuredOutputsTool_type(value: Any, path: str, errors: l
 
 def _validate_OpenAI_CodeInterpreterTool_container(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_AutoCodeInterpreterToolParam(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: string, OpenAI.AutoCodeInterpreterToolParam; got {_type_label(value)}")
         return
 
@@ -3102,17 +3152,25 @@ def _validate_OpenAI_ImageGenTool_input_image_mask(value: Any, path: str, errors
 
 def _validate_OpenAI_ImageGenTool_model(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_ImageGenTool_model_2(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected ImageGenTool_model to be a string value, got {_type_label(value)}")
         return
 
@@ -3152,17 +3210,25 @@ def _validate_OpenAI_ImageGenTool_quality(value: Any, path: str, errors: list[di
 
 def _validate_OpenAI_ImageGenTool_size(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_ImageGenTool_size_2(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected ImageGenTool_size to be a string value, got {_type_label(value)}")
         return
 
@@ -3184,17 +3250,25 @@ def _validate_OpenAI_LocalShellToolParam_type(value: Any, path: str, errors: lis
 
 def _validate_OpenAI_MCPTool_allowed_tools(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'array'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_MCPTool_allowed_tools_array(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_MCPTool_allowed_tools_object(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: array, object; got {_type_label(value)}")
         return
 
@@ -3233,17 +3307,25 @@ def _validate_OpenAI_MCPTool_project_connection_id(value: Any, path: str, errors
 
 def _validate_OpenAI_MCPTool_require_approval(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_MCPTool_require_approval_object(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_MCPTool_require_approval_2(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: object, string; got {_type_label(value)}")
         return
 
@@ -3728,17 +3810,25 @@ def _validate_OpenAI_ItemCustomToolCallOutput_id(value: Any, path: str, errors: 
 
 def _validate_OpenAI_ItemCustomToolCallOutput_output(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'array'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_ItemCustomToolCallOutput_output_array(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: string, array; got {_type_label(value)}")
         return
 
@@ -3817,17 +3907,25 @@ def _validate_OpenAI_ItemFunctionToolCall_type(value: Any, path: str, errors: li
 
 def _validate_OpenAI_FunctionCallOutputItemParam_output(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'array'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_FunctionCallOutputItemParam_output_array(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: string, array; got {_type_label(value)}")
         return
 
@@ -4057,17 +4155,25 @@ def _validate_MemorySearchToolCallItemParam_type(value: Any, path: str, errors: 
 
 def _validate_OpenAI_ItemMessage_content(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'array'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_ItemMessage_content_array(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: string, array; got {_type_label(value)}")
         return
 
@@ -4281,22 +4387,32 @@ def _validate_OpenAI_ToolSearchOutputItemParam_type(value: Any, path: str, error
 
 def _validate_OpenAI_ItemWebSearchToolCall_action(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_WebSearchActionSearch(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_WebSearchActionOpenPage(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_2: list[dict[str, str]] = []
         _validate_OpenAI_WebSearchActionFind(value, path, _branch_errors_2)
         if not _branch_errors_2:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_2) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_2
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: OpenAI.WebSearchActionSearch, OpenAI.WebSearchActionOpenPage, OpenAI.WebSearchActionFind; got {_type_label(value)}")
         return
 
@@ -4528,17 +4644,25 @@ def _validate_MemorySearchTool_search_options_all_of_0(value: Any, path: str, er
 
 def _validate_OpenAI_NamespaceToolParam_tools_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_FunctionToolParam(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_CustomToolParam(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: OpenAI.FunctionToolParam, OpenAI.CustomToolParam; got {_type_label(value)}")
         return
 
@@ -4617,17 +4741,25 @@ def _validate_OpenAI_ApplyPatchToolCallOutputItemParam_status_all_of_0(value: An
 
 def _validate_OpenAI_ItemCodeInterpreterToolCall_outputs_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_CodeInterpreterOutputLogs(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_CodeInterpreterOutputImage(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: OpenAI.CodeInterpreterOutputLogs, OpenAI.CodeInterpreterOutputImage; got {_type_label(value)}")
         return
 
@@ -5118,17 +5250,25 @@ def _validate_FabricDataAgentToolParameters(value: Any, path: str, errors: list[
 
 def _validate_OpenAI_Filters(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_ComparisonFilter(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_CompoundFilter(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: OpenAI.ComparisonFilter, OpenAI.CompoundFilter; got {_type_label(value)}")
         return
 
@@ -5720,22 +5860,32 @@ def _validate_OpenAI_FileSearchToolCallResults(value: Any, path: str, errors: li
 
 def _validate_OpenAI_FunctionCallOutputItemParam_output_array_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputTextContentParam(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_InputImageContentParamAutoParam(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_2: list[dict[str, str]] = []
         _validate_OpenAI_InputFileContentParam(value, path, _branch_errors_2)
         if not _branch_errors_2:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_2) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_2
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: OpenAI.InputTextContentParam, OpenAI.InputImageContentParamAutoParam, OpenAI.InputFileContentParam; got {_type_label(value)}")
         return
 
@@ -7210,27 +7360,39 @@ def _validate_OpenAI_ComparisonFilter_type(value: Any, path: str, errors: list[d
 
 def _validate_OpenAI_ComparisonFilter_value(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'number'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_ComparisonFilter_value_number(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union and _is_type(value, 'boolean'):
         _branch_errors_2: list[dict[str, str]] = []
         _validate_OpenAI_ComparisonFilter_value_boolean(value, path, _branch_errors_2)
         if not _branch_errors_2:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_2) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_2
     if not _matched_union and _is_type(value, 'array'):
         _branch_errors_3: list[dict[str, str]] = []
         _validate_OpenAI_ComparisonFilter_value_array(value, path, _branch_errors_3)
         if not _branch_errors_3:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_3) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_3
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: string, number, boolean, array; got {_type_label(value)}")
         return
 
@@ -7984,17 +8146,23 @@ def _validate_OpenAI_ComparisonFilter_value_array(value: Any, path: str, errors:
 
 def _validate_OpenAI_CompoundFilter_filters_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_ComparisonFilter(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union:
         _branch_errors_1: list[dict[str, str]] = []
         _validate_CreateResponse_structured_inputs_additional_property(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: OpenAI.ComparisonFilter, value; got {_type_label(value)}")
         return
 
@@ -8317,17 +8485,25 @@ def _validate_ToolProjectConnection_project_connection_id(value: Any, path: str,
 
 def _validate_OpenAI_ComparisonFilter_value_array_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'number'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_ComparisonFilter_value_number(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: string, number; got {_type_label(value)}")
         return
 
@@ -8428,22 +8604,32 @@ def _validate_OpenAI_CoordParam_y(value: Any, path: str, errors: list[dict[str, 
 
 def _validate_OpenAI_VectorStoreFileAttributes_additional_property(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'string'):
         _branch_errors_0: list[dict[str, str]] = []
         _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'number'):
         _branch_errors_1: list[dict[str, str]] = []
         _validate_OpenAI_ComparisonFilter_value_number(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
     if not _matched_union and _is_type(value, 'boolean'):
         _branch_errors_2: list[dict[str, str]] = []
         _validate_OpenAI_ComparisonFilter_value_boolean(value, path, _branch_errors_2)
         if not _branch_errors_2:
             _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_2) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_2
     if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
         _append_error(errors, path, f"Expected one of: string, number, boolean; got {_type_label(value)}")
         return
 

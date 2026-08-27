@@ -27,9 +27,7 @@ def test_emitter_generates_required_property_check() -> None:
     }
     module = _load_module(build_validator_module(schemas, ["CreateResponse"]))
     errors = module.validate_CreateResponse({})
-    assert any(
-        e["path"] == "$.model" and "missing" in e["message"].lower() for e in errors
-    )
+    assert any(e["path"] == "$.model" and "missing" in e["message"].lower() for e in errors)
 
 
 def test_emitter_generates_class_without_schema_definition() -> None:
@@ -62,9 +60,7 @@ def test_emitter_uses_request_field_literal_before_schema_alias() -> None:
     schemas = {
         "CreateResponse": {
             "type": "object",
-            "properties": {
-                "service_tier": {"$ref": "#/components/schemas/OpenAI.ServiceTier"}
-            },
+            "properties": {"service_tier": {"$ref": "#/components/schemas/OpenAI.ServiceTier"}},
         },
         "OpenAI.ServiceTier": {
             "type": "string",
@@ -76,27 +72,20 @@ def test_emitter_uses_request_field_literal_before_schema_alias() -> None:
 
     assert "_LITERAL_ENUM_ALIASES" not in code
     assert "_field_literal_values('CreateResponse', 'service_tier')" in code
-    assert code.index(
-        "_field_literal_values('CreateResponse', 'service_tier')"
-    ) < code.index("_schema_literal_values('ServiceTier')")
+    assert code.index("_field_literal_values('CreateResponse', 'service_tier')") < code.index(
+        "_schema_literal_values('ServiceTier')"
+    )
 
     class FakeCreateResponse:
-        __annotations__ = {
-            "service_tier": Optional[
-                Literal["auto", "default", "flex", "scale", "priority"]
-            ]
-        }
+        __annotations__ = {"service_tier": Optional[Literal["auto", "default", "flex", "scale", "priority"]]}
 
     module = _load_module(code)
-    module._response_types = type(
-        "FakeTypes", (), {"CreateResponse": FakeCreateResponse}
-    )
+    module._response_types = type("FakeTypes", (), {"CreateResponse": FakeCreateResponse})
 
     assert module.validate_CreateResponse({"service_tier": "scale"}) == []
     errors = module.validate_CreateResponse({"service_tier": "unknown"})
     assert any(
-        e["path"] == "$.service_tier"
-        and "Allowed: auto, default, flex, scale, priority" in e["message"]
+        e["path"] == "$.service_tier" and "Allowed: auto, default, flex, scale, priority" in e["message"]
         for e in errors
     )
 
@@ -147,19 +136,10 @@ def test_emitter_generates_primitive_type_checks_and_enum_literal() -> None:
         }
     }
     module = _load_module(build_validator_module(schemas, ["CreateResponse"]))
-    errors = module.validate_CreateResponse(
-        {"model": "bad", "temperature": "hot", "stream": "yes"}
-    )
-    assert any(
-        e["path"] == "$.model" and "allowed" in e["message"].lower() for e in errors
-    )
-    assert any(
-        e["path"] == "$.temperature" and "number" in e["message"].lower()
-        for e in errors
-    )
-    assert any(
-        e["path"] == "$.stream" and "boolean" in e["message"].lower() for e in errors
-    )
+    errors = module.validate_CreateResponse({"model": "bad", "temperature": "hot", "stream": "yes"})
+    assert any(e["path"] == "$.model" and "allowed" in e["message"].lower() for e in errors)
+    assert any(e["path"] == "$.temperature" and "number" in e["message"].lower() for e in errors)
+    assert any(e["path"] == "$.stream" and "boolean" in e["message"].lower() for e in errors)
 
 
 def test_emitter_generates_nested_delegate_calls() -> None:
@@ -200,10 +180,7 @@ def test_emitter_generates_union_kind_check_for_oneof_anyof() -> None:
     }
     module = _load_module(build_validator_module(schemas, ["CreateResponse"]))
     errors = module.validate_CreateResponse({"tool_choice": 123})
-    assert any(
-        e["path"] == "$.tool_choice" and "expected one of" in e["message"].lower()
-        for e in errors
-    )
+    assert any(e["path"] == "$.tool_choice" and "expected one of" in e["message"].lower() for e in errors)
     assert "and True" not in build_validator_module(schemas, ["CreateResponse"])
 
 
@@ -234,14 +211,15 @@ def test_emitter_validates_create_response_input_property() -> None:
 
     # Invalid input kind should fail the CreateResponse.input union check.
     invalid_errors = module.validate_CreateResponse({"input": 123})
-    assert any(
-        e["path"] == "$.input" and "expected one of" in e["message"].lower()
-        for e in invalid_errors
-    )
+    assert any(e["path"] == "$.input" and "expected one of" in e["message"].lower() for e in invalid_errors)
 
     # Supported input kinds should pass.
     assert module.validate_CreateResponse({"input": "hello"}) == []
     assert module.validate_CreateResponse({"input": [{"type": "message"}]}) == []
+
+    # Once a union branch matches the input kind, preserve its nested errors.
+    nested_errors = module.validate_CreateResponse({"input": [{}]})
+    assert any(error["path"] == "$.input[0].type" for error in nested_errors)
 
 
 def test_emitter_generates_discriminator_dispatch() -> None:
@@ -267,30 +245,18 @@ def test_emitter_generates_discriminator_dispatch() -> None:
     }
     module = _load_module(build_validator_module(schemas, ["Tool"]))
     errors = module.validate_Tool({"type": "function"})
-    assert any(
-        e["path"] == "$.name" and "missing" in e["message"].lower() for e in errors
-    )
+    assert any(e["path"] == "$.name" and "missing" in e["message"].lower() for e in errors)
 
 
 def test_emitter_validates_allof_wrapped_literal_alias() -> None:
     schemas = {
         "CreateResponse": {
             "type": "object",
-            "properties": {
-                "prompt_cache_options": {
-                    "$ref": "#/components/schemas/OpenAI.PromptCacheOptionsParam"
-                }
-            },
+            "properties": {"prompt_cache_options": {"$ref": "#/components/schemas/OpenAI.PromptCacheOptionsParam"}},
         },
         "OpenAI.PromptCacheOptionsParam": {
             "type": "object",
-            "properties": {
-                "mode": {
-                    "allOf": [
-                        {"$ref": "#/components/schemas/OpenAI.PromptCacheModeEnum"}
-                    ]
-                }
-            },
+            "properties": {"mode": {"allOf": [{"$ref": "#/components/schemas/OpenAI.PromptCacheModeEnum"}]}},
         },
         "OpenAI.PromptCacheModeEnum": {
             "type": "string",
@@ -311,17 +277,9 @@ def test_emitter_validates_allof_wrapped_literal_alias() -> None:
         },
     )
 
-    assert (
-        module.validate_CreateResponse({"prompt_cache_options": {"mode": "explicit"}})
-        == []
-    )
-    errors = module.validate_CreateResponse(
-        {"prompt_cache_options": {"mode": "invalid"}}
-    )
-    assert any(
-        e["path"] == "$.prompt_cache_options.mode" and "allowed" in e["message"].lower()
-        for e in errors
-    )
+    assert module.validate_CreateResponse({"prompt_cache_options": {"mode": "explicit"}}) == []
+    errors = module.validate_CreateResponse({"prompt_cache_options": {"mode": "invalid"}})
+    assert any(e["path"] == "$.prompt_cache_options.mode" and "allowed" in e["message"].lower() for e in errors)
 
 
 def test_emitter_validates_allof_wrapped_discriminator() -> None:
@@ -331,9 +289,7 @@ def test_emitter_validates_allof_wrapped_discriminator() -> None:
             "properties": {
                 "caller": {
                     "type": "object",
-                    "allOf": [
-                        {"$ref": "#/components/schemas/OpenAI.ToolCallCallerParam"}
-                    ],
+                    "allOf": [{"$ref": "#/components/schemas/OpenAI.ToolCallCallerParam"}],
                 }
             },
         },
@@ -370,20 +326,11 @@ def test_emitter_validates_allof_wrapped_discriminator() -> None:
 
     assert module.validate_CreateResponse({"caller": {"type": "direct"}}) == []
     missing_type = module.validate_CreateResponse({"caller": {}})
-    assert any(
-        e["path"] == "$.caller.type" and "missing" in e["message"].lower()
-        for e in missing_type
-    )
+    assert any(e["path"] == "$.caller.type" and "missing" in e["message"].lower() for e in missing_type)
     missing_caller_id = module.validate_CreateResponse({"caller": {"type": "program"}})
-    assert any(
-        e["path"] == "$.caller.caller_id" and "missing" in e["message"].lower()
-        for e in missing_caller_id
-    )
+    assert any(e["path"] == "$.caller.caller_id" and "missing" in e["message"].lower() for e in missing_caller_id)
     unknown_type = module.validate_CreateResponse({"caller": {"type": "unknown"}})
-    assert any(
-        e["path"] == "$.caller.type" and "invalid discriminator" in e["message"].lower()
-        for e in unknown_type
-    )
+    assert any(e["path"] == "$.caller.type" and "invalid discriminator" in e["message"].lower() for e in unknown_type)
 
 
 def test_emitter_generates_default_discriminator_fallback() -> None:
@@ -424,29 +371,18 @@ def test_emitter_generates_default_discriminator_fallback() -> None:
     # No type → defaults to "message", validates against ItemMessage
     errors = module.validate_Item({"role": "user"})
     # Should NOT get "Required discriminator 'type' is missing" or "Required property 'type' is missing"
-    assert not any(
-        "type" in e.get("path", "") and "missing" in e.get("message", "").lower()
-        for e in errors
-    )
+    assert not any("type" in e.get("path", "") and "missing" in e.get("message", "").lower() for e in errors)
     # Should validate as message — role present, so no errors
     assert errors == []
 
     # No type, missing required "role" → defaults to "message" but fails message validation
     errors_no_role = module.validate_Item({"content": "hi"})
-    assert not any(
-        "type" in e.get("path", "") and "missing" in e.get("message", "").lower()
-        for e in errors_no_role
-    )
-    assert any(
-        e["path"] == "$.role" and "missing" in e["message"].lower()
-        for e in errors_no_role
-    )
+    assert not any("type" in e.get("path", "") and "missing" in e.get("message", "").lower() for e in errors_no_role)
+    assert any(e["path"] == "$.role" and "missing" in e["message"].lower() for e in errors_no_role)
 
     # Explicit type still works
     errors_fc = module.validate_Item({"type": "function_call"})
-    assert any(
-        e["path"] == "$.name" and "missing" in e["message"].lower() for e in errors_fc
-    )
+    assert any(e["path"] == "$.name" and "missing" in e["message"].lower() for e in errors_fc)
 
 
 def test_emitter_generates_array_and_map_checks() -> None:

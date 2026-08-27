@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 import sys
 
 from typing import Optional, List
@@ -15,6 +16,21 @@ from ci_tools.parsing import ParsedSetup
 REPO_ROOT = discover_repo_root()
 AZURE_SDK_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
 PYPI_INDEX_URL = "https://pypi.org/simple/"
+
+
+def _patch_apistub_type_name_regex() -> None:
+    """Preserve dotted numeric segments when APIView tokenizes string literals."""
+    from apistub._generated.treestyle.parser.models import _patch
+
+    _patch.TYPE_NAME_REGEX = re.compile(r"(~?[a-zA-Z_][a-zA-Z\d._]*|\d+)")
+
+
+def _run_apistub_generator() -> None:
+    """Run the APIView stub generator with repository compatibility patches."""
+    from apistub import console_entry_point
+
+    _patch_apistub_type_name_regex()
+    console_entry_point()
 
 
 def get_package_wheel_path(pkg_root: str) -> str:
@@ -211,7 +227,7 @@ class apistub(Check):
             if cross_language_mapping_path:
                 cross_language_mapping_path = os.path.abspath(cross_language_mapping_path)
 
-            cmds = ["-m", "apistub", "--pkg-path", pkg_path]
+            cmds = ["-m", "azpysdk.apistub", "--pkg-path", pkg_path]
 
             if out_token_path:
                 cmds.extend(["--out-path", out_token_path])
@@ -270,3 +286,7 @@ class apistub(Check):
                 results.append(e.returncode)
 
         return max(results) if results else 0
+
+
+if __name__ == "__main__":
+    _run_apistub_generator()
