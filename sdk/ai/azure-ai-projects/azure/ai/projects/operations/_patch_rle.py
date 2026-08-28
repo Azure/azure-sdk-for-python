@@ -167,11 +167,6 @@ def _validate_poll_interval(poll_interval_s: float) -> float:
     return value
 
 
-def _is_healthy_response(response: Any) -> bool:
-    del response
-    return True
-
-
 def _capacity_details(exc: HttpResponseError) -> Optional[Any]:
     if getattr(exc.response, "status_code", None) != 429:
         return None
@@ -343,14 +338,13 @@ def _acquire_instance(
 
         while True:
             try:
-                health = runtime.health(
+                runtime.health(
                     environment_name,
                     environment_version,
                     instance_group_id,
                     instance_id,
                 )
-                if _is_healthy_response(health):
-                    break
+                break
             except HttpResponseError as exc:
                 if (
                     getattr(exc.response, "status_code", None)
@@ -592,9 +586,7 @@ class OpenEnvInstance:
         )
 
     def _ensure_healthy(self) -> None:
-        health = self.health()
-        if not _is_healthy_response(health):
-            raise RLEError(f"instance {self.id} is not healthy")
+        self.health()
 
     def _release(self) -> None:
         """Release the underlying instance, best effort."""

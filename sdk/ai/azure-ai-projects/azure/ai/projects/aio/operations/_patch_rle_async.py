@@ -42,7 +42,6 @@ from ...operations._patch_rle import (
     _TRANSIENT_HEALTH_STATUS_CODES,
     _capacity_retry,
     _error_code,
-    _is_healthy_response,
     _is_quota_exceeded_error,
     _parse_retry_after,
     _status_matches,
@@ -186,14 +185,13 @@ async def _acquire_instance(
 
         while True:
             try:
-                health = await runtime.health(
+                await runtime.health(
                     environment_name,
                     environment_version,
                     instance_group_id,
                     instance_id,
                 )
-                if _is_healthy_response(health):
-                    break
+                break
             except HttpResponseError as exc:
                 if (
                     getattr(exc.response, "status_code", None)
@@ -465,9 +463,7 @@ class AsyncOpenEnvInstance:
         )
 
     async def _ensure_healthy(self) -> None:
-        health = await self.health()
-        if not _is_healthy_response(health):
-            raise RLEError(f"instance {self.id} is not healthy")
+        await self.health()
 
     async def _release(self) -> None:
         """Release the underlying instance, best effort."""
