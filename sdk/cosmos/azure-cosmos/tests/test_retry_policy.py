@@ -13,7 +13,6 @@ import test_config
 from azure.cosmos import _retry_utility, PartitionKey, documents
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, ResourceType
 from _fault_injection_transport import FaultInjectionTransport
-import os
 from azure.core.exceptions import ServiceResponseError, ServiceRequestError
 from azure.cosmos._health_check_retry_policy import HealthCheckRetryPolicy
 from azure.cosmos._constants import _Constants

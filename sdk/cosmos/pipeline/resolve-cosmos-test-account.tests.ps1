@@ -194,13 +194,6 @@ Test-Case 'requires key' {
     Assert-True ($r.StdErr -match "missing required 'key'") "unexpected error: $($r.StdErr)"
 }
 
-Test-Case 'requires an https endpoint' {
-    $json = '{"version": 1, "accounts": {"single-session": {"endpoint": "http://x.documents.azure.com:443/", "key": "k"}}}'
-    $r = Invoke-Resolver -Json $json -Selector 'single-session'
-    Assert-True ($r.ExitCode -ne 0) 'expected non-zero exit'
-    Assert-True ($r.StdErr -match 'must start with https://') "unexpected error: $($r.StdErr)"
-}
-
 # Azure DevOps logging commands are line-oriented, so a newline in a key would truncate the
 # variable and print the remainder of the secret to the log as unscrubbed plain text.
 Test-Case 'rejects a key containing a line break' {

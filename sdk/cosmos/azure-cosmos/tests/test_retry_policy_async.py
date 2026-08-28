@@ -1,7 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
-import os
 import unittest
 import uuid
 

@@ -3,7 +3,6 @@
 
 import base64
 import json
-import os
 import time
 import unittest
 from io import StringIO

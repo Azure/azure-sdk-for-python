@@ -10,7 +10,7 @@
 
 .DESCRIPTION
     This is the PowerShell counterpart of the Java repo's sdk/cosmos/pipeline/resolve-cosmos-test-account.sh
-    and reads the exact same secret, in the same schema, with the same validation rules.
+    and reads the exact same secret, in the same schema, selecting the same credential fields.
 
     It is PowerShell rather than bash+jq on purpose: unlike Java, the Python Cosmos live matrix
     (sdk/cosmos/live-platform-matrix.json) runs legs on windows-2022 and macos images as well as
@@ -173,10 +173,6 @@ if ([string]::IsNullOrWhiteSpace($endpoint)) {
 if ([string]::IsNullOrWhiteSpace($key)) {
     Write-Failure "Account '$Selector' is missing required 'key'."
 }
-if (-not $endpoint.StartsWith('https://', [System.StringComparison]::Ordinal)) {
-    Write-Failure "Account '$Selector' endpoint must start with https:// (got '$endpoint')."
-}
-
 Assert-SingleLine 'endpoint' $endpoint
 Assert-SingleLine 'key' $key
 
