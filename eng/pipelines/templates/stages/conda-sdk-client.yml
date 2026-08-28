@@ -982,6 +982,7 @@ extends:
                         - package: azure-mgmt-sphere
                           version: 1.0.0
                         - package: azure-mgmt-sql
+                          checkout_path: sdk/sql
                           version: 4.0.0
                         - package: azure-mgmt-sqlvirtualmachine
                           version: 1.0.0
