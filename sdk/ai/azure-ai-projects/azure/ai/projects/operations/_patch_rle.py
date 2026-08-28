@@ -57,7 +57,6 @@ _DEFAULT_POLL_INTERVAL_S = 5.0
 _MAX_PAGINATION_LIMIT = 100
 _QUOTA_EXCEEDED_CODE = "QuotaExceeded"
 _INSTANCE_GROUP_AT_CAPACITY_CODE = "InstanceGroupAtCapacity"
-_HEALTHY_STATUSES = frozenset(("healthy", "ok", "ready", "running"))
 _TRANSIENT_HEALTH_STATUS_CODES = frozenset(
     (404, 408, 409, 425, 429, 500, 502, 503, 504)
 )
@@ -169,10 +168,8 @@ def _validate_poll_interval(poll_interval_s: float) -> float:
 
 
 def _is_healthy_response(response: Any) -> bool:
-    if not isinstance(response, Mapping):
-        return True
-    status = response.get("status")
-    return status is None or str(status).lower() in _HEALTHY_STATUSES
+    del response
+    return True
 
 
 def _capacity_details(exc: HttpResponseError) -> Optional[Any]:
@@ -875,26 +872,24 @@ class RLEOperations:
     @distributed_trace
     def create_environment(
         self,
-        name: str,
         acr_image_path: str,
         *,
+        name: Optional[str] = None,
         version_bump: Optional[Union[str, RLEnvironmentVersionBump]] = None,
         **kwargs: Any,
     ) -> RLEnvironment:
         """Create a new hosted RLE environment.
 
-        :param name: Environment name. Required.
-        :type name: str
         :param acr_image_path: Azure Container Registry image path that backs the environment. Required.
         :type acr_image_path: str
+        :keyword name: Optional environment name. The service assigns one when omitted.
+        :paramtype name: str or None
         :keyword version_bump: Semantic version component to increment. Omit to let the service choose.
         :paramtype version_bump: str or ~azure.ai.projects.models.RLEnvironmentVersionBump or None
         :return: The created RLEnvironment.
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not name:
-            raise ValueError("name is required")
         if not acr_image_path:
             raise ValueError("acr_image_path is required")
         return self._environments.create_environment(

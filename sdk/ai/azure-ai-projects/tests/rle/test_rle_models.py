@@ -671,13 +671,13 @@ def test_openenv_get_instance_releases_pending_instance_when_interrupted(monkeyp
     assert instances.released == ["inst-0"]
 
 
-def test_openenv_get_instance_waits_for_runtime_health():
+def test_openenv_get_instance_accepts_successful_runtime_health_response():
     instances = _FakeInstances(health_statuses=["starting", "healthy"])
     client, _groups, _instances = _make_openenv_client(instances=instances)
     with client:
         with client.get_instance() as instance:
             assert instance.id == "inst-0"
-    assert [call[0] for call in instances.calls] == ["health", "health"]
+    assert [call[0] for call in instances.calls] == ["health"]
 
 
 def test_openenv_get_instance_releases_instance_when_health_times_out():
@@ -685,7 +685,7 @@ def test_openenv_get_instance_releases_instance_when_health_times_out():
         def health(
             self, environment_name, environment_version, instance_group_id, instance_id
         ):
-            return {"status": "starting"}
+            raise _http_response_error(503)
 
     instances = _UnhealthyInstances()
     client, _groups, _instances = _make_openenv_client(
@@ -885,14 +885,13 @@ def test_openenv_runtime_calls_use_runtime_operations_group():
     ]
 
 
-def test_openenv_instance_blocks_workload_when_health_check_fails():
+def test_openenv_instance_allows_workload_for_successful_health_response():
     instances = _FakeInstances(health_statuses=["ok", "starting"])
     client, _groups, _instances = _make_openenv_client(instances=instances)
     with client:
         with client.get_instance() as instance:
-            with pytest.raises(RLEError, match="is not healthy"):
-                instance.reset()
-    assert [call[0] for call in instances.calls] == ["health", "health"]
+            assert isinstance(instance.reset(), RLEStepResult)
+    assert [call[0] for call in instances.calls] == ["health", "health", "reset"]
 
 
 def test_openenv_get_instance_requires_enter_first():
@@ -970,7 +969,7 @@ def test_create_environment_builds_request():
     environments = _FakeEnvironments()
     ops._environments = environments
     result = ops.create_environment(
-        "wordle", "registry.azurecr.io/wordle:v1", version_bump="Minor"
+        "registry.azurecr.io/wordle:v1", name="wordle", version_bump="Minor"
     )
     assert result.name == "wordle"
     body = environments.calls[0][1]
@@ -1595,15 +1594,14 @@ def test_async_openenv_runtime_calls_use_runtime_operations_group():
     asyncio.run(run())
 
 
-def test_async_openenv_instance_blocks_workload_when_health_check_fails():
+def test_async_openenv_instance_allows_workload_for_successful_health_response():
     async def run():
         instances = _AsyncFakeInstances(health_statuses=["ok", "starting"])
         client, _groups, _instances = _make_async_openenv_client(instances=instances)
         async with client:
             async with client.get_instance() as instance:
-                with pytest.raises(RLEError, match="is not healthy"):
-                    await instance.step({"code": "x"})
-        assert [call[0] for call in instances.calls] == ["health", "health"]
+                assert isinstance(await instance.step({"code": "x"}), RLEStepResult)
+        assert [call[0] for call in instances.calls] == ["health", "health", "step"]
 
     asyncio.run(run())
 
@@ -1926,14 +1924,14 @@ def test_async_openenv_get_instance_releases_pending_instance_when_cancelled(
     asyncio.run(run())
 
 
-def test_async_openenv_get_instance_waits_for_runtime_health():
+def test_async_openenv_get_instance_accepts_successful_runtime_health_response():
     async def run():
         instances = _AsyncFakeInstances(health_statuses=["starting", "healthy"])
         client, _groups, _instances = _make_async_openenv_client(instances=instances)
         async with client:
             async with client.get_instance() as instance:
                 assert instance.id == "inst-0"
-        assert [call[0] for call in instances.calls] == ["health", "health"]
+        assert [call[0] for call in instances.calls] == ["health"]
 
     asyncio.run(run())
 
@@ -1943,7 +1941,7 @@ def test_async_openenv_get_instance_releases_instance_when_health_times_out():
         async def health(
             self, environment_name, environment_version, instance_group_id, instance_id
         ):
-            return {"status": "starting"}
+            raise _http_response_error(503)
 
     async def run():
         instances = _UnhealthyInstances()
@@ -2020,7 +2018,7 @@ def test_async_create_environment_builds_request():
         environments = _AsyncFakeEnvironments()
         ops._environments = environments
         result = await ops.create_environment(
-            "wordle", "registry.azurecr.io/wordle:v1", version_bump="Major"
+            "registry.azurecr.io/wordle:v1", name="wordle", version_bump="Major"
         )
         assert result.name == "wordle"
         body = environments.calls[0][1]

@@ -743,26 +743,24 @@ class RLEOperations:
     @distributed_trace_async
     async def create_environment(
         self,
-        name: str,
         acr_image_path: str,
         *,
+        name: Optional[str] = None,
         version_bump: Optional[Union[str, RLEnvironmentVersionBump]] = None,
         **kwargs: Any,
     ) -> RLEnvironment:
         """Create a new hosted RLE environment.
 
-        :param name: Environment name. Required.
-        :type name: str
         :param acr_image_path: Azure Container Registry image path that backs the environment. Required.
         :type acr_image_path: str
+        :keyword name: Optional environment name. The service assigns one when omitted.
+        :paramtype name: str or None
         :keyword version_bump: Semantic version component to increment. Omit to let the service choose.
         :paramtype version_bump: str or ~azure.ai.projects.models.RLEnvironmentVersionBump or None
         :return: The created RLEnvironment.
         :rtype: ~azure.ai.projects.models.RLEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not name:
-            raise ValueError("name is required")
         if not acr_image_path:
             raise ValueError("acr_image_path is required")
         return await self._environments.create_environment(
