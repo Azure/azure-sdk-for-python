@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -24,8 +25,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
+from .. import models as _models1
 from ..._configuration import JsonlClientConfiguration
+from ..._utils.model_base import _deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._utils.streaming_base import Stream
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -162,11 +166,12 @@ class BasicOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def receive(self, **kwargs: Any) -> Iterator[bytes]:
+    def receive(self, **kwargs: Any) -> Stream[_models1.Info]:
         """receive.
 
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: An instance of Stream that iterates over Info. The Info is compatible with
+         MutableMapping
+        :rtype: ~streaming.jsonl.Stream[~streaming.jsonl.basic.models.Info]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -180,7 +185,7 @@ class BasicOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Stream[_models1.Info]] = kwargs.pop("cls", None)
 
         _request = build_basic_receive_request(
             headers=_headers,
@@ -208,12 +213,12 @@ class BasicOperations:  # pylint: disable=docstring-missing-param
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        def _callback(_http_response, _event):
+            _event_json = _event.json()
+            deserialized = _deserialize(_models1.Info, _event_json)
+            return deserialized
 
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
+        deserialized: Stream[_models1.Info] = Stream(response=response, deserialization_callback=_callback)  # type: ignore
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+        return deserialized

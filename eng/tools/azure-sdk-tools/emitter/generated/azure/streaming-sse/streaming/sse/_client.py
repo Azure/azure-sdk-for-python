@@ -17,6 +17,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import SseClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .named.operations import NamedOperations
+from .protocol.operations import ProtocolOperations
 from .retrieve.operations import RetrieveOperations
 from .unnamed.operations import UnnamedOperations
 
@@ -35,6 +36,8 @@ class SseClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype named: streaming.sse.operations.NamedOperations
     :ivar retrieve: RetrieveOperations operations
     :vartype retrieve: streaming.sse.operations.RetrieveOperations
+    :ivar protocol: ProtocolOperations operations
+    :vartype protocol: streaming.sse.operations.ProtocolOperations
     :keyword endpoint: Service host. Default value is "http://localhost:3000".
     :paramtype endpoint: str
     """
@@ -70,6 +73,7 @@ class SseClient:  # pylint: disable=client-accepts-api-version-keyword
         self.unnamed = UnnamedOperations(self._client, self._config, self._serialize, self._deserialize)
         self.named = NamedOperations(self._client, self._config, self._serialize, self._deserialize)
         self.retrieve = RetrieveOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.protocol = ProtocolOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

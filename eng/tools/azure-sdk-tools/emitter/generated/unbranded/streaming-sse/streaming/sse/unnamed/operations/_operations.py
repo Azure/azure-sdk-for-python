@@ -1,6 +1,8 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 from collections.abc import MutableMapping
-from typing import Any, Callable, Iterator, Optional, TypeVar
+import json
+from typing import Any, Callable, Optional, TypeVar
 
 from corehttp.exceptions import (
     ClientAuthenticationError,
@@ -17,8 +19,11 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
+from .. import models as _models1
 from ..._configuration import SseClientConfiguration
+from ..._utils.model_base import _deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._utils.streaming_base import Stream
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -58,11 +63,11 @@ class UnnamedOperations:  # pylint: disable=docstring-missing-param
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def receive(self, **kwargs: Any) -> Iterator[bytes]:
+    def receive(self, **kwargs: Any) -> Stream[_models1.Info]:
         """receive.
 
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: An instance of Stream that iterates over Info
+        :rtype: ~streaming.sse.Stream[~streaming.sse.unnamed.models.Info]
         :raises ~corehttp.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -76,7 +81,9 @@ class UnnamedOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Stream[_models1.Info]] = kwargs.pop("cls", None)
+
+        _last_event_id = kwargs.pop("last_event_id", None)
 
         _request = build_unnamed_receive_request(
             headers=_headers,
@@ -86,6 +93,9 @@ class UnnamedOperations:  # pylint: disable=docstring-missing-param
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        if _last_event_id is not None:
+            _request.headers["Last-Event-ID"] = _last_event_id
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", True)
@@ -102,12 +112,15 @@ class UnnamedOperations:  # pylint: disable=docstring-missing-param
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        def _callback(_http_response, _event):
+            if _event.event == "message":
+                _event_json = json.loads(_event.data)
+                deserialized = _deserialize(_models1.Info, _event_json)
+            else:
+                raise ValueError(f"Unknown SSE event type: {_event.event!r}")
+            return deserialized
 
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
+        deserialized: Stream[_models1.Info] = Stream(response=response, deserialization_callback=_callback)  # type: ignore
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+        return deserialized

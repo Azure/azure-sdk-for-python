@@ -1,0 +1,67 @@
+# coding=utf-8
+# pylint: disable=useless-super-delegation
+
+from typing import Any, Mapping, overload
+
+from ...._utils.model_base import Model as _Model, rest_field
+
+
+class WithEnvelope(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """WithEnvelope.
+
+    :ivar contents: Required.
+    :vartype contents: str
+    """
+
+    contents: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        contents: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WithEnvelope1(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """WithEnvelope1.
+
+    :ivar metadata: Required.
+    :vartype metadata: dict[str, str]
+    :ivar contents: Required.
+    :vartype contents: str
+    """
+
+    metadata: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    contents: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: dict[str, str],
+        contents: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
