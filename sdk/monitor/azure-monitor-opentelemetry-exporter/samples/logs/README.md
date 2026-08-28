@@ -13,7 +13,7 @@ These code samples show common champion scenario operations with the AzureMonito
 * Logs: [sample_log.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/logs/sample_log.py)
 * Trace correlation: [sample_log.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/logs/sample_correlate.py)
 * Custom properties: [sample_properties.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/logs/sample_properties.py)
-* Custom measurements: [sample_custom_measurements.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/logs/sample_custom_measurements.py)
+* Custom measurements: [sample_log_custom_measurements.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/logs/sample_log_custom_measurements.py)
 
 
 ## Installation
@@ -65,7 +65,7 @@ $ python sample_properties.py
 
 ```sh
 $ # from this directory
-$ python sample_custom_measurements.py
+$ python sample_log_custom_measurements.py
 ```
 
 ## Explore the data

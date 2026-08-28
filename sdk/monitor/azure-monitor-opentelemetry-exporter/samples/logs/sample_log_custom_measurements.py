@@ -36,9 +36,8 @@ custom_measurements = json.dumps({"itemsProcessed": 42.0, "queueDepth": 7})
 logger.info(
     "INFO: Custom event with measurements",
     extra={
-        "microsoft.custom_event.name": "custom-measurements-event",
+        #"microsoft.custom_event.name": "custom-measurements-event", ## Enable to see the custom measurements attribute for custom events.
         "microsoft.custom_measurements": custom_measurements,
     },
 )
 
-input()
