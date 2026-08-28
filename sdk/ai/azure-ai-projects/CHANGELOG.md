@@ -17,6 +17,7 @@
 
 * Added `sample_agent_web_iq.py` under `samples/agents/tools/`, demonstrating a Prompt Agent configured with `WebIQPreviewTool`.
 * Added `sample_toolboxes_shell_and_web_iq.py` under `samples/toolboxes/`, demonstrating a Toolbox containing an automatically provisioned shell tool and a WebIQ preview tool.
+* Added `sample_synthetic_multiturn_evaluation.py`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
 
 ## 2.5.0 (2026-08-20)
 
