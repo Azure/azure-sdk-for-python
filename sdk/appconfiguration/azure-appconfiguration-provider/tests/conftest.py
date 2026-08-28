@@ -65,7 +65,7 @@ def wait_for_data_plane_access():
 
     client = AzureAppConfigurationClient(endpoint, get_credential())
     try:
-        _wait_for_data_plane_access(client)
+        _wait_for_rbac_propagation(client)
     finally:
         client.close()
 

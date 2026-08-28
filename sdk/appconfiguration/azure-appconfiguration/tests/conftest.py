@@ -41,11 +41,11 @@ from devtools_testutils import (
 
 
 _LOGGER = logging.getLogger(__name__)
-_RBAC_PROPAGATION_TIMEOUT = 15 * 60
+_RBAC_PROPAGATION_TIMEOUT = 15 * 60 + 5
 _MAX_RETRY_DELAY = 30
 
 
-def _wait_for_data_plane_access(client, timeout=_RBAC_PROPAGATION_TIMEOUT):
+def _wait_for_rbac_propagation(client, timeout=_RBAC_PROPAGATION_TIMEOUT):
     deadline = time.monotonic() + timeout
     retry_delay = 1
 
@@ -81,7 +81,7 @@ def wait_for_data_plane_access():
 
     client = AzureAppConfigurationClient(endpoint, get_credential())
     try:
-        _wait_for_data_plane_access(client)
+        _wait_for_rbac_propagation(client)
     finally:
         client.close()
 
