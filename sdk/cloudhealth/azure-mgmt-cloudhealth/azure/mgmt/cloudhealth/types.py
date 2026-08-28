@@ -14,17 +14,16 @@ from .models._enums import AuthenticationKind, DiscoveryRuleKind, SignalKind
 
 if TYPE_CHECKING:
     from .models import (
+        AggregationType,
+        AggregationUnit,
         AlertSeverity,
         CreatedByType,
-        DependenciesAggregationType,
-        DependenciesAggregationUnit,
         DiscoveryRuleRecommendedSignalsBehavior,
         DiscoveryRuleRelationshipDiscoveryBehavior,
         DynamicThresholdSensitivity,
         EntityImpact,
         HealthModelProvisioningState,
         HealthState,
-        LookBackWindow,
         ManagedServiceIdentityType,
         MetricAggregationType,
         RefreshInterval,
@@ -40,10 +39,10 @@ if TYPE_CHECKING:
 class AddDataAnnotationRequest(TypedDict, total=False):
     """Request body for adding a data annotation.
 
-    :ivar annotation_details: Annotation details as a dynamic key-value pair bag. Service-enforced
+    :ivar annotationDetails: Annotation details as a dynamic key-value pair bag. Service-enforced
      limits: a maximum of 10 entries per annotation and a maximum value length of 256 characters.
      Requests exceeding these limits will be rejected with a 400 response. Required.
-    :vartype annotation_details: dict[str, str]
+    :vartype annotationDetails: dict[str, str]
     :ivar description: Optional description of the annotation.
     :vartype description: str
     """
@@ -64,9 +63,9 @@ class AlertConfiguration(TypedDict, total=False):
     :vartype severity: Union[str, "AlertSeverity"]
     :ivar description: The alert rule description.
     :vartype description: str
-    :ivar action_group_ids: Optional list of action group resource IDs to be notified when the
-     alert is triggered.
-    :vartype action_group_ids: list[str]
+    :ivar actionGroupIds: Optional list of action group resource IDs to be notified when the alert
+     is triggered.
+    :vartype actionGroupIds: list[str]
     """
 
     severity: Required[Union[str, "AlertSeverity"]]
@@ -84,8 +83,8 @@ class ApplicationInsightsTopologySpecification(TypedDict, total=False):
     :ivar kind: Kind of the discovery rule specification. Required. Application Insights topology
      based discovery.
     :vartype kind: Literal[DiscoveryRuleKind.APPLICATION_INSIGHTS_TOPOLOGY]
-    :ivar application_insights_resource_id: Application Insights resource ID. Required.
-    :vartype application_insights_resource_id: str
+    :ivar applicationInsightsResourceId: Application Insights resource ID. Required.
+    :vartype applicationInsightsResourceId: str
     """
 
     kind: Required[Literal[DiscoveryRuleKind.APPLICATION_INSIGHTS_TOPOLOGY]]
@@ -106,9 +105,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -134,9 +133,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -151,9 +150,9 @@ class AuthenticationSetting(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "AuthenticationSettingProperties"
     """
@@ -165,11 +164,11 @@ class AuthenticationSetting(ProxyResource):
 class AzureMonitorWorkspaceSignals(TypedDict, total=False):
     """A grouping of Azure Monitor workspace signals.
 
-    :ivar authentication_setting: Reference to the name of the authentication setting which is used
+    :ivar authenticationSetting: Reference to the name of the authentication setting which is used
      for querying the data source. Required.
-    :vartype authentication_setting: str
-    :ivar azure_monitor_workspace_resource_id: Azure Monitor workspace resource ID. Required.
-    :vartype azure_monitor_workspace_resource_id: str
+    :vartype authenticationSetting: str
+    :ivar azureMonitorWorkspaceResourceId: Azure Monitor workspace resource ID. Required.
+    :vartype azureMonitorWorkspaceResourceId: str
     :ivar signals: Signals assigned to this signal group.
     :vartype signals: list["PrometheusMetricsSignal"]
     """
@@ -190,8 +189,8 @@ class AzureResourceHealthSignal(TypedDict, total=False):
      state from Azure Resource Health. Defaults to Enabled. Known values are: "Enabled" and
      "Disabled".
     :vartype enabled: Union[str, "ResourceHealthAvailabilityStateSignalBehavior"]
-    :ivar signal_name: The unique name of the Azure resource health signal. System assigned.
-    :vartype signal_name: str
+    :ivar signalName: The unique name of the Azure resource health signal. System assigned.
+    :vartype signalName: str
     :ivar status: Current status of the Azure resource health signal.
     :vartype status: "AzureResourceHealthSignalStatus"
     """
@@ -209,38 +208,38 @@ class AzureResourceHealthSignalStatus(TypedDict, total=False):
     """Status of an Azure Resource Health signal, including availability information reported by Azure
     Resource Health.
 
-    :ivar health_state: Health state of this signal. Known values are: "Healthy", "Degraded",
+    :ivar healthState: Health state of this signal. Known values are: "Healthy", "Degraded",
      "Unhealthy", "Unknown", and "Deleted".
-    :vartype health_state: Union[str, "HealthState"]
+    :vartype healthState: Union[str, "HealthState"]
     :ivar value: Reported value of the signal.
     :vartype value: float
-    :ivar reported_at: Timestamp when the value was reported.
-    :vartype reported_at: str
+    :ivar reportedAt: Timestamp when the value was reported.
+    :vartype reportedAt: str
     :ivar error: Error message if the signal status cannot be retrieved.
     :vartype error: str
-    :ivar additional_context: Additional context as provided by the submitter.
-    :vartype additional_context: str
-    :ivar availability_state: Availability state of the Azure resource as reported by Azure
-     Resource Health. Known values are: "Available", "Unavailable", "Degraded", and "Unknown".
-    :vartype availability_state: Union[str, "ResourceHealthAvailabilityState"]
+    :ivar additionalContext: Additional context as provided by the submitter.
+    :vartype additionalContext: str
+    :ivar availabilityState: Availability state of the Azure resource as reported by Azure Resource
+     Health. Known values are: "Available", "Unavailable", "Degraded", and "Unknown".
+    :vartype availabilityState: Union[str, "ResourceHealthAvailabilityState"]
     :ivar category: Whether the status changing event was planned or unplanned. Known values are:
      "Planned" and "Unplanned".
     :vartype category: Union[str, "ResourceHealthCategory"]
-    :ivar detailed_status: Detailed status of the Azure resource as reported by Azure Resource
+    :ivar detailedStatus: Detailed status of the Azure resource as reported by Azure Resource
      Health.
-    :vartype detailed_status: str
+    :vartype detailedStatus: str
     :ivar summary: Human-readable summary of the current availability state from Azure Resource
      Health.
     :vartype summary: str
-    :ivar reason_type: Reason type for the current availability state (e.g. 'Unplanned', 'Planned',
+    :ivar reasonType: Reason type for the current availability state (e.g. 'Unplanned', 'Planned',
      'UserInitiated'). Known values are: "Unplanned", "Planned", and "UserInitiated".
-    :vartype reason_type: Union[str, "ResourceHealthReasonType"]
-    :ivar reason_chronicity: Whether the current availability state is 'Persistent' or 'Transient'.
+    :vartype reasonType: Union[str, "ResourceHealthReasonType"]
+    :ivar reasonChronicity: Whether the current availability state is 'Persistent' or 'Transient'.
      Known values are: "Persistent" and "Transient".
-    :vartype reason_chronicity: Union[str, "ResourceHealthReasonChronicity"]
-    :ivar availability_reported_time: Timestamp when Azure Resource Health observed the current
+    :vartype reasonChronicity: Union[str, "ResourceHealthReasonChronicity"]
+    :ivar availabilityReportedTime: Timestamp when Azure Resource Health observed the current
      availability state.
-    :vartype availability_reported_time: str
+    :vartype availabilityReportedTime: str
     """
 
     healthState: Union[str, "HealthState"]
@@ -279,34 +278,34 @@ class AzureResourceSignal(TypedDict, total=False):
 
     :ivar name: Unique name of the signal within the entity. Required.
     :vartype name: str
-    :ivar signal_definition_name: Optional reference to a signal definition that provides default
+    :ivar signalDefinitionName: Optional reference to a signal definition that provides default
      values.
-    :vartype signal_definition_name: str
+    :vartype signalDefinitionName: str
     :ivar status: Current status of the signal.
     :vartype status: "SignalStatus"
-    :ivar signal_kind: Kind of the signal instance. Required. AZURE_RESOURCE_METRIC.
-    :vartype signal_kind: Literal[SignalKind.AZURE_RESOURCE_METRIC]
-    :ivar metric_namespace: Metric namespace.
-    :vartype metric_namespace: str
-    :ivar metric_name: Name of the metric.
-    :vartype metric_name: str
-    :ivar time_grain: Time range of signal. ISO duration format like PT10M.
-    :vartype time_grain: str
-    :ivar aggregation_type: Type of aggregation to apply to the metric. Known values are: "None",
+    :ivar signalKind: Kind of the signal instance. Required. AZURE_RESOURCE_METRIC.
+    :vartype signalKind: Literal[SignalKind.AZURE_RESOURCE_METRIC]
+    :ivar metricNamespace: Metric namespace.
+    :vartype metricNamespace: str
+    :ivar metricName: Name of the metric.
+    :vartype metricName: str
+    :ivar timeGrain: Time range of signal. ISO duration format like PT10M.
+    :vartype timeGrain: str
+    :ivar aggregationType: Type of aggregation to apply to the metric. Known values are: "None",
      "Average", "Count", "Minimum", "Maximum", and "Total".
-    :vartype aggregation_type: Union[str, "MetricAggregationType"]
-    :ivar dimension_filter: Optional: Dimension filter to apply to the dimension. Must only be set
+    :vartype aggregationType: Union[str, "MetricAggregationType"]
+    :ivar dimensionFilter: Optional: Dimension filter to apply to the dimension. Must only be set
      if also Dimension is set.
-    :vartype dimension_filter: str
-    :ivar display_name: Display name.
-    :vartype display_name: str
-    :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
+    :vartype dimensionFilter: str
+    :ivar displayName: Display name.
+    :vartype displayName: str
+    :ivar refreshInterval: Interval in which the signal is being evaluated. Defaults to PT1M (1
      minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
-    :vartype refresh_interval: Union[str, "RefreshInterval"]
-    :ivar data_unit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
-    :vartype data_unit: str
-    :ivar evaluation_rules: Evaluation rules for the signal definition.
-    :vartype evaluation_rules: "EvaluationRule"
+    :vartype refreshInterval: Union[str, "RefreshInterval"]
+    :ivar dataUnit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
+    :vartype dataUnit: str
+    :ivar evaluationRules: Evaluation rules for the signal definition.
+    :vartype evaluationRules: "EvaluationRule"
     """
 
     name: Required[str]
@@ -343,19 +342,19 @@ class AzureResourceSignal(TypedDict, total=False):
 class AzureResourceSignals(TypedDict, total=False):
     """A grouping of Azure resource signals.
 
-    :ivar authentication_setting: Reference to the name of the authentication setting which is used
+    :ivar authenticationSetting: Reference to the name of the authentication setting which is used
      for querying the data source. Required.
-    :vartype authentication_setting: str
-    :ivar azure_resource_id: Azure resource ID. Required.
-    :vartype azure_resource_id: str
-    :ivar azure_resource_kind: Azure resource kind (e.g., 'functionapp'). Populated by the UI for
+    :vartype authenticationSetting: str
+    :ivar azureResourceId: Azure resource ID. Required.
+    :vartype azureResourceId: str
+    :ivar azureResourceKind: Azure resource kind (e.g., 'functionapp'). Populated by the UI for
      icon rendering. Can be null if not populated.
-    :vartype azure_resource_kind: str
+    :vartype azureResourceKind: str
     :ivar signals: Signals assigned to this group.
     :vartype signals: list["AzureResourceSignal"]
-    :ivar resource_health: Optional configuration for automatically adding a signal based on the
+    :ivar resourceHealth: Optional configuration for automatically adding a signal based on the
      resource's availability state in Azure Resource Health.
-    :vartype resource_health: "AzureResourceHealthSignal"
+    :vartype resourceHealth: "AzureResourceHealthSignal"
     """
 
     authenticationSetting: Required[str]
@@ -376,29 +375,29 @@ class AzureResourceSignals(TypedDict, total=False):
 class DependenciesSignalGroupV2(TypedDict, total=False):
     """Properties for dependent entities, i.e. child entities.
 
-    :ivar aggregation_type: Aggregation type for child dependencies. Required. Known values are:
-     "WorstOf", "MinHealthy", and "MaxNotHealthy".
-    :vartype aggregation_type: Union[str, "DependenciesAggregationType"]
-    :ivar degraded_threshold: Degraded threshold for aggregation. For MinHealthy: parent is
-     degraded when healthy count/percentage falls to or below this value. For MaxNotHealthy: parent
-     is degraded when not-healthy count/percentage reaches or exceeds this value. Optional — if not
+    :ivar aggregationType: Aggregation type for child dependencies. Required. Known values are:
+     "WorstOf", "BestOf", "MinHealthy", and "MaxNotHealthy".
+    :vartype aggregationType: Union[str, "AggregationType"]
+    :ivar degradedThreshold: Degraded threshold for aggregation. For MinHealthy: parent is degraded
+     when healthy count/percentage falls to or below this value. For MaxNotHealthy: parent is
+     degraded when not-healthy count/percentage reaches or exceeds this value. Optional — if not
      set, there is no degraded state (transitions directly from Healthy to Unhealthy).
-    :vartype degraded_threshold: float
-    :ivar unhealthy_threshold: Unhealthy threshold for aggregation. For MinHealthy: parent is
+    :vartype degradedThreshold: float
+    :ivar unhealthyThreshold: Unhealthy threshold for aggregation. For MinHealthy: parent is
      unhealthy when healthy count/percentage falls to or below this value. For MaxNotHealthy: parent
      is unhealthy when not-healthy count/percentage reaches or exceeds this value. Required when
      aggregationType is MinHealthy or MaxNotHealthy.
-    :vartype unhealthy_threshold: float
+    :vartype unhealthyThreshold: float
     :ivar unit: Unit type for the aggregation thresholds. Required when aggregationType is
      MinHealthy or MaxNotHealthy. Known values are: "Absolute" and "Percentage".
-    :vartype unit: Union[str, "DependenciesAggregationUnit"]
-    :ivar ignore_unknown: If true, children with Unknown health state are excluded from aggregation
+    :vartype unit: Union[str, "AggregationUnit"]
+    :ivar ignoreUnknown: If true, children with Unknown health state are excluded from aggregation
      calculations. Defaults to true.
-    :vartype ignore_unknown: bool
+    :vartype ignoreUnknown: bool
     """
 
-    aggregationType: Required[Union[str, "DependenciesAggregationType"]]
-    """Aggregation type for child dependencies. Required. Known values are: \"WorstOf\",
+    aggregationType: Required[Union[str, "AggregationType"]]
+    """Aggregation type for child dependencies. Required. Known values are: \"WorstOf\", \"BestOf\",
      \"MinHealthy\", and \"MaxNotHealthy\"."""
     degradedThreshold: float
     """Degraded threshold for aggregation. For MinHealthy: parent is degraded when healthy
@@ -410,7 +409,7 @@ class DependenciesSignalGroupV2(TypedDict, total=False):
      count/percentage falls to or below this value. For MaxNotHealthy: parent is unhealthy when
      not-healthy count/percentage reaches or exceeds this value. Required when aggregationType is
      MinHealthy or MaxNotHealthy."""
-    unit: Union[str, "DependenciesAggregationUnit"]
+    unit: Union[str, "AggregationUnit"]
     """Unit type for the aggregation thresholds. Required when aggregationType is MinHealthy or
      MaxNotHealthy. Known values are: \"Absolute\" and \"Percentage\"."""
     ignoreUnknown: bool
@@ -445,9 +444,9 @@ class DiscoveryRule(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "DiscoveryRuleProperties"
     """
@@ -459,37 +458,36 @@ class DiscoveryRule(ProxyResource):
 class DiscoveryRuleProperties(TypedDict, total=False):
     """Discovery rule properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", and "Deleting".
-    :vartype provisioning_state: Union[str, "HealthModelProvisioningState"]
-    :ivar display_name: Display name.
-    :vartype display_name: str
-    :ivar authentication_setting: Reference to the name of the authentication setting which is used
+    :vartype provisioningState: Union[str, "HealthModelProvisioningState"]
+    :ivar displayName: Display name.
+    :vartype displayName: str
+    :ivar authenticationSetting: Reference to the name of the authentication setting which is used
      for querying Azure Resource Graph. The same authentication setting will also be assigned to any
      discovered entities. Required.
-    :vartype authentication_setting: str
-    :ivar discover_relationships: Whether to create relationships between the discovered entities
+    :vartype authenticationSetting: str
+    :ivar discoverRelationships: Whether to create relationships between the discovered entities
      based on a set of built-in rules. These relationships cannot be manually deleted. Required.
      Known values are: "Enabled" and "Disabled".
-    :vartype discover_relationships: Union[str, "DiscoveryRuleRelationshipDiscoveryBehavior"]
-    :ivar add_recommended_signals: Whether to add all recommended signals to the discovered
-     entities. Required. Known values are: "Enabled" and "Disabled".
-    :vartype add_recommended_signals: Union[str, "DiscoveryRuleRecommendedSignalsBehavior"]
+    :vartype discoverRelationships: Union[str, "DiscoveryRuleRelationshipDiscoveryBehavior"]
+    :ivar addRecommendedSignals: Whether to add all recommended signals to the discovered entities.
+     Required. Known values are: "Enabled" and "Disabled".
+    :vartype addRecommendedSignals: Union[str, "DiscoveryRuleRecommendedSignalsBehavior"]
     :ivar specification: Specification of the discovery rule defining how entities are discovered.
      Required.
     :vartype specification: "DiscoveryRuleSpecification"
-    :ivar add_resource_health_signal: Whether to automatically add a signal for the Azure
-     resource's availability state from Azure Resource Health to the discovered entities. Defaults
-     to ``Enabled``: discovery rules updated via this API version without setting this field will
-     begin emitting a Resource Health availability signal. Pass ``Disabled`` to preserve
+    :ivar addResourceHealthSignal: Whether to automatically add a signal for the Azure resource's
+     availability state from Azure Resource Health to the discovered entities. Defaults to
+     ``Enabled``: discovery rules updated via this API version without setting this field will begin
+     emitting a Resource Health availability signal. Pass ``Disabled`` to preserve
      pre-``2026-05-01-preview`` behavior. Known values are: "Enabled" and "Disabled".
-    :vartype add_resource_health_signal: Union[str,
-     "ResourceHealthAvailabilityStateSignalBehavior"]
+    :vartype addResourceHealthSignal: Union[str, "ResourceHealthAvailabilityStateSignalBehavior"]
     :ivar error: Error details if the last discovery operation failed.
     :vartype error: "DiscoveryError"
-    :ivar entity_name: Name of the entity which represents the discovery rule. Note: It might take
-     a few minutes after creating the discovery rule until the entity is created. Required.
-    :vartype entity_name: str
+    :ivar entityName: Name of the entity which represents the discovery rule. Note: It might take a
+     few minutes after creating the discovery rule until the entity is created.
+    :vartype entityName: str
     """
 
     provisioningState: Union[str, "HealthModelProvisioningState"]
@@ -518,9 +516,9 @@ class DiscoveryRuleProperties(TypedDict, total=False):
      values are: \"Enabled\" and \"Disabled\"."""
     error: "DiscoveryError"
     """Error details if the last discovery operation failed."""
-    entityName: Required[str]
+    entityName: str
     """Name of the entity which represents the discovery rule. Note: It might take a few minutes after
-     creating the discovery rule until the entity is created. Required."""
+     creating the discovery rule until the entity is created."""
 
 
 class Entity(ProxyResource):
@@ -534,9 +532,9 @@ class Entity(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "EntityProperties"
     """
@@ -578,15 +576,15 @@ class EntityCoordinates(TypedDict, total=False):
 class EntityHistoryRequest(TypedDict, total=False):
     """Request body for getting entity health history.
 
-    :ivar start_at: Start time for the history query. Defaults to 24 hours ago if not specified.
-    :vartype start_at: str
-    :ivar end_at: End time for the history query. Defaults to now if not specified.
-    :vartype end_at: str
+    :ivar startAt: Start time for the history query. Defaults to 24 hours ago if not specified.
+    :vartype startAt: str
+    :ivar endAt: End time for the history query. Defaults to now if not specified.
+    :vartype endAt: str
     :ivar top: Maximum number of health state transitions to return per page. Defaults to 1000.
     :vartype top: int
-    :ivar next_marker: An opaque string value that identifies the portion of the result set to be
+    :ivar nextMarker: An opaque string value that identifies the portion of the result set to be
      returned with the next operation. Must not be combined with startAt or endAt.
-    :vartype next_marker: str
+    :vartype nextMarker: str
     """
 
     startAt: str
@@ -603,30 +601,37 @@ class EntityHistoryRequest(TypedDict, total=False):
 class EntityProperties(TypedDict, total=False):
     """Properties which are common across all kinds of entities.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", and "Deleting".
-    :vartype provisioning_state: Union[str, "HealthModelProvisioningState"]
-    :ivar display_name: Display name.
-    :vartype display_name: str
-    :ivar canvas_position: Positioning of the entity on the model canvas.
-    :vartype canvas_position: "EntityCoordinates"
+    :vartype provisioningState: Union[str, "HealthModelProvisioningState"]
+    :ivar displayName: Display name.
+    :vartype displayName: str
+    :ivar canvasPosition: Positioning of the entity on the model canvas.
+    :vartype canvasPosition: "EntityCoordinates"
     :ivar icon: Visual icon definition. If not set, a default icon is used.
     :vartype icon: "IconDefinition"
-    :ivar health_objective: Health objective as a percentage of time the entity should be healthy.
-    :vartype health_objective: float
+    :ivar healthObjective: Health objective as a percentage of time the entity should be healthy.
+    :vartype healthObjective: float
     :ivar impact: Impact of the entity in health state propagation. Known values are: "Standard",
      "Limited", and "Suppressed".
     :vartype impact: Union[str, "EntityImpact"]
     :ivar tags: Optional set of tags (key-value pairs).
     :vartype tags: dict[str, str]
-    :ivar signal_groups: Signal groups which are assigned to this entity.
-    :vartype signal_groups: "SignalGroups"
-    :ivar discovered_by: Discovered by which discovery rule. If set, the entity cannot be deleted
+    :ivar signalGroups: Signal groups which are assigned to this entity.
+    :vartype signalGroups: "SignalGroups"
+    :ivar signalAggregationGroups: Logical aggregation groups over the signals on this entity.
+     Overlap is allowed: the same signal may appear in more than one group's members. Each group is
+     evaluated independently according to its strategy, and a shared signal can contribute to
+     multiple group states and related per-group telemetry. Group states contribute alongside any
+     ungrouped signals and the dependency-aggregated child health to the entity's overall worst-of
+     composite.
+    :vartype signalAggregationGroups: list["SignalAggregationGroup"]
+    :ivar discoveredBy: Discovered by which discovery rule. If set, the entity cannot be deleted
      manually.
-    :vartype discovered_by: str
-    :ivar health_state: Health state of this entity. Known values are: "Healthy", "Degraded",
+    :vartype discoveredBy: str
+    :ivar healthState: Health state of this entity. Known values are: "Healthy", "Degraded",
      "Unhealthy", "Unknown", and "Deleted".
-    :vartype health_state: Union[str, "HealthState"]
+    :vartype healthState: Union[str, "HealthState"]
     :ivar alerts: Alert configuration for this entity.
     :vartype alerts: "EntityAlerts"
     """
@@ -649,6 +654,12 @@ class EntityProperties(TypedDict, total=False):
     """Optional set of tags (key-value pairs)."""
     signalGroups: "SignalGroups"
     """Signal groups which are assigned to this entity."""
+    signalAggregationGroups: list["SignalAggregationGroup"]
+    """Logical aggregation groups over the signals on this entity. Overlap is allowed: the same signal
+     may appear in more than one group's members. Each group is evaluated independently according to
+     its strategy, and a shared signal can contribute to multiple group states and related per-group
+     telemetry. Group states contribute alongside any ungrouped signals and the
+     dependency-aggregated child health to the entity's overall worst-of composite."""
     discoveredBy: str
     """Discovered by which discovery rule. If set, the entity cannot be deleted manually."""
     healthState: Union[str, "HealthState"]
@@ -661,10 +672,10 @@ class EntityProperties(TypedDict, total=False):
 class EvaluationRule(TypedDict, total=False):
     """Evaluation rule for a signal definition.
 
-    :ivar degraded_rule: Degraded rule with static threshold.
-    :vartype degraded_rule: "ThresholdRuleV2"
-    :ivar unhealthy_rule: Unhealthy rule with static threshold. Required.
-    :vartype unhealthy_rule: "ThresholdRuleV2"
+    :ivar degradedRule: Degraded rule with static threshold.
+    :vartype degradedRule: "ThresholdRuleV2"
+    :ivar unhealthyRule: Unhealthy rule with static threshold. Required.
+    :vartype unhealthyRule: "ThresholdRuleV2"
     """
 
     degradedRule: "ThresholdRuleV2"
@@ -678,15 +689,15 @@ class ExternalSignal(TypedDict, total=False):
 
     :ivar name: Unique name of the signal within the entity. Required.
     :vartype name: str
-    :ivar signal_definition_name: Optional reference to a signal definition that provides default
+    :ivar signalDefinitionName: Optional reference to a signal definition that provides default
      values.
-    :vartype signal_definition_name: str
+    :vartype signalDefinitionName: str
     :ivar status: Current status of the signal.
     :vartype status: "SignalStatus"
-    :ivar signal_kind: Kind of the signal instance. Required. EXTERNAL_SIGNAL.
-    :vartype signal_kind: Literal[SignalKind.EXTERNAL_SIGNAL]
-    :ivar evaluation_rules: Evaluation rules for the external signal as submitted.
-    :vartype evaluation_rules: "EvaluationRule"
+    :ivar signalKind: Kind of the signal instance. Required. EXTERNAL_SIGNAL.
+    :vartype signalKind: Literal[SignalKind.EXTERNAL_SIGNAL]
+    :ivar evaluationRules: Evaluation rules for the external signal as submitted.
+    :vartype evaluationRules: "EvaluationRule"
     """
 
     name: Required[str]
@@ -715,15 +726,15 @@ class ExternalSignalGroup(TypedDict, total=False):
 class GetDataAnnotationsRequest(TypedDict, total=False):
     """Request body for querying data annotations.
 
-    :ivar start_at: Start of UTC time range. Defaults to 24 hours ago if not specified.
-    :vartype start_at: str
-    :ivar end_at: End of UTC time range. Defaults to now if not specified.
-    :vartype end_at: str
+    :ivar startAt: Start of UTC time range. Defaults to 24 hours ago if not specified.
+    :vartype startAt: str
+    :ivar endAt: End of UTC time range. Defaults to now if not specified.
+    :vartype endAt: str
     :ivar top: Maximum number of annotations to return per page. Defaults to 100.
     :vartype top: int
-    :ivar next_marker: An opaque string value that identifies the portion of the result set to be
+    :ivar nextMarker: An opaque string value that identifies the portion of the result set to be
      returned with the next operation. Must not be combined with startAt or endAt.
-    :vartype next_marker: str
+    :vartype nextMarker: str
     """
 
     startAt: str
@@ -748,9 +759,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -774,9 +785,9 @@ class HealthModel(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -796,9 +807,9 @@ class HealthModel(TrackedResource):
 class HealthModelProperties(TypedDict, total=False):
     """HealthModel properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", and "Deleting".
-    :vartype provisioning_state: Union[str, "HealthModelProvisioningState"]
+    :vartype provisioningState: Union[str, "HealthModelProvisioningState"]
     """
 
     provisioningState: Union[str, "HealthModelProvisioningState"]
@@ -824,10 +835,10 @@ class HealthModelUpdate(TypedDict, total=False):
 class HealthReportEvaluationRule(TypedDict, total=False):
     """Evaluation rules for the health report.
 
-    :ivar degraded_rule: Degraded rule with static threshold.
-    :vartype degraded_rule: "ThresholdRuleV2"
-    :ivar unhealthy_rule: Unhealthy rule with static threshold. Required.
-    :vartype unhealthy_rule: "ThresholdRuleV2"
+    :ivar degradedRule: Degraded rule with static threshold.
+    :vartype degradedRule: "ThresholdRuleV2"
+    :ivar unhealthyRule: Unhealthy rule with static threshold. Required.
+    :vartype unhealthyRule: "ThresholdRuleV2"
     """
 
     degradedRule: "ThresholdRuleV2"
@@ -839,20 +850,20 @@ class HealthReportEvaluationRule(TypedDict, total=False):
 class HealthReportRequest(TypedDict, total=False):
     """Health report that's submitted for a specific signal.
 
-    :ivar signal_name: Name of the entity signal to report health for. Required.
-    :vartype signal_name: str
-    :ivar health_state: Health state to report for the signal. Required. Known values are:
+    :ivar signalName: Name of the entity signal to report health for. Required.
+    :vartype signalName: str
+    :ivar healthState: Health state to report for the signal. Required. Known values are:
      "Healthy", "Degraded", "Unhealthy", "Unknown", and "Deleted".
-    :vartype health_state: Union[str, "HealthState"]
+    :vartype healthState: Union[str, "HealthState"]
     :ivar value: Reported value of the signal.
     :vartype value: float
-    :ivar evaluation_rules: Evaluation rules that were used to determine the reported health state.
-    :vartype evaluation_rules: "HealthReportEvaluationRule"
-    :ivar expires_in_minutes: Number of minutes until the health report expires. Defaults to 60 (1
+    :ivar evaluationRules: Evaluation rules that were used to determine the reported health state.
+    :vartype evaluationRules: "HealthReportEvaluationRule"
+    :ivar expiresInMinutes: Number of minutes until the health report expires. Defaults to 60 (1
      hour) if not specified.
-    :vartype expires_in_minutes: int
-    :ivar additional_context: Optional additional context or description for the health report.
-    :vartype additional_context: str
+    :vartype expiresInMinutes: int
+    :ivar additionalContext: Optional additional context or description for the health report.
+    :vartype additionalContext: str
     """
 
     signalName: Required[str]
@@ -873,11 +884,11 @@ class HealthReportRequest(TypedDict, total=False):
 class IconDefinition(TypedDict, total=False):
     """Visual icon definition of an entity.
 
-    :ivar icon_name: Name of the built-in icon, or 'Custom' to use customData. Required.
-    :vartype icon_name: str
-    :ivar custom_data: Custom data. Base64-encoded SVG data. If set, this overrides the built-in
+    :ivar iconName: Name of the built-in icon, or 'Custom' to use customData. Required.
+    :vartype iconName: str
+    :ivar customData: Custom data. Base64-encoded SVG data. If set, this overrides the built-in
      icon.
-    :vartype custom_data: str
+    :vartype customData: str
     """
 
     iconName: Required[str]
@@ -889,31 +900,30 @@ class IconDefinition(TypedDict, total=False):
 class LogAnalyticsQuerySignalDefinitionProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """Log Analytics Query Signal Definition properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", and "Deleting".
-    :vartype provisioning_state: Union[str, "HealthModelProvisioningState"]
-    :ivar display_name: Display name.
-    :vartype display_name: str
-    :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
+    :vartype provisioningState: Union[str, "HealthModelProvisioningState"]
+    :ivar displayName: Display name.
+    :vartype displayName: str
+    :ivar refreshInterval: Interval in which the signal is being evaluated. Defaults to PT1M (1
      minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
-    :vartype refresh_interval: Union[str, "RefreshInterval"]
+    :vartype refreshInterval: Union[str, "RefreshInterval"]
     :ivar tags: Optional set of tags (key-value pairs).
     :vartype tags: dict[str, str]
-    :ivar data_unit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
-    :vartype data_unit: str
-    :ivar evaluation_rules: Evaluation rules for the signal definition. Required.
-    :vartype evaluation_rules: "EvaluationRule"
-    :ivar signal_kind: Kind of the signal definition. Required. LOG_ANALYTICS_QUERY.
-    :vartype signal_kind: Literal[SignalKind.LOG_ANALYTICS_QUERY]
-    :ivar query_text: Query text in KQL syntax. Required.
-    :vartype query_text: str
-    :ivar time_grain: Time range of signal. ISO duration format like PT10M. If not specified, the
+    :ivar dataUnit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
+    :vartype dataUnit: str
+    :ivar evaluationRules: Evaluation rules for the signal definition. Required.
+    :vartype evaluationRules: "EvaluationRule"
+    :ivar signalKind: Kind of the signal definition. Required. LOG_ANALYTICS_QUERY.
+    :vartype signalKind: Literal[SignalKind.LOG_ANALYTICS_QUERY]
+    :ivar queryText: Query text in KQL syntax. Required.
+    :vartype queryText: str
+    :ivar timeGrain: Time range of signal. ISO duration format like PT10M. If not specified, the
      KQL query must define a time range.
-    :vartype time_grain: str
-    :ivar value_column_name: Name of the column in the result set to evaluate against the
-     thresholds. Defaults to the first column in the result set if not specified. The column must be
-     numeric.
-    :vartype value_column_name: str
+    :vartype timeGrain: str
+    :ivar valueColumnName: Name of the column in the result set to evaluate against the thresholds.
+     Defaults to the first column in the result set if not specified. The column must be numeric.
+    :vartype valueColumnName: str
     """
 
     provisioningState: Union[str, "HealthModelProvisioningState"]
@@ -947,31 +957,30 @@ class LogAnalyticsSignal(TypedDict, total=False):
 
     :ivar name: Unique name of the signal within the entity. Required.
     :vartype name: str
-    :ivar signal_definition_name: Optional reference to a signal definition that provides default
+    :ivar signalDefinitionName: Optional reference to a signal definition that provides default
      values.
-    :vartype signal_definition_name: str
+    :vartype signalDefinitionName: str
     :ivar status: Current status of the signal.
     :vartype status: "SignalStatus"
-    :ivar signal_kind: Kind of the signal instance. Required. LOG_ANALYTICS_QUERY.
-    :vartype signal_kind: Literal[SignalKind.LOG_ANALYTICS_QUERY]
-    :ivar query_text: Query text in KQL syntax.
-    :vartype query_text: str
-    :ivar time_grain: Time range of signal. ISO duration format like PT10M. If not specified, the
+    :ivar signalKind: Kind of the signal instance. Required. LOG_ANALYTICS_QUERY.
+    :vartype signalKind: Literal[SignalKind.LOG_ANALYTICS_QUERY]
+    :ivar queryText: Query text in KQL syntax.
+    :vartype queryText: str
+    :ivar timeGrain: Time range of signal. ISO duration format like PT10M. If not specified, the
      KQL query must define a time range.
-    :vartype time_grain: str
-    :ivar value_column_name: Name of the column in the result set to evaluate against the
-     thresholds. Defaults to the first column in the result set if not specified. The column must be
-     numeric.
-    :vartype value_column_name: str
-    :ivar display_name: Display name.
-    :vartype display_name: str
-    :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
+    :vartype timeGrain: str
+    :ivar valueColumnName: Name of the column in the result set to evaluate against the thresholds.
+     Defaults to the first column in the result set if not specified. The column must be numeric.
+    :vartype valueColumnName: str
+    :ivar displayName: Display name.
+    :vartype displayName: str
+    :ivar refreshInterval: Interval in which the signal is being evaluated. Defaults to PT1M (1
      minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
-    :vartype refresh_interval: Union[str, "RefreshInterval"]
-    :ivar data_unit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
-    :vartype data_unit: str
-    :ivar evaluation_rules: Evaluation rules for the signal definition.
-    :vartype evaluation_rules: "EvaluationRule"
+    :vartype refreshInterval: Union[str, "RefreshInterval"]
+    :ivar dataUnit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
+    :vartype dataUnit: str
+    :ivar evaluationRules: Evaluation rules for the signal definition.
+    :vartype evaluationRules: "EvaluationRule"
     """
 
     name: Required[str]
@@ -1004,11 +1013,11 @@ class LogAnalyticsSignal(TypedDict, total=False):
 class LogAnalyticsSignals(TypedDict, total=False):
     """A grouping of Log Analytics workspace signals.
 
-    :ivar authentication_setting: Reference to the name of the authentication setting which is used
+    :ivar authenticationSetting: Reference to the name of the authentication setting which is used
      for querying the data source. Required.
-    :vartype authentication_setting: str
-    :ivar log_analytics_workspace_resource_id: Log Analytics workspace resource ID. Required.
-    :vartype log_analytics_workspace_resource_id: str
+    :vartype authenticationSetting: str
+    :ivar logAnalyticsWorkspaceResourceId: Log Analytics workspace resource ID. Required.
+    :vartype logAnalyticsWorkspaceResourceId: str
     :ivar signals: Signals assigned to this group.
     :vartype signals: list["LogAnalyticsSignal"]
     """
@@ -1025,16 +1034,16 @@ class LogAnalyticsSignals(TypedDict, total=False):
 class ManagedIdentityAuthenticationSettingProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """Authentication setting properties for Azure Managed Identity.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", and "Deleting".
-    :vartype provisioning_state: Union[str, "HealthModelProvisioningState"]
-    :ivar display_name: Display name.
-    :vartype display_name: str
-    :ivar authentication_kind: Kind of the authentication setting. Required. MANAGED_IDENTITY.
-    :vartype authentication_kind: Literal[AuthenticationKind.MANAGED_IDENTITY]
-    :ivar managed_identity_name: Name of the managed identity to use. Either 'SystemAssigned' or
-     the resourceId of a user-assigned identity. Required.
-    :vartype managed_identity_name: str
+    :vartype provisioningState: Union[str, "HealthModelProvisioningState"]
+    :ivar displayName: Display name.
+    :vartype displayName: str
+    :ivar authenticationKind: Kind of the authentication setting. Required. MANAGED_IDENTITY.
+    :vartype authenticationKind: Literal[AuthenticationKind.MANAGED_IDENTITY]
+    :ivar managedIdentityName: Name of the managed identity to use. Either 'SystemAssigned' or the
+     resourceId of a user-assigned identity. Required.
+    :vartype managedIdentityName: str
     """
 
     provisioningState: Union[str, "HealthModelProvisioningState"]
@@ -1052,17 +1061,17 @@ class ManagedIdentityAuthenticationSettingProperties(TypedDict, total=False):  #
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -1083,26 +1092,26 @@ class PrometheusMetricsSignal(TypedDict, total=False):
 
     :ivar name: Unique name of the signal within the entity. Required.
     :vartype name: str
-    :ivar signal_definition_name: Optional reference to a signal definition that provides default
+    :ivar signalDefinitionName: Optional reference to a signal definition that provides default
      values.
-    :vartype signal_definition_name: str
+    :vartype signalDefinitionName: str
     :ivar status: Current status of the signal.
     :vartype status: "SignalStatus"
-    :ivar signal_kind: Kind of the signal instance. Required. PROMETHEUS_METRICS_QUERY.
-    :vartype signal_kind: Literal[SignalKind.PROMETHEUS_METRICS_QUERY]
-    :ivar query_text: Query text in PromQL syntax.
-    :vartype query_text: str
-    :ivar time_grain: Time range of signal. ISO duration format like PT10M.
-    :vartype time_grain: str
-    :ivar display_name: Display name.
-    :vartype display_name: str
-    :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
+    :ivar signalKind: Kind of the signal instance. Required. PROMETHEUS_METRICS_QUERY.
+    :vartype signalKind: Literal[SignalKind.PROMETHEUS_METRICS_QUERY]
+    :ivar queryText: Query text in PromQL syntax.
+    :vartype queryText: str
+    :ivar timeGrain: Time range of signal. ISO duration format like PT10M.
+    :vartype timeGrain: str
+    :ivar displayName: Display name.
+    :vartype displayName: str
+    :ivar refreshInterval: Interval in which the signal is being evaluated. Defaults to PT1M (1
      minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
-    :vartype refresh_interval: Union[str, "RefreshInterval"]
-    :ivar data_unit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
-    :vartype data_unit: str
-    :ivar evaluation_rules: Evaluation rules for the signal definition.
-    :vartype evaluation_rules: "EvaluationRule"
+    :vartype refreshInterval: Union[str, "RefreshInterval"]
+    :ivar dataUnit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
+    :vartype dataUnit: str
+    :ivar evaluationRules: Evaluation rules for the signal definition.
+    :vartype evaluationRules: "EvaluationRule"
     """
 
     name: Required[str]
@@ -1131,26 +1140,26 @@ class PrometheusMetricsSignal(TypedDict, total=False):
 class PrometheusMetricsSignalDefinitionProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """Prometheus Metrics Signal Definition properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", and "Deleting".
-    :vartype provisioning_state: Union[str, "HealthModelProvisioningState"]
-    :ivar display_name: Display name.
-    :vartype display_name: str
-    :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
+    :vartype provisioningState: Union[str, "HealthModelProvisioningState"]
+    :ivar displayName: Display name.
+    :vartype displayName: str
+    :ivar refreshInterval: Interval in which the signal is being evaluated. Defaults to PT1M (1
      minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
-    :vartype refresh_interval: Union[str, "RefreshInterval"]
+    :vartype refreshInterval: Union[str, "RefreshInterval"]
     :ivar tags: Optional set of tags (key-value pairs).
     :vartype tags: dict[str, str]
-    :ivar data_unit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
-    :vartype data_unit: str
-    :ivar evaluation_rules: Evaluation rules for the signal definition. Required.
-    :vartype evaluation_rules: "EvaluationRule"
-    :ivar signal_kind: Kind of the signal definition. Required. PROMETHEUS_METRICS_QUERY.
-    :vartype signal_kind: Literal[SignalKind.PROMETHEUS_METRICS_QUERY]
-    :ivar query_text: Query text in PromQL syntax. Required.
-    :vartype query_text: str
-    :ivar time_grain: Time range of signal. ISO duration format like PT10M.
-    :vartype time_grain: str
+    :ivar dataUnit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
+    :vartype dataUnit: str
+    :ivar evaluationRules: Evaluation rules for the signal definition. Required.
+    :vartype evaluationRules: "EvaluationRule"
+    :ivar signalKind: Kind of the signal definition. Required. PROMETHEUS_METRICS_QUERY.
+    :vartype signalKind: Literal[SignalKind.PROMETHEUS_METRICS_QUERY]
+    :ivar queryText: Query text in PromQL syntax. Required.
+    :vartype queryText: str
+    :ivar timeGrain: Time range of signal. ISO duration format like PT10M.
+    :vartype timeGrain: str
     """
 
     provisioningState: Union[str, "HealthModelProvisioningState"]
@@ -1186,9 +1195,9 @@ class Relationship(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "RelationshipProperties"
     """
@@ -1200,20 +1209,20 @@ class Relationship(ProxyResource):
 class RelationshipProperties(TypedDict, total=False):
     """Relationship properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", and "Deleting".
-    :vartype provisioning_state: Union[str, "HealthModelProvisioningState"]
-    :ivar display_name: Display name.
-    :vartype display_name: str
-    :ivar parent_entity_name: Resource name of the parent entity. Required.
-    :vartype parent_entity_name: str
-    :ivar child_entity_name: Resource name of the child entity. Required.
-    :vartype child_entity_name: str
+    :vartype provisioningState: Union[str, "HealthModelProvisioningState"]
+    :ivar displayName: Display name.
+    :vartype displayName: str
+    :ivar parentEntityName: Resource name of the parent entity. Required.
+    :vartype parentEntityName: str
+    :ivar childEntityName: Resource name of the child entity. Required.
+    :vartype childEntityName: str
     :ivar tags: Optional set of tags (key-value pairs).
     :vartype tags: dict[str, str]
-    :ivar discovered_by: Discovered by which discovery rule. If set, the relationship cannot be
+    :ivar discoveredBy: Discovered by which discovery rule. If set, the relationship cannot be
      deleted manually.
-    :vartype discovered_by: str
+    :vartype discoveredBy: str
     """
 
     provisioningState: Union[str, "HealthModelProvisioningState"]
@@ -1237,10 +1246,10 @@ class ResourceGraphQuerySpecification(TypedDict, total=False):
     :ivar kind: Kind of the discovery rule specification. Required. Azure Resource Graph query
      based discovery.
     :vartype kind: Literal[DiscoveryRuleKind.RESOURCE_GRAPH_QUERY]
-    :ivar resource_graph_query: Azure Resource Graph query text in KQL syntax. The query must
-     return at least a column named 'id' which contains the resource ID of the discovered resources.
+    :ivar resourceGraphQuery: Azure Resource Graph query text in KQL syntax. The query must return
+     at least a column named 'id' which contains the resource ID of the discovered resources.
      Required.
-    :vartype resource_graph_query: str
+    :vartype resourceGraphQuery: str
     """
 
     kind: Required[Literal[DiscoveryRuleKind.RESOURCE_GRAPH_QUERY]]
@@ -1253,34 +1262,34 @@ class ResourceGraphQuerySpecification(TypedDict, total=False):
 class ResourceMetricSignalDefinitionProperties(TypedDict, total=False):
     """Azure Resource Metric Signal Definition properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", and "Deleting".
-    :vartype provisioning_state: Union[str, "HealthModelProvisioningState"]
-    :ivar display_name: Display name.
-    :vartype display_name: str
-    :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
+    :vartype provisioningState: Union[str, "HealthModelProvisioningState"]
+    :ivar displayName: Display name.
+    :vartype displayName: str
+    :ivar refreshInterval: Interval in which the signal is being evaluated. Defaults to PT1M (1
      minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
-    :vartype refresh_interval: Union[str, "RefreshInterval"]
+    :vartype refreshInterval: Union[str, "RefreshInterval"]
     :ivar tags: Optional set of tags (key-value pairs).
     :vartype tags: dict[str, str]
-    :ivar data_unit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
-    :vartype data_unit: str
-    :ivar evaluation_rules: Evaluation rules for the signal definition. Required.
-    :vartype evaluation_rules: "EvaluationRule"
-    :ivar signal_kind: Kind of the signal definition. Required. AZURE_RESOURCE_METRIC.
-    :vartype signal_kind: Literal[SignalKind.AZURE_RESOURCE_METRIC]
-    :ivar metric_namespace: Metric namespace. Required.
-    :vartype metric_namespace: str
-    :ivar metric_name: Name of the metric. Required.
-    :vartype metric_name: str
-    :ivar time_grain: Time range of signal. ISO duration format like PT10M. Required.
-    :vartype time_grain: str
-    :ivar aggregation_type: Type of aggregation to apply to the metric. Required. Known values are:
+    :ivar dataUnit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
+    :vartype dataUnit: str
+    :ivar evaluationRules: Evaluation rules for the signal definition. Required.
+    :vartype evaluationRules: "EvaluationRule"
+    :ivar signalKind: Kind of the signal definition. Required. AZURE_RESOURCE_METRIC.
+    :vartype signalKind: Literal[SignalKind.AZURE_RESOURCE_METRIC]
+    :ivar metricNamespace: Metric namespace. Required.
+    :vartype metricNamespace: str
+    :ivar metricName: Name of the metric. Required.
+    :vartype metricName: str
+    :ivar timeGrain: Time range of signal. ISO duration format like PT10M. Required.
+    :vartype timeGrain: str
+    :ivar aggregationType: Type of aggregation to apply to the metric. Required. Known values are:
      "None", "Average", "Count", "Minimum", "Maximum", and "Total".
-    :vartype aggregation_type: Union[str, "MetricAggregationType"]
-    :ivar dimension_filter: Optional: Dimension filter to apply to the dimension. Must only be set
+    :vartype aggregationType: Union[str, "MetricAggregationType"]
+    :ivar dimensionFilter: Optional: Dimension filter to apply to the dimension. Must only be set
      if also Dimension is set.
-    :vartype dimension_filter: str
+    :vartype dimensionFilter: str
     """
 
     provisioningState: Union[str, "HealthModelProvisioningState"]
@@ -1313,6 +1322,96 @@ class ResourceMetricSignalDefinitionProperties(TypedDict, total=False):
      set."""
 
 
+class SignalAggregationGroup(TypedDict, total=False):
+    """A logical group of signals on an entity, evaluated under a configurable aggregation strategy.
+    Groups are independent even when they share members. Each group's aggregated state is one of
+    the inputs to the entity's composite health computation alongside any signals not declared in
+    any group's members[].
+
+    :ivar name: Name of the aggregation group. Unique within the entity. Required.
+    :vartype name: str
+    :ivar displayName: Display name.
+    :vartype displayName: str
+    :ivar aggregationType: Aggregation strategy applied across the members of this group. Known
+     values are: "WorstOf", "BestOf", "MinHealthy", and "MaxNotHealthy".
+    :vartype aggregationType: Union[str, "AggregationType"]
+    :ivar members: Names of signals on this entity which are members of the group. Members are
+     matched by name; references to signals that do not currently exist on the entity are accepted
+     (typically for pre-declared external signals) and surfaced via 'unresolvedMembers'. A signal
+     may be listed in multiple groups; no duplicates within this list. Required.
+    :vartype members: list[str]
+    :ivar degradedThreshold: Degraded threshold for threshold-bearing strategies (MinHealthy,
+     MaxNotHealthy). For MinHealthy: group is degraded when the healthy member count/percentage
+     falls to or below this value. For MaxNotHealthy: group is degraded when the not-healthy member
+     count/percentage reaches or exceeds this value. Optional — if not set, the group transitions
+     directly between Healthy and Unhealthy. MUST NOT be set when aggregationType is WorstOf or
+     BestOf.
+    :vartype degradedThreshold: float
+    :ivar unhealthyThreshold: Unhealthy threshold for threshold-bearing strategies. Required when
+     aggregationType is MinHealthy or MaxNotHealthy; MUST NOT be set otherwise.
+    :vartype unhealthyThreshold: float
+    :ivar unit: Unit type for the thresholds. Required when aggregationType is MinHealthy or
+     MaxNotHealthy; MUST NOT be set otherwise. Known values are: "Absolute" and "Percentage".
+    :vartype unit: Union[str, "AggregationUnit"]
+    :ivar ignoreUnknown: If true (default), members reporting Unknown are excluded from the
+     aggregation. For MinHealthy and MaxNotHealthy this flag affects the denominator/count and is
+     meaningful. For WorstOf and BestOf the flag has no observable effect: under WorstOf, Unknown=0
+     is the lowest severity and can never beat any non-Unknown member in a Max() so filtering it
+     changes nothing observable; under BestOf, Unknown is unconditionally excluded by the strategy
+     itself irrespective of the flag. The flag is retained on the contract for vocabulary symmetry
+     across all four strategies.
+    :vartype ignoreUnknown: bool
+    :ivar aggregatedHealthState: Computed aggregated health state of the group as of the last
+     entity evaluation. Unknown if no resolvable members or all members filtered out. Known values
+     are: "Healthy", "Degraded", "Unhealthy", "Unknown", and "Deleted".
+    :vartype aggregatedHealthState: Union[str, "HealthState"]
+    :ivar unresolvedMembers: Members listed in 'members' that do not currently resolve to a signal
+     on this entity at the time of the last entity evaluation. Treated as Unknown during
+     aggregation. Empty/omitted when every member resolves.
+    :vartype unresolvedMembers: list[str]
+    """
+
+    name: Required[str]
+    """Name of the aggregation group. Unique within the entity. Required."""
+    displayName: str
+    """Display name."""
+    aggregationType: Union[str, "AggregationType"]
+    """Aggregation strategy applied across the members of this group. Known values are: \"WorstOf\",
+     \"BestOf\", \"MinHealthy\", and \"MaxNotHealthy\"."""
+    members: Required[list[str]]
+    """Names of signals on this entity which are members of the group. Members are matched by name;
+     references to signals that do not currently exist on the entity are accepted (typically for
+     pre-declared external signals) and surfaced via 'unresolvedMembers'. A signal may be listed in
+     multiple groups; no duplicates within this list. Required."""
+    degradedThreshold: float
+    """Degraded threshold for threshold-bearing strategies (MinHealthy, MaxNotHealthy). For
+     MinHealthy: group is degraded when the healthy member count/percentage falls to or below this
+     value. For MaxNotHealthy: group is degraded when the not-healthy member count/percentage
+     reaches or exceeds this value. Optional — if not set, the group transitions directly between
+     Healthy and Unhealthy. MUST NOT be set when aggregationType is WorstOf or BestOf."""
+    unhealthyThreshold: float
+    """Unhealthy threshold for threshold-bearing strategies. Required when aggregationType is
+     MinHealthy or MaxNotHealthy; MUST NOT be set otherwise."""
+    unit: Union[str, "AggregationUnit"]
+    """Unit type for the thresholds. Required when aggregationType is MinHealthy or MaxNotHealthy;
+     MUST NOT be set otherwise. Known values are: \"Absolute\" and \"Percentage\"."""
+    ignoreUnknown: bool
+    """If true (default), members reporting Unknown are excluded from the aggregation. For MinHealthy
+     and MaxNotHealthy this flag affects the denominator/count and is meaningful. For WorstOf and
+     BestOf the flag has no observable effect: under WorstOf, Unknown=0 is the lowest severity and
+     can never beat any non-Unknown member in a Max() so filtering it changes nothing observable;
+     under BestOf, Unknown is unconditionally excluded by the strategy itself irrespective of the
+     flag. The flag is retained on the contract for vocabulary symmetry across all four strategies."""
+    aggregatedHealthState: Union[str, "HealthState"]
+    """Computed aggregated health state of the group as of the last entity evaluation. Unknown if no
+     resolvable members or all members filtered out. Known values are: \"Healthy\", \"Degraded\",
+     \"Unhealthy\", \"Unknown\", and \"Deleted\"."""
+    unresolvedMembers: list[str]
+    """Members listed in 'members' that do not currently resolve to a signal on this entity at the
+     time of the last entity evaluation. Treated as Unknown during aggregation. Empty/omitted when
+     every member resolves."""
+
+
 class SignalDefinition(ProxyResource):
     """A signal definition in a health model.
 
@@ -1324,9 +1423,9 @@ class SignalDefinition(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "SignalDefinitionProperties"
     """
@@ -1338,12 +1437,12 @@ class SignalDefinition(ProxyResource):
 class SignalGroups(TypedDict, total=False):
     """Contains various signal groups that can be assigned to an entity.
 
-    :ivar azure_resource: Azure Resource Signal Group.
-    :vartype azure_resource: "AzureResourceSignals"
-    :ivar azure_log_analytics: Log Analytics Signal Group.
-    :vartype azure_log_analytics: "LogAnalyticsSignals"
-    :ivar azure_monitor_workspace: Azure Monitor Workspace Signal Group.
-    :vartype azure_monitor_workspace: "AzureMonitorWorkspaceSignals"
+    :ivar azureResource: Azure Resource Signal Group.
+    :vartype azureResource: "AzureResourceSignals"
+    :ivar azureLogAnalytics: Log Analytics Signal Group.
+    :vartype azureLogAnalytics: "LogAnalyticsSignals"
+    :ivar azureMonitorWorkspace: Azure Monitor Workspace Signal Group.
+    :vartype azureMonitorWorkspace: "AzureMonitorWorkspaceSignals"
     :ivar dependencies: Settings for dependency signals to control how the health state of child
      entities influences the health state of the parent entity.
     :vartype dependencies: "DependenciesSignalGroupV2"
@@ -1367,17 +1466,17 @@ class SignalGroups(TypedDict, total=False):
 class SignalHistoryRequest(TypedDict, total=False):
     """Request body for getting signal history.
 
-    :ivar signal_name: Name of the signal to get history for. Required.
-    :vartype signal_name: str
-    :ivar start_at: Start time for the history query. Defaults to 24 hours ago if not specified.
-    :vartype start_at: str
-    :ivar end_at: End time for the history query. Defaults to now if not specified.
-    :vartype end_at: str
+    :ivar signalName: Name of the signal to get history for. Required.
+    :vartype signalName: str
+    :ivar startAt: Start time for the history query. Defaults to 24 hours ago if not specified.
+    :vartype startAt: str
+    :ivar endAt: End time for the history query. Defaults to now if not specified.
+    :vartype endAt: str
     :ivar top: Maximum number of data points to return per page. Defaults to 1000.
     :vartype top: int
-    :ivar next_marker: An opaque string value that identifies the portion of the result set to be
+    :ivar nextMarker: An opaque string value that identifies the portion of the result set to be
      returned with the next operation. Must not be combined with startAt or endAt.
-    :vartype next_marker: str
+    :vartype nextMarker: str
     """
 
     signalName: Required[str]
@@ -1396,17 +1495,17 @@ class SignalHistoryRequest(TypedDict, total=False):
 class SignalStatus(TypedDict, total=False):
     """Status of a signal.
 
-    :ivar health_state: Health state of this signal. Known values are: "Healthy", "Degraded",
+    :ivar healthState: Health state of this signal. Known values are: "Healthy", "Degraded",
      "Unhealthy", "Unknown", and "Deleted".
-    :vartype health_state: Union[str, "HealthState"]
+    :vartype healthState: Union[str, "HealthState"]
     :ivar value: Reported value of the signal.
     :vartype value: float
-    :ivar reported_at: Timestamp when the value was reported.
-    :vartype reported_at: str
+    :ivar reportedAt: Timestamp when the value was reported.
+    :vartype reportedAt: str
     :ivar error: Error message if the signal status cannot be retrieved.
     :vartype error: str
-    :ivar additional_context: Additional context as provided by the submitter.
-    :vartype additional_context: str
+    :ivar additionalContext: Additional context as provided by the submitter.
+    :vartype additionalContext: str
     """
 
     healthState: Union[str, "HealthState"]
@@ -1425,20 +1524,20 @@ class SignalStatus(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1469,10 +1568,6 @@ class ThresholdRuleV2(TypedDict, total=False):
     :ivar sensitivity: Sensitivity level for dynamic threshold detection. Only applicable when
      operator is Dynamic. Known values are: "Low", "Medium", and "High".
     :vartype sensitivity: Union[str, "DynamicThresholdSensitivity"]
-    :ivar look_back_window: ISO 8601 duration for the historical look-back window used by dynamic
-     threshold computation. Only applicable when operator is Dynamic. Known values are: "PT5M",
-     "PT15M", "PT30M", and "PT1H".
-    :vartype look_back_window: Union[str, "LookBackWindow"]
     """
 
     operator: Required[Union[str, "SignalOperator"]]
@@ -1484,19 +1579,15 @@ class ThresholdRuleV2(TypedDict, total=False):
     sensitivity: Union[str, "DynamicThresholdSensitivity"]
     """Sensitivity level for dynamic threshold detection. Only applicable when operator is Dynamic.
      Known values are: \"Low\", \"Medium\", and \"High\"."""
-    lookBackWindow: Union[str, "LookBackWindow"]
-    """ISO 8601 duration for the historical look-back window used by dynamic threshold computation.
-     Only applicable when operator is Dynamic. Known values are: \"PT5M\", \"PT15M\", \"PT30M\", and
-     \"PT1H\"."""
 
 
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
