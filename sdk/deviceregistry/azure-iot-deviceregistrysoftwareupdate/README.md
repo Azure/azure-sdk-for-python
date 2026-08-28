@@ -1,5 +1,6 @@
 # Azure Device Registry Software Update client library for Python
-<!-- write necessary description of service -->
+
+Azure Device Registry Software Update enables you to import and manage software updates and inspect device classes for IoT devices registered with Azure Device Registry.
 
 ## Getting started
 
@@ -13,7 +14,7 @@ python -m pip install azure-iot-deviceregistrysoftwareupdate
 
 - Python 3.10 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Device Registry Software Update instance with the endpoint, such as `https://contoso.api.adu.microsoft.com`.
+- An existing Azure Device Registry Software Update instance and its endpoint hostname, such as `contoso.api.adu.microsoft.com`.
 
 ### Use with AI tools
 
