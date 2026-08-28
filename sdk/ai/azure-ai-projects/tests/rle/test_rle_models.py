@@ -1541,6 +1541,40 @@ def test_async_openenv_instance_entry_is_atomic():
     asyncio.run(run())
 
 
+def test_async_openenv_instance_release_waits_for_entry():
+    class _BlockingInstances(_AsyncFakeInstances):
+        def __init__(self):
+            super().__init__()
+            self.acquire_started = asyncio.Event()
+            self.allow_acquire = asyncio.Event()
+
+        async def create_instance(
+            self, environment_name, environment_version, instance_group_id, *, cls=None
+        ):
+            self.acquire_started.set()
+            await self.allow_acquire.wait()
+            return await super().create_instance(
+                environment_name, environment_version, instance_group_id, cls=cls
+            )
+
+    async def run():
+        instances = _BlockingInstances()
+        client, _groups, _instances = _make_async_openenv_client(instances=instances)
+        async with client:
+            instance_context = client.get_instance()
+            entering = asyncio.create_task(instance_context.__aenter__())
+            await instances.acquire_started.wait()
+            releasing = asyncio.create_task(instance_context.release())
+            await asyncio.sleep(0)
+            assert not releasing.done()
+            instances.allow_acquire.set()
+            await entering
+            await releasing
+        assert instances.released == ["inst-0"]
+
+    asyncio.run(run())
+
+
 def test_async_openenv_client_validates_poll_interval():
     client, _groups, _instances = _make_async_openenv_client()
     assert client

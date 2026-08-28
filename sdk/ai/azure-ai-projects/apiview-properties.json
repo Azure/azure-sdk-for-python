@@ -578,6 +578,8 @@
         "azure.ai.projects.aio.operations.RLEInstanceGroupsOperations.delete_instance_group": "Azure.AI.Projects.RLEInstanceGroups.deleteInstanceGroup",
         "azure.ai.projects.operations.RLEInstancesOperations.create_instance": "Azure.AI.Projects.RLEInstances.createInstance",
         "azure.ai.projects.aio.operations.RLEInstancesOperations.create_instance": "Azure.AI.Projects.RLEInstances.createInstance",
+        "azure.ai.projects.operations.RLEInstancesOperations.delete_instance": "Azure.AI.Projects.RLEInstances.deleteInstance",
+        "azure.ai.projects.aio.operations.RLEInstancesOperations.delete_instance": "Azure.AI.Projects.RLEInstances.deleteInstance",
         "azure.ai.projects.operations.RLEInstancesOperations.get_instance": "Azure.AI.Projects.RLEInstances.getInstance",
         "azure.ai.projects.aio.operations.RLEInstancesOperations.get_instance": "Azure.AI.Projects.RLEInstances.getInstance",
         "azure.ai.projects.operations.RLEInstanceRuntimeOperations.reset": "Azure.AI.Projects.RLEInstances.reset",

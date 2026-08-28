@@ -343,7 +343,7 @@ class AsyncOpenEnvInstance:
             )
             self._instance = instance
         if self._is_client_closed():
-            await self._release()
+            await self.release()
             raise RLEError("OpenEnv client is closed")
         return self
 
@@ -467,21 +467,22 @@ class AsyncOpenEnvInstance:
 
     async def _release(self) -> None:
         """Release the underlying instance, best effort."""
-        instance = self._instance
-        if instance is None:
-            return
-        instance_id = self.id
-        try:
-            await self._instances.delete_instance(
-                self._environment_name,
-                self._environment_version,
-                self._instance_group_id,
-                instance_id,
-            )
-        except AzureError:
-            pass
-        self._instance = None
-        self._released = True
+        async with self._lock:
+            instance = self._instance
+            if instance is None:
+                return
+            instance_id = self.id
+            try:
+                await self._instances.delete_instance(
+                    self._environment_name,
+                    self._environment_version,
+                    self._instance_group_id,
+                    instance_id,
+                )
+            except AzureError:
+                pass
+            self._instance = None
+            self._released = True
 
 
 class AsyncOpenEnvClient:  # pylint: disable=too-many-instance-attributes,async-client-bad-name,client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
