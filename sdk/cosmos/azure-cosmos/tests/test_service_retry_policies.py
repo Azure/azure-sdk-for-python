@@ -141,6 +141,14 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
         created_item = container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
 
+        # Wait for the background _endpoints_health_check thread (started by the create_item
+        # startup refresh) to finish before configuring synthetic regions.  If it runs after
+        # _setup_read_regions it calls update_location_cache(), which resets
+        # read_regional_routing_contexts to 1 on localhost.
+        gem = mock_client.client_connection._global_endpoint_manager
+        if gem._refresh_thread and gem._refresh_thread.is_alive():
+            gem._refresh_thread.join(timeout=30)
+
         # Change the location cache to have 3 preferred read regions
         original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
         self._setup_read_regions(original_location_cache, [self.REGION1, self.REGION2, self.REGION3])
@@ -188,6 +196,15 @@ class TestServiceRetryPolicies(unittest.TestCase):
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
         created_item = container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+
+        # The startup refresh spawns a background _endpoints_health_check thread that calls
+        # update_location_cache() when it finishes. On localhost, that call resets
+        # read_regional_routing_contexts to 1 (because is_default_endpoint_regional() returns True
+        # when all synthetic region endpoints share the same URL). Wait for that thread to complete
+        # before configuring the synthetic regions so there is no race.
+        gem = mock_client.client_connection._global_endpoint_manager
+        if gem._refresh_thread and gem._refresh_thread.is_alive():
+            gem._refresh_thread.join(timeout=30)
 
         # Change the location cache to have 3 preferred read regions
         original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
