@@ -11,7 +11,6 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `SkuMixPlacementDeploymentChoice` deleted or renamed its instance variable `id`
   - Model `SkuMixPlacementItem` deleted or renamed its instance variable `capacity_max`
 
