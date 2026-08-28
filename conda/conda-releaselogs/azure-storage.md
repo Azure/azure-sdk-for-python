@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-storage-blob-12.30.0
+- azure-storage-blob-12.30.1
 - azure-storage-file-datalake-12.25.0
 - azure-storage-file-share-12.26.0
 - azure-storage-queue-12.17.0

@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-ai-voicelive-1.2.0
+- azure-ai-voicelive-1.3.0
 
 ## 2026.06.01
 

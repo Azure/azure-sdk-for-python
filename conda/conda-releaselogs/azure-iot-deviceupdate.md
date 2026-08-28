@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-iot-deviceupdate-1.0.0
+- azure-iot-deviceupdate-1.1.0
 
 ## 2026.06.01
 

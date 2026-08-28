@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-ai-projects-2.4.0
+- azure-ai-projects-2.5.0
 
 ## 2026.06.01
 

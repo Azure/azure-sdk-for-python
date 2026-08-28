@@ -37,7 +37,7 @@
 - azure-mgmt-cognitiveservices-14.1.0
 - azure-mgmt-commerce-6.0.1
 - azure-mgmt-communication-3.0.0
-- azure-mgmt-compute-38.2.0
+- azure-mgmt-compute-38.3.0
 - azure-mgmt-computefleet-1.0.0
 - azure-mgmt-computelimit-1.3.0
 - azure-mgmt-computeschedule-1.1.0
@@ -48,8 +48,8 @@
 - azure-mgmt-consumption-11.0.0
 - azure-mgmt-containerinstance-10.1.0
 - azure-mgmt-containerregistry-15.0.0
-- azure-mgmt-containerservice-41.5.0
-- azure-mgmt-containerservicefleet-3.1.0
+- azure-mgmt-containerservice-41.6.0
+- azure-mgmt-containerservicefleet-4.0.0
 - azure-mgmt-cosmosdb-10.0.0
 - azure-mgmt-costmanagement-5.0.0
 - azure-mgmt-customproviders-1.0.1
@@ -135,7 +135,7 @@
 - azure-mgmt-msi-7.1.0
 - azure-mgmt-neonpostgres-1.0.0
 - azure-mgmt-netapp-17.1.0
-- azure-mgmt-network-31.0.1
+- azure-mgmt-network-32.0.0
 - azure-mgmt-networkanalytics-1.0.0
 - azure-mgmt-networkcloud-3.0.0
 - azure-mgmt-networkfunction-1.0.0
@@ -162,7 +162,7 @@
 - azure-mgmt-qumulo-3.0.0
 - azure-mgmt-quota-3.0.1
 - azure-mgmt-rdbms-10.1.1
-- azure-mgmt-recoveryservices-4.1.0
+- azure-mgmt-recoveryservices-4.2.0
 - azure-mgmt-recoveryservicesbackup-10.0.0
 - azure-mgmt-recoveryservicesdatareplication-1.0.0
 - azure-mgmt-recoveryservicessiterecovery-2.0.0
@@ -204,7 +204,7 @@
 - azure-mgmt-storagediscovery-1.0.1
 - azure-mgmt-storagemover-3.1.0
 - azure-mgmt-storagepool-1.0.0
-- azure-mgmt-storagesync-2.0.0
+- azure-mgmt-storagesync-2.1.0
 - azure-mgmt-streamanalytics-1.0.0
 - azure-mgmt-subscription-3.1.1
 - azure-mgmt-support-7.0.0

@@ -7,7 +7,7 @@
 - azure-keyvault-administration-4.7.0
 - azure-keyvault-certificates-4.11.1
 - azure-keyvault-keys-4.11.1
-- azure-keyvault-secrets-4.11.0
+- azure-keyvault-secrets-4.11.2
 
 ## 2026.06.01
 
