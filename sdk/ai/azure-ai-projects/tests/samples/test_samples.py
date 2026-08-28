@@ -49,6 +49,7 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_agent_openapi.py",  # 400 2/28/2026 validation/tool_user_error; failing weather GET curl call in OpenAPI tool
                 "sample_agent_memory_search.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
                 "sample_agent_to_agent.py",  # Skipped not sample should work, but not able to obtain a project endpoint that work with a2a at this moment
+                "sample_agent_web_iq.py",  # Recording not yet available.
             ],
         ),
     )
@@ -353,7 +354,9 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "toolboxes",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_toolboxes_shell_and_web_iq.py",  # Recording not yet available.
+            ],
         ),
     )
     @servicePreparer()

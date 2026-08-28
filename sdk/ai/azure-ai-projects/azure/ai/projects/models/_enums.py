@@ -47,6 +47,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MODELS_V1_PREVIEW."""
     AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
     """AGENTS_OPTIMIZATION_V2_PREVIEW."""
+    MODEL_ROUTER_CONTROLS_V1_PREVIEW = "ModelRouterControls=V1Preview"
+    """MODEL_ROUTER_CONTROLS_V1_PREVIEW."""
 
 
 class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -54,6 +56,47 @@ class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     V1_0 = "1.0"
     """A2A protocol version 1.0."""
+
+
+class ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An access boundary for the activity protocol."""
+
+    READ1_ON1_DEVELOPERS = "read.1on1.developers"
+    """Allows read access to one-on-one developer conversations."""
+    READ1_ON1_MANAGER = "read.1on1.manager"
+    """Allows read access to one-on-one manager conversations."""
+    READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
+    """Allows read access to allowlisted one-on-one conversations."""
+    READ1_ON1_TENANT = "read.1on1.tenant"
+    """Allows read access to tenant-wide one-on-one conversations."""
+    WRITE1_ON1_DEVELOPERS = "write.1on1.developers"
+    """Allows write access to one-on-one developer conversations."""
+    WRITE1_ON1_MANAGER = "write.1on1.manager"
+    """Allows write access to one-on-one manager conversations."""
+    WRITE1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
+    """Allows write access to allowlisted one-on-one conversations."""
+    WRITE1_ON1_TENANT = "write.1on1.tenant"
+    """Allows write access to tenant-wide one-on-one conversations."""
+    READ_GROUP_DEVELOPERS = "read.group.developers"
+    """Allows read access to developer group conversations."""
+    READ_GROUP_ALLOWLISTED = "read.group.allowlisted"
+    """Allows read access to allowlisted group conversations."""
+    READ_GROUP_MANAGER_INVITED = "read.group.manager-invited"
+    """Allows read access to group conversations where a manager is invited."""
+    READ_GROUP_MANAGER_PRESENT = "read.group.manager-present"
+    """Allows read access to group conversations where a manager is present."""
+    READ_GROUP_TENANT = "read.group.tenant"
+    """Allows read access to tenant-wide group conversations."""
+    WRITE_GROUP_DEVELOPERS = "write.group.developers"
+    """Allows write access to developer group conversations."""
+    WRITE_GROUP_ALLOWLISTED = "write.group.allowlisted"
+    """Allows write access to allowlisted group conversations."""
+    WRITE_GROUP_MANAGER_INVITED = "write.group.manager-invited"
+    """Allows write access to group conversations where a manager is invited."""
+    WRITE_GROUP_MANAGER_PRESENT = "write.group.manager-present"
+    """Allows write access to group conversations where a manager is present."""
+    WRITE_GROUP_TENANT = "write.group.tenant"
+    """Allows write access to tenant-wide group conversations."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1175,14 +1218,14 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FILE_SEARCH."""
     WEB_SEARCH = "web_search"
     """WEB_SEARCH."""
+    SHELL = "shell"
+    """SHELL."""
     MCP = "mcp"
     """MCP."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     OPENAPI = "openapi"
     """OPENAPI."""
-    A2_A = "a2a"
-    """A2_A."""
     A2A_PREVIEW = "a2a_preview"
     """A2A_PREVIEW."""
     BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
@@ -1197,6 +1240,10 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TOOLBOX_SEARCH."""
     TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
     """TOOLBOX_SEARCH_PREVIEW."""
+    WEB_IQ_PREVIEW = "web_iq_preview"
+    """WEB_IQ_PREVIEW."""
+    A2_A = "a2a"
+    """A2_A."""
 
 
 class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1296,6 +1343,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FABRIC_IQ_PREVIEW."""
     TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
     """TOOLBOX_SEARCH_PREVIEW."""
+    WEB_IQ_PREVIEW = "web_iq_preview"
+    """WEB_IQ_PREVIEW."""
     A2_A = "a2a"
     """A2_A."""
     AZURE_AI_SEARCH = "azure_ai_search"

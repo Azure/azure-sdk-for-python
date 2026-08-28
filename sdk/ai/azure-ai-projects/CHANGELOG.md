@@ -2,12 +2,21 @@
 
 ## 2.6.0 (Unreleased)
 
+### Features Added
+
+* Added the preview Agent and Toolbox tools `WebIQPreviewTool` and `WebIQPreviewToolboxTool`, with new `ToolType.WEB_IQ_PREVIEW` and `ToolboxToolType.WEB_IQ_PREVIEW` enum members.
+* Added shell tools for Toolboxes through `ShellToolboxTool` and the new `ToolboxShellEnvironment`, `ToolboxShellContainerAutoEnvironment`, `ToolboxShellContainerReferenceEnvironment`, `ToolboxShellNetworkPolicy`, and `ToolboxShellNetworkPolicyDisabled` models.
+* Added the optional `session_configuration` property to `HostedAgentDefinition` and the new `SessionConfiguration` model for configuring the session idle timeout.
+* Added the read-only `access_boundaries` property to `ActivityProtocolConfiguration` and the new `ActivityProtocolAccessBoundary` enum.
+
 ### Bugs Fixed
 
 * Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
 
 ### Sample updates
 
+* Added `sample_agent_web_iq.py` under `samples/agents/tools/`, demonstrating a Prompt Agent configured with `WebIQPreviewTool`.
+* Added `sample_toolboxes_shell_and_web_iq.py` under `samples/toolboxes/`, demonstrating a Toolbox containing an automatically provisioned shell tool and a WebIQ preview tool.
 * Added `sample_synthetic_multiturn_evaluation.py`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
 
 ## 2.5.0 (2026-08-20)

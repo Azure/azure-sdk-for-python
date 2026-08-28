@@ -49,7 +49,10 @@ This skill creates a new topic branch, emits SDK from TypeSpec, runs some post-p
 
 This skill updates the file CHANGELOG.md, comparing the source in the current branch which the source of the latest public release. It does not create a new topic branch or a PR.
 
+### azure-ai-projects-author-samples
 
+This skill compares a newly emitted or merged public API surface with its selected base, then creates or updates idiomatic synchronous and asynchronous Python samples. It also keeps unrecorded samples excluded from the recorded sample harness.
 
+### azure-ai-projects-author-tests
 
-
+This skill updates existing pytest coverage and authors complete sync/async Test Proxy tests for new behavior. New recorded service tests remain explicitly skipped until a human adds recordings.
