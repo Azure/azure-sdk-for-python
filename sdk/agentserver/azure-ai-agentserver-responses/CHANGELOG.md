@@ -2,13 +2,18 @@
 
 ## 2.2.0b2 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
 
+- Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
+  available, preventing recreated same-name sessions from colliding with task
+  tombstones. Existing pre-rollout active chains remain resumable through a
+  legacy-ID lookup.
+
 ### Other Changes
+
+- Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b1`,
+  which provides the session GUID configuration and legacy task lookup used by
+  resilient Responses.
 
 ## 2.2.0b1 (2026-08-27)
 
