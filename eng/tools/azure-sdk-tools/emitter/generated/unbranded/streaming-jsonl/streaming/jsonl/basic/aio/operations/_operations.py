@@ -1,6 +1,7 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from corehttp.exceptions import (
     ClientAuthenticationError,
@@ -17,7 +18,10 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
+from ... import models as _models2
+from ...._utils.model_base import _deserialize
 from ...._utils.serialization import Deserializer, Serializer
+from ...._utils.streaming_base import AsyncStream
 from ....aio._configuration import JsonlClientConfiguration
 from ...operations._operations import build_basic_receive_request, build_basic_send_request
 
@@ -119,11 +123,12 @@ class BasicOperations:  # pylint: disable=docstring-missing-param
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    async def receive(self, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def receive(self, **kwargs: Any) -> AsyncStream[_models2.Info]:
         """receive.
 
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
+        :return: An instance of AsyncStream that iterates over Info. The Info is compatible with
+         MutableMapping
+        :rtype: ~streaming.jsonl.AsyncStream[~streaming.jsonl.basic.models.Info]
         :raises ~corehttp.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -137,7 +142,7 @@ class BasicOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncStream[_models2.Info]] = kwargs.pop("cls", None)
 
         _request = build_basic_receive_request(
             headers=_headers,
@@ -163,12 +168,12 @@ class BasicOperations:  # pylint: disable=docstring-missing-param
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        def _callback(_http_response, _event):
+            _event_json = _event.json()
+            deserialized = _deserialize(_models2.Info, _event_json)
+            return deserialized
 
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
+        deserialized: AsyncStream[_models2.Info] = AsyncStream(response=response, deserialization_callback=_callback)  # type: ignore
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+        return deserialized

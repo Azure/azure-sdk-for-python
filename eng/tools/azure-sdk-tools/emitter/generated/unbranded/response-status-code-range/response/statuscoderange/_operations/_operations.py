@@ -108,6 +108,9 @@ class _StatusCodeRangeClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -136,8 +139,7 @@ class _StatusCodeRangeClientOperationsMixin(
             error = None
             if response.status_code == 404:
                 error = _failsafe_deserialize(_models.NotFoundError, response)
-                raise ResourceNotFoundError(response=response, model=error)
-            if 400 <= response.status_code <= 499:
+            elif 400 <= response.status_code <= 499:
                 error = _failsafe_deserialize(_models.Standard4XXError, response)
             raise HttpResponseError(response=response, model=error)
 

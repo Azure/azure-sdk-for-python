@@ -3,16 +3,29 @@
     "CrossLanguageDefinitionId": {
         "streaming.sse.retrieve.models.FinalResult": "Streaming.Sse.Retrieve.FinalResult",
         "streaming.sse.unnamed.models.Info": "Streaming.Sse.Unnamed.Info",
+        "streaming.sse.protocol.models.Info": "Streaming.Sse.Protocol.Info",
         "streaming.sse.retrieve.models.PartialResult": "Streaming.Sse.Retrieve.PartialResult",
         "streaming.sse.named.models.ResponseCreated": "Streaming.Sse.Named.ResponseCreated",
         "streaming.sse.named.models.ResponseDelta": "Streaming.Sse.Named.ResponseDelta",
         "streaming.sse.retrieve.models.RetrievalRequest": "Streaming.Sse.Retrieve.RetrievalRequest",
+        "streaming.sse.protocol.data.models.WithEnvelope": "Streaming.Sse.Protocol.Data.withEnvelope.anonymous",
+        "streaming.sse.protocol.data.models.WithEnvelope1": "Streaming.Sse.Protocol.Data.withEnvelope.anonymous",
         "streaming.sse.operations.UnnamedOperations.receive": "Streaming.Sse.Unnamed.receive",
         "streaming.sse.aio.operations.UnnamedOperations.receive": "Streaming.Sse.Unnamed.receive",
         "streaming.sse.operations.NamedOperations.receive": "Streaming.Sse.Named.receive",
         "streaming.sse.aio.operations.NamedOperations.receive": "Streaming.Sse.Named.receive",
         "streaming.sse.operations.RetrieveOperations.stream": "Streaming.Sse.Retrieve.stream",
-        "streaming.sse.aio.operations.RetrieveOperations.stream": "Streaming.Sse.Retrieve.stream"
+        "streaming.sse.aio.operations.RetrieveOperations.stream": "Streaming.Sse.Retrieve.stream",
+        "streaming.sse.operations.ProtocolOperations.id": "Streaming.Sse.Protocol.id",
+        "streaming.sse.aio.operations.ProtocolOperations.id": "Streaming.Sse.Protocol.id",
+        "streaming.sse.operations.ProtocolOperations.invalid_id": "Streaming.Sse.Protocol.invalidId",
+        "streaming.sse.aio.operations.ProtocolOperations.invalid_id": "Streaming.Sse.Protocol.invalidId",
+        "streaming.sse.operations.ProtocolOperations.retry": "Streaming.Sse.Protocol.retry",
+        "streaming.sse.aio.operations.ProtocolOperations.retry": "Streaming.Sse.Protocol.retry",
+        "streaming.sse.operations.ProtocolOperations.invalid_retry": "Streaming.Sse.Protocol.invalidRetry",
+        "streaming.sse.aio.operations.ProtocolOperations.invalid_retry": "Streaming.Sse.Protocol.invalidRetry",
+        "streaming.sse.operations.ProtocolOperations.reconnect": "Streaming.Sse.Protocol.reconnect",
+        "streaming.sse.aio.operations.ProtocolOperations.reconnect": "Streaming.Sse.Protocol.reconnect"
     },
-    "CrossLanguageVersion": "f32c1336cafd"
+    "CrossLanguageVersion": "156f1a51a430"
 }

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -28,8 +29,9 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models1, types as _types_models1
 from ..._configuration import SseClientConfiguration
-from ..._utils.model_base import SdkJSONEncoder
+from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._utils.streaming_base import Stream
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -75,7 +77,7 @@ class RetrieveOperations:  # pylint: disable=docstring-missing-param
     @overload
     def stream(
         self, request: _models1.RetrievalRequest, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> Stream[Union[_models1.PartialResult, _models1.FinalResult]]:
         """stream.
 
         :param request: Required.
@@ -83,15 +85,16 @@ class RetrieveOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: An instance of Stream that iterates over PartialResult or FinalResult
+        :rtype: ~streaming.sse.Stream[~streaming.sse.retrieve.models.PartialResult or
+         ~streaming.sse.retrieve.models.FinalResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def stream(
         self, request: _types_models1.RetrievalRequest, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> Stream[Union[_models1.PartialResult, _models1.FinalResult]]:
         """stream.
 
         :param request: Required.
@@ -99,13 +102,16 @@ class RetrieveOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: An instance of Stream that iterates over PartialResult or FinalResult
+        :rtype: ~streaming.sse.Stream[~streaming.sse.retrieve.models.PartialResult or
+         ~streaming.sse.retrieve.models.FinalResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def stream(self, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> Iterator[bytes]:
+    def stream(
+        self, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> Stream[Union[_models1.PartialResult, _models1.FinalResult]]:
         """stream.
 
         :param request: Required.
@@ -113,22 +119,24 @@ class RetrieveOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: An instance of Stream that iterates over PartialResult or FinalResult
+        :rtype: ~streaming.sse.Stream[~streaming.sse.retrieve.models.PartialResult or
+         ~streaming.sse.retrieve.models.FinalResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def stream(
         self, request: Union[_models1.RetrievalRequest, _types_models1.RetrievalRequest, IO[bytes]], **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> Stream[Union[_models1.PartialResult, _models1.FinalResult]]:
         """stream.
 
         :param request: Is either a RetrievalRequest type or a IO[bytes] type. Required.
         :type request: ~streaming.sse.retrieve.models.RetrievalRequest or
          ~streaming.sse.retrieve.types.RetrievalRequest or IO[bytes]
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: An instance of Stream that iterates over PartialResult or FinalResult
+        :rtype: ~streaming.sse.Stream[~streaming.sse.retrieve.models.PartialResult or
+         ~streaming.sse.retrieve.models.FinalResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -143,8 +151,9 @@ class RetrieveOperations:  # pylint: disable=docstring-missing-param
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Stream[Union[_models1.PartialResult, _models1.FinalResult]]] = kwargs.pop("cls", None)
 
+        _last_event_id = kwargs.pop("last_event_id", None)
         content_type = content_type or "application/json"
         _content = None
         if isinstance(request, (IOBase, bytes)):
@@ -163,6 +172,9 @@ class RetrieveOperations:  # pylint: disable=docstring-missing-param
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        if _last_event_id is not None:
+            _request.headers["Last-Event-ID"] = _last_event_id
+
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -180,12 +192,18 @@ class RetrieveOperations:  # pylint: disable=docstring-missing-param
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        def _callback(_http_response, _event):
+            if _event.event == "partialResult":
+                _event_json = json.loads(_event.data)
+                deserialized = _deserialize(_models1.PartialResult, _event_json)
+            elif _event.event == "finalResult":
+                _event_json = json.loads(_event.data)
+                deserialized = _deserialize(_models1.FinalResult, _event_json)
+            else:
+                raise ValueError(f"Unknown SSE event type: {_event.event!r}")
+            return deserialized
 
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
+        deserialized: Stream[Union[_models1.PartialResult, _models1.FinalResult]] = Stream(response=response, deserialization_callback=_callback, terminal_event="[DONE]")  # type: ignore
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+        return deserialized

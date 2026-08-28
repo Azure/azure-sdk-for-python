@@ -1,0 +1,11 @@
+{
+    "CrossLanguagePackageId": "Response.BodyOrNoContent",
+    "CrossLanguageDefinitionId": {
+        "response.bodyornocontent.models.BlobLayout": "Response.BodyOrNoContent.BlobLayout",
+        "response.bodyornocontent.BodyOrNoContentClient.get_body": "Response.BodyOrNoContent.getBody",
+        "response.bodyornocontent.aio.BodyOrNoContentClient.get_body": "Response.BodyOrNoContent.getBody",
+        "response.bodyornocontent.BodyOrNoContentClient.get_no_content": "Response.BodyOrNoContent.getNoContent",
+        "response.bodyornocontent.aio.BodyOrNoContentClient.get_no_content": "Response.BodyOrNoContent.getNoContent"
+    },
+    "CrossLanguageVersion": "efd2e40ee7dd"
+}
