@@ -1430,35 +1430,37 @@ class TestBaseExporter(unittest.TestCase):
     def test_transmission_413_persists_and_retries(self):
         """End-to-end with real on-disk storage: a 413 persists the split halves to
         disk, and a later successful drain reads them back and retries them."""
-        exporter = self._base
-        clean_folder(exporter.storage._path)
-        custom_envelopes_to_export = [
-            TelemetryItem(name="Test1", time=datetime.now()),
-            TelemetryItem(name="Test2", time=datetime.now()),
-            TelemetryItem(name="Test3", time=datetime.now()),
-            TelemetryItem(name="Test4", time=datetime.now()),
-        ]
-        # First transmit gets a 413 -> the batch is split and each half is persisted.
-        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
-            result = exporter._transmit(custom_envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-        # Two separate blobs were written to disk (one per half).
-        blobs = [f for f in os.listdir(exporter.storage._path) if ".blob" in f]
-        self.assertEqual(len(blobs), 2)
-        # Strip the retry lease so the freshly-persisted blobs are drainable now.
-        for name in os.listdir(exporter.storage._path):
-            if name.endswith(".lock"):
-                src = os.path.join(exporter.storage._path, name)
-                dst = os.path.join(exporter.storage._path, name[: name.rindex("@")])
-                os.rename(src, dst)
-        # Now the endpoint accepts data -> draining retries the persisted halves.
-        with mock.patch.object(AzureMonitorClient, "track") as post:
-            post.return_value = TrackResponse(items_received=2, items_accepted=2, errors=[])
-            exporter._transmit_from_storage()
-        # Both halves were re-sent and their blobs removed from disk.
-        self.assertEqual(post.call_count, 2)
-        remaining = [f for f in os.listdir(exporter.storage._path) if ".blob" in f]
-        self.assertEqual(len(remaining), 0)
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as storage_directory:
+            exporter = BaseExporter(storage_directory=storage_directory)
+            custom_envelopes_to_export = [
+                TelemetryItem(name="Test1", time=datetime.now()),
+                TelemetryItem(name="Test2", time=datetime.now()),
+                TelemetryItem(name="Test3", time=datetime.now()),
+                TelemetryItem(name="Test4", time=datetime.now()),
+            ]
+            # First transmit gets a 413 -> the batch is split and each half is persisted.
+            with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
+                result = exporter._transmit(custom_envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            # Two separate blobs were written to disk (one per half).
+            blobs = [f for f in os.listdir(storage_directory) if ".blob" in f]
+            self.assertEqual(len(blobs), 2)
+            # Strip the retry lease so the freshly-persisted blobs are drainable now.
+            for name in os.listdir(storage_directory):
+                if name.endswith(".lock"):
+                    src = os.path.join(storage_directory, name)
+                    dst = os.path.join(storage_directory, name[: name.rindex("@")])
+                    os.rename(src, dst)
+            # Now the endpoint accepts data -> draining retries the persisted halves.
+            with mock.patch.object(AzureMonitorClient, "track") as post:
+                post.return_value = TrackResponse(items_received=2, items_accepted=2, errors=[])
+                exporter._transmit_from_storage()
+            # Both halves were re-sent and their blobs removed from disk.
+            self.assertEqual(post.call_count, 2)
+            remaining = [f for f in os.listdir(storage_directory) if ".blob" in f]
+            self.assertEqual(len(remaining), 0)
 
     def test_transmission_413_sub_batch_persist_failure_drops_that_batch_only(self):
         """storage.put reports failure by return value (not by raising). If persisting one
