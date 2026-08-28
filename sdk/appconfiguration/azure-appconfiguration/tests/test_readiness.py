@@ -47,9 +47,9 @@ def test_wait_for_data_plane_access_times_out():
     client = MagicMock()
     client.list_configuration_settings.side_effect = _http_error(403)
 
-    with patch("conftest.time.monotonic", side_effect=[0, 2]), patch(
-        "conftest.time.sleep"
-    ) as sleep, pytest.raises(TimeoutError):
+    with patch("conftest.time.monotonic", side_effect=[0, 2]), patch("conftest.time.sleep") as sleep, pytest.raises(
+        TimeoutError
+    ):
         _wait_for_data_plane_access(client, timeout=1)
 
     sleep.assert_not_called()
