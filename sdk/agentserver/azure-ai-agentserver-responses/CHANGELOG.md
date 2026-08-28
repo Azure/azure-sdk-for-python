@@ -1,6 +1,6 @@
 # Release History
 
-## 2.2.0b1 (Unreleased)
+## 2.2.0b2 (Unreleased)
 
 ### Bugs Fixed
 
@@ -14,6 +14,21 @@
 - Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b1`,
   which provides the session GUID configuration and legacy task lookup used by
   resilient Responses.
+
+## 2.2.0b1 (2026-08-27)
+
+### Breaking Changes
+
+- `ResponseUsageInputTokensDetails.cache_write_tokens` is now required by the latest AgentServer contract.
+
+### Features Added
+
+- Added prompt caching and programmatic tool-calling models from the latest AgentServer contract.
+
+### Bugs Fixed
+
+- Made `logprobs` optional in assistant output-text content to match the OpenAI Responses API runtime behavior.
+- Added validation for prompt-cache options and tool-call caller discriminators.
 
 ## 2.1.0 (2026-08-24)
 

@@ -903,6 +903,17 @@ class ReplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cross zone replication."""
 
 
+class SecureLdapType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the secure LDAP mode for encrypting communication between ANF storage and customer
+    LDAP servers.
+    """
+
+    LDAP_OVER_TLS = "LdapOverTLS"
+    """LDAP traffic is encrypted using LDAP over TLS."""
+    NONE = "None"
+    """LDAP traffic is not encrypted."""
+
+
 class SecurityStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The security style of volume, default unix, defaults to ntfs for dual protocol or CIFS
     protocol.

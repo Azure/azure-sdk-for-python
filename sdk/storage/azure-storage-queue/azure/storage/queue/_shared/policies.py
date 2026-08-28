@@ -876,6 +876,10 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
         "x-ms-copy-source",
         "x-ms-copy-source-authorization",
         "x-ms-rename-source",
+        "x-ms-encryption-key",
+        "x-ms-encryption-key-sha256",
+        "x-ms-source-encryption-key",
+        "x-ms-source-encryption-key-sha256",
     }
 
     DEFAULT_SENSITIVE_QUERY_PARAMS = {"sig"}
