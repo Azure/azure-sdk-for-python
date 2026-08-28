@@ -158,7 +158,9 @@ extends:
                   - checkout: self
                     fetchDepth: 1
                     fetchTags: false
-                    sparseCheckoutDirectories: eng/common
+                    sparseCheckoutDirectories: |
+                      eng/common
+                      eng/scripts
 
                   - download: current
                     artifact: packages_extended
