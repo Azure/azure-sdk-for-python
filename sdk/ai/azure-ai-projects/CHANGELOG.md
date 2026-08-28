@@ -10,6 +10,10 @@
 
 * Added private-preview Reinforcement Learning Environments (RLE) support through `AIProjectClient.rle` when constructed with `allow_preview=True`, including OpenEnv instance lifecycle management and environment management operations.
 
+### Sample updates
+
+* Added `sample_synthetic_multiturn_evaluation.py`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+
 ## 2.5.0 (2026-08-20)
 
 ### Dependency update
