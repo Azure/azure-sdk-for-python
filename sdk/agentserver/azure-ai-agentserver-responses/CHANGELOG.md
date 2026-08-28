@@ -4,11 +4,19 @@
 
 ### Features Added
 
+- Added memory-command, procedural-memory, model-routing, content-filter, and expanded tool configuration models.
+- Added shell command and output-content streaming events.
+
 ### Breaking Changes
+
+- Replaced the legacy memory-search item models with `MemorySearchToolCall`.
+- Updated the WorkIQ preview tool and response compaction request contracts to match the Foundry release specification.
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Regenerated the AgentServer model and validation contracts from the consolidated Foundry release specification.
 
 ## 2.2.0b1 (2026-08-27)
 

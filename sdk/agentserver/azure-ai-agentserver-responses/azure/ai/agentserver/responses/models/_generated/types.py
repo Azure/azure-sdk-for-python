@@ -13,6 +13,9 @@ from typing_extensions import Required, TypedDict
 if TYPE_CHECKING:
     from . import _unions
 
+A2AProtocolVersion = Literal["1.0"]
+"""Supported A2A protocol versions."""
+
 AnnotationType = Literal["file_citation", "url_citation", "container_file_citation", "file_path"]
 """Type of AnnotationType."""
 
@@ -36,6 +39,9 @@ ApplyPatchOperationParamType = Literal["create_file", "delete_file", "update_fil
 
 AzureAISearchQueryType = Literal["simple", "semantic", "vector", "vector_simple_hybrid", "vector_semantic_hybrid"]
 """Available query types for Azure AI Search tool."""
+
+AzureContentFilterSeverity = Literal["safe", "low", "medium", "high"]
+"""Ratings for the intensity and risk level of harmful content."""
 
 CallableToolAllowedCaller = Literal["direct", "programmatic"]
 """Type of CallableToolAllowedCaller."""
@@ -211,6 +217,8 @@ ItemType = Literal[
     "structured_outputs",
     "oauth_consent_request",
     "memory_search_call",
+    "memory_command_preview_call",
+    "memory_command_preview_call_output",
     "workflow_action",
     "a2a_preview_call",
     "a2a_preview_call_output",
@@ -236,7 +244,7 @@ ItemType = Literal[
 MCPToolCallStatus = Literal["in_progress", "completed", "incomplete", "calling", "failed"]
 """Type of MCPToolCallStatus."""
 
-MemoryItemKind = Literal["user_profile", "chat_summary"]
+MemoryItemKind = Literal["user_profile", "chat_summary", "procedural"]
 """Memory item kind."""
 
 MessageContentType = Literal[
@@ -264,113 +272,8 @@ MessageRole = Literal["unknown", "user", "assistant", "system", "critic", "discr
 MessageStatus = Literal["in_progress", "completed", "incomplete"]
 """Type of MessageStatus."""
 
-ModelIdsCompaction = Literal[
-    "gpt-5.6-sol",
-    "gpt-5.6-terra",
-    "gpt-5.6-luna",
-    "gpt-5.5",
-    "gpt-5.5-2026-04-23",
-    "gpt-5.4",
-    "gpt-5.4-mini",
-    "gpt-5.4-nano",
-    "gpt-5.4-mini-2026-03-17",
-    "gpt-5.4-nano-2026-03-17",
-    "gpt-5.3-chat-latest",
-    "gpt-5.2",
-    "gpt-5.2-2025-12-11",
-    "gpt-5.2-chat-latest",
-    "gpt-5.2-pro",
-    "gpt-5.2-pro-2025-12-11",
-    "gpt-5.1",
-    "gpt-5.1-2025-11-13",
-    "gpt-5.1-codex",
-    "gpt-5.1-mini",
-    "gpt-5.1-chat-latest",
-    "gpt-5",
-    "gpt-5-mini",
-    "gpt-5-nano",
-    "gpt-5-2025-08-07",
-    "gpt-5-mini-2025-08-07",
-    "gpt-5-nano-2025-08-07",
-    "gpt-5-chat-latest",
-    "gpt-4.1",
-    "gpt-4.1-mini",
-    "gpt-4.1-nano",
-    "gpt-4.1-2025-04-14",
-    "gpt-4.1-mini-2025-04-14",
-    "gpt-4.1-nano-2025-04-14",
-    "o4-mini",
-    "o4-mini-2025-04-16",
-    "o3",
-    "o3-2025-04-16",
-    "o3-mini",
-    "o3-mini-2025-01-31",
-    "o1",
-    "o1-2024-12-17",
-    "o1-preview",
-    "o1-preview-2024-09-12",
-    "o1-mini",
-    "o1-mini-2024-09-12",
-    "gpt-4o",
-    "gpt-4o-2024-11-20",
-    "gpt-4o-2024-08-06",
-    "gpt-4o-2024-05-13",
-    "gpt-4o-audio-preview",
-    "gpt-4o-audio-preview-2024-10-01",
-    "gpt-4o-audio-preview-2024-12-17",
-    "gpt-4o-audio-preview-2025-06-03",
-    "gpt-4o-mini-audio-preview",
-    "gpt-4o-mini-audio-preview-2024-12-17",
-    "gpt-4o-search-preview",
-    "gpt-4o-mini-search-preview",
-    "gpt-4o-search-preview-2025-03-11",
-    "gpt-4o-mini-search-preview-2025-03-11",
-    "chatgpt-4o-latest",
-    "codex-mini-latest",
-    "gpt-4o-mini",
-    "gpt-4o-mini-2024-07-18",
-    "gpt-4-turbo",
-    "gpt-4-turbo-2024-04-09",
-    "gpt-4-0125-preview",
-    "gpt-4-turbo-preview",
-    "gpt-4-1106-preview",
-    "gpt-4-vision-preview",
-    "gpt-4",
-    "gpt-4-0314",
-    "gpt-4-0613",
-    "gpt-4-32k",
-    "gpt-4-32k-0314",
-    "gpt-4-32k-0613",
-    "gpt-3.5-turbo",
-    "gpt-3.5-turbo-16k",
-    "gpt-3.5-turbo-0301",
-    "gpt-3.5-turbo-0613",
-    "gpt-3.5-turbo-1106",
-    "gpt-3.5-turbo-0125",
-    "gpt-3.5-turbo-16k-0613",
-    "o1-pro",
-    "o1-pro-2025-03-19",
-    "o3-pro",
-    "o3-pro-2025-06-10",
-    "o3-deep-research",
-    "o3-deep-research-2025-06-26",
-    "o4-mini-deep-research",
-    "o4-mini-deep-research-2025-06-26",
-    "computer-use-preview",
-    "computer-use-preview-2025-03-11",
-    "gpt-5.5-pro",
-    "gpt-5.5-pro-2026-04-23",
-    "gpt-5-codex",
-    "gpt-5-pro",
-    "gpt-5-pro-2025-10-06",
-    "gpt-5.1-codex-max",
-    "gpt-daybreak-blue-latest",
-    "gpt-daybreak-red-latest",
-    "gpt-5.6-cyber",
-]
-"""Model ID used to generate the response, like ``gpt-5`` or ``o3``. OpenAI offers a wide range of
-models with different capabilities, performance characteristics, and price points. Refer to the
-`model guide </docs/models>`_ to browse and compare available models."""
+ModelRouterMode = Literal["balanced", "cost", "quality"]
+"""The routing mode used by Model Router for the request."""
 
 ModerationEntryType = Literal["moderation_result", "error"]
 """Type of ModerationEntryType."""
@@ -424,6 +327,8 @@ OutputItemType = Literal[
     "structured_outputs",
     "oauth_consent_request",
     "memory_search_call",
+    "memory_command_preview_call",
+    "memory_command_preview_call_output",
     "workflow_action",
     "a2a_preview_call",
     "a2a_preview_call_output",
@@ -636,6 +541,10 @@ ToolType = Literal[
     "sharepoint_grounding_preview",
     "memory_search_preview",
     "work_iq_preview",
+    "fabric_iq_preview",
+    "toolbox_search_preview",
+    "web_iq_preview",
+    "a2a",
     "azure_ai_search",
     "azure_function",
     "bing_grounding",
@@ -650,10 +559,6 @@ class A2APreviewTool(TypedDict, total=False):
 
     :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2_A_PREVIEW.
     :vartype type: Literal["a2a_preview"]
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar base_url: Base URL of the agent.
     :vartype base_url: str
     :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
@@ -663,14 +568,14 @@ class A2APreviewTool(TypedDict, total=False):
      connection stores authentication and other connection details needed to connect to the A2A
      server.
     :vartype project_connection_id: str
+    :ivar send_credentials_for_agent_card: When ``true``, Foundry sends its credentials when
+     fetching the remote agent's Agent Card. The service defaults to ``false`` if a value is not
+     specified by the caller (anonymous fetch).
+    :vartype send_credentials_for_agent_card: bool
     """
 
     type: Required[Literal["a2a_preview"]]
     """The type of the tool. Always ``\"a2a_preview``. Required. A2_A_PREVIEW."""
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     base_url: str
     """Base URL of the agent."""
     agent_card_path: str
@@ -679,6 +584,48 @@ class A2APreviewTool(TypedDict, total=False):
     project_connection_id: str
     """The connection ID in the project for the A2A server. The connection stores authentication and
      other connection details needed to connect to the A2A server."""
+    send_credentials_for_agent_card: bool
+    """When ``true``, Foundry sends its credentials when fetching the remote agent's Agent Card. The
+     service defaults to ``false`` if a value is not specified by the caller (anonymous fetch)."""
+
+
+class A2ATool(TypedDict, total=False):
+    """An agent implementing the A2A protocol.
+
+    :ivar type: The type of the tool. Always ``"a2a"``. Required. A2_A.
+    :vartype type: Literal["a2a"]
+    :ivar base_url: Base URL of the agent.
+    :vartype base_url: str
+    :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
+     provided, defaults to  ``/.well-known/agent-card.json``.
+    :vartype agent_card_path: str
+    :ivar project_connection_id: The connection ID in the project for the A2A server. The
+     connection stores authentication and other connection details needed to connect to the A2A
+     server.
+    :vartype project_connection_id: str
+    :ivar send_credentials_for_agent_card: When ``true``, Foundry sends its credentials when
+     fetching the remote agent's Agent Card. The service defaults to ``false`` if a value is not
+     specified by the caller (anonymous fetch).
+    :vartype send_credentials_for_agent_card: bool
+    :ivar a2a_version: The A2A protocol version supported by the agent. Required. "1.0"
+    :vartype a2a_version: A2AProtocolVersion
+    """
+
+    type: Required[Literal["a2a"]]
+    """The type of the tool. Always ``\"a2a\"``. Required. A2_A."""
+    base_url: str
+    """Base URL of the agent."""
+    agent_card_path: str
+    """The path to the agent card relative to the ``base_url``. If not provided, defaults to
+     ``/.well-known/agent-card.json``."""
+    project_connection_id: str
+    """The connection ID in the project for the A2A server. The connection stores authentication and
+     other connection details needed to connect to the A2A server."""
+    send_credentials_for_agent_card: bool
+    """When ``true``, Foundry sends its credentials when fetching the remote agent's Agent Card. The
+     service defaults to ``false`` if a value is not specified by the caller (anonymous fetch)."""
+    a2a_version: Required[A2AProtocolVersion]
+    """The A2A protocol version supported by the agent. Required. \"1.0\""""
 
 
 class A2AToolCall(TypedDict, total=False):
@@ -814,10 +761,6 @@ class AISearchIndexResource(TypedDict, total=False):
     :vartype project_connection_id: str
     :ivar index_name: The name of an index in an IndexResource attached to this agent.
     :vartype index_name: str
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar query_type: Type of query in an AIIndexResource attached to this agent. Known values are:
      "simple", "semantic", "vector", "vector_simple_hybrid", and "vector_semantic_hybrid".
     :vartype query_type: AzureAISearchQueryType
@@ -833,10 +776,6 @@ class AISearchIndexResource(TypedDict, total=False):
     """An index connection ID in an IndexResource attached to this agent."""
     index_name: str
     """The name of an index in an IndexResource attached to this agent."""
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     query_type: AzureAISearchQueryType
     """Type of query in an AIIndexResource attached to this agent. Known values are: \"simple\",
      \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
@@ -1094,10 +1033,14 @@ class AzureAISearchTool(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH.
     :vartype type: Literal["azure_ai_search"]
-    :ivar name: Optional user-defined name for this tool or configuration.
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
     :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
     :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     :ivar azure_ai_search: The azure ai search index resource. Required.
     :vartype azure_ai_search: "AzureAISearchToolResource"
     """
@@ -1105,9 +1048,11 @@ class AzureAISearchTool(TypedDict, total=False):
     type: Required[Literal["azure_ai_search"]]
     """The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH."""
     name: str
-    """Optional user-defined name for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     description: str
-    """Optional user-defined description for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     azure_ai_search: Required["AzureAISearchToolResource"]
     """The azure ai search index resource. Required."""
 
@@ -1191,22 +1136,285 @@ class AzureAISearchToolCallOutput(TypedDict, total=False):
 class AzureAISearchToolResource(TypedDict, total=False):
     """A set of index resources used by the ``azure_ai_search`` tool.
 
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar indexes: The indices attached to this agent. There can be a maximum of 1 index resource
      attached to the agent. Required.
     :vartype indexes: list["AISearchIndexResource"]
     """
 
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     indexes: Required[list["AISearchIndexResource"]]
     """The indices attached to this agent. There can be a maximum of 1 index resource attached to the
      agent. Required."""
+
+
+class AzureContentFilterBlocklistIdResult(TypedDict, total=False):
+    """A content filter blocklist ID result.
+
+    :ivar id: The ID of the custom blocklist. Required.
+    :vartype id: str
+    :ivar filtered: Whether the blocklist resulted in filtering. Required.
+    :vartype filtered: bool
+    """
+
+    id: Required[str]
+    """The ID of the custom blocklist. Required."""
+    filtered: Required[bool]
+    """Whether the blocklist resulted in filtering. Required."""
+
+
+class AzureContentFilterBlocklistResult(TypedDict, total=False):
+    """A collection of filtering results for configured custom blocklists.
+
+    :ivar filtered: Whether any blocklist resulted in filtering. Required.
+    :vartype filtered: bool
+    :ivar details: The pairs of individual blocklist IDs and their filtering results.
+    :vartype details: list["AzureContentFilterBlocklistIdResult"]
+    """
+
+    filtered: Required[bool]
+    """Whether any blocklist resulted in filtering. Required."""
+    details: list["AzureContentFilterBlocklistIdResult"]
+    """The pairs of individual blocklist IDs and their filtering results."""
+
+
+class AzureContentFilterCitation(TypedDict, total=False):
+    """Citation details for protected material detection.
+
+    :ivar license: The license associated with the detection.
+    :vartype license: str
+    :ivar url: The URL associated with the license.
+    :vartype url: str
+    """
+
+    license: str
+    """The license associated with the detection."""
+    url: str
+    """The URL associated with the license."""
+
+
+class AzureContentFilterCompletionTextSpan(TypedDict, total=False):
+    """A representation of a span of completion text as used by Azure OpenAI content filter results.
+
+    :ivar completion_start_offset: Offset of the UTF32 code point which begins the span. Required.
+    :vartype completion_start_offset: int
+    :ivar completion_end_offset: Offset of the first UTF32 code point which is excluded from the
+     span. Required.
+    :vartype completion_end_offset: int
+    """
+
+    completion_start_offset: Required[int]
+    """Offset of the UTF32 code point which begins the span. Required."""
+    completion_end_offset: Required[int]
+    """Offset of the first UTF32 code point which is excluded from the span. Required."""
+
+
+class AzureContentFilterCompletionTextSpanDetectionResult(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A content filter detection result with completion text span details.
+
+    :ivar filtered: Whether the content was filtered. Required.
+    :vartype filtered: bool
+    :ivar detected: Whether the content category was detected. Required.
+    :vartype detected: bool
+    :ivar details: Detailed information about the detected completion text spans. Required.
+    :vartype details: list["AzureContentFilterCompletionTextSpan"]
+    """
+
+    filtered: Required[bool]
+    """Whether the content was filtered. Required."""
+    detected: Required[bool]
+    """Whether the content category was detected. Required."""
+    details: Required[list["AzureContentFilterCompletionTextSpan"]]
+    """Detailed information about the detected completion text spans. Required."""
+
+
+class AzureContentFilterDetectionResult(TypedDict, total=False):
+    """A content filter result indicating whether the content was detected and filtered.
+
+    :ivar filtered: Whether the content was filtered. Required.
+    :vartype filtered: bool
+    :ivar detected: Whether the content category was detected. Required.
+    :vartype detected: bool
+    """
+
+    filtered: Required[bool]
+    """Whether the content was filtered. Required."""
+    detected: Required[bool]
+    """Whether the content category was detected. Required."""
+
+
+class AzureContentFilterDetectionWithCitationResult(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A content filter detection result that includes citation information for protected material.
+
+    :ivar filtered: Whether the content was filtered. Required.
+    :vartype filtered: bool
+    :ivar detected: Whether the content category was detected. Required.
+    :vartype detected: bool
+    :ivar citation: Citation details describing the associated license and its location.
+    :vartype citation: "AzureContentFilterCitation"
+    """
+
+    filtered: Required[bool]
+    """Whether the content was filtered. Required."""
+    detected: Required[bool]
+    """Whether the content category was detected. Required."""
+    citation: "AzureContentFilterCitation"
+    """Citation details describing the associated license and its location."""
+
+
+class AzureContentFilterDetectionWithReasonResult(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A content filter detection result that includes a reason description.
+
+    :ivar filtered: Whether the content was filtered. Required.
+    :vartype filtered: bool
+    :ivar detected: Whether the content category was detected. Required.
+    :vartype detected: bool
+    :ivar reason: A human-readable explanation of why the detection result was produced.
+    :vartype reason: str
+    """
+
+    filtered: Required[bool]
+    """Whether the content was filtered. Required."""
+    detected: Required[bool]
+    """Whether the content category was detected. Required."""
+    reason: str
+    """A human-readable explanation of why the detection result was produced."""
+
+
+class AzureContentFilterError(TypedDict, total=False):
+    """Error details from the content filtering system.
+
+    :ivar code: A machine-readable error code. Required.
+    :vartype code: int
+    :ivar message: A human-readable error message. Required.
+    :vartype message: str
+    """
+
+    code: Required[int]
+    """A machine-readable error code. Required."""
+    message: Required[str]
+    """A human-readable error message. Required."""
+
+
+class AzureContentFilterPersonallyIdentifiableInformationResult(
+    TypedDict, total=False
+):  # pylint: disable=name-too-long
+    """A content filter detection result for Personally Identifiable Information.
+
+    :ivar filtered: Whether the content was filtered. Required.
+    :vartype filtered: bool
+    :ivar detected: Whether PII was detected in the content. Required.
+    :vartype detected: bool
+    :ivar sub_categories: Detailed results for individual PII subcategories.
+    :vartype sub_categories: list["AzureContentFilterPiiSubCategoryResult"]
+    """
+
+    filtered: Required[bool]
+    """Whether the content was filtered. Required."""
+    detected: Required[bool]
+    """Whether PII was detected in the content. Required."""
+    sub_categories: list["AzureContentFilterPiiSubCategoryResult"]
+    """Detailed results for individual PII subcategories."""
+
+
+class AzureContentFilterPiiSubCategoryResult(TypedDict, total=False):
+    """Result details for an individual PII subcategory.
+
+    :ivar sub_category: The PII subcategory that was evaluated. Required.
+    :vartype sub_category: str
+    :ivar filtered: Whether the content was filtered for this subcategory. Required.
+    :vartype filtered: bool
+    :ivar detected: Whether the subcategory was detected in the content. Required.
+    :vartype detected: bool
+    """
+
+    sub_category: Required[str]
+    """The PII subcategory that was evaluated. Required."""
+    filtered: Required[bool]
+    """Whether the content was filtered for this subcategory. Required."""
+    detected: Required[bool]
+    """Whether the subcategory was detected in the content. Required."""
+
+
+class AzureContentFilterResultsForResponses(TypedDict, total=False):
+    """Content filter results for the Responses API.
+
+    :ivar sexual: Severity result for sexual content.
+    :vartype sexual: "AzureContentFilterSeverityResult"
+    :ivar hate: Severity result for hate content.
+    :vartype hate: "AzureContentFilterSeverityResult"
+    :ivar violence: Severity result for violence content.
+    :vartype violence: "AzureContentFilterSeverityResult"
+    :ivar self_harm: Severity result for self-harm content.
+    :vartype self_harm: "AzureContentFilterSeverityResult"
+    :ivar profanity: Detection result for profanity.
+    :vartype profanity: "AzureContentFilterDetectionResult"
+    :ivar custom_blocklists: Results for configured custom blocklists.
+    :vartype custom_blocklists: "AzureContentFilterBlocklistResult"
+    :ivar jailbreak: Detection result for jailbreak attempts.
+    :vartype jailbreak: "AzureContentFilterDetectionResult"
+    :ivar task_adherence: Detection result for task adherence evaluation.
+    :vartype task_adherence: "AzureContentFilterDetectionWithReasonResult"
+    :ivar protected_material_text: Detection result for protected material text.
+    :vartype protected_material_text: "AzureContentFilterDetectionResult"
+    :ivar protected_material_code: Detection result for protected material code with citation.
+    :vartype protected_material_code: "AzureContentFilterDetectionWithCitationResult"
+    :ivar ungrounded_material: Detection result for ungrounded material with completion text span
+     details.
+    :vartype ungrounded_material: "AzureContentFilterCompletionTextSpanDetectionResult"
+    :ivar personally_identifiable_information: Detection result for Personally Identifiable
+     Information.
+    :vartype personally_identifiable_information:
+     "AzureContentFilterPersonallyIdentifiableInformationResult"
+    :ivar indirect_attack: Detection result for indirect attacks.
+    :vartype indirect_attack: "AzureContentFilterDetectionResult"
+    :ivar error: Error details if content filtering evaluation failed.
+    :vartype error: "AzureContentFilterError"
+    """
+
+    sexual: "AzureContentFilterSeverityResult"
+    """Severity result for sexual content."""
+    hate: "AzureContentFilterSeverityResult"
+    """Severity result for hate content."""
+    violence: "AzureContentFilterSeverityResult"
+    """Severity result for violence content."""
+    self_harm: "AzureContentFilterSeverityResult"
+    """Severity result for self-harm content."""
+    profanity: "AzureContentFilterDetectionResult"
+    """Detection result for profanity."""
+    custom_blocklists: "AzureContentFilterBlocklistResult"
+    """Results for configured custom blocklists."""
+    jailbreak: "AzureContentFilterDetectionResult"
+    """Detection result for jailbreak attempts."""
+    task_adherence: "AzureContentFilterDetectionWithReasonResult"
+    """Detection result for task adherence evaluation."""
+    protected_material_text: "AzureContentFilterDetectionResult"
+    """Detection result for protected material text."""
+    protected_material_code: "AzureContentFilterDetectionWithCitationResult"
+    """Detection result for protected material code with citation."""
+    ungrounded_material: "AzureContentFilterCompletionTextSpanDetectionResult"
+    """Detection result for ungrounded material with completion text span details."""
+    personally_identifiable_information: "AzureContentFilterPersonallyIdentifiableInformationResult"
+    """Detection result for Personally Identifiable Information."""
+    indirect_attack: "AzureContentFilterDetectionResult"
+    """Detection result for indirect attacks."""
+    error: "AzureContentFilterError"
+    """Error details if content filtering evaluation failed."""
+
+
+class AzureContentFilterSeverityResult(TypedDict, total=False):
+    """A content filter result indicating severity level and whether content was filtered.
+
+    :ivar filtered: Whether the content was filtered. Required.
+    :vartype filtered: bool
+    :ivar severity: The severity level of the content. Required. Known values are: "safe", "low",
+     "medium", and "high".
+    :vartype severity: AzureContentFilterSeverity
+    """
+
+    filtered: Required[bool]
+    """Whether the content was filtered. Required."""
+    severity: Required[AzureContentFilterSeverity]
+    """The severity level of the content. Required. Known values are: \"safe\", \"low\", \"medium\",
+     and \"high\"."""
 
 
 class AzureFunctionBinding(TypedDict, total=False):
@@ -1292,12 +1500,17 @@ class AzureFunctionTool(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'browser_automation'. Required. AZURE_FUNCTION.
     :vartype type: Literal["azure_function"]
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     :ivar azure_function: The Azure Function Tool definition. Required.
     :vartype azure_function: "AzureFunctionDefinition"
     """
 
     type: Required[Literal["azure_function"]]
     """The object type, which is always 'browser_automation'. Required. AZURE_FUNCTION."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     azure_function: Required["AzureFunctionDefinition"]
     """The Azure Function Tool definition. Required."""
 
@@ -1386,13 +1599,44 @@ class AzureFunctionToolCallOutput(TypedDict, total=False):
     """Required."""
 
 
+class AzureUserSecurityContext(TypedDict, total=False):
+    """User security context contains several parameters that describe the application itself, and the
+    end user that interacts with the application. These fields assist your security operations
+    teams to investigate and mitigate security incidents by providing a comprehensive approach to
+    protecting your AI applications. Learn more: https://aka.ms/TP4AI/Documentation/EndUserContext about protecting AI applications using
+    Microsoft Defender for Cloud.
+
+    :ivar application_name: The name of the application. Sensitive personal information should not
+     be included in this field.
+    :vartype application_name: str
+    :ivar end_user_id: This identifier is the Microsoft Entra ID (formerly Azure Active Directory)
+     user object ID used to authenticate end-users within the generative AI application. Sensitive
+     personal information should not be included in this field.
+    :vartype end_user_id: str
+    :ivar end_user_tenant_id: The Microsoft 365 tenant ID the end user belongs to. It's required
+     when the generative AI application is multitenant.
+    :vartype end_user_tenant_id: str
+    :ivar source_ip: Captures the original client's IP address.
+    :vartype source_ip: str
+    """
+
+    application_name: str
+    """The name of the application. Sensitive personal information should not be included in this
+     field."""
+    end_user_id: str
+    """This identifier is the Microsoft Entra ID (formerly Azure Active Directory) user object ID used
+     to authenticate end-users within the generative AI application. Sensitive personal information
+     should not be included in this field."""
+    end_user_tenant_id: str
+    """The Microsoft 365 tenant ID the end user belongs to. It's required when the generative AI
+     application is multitenant."""
+    source_ip: str
+    """Captures the original client's IP address."""
+
+
 class BingCustomSearchConfiguration(TypedDict, total=False):
     """A bing custom search configuration.
 
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar project_connection_id: Project connection id for grounding with bing search. Required.
     :vartype project_connection_id: str
     :ivar instance_name: Name of the custom configuration instance given to config. Required.
@@ -1408,10 +1652,6 @@ class BingCustomSearchConfiguration(TypedDict, total=False):
     :vartype freshness: str
     """
 
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     project_connection_id: Required[str]
     """Project connection id for grounding with bing search. Required."""
     instance_name: Required[str]
@@ -1433,10 +1673,6 @@ class BingCustomSearchPreviewTool(TypedDict, total=False):
     :ivar type: The object type, which is always 'bing_custom_search_preview'. Required.
      BING_CUSTOM_SEARCH_PREVIEW.
     :vartype type: Literal["bing_custom_search_preview"]
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar bing_custom_search_preview: The bing custom search tool parameters. Required.
     :vartype bing_custom_search_preview: "BingCustomSearchToolParameters"
     """
@@ -1444,10 +1680,6 @@ class BingCustomSearchPreviewTool(TypedDict, total=False):
     type: Required[Literal["bing_custom_search_preview"]]
     """The object type, which is always 'bing_custom_search_preview'. Required.
      BING_CUSTOM_SEARCH_PREVIEW."""
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     bing_custom_search_preview: Required["BingCustomSearchToolParameters"]
     """The bing custom search tool parameters. Required."""
 
@@ -1531,19 +1763,11 @@ class BingCustomSearchToolCallOutput(TypedDict, total=False):
 class BingCustomSearchToolParameters(TypedDict, total=False):
     """The bing custom search tool parameters.
 
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar search_configurations: The project connections attached to this tool. There can be a
      maximum of 1 connection resource attached to the tool. Required.
     :vartype search_configurations: list["BingCustomSearchConfiguration"]
     """
 
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     search_configurations: Required[list["BingCustomSearchConfiguration"]]
     """The project connections attached to this tool. There can be a maximum of 1 connection resource
      attached to the tool. Required."""
@@ -1552,10 +1776,6 @@ class BingCustomSearchToolParameters(TypedDict, total=False):
 class BingGroundingSearchConfiguration(TypedDict, total=False):
     """Search configuration for Bing Grounding.
 
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar project_connection_id: Project connection id for grounding with bing search. Required.
     :vartype project_connection_id: str
     :ivar market: The market where the results come from.
@@ -1569,10 +1789,6 @@ class BingGroundingSearchConfiguration(TypedDict, total=False):
     :vartype freshness: str
     """
 
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     project_connection_id: Required[str]
     """Project connection id for grounding with bing search. Required."""
     market: str
@@ -1589,19 +1805,11 @@ class BingGroundingSearchConfiguration(TypedDict, total=False):
 class BingGroundingSearchToolParameters(TypedDict, total=False):
     """The bing grounding search tool parameters.
 
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar search_configurations: The search configurations attached to this tool. There can be a
      maximum of 1 search configuration resource attached to the tool. Required.
     :vartype search_configurations: list["BingGroundingSearchConfiguration"]
     """
 
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     search_configurations: Required[list["BingGroundingSearchConfiguration"]]
     """The search configurations attached to this tool. There can be a maximum of 1 search
      configuration resource attached to the tool. Required."""
@@ -1613,10 +1821,14 @@ class BingGroundingTool(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'bing_grounding'. Required. BING_GROUNDING.
     :vartype type: Literal["bing_grounding"]
-    :ivar name: Optional user-defined name for this tool or configuration.
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
     :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
     :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     :ivar bing_grounding: The bing grounding search tool parameters. Required.
     :vartype bing_grounding: "BingGroundingSearchToolParameters"
     """
@@ -1624,9 +1836,11 @@ class BingGroundingTool(TypedDict, total=False):
     type: Required[Literal["bing_grounding"]]
     """The object type, which is always 'bing_grounding'. Required. BING_GROUNDING."""
     name: str
-    """Optional user-defined name for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     description: str
-    """Optional user-defined description for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     bing_grounding: Required["BingGroundingSearchToolParameters"]
     """The bing grounding search tool parameters. Required."""
 
@@ -1713,10 +1927,6 @@ class BrowserAutomationPreviewTool(TypedDict, total=False):
     :ivar type: The object type, which is always 'browser_automation_preview'. Required.
      BROWSER_AUTOMATION_PREVIEW.
     :vartype type: Literal["browser_automation_preview"]
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar browser_automation_preview: The Browser Automation Tool parameters. Required.
     :vartype browser_automation_preview: "BrowserAutomationToolParameters"
     """
@@ -1724,10 +1934,6 @@ class BrowserAutomationPreviewTool(TypedDict, total=False):
     type: Required[Literal["browser_automation_preview"]]
     """The object type, which is always 'browser_automation_preview'. Required.
      BROWSER_AUTOMATION_PREVIEW."""
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     browser_automation_preview: Required["BrowserAutomationToolParameters"]
     """The Browser Automation Tool parameters. Required."""
 
@@ -1811,19 +2017,11 @@ class BrowserAutomationToolCallOutput(TypedDict, total=False):
 class BrowserAutomationToolConnectionParameters(TypedDict, total=False):  # pylint: disable=name-too-long
     """Definition of input parameters for the connection used by the Browser Automation Tool.
 
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar project_connection_id: The ID of the project connection to your Azure Playwright
      resource. Required.
     :vartype project_connection_id: str
     """
 
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     project_connection_id: Required[str]
     """The ID of the project connection to your Azure Playwright resource. Required."""
 
@@ -1831,19 +2029,11 @@ class BrowserAutomationToolConnectionParameters(TypedDict, total=False):  # pyli
 class BrowserAutomationToolParameters(TypedDict, total=False):
     """Definition of input parameters for the Browser Automation Tool.
 
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar connection: The project connection parameters associated with the Browser Automation
      Tool. Required.
     :vartype connection: "BrowserAutomationToolConnectionParameters"
     """
 
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     connection: Required["BrowserAutomationToolConnectionParameters"]
     """The project connection parameters associated with the Browser Automation Tool. Required."""
 
@@ -1854,6 +2044,14 @@ class CaptureStructuredOutputsTool(TypedDict, total=False):
     :ivar type: The type of the tool. Always ``capture_structured_outputs``. Required.
      CAPTURE_STRUCTURED_OUTPUTS.
     :vartype type: Literal["capture_structured_outputs"]
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
+    :vartype name: str
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     :ivar outputs: The structured outputs to capture from the model. Required.
     :vartype outputs: "StructuredOutputDefinition"
     """
@@ -1861,6 +2059,12 @@ class CaptureStructuredOutputsTool(TypedDict, total=False):
     type: Required[Literal["capture_structured_outputs"]]
     """The type of the tool. Always ``capture_structured_outputs``. Required.
      CAPTURE_STRUCTURED_OUTPUTS."""
+    name: str
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    description: str
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     outputs: Required["StructuredOutputDefinition"]
     """The structured outputs to capture from the model. Required."""
 
@@ -1963,10 +2167,14 @@ class CodeInterpreterTool(TypedDict, total=False):
     :vartype type: Literal["code_interpreter"]
     :ivar allowed_callers:
     :vartype allowed_callers: list[CallableToolAllowedCaller]
-    :ivar name: Optional user-defined name for this tool or configuration.
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
     :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
     :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     :ivar container: The code interpreter container. Can be a container ID or an object that
      specifies uploaded file IDs to make available to your code, along with an optional
      ``memory_limit`` setting. If not provided, the service assumes auto. Is either a str type or a
@@ -1978,9 +2186,11 @@ class CodeInterpreterTool(TypedDict, total=False):
     """The type of the code interpreter tool. Always ``code_interpreter``. Required. CODE_INTERPRETER."""
     allowed_callers: Optional[list[CallableToolAllowedCaller]]
     name: str
-    """Optional user-defined name for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     description: str
-    """Optional user-defined description for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     container: Union[str, "AutoCodeInterpreterToolParam"]
     """The code interpreter container. Can be a container ID or an object that specifies uploaded file
      IDs to make available to your code, along with an optional ``memory_limit`` setting. If not
@@ -2367,6 +2577,32 @@ class ContainerReferenceResource(TypedDict, total=False):
     """Required."""
 
 
+class ContentFilterResult(TypedDict, total=False):
+    """A content filter evaluation result for a specific source in the response.
+
+    :ivar blocked: Whether the content was blocked by the content filter. Required.
+    :vartype blocked: bool
+    :ivar source_type: The source type of the content filter evaluation (e.g., 'prompt',
+     'response', 'pre_tool_call', 'post_tool_call'). Required.
+    :vartype source_type: str
+    :ivar content_filter_results: The content filter results for this evaluation. Required.
+    :vartype content_filter_results: "AzureContentFilterResultsForResponses"
+    :ivar tool_call_id: The ID of the tool call associated with this content filter result, if
+     applicable.
+    :vartype tool_call_id: str
+    """
+
+    blocked: Required[bool]
+    """Whether the content was blocked by the content filter. Required."""
+    source_type: Required[str]
+    """The source type of the content filter evaluation (e.g., 'prompt', 'response', 'pre_tool_call',
+     'post_tool_call'). Required."""
+    content_filter_results: Required["AzureContentFilterResultsForResponses"]
+    """The content filter results for this evaluation. Required."""
+    tool_call_id: str
+    """The ID of the tool call associated with this content filter result, if applicable."""
+
+
 class ContextManagementParam(TypedDict, total=False):
     """ContextManagementParam.
 
@@ -2489,11 +2725,21 @@ class CreateResponse(TypedDict, total=False):
     :vartype context_management: list["ContextManagementParam"]
     :ivar max_output_tokens:
     :vartype max_output_tokens: int
+    :ivar agent_session_id: Optional session identifier for sandbox affinity. Currently only
+     relevant for hosted agents. When provided, the request is routed to the same sandbox. When
+     omitted, auto-derived from conversation_id/prev_response_id or a new UUID is generated.
+    :vartype agent_session_id: str
     :ivar agent_reference: The agent to use for generating the response.
     :vartype agent_reference: "AgentReference"
     :ivar structured_inputs: The structured inputs to the response that can participate in prompt
      template substitution or tool argument bindings.
     :vartype structured_inputs: dict[str, Any]
+    :ivar user_security_context: User security context contains several parameters that describe
+     the application itself, and the end user that interacts with the application. These fields
+     assist your security operations teams to investigate and mitigate security incidents by
+     providing a comprehensive approach to protecting your AI applications. Learn more: https://aka.ms/TP4AI/Documentation/EndUserContext about protecting AI applications using
+     Microsoft Defender for Cloud.
+    :vartype user_security_context: "AzureUserSecurityContext"
     """
 
     metadata: Optional["Metadata"]
@@ -2540,11 +2786,184 @@ class CreateResponse(TypedDict, total=False):
     context_management: Optional[list["ContextManagementParam"]]
     """Context management configuration for this request."""
     max_output_tokens: Optional[int]
+    agent_session_id: str
+    """Optional session identifier for sandbox affinity. Currently only relevant for hosted agents.
+     When provided, the request is routed to the same sandbox. When omitted, auto-derived from
+     conversation_id/prev_response_id or a new UUID is generated."""
     agent_reference: "AgentReference"
     """The agent to use for generating the response."""
     structured_inputs: dict[str, Any]
     """The structured inputs to the response that can participate in prompt template substitution or
      tool argument bindings."""
+    user_security_context: "AzureUserSecurityContext"
+    """User security context contains several parameters that describe the application itself, and the
+     end user that interacts with the application. These fields assist your security operations
+     teams to investigate and mitigate security incidents by providing a comprehensive approach to
+     protecting your AI applications. Learn more: https://aka.ms/TP4AI/Documentation/EndUserContext about protecting AI applications using
+     Microsoft Defender for Cloud."""
+
+
+class CreateResponseResponse(TypedDict, total=False):
+    """CreateResponseResponse.
+
+    :ivar metadata:
+    :vartype metadata: "Metadata"
+    :ivar top_logprobs:
+    :vartype top_logprobs: int
+    :ivar temperature:
+    :vartype temperature: float
+    :ivar top_p:
+    :vartype top_p: float
+    :ivar user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
+     ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
+     end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
+     OpenAI detect and prevent abuse. Learn more: /docs/guides/safety-best-practices#safety-identifiers.
+    :vartype user: str
+    :ivar safety_identifier:
+    :vartype safety_identifier: str
+    :ivar prompt_cache_key:
+    :vartype prompt_cache_key: str
+    :ivar prompt_cache_retention: Is either a Literal["in_memory"] type or a Literal["24h"] type.
+    :vartype prompt_cache_retention: Literal["in_memory", "24h"]
+    :ivar previous_response_id:
+    :vartype previous_response_id: str
+    :ivar model: The model deployment to use for the creation of this response.
+    :vartype model: str
+    :ivar background:
+    :vartype background: bool
+    :ivar max_tool_calls:
+    :vartype max_tool_calls: int
+    :ivar text:
+    :vartype text: "ResponseTextParam"
+    :ivar tools:
+    :vartype tools: list["Tool"]
+    :ivar tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type.
+    :vartype tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
+    :ivar prompt:
+    :vartype prompt: "Prompt"
+    :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
+     Literal["flex"], Literal["scale"], Literal["priority"], Literal["fast"], Literal["ultrafast"]
+    :vartype service_tier: Literal["auto", "default", "flex", "scale", "priority", "fast",
+     "ultrafast"]
+    :ivar truncation: Is either a Literal["auto"] type or a Literal["disabled"] type.
+    :vartype truncation: Literal["auto", "disabled"]
+    :ivar id: Unique identifier for this Response. Required.
+    :vartype id: str
+    :ivar object: The object type of this resource - always set to ``response``. Required. Default
+     value is "response".
+    :vartype object: Literal["response"]
+    :ivar status: The status of the response generation. One of ``completed``, ``failed``,
+     ``in_progress``, ``cancelled``, ``queued``, or ``incomplete``. Is one of the following types:
+     Literal["completed"], Literal["failed"], Literal["in_progress"], Literal["cancelled"],
+     Literal["queued"], Literal["incomplete"]
+    :vartype status: Literal["completed", "failed", "in_progress", "cancelled", "queued",
+     "incomplete"]
+    :ivar created_at: Unix timestamp (in seconds) of when this Response was created. Required.
+    :vartype created_at: int
+    :ivar completed_at:
+    :vartype completed_at: int
+    :ivar error: Required.
+    :vartype error: "ResponseErrorInfo"
+    :ivar incomplete_details: Required.
+    :vartype incomplete_details: "ResponseIncompleteDetails"
+    :ivar output: An array of content items generated by the model. The length and order of items
+     depends on the model response. Use the output_text property instead of assuming the first item
+     is an assistant message. Required.
+    :vartype output: list["OutputItem"]
+    :ivar reasoning:
+    :vartype reasoning: "Reasoning"
+    :ivar instructions: Required. Is either a str type or a [Item] type.
+    :vartype instructions: Union[str, list["Item"]]
+    :ivar output_text:
+    :vartype output_text: str
+    :ivar usage:
+    :vartype usage: "ResponseUsage"
+    :ivar prompt_cache_options:
+    :vartype prompt_cache_options: "PromptCacheOptions"
+    :ivar moderation:
+    :vartype moderation: "Moderation"
+    :ivar parallel_tool_calls: Whether to allow the model to run tool calls in parallel. Required.
+    :vartype parallel_tool_calls: bool
+    :ivar conversation:
+    :vartype conversation: "ConversationReference"
+    :ivar max_output_tokens:
+    :vartype max_output_tokens: int
+    :ivar agent_reference: The agent used for this response. Required.
+    :vartype agent_reference: "AgentReference"
+    :ivar model_selection_details: Model selection metadata providing visibility into routing
+     decisions. Present when the request was handled by Model Router.
+    :vartype model_selection_details: "ModelSelectionDetails"
+    :ivar content_filters: The content filter evaluation results.
+    :vartype content_filters: list["ContentFilterResult"]
+    """
+
+    metadata: Optional["Metadata"]
+    top_logprobs: Optional[int]
+    temperature: Optional[float]
+    top_p: Optional[float]
+    user: str
+    """This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
+     ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
+     end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
+     OpenAI detect and prevent abuse. Learn more: /docs/guides/safety-best-practices#safety-identifiers."""
+    safety_identifier: Optional[str]
+    prompt_cache_key: Optional[str]
+    prompt_cache_retention: Optional[Literal["in_memory", "24h"]]
+    """Is either a Literal[\"in_memory\"] type or a Literal[\"24h\"] type."""
+    previous_response_id: Optional[str]
+    model: str
+    """The model deployment to use for the creation of this response."""
+    background: Optional[bool]
+    max_tool_calls: Optional[int]
+    text: "ResponseTextParam"
+    tools: list["Tool"]
+    tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
+    """Is either a types.ToolChoiceOptions type or a ToolChoiceParam type."""
+    prompt: "Prompt"
+    service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority", "fast", "ultrafast"]]
+    """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
+     Literal[\"scale\"], Literal[\"priority\"], Literal[\"fast\"], Literal[\"ultrafast\"]"""
+    truncation: Optional[Literal["auto", "disabled"]]
+    """Is either a Literal[\"auto\"] type or a Literal[\"disabled\"] type."""
+    id: Required[str]
+    """Unique identifier for this Response. Required."""
+    object: Required[Literal["response"]]
+    """The object type of this resource - always set to ``response``. Required. Default value is
+     \"response\"."""
+    status: Literal["completed", "failed", "in_progress", "cancelled", "queued", "incomplete"]
+    """The status of the response generation. One of ``completed``, ``failed``, ``in_progress``,
+     ``cancelled``, ``queued``, or ``incomplete``. Is one of the following types:
+     Literal[\"completed\"], Literal[\"failed\"], Literal[\"in_progress\"], Literal[\"cancelled\"],
+     Literal[\"queued\"], Literal[\"incomplete\"]"""
+    created_at: Required[int]
+    """Unix timestamp (in seconds) of when this Response was created. Required."""
+    completed_at: Optional[int]
+    error: Required[Optional["ResponseErrorInfo"]]
+    """Required."""
+    incomplete_details: Required[Optional["ResponseIncompleteDetails"]]
+    """Required."""
+    output: Required[list["OutputItem"]]
+    """An array of content items generated by the model. The length and order of items depends on the
+     model response. Use the output_text property instead of assuming the first item is an assistant
+     message. Required."""
+    reasoning: Optional["Reasoning"]
+    instructions: Required[Optional[Union[str, list["Item"]]]]
+    """Required. Is either a str type or a [Item] type."""
+    output_text: Optional[str]
+    usage: "ResponseUsage"
+    prompt_cache_options: "PromptCacheOptions"
+    moderation: Optional["Moderation"]
+    parallel_tool_calls: Required[bool]
+    """Whether to allow the model to run tool calls in parallel. Required."""
+    conversation: Optional["ConversationReference"]
+    max_output_tokens: Optional[int]
+    agent_reference: Required[Optional["AgentReference"]]
+    """The agent used for this response. Required."""
+    model_selection_details: "ModelSelectionDetails"
+    """Model selection metadata providing visibility into routing decisions. Present when the request
+     was handled by Model Router."""
+    content_filters: list["ContentFilterResult"]
+    """The content filter evaluation results."""
 
 
 class CustomGrammarFormatParam(TypedDict, total=False):
@@ -2931,22 +3350,45 @@ class FabricDataAgentToolCallOutput(TypedDict, total=False):
 class FabricDataAgentToolParameters(TypedDict, total=False):
     """The fabric data agent tool parameters.
 
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar project_connections: The project connections attached to this tool. There can be a
      maximum of 1 connection resource attached to the tool.
     :vartype project_connections: list["ToolProjectConnection"]
     """
 
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     project_connections: list["ToolProjectConnection"]
     """The project connections attached to this tool. There can be a maximum of 1 connection resource
      attached to the tool."""
+
+
+class FabricIQPreviewTool(TypedDict, total=False):
+    """A FabricIQ server-side tool.
+
+    :ivar type: The object type, which is always 'fabric_iq_preview'. Required. FABRIC_IQ_PREVIEW.
+    :vartype type: Literal["fabric_iq_preview"]
+    :ivar project_connection_id: The ID of the FabricIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: (Optional) The label of the FabricIQ MCP server to connect to.
+    :vartype server_label: str
+    :ivar server_url: (Optional) The URL of the FabricIQ MCP server. If not provided, the URL from
+     the project connection will be used.
+    :vartype server_url: str
+    :ivar require_approval: (Optional) Whether the agent requires approval before executing
+     actions. Default is always. Is either a MCPToolRequireApproval type or a str type.
+    :vartype require_approval: Union["MCPToolRequireApproval", str]
+    """
+
+    type: Required[Literal["fabric_iq_preview"]]
+    """The object type, which is always 'fabric_iq_preview'. Required. FABRIC_IQ_PREVIEW."""
+    project_connection_id: Required[str]
+    """The ID of the FabricIQ project connection. Required."""
+    server_label: str
+    """(Optional) The label of the FabricIQ MCP server to connect to."""
+    server_url: str
+    """(Optional) The URL of the FabricIQ MCP server. If not provided, the URL from the project
+     connection will be used."""
+    require_approval: Optional[Union["MCPToolRequireApproval", str]]
+    """(Optional) Whether the agent requires approval before executing actions. Default is always. Is
+     either a MCPToolRequireApproval type or a str type."""
 
 
 class FileCitationBody(TypedDict, total=False):
@@ -3005,10 +3447,14 @@ class FileSearchTool(TypedDict, total=False):
     :vartype ranking_options: "RankingOptions"
     :ivar filters: Is either a ComparisonFilter type or a CompoundFilter type.
     :vartype filters: "_unions.Filters"
-    :ivar name: Optional user-defined name for this tool or configuration.
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
     :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
     :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     """
 
     type: Required[Literal["file_search"]]
@@ -3022,9 +3468,11 @@ class FileSearchTool(TypedDict, total=False):
     filters: Optional["_unions.Filters"]
     """Is either a ComparisonFilter type or a CompoundFilter type."""
     name: str
-    """Optional user-defined name for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     description: str
-    """Optional user-defined description for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
 
 
 class FileSearchToolCallResults(TypedDict, total=False):
@@ -3418,10 +3866,14 @@ class FunctionShellToolParam(TypedDict, total=False):
     :vartype environment: "FunctionShellToolParamEnvironment"
     :ivar allowed_callers:
     :vartype allowed_callers: list[CallableToolAllowedCaller]
-    :ivar name: Optional user-defined name for this tool or configuration.
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
     :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
     :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     """
 
     type: Required[Literal["shell"]]
@@ -3429,9 +3881,11 @@ class FunctionShellToolParam(TypedDict, total=False):
     environment: Optional["FunctionShellToolParamEnvironment"]
     allowed_callers: Optional[list[CallableToolAllowedCaller]]
     name: str
-    """Optional user-defined name for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     description: str
-    """Optional user-defined description for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
 
 
 class FunctionShellToolParamEnvironmentContainerReferenceParam(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -3601,10 +4055,14 @@ class ImageGenTool(TypedDict, total=False):
     :ivar action: Whether to generate a new image or edit an existing image. Default: ``auto``.
      Known values are: "generate", "edit", and "auto".
     :vartype action: ImageGenActionEnum
-    :ivar name: Optional user-defined name for this tool or configuration.
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
     :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
     :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     """
 
     type: Required[Literal["image_generation"]]
@@ -3650,9 +4108,11 @@ class ImageGenTool(TypedDict, total=False):
     """Whether to generate a new image or edit an existing image. Default: ``auto``. Known values are:
      \"generate\", \"edit\", and \"auto\"."""
     name: str
-    """Optional user-defined name for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     description: str
-    """Optional user-defined description for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
 
 
 class ImageGenToolInputImageMask(TypedDict, total=False):
@@ -5524,18 +5984,24 @@ class LocalShellToolParam(TypedDict, total=False):
 
     :ivar type: The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL.
     :vartype type: Literal["local_shell"]
-    :ivar name: Optional user-defined name for this tool or configuration.
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
     :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
     :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     """
 
     type: Required[Literal["local_shell"]]
     """The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL."""
     name: str
-    """Optional user-defined name for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     description: str
-    """Optional user-defined description for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
 
 
 class LocalSkillParam(TypedDict, total=False):
@@ -5689,6 +6155,9 @@ class MCPTool(TypedDict, total=False):
      connection stores authentication and other connection details needed to connect to the MCP
      server.
     :vartype project_connection_id: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     """
 
     type: Required[Literal["mcp"]]
@@ -5743,6 +6212,8 @@ class MCPTool(TypedDict, total=False):
     project_connection_id: str
     """The connection ID in the project for the MCP server. The connection stores authentication and
      other connection details needed to connect to the MCP server."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
 
 
 class MCPToolFilter(TypedDict, total=False):
@@ -5779,15 +6250,76 @@ class MCPToolRequireApproval(TypedDict, total=False):
     never: "MCPToolFilter"
 
 
-class MemorySearchItem(TypedDict, total=False):
-    """A retrieved memory item from memory search.
+class MemoryCommandToolCall(TypedDict, total=False):
+    """A memory command tool call.
 
-    :ivar memory_item: Retrieved memory item. Required.
-    :vartype memory_item: "MemoryItem"
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: "AgentReference"
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
+    :ivar type: Required. MEMORY_COMMAND_PREVIEW_CALL.
+    :vartype type: Literal["memory_command_preview_call"]
+    :ivar call_id: The unique ID of the tool call generated by the model. Required.
+    :vartype call_id: str
+    :ivar arguments: A JSON string of the arguments to pass to the tool, including ``action``
+     (``remember`` or ``forget``) and ``content``. Required.
+    :vartype arguments: str
+    :ivar status: The status of the tool call. Required. Known values are: "in_progress",
+     "completed", "incomplete", and "failed".
+    :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
     """
 
-    memory_item: Required["MemoryItem"]
-    """Retrieved memory item. Required."""
+    agent_reference: "AgentReference"
+    """The agent that created the item."""
+    response_id: str
+    """The response on which the item is created."""
+    type: Required[Literal["memory_command_preview_call"]]
+    """Required. MEMORY_COMMAND_PREVIEW_CALL."""
+    call_id: Required[str]
+    """The unique ID of the tool call generated by the model. Required."""
+    arguments: Required[str]
+    """A JSON string of the arguments to pass to the tool, including ``action`` (``remember`` or
+     ``forget``) and ``content``. Required."""
+    status: Required[ToolCallStatus]
+    """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
+     \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
+
+
+class MemoryCommandToolCallOutput(TypedDict, total=False):
+    """The output of a memory command tool call.
+
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: "AgentReference"
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
+    :ivar type: Required. MEMORY_COMMAND_PREVIEW_CALL_OUTPUT.
+    :vartype type: Literal["memory_command_preview_call_output"]
+    :ivar call_id: The unique ID of the tool call generated by the model. Required.
+    :vartype call_id: str
+    :ivar status: The status of the tool call. Required. Known values are: "in_progress",
+     "completed", "incomplete", and "failed".
+    :vartype status: ToolCallStatus
+    :ivar id: Required.
+    :vartype id: str
+    """
+
+    agent_reference: "AgentReference"
+    """The agent that created the item."""
+    response_id: str
+    """The response on which the item is created."""
+    type: Required[Literal["memory_command_preview_call_output"]]
+    """Required. MEMORY_COMMAND_PREVIEW_CALL_OUTPUT."""
+    call_id: Required[str]
+    """The unique ID of the tool call generated by the model. Required."""
+    status: Required[ToolCallStatus]
+    """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
+     \"incomplete\", and \"failed\"."""
+    id: Required[str]
+    """Required."""
 
 
 class MemorySearchOptions(TypedDict, total=False):
@@ -5807,10 +6339,6 @@ class MemorySearchPreviewTool(TypedDict, total=False):
     :ivar type: The type of the tool. Always ``memory_search_preview``. Required.
      MEMORY_SEARCH_PREVIEW.
     :vartype type: Literal["memory_search_preview"]
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar memory_store_name: The name of the memory store to use. Required.
     :vartype memory_store_name: str
     :ivar scope: The namespace used to group and isolate memories, such as a user ID. Limits which
@@ -5826,10 +6354,6 @@ class MemorySearchPreviewTool(TypedDict, total=False):
 
     type: Required[Literal["memory_search_preview"]]
     """The type of the tool. Always ``memory_search_preview``. Required. MEMORY_SEARCH_PREVIEW."""
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     memory_store_name: Required[str]
     """The name of the memory store to use. Required."""
     scope: Required[str]
@@ -5842,23 +6366,8 @@ class MemorySearchPreviewTool(TypedDict, total=False):
     """Time to wait before updating memories after inactivity (seconds). Default 300."""
 
 
-class MemorySearchToolCallItemParam(TypedDict, total=False):
-    """MemorySearchToolCallItemParam.
-
-    :ivar type: Required. Default value is "memory_search_call".
-    :vartype type: Literal["memory_search_call"]
-    :ivar results: The results returned from the memory search.
-    :vartype results: list["MemorySearchItem"]
-    """
-
-    type: Required[Literal["memory_search_call"]]
-    """Required. Default value is \"memory_search_call\"."""
-    results: Optional[list["MemorySearchItem"]]
-    """The results returned from the memory search."""
-
-
-class MemorySearchToolCallItemResource(TypedDict, total=False):
-    """MemorySearchToolCallItemResource.
+class MemorySearchToolCall(TypedDict, total=False):
+    """A memory search tool call.
 
     :ivar agent_reference: The agent that created the item.
     :vartype agent_reference: "AgentReference"
@@ -5866,13 +6375,11 @@ class MemorySearchToolCallItemResource(TypedDict, total=False):
     :vartype response_id: str
     :ivar type: Required. MEMORY_SEARCH_CALL.
     :vartype type: Literal["memory_search_call"]
-    :ivar status: The status of the memory search tool call. One of ``in_progress``, ``searching``,
-     ``completed``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
-     Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["incomplete"],
-     Literal["failed"]
-    :vartype status: Literal["in_progress", "searching", "completed", "incomplete", "failed"]
-    :ivar results: The results returned from the memory search.
-    :vartype results: list["MemorySearchItem"]
+    :ivar status: The status of the tool call. Required. Known values are: "in_progress",
+     "completed", "incomplete", and "failed".
+    :vartype status: ToolCallStatus
+    :ivar memories: The results returned from the memory search.
+    :vartype memories: list["MemoryItem"]
     :ivar id: Required.
     :vartype id: str
     """
@@ -5883,12 +6390,10 @@ class MemorySearchToolCallItemResource(TypedDict, total=False):
     """The response on which the item is created."""
     type: Required[Literal["memory_search_call"]]
     """Required. MEMORY_SEARCH_CALL."""
-    status: Required[Literal["in_progress", "searching", "completed", "incomplete", "failed"]]
-    """The status of the memory search tool call. One of ``in_progress``, ``searching``,
-     ``completed``, ``incomplete`` or ``failed``,. Required. Is one of the following types:
-     Literal[\"in_progress\"], Literal[\"searching\"], Literal[\"completed\"],
-     Literal[\"incomplete\"], Literal[\"failed\"]"""
-    results: Optional[list["MemorySearchItem"]]
+    status: Required[ToolCallStatus]
+    """The status of the tool call. Required. Known values are: \"in_progress\", \"completed\",
+     \"incomplete\", and \"failed\"."""
+    memories: Optional[list["MemoryItem"]]
     """The results returned from the memory search."""
     id: Required[str]
     """Required."""
@@ -6049,10 +6554,6 @@ class MicrosoftFabricPreviewTool(TypedDict, total=False):
     :ivar type: The object type, which is always 'fabric_dataagent_preview'. Required.
      FABRIC_DATAAGENT_PREVIEW.
     :vartype type: Literal["fabric_dataagent_preview"]
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar fabric_dataagent_preview: The fabric data agent tool parameters. Required.
     :vartype fabric_dataagent_preview: "FabricDataAgentToolParameters"
     """
@@ -6060,12 +6561,93 @@ class MicrosoftFabricPreviewTool(TypedDict, total=False):
     type: Required[Literal["fabric_dataagent_preview"]]
     """The object type, which is always 'fabric_dataagent_preview'. Required.
      FABRIC_DATAAGENT_PREVIEW."""
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     fabric_dataagent_preview: Required["FabricDataAgentToolParameters"]
     """The fabric data agent tool parameters. Required."""
+
+
+class ModelRouterAttempt(TypedDict, total=False):
+    """A single routing attempt targeting a specific model.
+
+    :ivar model: The model targeted in this attempt. Required.
+    :vartype model: str
+    :ivar result: How this attempt concluded — whether the model served the request successfully or
+     encountered an error. Required.
+    :vartype result: "ModelRouterAttemptResult"
+    """
+
+    model: Required[str]
+    """The model targeted in this attempt. Required."""
+    result: Required["ModelRouterAttemptResult"]
+    """How this attempt concluded — whether the model served the request successfully or encountered
+     an error. Required."""
+
+
+class ModelRouterAttemptError(TypedDict, total=False):
+    """Error details returned by a model routing attempt.
+
+    :ivar code: A service-defined error code.
+    :vartype code: str
+    :ivar message: A human-readable description of the error. Required.
+    :vartype message: str
+    """
+
+    code: str
+    """A service-defined error code."""
+    message: Required[str]
+    """A human-readable description of the error. Required."""
+
+
+class ModelRouterAttemptResult(TypedDict, total=False):
+    """The HTTP-style result returned by a model routing attempt.
+
+    :ivar status: The HTTP status code returned by the model. Required.
+    :vartype status: int
+    :ivar headers: Response headers returned by the model.
+    :vartype headers: dict[str, "_unions.ModelRouterResponseHeaderValue"]
+    :ivar error: Error details returned when the attempt did not succeed.
+    :vartype error: "ModelRouterAttemptError"
+    """
+
+    status: Required[int]
+    """The HTTP status code returned by the model. Required."""
+    headers: dict[str, "_unions.ModelRouterResponseHeaderValue"]
+    """Response headers returned by the model."""
+    error: "ModelRouterAttemptError"
+    """Error details returned when the attempt did not succeed."""
+
+
+class ModelRouterDetails(TypedDict, total=False):
+    """Routing decision metadata from Model Router.
+
+    :ivar mode: The routing mode for the request. Required. Known values are: "balanced", "cost",
+     and "quality".
+    :vartype mode: ModelRouterMode
+    :ivar routing_trace: Ordered trace of routing decisions. Contains one entry for Chat
+     Completions, and may contain multiple entries for Responses API or agent scenarios where
+     multiple inference turns occur. Required.
+    :vartype routing_trace: list["RoutingTraceEntry"]
+    """
+
+    mode: Required[ModelRouterMode]
+    """The routing mode for the request. Required. Known values are: \"balanced\", \"cost\", and
+     \"quality\"."""
+    routing_trace: Required[list["RoutingTraceEntry"]]
+    """Ordered trace of routing decisions. Contains one entry for Chat Completions, and may contain
+     multiple entries for Responses API or agent scenarios where multiple inference turns occur.
+     Required."""
+
+
+class ModelSelectionDetails(TypedDict, total=False):
+    """Model selection metadata providing visibility into routing decisions.
+
+    :ivar model_router_details: Routing decision metadata from Model Router. Present when the
+     request was handled by Model Router. Required.
+    :vartype model_router_details: "ModelRouterDetails"
+    """
+
+    model_router_details: Required["ModelRouterDetails"]
+    """Routing decision metadata from Model Router. Present when the request was handled by Model
+     Router. Required."""
 
 
 class Moderation(TypedDict, total=False):
@@ -6380,12 +6962,17 @@ class OpenApiTool(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'openapi'. Required. OPENAPI.
     :vartype type: Literal["openapi"]
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     :ivar openapi: The openapi function definition. Required.
     :vartype openapi: "OpenApiFunctionDefinition"
     """
 
     type: Required[Literal["openapi"]]
     """The object type, which is always 'openapi'. Required. OPENAPI."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     openapi: Required["OpenApiFunctionDefinition"]
     """The openapi function definition. Required."""
 
@@ -7688,6 +8275,35 @@ class OutputMessageContentRefusalContent(TypedDict, total=False):
     """The type of the refusal. Always ``refusal``. Required. REFUSAL."""
     refusal: Required[str]
     """The refusal explanation from the model. Required."""
+
+
+class ProceduralMemoryItem(TypedDict, total=False):
+    """A memory item containing a procedure extracted from conversations.
+
+    :ivar memory_id: The unique ID of the memory item. Required.
+    :vartype memory_id: str
+    :ivar updated_at: The last update time of the memory item. Required.
+    :vartype updated_at: int
+    :ivar scope: The namespace that logically groups and isolates memories, such as a user ID.
+     Required.
+    :vartype scope: str
+    :ivar content: The content of the memory. Required.
+    :vartype content: str
+    :ivar kind: The kind of the memory item. Required. Routine procedures extracted from
+     conversations.
+    :vartype kind: Literal["procedural"]
+    """
+
+    memory_id: Required[str]
+    """The unique ID of the memory item. Required."""
+    updated_at: Required[int]
+    """The last update time of the memory item. Required."""
+    scope: Required[str]
+    """The namespace that logically groups and isolates memories, such as a user ID. Required."""
+    content: Required[str]
+    """The content of the memory. Required."""
+    kind: Required[Literal["procedural"]]
+    """The kind of the memory item. Required. Routine procedures extracted from conversations."""
 
 
 class ProgrammaticToolCallingParam(TypedDict, total=False):
@@ -9051,6 +9667,11 @@ class ResponseObject(TypedDict, total=False):
     :vartype max_output_tokens: int
     :ivar agent_reference: The agent used for this response. Required.
     :vartype agent_reference: "AgentReference"
+    :ivar model_selection_details: Model selection metadata providing visibility into routing
+     decisions. Present when the request was handled by Model Router.
+    :vartype model_selection_details: "ModelSelectionDetails"
+    :ivar content_filters: The content filter evaluation results.
+    :vartype content_filters: list["ContentFilterResult"]
     """
 
     metadata: Optional["Metadata"]
@@ -9115,6 +9736,11 @@ class ResponseObject(TypedDict, total=False):
     max_output_tokens: Optional[int]
     agent_reference: Required[Optional["AgentReference"]]
     """The agent used for this response. Required."""
+    model_selection_details: "ModelSelectionDetails"
+    """Model selection metadata providing visibility into routing decisions. Present when the request
+     was handled by Model Router."""
+    content_filters: list["ContentFilterResult"]
+    """The content filter evaluation results."""
 
 
 class ResponseOutputItemAddedEvent(TypedDict, total=False):
@@ -9540,6 +10166,163 @@ class ResponseRefusalDoneEvent(TypedDict, total=False):
     """The sequence number of this event. Required."""
 
 
+class ResponseShellCallCommandAddedStreamingEvent(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Response shell command added event.
+
+    :ivar type: The type of the event, always ``response.shell_call_command.added``. Required.
+     RESPONSE_SHELL_CALL_COMMAND_ADDED.
+    :vartype type: Literal["response.shell_call_command.added"]
+    :ivar sequence_number: The sequence number of the event that was emitted. Required.
+    :vartype sequence_number: int
+    :ivar output_index: The index of the output item that was updated. Required.
+    :vartype output_index: int
+    :ivar command_index: The index of the shell command that was added. Required.
+    :vartype command_index: int
+    :ivar command: The shell command that was added. Required.
+    :vartype command: str
+    """
+
+    type: Required[Literal["response.shell_call_command.added"]]
+    """The type of the event, always ``response.shell_call_command.added``. Required.
+     RESPONSE_SHELL_CALL_COMMAND_ADDED."""
+    sequence_number: Required[int]
+    """The sequence number of the event that was emitted. Required."""
+    output_index: Required[int]
+    """The index of the output item that was updated. Required."""
+    command_index: Required[int]
+    """The index of the shell command that was added. Required."""
+    command: Required[str]
+    """The shell command that was added. Required."""
+
+
+class ResponseShellCallCommandDeltaStreamingEvent(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Response shell command delta event.
+
+    :ivar type: The type of the event, always ``response.shell_call_command.delta``. Required.
+     RESPONSE_SHELL_CALL_COMMAND_DELTA.
+    :vartype type: Literal["response.shell_call_command.delta"]
+    :ivar sequence_number: The sequence number of the event that was emitted. Required.
+    :vartype sequence_number: int
+    :ivar output_index: The index of the output item that was updated. Required.
+    :vartype output_index: int
+    :ivar command_index: The index of the shell command that was updated. Required.
+    :vartype command_index: int
+    :ivar delta: The shell command delta that was appended. Required.
+    :vartype delta: str
+    :ivar obfuscation: An obfuscation string that was added to pad the event payload.
+    :vartype obfuscation: str
+    """
+
+    type: Required[Literal["response.shell_call_command.delta"]]
+    """The type of the event, always ``response.shell_call_command.delta``. Required.
+     RESPONSE_SHELL_CALL_COMMAND_DELTA."""
+    sequence_number: Required[int]
+    """The sequence number of the event that was emitted. Required."""
+    output_index: Required[int]
+    """The index of the output item that was updated. Required."""
+    command_index: Required[int]
+    """The index of the shell command that was updated. Required."""
+    delta: Required[str]
+    """The shell command delta that was appended. Required."""
+    obfuscation: str
+    """An obfuscation string that was added to pad the event payload."""
+
+
+class ResponseShellCallCommandDoneStreamingEvent(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Response shell command done event.
+
+    :ivar type: The type of the event, always ``response.shell_call_command.done``. Required.
+     RESPONSE_SHELL_CALL_COMMAND_DONE.
+    :vartype type: Literal["response.shell_call_command.done"]
+    :ivar sequence_number: The sequence number of the event that was emitted. Required.
+    :vartype sequence_number: int
+    :ivar output_index: The index of the output item that was updated. Required.
+    :vartype output_index: int
+    :ivar command_index: The index of the shell command that was completed. Required.
+    :vartype command_index: int
+    :ivar command: The final shell command that was emitted. Required.
+    :vartype command: str
+    """
+
+    type: Required[Literal["response.shell_call_command.done"]]
+    """The type of the event, always ``response.shell_call_command.done``. Required.
+     RESPONSE_SHELL_CALL_COMMAND_DONE."""
+    sequence_number: Required[int]
+    """The sequence number of the event that was emitted. Required."""
+    output_index: Required[int]
+    """The index of the output item that was updated. Required."""
+    command_index: Required[int]
+    """The index of the shell command that was completed. Required."""
+    command: Required[str]
+    """The final shell command that was emitted. Required."""
+
+
+class ResponseShellCallOutputContentDeltaStreamingEvent(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Response shell call output content delta event.
+
+    :ivar type: The type of the event, always ``response.shell_call_output_content.delta``.
+     Required. RESPONSE_SHELL_CALL_OUTPUT_CONTENT_DELTA.
+    :vartype type: Literal["response.shell_call_output_content.delta"]
+    :ivar sequence_number: The sequence number of the event that was emitted. Required.
+    :vartype sequence_number: int
+    :ivar item_id: The ID of the output item that was updated. Required.
+    :vartype item_id: str
+    :ivar output_index: The index of the output item that was updated. Required.
+    :vartype output_index: int
+    :ivar command_index: The index of the shell command that produced output. Required.
+    :vartype command_index: int
+    :ivar delta: The stdout/stderr delta that was emitted. Required.
+    :vartype delta: "ShellCallOutputDelta"
+    """
+
+    type: Required[Literal["response.shell_call_output_content.delta"]]
+    """The type of the event, always ``response.shell_call_output_content.delta``. Required.
+     RESPONSE_SHELL_CALL_OUTPUT_CONTENT_DELTA."""
+    sequence_number: Required[int]
+    """The sequence number of the event that was emitted. Required."""
+    item_id: Required[str]
+    """The ID of the output item that was updated. Required."""
+    output_index: Required[int]
+    """The index of the output item that was updated. Required."""
+    command_index: Required[int]
+    """The index of the shell command that produced output. Required."""
+    delta: Required["ShellCallOutputDelta"]
+    """The stdout/stderr delta that was emitted. Required."""
+
+
+class ResponseShellCallOutputContentDoneStreamingEvent(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Response shell call output content done event.
+
+    :ivar type: The type of the event, always ``response.shell_call_output_content.done``.
+     Required. RESPONSE_SHELL_CALL_OUTPUT_CONTENT_DONE.
+    :vartype type: Literal["response.shell_call_output_content.done"]
+    :ivar sequence_number: The sequence number of the event that was emitted. Required.
+    :vartype sequence_number: int
+    :ivar item_id: The ID of the output item that was updated. Required.
+    :vartype item_id: str
+    :ivar output_index: The index of the output item that was updated. Required.
+    :vartype output_index: int
+    :ivar command_index: The index of the shell command that produced output. Required.
+    :vartype command_index: int
+    :ivar output: The output contents emitted for the shell command. Required.
+    :vartype output: list["FunctionShellCallOutputContent"]
+    """
+
+    type: Required[Literal["response.shell_call_output_content.done"]]
+    """The type of the event, always ``response.shell_call_output_content.done``. Required.
+     RESPONSE_SHELL_CALL_OUTPUT_CONTENT_DONE."""
+    sequence_number: Required[int]
+    """The sequence number of the event that was emitted. Required."""
+    item_id: Required[str]
+    """The ID of the output item that was updated. Required."""
+    output_index: Required[int]
+    """The index of the output item that was updated. Required."""
+    command_index: Required[int]
+    """The index of the shell command that produced output. Required."""
+    output: Required[list["FunctionShellCallOutputContent"]]
+    """The output contents emitted for the shell command. Required."""
+
+
 class ResponseStreamOptions(TypedDict, total=False):
     """Options for streaming responses. Only set this when you set ``stream: true``.
 
@@ -9786,6 +10569,30 @@ class ResponseWebSearchCallSearchingEvent(TypedDict, total=False):
     """The sequence number of the web search call being processed. Required."""
 
 
+class RoutingTraceEntry(TypedDict, total=False):
+    """A single entry in the routing trace representing one inference turn. Each entry contains the
+    latency and the ordered list of attempts for that turn.
+
+    :ivar output_id: Identifier of the output item/turn this routing decision is associated with.
+     This is omitted for Chat Completions.
+    :vartype output_id: str
+    :ivar latency_ms: Time in milliseconds spent in the routing decision for this turn. Required.
+    :vartype latency_ms: str
+    :ivar attempts: Ordered list of routing attempts. First element is the initial selection;
+     subsequent elements are fallback attempts. There is always at least one attempt. Required.
+    :vartype attempts: list["ModelRouterAttempt"]
+    """
+
+    output_id: str
+    """Identifier of the output item/turn this routing decision is associated with. This is omitted
+     for Chat Completions."""
+    latency_ms: Required[str]
+    """Time in milliseconds spent in the routing decision for this turn. Required."""
+    attempts: Required[list["ModelRouterAttempt"]]
+    """Ordered list of routing attempts. First element is the initial selection; subsequent elements
+     are fallback attempts. There is always at least one attempt. Required."""
+
+
 class ScreenshotParam(TypedDict, total=False):
     """Screenshot.
 
@@ -9910,19 +10717,11 @@ class SharepointGroundingToolCallOutput(TypedDict, total=False):
 class SharepointGroundingToolParameters(TypedDict, total=False):
     """The sharepoint grounding tool parameters.
 
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar project_connections: The project connections attached to this tool. There can be a
      maximum of 1 connection resource attached to the tool.
     :vartype project_connections: list["ToolProjectConnection"]
     """
 
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     project_connections: list["ToolProjectConnection"]
     """The project connections attached to this tool. There can be a maximum of 1 connection resource
      attached to the tool."""
@@ -9934,10 +10733,6 @@ class SharepointPreviewTool(TypedDict, total=False):
     :ivar type: The object type, which is always 'sharepoint_grounding_preview'. Required.
      SHAREPOINT_GROUNDING_PREVIEW.
     :vartype type: Literal["sharepoint_grounding_preview"]
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar sharepoint_grounding_preview: The sharepoint grounding tool parameters. Required.
     :vartype sharepoint_grounding_preview: "SharepointGroundingToolParameters"
     """
@@ -9945,12 +10740,23 @@ class SharepointPreviewTool(TypedDict, total=False):
     type: Required[Literal["sharepoint_grounding_preview"]]
     """The object type, which is always 'sharepoint_grounding_preview'. Required.
      SHAREPOINT_GROUNDING_PREVIEW."""
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     sharepoint_grounding_preview: Required["SharepointGroundingToolParameters"]
     """The sharepoint grounding tool parameters. Required."""
+
+
+class ShellCallOutputDelta(TypedDict, total=False):
+    """Shell call output delta.
+
+    :ivar stdout: The stdout delta that was emitted.
+    :vartype stdout: str
+    :ivar stderr: The stderr delta that was emitted.
+    :vartype stderr: str
+    """
+
+    stdout: str
+    """The stdout delta that was emitted."""
+    stderr: str
+    """The stderr delta that was emitted."""
 
 
 class SkillReferenceParam(TypedDict, total=False):
@@ -10321,22 +11127,35 @@ class ToolChoiceWebSearchPreview20250311(TypedDict, total=False):
     """Required. WEB_SEARCH_PREVIEW2025_03_11."""
 
 
+class ToolConfig(TypedDict, total=False):
+    """Per-tool configuration that controls tool visibility and search behavior.
+
+    :ivar pin: When true, the tool is always included in agent context and visible in
+     ``tools/list``. When false (default), the tool is hidden from ``tools/list`` and only
+     discoverable via ``tool_search``.
+    :vartype pin: bool
+    :ivar additional_search_text: Additional text indexed for tool_search. Supplements the native
+     tool description to improve discoverability. Does not alter ``tools/list`` output.
+    :vartype additional_search_text: str
+    """
+
+    pin: bool
+    """When true, the tool is always included in agent context and visible in ``tools/list``. When
+     false (default), the tool is hidden from ``tools/list`` and only discoverable via
+     ``tool_search``."""
+    additional_search_text: str
+    """Additional text indexed for tool_search. Supplements the native tool description to improve
+     discoverability. Does not alter ``tools/list`` output."""
+
+
 class ToolProjectConnection(TypedDict, total=False):
     """A project connection resource.
 
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar project_connection_id: A project connection in a ToolProjectConnectionList attached to
      this tool. Required.
     :vartype project_connection_id: str
     """
 
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     project_connection_id: Required[str]
     """A project connection in a ToolProjectConnectionList attached to this tool. Required."""
 
@@ -10542,6 +11361,34 @@ class WaitParam(TypedDict, total=False):
      WAIT."""
 
 
+class WebIQPreviewTool(TypedDict, total=False):
+    """A WebIQ server-side tool.
+
+    :ivar type: The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW.
+    :vartype type: Literal["web_iq_preview"]
+    :ivar project_connection_id: The ID of the WebIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: The label of the WebIQ MCP server to connect to. When omitted, the service
+     defaults to connection name extracted from project_connection_id.
+    :vartype server_label: str
+    :ivar require_approval: Whether the agent requires approval before executing actions. When
+     omitted, the service defaults to "always". Is either a MCPToolRequireApproval type or a str
+     type.
+    :vartype require_approval: Union["MCPToolRequireApproval", str]
+    """
+
+    type: Required[Literal["web_iq_preview"]]
+    """The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW."""
+    project_connection_id: Required[str]
+    """The ID of the WebIQ project connection. Required."""
+    server_label: str
+    """The label of the WebIQ MCP server to connect to. When omitted, the service defaults to
+     connection name extracted from project_connection_id."""
+    require_approval: Optional[Union["MCPToolRequireApproval", str]]
+    """Whether the agent requires approval before executing actions. When omitted, the service
+     defaults to \"always\". Is either a MCPToolRequireApproval type or a str type."""
+
+
 class WebSearchActionFind(TypedDict, total=False):
     """Find action.
 
@@ -10642,10 +11489,6 @@ class WebSearchApproximateLocation(TypedDict, total=False):
 class WebSearchConfiguration(TypedDict, total=False):
     """A web search configuration for bing custom search.
 
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
     :ivar project_connection_id: Project connection id for grounding with bing custom search.
      Required.
     :vartype project_connection_id: str
@@ -10653,10 +11496,6 @@ class WebSearchConfiguration(TypedDict, total=False):
     :vartype instance_name: str
     """
 
-    name: str
-    """Optional user-defined name for this tool or configuration."""
-    description: str
-    """Optional user-defined description for this tool or configuration."""
     project_connection_id: Required[str]
     """Project connection id for grounding with bing custom search. Required."""
     instance_name: Required[str]
@@ -10708,10 +11547,14 @@ class WebSearchTool(TypedDict, total=False):
      for the search. One of ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of
      the following types: Literal["low"], Literal["medium"], Literal["high"]
     :vartype search_context_size: Literal["low", "medium", "high"]
-    :ivar name: Optional user-defined name for this tool or configuration.
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
     :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
     :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, "ToolConfig"]
     :ivar custom_search_configuration: The project connections attached to this tool. There can be
      a maximum of 1 connection resource attached to the tool.
     :vartype custom_search_configuration: "WebSearchConfiguration"
@@ -10730,9 +11573,11 @@ class WebSearchTool(TypedDict, total=False):
      ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of the following types:
      Literal[\"low\"], Literal[\"medium\"], Literal[\"high\"]"""
     name: str
-    """Optional user-defined name for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     description: str
-    """Optional user-defined description for this tool or configuration."""
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Deprecated. This property is deprecated and will be removed in a future version."""
     custom_search_configuration: "WebSearchConfiguration"
     """The project connections attached to this tool. There can be a maximum of 1 connection resource
      attached to the tool."""
@@ -10800,57 +11645,169 @@ class WorkIQPreviewTool(TypedDict, total=False):
 
     :ivar type: The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW.
     :vartype type: Literal["work_iq_preview"]
-    :ivar work_iq_preview: The WorkIQ tool parameters. Required.
-    :vartype work_iq_preview: "WorkIQPreviewToolParameters"
-    """
-
-    type: Required[Literal["work_iq_preview"]]
-    """The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW."""
-    work_iq_preview: Required["WorkIQPreviewToolParameters"]
-    """The WorkIQ tool parameters. Required."""
-
-
-class WorkIQPreviewToolParameters(TypedDict, total=False):
-    """The WorkIQ tool parameters.
-
     :ivar project_connection_id: The ID of the WorkIQ project connection. Required.
     :vartype project_connection_id: str
     """
 
+    type: Required[Literal["work_iq_preview"]]
+    """The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW."""
     project_connection_id: Required[str]
     """The ID of the WorkIQ project connection. Required."""
+
+
+class CreateResponseRequest(TypedDict, total=False):
+    """CreateResponseRequest.
+
+    :ivar metadata:
+    :vartype metadata: "Metadata"
+    :ivar top_logprobs:
+    :vartype top_logprobs: int
+    :ivar temperature:
+    :vartype temperature: float
+    :ivar top_p:
+    :vartype top_p: float
+    :ivar user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
+     ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
+     end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
+     OpenAI detect and prevent abuse. Learn more: /docs/guides/safety-best-practices#safety-identifiers.
+    :vartype user: str
+    :ivar safety_identifier:
+    :vartype safety_identifier: str
+    :ivar prompt_cache_key:
+    :vartype prompt_cache_key: str
+    :ivar prompt_cache_retention: Is either a Literal["in_memory"] type or a Literal["24h"] type.
+    :vartype prompt_cache_retention: Literal["in_memory", "24h"]
+    :ivar prompt_cache_options:
+    :vartype prompt_cache_options: "PromptCacheOptionsParam"
+    :ivar previous_response_id:
+    :vartype previous_response_id: str
+    :ivar model: The model deployment to use for the creation of this response.
+    :vartype model: str
+    :ivar background:
+    :vartype background: bool
+    :ivar max_tool_calls:
+    :vartype max_tool_calls: int
+    :ivar text:
+    :vartype text: "ResponseTextParam"
+    :ivar tools:
+    :vartype tools: list["Tool"]
+    :ivar tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type.
+    :vartype tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
+    :ivar prompt:
+    :vartype prompt: "Prompt"
+    :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
+     Literal["flex"], Literal["scale"], Literal["priority"], Literal["fast"], Literal["ultrafast"]
+    :vartype service_tier: Literal["auto", "default", "flex", "scale", "priority", "fast",
+     "ultrafast"]
+    :ivar truncation: Is either a Literal["auto"] type or a Literal["disabled"] type.
+    :vartype truncation: Literal["auto", "disabled"]
+    :ivar reasoning:
+    :vartype reasoning: "Reasoning"
+    :ivar input: Is either a str type or a [Item] type.
+    :vartype input: "_unions.InputParam"
+    :ivar include:
+    :vartype include: list[IncludeEnum]
+    :ivar parallel_tool_calls:
+    :vartype parallel_tool_calls: bool
+    :ivar store:
+    :vartype store: bool
+    :ivar instructions:
+    :vartype instructions: str
+    :ivar moderation:
+    :vartype moderation: "ModerationParam"
+    :ivar stream:
+    :vartype stream: bool
+    :ivar stream_options:
+    :vartype stream_options: "ResponseStreamOptions"
+    :ivar conversation: Is either a str type or a ConversationParam_2 type.
+    :vartype conversation: "_unions.ConversationParam"
+    :ivar context_management: Context management configuration for this request.
+    :vartype context_management: list["ContextManagementParam"]
+    :ivar max_output_tokens:
+    :vartype max_output_tokens: int
+    :ivar agent_session_id: Optional session identifier for sandbox affinity. Currently only
+     relevant for hosted agents. When provided, the request is routed to the same sandbox. When
+     omitted, auto-derived from conversation_id/prev_response_id or a new UUID is generated.
+    :vartype agent_session_id: str
+    :ivar agent_reference: The agent to use for generating the response.
+    :vartype agent_reference: "AgentReference"
+    :ivar structured_inputs: The structured inputs to the response that can participate in prompt
+     template substitution or tool argument bindings.
+    :vartype structured_inputs: dict[str, Any]
+    :ivar user_security_context: User security context contains several parameters that describe
+     the application itself, and the end user that interacts with the application. These fields
+     assist your security operations teams to investigate and mitigate security incidents by
+     providing a comprehensive approach to protecting your AI applications. Learn more: https://aka.ms/TP4AI/Documentation/EndUserContext about protecting AI applications using
+     Microsoft Defender for Cloud.
+    :vartype user_security_context: "AzureUserSecurityContext"
+    """
+
+    metadata: Optional["Metadata"]
+    top_logprobs: Optional[int]
+    temperature: Optional[float]
+    top_p: Optional[float]
+    user: str
+    """This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
+     ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
+     end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
+     OpenAI detect and prevent abuse. Learn more: /docs/guides/safety-best-practices#safety-identifiers."""
+    safety_identifier: Optional[str]
+    prompt_cache_key: Optional[str]
+    prompt_cache_retention: Optional[Literal["in_memory", "24h"]]
+    """Is either a Literal[\"in_memory\"] type or a Literal[\"24h\"] type."""
+    prompt_cache_options: "PromptCacheOptionsParam"
+    previous_response_id: Optional[str]
+    model: str
+    """The model deployment to use for the creation of this response."""
+    background: Optional[bool]
+    max_tool_calls: Optional[int]
+    text: "ResponseTextParam"
+    tools: list["Tool"]
+    tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
+    """Is either a types.ToolChoiceOptions type or a ToolChoiceParam type."""
+    prompt: "Prompt"
+    service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority", "fast", "ultrafast"]]
+    """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
+     Literal[\"scale\"], Literal[\"priority\"], Literal[\"fast\"], Literal[\"ultrafast\"]"""
+    truncation: Optional[Literal["auto", "disabled"]]
+    """Is either a Literal[\"auto\"] type or a Literal[\"disabled\"] type."""
+    reasoning: Optional["Reasoning"]
+    input: "_unions.InputParam"
+    """Is either a str type or a [Item] type."""
+    include: Optional[list[IncludeEnum]]
+    parallel_tool_calls: Optional[bool]
+    store: Optional[bool]
+    instructions: Optional[str]
+    moderation: Optional["ModerationParam"]
+    stream: Optional[bool]
+    stream_options: Optional["ResponseStreamOptions"]
+    conversation: Optional["_unions.ConversationParam"]
+    """Is either a str type or a ConversationParam_2 type."""
+    context_management: Optional[list["ContextManagementParam"]]
+    """Context management configuration for this request."""
+    max_output_tokens: Optional[int]
+    agent_session_id: str
+    """Optional session identifier for sandbox affinity. Currently only relevant for hosted agents.
+     When provided, the request is routed to the same sandbox. When omitted, auto-derived from
+     conversation_id/prev_response_id or a new UUID is generated."""
+    agent_reference: "AgentReference"
+    """The agent to use for generating the response."""
+    structured_inputs: dict[str, Any]
+    """The structured inputs to the response that can participate in prompt template substitution or
+     tool argument bindings."""
+    user_security_context: "AzureUserSecurityContext"
+    """User security context contains several parameters that describe the application itself, and the
+     end user that interacts with the application. These fields assist your security operations
+     teams to investigate and mitigate security incidents by providing a comprehensive approach to
+     protecting your AI applications. Learn more: https://aka.ms/TP4AI/Documentation/EndUserContext about protecting AI applications using
+     Microsoft Defender for Cloud."""
 
 
 class CompactResponseMethodPublicBody(TypedDict, total=False):
     """CompactResponseMethodPublicBody.
 
-    :ivar model: Required. Known values are: "gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna",
-     "gpt-5.5", "gpt-5.5-2026-04-23", "gpt-5.4", "gpt-5.4-mini", "gpt-5.4-nano",
-     "gpt-5.4-mini-2026-03-17", "gpt-5.4-nano-2026-03-17", "gpt-5.3-chat-latest", "gpt-5.2",
-     "gpt-5.2-2025-12-11", "gpt-5.2-chat-latest", "gpt-5.2-pro", "gpt-5.2-pro-2025-12-11",
-     "gpt-5.1", "gpt-5.1-2025-11-13", "gpt-5.1-codex", "gpt-5.1-mini", "gpt-5.1-chat-latest",
-     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5-2025-08-07", "gpt-5-mini-2025-08-07",
-     "gpt-5-nano-2025-08-07", "gpt-5-chat-latest", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
-     "gpt-4.1-2025-04-14", "gpt-4.1-mini-2025-04-14", "gpt-4.1-nano-2025-04-14", "o4-mini",
-     "o4-mini-2025-04-16", "o3", "o3-2025-04-16", "o3-mini", "o3-mini-2025-01-31", "o1",
-     "o1-2024-12-17", "o1-preview", "o1-preview-2024-09-12", "o1-mini", "o1-mini-2024-09-12",
-     "gpt-4o", "gpt-4o-2024-11-20", "gpt-4o-2024-08-06", "gpt-4o-2024-05-13",
-     "gpt-4o-audio-preview", "gpt-4o-audio-preview-2024-10-01", "gpt-4o-audio-preview-2024-12-17",
-     "gpt-4o-audio-preview-2025-06-03", "gpt-4o-mini-audio-preview",
-     "gpt-4o-mini-audio-preview-2024-12-17", "gpt-4o-search-preview", "gpt-4o-mini-search-preview",
-     "gpt-4o-search-preview-2025-03-11", "gpt-4o-mini-search-preview-2025-03-11",
-     "chatgpt-4o-latest", "codex-mini-latest", "gpt-4o-mini", "gpt-4o-mini-2024-07-18",
-     "gpt-4-turbo", "gpt-4-turbo-2024-04-09", "gpt-4-0125-preview", "gpt-4-turbo-preview",
-     "gpt-4-1106-preview", "gpt-4-vision-preview", "gpt-4", "gpt-4-0314", "gpt-4-0613", "gpt-4-32k",
-     "gpt-4-32k-0314", "gpt-4-32k-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-0301",
-     "gpt-3.5-turbo-0613", "gpt-3.5-turbo-1106", "gpt-3.5-turbo-0125", "gpt-3.5-turbo-16k-0613",
-     "o1-pro", "o1-pro-2025-03-19", "o3-pro", "o3-pro-2025-06-10", "o3-deep-research",
-     "o3-deep-research-2025-06-26", "o4-mini-deep-research", "o4-mini-deep-research-2025-06-26",
-     "computer-use-preview", "computer-use-preview-2025-03-11", "gpt-5.5-pro",
-     "gpt-5.5-pro-2026-04-23", "gpt-5-codex", "gpt-5-pro", "gpt-5-pro-2025-10-06",
-     "gpt-5.1-codex-max", "gpt-daybreak-blue-latest", "gpt-daybreak-red-latest", and
-     "gpt-5.6-cyber".
-    :vartype model: ModelIdsCompaction
+    :ivar model: The model deployment to use for the compaction of this response. Required.
+    :vartype model: str
     :ivar input: Is either a str type or a [Item] type.
     :vartype input: Union[str, list["Item"]]
     :ivar previous_response_id:
@@ -10867,35 +11824,8 @@ class CompactResponseMethodPublicBody(TypedDict, total=False):
     :vartype service_tier: ServiceTierEnum
     """
 
-    model: Required[Optional[ModelIdsCompaction]]
-    """Required. Known values are: \"gpt-5.6-sol\", \"gpt-5.6-terra\", \"gpt-5.6-luna\", \"gpt-5.5\",
-     \"gpt-5.5-2026-04-23\", \"gpt-5.4\", \"gpt-5.4-mini\", \"gpt-5.4-nano\",
-     \"gpt-5.4-mini-2026-03-17\", \"gpt-5.4-nano-2026-03-17\", \"gpt-5.3-chat-latest\", \"gpt-5.2\",
-     \"gpt-5.2-2025-12-11\", \"gpt-5.2-chat-latest\", \"gpt-5.2-pro\", \"gpt-5.2-pro-2025-12-11\",
-     \"gpt-5.1\", \"gpt-5.1-2025-11-13\", \"gpt-5.1-codex\", \"gpt-5.1-mini\",
-     \"gpt-5.1-chat-latest\", \"gpt-5\", \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5-2025-08-07\",
-     \"gpt-5-mini-2025-08-07\", \"gpt-5-nano-2025-08-07\", \"gpt-5-chat-latest\", \"gpt-4.1\",
-     \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-4.1-2025-04-14\", \"gpt-4.1-mini-2025-04-14\",
-     \"gpt-4.1-nano-2025-04-14\", \"o4-mini\", \"o4-mini-2025-04-16\", \"o3\", \"o3-2025-04-16\",
-     \"o3-mini\", \"o3-mini-2025-01-31\", \"o1\", \"o1-2024-12-17\", \"o1-preview\",
-     \"o1-preview-2024-09-12\", \"o1-mini\", \"o1-mini-2024-09-12\", \"gpt-4o\",
-     \"gpt-4o-2024-11-20\", \"gpt-4o-2024-08-06\", \"gpt-4o-2024-05-13\", \"gpt-4o-audio-preview\",
-     \"gpt-4o-audio-preview-2024-10-01\", \"gpt-4o-audio-preview-2024-12-17\",
-     \"gpt-4o-audio-preview-2025-06-03\", \"gpt-4o-mini-audio-preview\",
-     \"gpt-4o-mini-audio-preview-2024-12-17\", \"gpt-4o-search-preview\",
-     \"gpt-4o-mini-search-preview\", \"gpt-4o-search-preview-2025-03-11\",
-     \"gpt-4o-mini-search-preview-2025-03-11\", \"chatgpt-4o-latest\", \"codex-mini-latest\",
-     \"gpt-4o-mini\", \"gpt-4o-mini-2024-07-18\", \"gpt-4-turbo\", \"gpt-4-turbo-2024-04-09\",
-     \"gpt-4-0125-preview\", \"gpt-4-turbo-preview\", \"gpt-4-1106-preview\",
-     \"gpt-4-vision-preview\", \"gpt-4\", \"gpt-4-0314\", \"gpt-4-0613\", \"gpt-4-32k\",
-     \"gpt-4-32k-0314\", \"gpt-4-32k-0613\", \"gpt-3.5-turbo\", \"gpt-3.5-turbo-16k\",
-     \"gpt-3.5-turbo-0301\", \"gpt-3.5-turbo-0613\", \"gpt-3.5-turbo-1106\", \"gpt-3.5-turbo-0125\",
-     \"gpt-3.5-turbo-16k-0613\", \"o1-pro\", \"o1-pro-2025-03-19\", \"o3-pro\",
-     \"o3-pro-2025-06-10\", \"o3-deep-research\", \"o3-deep-research-2025-06-26\",
-     \"o4-mini-deep-research\", \"o4-mini-deep-research-2025-06-26\", \"computer-use-preview\",
-     \"computer-use-preview-2025-03-11\", \"gpt-5.5-pro\", \"gpt-5.5-pro-2026-04-23\",
-     \"gpt-5-codex\", \"gpt-5-pro\", \"gpt-5-pro-2025-10-06\", \"gpt-5.1-codex-max\",
-     \"gpt-daybreak-blue-latest\", \"gpt-daybreak-red-latest\", and \"gpt-5.6-cyber\"."""
+    model: Required[str]
+    """The model deployment to use for the compaction of this response. Required."""
     input: Optional[Union[str, list["Item"]]]
     """Is either a str type or a [Item] type."""
     previous_response_id: Optional[str]
@@ -10909,6 +11839,7 @@ class CompactResponseMethodPublicBody(TypedDict, total=False):
 
 
 Tool = Union[
+    A2ATool,
     A2APreviewTool,
     ApplyPatchToolParam,
     AzureAISearchTool,
@@ -10922,6 +11853,7 @@ Tool = Union[
     ComputerUsePreviewTool,
     CustomToolParam,
     MicrosoftFabricPreviewTool,
+    FabricIQPreviewTool,
     FileSearchTool,
     FunctionTool,
     ImageGenTool,
@@ -10934,6 +11866,7 @@ Tool = Union[
     SharepointPreviewTool,
     FunctionShellToolParam,
     ToolSearchToolParam,
+    WebIQPreviewTool,
     WebSearchTool,
     WebSearchPreviewTool,
     WorkIQPreviewTool,
@@ -10972,7 +11905,9 @@ OutputItem = Union[
     OutputItemMcpApprovalResponseResource,
     OutputItemMcpToolCall,
     OutputItemMcpListTools,
-    MemorySearchToolCallItemResource,
+    MemoryCommandToolCall,
+    MemoryCommandToolCallOutput,
+    MemorySearchToolCall,
     OutputItemMessage,
     OAuthConsentRequestOutputItem,
     OpenApiToolCall,
@@ -11012,7 +11947,6 @@ Item = Union[
     MCPApprovalResponse,
     ItemMcpToolCall,
     ItemMcpListTools,
-    MemorySearchToolCallItemParam,
     ItemMessage,
     ItemOutputMessage,
     ItemProgram,
@@ -11031,7 +11965,7 @@ ApplyPatchFileOperation = Union[
 ApplyPatchOperationParam = Union[
     ApplyPatchCreateFileOperationParam, ApplyPatchDeleteFileOperationParam, ApplyPatchUpdateFileOperationParam
 ]
-MemoryItem = Union[ChatSummaryMemoryItem, UserProfileMemoryItem]
+MemoryItem = Union[ChatSummaryMemoryItem, ProceduralMemoryItem, UserProfileMemoryItem]
 ComputerAction = Union[
     ClickParam,
     DoubleClickAction,
@@ -11164,6 +12098,11 @@ ResponseStreamEvent = Union[
     ResponseReasoningTextDoneEvent,
     ResponseRefusalDeltaEvent,
     ResponseRefusalDoneEvent,
+    ResponseShellCallCommandAddedStreamingEvent,
+    ResponseShellCallCommandDeltaStreamingEvent,
+    ResponseShellCallCommandDoneStreamingEvent,
+    ResponseShellCallOutputContentDeltaStreamingEvent,
+    ResponseShellCallOutputContentDoneStreamingEvent,
     ResponseWebSearchCallCompletedEvent,
     ResponseWebSearchCallInProgressEvent,
     ResponseWebSearchCallSearchingEvent,

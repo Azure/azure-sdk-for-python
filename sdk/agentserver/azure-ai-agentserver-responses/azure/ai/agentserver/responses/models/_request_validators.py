@@ -156,6 +156,8 @@ def _validate_CreateResponse(value: Any, path: str, errors: list[dict[str, str]]
         _validate_CreateResponse_truncation(value['truncation'], f"{path}.truncation", errors)
     if 'user' in value:
         _validate_CreateResponse_user(value['user'], f"{path}.user", errors)
+    if 'user_security_context' in value:
+        _validate_CreateResponse_user_security_context(value['user_security_context'], f"{path}.user_security_context", errors)
 
 def _validate_CreateResponse_agent(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_CreateResponse_agent_all_of_0(value, path, errors)
@@ -214,6 +216,7 @@ def _validate_CreateResponse_max_output_tokens(value: Any, path: str, errors: li
     if not _is_type(value, 'integer'):
         _append_type_mismatch(errors, path, 'integer', value)
         return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_CreateResponse_metadata(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if value is None:
@@ -297,6 +300,7 @@ def _validate_CreateResponse_temperature(value: Any, path: str, errors: list[dic
     if not _is_type(value, 'number'):
         _append_type_mismatch(errors, path, 'number', value)
         return
+    _validate_CreateResponse_temperature_all_of_0(value, path, errors)
 
 def _validate_CreateResponse_text(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_ResponseTextParam(value, path, errors)
@@ -343,6 +347,9 @@ def _validate_CreateResponse_user(value: Any, path: str, errors: list[dict[str, 
         _append_type_mismatch(errors, path, 'string', value)
         return
 
+def _validate_CreateResponse_user_security_context(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _validate_CreateResponse_user_security_context_all_of_0(value, path, errors)
+
 def _validate_CreateResponse_agent_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_AgentReference(value, path, errors)
 
@@ -383,6 +390,9 @@ def _validate_OpenAI_InputParam(value: Any, path: str, errors: list[dict[str, st
             return
         _append_error(errors, path, f"Expected one of: string, array; got {_type_label(value)}")
         return
+
+def _validate_CreateResponse_max_output_tokens_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _validate_OpenAI_integer(value, path, errors)
 
 def _validate_CreateResponse_metadata_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_Metadata(value, path, errors)
@@ -435,6 +445,9 @@ def _validate_CreateResponse_stream_options_all_of_0(value: Any, path: str, erro
 
 def _validate_CreateResponse_structured_inputs_additional_property(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     return
+
+def _validate_CreateResponse_temperature_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _validate_OpenAI_numeric(value, path, errors)
 
 def _validate_OpenAI_ResponseTextParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -524,6 +537,9 @@ def _validate_OpenAI_ToolsArray(value: Any, path: str, errors: list[dict[str, st
     for _idx, _item in enumerate(value):
         _validate_OpenAI_ToolsArray_item(_item, f"{path}[{_idx}]", errors)
 
+def _validate_CreateResponse_user_security_context_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _validate_AzureUserSecurityContext(value, path, errors)
+
 def _validate_AgentReference(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
@@ -599,6 +615,11 @@ def _validate_OpenAI_InputParam_array(value: Any, path: str, errors: list[dict[s
     for _idx, _item in enumerate(value):
         _validate_OpenAI_InputParam_array_item(_item, f"{path}[{_idx}]", errors)
 
+def _validate_OpenAI_integer(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'integer'):
+        _append_type_mismatch(errors, path, 'integer', value)
+        return
+
 def _validate_OpenAI_Metadata(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
@@ -658,6 +679,11 @@ def _validate_OpenAI_ResponseStreamOptions(value: Any, path: str, errors: list[d
         return
     if 'include_obfuscation' in value:
         _validate_OpenAI_ResponseStreamOptions_include_obfuscation(value['include_obfuscation'], f"{path}.include_obfuscation", errors)
+
+def _validate_OpenAI_numeric(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'number'):
+        _append_type_mismatch(errors, path, 'number', value)
+        return
 
 def _validate_OpenAI_ResponseTextParam_format(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_TextResponseFormatConfiguration(value, path, errors)
@@ -837,6 +863,19 @@ def _validate_OpenAI_ToolChoiceWebSearchPreview20250311(value: Any, path: str, e
 
 def _validate_OpenAI_ToolsArray_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_Tool(value, path, errors)
+
+def _validate_AzureUserSecurityContext(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'object'):
+        _append_type_mismatch(errors, path, 'object', value)
+        return
+    if 'application_name' in value:
+        _validate_AzureUserSecurityContext_application_name(value['application_name'], f"{path}.application_name", errors)
+    if 'end_user_id' in value:
+        _validate_AzureUserSecurityContext_end_user_id(value['end_user_id'], f"{path}.end_user_id", errors)
+    if 'end_user_tenant_id' in value:
+        _validate_AzureUserSecurityContext_end_user_tenant_id(value['end_user_tenant_id'], f"{path}.end_user_tenant_id", errors)
+    if 'source_ip' in value:
+        _validate_AzureUserSecurityContext_source_ip(value['source_ip'], f"{path}.source_ip", errors)
 
 def _validate_AgentReference_name(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'string'):
@@ -1151,6 +1190,9 @@ def _validate_OpenAI_Tool(value: Any, path: str, errors: list[dict[str, str]]) -
     if not isinstance(_disc_value, str):
         _append_error(errors, f"{path}.type", "Required discriminator 'type' is missing or invalid")
         return
+    if _disc_value == 'a2a':
+        _validate_A2ATool(value, path, errors)
+        return
     if _disc_value == 'a2a_preview':
         _validate_A2APreviewTool(value, path, errors)
         return
@@ -1189,6 +1231,9 @@ def _validate_OpenAI_Tool(value: Any, path: str, errors: list[dict[str, str]]) -
         return
     if _disc_value == 'fabric_dataagent_preview':
         _validate_MicrosoftFabricPreviewTool(value, path, errors)
+        return
+    if _disc_value == 'fabric_iq_preview':
+        _validate_FabricIQPreviewTool(value, path, errors)
         return
     if _disc_value == 'file_search':
         _validate_OpenAI_FileSearchTool(value, path, errors)
@@ -1229,6 +1274,9 @@ def _validate_OpenAI_Tool(value: Any, path: str, errors: list[dict[str, str]]) -
     if _disc_value == 'tool_search':
         _validate_OpenAI_ToolSearchToolParam(value, path, errors)
         return
+    if _disc_value == 'web_iq_preview':
+        _validate_WebIQPreviewTool(value, path, errors)
+        return
     if _disc_value == 'web_search':
         _validate_OpenAI_WebSearchTool(value, path, errors)
         return
@@ -1238,7 +1286,27 @@ def _validate_OpenAI_Tool(value: Any, path: str, errors: list[dict[str, str]]) -
     if _disc_value == 'work_iq_preview':
         _validate_WorkIQPreviewTool(value, path, errors)
         return
-    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: a2a_preview, apply_patch, azure_ai_search, azure_function, bing_custom_search_preview, bing_grounding, browser_automation_preview, capture_structured_outputs, code_interpreter, computer, computer_use_preview, custom, fabric_dataagent_preview, file_search, function, image_generation, local_shell, mcp, memory_search, memory_search_preview, namespace, openapi, programmatic_tool_calling, sharepoint_grounding_preview, shell, tool_search, web_search, web_search_preview, work_iq_preview")
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: a2a, a2a_preview, apply_patch, azure_ai_search, azure_function, bing_custom_search_preview, bing_grounding, browser_automation_preview, capture_structured_outputs, code_interpreter, computer, computer_use_preview, custom, fabric_dataagent_preview, fabric_iq_preview, file_search, function, image_generation, local_shell, mcp, memory_search, memory_search_preview, namespace, openapi, programmatic_tool_calling, sharepoint_grounding_preview, shell, tool_search, web_iq_preview, web_search, web_search_preview, work_iq_preview")
+
+def _validate_AzureUserSecurityContext_application_name(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_AzureUserSecurityContext_end_user_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_AzureUserSecurityContext_end_user_tenant_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_AzureUserSecurityContext_source_ip(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
 
 def _validate_OpenAI_ConversationParam_2_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'string'):
@@ -1317,9 +1385,6 @@ def _validate_OpenAI_Item(value: Any, path: str, errors: list[dict[str, str]]) -
     if _disc_value == 'mcp_list_tools':
         _validate_OpenAI_ItemMcpListTools(value, path, errors)
         return
-    if _disc_value == 'memory_search_call':
-        _validate_MemorySearchToolCallItemParam(value, path, errors)
-        return
     if _disc_value == 'message':
         _validate_OpenAI_ItemMessage(value, path, errors)
         return
@@ -1350,7 +1415,7 @@ def _validate_OpenAI_Item(value: Any, path: str, errors: list[dict[str, str]]) -
     if _disc_value == 'web_search_call':
         _validate_OpenAI_ItemWebSearchToolCall(value, path, errors)
         return
-    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: additional_tools, apply_patch_call, apply_patch_call_output, code_interpreter_call, compaction, computer_call, computer_call_output, custom_tool_call, custom_tool_call_output, file_search_call, function_call, function_call_output, image_generation_call, item_reference, local_shell_call, local_shell_call_output, mcp_approval_request, mcp_approval_response, mcp_call, mcp_list_tools, memory_search_call, message, output_message, program, program_output, reasoning, shell_call, shell_call_output, tool_search_call, tool_search_output, web_search_call")
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: additional_tools, apply_patch_call, apply_patch_call_output, code_interpreter_call, compaction, computer_call, computer_call_output, custom_tool_call, custom_tool_call_output, file_search_call, function_call, function_call_output, image_generation_call, item_reference, local_shell_call, local_shell_call_output, mcp_approval_request, mcp_approval_response, mcp_call, mcp_list_tools, message, output_message, program, program_output, reasoning, shell_call, shell_call_output, tool_search_call, tool_search_output, web_search_call")
 
 def _validate_OpenAI_ModerationParam_policy_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_ModerationPolicyParam(value, path, errors)
@@ -1468,6 +1533,27 @@ def _validate_OpenAI_Tool_type(value: Any, path: str, errors: list[dict[str, str
         return
     _validate_OpenAI_ToolType(value, path, errors)
 
+def _validate_A2ATool(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'object'):
+        _append_type_mismatch(errors, path, 'object', value)
+        return
+    if 'type' not in value:
+        _append_error(errors, f"{path}.type", "Required property 'type' is missing")
+    if 'a2a_version' not in value:
+        _append_error(errors, f"{path}.a2a_version", "Required property 'a2a_version' is missing")
+    if 'a2a_version' in value:
+        _validate_A2ATool_a2a_version(value['a2a_version'], f"{path}.a2a_version", errors)
+    if 'agent_card_path' in value:
+        _validate_A2ATool_agent_card_path(value['agent_card_path'], f"{path}.agent_card_path", errors)
+    if 'base_url' in value:
+        _validate_A2ATool_base_url(value['base_url'], f"{path}.base_url", errors)
+    if 'project_connection_id' in value:
+        _validate_A2ATool_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
+    if 'send_credentials_for_agent_card' in value:
+        _validate_A2ATool_send_credentials_for_agent_card(value['send_credentials_for_agent_card'], f"{path}.send_credentials_for_agent_card", errors)
+    if 'type' in value:
+        _validate_A2ATool_type(value['type'], f"{path}.type", errors)
+
 def _validate_A2APreviewTool(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
@@ -1475,15 +1561,13 @@ def _validate_A2APreviewTool(value: Any, path: str, errors: list[dict[str, str]]
     if 'type' not in value:
         _append_error(errors, f"{path}.type", "Required property 'type' is missing")
     if 'agent_card_path' in value:
-        _validate_A2APreviewTool_agent_card_path(value['agent_card_path'], f"{path}.agent_card_path", errors)
+        _validate_A2ATool_agent_card_path(value['agent_card_path'], f"{path}.agent_card_path", errors)
     if 'base_url' in value:
-        _validate_A2APreviewTool_base_url(value['base_url'], f"{path}.base_url", errors)
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
+        _validate_A2ATool_base_url(value['base_url'], f"{path}.base_url", errors)
     if 'project_connection_id' in value:
-        _validate_A2APreviewTool_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
+        _validate_A2ATool_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
+    if 'send_credentials_for_agent_card' in value:
+        _validate_A2ATool_send_credentials_for_agent_card(value['send_credentials_for_agent_card'], f"{path}.send_credentials_for_agent_card", errors)
     if 'type' in value:
         _validate_A2APreviewTool_type(value['type'], f"{path}.type", errors)
 
@@ -1509,9 +1593,11 @@ def _validate_AzureAISearchTool(value: Any, path: str, errors: list[dict[str, st
     if 'azure_ai_search' in value:
         _validate_AzureAISearchTool_azure_ai_search(value['azure_ai_search'], f"{path}.azure_ai_search", errors)
     if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
+        _validate_AzureAISearchTool_description(value['description'], f"{path}.description", errors)
     if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
+        _validate_AzureAISearchTool_description(value['name'], f"{path}.name", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'type' in value:
         _validate_AzureAISearchTool_type(value['type'], f"{path}.type", errors)
 
@@ -1525,6 +1611,8 @@ def _validate_AzureFunctionTool(value: Any, path: str, errors: list[dict[str, st
         _append_error(errors, f"{path}.azure_function", "Required property 'azure_function' is missing")
     if 'azure_function' in value:
         _validate_AzureFunctionTool_azure_function(value['azure_function'], f"{path}.azure_function", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'type' in value:
         _validate_AzureFunctionTool_type(value['type'], f"{path}.type", errors)
 
@@ -1538,10 +1626,6 @@ def _validate_BingCustomSearchPreviewTool(value: Any, path: str, errors: list[di
         _append_error(errors, f"{path}.bing_custom_search_preview", "Required property 'bing_custom_search_preview' is missing")
     if 'bing_custom_search_preview' in value:
         _validate_BingCustomSearchPreviewTool_bing_custom_search_preview(value['bing_custom_search_preview'], f"{path}.bing_custom_search_preview", errors)
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'type' in value:
         _validate_BingCustomSearchPreviewTool_type(value['type'], f"{path}.type", errors)
 
@@ -1556,9 +1640,11 @@ def _validate_BingGroundingTool(value: Any, path: str, errors: list[dict[str, st
     if 'bing_grounding' in value:
         _validate_BingGroundingTool_bing_grounding(value['bing_grounding'], f"{path}.bing_grounding", errors)
     if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
+        _validate_AzureAISearchTool_description(value['description'], f"{path}.description", errors)
     if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
+        _validate_AzureAISearchTool_description(value['name'], f"{path}.name", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'type' in value:
         _validate_BingGroundingTool_type(value['type'], f"{path}.type", errors)
 
@@ -1572,10 +1658,6 @@ def _validate_BrowserAutomationPreviewTool(value: Any, path: str, errors: list[d
         _append_error(errors, f"{path}.browser_automation_preview", "Required property 'browser_automation_preview' is missing")
     if 'browser_automation_preview' in value:
         _validate_BrowserAutomationPreviewTool_browser_automation_preview(value['browser_automation_preview'], f"{path}.browser_automation_preview", errors)
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'type' in value:
         _validate_BrowserAutomationPreviewTool_type(value['type'], f"{path}.type", errors)
 
@@ -1587,8 +1669,14 @@ def _validate_CaptureStructuredOutputsTool(value: Any, path: str, errors: list[d
         _append_error(errors, f"{path}.type", "Required property 'type' is missing")
     if 'outputs' not in value:
         _append_error(errors, f"{path}.outputs", "Required property 'outputs' is missing")
+    if 'description' in value:
+        _validate_AzureAISearchTool_description(value['description'], f"{path}.description", errors)
+    if 'name' in value:
+        _validate_AzureAISearchTool_description(value['name'], f"{path}.name", errors)
     if 'outputs' in value:
         _validate_CaptureStructuredOutputsTool_outputs(value['outputs'], f"{path}.outputs", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'type' in value:
         _validate_CaptureStructuredOutputsTool_type(value['type'], f"{path}.type", errors)
 
@@ -1603,9 +1691,11 @@ def _validate_OpenAI_CodeInterpreterTool(value: Any, path: str, errors: list[dic
     if 'container' in value:
         _validate_OpenAI_CodeInterpreterTool_container(value['container'], f"{path}.container", errors)
     if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
+        _validate_AzureAISearchTool_description(value['description'], f"{path}.description", errors)
     if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
+        _validate_AzureAISearchTool_description(value['name'], f"{path}.name", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'type' in value:
         _validate_OpenAI_CodeInterpreterTool_type(value['type'], f"{path}.type", errors)
 
@@ -1668,14 +1758,29 @@ def _validate_MicrosoftFabricPreviewTool(value: Any, path: str, errors: list[dic
         _append_error(errors, f"{path}.type", "Required property 'type' is missing")
     if 'fabric_dataagent_preview' not in value:
         _append_error(errors, f"{path}.fabric_dataagent_preview", "Required property 'fabric_dataagent_preview' is missing")
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
     if 'fabric_dataagent_preview' in value:
         _validate_MicrosoftFabricPreviewTool_fabric_dataagent_preview(value['fabric_dataagent_preview'], f"{path}.fabric_dataagent_preview", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'type' in value:
         _validate_MicrosoftFabricPreviewTool_type(value['type'], f"{path}.type", errors)
+
+def _validate_FabricIQPreviewTool(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'object'):
+        _append_type_mismatch(errors, path, 'object', value)
+        return
+    if 'type' not in value:
+        _append_error(errors, f"{path}.type", "Required property 'type' is missing")
+    if 'project_connection_id' not in value:
+        _append_error(errors, f"{path}.project_connection_id", "Required property 'project_connection_id' is missing")
+    if 'project_connection_id' in value:
+        _validate_FabricIQPreviewTool_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
+    if 'require_approval' in value:
+        _validate_FabricIQPreviewTool_require_approval(value['require_approval'], f"{path}.require_approval", errors)
+    if 'server_label' in value:
+        _validate_FabricIQPreviewTool_server_label(value['server_label'], f"{path}.server_label", errors)
+    if 'server_url' in value:
+        _validate_FabricIQPreviewTool_server_url(value['server_url'], f"{path}.server_url", errors)
+    if 'type' in value:
+        _validate_FabricIQPreviewTool_type(value['type'], f"{path}.type", errors)
 
 def _validate_OpenAI_FileSearchTool(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -1686,15 +1791,17 @@ def _validate_OpenAI_FileSearchTool(value: Any, path: str, errors: list[dict[str
     if 'vector_store_ids' not in value:
         _append_error(errors, f"{path}.vector_store_ids", "Required property 'vector_store_ids' is missing")
     if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
+        _validate_AzureAISearchTool_description(value['description'], f"{path}.description", errors)
     if 'filters' in value:
         _validate_OpenAI_FileSearchTool_filters(value['filters'], f"{path}.filters", errors)
     if 'max_num_results' in value:
         _validate_OpenAI_FileSearchTool_max_num_results(value['max_num_results'], f"{path}.max_num_results", errors)
     if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
+        _validate_AzureAISearchTool_description(value['name'], f"{path}.name", errors)
     if 'ranking_options' in value:
         _validate_OpenAI_FileSearchTool_ranking_options(value['ranking_options'], f"{path}.ranking_options", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'type' in value:
         _validate_OpenAI_FileSearchTool_type(value['type'], f"{path}.type", errors)
     if 'vector_store_ids' in value:
@@ -1736,7 +1843,7 @@ def _validate_OpenAI_ImageGenTool(value: Any, path: str, errors: list[dict[str, 
     if 'background' in value:
         _validate_OpenAI_ImageGenTool_background(value['background'], f"{path}.background", errors)
     if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
+        _validate_AzureAISearchTool_description(value['description'], f"{path}.description", errors)
     if 'input_fidelity' in value:
         _validate_OpenAI_ImageGenTool_input_fidelity(value['input_fidelity'], f"{path}.input_fidelity", errors)
     if 'input_image_mask' in value:
@@ -1746,7 +1853,7 @@ def _validate_OpenAI_ImageGenTool(value: Any, path: str, errors: list[dict[str, 
     if 'moderation' in value:
         _validate_OpenAI_ImageGenTool_moderation(value['moderation'], f"{path}.moderation", errors)
     if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
+        _validate_AzureAISearchTool_description(value['name'], f"{path}.name", errors)
     if 'output_compression' in value:
         _validate_OpenAI_ImageGenTool_output_compression(value['output_compression'], f"{path}.output_compression", errors)
     if 'output_format' in value:
@@ -1757,6 +1864,8 @@ def _validate_OpenAI_ImageGenTool(value: Any, path: str, errors: list[dict[str, 
         _validate_OpenAI_ImageGenTool_quality(value['quality'], f"{path}.quality", errors)
     if 'size' in value:
         _validate_OpenAI_ImageGenTool_size(value['size'], f"{path}.size", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'type' in value:
         _validate_OpenAI_ImageGenTool_type(value['type'], f"{path}.type", errors)
 
@@ -1767,9 +1876,11 @@ def _validate_OpenAI_LocalShellToolParam(value: Any, path: str, errors: list[dic
     if 'type' not in value:
         _append_error(errors, f"{path}.type", "Required property 'type' is missing")
     if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
+        _validate_AzureAISearchTool_description(value['description'], f"{path}.description", errors)
     if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
+        _validate_AzureAISearchTool_description(value['name'], f"{path}.name", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'type' in value:
         _validate_OpenAI_LocalShellToolParam_type(value['type'], f"{path}.type", errors)
 
@@ -1803,6 +1914,8 @@ def _validate_OpenAI_MCPTool(value: Any, path: str, errors: list[dict[str, str]]
         _validate_OpenAI_MCPTool_server_label(value['server_label'], f"{path}.server_label", errors)
     if 'server_url' in value:
         _validate_OpenAI_MCPTool_server_url(value['server_url'], f"{path}.server_url", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'tunnel_id' in value:
         _validate_OpenAI_MCPTool_tunnel_id(value['tunnel_id'], f"{path}.tunnel_id", errors)
     if 'type' in value:
@@ -1818,12 +1931,8 @@ def _validate_MemorySearchTool(value: Any, path: str, errors: list[dict[str, str
         _append_error(errors, f"{path}.memory_store_name", "Required property 'memory_store_name' is missing")
     if 'scope' not in value:
         _append_error(errors, f"{path}.scope", "Required property 'scope' is missing")
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
     if 'memory_store_name' in value:
         _validate_MemorySearchTool_memory_store_name(value['memory_store_name'], f"{path}.memory_store_name", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'scope' in value:
         _validate_MemorySearchTool_scope(value['scope'], f"{path}.scope", errors)
     if 'search_options' in value:
@@ -1843,12 +1952,8 @@ def _validate_MemorySearchPreviewTool(value: Any, path: str, errors: list[dict[s
         _append_error(errors, f"{path}.memory_store_name", "Required property 'memory_store_name' is missing")
     if 'scope' not in value:
         _append_error(errors, f"{path}.scope", "Required property 'scope' is missing")
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
     if 'memory_store_name' in value:
         _validate_MemorySearchTool_memory_store_name(value['memory_store_name'], f"{path}.memory_store_name", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'scope' in value:
         _validate_MemorySearchTool_scope(value['scope'], f"{path}.scope", errors)
     if 'search_options' in value:
@@ -1889,6 +1994,8 @@ def _validate_OpenApiTool(value: Any, path: str, errors: list[dict[str, str]]) -
         _append_error(errors, f"{path}.openapi", "Required property 'openapi' is missing")
     if 'openapi' in value:
         _validate_OpenApiTool_openapi(value['openapi'], f"{path}.openapi", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'type' in value:
         _validate_OpenApiTool_type(value['type'], f"{path}.type", errors)
 
@@ -1909,10 +2016,6 @@ def _validate_SharepointPreviewTool(value: Any, path: str, errors: list[dict[str
         _append_error(errors, f"{path}.type", "Required property 'type' is missing")
     if 'sharepoint_grounding_preview' not in value:
         _append_error(errors, f"{path}.sharepoint_grounding_preview", "Required property 'sharepoint_grounding_preview' is missing")
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'sharepoint_grounding_preview' in value:
         _validate_SharepointPreviewTool_sharepoint_grounding_preview(value['sharepoint_grounding_preview'], f"{path}.sharepoint_grounding_preview", errors)
     if 'type' in value:
@@ -1927,11 +2030,13 @@ def _validate_OpenAI_FunctionShellToolParam(value: Any, path: str, errors: list[
     if 'allowed_callers' in value:
         _validate_OpenAI_ApplyPatchToolParam_allowed_callers(value['allowed_callers'], f"{path}.allowed_callers", errors)
     if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
+        _validate_AzureAISearchTool_description(value['description'], f"{path}.description", errors)
     if 'environment' in value:
         _validate_OpenAI_FunctionShellToolParam_environment(value['environment'], f"{path}.environment", errors)
     if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
+        _validate_AzureAISearchTool_description(value['name'], f"{path}.name", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'type' in value:
         _validate_OpenAI_FunctionShellToolParam_type(value['type'], f"{path}.type", errors)
 
@@ -1950,6 +2055,23 @@ def _validate_OpenAI_ToolSearchToolParam(value: Any, path: str, errors: list[dic
     if 'type' in value:
         _validate_OpenAI_ToolSearchToolParam_type(value['type'], f"{path}.type", errors)
 
+def _validate_WebIQPreviewTool(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'object'):
+        _append_type_mismatch(errors, path, 'object', value)
+        return
+    if 'type' not in value:
+        _append_error(errors, f"{path}.type", "Required property 'type' is missing")
+    if 'project_connection_id' not in value:
+        _append_error(errors, f"{path}.project_connection_id", "Required property 'project_connection_id' is missing")
+    if 'project_connection_id' in value:
+        _validate_WebIQPreviewTool_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
+    if 'require_approval' in value:
+        _validate_WebIQPreviewTool_require_approval(value['require_approval'], f"{path}.require_approval", errors)
+    if 'server_label' in value:
+        _validate_WebIQPreviewTool_server_label(value['server_label'], f"{path}.server_label", errors)
+    if 'type' in value:
+        _validate_WebIQPreviewTool_type(value['type'], f"{path}.type", errors)
+
 def _validate_OpenAI_WebSearchTool(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
@@ -1959,15 +2081,17 @@ def _validate_OpenAI_WebSearchTool(value: Any, path: str, errors: list[dict[str,
     if 'custom_search_configuration' in value:
         _validate_OpenAI_WebSearchTool_custom_search_configuration(value['custom_search_configuration'], f"{path}.custom_search_configuration", errors)
     if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
+        _validate_AzureAISearchTool_description(value['description'], f"{path}.description", errors)
     if 'external_web_access' in value:
         _validate_OpenAI_WebSearchTool_external_web_access(value['external_web_access'], f"{path}.external_web_access", errors)
     if 'filters' in value:
         _validate_OpenAI_WebSearchTool_filters(value['filters'], f"{path}.filters", errors)
     if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
+        _validate_AzureAISearchTool_description(value['name'], f"{path}.name", errors)
     if 'search_context_size' in value:
         _validate_OpenAI_WebSearchTool_search_context_size(value['search_context_size'], f"{path}.search_context_size", errors)
+    if 'tool_configs' in value:
+        _validate_AzureAISearchTool_tool_configs(value['tool_configs'], f"{path}.tool_configs", errors)
     if 'type' in value:
         _validate_OpenAI_WebSearchTool_type(value['type'], f"{path}.type", errors)
     if 'user_location' in value:
@@ -1994,12 +2118,12 @@ def _validate_WorkIQPreviewTool(value: Any, path: str, errors: list[dict[str, st
         return
     if 'type' not in value:
         _append_error(errors, f"{path}.type", "Required property 'type' is missing")
-    if 'work_iq_preview' not in value:
-        _append_error(errors, f"{path}.work_iq_preview", "Required property 'work_iq_preview' is missing")
+    if 'project_connection_id' not in value:
+        _append_error(errors, f"{path}.project_connection_id", "Required property 'project_connection_id' is missing")
+    if 'project_connection_id' in value:
+        _validate_WorkIQPreviewTool_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
     if 'type' in value:
         _validate_WorkIQPreviewTool_type(value['type'], f"{path}.type", errors)
-    if 'work_iq_preview' in value:
-        _validate_WorkIQPreviewTool_work_iq_preview(value['work_iq_preview'], f"{path}.work_iq_preview", errors)
 
 def _validate_OpenAI_Item_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
@@ -2489,17 +2613,6 @@ def _validate_OpenAI_ItemMcpListTools(value: Any, path: str, errors: list[dict[s
     if 'type' in value:
         _validate_OpenAI_ItemMcpListTools_type(value['type'], f"{path}.type", errors)
 
-def _validate_MemorySearchToolCallItemParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'object'):
-        _append_type_mismatch(errors, path, 'object', value)
-        return
-    if 'type' not in value:
-        _append_error(errors, f"{path}.type", "Required property 'type' is missing")
-    if 'results' in value:
-        _validate_MemorySearchToolCallItemParam_results(value['results'], f"{path}.results", errors)
-    if 'type' in value:
-        _validate_MemorySearchToolCallItemParam_type(value['type'], f"{path}.type", errors)
-
 def _validate_OpenAI_ItemMessage(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
@@ -2866,27 +2979,33 @@ def _validate_OpenAI_ToolType(value: Any, path: str, errors: list[dict[str, str]
             return
         return
 
-def _validate_A2APreviewTool_agent_card_path(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+def _validate_A2ATool_a2a_version(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _validate_A2ATool_a2a_version_all_of_0(value, path, errors)
+
+def _validate_A2ATool_agent_card_path(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'string'):
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_A2APreviewTool_base_url(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+def _validate_A2ATool_base_url(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'string'):
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_A2APreviewTool_description(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+def _validate_A2ATool_project_connection_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'string'):
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_A2APreviewTool_name(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
+def _validate_A2ATool_send_credentials_for_agent_card(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'boolean'):
+        _append_type_mismatch(errors, path, 'boolean', value)
         return
 
-def _validate_A2APreviewTool_project_connection_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+def _validate_A2ATool_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = ('a2a',)
+    if value not in _allowed_values:
+        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
     if not _is_type(value, 'string'):
         _append_type_mismatch(errors, path, 'string', value)
         return
@@ -2918,6 +3037,19 @@ def _validate_OpenAI_ApplyPatchToolParam_type(value: Any, path: str, errors: lis
 
 def _validate_AzureAISearchTool_azure_ai_search(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_AzureAISearchTool_azure_ai_search_all_of_0(value, path, errors)
+
+def _validate_AzureAISearchTool_description(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_AzureAISearchTool_tool_configs(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'object'):
+        _append_type_mismatch(errors, path, 'object', value)
+        return
+    for _key, _item in value.items():
+        if _key not in ():
+            _validate_AzureAISearchTool_tool_configs_additional_property(_item, f"{path}.{_key}", errors)
 
 def _validate_AzureAISearchTool_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('azure_ai_search',)
@@ -3023,14 +3155,10 @@ def _validate_OpenAI_ComputerTool_type(value: Any, path: str, errors: list[dict[
         return
 
 def _validate_OpenAI_ComputerUsePreviewTool_display_height(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ComputerUsePreviewTool_display_width(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ComputerUsePreviewTool_environment(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_ComputerUsePreviewTool_environment_all_of_0(value, path, errors)
@@ -3080,15 +3208,60 @@ def _validate_MicrosoftFabricPreviewTool_type(value: Any, path: str, errors: lis
         _append_type_mismatch(errors, path, 'string', value)
         return
 
+def _validate_FabricIQPreviewTool_project_connection_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_FabricIQPreviewTool_require_approval(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
+    if not _matched_union and _is_type(value, 'object'):
+        _branch_errors_0: list[dict[str, str]] = []
+        _validate_FabricIQPreviewTool_require_approval_object(value, path, _branch_errors_0)
+        if not _branch_errors_0:
+            _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
+    if not _matched_union and _is_type(value, 'string'):
+        _branch_errors_1: list[dict[str, str]] = []
+        _validate_CreateResponse_instructions(value, path, _branch_errors_1)
+        if not _branch_errors_1:
+            _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
+    if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
+        _append_error(errors, path, f"Expected one of: object, string; got {_type_label(value)}")
+        return
+
+def _validate_FabricIQPreviewTool_server_label(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_FabricIQPreviewTool_server_url(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_FabricIQPreviewTool_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = ('fabric_iq_preview',)
+    if value not in _allowed_values:
+        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
 def _validate_OpenAI_FileSearchTool_filters(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if value is None:
         return
     _validate_OpenAI_FileSearchTool_filters_all_of_0(value, path, errors)
 
 def _validate_OpenAI_FileSearchTool_max_num_results(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_FileSearchTool_ranking_options(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_FileSearchTool_ranking_options_all_of_0(value, path, errors)
@@ -3183,9 +3356,7 @@ def _validate_OpenAI_ImageGenTool_moderation(value: Any, path: str, errors: list
         return
 
 def _validate_OpenAI_ImageGenTool_output_compression(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ImageGenTool_output_format(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('png', 'webp', 'jpeg')
@@ -3196,9 +3367,7 @@ def _validate_OpenAI_ImageGenTool_output_format(value: Any, path: str, errors: l
         return
 
 def _validate_OpenAI_ImageGenTool_partial_images(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ImageGenTool_quality(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('low', 'medium', 'high', 'auto')
@@ -3310,7 +3479,7 @@ def _validate_OpenAI_MCPTool_require_approval(value: Any, path: str, errors: lis
     _best_branch_errors: list[dict[str, str]] | None = None
     if not _matched_union and _is_type(value, 'object'):
         _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_MCPTool_require_approval_object(value, path, _branch_errors_0)
+        _validate_FabricIQPreviewTool_require_approval_object(value, path, _branch_errors_0)
         if not _branch_errors_0:
             _matched_union = True
         elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
@@ -3481,6 +3650,48 @@ def _validate_OpenAI_ToolSearchToolParam_type(value: Any, path: str, errors: lis
         _append_type_mismatch(errors, path, 'string', value)
         return
 
+def _validate_WebIQPreviewTool_project_connection_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_WebIQPreviewTool_require_approval(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _matched_union = False
+    _best_branch_errors: list[dict[str, str]] | None = None
+    if not _matched_union and _is_type(value, 'object'):
+        _branch_errors_0: list[dict[str, str]] = []
+        _validate_FabricIQPreviewTool_require_approval_object(value, path, _branch_errors_0)
+        if not _branch_errors_0:
+            _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_0) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_0
+    if not _matched_union and _is_type(value, 'string'):
+        _branch_errors_1: list[dict[str, str]] = []
+        _validate_CreateResponse_instructions(value, path, _branch_errors_1)
+        if not _branch_errors_1:
+            _matched_union = True
+        elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
+            _best_branch_errors = _branch_errors_1
+    if not _matched_union:
+        if _best_branch_errors is not None:
+            errors.extend(_best_branch_errors)
+            return
+        _append_error(errors, path, f"Expected one of: object, string; got {_type_label(value)}")
+        return
+
+def _validate_WebIQPreviewTool_server_label(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_WebIQPreviewTool_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = ('web_iq_preview',)
+    if value not in _allowed_values:
+        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
 def _validate_OpenAI_WebSearchTool_custom_search_configuration(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_WebSearchTool_custom_search_configuration_all_of_0(value, path, errors)
 
@@ -3547,6 +3758,11 @@ def _validate_OpenAI_WebSearchPreviewTool_user_location(value: Any, path: str, e
         return
     _validate_OpenAI_WebSearchPreviewTool_user_location_all_of_0(value, path, errors)
 
+def _validate_WorkIQPreviewTool_project_connection_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
 def _validate_WorkIQPreviewTool_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('work_iq_preview',)
     if value not in _allowed_values:
@@ -3554,9 +3770,6 @@ def _validate_WorkIQPreviewTool_type(value: Any, path: str, errors: list[dict[st
     if not _is_type(value, 'string'):
         _append_type_mismatch(errors, path, 'string', value)
         return
-
-def _validate_WorkIQPreviewTool_work_iq_preview(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _validate_WorkIQPreviewTool_work_iq_preview_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ItemType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values, _literal_error = _schema_literal_values('ItemType')
@@ -4136,23 +4349,6 @@ def _validate_OpenAI_ItemMcpListTools_type(value: Any, path: str, errors: list[d
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_MemorySearchToolCallItemParam_results(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if value is None:
-        return
-    if not _is_type(value, 'array'):
-        _append_type_mismatch(errors, path, 'array', value)
-        return
-    for _idx, _item in enumerate(value):
-        _validate_MemorySearchToolCallItemParam_results_item(_item, f"{path}[{_idx}]", errors)
-
-def _validate_MemorySearchToolCallItemParam_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values = ('memory_search_call',)
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
 def _validate_OpenAI_ItemMessage_content(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
     _best_branch_errors: list[dict[str, str]] | None = None
@@ -4508,6 +4704,14 @@ def _validate_OpenAI_ResponseFormatJsonSchemaSchema(value: Any, path: str, error
         if _key not in ():
             _validate_CreateResponse_structured_inputs_additional_property(_item, f"{path}.{_key}", errors)
 
+def _validate_A2ATool_a2a_version_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('A2ATool', 'a2a_version_all_of_0')
+    if _allowed_values is not None and value is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
+    _validate_A2AProtocolVersion(value, path, errors)
+
 def _validate_OpenAI_ApplyPatchToolParam_allowed_callers_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('ApplyPatchToolParam', 'allowed_callers_item')
     if _allowed_values is not None and value is not None:
@@ -4518,6 +4722,9 @@ def _validate_OpenAI_ApplyPatchToolParam_allowed_callers_item(value: Any, path: 
 
 def _validate_AzureAISearchTool_azure_ai_search_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_AzureAISearchToolResource(value, path, errors)
+
+def _validate_AzureAISearchTool_tool_configs_additional_property(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _validate_ToolConfig(value, path, errors)
 
 def _validate_AzureFunctionTool_azure_function_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_AzureFunctionDefinition(value, path, errors)
@@ -4562,6 +4769,14 @@ def _validate_OpenAI_CustomToolParam_format_all_of_0(value: Any, path: str, erro
 
 def _validate_MicrosoftFabricPreviewTool_fabric_dataagent_preview_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_FabricDataAgentToolParameters(value, path, errors)
+
+def _validate_FabricIQPreviewTool_require_approval_object(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if value is None:
+        return
+    if not _is_type(value, 'object'):
+        _append_type_mismatch(errors, path, 'object', value)
+        return
+    _validate_FabricIQPreviewTool_require_approval_object_all_of_0(value, path, errors)
 
 def _validate_OpenAI_FileSearchTool_filters_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_Filters(value, path, errors)
@@ -4620,14 +4835,6 @@ def _validate_OpenAI_MCPTool_allowed_tools_object(value: Any, path: str, errors:
         _append_type_mismatch(errors, path, 'object', value)
         return
     _validate_OpenAI_MCPTool_allowed_tools_object_all_of_0(value, path, errors)
-
-def _validate_OpenAI_MCPTool_require_approval_object(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if value is None:
-        return
-    if not _is_type(value, 'object'):
-        _append_type_mismatch(errors, path, 'object', value)
-        return
-    _validate_OpenAI_MCPTool_require_approval_object_all_of_0(value, path, errors)
 
 def _validate_OpenAI_MCPTool_require_approval_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if value is None:
@@ -4713,9 +4920,6 @@ def _validate_OpenAI_WebSearchPreviewTool_search_context_size_all_of_0(value: An
 
 def _validate_OpenAI_WebSearchPreviewTool_user_location_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_ApproximateLocation(value, path, errors)
-
-def _validate_WorkIQPreviewTool_work_iq_preview_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _validate_WorkIQPreviewToolParameters(value, path, errors)
 
 def _validate_OpenAI_ApplyPatchToolCallItemParam_caller_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_ToolCallCallerParam(value, path, errors)
@@ -4912,9 +5116,6 @@ def _validate_OpenAI_RealtimeMCPError(value: Any, path: str, errors: list[dict[s
 def _validate_OpenAI_ItemMcpListTools_tools_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_MCPListToolsTool(value, path, errors)
 
-def _validate_MemorySearchToolCallItemParam_results_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _validate_MemorySearchItem(value, path, errors)
-
 def _validate_OpenAI_ItemMessage_content_array(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'array'):
         _append_type_mismatch(errors, path, 'array', value)
@@ -5078,6 +5279,19 @@ def _validate_OpenAI_InputFileContent_type(value: Any, path: str, errors: list[d
         _append_type_mismatch(errors, path, 'string', value)
         return
 
+def _validate_A2AProtocolVersion(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values, _literal_error = _schema_literal_values('A2AProtocolVersion')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
+        return
+
 def _validate_OpenAI_CallableToolAllowedCaller(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values, _literal_error = _schema_literal_values('CallableToolAllowedCaller')
     if _literal_error is not None:
@@ -5097,12 +5311,17 @@ def _validate_AzureAISearchToolResource(value: Any, path: str, errors: list[dict
         return
     if 'indexes' not in value:
         _append_error(errors, f"{path}.indexes", "Required property 'indexes' is missing")
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
     if 'indexes' in value:
         _validate_AzureAISearchToolResource_indexes(value['indexes'], f"{path}.indexes", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
+
+def _validate_ToolConfig(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'object'):
+        _append_type_mismatch(errors, path, 'object', value)
+        return
+    if 'additional_search_text' in value:
+        _validate_ToolConfig_additional_search_text(value['additional_search_text'], f"{path}.additional_search_text", errors)
+    if 'pin' in value:
+        _validate_ToolConfig_pin(value['pin'], f"{path}.pin", errors)
 
 def _validate_AzureFunctionDefinition(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -5127,10 +5346,6 @@ def _validate_BingCustomSearchToolParameters(value: Any, path: str, errors: list
         return
     if 'search_configurations' not in value:
         _append_error(errors, f"{path}.search_configurations", "Required property 'search_configurations' is missing")
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'search_configurations' in value:
         _validate_BingCustomSearchToolParameters_search_configurations(value['search_configurations'], f"{path}.search_configurations", errors)
 
@@ -5140,10 +5355,6 @@ def _validate_BingGroundingSearchToolParameters(value: Any, path: str, errors: l
         return
     if 'search_configurations' not in value:
         _append_error(errors, f"{path}.search_configurations", "Required property 'search_configurations' is missing")
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'search_configurations' in value:
         _validate_BingGroundingSearchToolParameters_search_configurations(value['search_configurations'], f"{path}.search_configurations", errors)
 
@@ -5155,10 +5366,6 @@ def _validate_BrowserAutomationToolParameters(value: Any, path: str, errors: lis
         _append_error(errors, f"{path}.connection", "Required property 'connection' is missing")
     if 'connection' in value:
         _validate_BrowserAutomationToolParameters_connection(value['connection'], f"{path}.connection", errors)
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
 
 def _validate_StructuredOutputDefinition(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -5241,12 +5448,11 @@ def _validate_FabricDataAgentToolParameters(value: Any, path: str, errors: list[
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
         return
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'project_connections' in value:
         _validate_FabricDataAgentToolParameters_project_connections(value['project_connections'], f"{path}.project_connections", errors)
+
+def _validate_FabricIQPreviewTool_require_approval_object_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _validate_OpenAI_MCPToolRequireApproval(value, path, errors)
 
 def _validate_OpenAI_Filters(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
@@ -5321,9 +5527,6 @@ def _validate_OpenAI_ImageGenToolInputImageMask(value: Any, path: str, errors: l
 def _validate_OpenAI_MCPTool_allowed_tools_object_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_MCPToolFilter(value, path, errors)
 
-def _validate_OpenAI_MCPTool_require_approval_object_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _validate_OpenAI_MCPToolRequireApproval(value, path, errors)
-
 def _validate_MemorySearchOptions(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
@@ -5383,10 +5586,6 @@ def _validate_SharepointGroundingToolParameters(value: Any, path: str, errors: l
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
         return
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'project_connections' in value:
         _validate_FabricDataAgentToolParameters_project_connections(value['project_connections'], f"{path}.project_connections", errors)
 
@@ -5439,12 +5638,8 @@ def _validate_WebSearchConfiguration(value: Any, path: str, errors: list[dict[st
         _append_error(errors, f"{path}.project_connection_id", "Required property 'project_connection_id' is missing")
     if 'instance_name' not in value:
         _append_error(errors, f"{path}.instance_name", "Required property 'instance_name' is missing")
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
     if 'instance_name' in value:
         _validate_WebSearchConfiguration_instance_name(value['instance_name'], f"{path}.instance_name", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'project_connection_id' in value:
         _validate_WebSearchConfiguration_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
 
@@ -5514,15 +5709,6 @@ def _validate_OpenAI_ApproximateLocation(value: Any, path: str, errors: list[dic
         _validate_CreateResponse_instructions(value['timezone'], f"{path}.timezone", errors)
     if 'type' in value:
         _validate_OpenAI_WebSearchApproximateLocation_type(value['type'], f"{path}.type", errors)
-
-def _validate_WorkIQPreviewToolParameters(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'object'):
-        _append_type_mismatch(errors, path, 'object', value)
-        return
-    if 'project_connection_id' not in value:
-        _append_error(errors, f"{path}.project_connection_id", "Required property 'project_connection_id' is missing")
-    if 'project_connection_id' in value:
-        _validate_WorkIQPreviewToolParameters_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
 
 def _validate_OpenAI_ToolCallCallerParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -5944,7 +6130,7 @@ def _validate_OpenAI_RealtimeMCPHTTPError(value: Any, path: str, errors: list[di
     if 'message' not in value:
         _append_error(errors, f"{path}.message", "Required property 'message' is missing")
     if 'code' in value:
-        _validate_OpenAI_RealtimeMCPHTTPError_code(value['code'], f"{path}.code", errors)
+        _validate_CreateResponse_max_output_tokens_all_of_0(value['code'], f"{path}.code", errors)
     if 'message' in value:
         _validate_OpenAI_InputParam_string(value['message'], f"{path}.message", errors)
     if 'type' in value:
@@ -5961,7 +6147,7 @@ def _validate_OpenAI_RealtimeMCPProtocolError(value: Any, path: str, errors: lis
     if 'message' not in value:
         _append_error(errors, f"{path}.message", "Required property 'message' is missing")
     if 'code' in value:
-        _validate_OpenAI_RealtimeMCPHTTPError_code(value['code'], f"{path}.code", errors)
+        _validate_CreateResponse_max_output_tokens_all_of_0(value['code'], f"{path}.code", errors)
     if 'message' in value:
         _validate_OpenAI_InputParam_string(value['message'], f"{path}.message", errors)
     if 'type' in value:
@@ -5996,15 +6182,6 @@ def _validate_OpenAI_MCPListToolsTool(value: Any, path: str, errors: list[dict[s
         _validate_OpenAI_MCPListToolsTool_input_schema(value['input_schema'], f"{path}.input_schema", errors)
     if 'name' in value:
         _validate_OpenAI_MCPListToolsTool_name(value['name'], f"{path}.name", errors)
-
-def _validate_MemorySearchItem(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'object'):
-        _append_type_mismatch(errors, path, 'object', value)
-        return
-    if 'memory_item' not in value:
-        _append_error(errors, f"{path}.memory_item", "Required property 'memory_item' is missing")
-    if 'memory_item' in value:
-        _validate_MemorySearchItem_memory_item(value['memory_item'], f"{path}.memory_item", errors)
 
 def _validate_OpenAI_ItemMessage_content_array_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_MessageContent(value, path, errors)
@@ -6258,6 +6435,16 @@ def _validate_AzureAISearchToolResource_indexes(value: Any, path: str, errors: l
     for _idx, _item in enumerate(value):
         _validate_AzureAISearchToolResource_indexes_item(_item, f"{path}[{_idx}]", errors)
 
+def _validate_ToolConfig_additional_search_text(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'string'):
+        _append_type_mismatch(errors, path, 'string', value)
+        return
+
+def _validate_ToolConfig_pin(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'boolean'):
+        _append_type_mismatch(errors, path, 'boolean', value)
+        return
+
 def _validate_AzureFunctionDefinition_function(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
@@ -6390,6 +6577,15 @@ def _validate_FabricDataAgentToolParameters_project_connections(value: Any, path
     for _idx, _item in enumerate(value):
         _validate_FabricDataAgentToolParameters_project_connections_item(_item, f"{path}[{_idx}]", errors)
 
+def _validate_OpenAI_MCPToolRequireApproval(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if not _is_type(value, 'object'):
+        _append_type_mismatch(errors, path, 'object', value)
+        return
+    if 'always' in value:
+        _validate_OpenAI_MCPTool_allowed_tools_object_all_of_0(value['always'], f"{path}.always", errors)
+    if 'never' in value:
+        _validate_OpenAI_MCPTool_allowed_tools_object_all_of_0(value['never'], f"{path}.never", errors)
+
 def _validate_OpenAI_ComparisonFilter(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
@@ -6427,9 +6623,7 @@ def _validate_OpenAI_RankingOptions_ranker(value: Any, path: str, errors: list[d
     _validate_OpenAI_RankingOptions_ranker_all_of_0(value, path, errors)
 
 def _validate_OpenAI_RankingOptions_score_threshold(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'number'):
-        _append_type_mismatch(errors, path, 'number', value)
-        return
+    _validate_CreateResponse_temperature_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ImageGenToolInputImageMask_image_url(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'string'):
@@ -6444,15 +6638,6 @@ def _validate_OpenAI_MCPToolFilter(value: Any, path: str, errors: list[dict[str,
         _validate_OpenAI_MCPToolFilter_read_only(value['read_only'], f"{path}.read_only", errors)
     if 'tool_names' in value:
         _validate_OpenAI_MCPToolFilter_tool_names(value['tool_names'], f"{path}.tool_names", errors)
-
-def _validate_OpenAI_MCPToolRequireApproval(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'object'):
-        _append_type_mismatch(errors, path, 'object', value)
-        return
-    if 'always' in value:
-        _validate_OpenAI_MCPTool_allowed_tools_object_all_of_0(value['always'], f"{path}.always", errors)
-    if 'never' in value:
-        _validate_OpenAI_MCPTool_allowed_tools_object_all_of_0(value['never'], f"{path}.never", errors)
 
 def _validate_MemorySearchOptions_max_memories(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'integer'):
@@ -6575,11 +6760,6 @@ def _validate_OpenAI_WebSearchApproximateLocation_type(value: Any, path: str, er
     _allowed_values = ('approximate',)
     if value not in _allowed_values:
         _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
-def _validate_WorkIQPreviewToolParameters_project_connection_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'string'):
         _append_type_mismatch(errors, path, 'string', value)
         return
@@ -6720,14 +6900,10 @@ def _validate_OpenAI_ClickParam_type(value: Any, path: str, errors: list[dict[st
         return
 
 def _validate_OpenAI_ClickParam_x(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ClickParam_y(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_DoubleClickAction_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('double_click',)
@@ -6738,14 +6914,10 @@ def _validate_OpenAI_DoubleClickAction_type(value: Any, path: str, errors: list[
         return
 
 def _validate_OpenAI_DoubleClickAction_x(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_DoubleClickAction_y(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_DragParam_path(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'array'):
@@ -6786,14 +6958,10 @@ def _validate_OpenAI_MoveParam_type(value: Any, path: str, errors: list[dict[str
         return
 
 def _validate_OpenAI_MoveParam_x(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_MoveParam_y(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ScreenshotParam_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('screenshot',)
@@ -6804,14 +6972,10 @@ def _validate_OpenAI_ScreenshotParam_type(value: Any, path: str, errors: list[di
         return
 
 def _validate_OpenAI_ScrollParam_scroll_x(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ScrollParam_scroll_y(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ScrollParam_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('scroll',)
@@ -6822,14 +6986,10 @@ def _validate_OpenAI_ScrollParam_type(value: Any, path: str, errors: list[dict[s
         return
 
 def _validate_OpenAI_ScrollParam_x(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ScrollParam_y(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_TypeParam_text(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'string'):
@@ -6989,11 +7149,6 @@ def _validate_OpenAI_RealtimeMcpErrorType(value: Any, path: str, errors: list[di
             return
         return
 
-def _validate_OpenAI_RealtimeMCPHTTPError_code(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
-
 def _validate_OpenAI_RealtimeMCPHTTPError_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('http_error',)
     if value not in _allowed_values:
@@ -7033,9 +7188,6 @@ def _validate_OpenAI_MCPListToolsTool_name(value: Any, path: str, errors: list[d
     if not _is_type(value, 'string'):
         _append_type_mismatch(errors, path, 'string', value)
         return
-
-def _validate_MemorySearchItem_memory_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _validate_MemorySearchItem_memory_item_all_of_0(value, path, errors)
 
 def _validate_OpenAI_MessageContent(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -7370,7 +7522,7 @@ def _validate_OpenAI_ComparisonFilter_value(value: Any, path: str, errors: list[
             _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'number'):
         _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_ComparisonFilter_value_number(value, path, _branch_errors_1)
+        _validate_OpenAI_numeric(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
         elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
@@ -7393,7 +7545,7 @@ def _validate_OpenAI_ComparisonFilter_value(value: Any, path: str, errors: list[
         if _best_branch_errors is not None:
             errors.extend(_best_branch_errors)
             return
-        _append_error(errors, path, f"Expected one of: string, number, boolean, array; got {_type_label(value)}")
+        _append_error(errors, path, f"Expected one of: string, OpenAI.numeric, boolean, array; got {_type_label(value)}")
         return
 
 def _validate_OpenAI_CompoundFilter_filters(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -7739,9 +7891,6 @@ def _validate_OpenAI_MCPListToolsTool_annotations_all_of_0(value: Any, path: str
 def _validate_OpenAI_MCPListToolsTool_input_schema_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_MCPListToolsToolInputSchema(value, path, errors)
 
-def _validate_MemorySearchItem_memory_item_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _validate_MemoryItem(value, path, errors)
-
 def _validate_OpenAI_MessageContent_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('MessageContent', 'type')
     if _allowed_values is not None and value is not None:
@@ -7981,16 +8130,12 @@ def _validate_AISearchIndexResource(value: Any, path: str, errors: list[dict[str
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
         return
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
     if 'filter' in value:
         _validate_AISearchIndexResource_filter(value['filter'], f"{path}.filter", errors)
     if 'index_asset_id' in value:
         _validate_AISearchIndexResource_index_asset_id(value['index_asset_id'], f"{path}.index_asset_id", errors)
     if 'index_name' in value:
         _validate_AISearchIndexResource_index_name(value['index_name'], f"{path}.index_name", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'project_connection_id' in value:
         _validate_AISearchIndexResource_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
     if 'query_type' in value:
@@ -8021,16 +8166,12 @@ def _validate_BingCustomSearchConfiguration(value: Any, path: str, errors: list[
         _append_error(errors, f"{path}.instance_name", "Required property 'instance_name' is missing")
     if 'count' in value:
         _validate_BingCustomSearchConfiguration_count(value['count'], f"{path}.count", errors)
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
     if 'freshness' in value:
         _validate_BingCustomSearchConfiguration_freshness(value['freshness'], f"{path}.freshness", errors)
     if 'instance_name' in value:
         _validate_WebSearchConfiguration_instance_name(value['instance_name'], f"{path}.instance_name", errors)
     if 'market' in value:
         _validate_BingCustomSearchConfiguration_market(value['market'], f"{path}.market", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'project_connection_id' in value:
         _validate_BingCustomSearchConfiguration_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
     if 'set_lang' in value:
@@ -8044,14 +8185,10 @@ def _validate_BingGroundingSearchConfiguration(value: Any, path: str, errors: li
         _append_error(errors, f"{path}.project_connection_id", "Required property 'project_connection_id' is missing")
     if 'count' in value:
         _validate_BingCustomSearchConfiguration_count(value['count'], f"{path}.count", errors)
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
     if 'freshness' in value:
         _validate_BingCustomSearchConfiguration_freshness(value['freshness'], f"{path}.freshness", errors)
     if 'market' in value:
         _validate_BingCustomSearchConfiguration_market(value['market'], f"{path}.market", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'project_connection_id' in value:
         _validate_BingCustomSearchConfiguration_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
     if 'set_lang' in value:
@@ -8063,10 +8200,6 @@ def _validate_BrowserAutomationToolConnectionParameters(value: Any, path: str, e
         return
     if 'project_connection_id' not in value:
         _append_error(errors, f"{path}.project_connection_id", "Required property 'project_connection_id' is missing")
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'project_connection_id' in value:
         _validate_BrowserAutomationToolConnectionParameters_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
 
@@ -8120,17 +8253,8 @@ def _validate_ToolProjectConnection(value: Any, path: str, errors: list[dict[str
         return
     if 'project_connection_id' not in value:
         _append_error(errors, f"{path}.project_connection_id", "Required property 'project_connection_id' is missing")
-    if 'description' in value:
-        _validate_A2APreviewTool_description(value['description'], f"{path}.description", errors)
-    if 'name' in value:
-        _validate_A2APreviewTool_name(value['name'], f"{path}.name", errors)
     if 'project_connection_id' in value:
         _validate_ToolProjectConnection_project_connection_id(value['project_connection_id'], f"{path}.project_connection_id", errors)
-
-def _validate_OpenAI_ComparisonFilter_value_number(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'number'):
-        _append_type_mismatch(errors, path, 'number', value)
-        return
 
 def _validate_OpenAI_ComparisonFilter_value_boolean(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'boolean'):
@@ -8288,42 +8412,6 @@ def _validate_OpenAI_MCPListToolsToolInputSchema(value: Any, path: str, errors: 
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
         return
-
-def _validate_MemoryItem(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'object'):
-        _append_type_mismatch(errors, path, 'object', value)
-        return
-    if 'memory_id' not in value:
-        _append_error(errors, f"{path}.memory_id", "Required property 'memory_id' is missing")
-    if 'updated_at' not in value:
-        _append_error(errors, f"{path}.updated_at", "Required property 'updated_at' is missing")
-    if 'scope' not in value:
-        _append_error(errors, f"{path}.scope", "Required property 'scope' is missing")
-    if 'content' not in value:
-        _append_error(errors, f"{path}.content", "Required property 'content' is missing")
-    if 'kind' not in value:
-        _append_error(errors, f"{path}.kind", "Required property 'kind' is missing")
-    if 'content' in value:
-        _validate_MemoryItem_content(value['content'], f"{path}.content", errors)
-    if 'kind' in value:
-        _validate_MemoryItem_kind(value['kind'], f"{path}.kind", errors)
-    if 'memory_id' in value:
-        _validate_MemoryItem_memory_id(value['memory_id'], f"{path}.memory_id", errors)
-    if 'scope' in value:
-        _validate_MemoryItem_scope(value['scope'], f"{path}.scope", errors)
-    if 'updated_at' in value:
-        _validate_MemoryItem_updated_at(value['updated_at'], f"{path}.updated_at", errors)
-    _disc_value = value.get('kind')
-    if not isinstance(_disc_value, str):
-        _append_error(errors, f"{path}.kind", "Required discriminator 'kind' is missing or invalid")
-        return
-    if _disc_value == 'chat_summary':
-        _validate_ChatSummaryMemoryItem(value, path, errors)
-        return
-    if _disc_value == 'user_profile':
-        _validate_UserProfileMemoryItem(value, path, errors)
-        return
-    _append_error(errors, f"{path}.kind", f"Invalid discriminator '{_disc_value}'. Allowed: chat_summary, user_profile")
 
 def _validate_OpenAI_MessageContentType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values, _literal_error = _schema_literal_values('MessageContentType')
@@ -8495,7 +8583,7 @@ def _validate_OpenAI_ComparisonFilter_value_array_item(value: Any, path: str, er
             _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'number'):
         _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_ComparisonFilter_value_number(value, path, _branch_errors_1)
+        _validate_OpenAI_numeric(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
         elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
@@ -8504,18 +8592,14 @@ def _validate_OpenAI_ComparisonFilter_value_array_item(value: Any, path: str, er
         if _best_branch_errors is not None:
             errors.extend(_best_branch_errors)
             return
-        _append_error(errors, path, f"Expected one of: string, number; got {_type_label(value)}")
+        _append_error(errors, path, f"Expected one of: string, OpenAI.numeric; got {_type_label(value)}")
         return
 
 def _validate_OpenAI_HybridSearchOptions_embedding_weight(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'number'):
-        _append_type_mismatch(errors, path, 'number', value)
-        return
+    _validate_CreateResponse_temperature_all_of_0(value, path, errors)
 
 def _validate_OpenAI_HybridSearchOptions_text_weight(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'number'):
-        _append_type_mismatch(errors, path, 'number', value)
-        return
+    _validate_CreateResponse_temperature_all_of_0(value, path, errors)
 
 def _validate_OpenApiAuthDetails_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenApiAuthDetails_type_all_of_0(value, path, errors)
@@ -8593,14 +8677,10 @@ def _validate_OpenAI_LocalSkillParam(value: Any, path: str, errors: list[dict[st
         _validate_OpenAI_LocalSkillParam_path(value['path'], f"{path}.path", errors)
 
 def _validate_OpenAI_CoordParam_x(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_CoordParam_y(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_VectorStoreFileAttributes_additional_property(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
@@ -8614,7 +8694,7 @@ def _validate_OpenAI_VectorStoreFileAttributes_additional_property(value: Any, p
             _best_branch_errors = _branch_errors_0
     if not _matched_union and _is_type(value, 'number'):
         _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_ComparisonFilter_value_number(value, path, _branch_errors_1)
+        _validate_OpenAI_numeric(value, path, _branch_errors_1)
         if not _branch_errors_1:
             _matched_union = True
         elif _best_branch_errors is None or len(_branch_errors_1) < len(_best_branch_errors):
@@ -8630,7 +8710,7 @@ def _validate_OpenAI_VectorStoreFileAttributes_additional_property(value: Any, p
         if _best_branch_errors is not None:
             errors.extend(_best_branch_errors)
             return
-        _append_error(errors, path, f"Expected one of: string, number, boolean; got {_type_label(value)}")
+        _append_error(errors, path, f"Expected one of: string, OpenAI.numeric, boolean; got {_type_label(value)}")
         return
 
 def _validate_OpenAI_PromptCacheBreakpointParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -8654,47 +8734,6 @@ def _validate_OpenAI_DetailEnum(value: Any, path: str, errors: list[dict[str, st
             _append_type_mismatch(errors, path, 'string', value)
             return
         return
-
-def _validate_MemoryItem_content(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
-def _validate_MemoryItem_kind(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _validate_MemoryItem_kind_all_of_0(value, path, errors)
-
-def _validate_MemoryItem_memory_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
-def _validate_MemoryItem_scope(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
-def _validate_MemoryItem_updated_at(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
-
-def _validate_ChatSummaryMemoryItem(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'object'):
-        _append_type_mismatch(errors, path, 'object', value)
-        return
-    if 'kind' not in value:
-        _append_error(errors, f"{path}.kind", "Required property 'kind' is missing")
-    if 'kind' in value:
-        _validate_ChatSummaryMemoryItem_kind(value['kind'], f"{path}.kind", errors)
-
-def _validate_UserProfileMemoryItem(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'object'):
-        _append_type_mismatch(errors, path, 'object', value)
-        return
-    if 'kind' not in value:
-        _append_error(errors, f"{path}.kind", "Required property 'kind' is missing")
-    if 'kind' in value:
-        _validate_UserProfileMemoryItem_kind(value['kind'], f"{path}.kind", errors)
 
 def _validate_OpenAI_Annotation(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -8737,7 +8776,7 @@ def _validate_OpenAI_LogProb(value: Any, path: str, errors: list[dict[str, str]]
     if 'bytes' in value:
         _validate_OpenAI_LogProb_bytes(value['bytes'], f"{path}.bytes", errors)
     if 'logprob' in value:
-        _validate_OpenAI_ComparisonFilter_value_number(value['logprob'], f"{path}.logprob", errors)
+        _validate_CreateResponse_temperature_all_of_0(value['logprob'], f"{path}.logprob", errors)
     if 'token' in value:
         _validate_OpenAI_InputParam_string(value['token'], f"{path}.token", errors)
     if 'top_logprobs' in value:
@@ -8881,30 +8920,6 @@ def _validate_OpenAI_LocalSkillParam_path(value: Any, path: str, errors: list[di
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_MemoryItem_kind_all_of_0(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values = _field_literal_values('MemoryItem', 'kind_all_of_0')
-    if _allowed_values is not None and value is not None:
-        if value not in _allowed_values:
-            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-        return
-    _validate_MemoryItemKind(value, path, errors)
-
-def _validate_ChatSummaryMemoryItem_kind(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values = ('chat_summary',)
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
-def _validate_UserProfileMemoryItem_kind(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values = ('user_profile',)
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
 def _validate_OpenAI_Annotation_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('Annotation', 'type')
     if _allowed_values is not None and value is not None:
@@ -9010,7 +9025,7 @@ def _validate_OpenAI_LogProb_bytes(value: Any, path: str, errors: list[dict[str,
         _append_type_mismatch(errors, path, 'array', value)
         return
     for _idx, _item in enumerate(value):
-        _validate_OpenAI_RealtimeMCPHTTPError_code(_item, f"{path}[{_idx}]", errors)
+        _validate_CreateResponse_max_output_tokens_all_of_0(_item, f"{path}[{_idx}]", errors)
 
 def _validate_OpenAI_LogProb_top_logprobs(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'array'):
@@ -9033,9 +9048,7 @@ def _validate_OpenAI_FunctionShellCallOutputOutcomeParamType(value: Any, path: s
         return
 
 def _validate_OpenAI_FunctionShellCallOutputExitOutcomeParam_exit_code(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_FunctionShellCallOutputExitOutcomeParam_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('exit',)
@@ -9140,19 +9153,6 @@ def _validate_OpenAI_SkillReferenceParam_version(value: Any, path: str, errors: 
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_MemoryItemKind(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('MemoryItemKind')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is not None:
-        if value not in _allowed_values:
-            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-        if not _is_type(value, 'string'):
-            _append_type_mismatch(errors, path, 'string', value)
-            return
-        return
-
 def _validate_OpenAI_AnnotationType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values, _literal_error = _schema_literal_values('AnnotationType')
     if _literal_error is not None:
@@ -9172,9 +9172,7 @@ def _validate_OpenAI_ContainerFileCitationBody_container_id(value: Any, path: st
         return
 
 def _validate_OpenAI_ContainerFileCitationBody_end_index(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ContainerFileCitationBody_file_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'string'):
@@ -9187,9 +9185,7 @@ def _validate_OpenAI_ContainerFileCitationBody_filename(value: Any, path: str, e
         return
 
 def _validate_OpenAI_ContainerFileCitationBody_start_index(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_ContainerFileCitationBody_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('container_file_citation',)
@@ -9205,9 +9201,7 @@ def _validate_OpenAI_FileCitationBody_filename(value: Any, path: str, errors: li
         return
 
 def _validate_OpenAI_FileCitationBody_index(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_FileCitationBody_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = ('file_citation',)
@@ -9226,14 +9220,10 @@ def _validate_OpenAI_FilePath_type(value: Any, path: str, errors: list[dict[str,
         return
 
 def _validate_OpenAI_UrlCitationBody_end_index(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_UrlCitationBody_start_index(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if not _is_type(value, 'integer'):
-        _append_type_mismatch(errors, path, 'integer', value)
-        return
+    _validate_CreateResponse_max_output_tokens_all_of_0(value, path, errors)
 
 def _validate_OpenAI_UrlCitationBody_title(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'string'):
@@ -9300,7 +9290,7 @@ def _validate_OpenAI_TopLogProb(value: Any, path: str, errors: list[dict[str, st
     if 'bytes' in value:
         _validate_OpenAI_LogProb_bytes(value['bytes'], f"{path}.bytes", errors)
     if 'logprob' in value:
-        _validate_OpenAI_ComparisonFilter_value_number(value['logprob'], f"{path}.logprob", errors)
+        _validate_CreateResponse_temperature_all_of_0(value['logprob'], f"{path}.logprob", errors)
     if 'token' in value:
         _validate_OpenAI_InputParam_string(value['token'], f"{path}.token", errors)
 
