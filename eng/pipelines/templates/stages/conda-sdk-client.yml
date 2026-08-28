@@ -950,7 +950,8 @@ extends:
                         - package: azure-mgmt-sphere
                           version: 1.0.0
                         - package: azure-mgmt-sql
-                          version: 3.0.1
+                          checkout_path: sdk/sql
+                          version: 4.0.0
                         - package: azure-mgmt-standbypool
                           version: 2.0.0
                         - package: azure-mgmt-storage
