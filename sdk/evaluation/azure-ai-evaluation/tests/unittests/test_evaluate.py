@@ -1895,8 +1895,12 @@ class TestTagsInLoggingFunctions:
         mock_client.start_evaluation_run.return_value = mock_start_result
 
         # Mock update_evaluation_run
+        ml_studio_url = (
+            "https://ml.azure.com/runs/test-run-id?wsid=/subscriptions/test-sub/resourceGroups/test-rg/"
+            "providers/Microsoft.MachineLearningServices/workspaces/test-ws"
+        )
         mock_update_result = type(
-            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": ml_studio_url}}
         )()
         mock_client.update_evaluation_run.return_value = mock_update_result
 
@@ -1923,7 +1927,10 @@ class TestTagsInLoggingFunctions:
         assert eval_upload.tags == tags
 
         # Verify return value
-        assert result == "https://test-uri"
+        assert result == (
+            "https://ai.azure.com/build/evaluation/test-run-id?wsid=/subscriptions/test-sub/resourceGroups/test-rg/"
+            "providers/Microsoft.MachineLearningServices/workspaces/test-ws"
+        )
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
     @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")

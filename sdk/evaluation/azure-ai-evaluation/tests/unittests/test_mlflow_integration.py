@@ -53,6 +53,29 @@ def _make_aoai_summary():
     return {"output_items": {"data": []}, "scorecard": {}}
 
 
+class TestStartRunLinks:
+    """Verify tracking links returned from OneDP use AI Foundry URLs."""
+
+    def test_start_run_normalizes_ml_studio_url(self):
+        integration = _make_mlflow_integration(one_dp_project=True)
+        onedp_client = integration.generated_rai_client._evaluation_onedp_client
+        response = MagicMock()
+        response.properties = {
+            "AiStudioEvaluationUri": (
+                "https://ml.azure.com/runs/test-run-id?wsid=/subscriptions/test-sub/resourceGroups/test-rg/"
+                "providers/Microsoft.MachineLearningServices/workspaces/test-ws"
+            )
+        }
+        onedp_client.start_red_team_run.return_value = response
+
+        integration.start_redteam_mlflow_run(azure_ai_project={"subscription_id": "test-sub"}, run_name="test-run")
+
+        assert integration.ai_studio_url == (
+            "https://ai.azure.com/build/evaluation/test-run-id?wsid=/subscriptions/test-sub/resourceGroups/test-rg/"
+            "providers/Microsoft.MachineLearningServices/workspaces/test-ws"
+        )
+
+
 class TestUpdateRunAlwaysFires:
     """Verify update_red_team_run is called even when create_evaluation_result fails."""
 

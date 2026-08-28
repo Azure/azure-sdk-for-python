@@ -9,6 +9,7 @@ import tempfile
 from pathlib import Path
 import time
 from typing import Any, Dict, List, NamedTuple, Optional, Union, cast
+from urllib.parse import urlparse
 import uuid
 import base64
 import math
@@ -214,7 +215,7 @@ def _log_metrics_and_instance_results_onedp(
             ),
         )
 
-    return update_run_response.properties.get("AiStudioEvaluationUri")
+    return _normalize_ai_studio_url(update_run_response.properties.get("AiStudioEvaluationUri"))
 
 
 def _log_metrics_and_instance_results(
@@ -313,6 +314,27 @@ def _get_ai_studio_url(trace_destination: str, evaluation_id: str) -> str:
     )
 
     return studio_url
+
+
+def _normalize_ai_studio_url(studio_url: Optional[str]) -> Optional[str]:
+    if not studio_url:
+        return studio_url
+
+    parsed_url = urlparse(studio_url)
+    if parsed_url.netloc != "ml.azure.com":
+        return studio_url
+
+    path_parts = [part for part in parsed_url.path.split("/") if part]
+    if "runs" not in path_parts:
+        return studio_url
+
+    run_id_index = path_parts.index("runs") + 1
+    if run_id_index >= len(path_parts):
+        return studio_url
+
+    studio_base_url = os.getenv("AI_STUDIO_BASE_URL", "https://ai.azure.com")
+    query = f"?{parsed_url.query}" if parsed_url.query else ""
+    return f"{studio_base_url}/build/evaluation/{path_parts[run_id_index]}{query}"
 
 
 def _trace_destination_from_project_scope(project_scope: AzureAIProject) -> str:
