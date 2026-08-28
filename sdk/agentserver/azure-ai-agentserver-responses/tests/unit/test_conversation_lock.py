@@ -230,7 +230,7 @@ class TestSessionGuidTaskMigration:
         assert orchestrator._multi_turn_task_fn.start.await_args.kwargs["task_id"] == expected_guid_id
 
     @pytest.mark.asyncio
-    async def test_existing_guid_task_is_preferred_when_both_ids_exist(self) -> None:
+    async def test_existing_guid_task_skips_legacy_lookup(self) -> None:
         from azure.ai.agentserver.responses.hosting._task_id import (
             derive_task_id,
             derive_task_session_scope,
@@ -262,6 +262,7 @@ class TestSessionGuidTaskMigration:
         )
 
         assert orchestrator._multi_turn_task_fn.start.await_args.kwargs["task_id"] == expected_guid_id
+        orchestrator._multi_turn_task_fn._get.assert_awaited_once_with(expected_guid_id)
 
     @pytest.mark.asyncio
     async def test_completed_legacy_task_is_not_reused(self) -> None:

@@ -127,11 +127,12 @@ def derive_conversation_chain_id(
     session_id: str,
     steerable: bool = True,
 ) -> str:
-    """Derive the stable conversation chain id (== the resilient ``task_id``).
+    """Derive the stable public conversation chain identity.
 
     The id is the same for every turn of a chain and reconstructable on recovery
     (a pure function of the persisted inputs). See the module docstring for the
-    per-case id shapes.
+    per-case id shapes. A hosted physical task ID can use a private session-GUID
+    scope and therefore differ from this handler-facing identity.
 
     :keyword conversation_id: Explicit conversation scope (highest priority).
     :paramtype conversation_id: str | None

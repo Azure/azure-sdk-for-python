@@ -1179,20 +1179,11 @@ class ResilientResponseOrchestrator:
         :returns: The task ID to use for this turn.
         :rtype: str
         """
-        new_task, legacy_task = await asyncio.gather(
-            task_fn._get(task_id),  # pylint: disable=protected-access
-            task_fn._get(legacy_task_id),  # pylint: disable=protected-access
-        )
+        new_task = await task_fn._get(task_id)  # pylint: disable=protected-access
         if new_task is not None:
-            if legacy_task is not None:
-                logger.warning(
-                    "Both GUID-scoped and legacy resilient tasks exist; using GUID-scoped task %s "
-                    "and leaving legacy task %s unchanged.",
-                    task_id,
-                    legacy_task_id,
-                )
             return task_id
 
+        legacy_task = await task_fn._get(legacy_task_id)  # pylint: disable=protected-access
         legacy_status = getattr(legacy_task, "status", None)
         if legacy_status in {"pending", "in_progress", "suspended"}:
             logger.info(
