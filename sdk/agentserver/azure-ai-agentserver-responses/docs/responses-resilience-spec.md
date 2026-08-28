@@ -1436,19 +1436,20 @@ through to non-store behaviour per their stability policy.
 
 ## §15 — Worked storage timeline (worked example)
 
-A `(store=true, background=true, resilient_background=true, stream=true,
-steerable_conversations=true)` chain with two turns and a crash
-between them. Numbers are illustrative.
+A hosted `(store=true, background=true, resilient_background=true, stream=true,
+steerable_conversations=true)` chain with a session-incarnation GUID, two turns,
+and a crash between them. Numbers are illustrative.
 
 ```
 T=0   POST /v1/responses { input: "Hi", store: true, background: true }
-      → derive_task_id  = "rchain_AB12..."
-      → conversation_chain_id = "rchain_AB12..."  (== task_id; standalone first
-                                              turn, derived from resp_1's
-                                              embedded partition key)
+      → derive_task_id = "rchain_CD34..."  (private hosted task identity;
+                                             scoped by the session GUID and
+                                             public session identity)
+      → conversation_chain_id = "rchain_AB12..."  (stable public
+                                                     handler-facing identity)
 
 T=1   primitive: task_store.create({
-        id: "rchain_AB12...",
+        id: "rchain_CD34...",
         status: "in_progress",
         payload: { input: <serialized ResilientResponseInput> },
         ...
@@ -1472,7 +1473,7 @@ T=3   handler:   emit response.in_progress (seq=2)
 
 T=4   ═══════ SIGKILL ═══════
       
-T=5   process restarts; lease scanner sees "rchain_AB12..."
+T=5   process restarts; lease scanner sees "rchain_CD34..."
       with status="in_progress" and expired lease
 
 T=6   primitive: re-fire task body with ctx.context.is_recovery=True
@@ -1518,7 +1519,7 @@ T=10  task body returns Suspended (steerable_conversations=true)
 
 T=11  POST /v1/responses { input: "Now this", previous_response_id: resp_1,
                            store: true, background: true }
-      → derive_task_id = SAME "rchain_AB12..." (chain inherits)
+      → derive_task_id = SAME "rchain_CD34..." (chain inherits)
       framework: task_fn.start(task_id, input_id=resp_2,
                                if_last_input_id=resp_1)
       primitive: precondition holds (_framework.last_input_id == resp_1)
