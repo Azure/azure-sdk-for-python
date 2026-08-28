@@ -20,7 +20,7 @@ from testcase import setup_configs, cleanup_test_resources
 
 
 _LOGGER = logging.getLogger(__name__)
-_RBAC_PROPAGATION_TIMEOUT = 15 * 60
+_RBAC_PROPAGATION_TIMEOUT = 15 * 60 + 5
 _MAX_RETRY_DELAY = 30
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
@@ -29,7 +29,7 @@ _MAX_RETRY_DELAY = 30
 snapshot_names = {}
 
 
-def _wait_for_data_plane_access(client, timeout=_RBAC_PROPAGATION_TIMEOUT):
+def _wait_for_rbac_propagation(client, timeout=_RBAC_PROPAGATION_TIMEOUT):
     deadline = time.monotonic() + timeout
     retry_delay = 1
 
