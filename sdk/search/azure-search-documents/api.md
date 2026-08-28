@@ -13762,7 +13762,7 @@ namespace azure.search.documents.models
 
         def add_merge_or_upload_actions(
                 self, 
-                *documents: , List[Dict[str, Any]]], 
+                *documents: Union[Dict[str, Any], List[Dict[str, Any]]], 
                 **kwargs: Any
             ) -> List[IndexAction]: ...
 
@@ -13806,7 +13806,7 @@ namespace azure.search.documents.models
     class azure.search.documents.models.QueryCaptionResult(_Model):
         highlights: Optional[str]
         text: Optional[str]
-Union[Dict[str, Any]
+
 
     class azure.search.documents.models.QueryCaptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EXTRACTIVE = "extractive"
