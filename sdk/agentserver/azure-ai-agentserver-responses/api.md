@@ -3,6 +3,7 @@ namespace azure.ai.agentserver.responses
 
     class azure.ai.agentserver.responses.CreateResponse(TypedDict, total=False):
         key "agent_reference": ForwardRef('AgentReference', module='types')
+        key "agent_session_id": str
         key "background": Optional[bool]
         key "context_management": Optional[list[ContextManagementParam]]
         key "conversation": Optional[ConversationParam]
@@ -33,7 +34,9 @@ namespace azure.ai.agentserver.responses
         key "top_p": Optional[float]
         key "truncation": Optional[Literal["auto", "disabled"]]
         key "user": str
+        key "user_security_context": ForwardRef('AzureUserSecurityContext', module='types')
         agent_reference: AgentReference
+        agent_session_id: str
         background: bool
         context_management: list[ContextManagementParam]
         conversation: ConversationParam
@@ -66,6 +69,7 @@ namespace azure.ai.agentserver.responses
         top_p: float
         truncation: Literal[auto, disabled]
         user: str
+        user_security_context: AzureUserSecurityContext
 
 
     class azure.ai.agentserver.responses.FileResponseStore(ResponseProviderProtocol):
@@ -684,6 +688,7 @@ namespace azure.ai.agentserver.responses
         key "max_tool_calls": Optional[int]
         key "metadata": Optional[Metadata]
         key "model": str
+        key "model_selection_details": ForwardRef('ModelSelectionDetails', module='types')
         key "moderation": Optional[Moderation]
         key "object": Required[Literal["response"]]
         key "output": Required[list[OutputItem]]
@@ -709,6 +714,7 @@ namespace azure.ai.agentserver.responses
         agent_reference: AgentReference
         background: bool
         completed_at: int
+        content_filters: list[ContentFilterResult]
         conversation: ConversationReference
         created_at: int
         error: ResponseErrorInfo
@@ -719,6 +725,7 @@ namespace azure.ai.agentserver.responses
         max_tool_calls: int
         metadata: Metadata
         model: str
+        model_selection_details: ModelSelectionDetails
         moderation: Moderation
         object: Literal[response]
         output: list[OutputItem]
@@ -1727,16 +1734,29 @@ namespace azure.ai.agentserver.responses.models
     class azure.ai.agentserver.responses.models.A2APreviewTool(TypedDict, total=False):
         key "agent_card_path": str
         key "base_url": str
-        key "description": str
-        key "name": str
         key "project_connection_id": str
+        key "send_credentials_for_agent_card": bool
         key "type": Required[Literal["a2a_preview"]]
         agent_card_path: str
         base_url: str
-        description: str
-        name: str
         project_connection_id: str
+        send_credentials_for_agent_card: bool
         type: Literal[a2a_preview]
+
+
+    class azure.ai.agentserver.responses.models.A2ATool(TypedDict, total=False):
+        key "a2a_version": Required[Literal["0"]]
+        key "agent_card_path": str
+        key "base_url": str
+        key "project_connection_id": str
+        key "send_credentials_for_agent_card": bool
+        key "type": Required[Literal["a2a"]]
+        a2a_version: A2AProtocolVersion
+        agent_card_path: str
+        base_url: str
+        project_connection_id: str
+        send_credentials_for_agent_card: bool
+        type: Literal[a2a]
 
 
     class azure.ai.agentserver.responses.models.A2AToolCall(TypedDict, total=False):
@@ -1778,19 +1798,15 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.AISearchIndexResource(TypedDict, total=False):
-        key "description": str
         key "filter": str
         key "index_asset_id": str
         key "index_name": str
-        key "name": str
         key "project_connection_id": str
         key "query_type": Literal["simple", "semantic", "vector", "vector_simple_hybrid", "vector_semantic_hybrid"]
         key "top_k": int
-        description: str
         filter: str
         index_asset_id: str
         index_name: str
-        name: str
         project_connection_id: str
         query_type: AzureAISearchQueryType
         top_k: int
@@ -1939,6 +1955,7 @@ namespace azure.ai.agentserver.responses.models
         azure_ai_search: AzureAISearchToolResource
         description: str
         name: str
+        tool_configs: dict[str, ToolConfig]
         type: Literal[azure_ai_search]
 
 
@@ -1977,12 +1994,131 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.AzureAISearchToolResource(TypedDict, total=False):
-        key "description": str
         key "indexes": Required[list[AISearchIndexResource]]
-        key "name": str
-        description: str
         indexes: list[AISearchIndexResource]
-        name: str
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterBlocklistIdResult(TypedDict, total=False):
+        key "filtered": Required[bool]
+        key "id": Required[str]
+        filtered: bool
+        id: str
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterBlocklistResult(TypedDict, total=False):
+        key "filtered": Required[bool]
+        details: list[AzureContentFilterBlocklistIdResult]
+        filtered: bool
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterCitation(TypedDict, total=False):
+        key "license": str
+        key "url": str
+        license: str
+        url: str
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterCompletionTextSpan(TypedDict, total=False):
+        key "completion_end_offset": Required[int]
+        key "completion_start_offset": Required[int]
+        completion_end_offset: int
+        completion_start_offset: int
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterCompletionTextSpanDetectionResult(TypedDict, total=False):
+        key "details": Required[list[AzureContentFilterCompletionTextSpan]]
+        key "detected": Required[bool]
+        key "filtered": Required[bool]
+        details: list[AzureContentFilterCompletionTextSpan]
+        detected: bool
+        filtered: bool
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterDetectionResult(TypedDict, total=False):
+        key "detected": Required[bool]
+        key "filtered": Required[bool]
+        detected: bool
+        filtered: bool
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterDetectionWithCitationResult(TypedDict, total=False):
+        key "citation": ForwardRef('AzureContentFilterCitation', module='types')
+        key "detected": Required[bool]
+        key "filtered": Required[bool]
+        citation: AzureContentFilterCitation
+        detected: bool
+        filtered: bool
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterDetectionWithReasonResult(TypedDict, total=False):
+        key "detected": Required[bool]
+        key "filtered": Required[bool]
+        key "reason": str
+        detected: bool
+        filtered: bool
+        reason: str
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterError(TypedDict, total=False):
+        key "code": Required[int]
+        key "message": Required[str]
+        code: int
+        message: str
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterPersonallyIdentifiableInformationResult(TypedDict, total=False):
+        key "detected": Required[bool]
+        key "filtered": Required[bool]
+        detected: bool
+        filtered: bool
+        sub_categories: list[AzureContentFilterPiiSubCategoryResult]
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterPiiSubCategoryResult(TypedDict, total=False):
+        key "detected": Required[bool]
+        key "filtered": Required[bool]
+        key "sub_category": Required[str]
+        detected: bool
+        filtered: bool
+        sub_category: str
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterResultsForResponses(TypedDict, total=False):
+        key "custom_blocklists": ForwardRef('AzureContentFilterBlocklistResult', module='types')
+        key "error": ForwardRef('AzureContentFilterError', module='types')
+        key "hate": ForwardRef('AzureContentFilterSeverityResult', module='types')
+        key "indirect_attack": ForwardRef('AzureContentFilterDetectionResult', module='types')
+        key "jailbreak": ForwardRef('AzureContentFilterDetectionResult', module='types')
+        key "personally_identifiable_information": ForwardRef('AzureContentFilterPersonallyIdentifiableInformationResult', module='types')
+        key "profanity": ForwardRef('AzureContentFilterDetectionResult', module='types')
+        key "protected_material_code": ForwardRef('AzureContentFilterDetectionWithCitationResult', module='types')
+        key "protected_material_text": ForwardRef('AzureContentFilterDetectionResult', module='types')
+        key "self_harm": ForwardRef('AzureContentFilterSeverityResult', module='types')
+        key "sexual": ForwardRef('AzureContentFilterSeverityResult', module='types')
+        key "task_adherence": ForwardRef('AzureContentFilterDetectionWithReasonResult', module='types')
+        key "ungrounded_material": ForwardRef('AzureContentFilterCompletionTextSpanDetectionResult', module='types')
+        key "violence": ForwardRef('AzureContentFilterSeverityResult', module='types')
+        custom_blocklists: AzureContentFilterBlocklistResult
+        error: AzureContentFilterError
+        hate: AzureContentFilterSeverityResult
+        indirect_attack: AzureContentFilterDetectionResult
+        jailbreak: AzureContentFilterDetectionResult
+        personally_identifiable_information: AzureContentFilterPersonallyIdentifiableInformationResult
+        profanity: AzureContentFilterDetectionResult
+        protected_material_code: AzureContentFilterDetectionWithCitationResult
+        protected_material_text: AzureContentFilterDetectionResult
+        self_harm: AzureContentFilterSeverityResult
+        sexual: AzureContentFilterSeverityResult
+        task_adherence: AzureContentFilterDetectionWithReasonResult
+        ungrounded_material: AzureContentFilterCompletionTextSpanDetectionResult
+        violence: AzureContentFilterSeverityResult
+
+
+    class azure.ai.agentserver.responses.models.AzureContentFilterSeverityResult(TypedDict, total=False):
+        key "filtered": Required[bool]
+        key "severity": Required[Literal["safe", "low", "medium", "high"]]
+        filtered: bool
+        severity: AzureContentFilterSeverity
 
 
     class azure.ai.agentserver.responses.models.AzureFunctionBinding(TypedDict, total=False):
@@ -2021,6 +2157,7 @@ namespace azure.ai.agentserver.responses.models
         key "azure_function": Required[AzureFunctionDefinition]
         key "type": Required[Literal["azure_function"]]
         azure_function: AzureFunctionDefinition
+        tool_configs: dict[str, ToolConfig]
         type: Literal[azure_function]
 
 
@@ -2062,33 +2199,36 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[azure_function_call_output]
 
 
+    class azure.ai.agentserver.responses.models.AzureUserSecurityContext(TypedDict, total=False):
+        key "application_name": str
+        key "end_user_id": str
+        key "end_user_tenant_id": str
+        key "source_ip": str
+        application_name: str
+        end_user_id: str
+        end_user_tenant_id: str
+        source_ip: str
+
+
     class azure.ai.agentserver.responses.models.BingCustomSearchConfiguration(TypedDict, total=False):
         key "count": int
-        key "description": str
         key "freshness": str
         key "instance_name": Required[str]
         key "market": str
-        key "name": str
         key "project_connection_id": Required[str]
         key "set_lang": str
         count: int
-        description: str
         freshness: str
         instance_name: str
         market: str
-        name: str
         project_connection_id: str
         set_lang: str
 
 
     class azure.ai.agentserver.responses.models.BingCustomSearchPreviewTool(TypedDict, total=False):
         key "bing_custom_search_preview": Required[BingCustomSearchToolParameters]
-        key "description": str
-        key "name": str
         key "type": Required[Literal["bing_custom_search_preview"]]
         bing_custom_search_preview: BingCustomSearchToolParameters
-        description: str
-        name: str
         type: Literal[bing_custom_search_preview]
 
 
@@ -2127,37 +2267,25 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.BingCustomSearchToolParameters(TypedDict, total=False):
-        key "description": str
-        key "name": str
         key "search_configurations": Required[list[BingCustomSearchConfiguration]]
-        description: str
-        name: str
         search_configurations: list[BingCustomSearchConfiguration]
 
 
     class azure.ai.agentserver.responses.models.BingGroundingSearchConfiguration(TypedDict, total=False):
         key "count": int
-        key "description": str
         key "freshness": str
         key "market": str
-        key "name": str
         key "project_connection_id": Required[str]
         key "set_lang": str
         count: int
-        description: str
         freshness: str
         market: str
-        name: str
         project_connection_id: str
         set_lang: str
 
 
     class azure.ai.agentserver.responses.models.BingGroundingSearchToolParameters(TypedDict, total=False):
-        key "description": str
-        key "name": str
         key "search_configurations": Required[list[BingGroundingSearchConfiguration]]
-        description: str
-        name: str
         search_configurations: list[BingGroundingSearchConfiguration]
 
 
@@ -2169,6 +2297,7 @@ namespace azure.ai.agentserver.responses.models
         bing_grounding: BingGroundingSearchToolParameters
         description: str
         name: str
+        tool_configs: dict[str, ToolConfig]
         type: Literal[bing_grounding]
 
 
@@ -2208,12 +2337,8 @@ namespace azure.ai.agentserver.responses.models
 
     class azure.ai.agentserver.responses.models.BrowserAutomationPreviewTool(TypedDict, total=False):
         key "browser_automation_preview": Required[BrowserAutomationToolParameters]
-        key "description": str
-        key "name": str
         key "type": Required[Literal["browser_automation_preview"]]
         browser_automation_preview: BrowserAutomationToolParameters
-        description: str
-        name: str
         type: Literal[browser_automation_preview]
 
 
@@ -2252,27 +2377,24 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.BrowserAutomationToolConnectionParameters(TypedDict, total=False):
-        key "description": str
-        key "name": str
         key "project_connection_id": Required[str]
-        description: str
-        name: str
         project_connection_id: str
 
 
     class azure.ai.agentserver.responses.models.BrowserAutomationToolParameters(TypedDict, total=False):
         key "connection": Required[BrowserAutomationToolConnectionParameters]
-        key "description": str
-        key "name": str
         connection: BrowserAutomationToolConnectionParameters
-        description: str
-        name: str
 
 
     class azure.ai.agentserver.responses.models.CaptureStructuredOutputsTool(TypedDict, total=False):
+        key "description": str
+        key "name": str
         key "outputs": Required[StructuredOutputDefinition]
         key "type": Required[Literal["capture_structured_outputs"]]
+        description: str
+        name: str
         outputs: StructuredOutputDefinition
+        tool_configs: dict[str, ToolConfig]
         type: Literal[capture_structured_outputs]
 
 
@@ -2326,6 +2448,7 @@ namespace azure.ai.agentserver.responses.models
         container: Union[str, AutoCodeInterpreterToolParam]
         description: str
         name: str
+        tool_configs: dict[str, ToolConfig]
         type: Literal[code_interpreter]
 
 
@@ -2345,7 +2468,7 @@ namespace azure.ai.agentserver.responses.models
     class azure.ai.agentserver.responses.models.CompactResponseMethodPublicBody(TypedDict, total=False):
         key "input": Optional[Union[str, list[Item]]]
         key "instructions": Optional[str]
-        key "model": Required[Optional[Literal["gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna", "gpt-5.5", "gpt-5.5-2026-04-23", "gpt-5.4", "gpt-5.4-mini", "gpt-5.4-nano", "gpt-5.4-mini-2026-03-17", "gpt-5.4-nano-2026-03-17", "gpt-5.3-chat-latest", "gpt-5.2", "gpt-5.2-2025-12-11", "gpt-5.2-chat-latest", "gpt-5.2-pro", "gpt-5.2-pro-2025-12-11", "gpt-5.1", "gpt-5.1-2025-11-13", "gpt-5.1-codex", "gpt-5.1-mini", "gpt-5.1-chat-latest", "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5-2025-08-07", "gpt-5-mini-2025-08-07", "gpt-5-nano-2025-08-07", "gpt-5-chat-latest", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "gpt-4.1-2025-04-14", "gpt-4.1-mini-2025-04-14", "gpt-4.1-nano-2025-04-14", "o4-mini", "o4-mini-2025-04-16", "o3", "o3-2025-04-16", "o3-mini", "o3-mini-2025-01-31", "o1", "o1-2024-12-17", "o1-preview", "o1-preview-2024-09-12", "o1-mini", "o1-mini-2024-09-12", "gpt-4o", "gpt-4o-2024-11-20", "gpt-4o-2024-08-06", "gpt-4o-2024-05-13", "gpt-4o-audio-preview", "gpt-4o-audio-preview-2024-10-01", "gpt-4o-audio-preview-2024-12-17", "gpt-4o-audio-preview-2025-06-03", "gpt-4o-mini-audio-preview", "gpt-4o-mini-audio-preview-2024-12-17", "gpt-4o-search-preview", "gpt-4o-mini-search-preview", "gpt-4o-search-preview-2025-03-11", "gpt-4o-mini-search-preview-2025-03-11", "chatgpt-4o-latest", "codex-mini-latest", "gpt-4o-mini", "gpt-4o-mini-2024-07-18", "gpt-4-turbo", "gpt-4-turbo-2024-04-09", "gpt-4-0125-preview", "gpt-4-turbo-preview", "gpt-4-1106-preview", "gpt-4-vision-preview", "gpt-4", "gpt-4-0314", "gpt-4-0613", "gpt-4-32k", "gpt-4-32k-0314", "gpt-4-32k-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-0301", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-1106", "gpt-3.5-turbo-0125", "gpt-3.5-turbo-16k-0613", "o1-pro", "o1-pro-2025-03-19", "o3-pro", "o3-pro-2025-06-10", "o3-deep-research", "o3-deep-research-2025-06-26", "o4-mini-deep-research", "o4-mini-deep-research-2025-06-26", "computer-use-preview", "computer-use-preview-2025-03-11", "gpt-5.5-pro", "gpt-5.5-pro-2026-04-23", "gpt-5-codex", "gpt-5-pro", "gpt-5-pro-2025-10-06", "gpt-5.1-codex-max", "gpt-daybreak-blue-latest", "gpt-daybreak-red-latest", "gpt-5.6-cyber"]]]
+        key "model": Required[str]
         key "previous_response_id": Optional[str]
         key "prompt_cache_key": Optional[str]
         key "prompt_cache_options": Optional[PromptCacheOptionsParam]
@@ -2353,7 +2476,7 @@ namespace azure.ai.agentserver.responses.models
         key "service_tier": Optional[Literal["auto", "default", "fast", "flex", "priority"]]
         input: Union[str, list[Item]]
         instructions: str
-        model: ModelIdsCompaction
+        model: str
         previous_response_id: str
         prompt_cache_key: str
         prompt_cache_options: PromptCacheOptionsParam
@@ -2503,6 +2626,17 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[container_reference]
 
 
+    class azure.ai.agentserver.responses.models.ContentFilterResult(TypedDict, total=False):
+        key "blocked": Required[bool]
+        key "content_filter_results": Required[AzureContentFilterResultsForResponses]
+        key "source_type": Required[str]
+        key "tool_call_id": str
+        blocked: bool
+        content_filter_results: AzureContentFilterResultsForResponses
+        source_type: str
+        tool_call_id: str
+
+
     class azure.ai.agentserver.responses.models.ContextManagementParam(TypedDict, total=False):
         key "compact_threshold": Optional[int]
         key "type": Required[str]
@@ -2529,6 +2663,7 @@ namespace azure.ai.agentserver.responses.models
 
     class azure.ai.agentserver.responses.models.CreateResponse(TypedDict, total=False):
         key "agent_reference": ForwardRef('AgentReference', module='types')
+        key "agent_session_id": str
         key "background": Optional[bool]
         key "context_management": Optional[list[ContextManagementParam]]
         key "conversation": Optional[ConversationParam]
@@ -2559,7 +2694,9 @@ namespace azure.ai.agentserver.responses.models
         key "top_p": Optional[float]
         key "truncation": Optional[Literal["auto", "disabled"]]
         key "user": str
+        key "user_security_context": ForwardRef('AzureUserSecurityContext', module='types')
         agent_reference: AgentReference
+        agent_session_id: str
         background: bool
         context_management: list[ContextManagementParam]
         conversation: ConversationParam
@@ -2591,6 +2728,155 @@ namespace azure.ai.agentserver.responses.models
         top_logprobs: int
         top_p: float
         truncation: Literal[auto, disabled]
+        user: str
+        user_security_context: AzureUserSecurityContext
+
+
+    class azure.ai.agentserver.responses.models.CreateResponseRequest(TypedDict, total=False):
+        key "agent_reference": ForwardRef('AgentReference', module='types')
+        key "agent_session_id": str
+        key "background": Optional[bool]
+        key "context_management": Optional[list[ContextManagementParam]]
+        key "conversation": Optional[ConversationParam]
+        key "include": Optional[list[Literal["results", "results", "sources", "image_url", "image_url", "outputs", "encrypted_content", "logprobs", "results"]]]
+        key "input": ForwardRef('InputParam', module='types')
+        key "instructions": Optional[str]
+        key "max_output_tokens": Optional[int]
+        key "max_tool_calls": Optional[int]
+        key "metadata": Optional[Metadata]
+        key "model": str
+        key "moderation": Optional[ModerationParam]
+        key "parallel_tool_calls": Optional[bool]
+        key "previous_response_id": Optional[str]
+        key "prompt": ForwardRef('Prompt', module='types')
+        key "prompt_cache_key": Optional[str]
+        key "prompt_cache_options": ForwardRef('PromptCacheOptionsParam', module='types')
+        key "prompt_cache_retention": Optional[Literal["in_memory", "24h"]]
+        key "reasoning": Optional[Reasoning]
+        key "safety_identifier": Optional[str]
+        key "service_tier": Optional[Literal["auto", "default", "flex", "scale", "priority", "fast", "ultrafast"]]
+        key "store": Optional[bool]
+        key "stream": Optional[bool]
+        key "stream_options": Optional[ResponseStreamOptions]
+        key "temperature": Optional[float]
+        key "text": ForwardRef('ResponseTextParam', module='types')
+        key "tool_choice": Union[Literal["none", "auto", "required"], ToolChoiceParam]
+        key "top_logprobs": Optional[int]
+        key "top_p": Optional[float]
+        key "truncation": Optional[Literal["auto", "disabled"]]
+        key "user": str
+        key "user_security_context": ForwardRef('AzureUserSecurityContext', module='types')
+        agent_reference: AgentReference
+        agent_session_id: str
+        background: bool
+        context_management: list[ContextManagementParam]
+        conversation: ConversationParam
+        include: list[IncludeEnum]
+        input: InputParam
+        instructions: str
+        max_output_tokens: int
+        max_tool_calls: int
+        metadata: Metadata
+        model: str
+        moderation: ModerationParam
+        parallel_tool_calls: bool
+        previous_response_id: str
+        prompt: Prompt
+        prompt_cache_key: str
+        prompt_cache_options: PromptCacheOptionsParam
+        prompt_cache_retention: Literal[in_memory, 24h]
+        reasoning: Reasoning
+        safety_identifier: str
+        service_tier: Literal[auto, default, flex, scale, priority, fast, ultrafast]
+        store: bool
+        stream: bool
+        stream_options: ResponseStreamOptions
+        structured_inputs: dict[str, Any]
+        temperature: float
+        text: ResponseTextParam
+        tool_choice: Union[ToolChoiceOptions, ToolChoiceParam]
+        tools: list[Tool]
+        top_logprobs: int
+        top_p: float
+        truncation: Literal[auto, disabled]
+        user: str
+        user_security_context: AzureUserSecurityContext
+
+
+    class azure.ai.agentserver.responses.models.CreateResponseResponse(TypedDict, total=False):
+        key "agent_reference": Required[Optional[AgentReference]]
+        key "background": Optional[bool]
+        key "completed_at": Optional[int]
+        key "conversation": Optional[ConversationReference]
+        key "created_at": Required[int]
+        key "error": Required[Optional[ResponseErrorInfo]]
+        key "id": Required[str]
+        key "incomplete_details": Required[Optional[ResponseIncompleteDetails]]
+        key "instructions": Required[Optional[Union[str, list[Item]]]]
+        key "max_output_tokens": Optional[int]
+        key "max_tool_calls": Optional[int]
+        key "metadata": Optional[Metadata]
+        key "model": str
+        key "model_selection_details": ForwardRef('ModelSelectionDetails', module='types')
+        key "moderation": Optional[Moderation]
+        key "object": Required[Literal["response"]]
+        key "output": Required[list[OutputItem]]
+        key "output_text": Optional[str]
+        key "parallel_tool_calls": Required[bool]
+        key "previous_response_id": Optional[str]
+        key "prompt": ForwardRef('Prompt', module='types')
+        key "prompt_cache_key": Optional[str]
+        key "prompt_cache_options": ForwardRef('PromptCacheOptions', module='types')
+        key "prompt_cache_retention": Optional[Literal["in_memory", "24h"]]
+        key "reasoning": Optional[Reasoning]
+        key "safety_identifier": Optional[str]
+        key "service_tier": Optional[Literal["auto", "default", "flex", "scale", "priority", "fast", "ultrafast"]]
+        key "status": Literal["completed", "failed", "in_progress", "cancelled", "queued", "incomplete"]
+        key "temperature": Optional[float]
+        key "text": ForwardRef('ResponseTextParam', module='types')
+        key "tool_choice": Union[Literal["none", "auto", "required"], ToolChoiceParam]
+        key "top_logprobs": Optional[int]
+        key "top_p": Optional[float]
+        key "truncation": Optional[Literal["auto", "disabled"]]
+        key "usage": ForwardRef('ResponseUsage', module='types')
+        key "user": str
+        agent_reference: AgentReference
+        background: bool
+        completed_at: int
+        content_filters: list[ContentFilterResult]
+        conversation: ConversationReference
+        created_at: int
+        error: ResponseErrorInfo
+        id: str
+        incomplete_details: ResponseIncompleteDetails
+        instructions: Union[str, list[Item]]
+        max_output_tokens: int
+        max_tool_calls: int
+        metadata: Metadata
+        model: str
+        model_selection_details: ModelSelectionDetails
+        moderation: Moderation
+        object: Literal[response]
+        output: list[OutputItem]
+        output_text: str
+        parallel_tool_calls: bool
+        previous_response_id: str
+        prompt: Prompt
+        prompt_cache_key: str
+        prompt_cache_options: PromptCacheOptions
+        prompt_cache_retention: Literal[in_memory, 24h]
+        reasoning: Reasoning
+        safety_identifier: str
+        service_tier: Literal[auto, default, flex, scale, priority, fast, ultrafast]
+        status: Literal[completed, failed, in_progress, cancelled, queued, incomplete]
+        temperature: float
+        text: ResponseTextParam
+        tool_choice: Union[ToolChoiceOptions, ToolChoiceParam]
+        tools: list[Tool]
+        top_logprobs: int
+        top_p: float
+        truncation: Literal[auto, disabled]
+        usage: ResponseUsage
         user: str
 
 
@@ -2760,11 +3046,20 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.FabricDataAgentToolParameters(TypedDict, total=False):
-        key "description": str
-        key "name": str
-        description: str
-        name: str
         project_connections: list[ToolProjectConnection]
+
+
+    class azure.ai.agentserver.responses.models.FabricIQPreviewTool(TypedDict, total=False):
+        key "project_connection_id": Required[str]
+        key "require_approval": Optional[Union[MCPToolRequireApproval, str]]
+        key "server_label": str
+        key "server_url": str
+        key "type": Required[Literal["fabric_iq_preview"]]
+        project_connection_id: str
+        require_approval: Union[MCPToolRequireApproval, str]
+        server_label: str
+        server_url: str
+        type: Literal[fabric_iq_preview]
 
 
     class azure.ai.agentserver.responses.models.FileCitationBody(TypedDict, total=False):
@@ -2800,6 +3095,7 @@ namespace azure.ai.agentserver.responses.models
         max_num_results: int
         name: str
         ranking_options: RankingOptions
+        tool_configs: dict[str, ToolConfig]
         type: Literal[file_search]
         vector_store_ids: list[str]
 
@@ -2994,6 +3290,7 @@ namespace azure.ai.agentserver.responses.models
         description: str
         environment: FunctionShellToolParamEnvironment
         name: str
+        tool_configs: dict[str, ToolConfig]
         type: Literal[shell]
 
 
@@ -3061,7 +3358,7 @@ namespace azure.ai.agentserver.responses.models
         key "description": str
         key "input_fidelity": Optional[Literal["high", "low"]]
         key "input_image_mask": ForwardRef('ImageGenToolInputImageMask', module='types')
-        key "model": Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str]
+        key "model": Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], str]
         key "moderation": Literal["auto", "low"]
         key "name": str
         key "output_compression": int
@@ -3075,7 +3372,7 @@ namespace azure.ai.agentserver.responses.models
         description: str
         input_fidelity: InputFidelity
         input_image_mask: ImageGenToolInputImageMask
-        model: Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-1.5], str]
+        model: Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], str]
         moderation: Literal[auto, low]
         name: str
         output_compression: int
@@ -3083,6 +3380,7 @@ namespace azure.ai.agentserver.responses.models
         partial_images: int
         quality: Literal[low, medium, high, auto]
         size: Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]
+        tool_configs: dict[str, ToolConfig]
         type: Literal[image_generation]
 
 
@@ -3879,6 +4177,7 @@ namespace azure.ai.agentserver.responses.models
         key "type": Required[Literal["local_shell"]]
         description: str
         name: str
+        tool_configs: dict[str, ToolConfig]
         type: Literal[local_shell]
 
 
@@ -3957,6 +4256,7 @@ namespace azure.ai.agentserver.responses.models
         server_description: str
         server_label: str
         server_url: str
+        tool_configs: dict[str, ToolConfig]
         tunnel_id: str
         type: Literal[mcp]
 
@@ -3974,9 +4274,36 @@ namespace azure.ai.agentserver.responses.models
         never: MCPToolFilter
 
 
-    class azure.ai.agentserver.responses.models.MemorySearchItem(TypedDict, total=False):
-        key "memory_item": Required[MemoryItem]
-        memory_item: MemoryItem
+    class azure.ai.agentserver.responses.models.MemoryCommandToolCall(TypedDict, total=False):
+        key "agent_reference": ForwardRef('AgentReference', module='types')
+        key "arguments": Required[str]
+        key "call_id": Required[str]
+        key "id": Required[str]
+        key "response_id": str
+        key "status": Required[Literal["in_progress", "completed", "incomplete", "failed"]]
+        key "type": Required[Literal["memory_command_preview_call"]]
+        agent_reference: AgentReference
+        arguments: str
+        call_id: str
+        id: str
+        response_id: str
+        status: ToolCallStatus
+        type: Literal[memory_command_preview_call]
+
+
+    class azure.ai.agentserver.responses.models.MemoryCommandToolCallOutput(TypedDict, total=False):
+        key "agent_reference": ForwardRef('AgentReference', module='types')
+        key "call_id": Required[str]
+        key "id": Required[str]
+        key "response_id": str
+        key "status": Required[Literal["in_progress", "completed", "incomplete", "failed"]]
+        key "type": Required[Literal["memory_command_preview_call_output"]]
+        agent_reference: AgentReference
+        call_id: str
+        id: str
+        response_id: str
+        status: ToolCallStatus
+        type: Literal[memory_command_preview_call_output]
 
 
     class azure.ai.agentserver.responses.models.MemorySearchOptions(TypedDict, total=False):
@@ -3985,41 +4312,30 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.MemorySearchPreviewTool(TypedDict, total=False):
-        key "description": str
         key "memory_store_name": Required[str]
-        key "name": str
         key "scope": Required[str]
         key "search_options": ForwardRef('MemorySearchOptions', module='types')
         key "type": Required[Literal["memory_search_preview"]]
         key "update_delay": int
-        description: str
         memory_store_name: str
-        name: str
         scope: str
         search_options: MemorySearchOptions
         type: Literal[memory_search_preview]
         update_delay: int
 
 
-    class azure.ai.agentserver.responses.models.MemorySearchToolCallItemParam(TypedDict, total=False):
-        key "results": Optional[list[MemorySearchItem]]
-        key "type": Required[Literal["memory_search_call"]]
-        results: list[MemorySearchItem]
-        type: Literal[memory_search_call]
-
-
-    class azure.ai.agentserver.responses.models.MemorySearchToolCallItemResource(TypedDict, total=False):
+    class azure.ai.agentserver.responses.models.MemorySearchToolCall(TypedDict, total=False):
         key "agent_reference": ForwardRef('AgentReference', module='types')
         key "id": Required[str]
+        key "memories": Optional[list[MemoryItem]]
         key "response_id": str
-        key "results": Optional[list[MemorySearchItem]]
-        key "status": Required[Literal["in_progress", "searching", "completed", "incomplete", "failed"]]
+        key "status": Required[Literal["in_progress", "completed", "incomplete", "failed"]]
         key "type": Required[Literal["memory_search_call"]]
         agent_reference: AgentReference
         id: str
+        memories: list[MemoryItem]
         response_id: str
-        results: list[MemorySearchItem]
-        status: Literal[in_progress, searching, completed, incomplete, failed]
+        status: ToolCallStatus
         type: Literal[memory_search_call]
 
 
@@ -4089,14 +4405,44 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.MicrosoftFabricPreviewTool(TypedDict, total=False):
-        key "description": str
         key "fabric_dataagent_preview": Required[FabricDataAgentToolParameters]
-        key "name": str
         key "type": Required[Literal["fabric_dataagent_preview"]]
-        description: str
         fabric_dataagent_preview: FabricDataAgentToolParameters
-        name: str
         type: Literal[fabric_dataagent_preview]
+
+
+    class azure.ai.agentserver.responses.models.ModelRouterAttempt(TypedDict, total=False):
+        key "model": Required[str]
+        key "result": Required[ModelRouterAttemptResult]
+        model: str
+        result: ModelRouterAttemptResult
+
+
+    class azure.ai.agentserver.responses.models.ModelRouterAttemptError(TypedDict, total=False):
+        key "code": str
+        key "message": Required[str]
+        code: str
+        message: str
+
+
+    class azure.ai.agentserver.responses.models.ModelRouterAttemptResult(TypedDict, total=False):
+        key "error": ForwardRef('ModelRouterAttemptError', module='types')
+        key "status": Required[int]
+        error: ModelRouterAttemptError
+        headers: dict[str, ModelRouterResponseHeaderValue]
+        status: int
+
+
+    class azure.ai.agentserver.responses.models.ModelRouterDetails(TypedDict, total=False):
+        key "mode": Required[Literal["balanced", "cost", "quality"]]
+        key "routing_trace": Required[list[RoutingTraceEntry]]
+        mode: ModelRouterMode
+        routing_trace: list[RoutingTraceEntry]
+
+
+    class azure.ai.agentserver.responses.models.ModelSelectionDetails(TypedDict, total=False):
+        key "model_router_details": Required[ModelRouterDetails]
+        model_router_details: ModelRouterDetails
 
 
     class azure.ai.agentserver.responses.models.Moderation(TypedDict, total=False):
@@ -4241,6 +4587,7 @@ namespace azure.ai.agentserver.responses.models
         key "openapi": Required[OpenApiFunctionDefinition]
         key "type": Required[Literal["openapi"]]
         openapi: OpenApiFunctionDefinition
+        tool_configs: dict[str, ToolConfig]
         type: Literal[openapi]
 
 
@@ -4781,6 +5128,19 @@ namespace azure.ai.agentserver.responses.models
         response_id: str
         status: Literal[in_progress, searching, completed, failed, incomplete]
         type: Literal[web_search_call]
+
+
+    class azure.ai.agentserver.responses.models.ProceduralMemoryItem(TypedDict, total=False):
+        key "content": Required[str]
+        key "kind": Required[Literal["procedural"]]
+        key "memory_id": Required[str]
+        key "scope": Required[str]
+        key "updated_at": Required[int]
+        content: str
+        kind: Literal[procedural]
+        memory_id: str
+        scope: str
+        updated_at: int
 
 
     class azure.ai.agentserver.responses.models.ProgramToolCallCaller(TypedDict, total=False):
@@ -5352,6 +5712,7 @@ namespace azure.ai.agentserver.responses.models
         key "max_tool_calls": Optional[int]
         key "metadata": Optional[Metadata]
         key "model": str
+        key "model_selection_details": ForwardRef('ModelSelectionDetails', module='types')
         key "moderation": Optional[Moderation]
         key "object": Required[Literal["response"]]
         key "output": Required[list[OutputItem]]
@@ -5377,6 +5738,7 @@ namespace azure.ai.agentserver.responses.models
         agent_reference: AgentReference
         background: bool
         completed_at: int
+        content_filters: list[ContentFilterResult]
         conversation: ConversationReference
         created_at: int
         error: ResponseErrorInfo
@@ -5387,6 +5749,7 @@ namespace azure.ai.agentserver.responses.models
         max_tool_calls: int
         metadata: Metadata
         model: str
+        model_selection_details: ModelSelectionDetails
         moderation: Moderation
         object: Literal[response]
         output: list[OutputItem]
@@ -5599,6 +5962,77 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[done]
 
 
+    class azure.ai.agentserver.responses.models.ResponseShellCallCommandAddedStreamingEvent(TypedDict, total=False):
+        key "command": Required[str]
+        key "command_index": Required[int]
+        key "output_index": Required[int]
+        key "sequence_number": Required[int]
+        key "type": Required[Literal["added"]]
+        command: str
+        command_index: int
+        output_index: int
+        sequence_number: int
+        type: Literal[added]
+
+
+    class azure.ai.agentserver.responses.models.ResponseShellCallCommandDeltaStreamingEvent(TypedDict, total=False):
+        key "command_index": Required[int]
+        key "delta": Required[str]
+        key "obfuscation": str
+        key "output_index": Required[int]
+        key "sequence_number": Required[int]
+        key "type": Required[Literal["delta"]]
+        command_index: int
+        delta: str
+        obfuscation: str
+        output_index: int
+        sequence_number: int
+        type: Literal[delta]
+
+
+    class azure.ai.agentserver.responses.models.ResponseShellCallCommandDoneStreamingEvent(TypedDict, total=False):
+        key "command": Required[str]
+        key "command_index": Required[int]
+        key "output_index": Required[int]
+        key "sequence_number": Required[int]
+        key "type": Required[Literal["done"]]
+        command: str
+        command_index: int
+        output_index: int
+        sequence_number: int
+        type: Literal[done]
+
+
+    class azure.ai.agentserver.responses.models.ResponseShellCallOutputContentDeltaStreamingEvent(TypedDict, total=False):
+        key "command_index": Required[int]
+        key "delta": Required[ShellCallOutputDelta]
+        key "item_id": Required[str]
+        key "output_index": Required[int]
+        key "sequence_number": Required[int]
+        key "type": Required[Literal["delta"]]
+        command_index: int
+        delta: ShellCallOutputDelta
+        item_id: str
+        output_index: int
+        sequence_number: int
+        type: Literal[delta]
+
+
+    class azure.ai.agentserver.responses.models.ResponseShellCallOutputContentDoneStreamingEvent(TypedDict, total=False):
+        key "command_index": Required[int]
+        key "item_id": Required[str]
+        key "output": Required[list[FunctionShellCallOutputContent]]
+        key "output_index": Required[int]
+        key "sequence_number": Required[int]
+        key "type": Required[Literal["done"]]
+        command_index: int
+        item_id: str
+        output: list[FunctionShellCallOutputContent]
+        output_index: int
+        sequence_number: int
+        type: Literal[done]
+
+
     class azure.ai.agentserver.responses.models.ResponseStreamOptions(TypedDict, total=False):
         key "include_obfuscation": bool
         include_obfuscation: bool
@@ -5703,6 +6137,15 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[searching]
 
 
+    class azure.ai.agentserver.responses.models.RoutingTraceEntry(TypedDict, total=False):
+        key "attempts": Required[list[ModelRouterAttempt]]
+        key "latency_ms": Required[str]
+        key "output_id": str
+        attempts: list[ModelRouterAttempt]
+        latency_ms: str
+        output_id: str
+
+
     class azure.ai.agentserver.responses.models.ScreenshotParam(TypedDict, total=False):
         key "type": Required[Literal["screenshot"]]
         type: Literal[screenshot]
@@ -5758,22 +6201,21 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.SharepointGroundingToolParameters(TypedDict, total=False):
-        key "description": str
-        key "name": str
-        description: str
-        name: str
         project_connections: list[ToolProjectConnection]
 
 
     class azure.ai.agentserver.responses.models.SharepointPreviewTool(TypedDict, total=False):
-        key "description": str
-        key "name": str
         key "sharepoint_grounding_preview": Required[SharepointGroundingToolParameters]
         key "type": Required[Literal["sharepoint_grounding_preview"]]
-        description: str
-        name: str
         sharepoint_grounding_preview: SharepointGroundingToolParameters
         type: Literal[sharepoint_grounding_preview]
+
+
+    class azure.ai.agentserver.responses.models.ShellCallOutputDelta(TypedDict, total=False):
+        key "stderr": str
+        key "stdout": str
+        stderr: str
+        stdout: str
 
 
     class azure.ai.agentserver.responses.models.SkillReferenceParam(TypedDict, total=False):
@@ -5933,12 +6375,15 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[web_search_preview_2025_03_11]
 
 
+    class azure.ai.agentserver.responses.models.ToolConfig(TypedDict, total=False):
+        key "additional_search_text": str
+        key "pin": bool
+        additional_search_text: str
+        pin: bool
+
+
     class azure.ai.agentserver.responses.models.ToolProjectConnection(TypedDict, total=False):
-        key "description": str
-        key "name": str
         key "project_connection_id": Required[str]
-        description: str
-        name: str
         project_connection_id: str
 
 
@@ -6033,6 +6478,17 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[wait]
 
 
+    class azure.ai.agentserver.responses.models.WebIQPreviewTool(TypedDict, total=False):
+        key "project_connection_id": Required[str]
+        key "require_approval": Optional[Union[MCPToolRequireApproval, str]]
+        key "server_label": str
+        key "type": Required[Literal["web_iq_preview"]]
+        project_connection_id: str
+        require_approval: Union[MCPToolRequireApproval, str]
+        server_label: str
+        type: Literal[web_iq_preview]
+
+
     class azure.ai.agentserver.responses.models.WebSearchActionFind(TypedDict, total=False):
         key "pattern": Required[str]
         key "type": Required[Literal["find_in_page"]]
@@ -6079,13 +6535,9 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.WebSearchConfiguration(TypedDict, total=False):
-        key "description": str
         key "instance_name": Required[str]
-        key "name": str
         key "project_connection_id": Required[str]
-        description: str
         instance_name: str
-        name: str
         project_connection_id: str
 
 
@@ -6114,6 +6566,7 @@ namespace azure.ai.agentserver.responses.models
         filters: WebSearchToolFilters
         name: str
         search_context_size: Literal[low, medium, high]
+        tool_configs: dict[str, ToolConfig]
         type: Literal[web_search]
         user_location: WebSearchApproximateLocation
 
@@ -6124,15 +6577,10 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.WorkIQPreviewTool(TypedDict, total=False):
-        key "type": Required[Literal["work_iq_preview"]]
-        key "work_iq_preview": Required[WorkIQPreviewToolParameters]
-        type: Literal[work_iq_preview]
-        work_iq_preview: WorkIQPreviewToolParameters
-
-
-    class azure.ai.agentserver.responses.models.WorkIQPreviewToolParameters(TypedDict, total=False):
         key "project_connection_id": Required[str]
+        key "type": Required[Literal["work_iq_preview"]]
         project_connection_id: str
+        type: Literal[work_iq_preview]
 
 
     class azure.ai.agentserver.responses.models.WorkflowActionOutputItem(TypedDict, total=False):

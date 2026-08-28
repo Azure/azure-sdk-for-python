@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from . import types as _types
 Filters = Union["_types.ComparisonFilter", "_types.CompoundFilter"]
 ToolCallOutputContent = Union[dict[str, Any], str, list[Any]]
+ModelRouterResponseHeaderValue = Union[str, int]
 InputParam = Union[str, list["_types.Item"]]
 ConversationParam = Union[str, "_types.ConversationParam_2"]
 CreateResponseStreamingResponse = Union[
