@@ -39,6 +39,7 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
     SERVER_VERSION,
     USER_ID,
 )
+from azure.ai.agentserver.core._tracing import _BAGGAGE_SESSION_ID
 
 from .._constants import InvocationsWSConstants, _classify_websocket_close_code
 from .._invocation import InvocationAgentServerHost
@@ -1042,6 +1043,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
             InvocationsWSConstants.ATTR_SPAN_DURATION_MS: duration_ms,
         }
         if _is_valid_voice_correlation_id("azure.ai.agentserver.session_id", session_id):
+            extra[_BAGGAGE_SESSION_ID] = session_id
             extra[InvocationsWSConstants.ATTR_SPAN_SESSION_ID] = session_id
         if error_code is not None:
             extra[InvocationsWSConstants.ATTR_SPAN_ERROR_CODE] = error_code
