@@ -7,9 +7,22 @@
 
 ### Bugs Fixed
 - Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
+- Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning
+  an empty list.
 - Fixed an issue where `generate_blob_sas` signed a blob name containing a backslash (`\`) verbatim, producing a SAS token
-the service rejects. Backslashes in the blob name are now canonicalized to forward slashes (`/`) when building the
-signed resource, consistent with the service and the Go and .NET SDKs.
+  the service rejects. Backslashes in the blob name are now canonicalized to forward slashes (`/`) when building the
+  signed resource, consistent with the service and the Go and .NET SDKs.
+
+### Other Changes
+- Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
+  and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
+  models instead of generated internal types.
+
+## 12.30.1 (2026-08-27)
+
+### Bugs Fixed
+- Fixed a bug where client-side encryption 2.0 could not detect a rearrangement of otherwise-untampered authenticated regions in blob content. This is now detected and exceptions are thrown. For data recovery purposes, this behavior can be reverted by setting the "AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS" environment variable.
+- Fixed a bug in client-side encryption where version downgrades, and other metadata tampering, was only detected at the start of a download.
 
 ## 12.31.0b1 (2026-08-10)
 

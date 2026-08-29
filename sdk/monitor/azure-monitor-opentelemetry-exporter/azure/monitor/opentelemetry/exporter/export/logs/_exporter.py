@@ -35,6 +35,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _MESSAGE_ENVELOPE_NAME,
     _MICROSOFT_CUSTOM_EVENT_NAME,
+    _MICROSOFT_CUSTOM_MEASUREMENTS,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
@@ -175,6 +176,7 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
     properties = _utils._filter_custom_properties(
         log_record.attributes, lambda key, val: not _is_ignored_attribute(key)  # type: ignore
     )
+    measurements = _utils._filter_custom_measurements(log_record.attributes)
     exc_type = exc_message = stack_trace = None
     if log_record.attributes:
         exc_type = log_record.attributes.get(EXCEPTION_TYPE)
@@ -210,6 +212,7 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
             version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
             severity_level=severity_level,
             properties=properties,
+            measurements=measurements,
             exceptions=[exc_details],
         )
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
@@ -225,6 +228,7 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
             version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
             name=event_name,
             properties=properties,
+            measurements=measurements,
         )
         envelope.data = MonitorBase(base_data=data, base_type="EventData")
     else:  # Message telemetry
@@ -236,6 +240,7 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
             message=_map_body_to_message(log_record.body),
             severity_level=severity_level,
             properties=properties,
+            measurements=measurements,
         )
         if hasattr(data, "message"):
             data.message = data.message.strip()
@@ -293,6 +298,7 @@ _IGNORED_ATTRS = frozenset(
         EXCEPTION_ESCAPED,
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
         _MICROSOFT_CUSTOM_EVENT_NAME,
+        _MICROSOFT_CUSTOM_MEASUREMENTS,
         _ENDUSER_ID_ATTRIBUTE,
         _ENDUSER_PSEUDO_ID_ATTRIBUTE,
     )

@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 """Unit tests for ResponseContext.get_input_items() item-reference resolution."""
+# cspell:ignore progo
 
 from __future__ import annotations
 
@@ -417,6 +418,34 @@ def test_to_output_item__preserves_tool_search_status() -> None:
 
     assert result is not None
     assert result["status"] == "in_progress"
+
+
+@pytest.mark.parametrize(
+    "item",
+    [
+        {
+            "type": "program",
+            "id": "prog_source",
+            "call_id": "call_123",
+            "code": "return 1;",
+            "fingerprint": "fp_123",
+        },
+        {
+            "type": "program_output",
+            "id": "progo_source",
+            "call_id": "call_123",
+            "result": "1",
+            "status": "completed",
+        },
+    ],
+)
+def test_program_items_round_trip_for_persistence(item: dict[str, str]) -> None:
+    output_item = to_output_item(cast(Item, item), "resp_123")
+
+    assert output_item is not None
+    assert output_item["type"] == item["type"]
+    assert output_item["call_id"] == item["call_id"]
+    assert to_item(output_item) == output_item
 
 
 @pytest.mark.parametrize(
