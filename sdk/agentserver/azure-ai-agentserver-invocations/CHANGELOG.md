@@ -1,14 +1,35 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.2.0b1 (Unreleased)
+
+### Features Added
+
+- Added W3C Voice connection tracing with one `agentserver.connection` span,
+  content-free `voice.callback` dispatch spans, and aggregate duration and
+  propagation-failure metrics.
+- Added application-declared target-turn tracing through
+  `Session.start_target_turn`, `TargetTurn.activate`, and explicit
+  `TargetTurn.complete` outcomes. The SDK does not infer response lifecycle or
+  own application tasks.
+- Added source-aware `Session.termination` for classifying unfinished
+  application work during connection cleanup.
 
 ### Bugs Fixed
 
 - Added A365 telemetry correlation to `invocations_ws` by propagating the WebSocket session ID as OpenTelemetry baggage for handler spans and logs, using the cross-protocol `azure.ai.agentserver.session_id` attribute while retaining the legacy structured-log field.
 
+### Samples
+
+- Updated `basic_voice_agent` to declare target turns around real background
+  generation work and report truthful response, timeout, cancellation,
+  end-call, and transport outcomes, with bounded per-connection concurrency and
+  retained model output. Unfinished turns now distinguish clean abandonment,
+  application/server errors, and protocol or transport loss.
+
 ### Other Changes
 
-- Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.1.1`.
+- Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
+- Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b1`.
 
 ## 1.1.0 (2026-08-24)
 

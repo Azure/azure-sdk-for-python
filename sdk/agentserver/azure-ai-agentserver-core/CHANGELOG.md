@@ -1,6 +1,12 @@
 # Release History
 
-## 2.1.1 (Unreleased)
+## 2.2.0b1 (Unreleased)
+
+### Features Added
+
+- Added `AgentConfig.session_guid`, populated from the platform-owned
+  `FOUNDRY_AGENT_SESSION_GUID` environment variable for hosted session
+  incarnation identity.
 
 ### Bugs Fixed
 

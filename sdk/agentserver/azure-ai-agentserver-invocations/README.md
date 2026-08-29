@@ -302,7 +302,7 @@ app.run()
 
 ### Per-connection telemetry correlation
 
-The SDK does **not** create its own connection ("websocket_session") span. Instead, for each connection it extracts the caller's W3C trace context (`traceparent`/`tracestate`) and baggage from the WebSocket upgrade request and attaches the per-connection session ID as the `azure.ai.agentserver.session_id` baggage entry for the lifetime of the connection. Any child spans your handler opens — e.g. via `opentelemetry.trace.get_tracer(...).start_as_current_span(...)` — are therefore parented to the caller's trace and carry the A365 session correlation, which the core enrichment processor stamps onto them. The connection close is reported on the structured close-event log line described above (`azure.ai.agentserver.session_id`, `...invocations_ws.close_code`, `...invocations_ws.duration_ms`), not as a span.
+For each generic `@app.ws_handler` connection, the SDK extracts the caller's W3C trace context (`traceparent`/`tracestate`) and baggage from the WebSocket upgrade request and attaches the per-connection session ID as the `azure.ai.agentserver.session_id` baggage entry for the lifetime of the connection. Any child spans your handler opens are therefore parented to the caller's trace and carry A365 session correlation. Generic handlers do not create a connection span; typed Voice hosts provide their own connection tracing.
 
 ### Handler signature
 
@@ -317,6 +317,8 @@ The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`.
 send-only `Session`:
 
 ```python
+import asyncio
+
 from azure.ai.agentserver.invocations.voice import (
     ResponseCreated,
     ResponseDone,
@@ -325,6 +327,9 @@ from azure.ai.agentserver.invocations.voice import (
     SessionReady,
     SessionRejected,
     SessionStart,
+    SessionTermination,
+    TargetTurnOrigin,
+    TargetTurnOutcome,
     UserMessage,
     VoiceAgentServerHost,
     new_item_id,
@@ -332,6 +337,21 @@ from azure.ai.agentserver.invocations.voice import (
 )
 
 app = VoiceAgentServerHost()
+
+
+def target_turn_error_outcome(
+    termination: SessionTermination | None,
+) -> TargetTurnOutcome:
+    if termination is SessionTermination.CANCELLED:
+        return TargetTurnOutcome.CANCELLED
+    if termination is SessionTermination.COMPLETED:
+        return TargetTurnOutcome.ABANDONED
+    if termination in {
+        SessionTermination.PROTOCOL_ERROR,
+        SessionTermination.TRANSPORT_ERROR,
+    }:
+        return TargetTurnOutcome.TRANSPORT_ERROR
+    return TargetTurnOutcome.ERROR
 
 
 @app.on_session_start
@@ -349,17 +369,48 @@ async def on_session_start(session: Session, event: SessionStart) -> None:
 async def on_user_message(session: Session, event: UserMessage) -> None:
     response_id = new_response_id()
     item_id = new_item_id()
-    await session.send(
-        ResponseCreated(response_id=response_id, in_reply_to=(event.item_id,))
-    )
-    await session.send(
-        ResponseOutputTextDone(
+    turn = session.start_target_turn(origin=TargetTurnOrigin.USER, input_count=1)
+    response_started = False
+    output_item_count = 0
+    try:
+        with turn.activate():
+            await session.send(
+                ResponseCreated(response_id=response_id, in_reply_to=(event.item_id,))
+            )
+            response_started = True
+            await session.send(
+                ResponseOutputTextDone(
+                    response_id=response_id,
+                    item_id=item_id,
+                    text="Hello from the hosted text agent.",
+                )
+            )
+            output_item_count = 1
+            await session.send(ResponseDone(response_id=response_id))
+        turn.complete(
+            outcome=TargetTurnOutcome.RESPONSE,
             response_id=response_id,
-            item_id=item_id,
-            text="Hello from the hosted text agent.",
+            output_item_count=1,
         )
-    )
-    await session.send(ResponseDone(response_id=response_id))
+    except asyncio.CancelledError:
+        turn.complete(
+            outcome=(
+                target_turn_error_outcome(session.termination)
+                if session.termination is not None
+                else TargetTurnOutcome.CANCELLED
+            ),
+            response_id=response_id if response_started else None,
+            output_item_count=output_item_count,
+        )
+        raise
+    except Exception:
+        if not turn.is_completed:
+            turn.complete(
+                outcome=target_turn_error_outcome(session.termination),
+                response_id=response_id if response_started else None,
+                output_item_count=output_item_count,
+            )
+        raise
 ```
 
 The submodule is deliberately a thin typed event relay. It decodes one inbound frame,
@@ -367,6 +418,37 @@ dispatches the corresponding callback, encodes explicit outbound messages, and
 serializes concurrent WebSocket writes. It does **not** own pending responses,
 terminal arbitration, timeout/cancel operations, generation tasks, history, or
 reconnect state.
+
+### Voice tracing
+
+The typed Voice endpoint extracts W3C context from each WebSocket upgrade and
+creates one `agentserver.connection` span for the physical connection. Each
+registered event dispatch creates a sibling `voice.callback` span. Application
+code opts into a target-decision `invoke_agent` span by calling
+`Session.start_target_turn`, activating the returned handle around all model,
+tool, retrieval, and custom descendant work, and completing it once with the
+application-known outcome.
+
+```text
+Hosted Agents invoke_agent
+└── agentserver.connection
+    ├── voice.callback
+    └── invoke_agent                 # only after start_target_turn(...)
+        └── customer model/tool spans
+```
+
+The SDK never discovers, retains, or awaits application tasks and never infers
+response facts from `Session.send`. Applications that do not call
+`start_target_turn` do not receive an automatic target `invoke_agent` span.
+`Session.termination` exposes the first source-aware physical terminal fact to
+`on_connection_terminating` so the application can classify unfinished work.
+
+Voice propagation accepts only W3C trace context, the five correlation baggage
+keys produced by Hosted Agents, and a bounded `x-request-id`. Transcript,
+output, prompt, tool argument/result, and arbitrary baggage content are not
+added to SDK spans, metrics, or diagnostics. Valid upstream sampling and
+`tracestate` are preserved; unsampled operations still contribute aggregate
+connection and target duration metrics.
 
 When the peer or proxy closes the WebSocket, `@app.on_disconnect` receives a
 local `SessionDisconnected` event. This callback represents only the observed

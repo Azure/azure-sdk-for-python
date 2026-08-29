@@ -1,14 +1,10 @@
 # Release History
 
-## 4.11.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 4.11.2 (2026-08-25)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
 
 ## 4.11.1 (2026-08-12)
 

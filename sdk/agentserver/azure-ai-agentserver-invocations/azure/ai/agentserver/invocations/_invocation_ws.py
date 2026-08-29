@@ -61,6 +61,24 @@ logger = logging.getLogger("azure.ai.agentserver")
 WSHandler = Callable[[WebSocket], Awaitable[None]]
 
 
+def _websocket_session_context(session_id: str, *, context: Any = None) -> Any:
+    """Add WebSocket session baggage while preserving caller context.
+
+    :param str session_id: The session identifier to add to OpenTelemetry baggage.
+    :keyword context: The caller context to enrich. Defaults to the current context.
+    :paramtype context: ~opentelemetry.context.Context or None
+    :return: The enriched OpenTelemetry context.
+    :rtype: ~opentelemetry.context.Context
+    """
+    if context is None:
+        context = _otel_context.get_current()
+    return _otel_baggage.set_baggage(
+        _BAGGAGE_SESSION_ID,
+        session_id,
+        context=context,
+    )
+
+
 def _attach_websocket_session_context(session_id: str, *, context: Any = None) -> Any:
     """Attach the WebSocket session baggage while preserving caller context.
 
@@ -70,14 +88,7 @@ def _attach_websocket_session_context(session_id: str, *, context: Any = None) -
     :return: The token used to restore the previous OpenTelemetry context.
     :rtype: ~opentelemetry.context.Token
     """
-    if context is None:
-        context = _otel_context.get_current()
-    context = _otel_baggage.set_baggage(
-        _BAGGAGE_SESSION_ID,
-        session_id,
-        context=context,
-    )
-    return _otel_context.attach(context)
+    return _otel_context.attach(_websocket_session_context(session_id, context=context))
 
 
 class _WSHandlerMixin(_MixinBase):
