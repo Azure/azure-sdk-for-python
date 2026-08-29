@@ -7,6 +7,7 @@ import struct
 import uuid
 import logging
 import decimal
+import threading
 from typing import (
     Callable,
     List,
@@ -79,9 +80,8 @@ DECIMAL128_BIAS = 6176
 # compound types (list/map/array/described) arbitrarily deep; each level is ~1-3 wire
 # bytes but one Python recursion frame, so a small message can exhaust the interpreter
 # stack (RecursionError) before any count cap applies. ---
-import threading as _threading
 _MAX_NESTED_DEPTH = 64
-_decode_depth = _threading.local()
+_decode_depth = threading.local()
 
 
 def _depth_guarded(fn):
