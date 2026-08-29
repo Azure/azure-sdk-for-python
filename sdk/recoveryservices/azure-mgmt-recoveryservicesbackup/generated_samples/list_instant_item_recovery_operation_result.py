@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservicesbackup import RecoveryServicesBackupClient
     pip install azure-identity
     pip install azure-mgmt-recoveryservicesbackup
 # USAGE
-    python list_jobs_with_start_time_and_end_time_filters.py
+    python list_instant_item_recovery_operation_result.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,18 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.backup_jobs.list(
-        vault_name="NetSDKTestRsVault",
-        resource_group_name="SwaggerTestRg",
+    response = client.item_level_recovery_connections.list_instant_item_recovery_operation_result(
+        resource_group_name="PythonSDKBackupTestRg",
+        vault_name="PySDKBackupTestRsVault",
+        fabric_name="Azure",
+        container_name="iaasvmcontainer;iaasvmcontainerv2;pysdktestrg;pysdktestv2vm1",
+        protected_item_name="vm;iaasvmcontainerv2;pysdktestrg;pysdktestv2vm1",
+        recovery_point_id="38823086363464",
+        body={"provisionInstantItemRecoveryOperationId": "00000000-0000-0000-0000-000000000001"},
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2026-08-01/Common/ListJobsWithStartTimeAndEndTimeFilters.json
+# x-ms-original-file: 2026-08-01/AzureIaasVm/ListInstantItemRecoveryOperationResult.json
 if __name__ == "__main__":
     main()

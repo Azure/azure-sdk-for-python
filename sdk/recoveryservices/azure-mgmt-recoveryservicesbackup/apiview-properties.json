@@ -189,6 +189,7 @@
         "azure.mgmt.recoveryservicesbackup.models.ILRRequestResource": "Microsoft.RecoveryServices.ILRRequestResource",
         "azure.mgmt.recoveryservicesbackup.models.InquiryInfo": "Microsoft.RecoveryServices.InquiryInfo",
         "azure.mgmt.recoveryservicesbackup.models.InquiryValidation": "Microsoft.RecoveryServices.InquiryValidation",
+        "azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryOperationResultRequest": "Microsoft.RecoveryServices.InstantItemRecoveryOperationResultRequest",
         "azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryTarget": "Microsoft.RecoveryServices.InstantItemRecoveryTarget",
         "azure.mgmt.recoveryservicesbackup.models.InstantRPAdditionalDetails": "Microsoft.RecoveryServices.InstantRPAdditionalDetails",
         "azure.mgmt.recoveryservicesbackup.models.JobResource": "Microsoft.RecoveryServices.JobResource",
@@ -432,6 +433,8 @@
         "azure.mgmt.recoveryservicesbackup.aio.operations.ItemLevelRecoveryConnectionsOperations.provision": "Microsoft.RecoveryServices.ItemLevelRecoveryConnections.provision",
         "azure.mgmt.recoveryservicesbackup.operations.ItemLevelRecoveryConnectionsOperations.revoke": "Microsoft.RecoveryServices.ItemLevelRecoveryConnections.revoke",
         "azure.mgmt.recoveryservicesbackup.aio.operations.ItemLevelRecoveryConnectionsOperations.revoke": "Microsoft.RecoveryServices.ItemLevelRecoveryConnections.revoke",
+        "azure.mgmt.recoveryservicesbackup.operations.ItemLevelRecoveryConnectionsOperations.list_instant_item_recovery_operation_result": "Microsoft.RecoveryServices.ItemLevelRecoveryConnections.listInstantItemRecoveryOperationResult",
+        "azure.mgmt.recoveryservicesbackup.aio.operations.ItemLevelRecoveryConnectionsOperations.list_instant_item_recovery_operation_result": "Microsoft.RecoveryServices.ItemLevelRecoveryConnections.listInstantItemRecoveryOperationResult",
         "azure.mgmt.recoveryservicesbackup.operations.ProtectionPoliciesOperations.get": "Microsoft.RecoveryServices.ProtectionPolicies.get",
         "azure.mgmt.recoveryservicesbackup.aio.operations.ProtectionPoliciesOperations.get": "Microsoft.RecoveryServices.ProtectionPolicies.get",
         "azure.mgmt.recoveryservicesbackup.operations.ProtectionPoliciesOperations.create_or_update": "Microsoft.RecoveryServices.ProtectionPolicies.createOrUpdate",
@@ -535,5 +538,5 @@
         "azure.mgmt.recoveryservicesbackup.RecoveryServicesBackupClient.begin_move_recovery_point": "Microsoft.RecoveryServices.RecoveryPoints.moveRecoveryPoint",
         "azure.mgmt.recoveryservicesbackup.aio.RecoveryServicesBackupClient.begin_move_recovery_point": "Microsoft.RecoveryServices.RecoveryPoints.moveRecoveryPoint"
     },
-    "CrossLanguageVersion": "8dd02bdc849d"
+    "CrossLanguageVersion": "7b9b01a551c8"
 }
