@@ -1,6 +1,11 @@
 import pathlib
 import pytest
-from azure.servicebus._pyamqp._decode import decode_frame, _PERFORMATIVE_FIELD_COUNT
+from azure.servicebus._pyamqp._decode import (
+    decode_frame,
+    decode_payload,
+    _PERFORMATIVE_FIELD_COUNT,
+    _MAX_NESTED_DEPTH,
+)
 from azure.servicebus._pyamqp import performatives
 
 
@@ -183,6 +188,32 @@ def test_performative_field_count_matches_spec(frame_cls, expected_count):
     # The padding target is the number of wire fields defined for each
     # performative (the trailing transfer payload slot is excluded).
     assert _PERFORMATIVE_FIELD_COUNT[frame_cls._code] == expected_count
+
+
+def _nested_value(depth):
+    # An amqp-value section (descriptor 0x77) wrapping `depth` nested list8
+    # compounds, each holding exactly one element: 0xc0 (list8), size, count=1.
+    # Every level passes the _MAX_COMPOUND_COUNT check (count == 1); only the
+    # nesting depth grows, ~3 wire bytes per level.
+    inner = bytes([0x45])  # innermost empty list
+    for _ in range(depth):
+        inner = bytes([0xC0, 0, 1]) + inner
+    return memoryview(bytes([0x00, 0x53, 0x77]) + inner)
+
+
+def test_decode_allows_nesting_up_to_the_depth_cap():
+    # Nesting within the cap decodes without error.
+    decode_payload(_nested_value(_MAX_NESTED_DEPTH - 2))
+
+
+def test_decode_rejects_excessive_nesting_depth():
+    # A deeply nested message must raise a clean ValueError rather than
+    # exhausting the interpreter stack with a RecursionError. The element-count
+    # cap does not catch this: every level has count == 1.
+    with pytest.raises(ValueError, match="nested compound depth"):
+        decode_payload(_nested_value(_MAX_NESTED_DEPTH + 5))
+    with pytest.raises(ValueError, match="nested compound depth"):
+        decode_payload(_nested_value(5000))
 
 
 # The _pyamqp engine is vendored identically into azure-eventhub and
