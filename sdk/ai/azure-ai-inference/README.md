@@ -408,7 +408,7 @@ In the above example, this will be the JSON payload in the HTTP request:
 
 Note that by default, the service will reject any request payload that includes extra parameters. In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"extra-parameters": "pass-through"`.
 
-Use the same method to add additional paramaters in the request of other clients in this package.
+Use the same method to add additional parameters in the request of other clients in this package.
 
 ### Adding HTTP request headers
 
