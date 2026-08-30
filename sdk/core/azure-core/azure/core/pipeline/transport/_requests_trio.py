@@ -228,7 +228,10 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
-        trio_limiter = kwargs.get("trio_limiter", None)
+        for key in kwargs:
+            if key not in ("stream", "trio_limiter", "connection_timeout", "connection_verify", "connection_cert"):
+                raise TypeError(f"TrioRequestsTransport.send() got an unexpected keyword argument '{key}'")
+        trio_limiter = kwargs.pop("trio_limiter", None)
         response = None
         error: Optional[AzureErrorUnion] = None
         data_to_send = await self._retrieve_request_data(request)

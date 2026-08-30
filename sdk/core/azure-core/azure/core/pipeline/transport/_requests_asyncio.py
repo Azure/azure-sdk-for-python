@@ -155,7 +155,12 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
-        loop = kwargs.get("loop", _get_running_loop())
+        for key in kwargs:
+            if key not in ("stream", "loop", "connection_timeout", "connection_verify", "connection_cert"):
+                raise TypeError(f"AsyncioRequestsTransport.send() got an unexpected keyword argument '{key}'")
+        loop = kwargs.pop("loop", None)
+        if loop is None:
+            loop = _get_running_loop()
         response = None
         error: Optional[AzureErrorUnion] = None
         data_to_send = await self._retrieve_request_data(request)

@@ -25,7 +25,7 @@ from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResp
 from azure.core.pipeline._tools import is_rest
 
 # pylint: disable=no-name-in-module
-from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse, RequestsTransport
+from azure.core.pipeline.transport import HttpRequest, HttpResponse as PipelineTransportHttpResponse, RequestsTransport
 from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
@@ -67,6 +67,12 @@ class RestMockResponse(RestHttpResponseImpl):
 
 
 MOCK_RESPONSES = [PipelineTransportMockResponse, RestMockResponse]
+
+
+def test_requests_transport_rejects_unknown_kwargs():
+    with RequestsTransport() as transport:
+        with pytest.raises(TypeError, match="unexpected keyword argument 'query_filter'"):
+            transport.send(HttpRequest("GET", "http://localhost"), query_filter="PartitionKey eq 'pk001'")
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

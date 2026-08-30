@@ -187,6 +187,17 @@ class AioHttpTransport(AsyncHttpTransport):
         :rtype: ~corehttp.rest.AsyncHttpResponse
         """
         await self.open()
+        for key in config:
+            if key not in (
+                "proxy",
+                "connection_cert",
+                "connection_verify",
+                "connection_timeout",
+                "read_timeout",
+                "ssl",
+                "server_hostname",
+            ):
+                raise TypeError(f"AioHttpTransport.send() got an unexpected keyword argument '{key}'")
         try:
             auto_decompress = self.session.auto_decompress  # type: ignore
         except AttributeError:

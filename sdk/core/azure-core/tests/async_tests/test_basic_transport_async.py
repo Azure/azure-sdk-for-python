@@ -10,6 +10,7 @@ import asyncio
 from unittest import mock
 
 import pytest
+import trio
 from packaging.version import Version
 import aiohttp
 from utils import HTTP_REQUESTS, request_and_responses_product
@@ -21,6 +22,8 @@ from azure.core.pipeline.transport import (
     AioHttpTransport,
     HttpRequest,
     AioHttpTransportResponse,
+    AsyncioRequestsTransport,
+    TrioRequestsTransport,
 )
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl as RestAsyncHttpResponse
@@ -87,6 +90,37 @@ class RestMockResponse(RestAsyncHttpResponse):
 
 
 MOCK_RESPONSES = [PipelineTransportMockResponse, RestMockResponse]
+
+
+@pytest.mark.asyncio
+async def test_async_pipeline_aiohttp_transport_rejects_unknown_kwargs():
+    async with AsyncPipeline(AioHttpTransport(), policies=[]) as pipeline:
+        with pytest.raises(TypeError, match="unexpected keyword argument 'query_filter'"):
+            await pipeline.run(HttpRequest("GET", "http://localhost"), query_filter="PartitionKey eq 'pk001'")
+
+
+@pytest.mark.asyncio
+async def test_asyncio_requests_transport_validates_kwargs(port):
+    async with AsyncioRequestsTransport() as transport:
+        with pytest.raises(TypeError, match="unexpected keyword argument 'query_filter'"):
+            await transport.send(HttpRequest("GET", "http://localhost"), query_filter="PartitionKey eq 'pk001'")
+        response = await transport.send(
+            HttpRequest("GET", f"http://localhost:{port}/basic/string"), loop=asyncio.get_running_loop()
+        )
+    assert response.status_code == 200
+
+
+def test_trio_requests_transport_validates_kwargs(port):
+    async def run():
+        async with TrioRequestsTransport() as transport:
+            with pytest.raises(TypeError, match="unexpected keyword argument 'query_filter'"):
+                await transport.send(HttpRequest("GET", "http://localhost"), query_filter="PartitionKey eq 'pk001'")
+            response = await transport.send(
+                HttpRequest("GET", f"http://localhost:{port}/basic/string"), trio_limiter=None
+            )
+        assert response.status_code == 200
+
+    trio.run(run)
 
 
 @pytest.mark.asyncio

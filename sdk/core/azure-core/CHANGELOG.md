@@ -2,6 +2,10 @@
 
 ## 1.42.0 (Unreleased)
 
+### Breaking Changes
+
+- Built-in transports now reject unsupported per-request keyword arguments before calling their HTTP backends. #46546
+
 ### Features Added
 
 - Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.

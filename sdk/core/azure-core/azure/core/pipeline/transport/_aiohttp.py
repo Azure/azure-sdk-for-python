@@ -293,7 +293,7 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword MutableMapping proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         """
 
-    async def send(
+    async def send(  # pylint: disable=too-many-statements
         self,
         request: Union[HttpRequest, RestHttpRequest],
         *,
@@ -315,6 +315,17 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword MutableMapping proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         """
         await self.open()
+        for key in config:
+            if key not in (
+                "proxy",
+                "connection_cert",
+                "connection_verify",
+                "connection_timeout",
+                "read_timeout",
+                "ssl",
+                "server_hostname",
+            ):
+                raise TypeError(f"AioHttpTransport.send() got an unexpected keyword argument '{key}'")
         try:
             auto_decompress = self.session.auto_decompress  # type: ignore
         except AttributeError:

@@ -347,7 +347,7 @@ class RequestsTransport(HttpTransport):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    def send(  # pylint: disable=too-many-statements
+    def send(  # pylint: disable=too-many-statements,too-many-branches
         self,
         request: Union[HttpRequest, "RestHttpRequest"],
         *,
@@ -364,6 +364,15 @@ class RequestsTransport(HttpTransport):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
+        for key in kwargs:
+            if key not in (
+                "stream",
+                "connection_timeout",
+                "read_timeout",
+                "connection_verify",
+                "connection_cert",
+            ):
+                raise TypeError(f"RequestsTransport.send() got an unexpected keyword argument '{key}'")
         response = None
         error: Optional[AzureErrorUnion] = None
 

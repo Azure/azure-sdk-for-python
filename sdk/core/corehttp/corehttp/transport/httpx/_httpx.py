@@ -90,10 +90,11 @@ class HttpXTransport(HttpTransport):
         :rtype: ~corehttp.rest.HttpResponse
         """
         self.open()
+        for key in kwargs:
+            if key not in ("connection_timeout", "read_timeout"):
+                raise TypeError(f"HttpXTransport.send() got an unexpected keyword argument '{key}'")
         connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
-        # not needed here as its already handled during init
-        kwargs.pop("connection_verify", None)
 
         timeout = httpx.Timeout(connect_timeout, read=read_timeout)
         parameters = {
@@ -178,10 +179,11 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         :rtype: ~corehttp.rest.AsyncHttpResponse
         """
         await self.open()
+        for key in kwargs:
+            if key not in ("connection_timeout", "read_timeout"):
+                raise TypeError(f"AsyncHttpXTransport.send() got an unexpected keyword argument '{key}'")
         connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
-        # not needed here as its already handled during init
-        kwargs.pop("connection_verify", None)
         timeout = httpx.Timeout(connect_timeout, read=read_timeout)
         parameters = {
             "method": request.method,

@@ -8,6 +8,8 @@
 
 ### Breaking Changes
 
+- Built-in transports now reject unsupported per-request keyword arguments before calling their HTTP backends. [#46546](https://github.com/Azure/azure-sdk-for-python/pull/46546)
+
 ### Bugs Fixed
 
 - Fixed `PipelineClient.format_url` to avoid adding trailing slashes when the URL template contains only query parameters. [#45113](https://github.com/Azure/azure-sdk-for-python/pull/45113)

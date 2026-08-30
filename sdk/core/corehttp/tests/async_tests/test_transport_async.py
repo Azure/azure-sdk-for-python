@@ -9,6 +9,7 @@ from packaging.version import Version
 
 from corehttp.rest import HttpRequest
 from corehttp.transport.aiohttp import AioHttpTransport
+from corehttp.transport.httpx import AsyncHttpXTransport
 from corehttp.runtime.pipeline import AsyncPipeline
 from corehttp.exceptions import (
     ServiceResponseError,
@@ -19,6 +20,22 @@ from corehttp.exceptions import (
 
 import aiohttp
 import pytest
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "transport_type, keyword",
+    [
+        (AioHttpTransport, "query_filter"),
+        (AsyncHttpXTransport, "query_filter"),
+        (AsyncHttpXTransport, "connection_verify"),
+        (AsyncHttpXTransport, "connection_cert"),
+    ],
+)
+async def test_transport_rejects_unknown_kwargs(transport_type, keyword):
+    async with transport_type() as transport:
+        with pytest.raises(TypeError, match=keyword):
+            await transport.send(HttpRequest("GET", "http://localhost"), **{keyword: True})
 
 
 @pytest.mark.asyncio

@@ -12,9 +12,25 @@ from urllib3.response import HTTPResponse as UrllibResponse
 from urllib3.connection import HTTPConnection as UrllibConnection
 
 from corehttp.rest import HttpRequest
+from corehttp.transport.httpx import HttpXTransport
 from corehttp.transport.requests import RequestsTransport
 from corehttp.runtime.pipeline import Pipeline
 from corehttp.exceptions import ServiceResponseError, ServiceResponseTimeoutError, ServiceRequestTimeoutError
+
+
+@pytest.mark.parametrize(
+    "transport_type, keyword",
+    [
+        (RequestsTransport, "query_filter"),
+        (HttpXTransport, "query_filter"),
+        (HttpXTransport, "connection_verify"),
+        (HttpXTransport, "connection_cert"),
+    ],
+)
+def test_transport_rejects_unknown_kwargs(transport_type, keyword):
+    with transport_type() as transport:
+        with pytest.raises(TypeError, match=keyword):
+            transport.send(HttpRequest("GET", "http://localhost"), **{keyword: True})
 
 
 def test_already_close_with_with(caplog, port):

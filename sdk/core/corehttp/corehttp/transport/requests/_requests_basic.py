@@ -146,6 +146,9 @@ class RequestsTransport(HttpTransport):
         :rtype: ~corehttp.rest.HttpResponse
         """
         self.open()
+        for key in kwargs:
+            if key not in ("connection_timeout", "read_timeout", "connection_verify", "connection_cert"):
+                raise TypeError(f"RequestsTransport.send() got an unexpected keyword argument '{key}'")
         response = None
         error: Optional[BaseErrorUnion] = None
 
