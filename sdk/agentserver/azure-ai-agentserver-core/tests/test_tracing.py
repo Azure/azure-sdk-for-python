@@ -42,6 +42,8 @@ class _CollectorExporter(SpanExporter):
 
     def force_flush(self, timeout_millis=30000):
         return True
+
+
 # ------------------------------------------------------------------ #
 # Tracing enabled / disabled
 # ------------------------------------------------------------------ #
@@ -61,11 +63,17 @@ class TestTracingToggle:
             mock_configure.assert_called_once()
 
     def test_observability_receives_appinsights_env_var(self) -> None:
-        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with mock.patch.dict(
+            os.environ,
+            {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"},
+        ):
             mock_configure = mock.MagicMock()
             AgentServerHost(configure_observability=mock_configure)
             mock_configure.assert_called_once()
-            assert mock_configure.call_args[1]["connection_string"] == "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+            assert (
+                mock_configure.call_args[1]["connection_string"]
+                == "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+            )
 
     def test_observability_receives_otlp_env_var(self) -> None:
         with mock.patch.dict(os.environ, {"OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318"}):
@@ -105,9 +113,7 @@ class TestTracingToggle:
         """Passing configure_observability=None disables all SDK-managed observability."""
         with mock.patch.dict(
             os.environ,
-            {
-                "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
-            },
+            {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"},
         ):
             # Should not raise even with App Insights configured
             AgentServerHost(configure_observability=None)
@@ -157,6 +163,7 @@ class TestSetupDistroExport:
     def test_distro_called_when_conn_str_provided(self) -> None:
         with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
             from azure.ai.agentserver.core import _tracing
+
             _tracing._configure_tracing(connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000")
             mock_distro.assert_called_once()
             kwargs = mock_distro.call_args[1]
@@ -167,6 +174,7 @@ class TestSetupDistroExport:
     def test_distro_called_without_conn_str(self) -> None:
         with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
             from azure.ai.agentserver.core import _tracing
+
             _tracing._configure_tracing(connection_string=None)
             mock_distro.assert_called_once()
             kwargs = mock_distro.call_args[1]
@@ -236,12 +244,8 @@ class TestSetupDistroExport:
             assert len(span_processors) == 1
             assert len(metric_readers) == 1
             assert len(log_record_processors) == 1
-            assert span_processors[0].span_exporter.__module__.startswith(
-                "opentelemetry.exporter.otlp.proto.grpc"
-            )
-            assert metric_readers[0]._exporter.__module__.startswith(
-                "opentelemetry.exporter.otlp.proto.http"
-            )
+            assert span_processors[0].span_exporter.__module__.startswith("opentelemetry.exporter.otlp.proto.grpc")
+            assert metric_readers[0]._exporter.__module__.startswith("opentelemetry.exporter.otlp.proto.http")
             assert log_record_processors[0]._batch_processor._exporter.__module__.startswith(
                 "opentelemetry.exporter.otlp.proto.http"
             )
@@ -308,8 +312,7 @@ class TestSetupDistroExport:
                 for processor in otel_kwargs.get("span_processors") or []
             )
             exporter_modules.extend(
-                getattr(reader._exporter, "__module__", "")
-                for reader in otel_kwargs.get("metric_readers") or []
+                getattr(reader._exporter, "__module__", "") for reader in otel_kwargs.get("metric_readers") or []
             )
             exporter_modules.extend(
                 getattr(processor._batch_processor._exporter, "__module__", "")
@@ -417,9 +420,9 @@ class TestAzureMonitorDistroExport:
     ) -> dict:
         from azure.ai.agentserver.core import _tracing
 
-        with mock.patch(
-            "microsoft.opentelemetry.use_microsoft_opentelemetry"
-        ) as mock_use, mock.patch.dict(os.environ, env, clear=False):
+        with mock.patch("microsoft.opentelemetry.use_microsoft_opentelemetry") as mock_use, mock.patch.dict(
+            os.environ, env, clear=False
+        ):
             _tracing._setup_distro_export(
                 resource=Resource.create({}),
                 span_processors=[],
@@ -490,9 +493,7 @@ class TestAzureMonitorDistroExport:
             _setup_azure_instrumentations(
                 {
                     "disable_tracing": False,
-                    "instrumentation_options": _tracing._resolve_instrumentation_options(
-                        None
-                    ),
+                    "instrumentation_options": _tracing._resolve_instrumentation_options(None),
                 }
             )
             request = PipelineRequest(
@@ -520,9 +521,7 @@ class TestAzureMonitorDistroExport:
     def test_no_sampling_ratio_without_azure_monitor(self) -> None:
         from azure.ai.agentserver.core import _tracing
 
-        with mock.patch(
-            "microsoft.opentelemetry.use_microsoft_opentelemetry"
-        ) as mock_use:
+        with mock.patch("microsoft.opentelemetry.use_microsoft_opentelemetry") as mock_use:
             _tracing._setup_distro_export(
                 resource=Resource.create({}),
                 span_processors=[],
@@ -602,8 +601,10 @@ class TestFoundryEnrichmentSpanProcessor:
 
     def test_agent_attrs_present_on_exported_span(self) -> None:
         proc = _FoundryEnrichmentSpanProcessor(
-            agent_name="my-agent", agent_version="1.0",
-            agent_id="my-agent:1.0", project_id="proj-123",
+            agent_name="my-agent",
+            agent_version="1.0",
+            agent_id="my-agent:1.0",
+            project_id="proj-123",
         )
         provider, collector = self._create_provider(proc)
         tracer = provider.get_tracer("test")
@@ -620,8 +621,10 @@ class TestFoundryEnrichmentSpanProcessor:
     def test_agent_attrs_survive_framework_overwrite(self) -> None:
         """A framework setting agent attrs mid-span must not win."""
         proc = _FoundryEnrichmentSpanProcessor(
-            agent_name="my-agent", agent_version="1.0",
-            agent_id="my-agent:1.0", project_id="proj-123",
+            agent_name="my-agent",
+            agent_version="1.0",
+            agent_id="my-agent:1.0",
+            project_id="proj-123",
         )
         provider, collector = self._create_provider(proc)
         tracer = provider.get_tracer("test")
@@ -637,8 +640,10 @@ class TestFoundryEnrichmentSpanProcessor:
     def test_blueprint_id_uses_correct_attribute_key(self) -> None:
         """agent_blueprint_id must be emitted under microsoft.a365.agent.blueprint.id."""
         proc = _FoundryEnrichmentSpanProcessor(
-            agent_name="my-agent", agent_version="1.0",
-            agent_id="my-agent:1.0", agent_blueprint_id="bp-abc-123",
+            agent_name="my-agent",
+            agent_version="1.0",
+            agent_id="my-agent:1.0",
+            agent_blueprint_id="bp-abc-123",
         )
         provider, collector = self._create_provider(proc)
         tracer = provider.get_tracer("test")
@@ -651,8 +656,10 @@ class TestFoundryEnrichmentSpanProcessor:
 
     def test_none_fields_are_skipped(self) -> None:
         proc = _FoundryEnrichmentSpanProcessor(
-            agent_name=None, agent_version=None,
-            agent_id=None, project_id=None,
+            agent_name=None,
+            agent_version=None,
+            agent_id=None,
+            project_id=None,
         )
         provider, collector = self._create_provider(proc)
         tracer = provider.get_tracer("test")
@@ -669,7 +676,9 @@ class TestFoundryEnrichmentSpanProcessor:
     def test_no_crash_when_span_lacks_attributes(self) -> None:
         """If the SDK changes internals, _on_ending must not raise."""
         proc = _FoundryEnrichmentSpanProcessor(
-            agent_name="a", agent_version="1", agent_id="a:1",
+            agent_name="a",
+            agent_version="1",
+            agent_id="a:1",
         )
         fake_span = object()  # no _attributes at all
         proc._on_ending(fake_span)  # should not raise
@@ -683,7 +692,8 @@ class TestFoundryEnrichmentSpanProcessor:
         tracer = provider.get_tracer("test")
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", "session-456",
+            "azure.ai.agentserver.session_id",
+            "session-456",
         )
         with tracer.start_as_current_span("span", context=ctx):
             pass
@@ -699,7 +709,8 @@ class TestFoundryEnrichmentSpanProcessor:
         tracer = provider.get_tracer("test")
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.conversation_id", "conv-123",
+            "azure.ai.agentserver.conversation_id",
+            "conv-123",
         )
         with tracer.start_as_current_span("span", context=ctx):
             pass
@@ -715,10 +726,13 @@ class TestFoundryEnrichmentSpanProcessor:
         tracer = provider.get_tracer("test")
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", "session-456",
+            "azure.ai.agentserver.session_id",
+            "session-456",
         )
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.conversation_id", "conv-123", context=ctx,
+            "azure.ai.agentserver.conversation_id",
+            "conv-123",
+            context=ctx,
         )
         with tracer.start_as_current_span("span", context=ctx):
             pass
@@ -747,10 +761,13 @@ class TestFoundryEnrichmentSpanProcessor:
         tracer = provider.get_tracer("test")
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", "session-456",
+            "azure.ai.agentserver.session_id",
+            "session-456",
         )
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.conversation_id", "conv-789", context=ctx,
+            "azure.ai.agentserver.conversation_id",
+            "conv-789",
+            context=ctx,
         )
         token = _otel_context.attach(ctx)
         try:
@@ -773,7 +790,8 @@ class TestFoundryEnrichmentSpanProcessor:
         tracer = provider.get_tracer("test")
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.invocation_id", "inv-abc-123",
+            "azure.ai.agentserver.invocation_id",
+            "inv-abc-123",
         )
         with tracer.start_as_current_span("span", context=ctx):
             pass
@@ -800,7 +818,8 @@ class TestFoundryEnrichmentSpanProcessor:
         tracer = provider.get_tracer("test")
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.invocation_id", "inv-xyz-789",
+            "azure.ai.agentserver.invocation_id",
+            "inv-xyz-789",
         )
         token = _otel_context.attach(ctx)
         try:
@@ -889,7 +908,8 @@ class TestBaggageLogRecordProcessor:
         log_data = _FakeLogData({})
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", "session-from-baggage",
+            "azure.ai.agentserver.session_id",
+            "session-from-baggage",
         )
         token = _otel_context.attach(ctx)
         try:

@@ -220,8 +220,10 @@ def _configure_tracing(
 
     resolved_span_processors = [
         _FoundryEnrichmentSpanProcessor(
-            agent_name=agent_name, agent_version=agent_version,
-            agent_id=agent_id, project_id=project_id,
+            agent_name=agent_name,
+            agent_version=agent_version,
+            agent_id=agent_id,
+            project_id=project_id,
             agent_blueprint_id=agent_blueprint_id,
             agent_tenant_id=agent_tenant_id,
         ),
@@ -252,13 +254,9 @@ def _configure_tracing(
                 enable_sensitive_data=enable_sensitive_data,
                 instrumentation_options=instrumentation_options,
             )
-        logger.info(
-            "Tracing configured successfully via microsoft-opentelemetry distro."
-        )
+        logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
     except ImportError:
-        logger.warning(
-            "microsoft-opentelemetry is not installed — tracing export disabled."
-        )
+        logger.warning("microsoft-opentelemetry is not installed — tracing export disabled.")
         # Still set up TracerProvider with enrichment processor so spans are created
         _ensure_trace_provider(resource, resolved_span_processors)
 
@@ -295,9 +293,7 @@ def _setup_distro_export(
         "metric_readers": metric_readers,
         "log_record_processors": log_record_processors,
         "enable_sensitive_data": enable_sensitive_data,
-        "instrumentation_options": _resolve_instrumentation_options(
-            instrumentation_options
-        ),
+        "instrumentation_options": _resolve_instrumentation_options(instrumentation_options),
     }
 
     # Azure Monitor export is off by default in the distro — enable it
@@ -319,10 +315,9 @@ def _setup_distro_export(
             kwargs["azure_monitor_exporter_credential"] = ManagedIdentityCredential()
 
     # A365 tracing export — enabled only in hosted environments.
-    if (
-        os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "")
-        and os.environ.get("FOUNDRY_AGENT365_TRACING_ENABLED", "").lower() in ("true", "1")
-    ):
+    if os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "") and os.environ.get(
+        "FOUNDRY_AGENT365_TRACING_ENABLED", ""
+    ).lower() in ("true", "1"):
         kwargs["enable_a365"] = True
         kwargs["a365_use_s2s_endpoint"] = True
         kwargs["a365_enable_observability_exporter"] = True
@@ -460,10 +455,7 @@ def _resolve_otlp_protocol(signal_protocol_env: Optional[str] = None) -> str:
     protocol = protocol or os.environ.get(_OTLP_PROTOCOL) or _OTLP_HTTP_PROTOBUF
     normalized = protocol.strip().lower()
     if normalized not in (_OTLP_HTTP_PROTOBUF, _OTLP_GRPC):
-        raise ValueError(
-            f"Unsupported OTLP protocol {protocol!r}. Use "
-            f"{_OTLP_HTTP_PROTOBUF!r} or {_OTLP_GRPC!r}."
-        )
+        raise ValueError(f"Unsupported OTLP protocol {protocol!r}. Use " f"{_OTLP_HTTP_PROTOBUF!r} or {_OTLP_GRPC!r}.")
     return normalized
 
 
@@ -521,20 +513,20 @@ class TraceContextMiddleware:
 
         # Build a simple dict of headers for the propagators
         raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
-        headers = {
-            k.decode("latin-1"): v.decode("latin-1")
-            for k, v in raw_headers
-        }
+        headers = {k.decode("latin-1"): v.decode("latin-1") for k, v in raw_headers}
 
         # Use the global propagator to extract trace context + baggage
         from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+
         ctx = extract(carrier=headers)
 
         # Add x-request-id as baggage for downstream propagation
         x_request_id = headers.get("x-request-id")
         if x_request_id:
             ctx = _otel_baggage.set_baggage(
-                "x_request_id", x_request_id, context=ctx,
+                "x_request_id",
+                x_request_id,
+                context=ctx,
             )
 
         token = _otel_context.attach(ctx)
@@ -650,9 +642,7 @@ def detach_context(token: Any) -> None:
             )
 
 
-async def trace_stream(
-    iterator: AsyncIterable[StreamContent], span: Any
-) -> AsyncIterator[StreamContent]:
+async def trace_stream(iterator: AsyncIterable[StreamContent], span: Any) -> AsyncIterator[StreamContent]:
     """Wrap a streaming body so the span covers the full transmission.
 
     Yields chunks unchanged.  Ends the span when the iterator is
