@@ -56,11 +56,15 @@ class _ConfigurationManager(metaclass=Singleton):
     def initialize(self, **kwargs):
         """Initialize the ConfigurationManager and start the configuration worker."""
         with self._state_lock:
+            # Always merge the caller's profile fields, even after the worker has started. fill() is
+            # first-wins per field, so a chain of components (e.g. distro -> exporter) can each
+            # contribute the fields they know: the distro sets component="dst" first, and a later
+            # exporter still supplies ikey/region without overriding the already-set component.
+            _ConfigurationProfile.fill(**kwargs)
+
+            # Start the worker only once; subsequent initialize() calls only contribute profile fields.
             if self._initialized:
                 return
-
-            # Fill the configuration profile with the initializer's parameters
-            _ConfigurationProfile.fill(**kwargs)
 
             # Lazy import to avoid circular import
             from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker

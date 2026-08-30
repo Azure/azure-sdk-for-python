@@ -262,6 +262,9 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         settle_operation,
         dead_letter_reason=None,
         dead_letter_error_description=None,
+        *,
+        await_outcome: bool = False,
+        outcome_timeout=None,
     ) -> None:
         """
         Settles message.
@@ -271,6 +274,10 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :param str settle_operation: The settle operation.
         :param str or None dead_letter_reason: Optional. The dead letter reason.
         :param str or None dead_letter_error_description: Optional. The dead letter error description.
+        :keyword bool await_outcome: Whether to wait for the service to confirm the settlement.
+         Only supported by the pyamqp transport.
+        :keyword outcome_timeout: Seconds to wait for the settlement outcome.
+        :paramtype outcome_timeout: float or None
         """
 
     @staticmethod

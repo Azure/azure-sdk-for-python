@@ -18,6 +18,11 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
 
 import anyio
 
+from azure.ai.agentserver.core import (
+    FoundryAgentRequestContext,
+    reset_request_context,
+    set_request_context,
+)
 from azure.ai.agentserver.core.platform_headers import (
     PLATFORM_ERROR_TAG,
 )
@@ -41,18 +46,10 @@ from ..models.runtime import (
     ResponseExecution,
     ResponseModeFlags,
     ResponseStatus,
-)
-from ..models.runtime import (
-    apply_cancelled_terminal as _apply_cancelled_terminal,
-)
-from ..models.runtime import (
-    apply_failed_terminal as _apply_failed_terminal,
-)
-from ..models.runtime import (
-    resolve_cancelled_response as _resolve_cancelled_response,
-)
-from ..models.runtime import (
-    resolve_failed_response as _resolve_failed_response,
+    _apply_cancelled_terminal,
+    _apply_failed_terminal,
+    _resolve_cancelled_response,
+    _resolve_failed_response,
 )
 from ..store._base import ResponseAlreadyExistsError, ResponseProviderProtocol
 from ..streaming._checkpoint import ResponseCheckpointEvent
@@ -81,27 +78,55 @@ if TYPE_CHECKING:
 logger = logging.getLogger("azure.ai.agentserver")
 
 
-def _is_hosted_environment() -> bool:
-    """Return whether the agent is running in a Foundry-hosted container.
-
-    Uses the canonical :class:`~azure.ai.agentserver.core.AgentConfig` derivation
-    (the same public API ``_routing`` already uses for Foundry auto-activation).
-    In a hosted deployment the resilient-task subsystem is auto-initialized with
-    no opt-out, so a missing TaskManager is a platform-infrastructure failure
-    rather than a reason to silently run a response non-durably.
-
-    :return: ``True`` if running in a Foundry-hosted environment.
-    :rtype: bool
-    """
-    from azure.ai.agentserver.core import AgentConfig  # pylint: disable=import-outside-toplevel
-
-    return AgentConfig.from_env().is_hosted
-
-
 _STORAGE_ERROR_MESSAGE = (
     "An internal error occurred while storing the response. "
     "Subsequent retrieval is not guaranteed. Please retry the request."
 )
+
+
+async def _iter_handler_with_request_context(
+    create_fn: "Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]]",
+    parsed: "CreateResponse",
+    context: "ResponseContext | None",
+    cancellation_signal: asyncio.Event,
+    agent_session_id: str | None,
+) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    """Run a developer handler with its reconstructed ambient platform identity.
+
+    :param create_fn: The handler's async generator callable.
+    :type create_fn: Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]]
+    :param parsed: The parsed request.
+    :type parsed: CreateResponse
+    :param context: The reconstructed response context.
+    :type context: ResponseContext | None
+    :param cancellation_signal: The cancellation event.
+    :type cancellation_signal: asyncio.Event
+    :param agent_session_id: The resolved agent session ID.
+    :type agent_session_id: str | None
+    :return: The handler's response stream events.
+    :rtype: AsyncIterator[generated_models.ResponseStreamEvent]
+    """
+    request_context = None
+    if context is not None:
+        platform_context = context.platform_context
+        request_context = FoundryAgentRequestContext(
+            user_id=platform_context.user_id_key,
+            call_id=platform_context.call_id,
+            session_id=agent_session_id,
+        )
+
+    handler_iterator = create_fn(parsed, context, cancellation_signal)
+    while True:
+        token = set_request_context(request_context) if request_context is not None else None
+        try:
+            try:
+                event = await handler_iterator.__anext__()
+            except StopAsyncIteration:
+                return
+        finally:
+            if token is not None:
+                reset_request_context(token)
+        yield event
 
 
 async def _resolve_input_items_for_persistence(
@@ -967,9 +992,14 @@ async def _bg_drain_handler_events(
     :rtype: bool
     """
     try:
-        async for handler_event in _iter_with_winddown(
-            create_fn(parsed, context, cancellation_signal), cancellation_signal
-        ):
+        handler_iterator = _iter_handler_with_request_context(
+            create_fn,
+            parsed,
+            context,
+            cancellation_signal,
+            agent_session_id,
+        )
+        async for handler_event in _iter_with_winddown(handler_iterator, cancellation_signal):
             # Intercept developer ``stream.checkpoint()`` events (spec 025 §A.3):
             # persist (resilient background only) and never forward them.
             if isinstance(handler_event, ResponseCheckpointEvent):
@@ -3856,14 +3886,19 @@ class _ResponseOrchestrator:
                 exc_info=True,
             )
             state.next_seq = 0
-        handler_iterator = self._create_fn(parsed, context, cancellation_signal)
-
         # Drive the streaming pipeline. Events flow to the per-response
         # stream — the wire iterator on _live_stream's side consumes from
         # the same registry stream independently, and the file-backed
         # backing (when configured) persists every emit to disk for the
         # GET reconnect endpoint.
         try:
+            handler_iterator = _iter_handler_with_request_context(
+                self._create_fn,
+                parsed,
+                context,
+                cancellation_signal,
+                agent_session_id,
+            )
             async for _event in self._process_handler_events(ctx, state, handler_iterator):
                 # Events are emitted to record.subject inside
                 # _process_handler_events; we only need to drain the
@@ -3933,13 +3968,16 @@ class _ResponseOrchestrator:
 
         Two outcomes when the resilient start cannot proceed:
 
-        - **No task subsystem installed** (the start raises
-          :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized` —
-          e.g. an in-process test client whose lifespan never ran). When NOT
-          hosted, run the handler in-process via ``fallback_runner`` — there is
-          nothing to recover, so this is the legitimate non-durable path, NOT a
-          failure. When hosted, the subsystem is auto-initialized with no
-          opt-out, so its absence is a platform failure and is re-raised tagged.
+        - **No manager installed** — the start raises
+          :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized`.
+          Because ``AgentServerHost`` fails the lifespan when resilient tasks are
+          ENABLED but construction/startup fails, a missing manager in a running
+          deployment means resilient tasks are DISABLED (opt-out) — durability
+          was not requested (this also covers in-process test clients whose
+          lifespan never ran). The signal is **swallowed** and the handler runs
+          in-process via ``fallback_runner`` — the response still executes and
+          persists (GET works); it is simply not crash-recoverable. NOT a
+          failure.
         - **Subsystem present but the start fails**: fail immediately. The
           exception is tagged as a platform infrastructure error and re-raised
           (no silent degradation to a non-durable task — that would hide a real
@@ -3950,7 +3988,7 @@ class _ResponseOrchestrator:
         :param record: The mutable execution record.
         :type record: ResponseExecution
         :param fallback_runner: The shielded runner coroutine function to run
-            in-process when no task subsystem is installed.
+            in-process when resilient tasks are disabled.
         :type fallback_runner: Any
         :keyword disposition: One of ``"re-invoke"`` (Row 1: resilient_bg+bg+store
             — task body re-runs handler on recovery) or ``"mark-failed"``
@@ -3959,11 +3997,12 @@ class _ResponseOrchestrator:
             recovery). Stamped into task framework metadata so recovery dispatch
             can route without re-deriving the gate from request params.
         :paramtype disposition: str
-        :raises Exception: If durability is required but unavailable — either the
-            task subsystem is present and the resilient start fails, or the
-            deployment is hosted and the subsystem is missing. The exception is
+        :raises Exception: If the task subsystem is present and the resilient
+            start fails (e.g. the task-store write is rejected). The exception is
             tagged with ``PLATFORM_ERROR_TAG`` so the endpoint surfaces
-            ``x-platform-error-source: platform``.
+            ``x-platform-error-source: platform``. A missing subsystem
+            (``TaskManagerNotInitialized``) is NOT raised — it is swallowed and
+            handled via the in-process fallback (see above).
         """
         from ._resilient_orchestrator import (
             ResilientResponseOrchestrator,
@@ -4012,27 +4051,22 @@ class _ResponseOrchestrator:
             # `previous_response_id`. Propagate so the endpoint layer
             # surfaces HTTP 409 `conversation_fork_not_supported`.
             raise
-        except TaskManagerNotInitialized as exc:
-            # No resilient-task subsystem is installed in this process.
-            if _is_hosted_environment():
-                # Hosted deployments auto-initialize the subsystem with no
-                # opt-out, so its absence means initialization failed at boot
-                # (e.g. a misconfigured backend or a missing dependency).
-                # Durability is mandatory in production — fail loudly as a
-                # platform error rather than silently degrading a store=true
-                # response to a non-durable, connection-scoped task.
-                logger.error(
-                    "Resilient task subsystem missing in hosted environment for response %s; failing the request",
-                    ctx.response_id,
-                )
-                setattr(exc, PLATFORM_ERROR_TAG, True)
-                await self._runtime_state.delete(ctx.response_id)
-                raise
-            # Non-hosted (local dev, or unit/contract tests whose ASGI lifespan
-            # never ran). Nothing to recover — run the handler in-process. This
-            # is the legitimate non-durable path, NOT a failure. (When a manager
-            # IS present — hosted, or a local file-provider deployment — the
-            # start above succeeds and we use the resilient task.)
+        except TaskManagerNotInitialized:
+            # No manager is installed. Because ``AgentServerHost`` fails the
+            # lifespan when resilient tasks are ENABLED but construction/startup
+            # fails, a missing manager in a running deployment means resilient
+            # tasks are simply DISABLED (opt-out) — recovery/durability was not
+            # requested. (It also covers in-process test clients whose lifespan
+            # never ran.) SWALLOW and run the handler in-process: the response
+            # still executes and persists (GET works), it is simply not
+            # crash-recoverable. This is the deliberate non-durable path, NOT a
+            # failure.
+            logger.info(
+                "Resilient task subsystem not enabled for response %s; running handler "
+                "in-process (non-durable). Enable via set_resilient_tasks_enabled(True) "
+                "(or resilient_background) for crash recovery.",
+                ctx.response_id,
+            )
             record.execution_task = asyncio.create_task(fallback_runner())
         except Exception as exc:  # pylint: disable=broad-exception-caught
             # The resilient-task subsystem IS present but starting the task

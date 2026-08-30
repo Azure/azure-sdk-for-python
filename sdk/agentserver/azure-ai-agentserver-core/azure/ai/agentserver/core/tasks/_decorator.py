@@ -53,14 +53,15 @@ _VALID_TASK_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
 _MAX_TASK_ID_LENGTH = 256
 
 #: Spec 037 #8 — per-turn execution timeout: default to 1 day when unset and
-# treat 1 day as a HARD ceiling. A developer-supplied timeout may lower the
-# budget, but a larger (or negative) value is rejected at registration
-# (fail-fast, not clamped). This is a PER-TURN cap, not a task-lifetime bound:
-# a multi-turn chain can live indefinitely (the timeout resets every turn); the
-# task's overall lifetime is governed by the platform's 30-day sliding TTL.
+# treat 7 days as a HARD ceiling. A developer-supplied timeout may raise the
+# budget up to the ceiling, but a larger (or negative) value is rejected at
+# registration (fail-fast, not clamped). This is a PER-TURN cap, not a
+# task-lifetime bound: a multi-turn chain can live indefinitely (the timeout
+# resets every turn); the task's overall lifetime is governed by the platform's
+# 30-day sliding TTL.
 # Mirrors the .NET port's ``TaskEngineConstants.ResolveTaskTimeout``.
 _DEFAULT_TASK_TIMEOUT = timedelta(days=1)
-_MAX_TASK_TIMEOUT = timedelta(days=1)
+_MAX_TASK_TIMEOUT = timedelta(days=7)
 
 
 def _validate_task_name(name: str | None) -> None:
@@ -89,18 +90,18 @@ def _validate_task_name(name: str | None) -> None:
 
 def _validate_timeout(timeout: timedelta | None) -> None:
     """Spec 037 #8 — reject a per-turn timeout that is negative or exceeds the
-    1-day hard ceiling (fail-fast at registration, not clamped).
+    7-day hard ceiling (fail-fast at registration, not clamped).
 
     :param timeout: The developer-supplied per-turn timeout, or ``None``.
     :type timeout: ~datetime.timedelta | None
-    :raises ValueError: When ``timeout`` is negative or greater than 1 day.
+    :raises ValueError: When ``timeout`` is negative or greater than 7 days.
     """
     if timeout is None:
         return
     if timeout.total_seconds() < 0:
         raise ValueError(f"timeout must be >= 0, got {timeout}")
     if timeout > _MAX_TASK_TIMEOUT:
-        raise ValueError(f"timeout must be <= 1 day (the per-turn hard ceiling), got {timeout}")
+        raise ValueError(f"timeout must be <= 7 days (the per-turn hard ceiling), got {timeout}")
 
 
 def _resolve_effective_timeout(timeout: timedelta | None) -> timedelta:
@@ -1384,8 +1385,8 @@ def task(
     :keyword title: Static human-readable string.
     :keyword timeout: Per-turn, wall-clock, resilient, cooperative-only
         execution budget. Defaults to 1 day when unset; a supplied value may
-        lower the budget but 1 day is a hard ceiling (a larger or negative value
-        raises ``ValueError`` at decoration). This caps a single handler
+        raise the budget up to 7 days, which is a hard ceiling (a larger or
+        negative value raises ``ValueError`` at decoration). This caps a single handler
         invocation only — it is NOT a task-lifetime bound. When the budget
         elapses for the current turn, ``ctx.timeout_exceeded`` is set then
         ``ctx.cancel`` is set; the handler decides whether to wind down. The
@@ -1700,6 +1701,16 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
             return None
         return run
 
+    async def _get(self, task_id: str) -> Any:
+        """Return the persisted chain record for internal orchestration.
+
+        :param task_id: The chain task identifier.
+        :type task_id: str
+        :return: The persisted task information, or ``None`` when absent.
+        :rtype: Any
+        """
+        return await self._inner._get(task_id)  # noqa: SLF001  # pylint: disable=protected-access
+
     async def delete(self, task_id: str) -> None:
         """Force-delete the chain record + any queued inputs.
 
@@ -1807,7 +1818,7 @@ def multi_turn_task(
         :keyword title: Static human-readable string. Callable-factory form is
             not supported.
         :keyword timeout: Per-turn cooperative timeout. Defaults to 1 day when
-            unset; 1 day is a hard ceiling (larger/negative rejected at
+            unset; 7 days is a hard ceiling (larger/negative rejected at
             decoration). This is a per-turn cap, not a chain-lifetime bound.
         :keyword retry: Default retry policy.
         :keyword steerable: When True, ``start()`` against an in-flight chain

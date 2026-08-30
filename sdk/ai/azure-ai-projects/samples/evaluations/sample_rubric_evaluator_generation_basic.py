@@ -13,8 +13,8 @@ DESCRIPTION:
       1. Creates an `EvaluatorGenerationJob` whose only source is an inline
          natural-language description of the application's purpose, capabilities,
          and tools. The service synthesizes a rubric tailored to that application.
-      2. Calls `begin_create_generation_job` which returns an `LROPoller[EvaluatorVersion]`;
-         `.result()` polls automatically and returns the generated `EvaluatorVersion`.
+      2. Calls `begin_create_generation_job` and reports the standard LRO
+         poller's status until it returns the generated `EvaluatorVersion`.
       3. Creates an OpenAI evaluation referencing the generated evaluator as a
          testing criterion.
       4. Runs the evaluation against inline JSONL sample data.
@@ -87,10 +87,8 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     # 1. Generate an evaluator from a single `Prompt` source.
-    # The LRO polls automatically; `.result()` blocks until the job reaches a terminal state
-    # and returns the produced EvaluatorVersion directly.
-    print("Waiting for generation job to complete (polling is handled by the SDK)...")
-    evaluator = project_client.beta.evaluators.begin_create_generation_job(
+    print("Begin creating an evaluator generation job.")
+    poller = project_client.beta.evaluators.begin_create_generation_job(
         job=EvaluatorGenerationJob(
             inputs=EvaluatorGenerationInputs(
                 model=model_name,
@@ -119,7 +117,19 @@ with (
         # `operation_id` makes the call idempotent - re-submitting the same id attaches to the existing job.
         operation_id=f"rubric-eval-basic-{short}",
         polling_interval=poll_interval_seconds,
-    ).result()
+    )
+
+    # Optional: While SDK is polling, periodically print the job status until the job is complete
+    print("Periodically check job status:")
+    while not poller.done():
+        print(f"\tstatus=`{poller.status()}`")
+        time.sleep(poll_interval_seconds)
+
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
+    evaluator = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
+    print(f"Evaluator generation result: {evaluator}")
 
     # On success, the evaluator is automatically saved as version 1.
     # `isinstance` narrows the discriminated `definition` to the rubric subtype.

@@ -6,4 +6,4 @@
 -e ..
 -e ../../azure-ai-agentserver-invocations
 
-openai
+openai>=3.0.0,<4.0.0

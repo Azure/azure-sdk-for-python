@@ -56,8 +56,8 @@ from ..models._helpers import get_input_expanded, to_output_item
 from ..models.runtime import (
     ResponseExecution,
     ResponseModeFlags,
-    resolve_cancelled_response,
-    resolve_failed_response,
+    _resolve_cancelled_response,
+    _resolve_failed_response,
 )
 from ..store._base import ResponseProviderProtocol, ResponseStoreCorruptionError
 from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
@@ -418,6 +418,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         response_id: str,
         agent_reference: AgentReference | dict[str, Any],
         agent_session_id: str | None = None,
+        agent_session_guid: str | None = None,
         span: CreateSpan,
         request: Request,
     ) -> _ExecutionContext:
@@ -436,6 +437,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :paramtype agent_reference: AgentReference | dict[str, Any]
         :keyword agent_session_id: Resolved session ID (B39), or ``None``.
         :paramtype agent_session_id: str | None
+        :keyword agent_session_guid: Platform session-incarnation GUID, or
+            ``None`` when unavailable.
+        :paramtype agent_session_guid: str | None
         :keyword span: Active observability span for this request.
         :paramtype span: CreateSpan
         :keyword request: Starlette HTTP request (for headers / query params).
@@ -473,6 +477,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             conversation_id=conversation_id,
             cancellation_signal=cancellation_signal,
             agent_session_id=agent_session_id,
+            agent_session_guid=agent_session_guid,
             span=span,
             parsed=parsed,
             user_id=request.headers.get(USER_ID),
@@ -672,6 +677,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # B39: Resolve session ID
         config_session_id = getattr(getattr(self._host, "config", None), "session_id", "") or ""
+        host_config = getattr(self._host, "config", None)
+        config_session_guid = (
+            getattr(host_config, "session_guid", "") or ""
+            if getattr(host_config, "is_hosted", False)
+            else ""
+        )
         agent_session_id = _resolve_session_id(
             parsed, payload, env_session_id=config_session_id, agent_reference=agent_reference
         )
@@ -681,6 +692,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             response_id=response_id,
             agent_reference=agent_reference,
             agent_session_id=agent_session_id,
+            agent_session_guid=config_session_guid or None,
             span=span,
             request=request,
         )
@@ -1552,7 +1564,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if terminal_error is not None:
             if record.status == "cancelled":
                 record.set_response_snapshot(
-                    resolve_cancelled_response(
+                    _resolve_cancelled_response(
                         record.response, record.response_id, record.agent_reference, record.model
                     )
                 )
@@ -1581,7 +1593,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # Set cancelled snapshot and transition
         record.set_response_snapshot(
-            resolve_cancelled_response(record.response, record.response_id, record.agent_reference, record.model)
+            _resolve_cancelled_response(record.response, record.response_id, record.agent_reference, record.model)
         )
         # Stamp mode flags so the provider fallback can enforce B1/B2 checks
         # after eager eviction removes the in-memory record.
@@ -1836,7 +1848,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 # Leave in current state — will be re-entered on restart.
                 continue
             # Non-resilient or foreground: best-effort mark failed.
-            failed_payload = resolve_failed_response(
+            failed_payload = _resolve_failed_response(
                 record.response, record.response_id, record.agent_reference, record.model
             )
             record.set_response_snapshot(failed_payload)

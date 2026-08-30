@@ -15,7 +15,7 @@ from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 class TestAgentFunctionTool(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_function_tool(self, **kwargs):
         """
         Test agent with custom function tool.
@@ -160,7 +160,7 @@ class TestAgentFunctionTool(TestBase):
         print("Agent deleted")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_function_tool_multi_turn_with_multiple_calls(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test multi-turn conversation where agent calls functions multiple times.
@@ -371,7 +371,7 @@ class TestAgentFunctionTool(TestBase):
             print("Agent deleted")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_function_tool_context_dependent_followup(self, **kwargs):
         """
         Test deeply context-dependent follow-ups (e.g., unit conversion, clarification).

@@ -14,7 +14,7 @@ from typing import Any, AsyncIterator, Dict, Iterable
 from .._response_context import PlatformContext
 from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
 from ..models._helpers import get_conversation_id
-from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
+from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, _StreamReplayState
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol
 
 _DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
@@ -28,7 +28,7 @@ class _StoreEntry:
         self,
         *,
         execution: ResponseExecution,
-        replay: StreamReplayState,
+        replay: _StreamReplayState,
         response: ResponseObject | None = None,
         input_item_ids: list[str] | None = None,
         output_item_ids: list[str] | None = None,
@@ -122,7 +122,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
                     response_id=response_id,
                     mode_flags=self._resolve_mode_flags_from_response(response),
                 ),
-                replay=StreamReplayState(response_id=response_id),
+                replay=_StreamReplayState(response_id=response_id),
                 response=deepcopy(response),
                 input_item_ids=input_ids,
                 output_item_ids=output_ids,
@@ -286,20 +286,22 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         *,
         context: PlatformContext | None = None,
     ) -> list[str]:
-        """Resolve history item IDs from previous response and/or conversation scope.
+        """Resolve item IDs from previous response and/or conversation scope.
 
-        Collects history item IDs from the previous response chain and/or
-        all responses within the given conversation, up to *limit*.
+        Collects history, input, and output item IDs from the previous
+        response chain and/or all responses within the given conversation.
+        When over *limit*, keeps the most recent N item IDs from the
+        resolved chain, preserving chronological order in the returned slice.
 
         :param previous_response_id: Optional response ID to chain history from.
         :type previous_response_id: str | None
         :param conversation_id: Optional conversation ID to scope history lookup.
         :type conversation_id: str | None
-        :param limit: Maximum number of history item IDs to return.
+        :param limit: Maximum number of item IDs to return (most recent N).
         :type limit: int
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
-        :returns: A list of history item IDs within the given scope.
+        :returns: A list of item IDs from the resolved chain.
         :rtype: list[str]
         """
         async with self._locked():
@@ -325,7 +327,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
             if limit <= 0:
                 return []
-            return resolved[:limit]
+            # Keep the most recent N item IDs from the resolved chain,
+            # preserving chronological order in the returned slice.
+            return resolved[-limit:]
 
     async def create_execution(self, execution: ResponseExecution, *, ttl_seconds: int | None = None) -> None:
         """Create a new execution and replay container for ``execution.response_id``.
@@ -342,7 +346,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
             self._entries[execution.response_id] = _StoreEntry(
                 execution=deepcopy(execution),
-                replay=StreamReplayState(response_id=execution.response_id),
+                replay=_StreamReplayState(response_id=execution.response_id),
                 expires_at=self._compute_expiry(ttl_seconds),
             )
 

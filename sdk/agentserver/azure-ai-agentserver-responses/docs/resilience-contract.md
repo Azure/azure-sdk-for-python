@@ -102,7 +102,7 @@ apply.
 
 On a recovered re-invocation (Row 1 Path B post-restart, or Path C) the
 handler observes `context.is_recovery == True`. Its cross-turn checkpoint
-store is `context.conversation_chain_metadata`; its single-turn,
+state comes from an application-owned `FoundryStateStore`; its single-turn,
 per-response watermark surface is the `internal_metadata` map. The handler
 seeds its resumption from `context.persisted_response` (the last resiliently
 persisted snapshot — see Row 11).
@@ -172,8 +172,8 @@ with `context.is_recovery == True`.
 **Recovered handler entry contract** (Path B post-restart and Path C):
 
 - `context.is_recovery == True`.
-- `context.conversation_chain_metadata` carries any cross-turn checkpoint
-  state the handler flushed in a prior lifetime.
+- The handler reloads cross-turn checkpoint state from its explicit
+  `FoundryStateStore`.
 - The framework does not impose a watermark schema. The handler chooses what
   it stores and how it resumes.
 - For streaming, the recovered handler emits a `response.in_progress` reset
@@ -366,8 +366,7 @@ recovery while still returning a healthy-looking response):
 - For the checkpoint pattern (Row 11), checkpoint at safe phase boundaries and,
   on recovery, resume from `context.persisted_response`.
 - For at-most-once side effects across recovery, write a dedup marker to
-  `context.conversation_chain_metadata` and `await ...flush()` before the
-  side effect.
+  `FoundryStateStore` before the side effect.
 
 ---
 

@@ -152,7 +152,7 @@ def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fi
 
     usage = ResponseUsage(
         input_tokens=1,
-        input_tokens_details={"cached_tokens": 0},
+        input_tokens_details={"cached_tokens": 0, "cache_write_tokens": 1},
         output_tokens=2,
         output_tokens_details={"reasoning_tokens": 0},
         total_tokens=3,
@@ -164,6 +164,7 @@ def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fi
     assert completed["type"] == "response.completed"
     assert completed["response"]["status"] == "completed"
     assert completed["response"]["usage"]["total_tokens"] == 3
+    assert completed["response"]["usage"]["input_tokens_details"]["cache_write_tokens"] == 1
     assert isinstance(completed["response"]["completed_at"], int)
     assert completed["response"]["completed_at"] is not None
 
@@ -174,7 +175,7 @@ def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
 
     usage = ResponseUsage(
         input_tokens=4,
-        input_tokens_details={"cached_tokens": 0},
+        input_tokens_details={"cached_tokens": 0, "cache_write_tokens": 2},
         output_tokens=5,
         output_tokens_details={"reasoning_tokens": 0},
         total_tokens=9,
@@ -188,6 +189,7 @@ def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
     assert failed["response"]["error"]["code"] == "server_error"
     assert failed["response"]["error"]["message"] == "boom"
     assert failed["response"]["usage"]["total_tokens"] == 9
+    assert failed["response"]["usage"]["input_tokens_details"]["cache_write_tokens"] == 2
     assert failed["response"].get("completed_at") is None
 
 
@@ -197,7 +199,7 @@ def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> Non
 
     usage = ResponseUsage(
         input_tokens=2,
-        input_tokens_details={"cached_tokens": 0},
+        input_tokens_details={"cached_tokens": 0, "cache_write_tokens": 3},
         output_tokens=3,
         output_tokens_details={"reasoning_tokens": 0},
         total_tokens=5,
@@ -210,6 +212,7 @@ def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> Non
     assert incomplete["response"]["status"] == "incomplete"
     assert incomplete["response"]["incomplete_details"]["reason"] == "max_output_tokens"
     assert incomplete["response"]["usage"]["total_tokens"] == 5
+    assert incomplete["response"]["usage"]["input_tokens_details"]["cache_write_tokens"] == 3
     assert incomplete["response"].get("completed_at") is None
 
 

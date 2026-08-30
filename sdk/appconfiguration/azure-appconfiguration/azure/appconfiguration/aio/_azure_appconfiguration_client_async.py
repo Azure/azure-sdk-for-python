@@ -669,6 +669,13 @@ class AzureAppConfigurationClient:  # pylint: disable=docstring-keyword-should-m
         :return: An async iterator of labels.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSettingLabel]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            async for label in client.list_labels():
+                print(label)
         """
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
@@ -718,6 +725,17 @@ class AzureAppConfigurationClient:  # pylint: disable=docstring-keyword-should-m
             operation to complete and get the created snapshot.
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            from azure.appconfiguration import ConfigurationSettingsFilter
+
+            filters = [ConfigurationSettingsFilter(key="my_key", label="my_label")]
+            response = await client.begin_create_snapshot(name="my_snapshot", filters=filters)
+            created_snapshot = await response.result()
+            print(created_snapshot)
         """
         snapshot = ConfigurationSnapshot(
             filters=filters,
@@ -754,6 +772,13 @@ class AzureAppConfigurationClient:  # pylint: disable=docstring-keyword-should-m
         :return: The ConfigurationSnapshot returned from the service.
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            archived_snapshot = await client.archive_snapshot(name="my_snapshot")
+            print(archived_snapshot.status)
         """
         generated_snapshot = await self._impl._update_snapshot(
             name=name,
@@ -784,6 +809,13 @@ class AzureAppConfigurationClient:  # pylint: disable=docstring-keyword-should-m
         :return: The ConfigurationSnapshot returned from the service.
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            recovered_snapshot = await client.recover_snapshot(name="my_snapshot")
+            print(recovered_snapshot.status)
         """
         generated_snapshot = await self._impl._update_snapshot(
             name=name,
@@ -808,6 +840,13 @@ class AzureAppConfigurationClient:  # pylint: disable=docstring-keyword-should-m
         :return: The ConfigurationSnapshot returned from the service.
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            received_snapshot = await client.get_snapshot(name="my_snapshot")
+            print(received_snapshot)
         """
         generated_snapshot = await self._impl.get_snapshot(name=name, select=fields, **kwargs)
         return ConfigurationSnapshot._from_generated(generated_snapshot)
@@ -835,6 +874,13 @@ class AzureAppConfigurationClient:  # pylint: disable=docstring-keyword-should-m
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSnapshot`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            async for snapshot in client.list_snapshots():
+                print(snapshot)
         """
         return self._impl.get_snapshots(  # type: ignore[return-value]
             name=name,

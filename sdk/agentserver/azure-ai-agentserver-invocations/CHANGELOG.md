@@ -1,5 +1,72 @@
 # Release History
 
+## 1.2.0b1 (Unreleased)
+
+### Features Added
+
+- Added W3C Voice connection tracing with one `agentserver.connection` span,
+  content-free `voice.callback` dispatch spans, and aggregate duration and
+  propagation-failure metrics.
+- Added application-declared target-turn tracing through
+  `Session.start_target_turn`, `TargetTurn.activate`, and explicit
+  `TargetTurn.complete` outcomes. The SDK does not infer response lifecycle or
+  own application tasks.
+- Added source-aware `Session.termination` for classifying unfinished
+  application work during connection cleanup.
+
+### Samples
+
+- Updated `basic_voice_agent` to declare target turns around real background
+  generation work and report truthful response, timeout, cancellation,
+  end-call, and transport outcomes, with bounded per-connection concurrency and
+  retained model output. Unfinished turns now distinguish clean abandonment,
+  application/server errors, and protocol or transport loss.
+
+### Other Changes
+
+- Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
+
+## 1.1.0 (2026-08-24)
+
+### Features Added
+
+- Added the typed Voice event relay API under `azure.ai.agentserver.invocations.voice`, including `VoiceAgentServerHost`, typed protocol messages, session lifecycle callbacks, response cancellation and timeout handling, and a basic Voice agent sample.
+
+### Samples
+
+- Updated the resilient LangGraph sample to current `langgraph`,
+  `langgraph-checkpoint-sqlite`, and `langchain-core` release lines.
+
+### Other Changes
+
+- Constrained runtime, development, and sample dependencies to compatible release lines.
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable `2.1.0` release.
+
+## 1.1.0b1 (2026-08-11)
+
+### Samples
+
+- Simplified the resilient samples to use conversation-scoped `FoundryStateStore` instances directly for application state.
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.1.0b1` so
+  package tests and consumers use the Core release containing the local State
+  Store fallback.
+
+## 1.0.0 (2026-08-07)
+
+### Bugs Fixed
+
+- Added SSE keep-alive comments to idle `POST /invocations` event streams when
+  `SSE_KEEPALIVE_INTERVAL` is configured, preventing hosted proxy idle timeouts
+  from disconnecting clients before the agent emits its final events.
+
+### Other Changes
+
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable
+  `2.0.0` release.
+
 ## 1.0.0b8 (2026-08-03)
 
 ### Samples
