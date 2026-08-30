@@ -38,6 +38,7 @@ def main():
             "location": "West US",
             "properties": {
                 "addressPrefix": "10.168.0.0/24",
+                "addressPrefixV6": "2001:db8::/56",
                 "sku": "Basic",
                 "virtualWan": {
                     "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/virtualWans/virtualWan1"
@@ -49,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/VirtualHubPut.json
+# x-ms-original-file: 2025-09-01/VirtualHubPut.json
 if __name__ == "__main__":
     main()

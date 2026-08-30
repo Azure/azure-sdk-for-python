@@ -620,6 +620,19 @@ class DataMaskingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disabled."""
 
 
+class DataSyncParticipantIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of DataSyncParticipantIdentityType."""
+
+    NONE = "None"
+    """None."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """SystemAssigned."""
+    USER_ASSIGNED = "UserAssigned"
+    """UserAssigned."""
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssignedUserAssigned"
+    """SystemAssignedUserAssigned."""
+
+
 class DataWarehouseUserActivityName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of DataWarehouseUserActivityName."""
 
@@ -1023,6 +1036,15 @@ class LedgerDigestUploadsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disabled."""
 
 
+class LinkModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies whether the link operates in single-database or multi-database mode."""
+
+    SINGLE_DATABASE = "SingleDatabase"
+    """The link operates in single-database mode."""
+    MULTI_DATABASE = "MultiDatabase"
+    """The link operates in multi-database mode."""
+
+
 class LinkRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SQL server side link role."""
 
@@ -1104,6 +1126,19 @@ class ManagedDatabaseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DbMoving."""
     DB_COPYING = "DbCopying"
     """DbCopying."""
+
+
+class ManagedInstanceAdministratorPrincipalType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Principal type of the managed instance administrator."""
+
+    USER = "User"
+    """Indicates that the principal is a user."""
+    GROUP = "Group"
+    """Indicates that the principal is a group."""
+    APPLICATION = "Application"
+    """Indicates that the principal is an application."""
 
 
 class ManagedInstanceAdministratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1338,16 +1373,16 @@ class PrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class PrivateEndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the private endpoint connection."""
 
-    APPROVING = "Approving"
-    """Approving."""
-    READY = "Ready"
-    """Ready."""
-    DROPPING = "Dropping"
-    """Dropping."""
+    CREATED = "Created"
+    """Provisioning Created."""
+    IN_PROGRESS = "InProgress"
+    """Provisioning InProgress."""
+    SUCCEEDED = "Succeeded"
+    """Provisioning Succeeded."""
     FAILED = "Failed"
     """Failed."""
-    REJECTING = "Rejecting"
-    """Rejecting."""
+    CANCELED = "Canceled"
+    """Provisioning Canceled."""
 
 
 class PrivateLinkServiceConnectionStateActionsRequire(  # pylint: disable=name-too-long
@@ -1793,6 +1828,8 @@ class ServerNetworkAccessFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enabled."""
     DISABLED = "Disabled"
     """Disabled."""
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
+    """SecuredByPerimeter."""
 
 
 class ServerPublicNetworkAccessFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):

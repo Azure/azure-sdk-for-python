@@ -16,8 +16,6 @@ for the terminal text). Tests rely on these tags to verify:
 - Sequence numbers across recovery attempts are strictly monotonic.
 - The recovered handler's output_item slot reuse follows reset semantics.
 - ``context.conversation_chain_id`` is stable across attempts.
-- ``context.conversation_chain_metadata`` writes from prior lifetimes are visible to the
-  recovered handler (when the watermark knob is enabled).
 
 The tags live in :mod:`_test_handler_markers` so tests can import the
 formatter without pulling this whole subprocess module.
@@ -48,11 +46,6 @@ Env vars consumed:
   natural completion produces output that matches the historic single-
   ``"ok"``-delta behaviour at the structural level (count and ordering
   match; only the content tags changed).
-- ``CONFORMANCE_EMIT_METADATA_WATERMARK`` — when ``"true"``, the handler
-  appends ``context.0`` to a metadata-stored
-  watermark list and ``flush()``es before emitting deltas. The final
-  text includes ``visited=[…]`` so tests can verify the watermark
-  survives crash + recovery. Default ``"false"``.
 """
 
 from __future__ import annotations
@@ -60,6 +53,7 @@ from __future__ import annotations
 import asyncio
 import os
 
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -71,7 +65,6 @@ from azure.ai.agentserver.responses import (
 from tests.e2e.resilience_contract._test_handler_markers import (
     PHASE_POST,
     PHASE_PRE,
-    WATERMARK_METADATA_KEY,
     delta_content,
     final_text,
 )
@@ -98,7 +91,6 @@ _RESILIENT_BG = _env_bool("CONFORMANCE_RESILIENT_BACKGROUND", True)
 _SLEEP_MS = _env_int("CONFORMANCE_HANDLER_SLEEP_MS", 50)
 _SHUTDOWN_GRACE_S = max(1, _env_int("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", 10))
 _PRE_SLEEP_DELTAS = max(0, _env_int("CONFORMANCE_PRE_SLEEP_DELTAS", 0))
-_EMIT_WATERMARK = _env_bool("CONFORMANCE_EMIT_METADATA_WATERMARK", False)
 # When true, the handler signals shutdown recovery with the explicit
 # unified primitive ``await context.exit_for_recovery()`` instead of the
 # implicit bare ``return``. Exercises the Spec 025 §A.4 orchestrator
@@ -110,6 +102,12 @@ options = ResponsesServerOptions(
     resilient_background=_RESILIENT_BG,
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
+# Conformance exercises the durable-response subsystem (Rows 1/2/3), which is
+# gated on the resilient-tasks switch. Row 2 runs with resilient_background=False
+# (which does NOT auto-enable the switch), so enable it explicitly here — the
+# server must construct the TaskManager and run recovery to honour the Row 2
+# mark-failed-on-crash contract.
+set_resilient_tasks_enabled(True)
 app = ResponsesAgentServerHost(options=options)
 
 
@@ -128,26 +126,21 @@ async def handle_create(
     3. ``response.in_progress`` — normal start signal. On recovery a
        SECOND ``response.in_progress`` is emitted as the snapshot reset
        marker per ``resilience-contract.md`` § Streaming sub-contract.
-    4. Optional metadata watermark write — when enabled, append the
-       current ``retry_attempt`` to the metadata-stored visited list and
-       ``flush()``. The final text echoes the visited list so tests can
-       verify the watermark survives recovery.
-    5. ``output_item.added`` + ``content_part.added`` at index 0.
+    4. ``output_item.added`` + ``content_part.added`` at index 0.
        Always reuses output_index=0 across attempts so tests can verify
        the recovered handler's slot reuse triggers the reset
        reconciliation semantics on the client side.
-    6. ``CONFORMANCE_PRE_SLEEP_DELTAS`` deltas with content
+    5. ``CONFORMANCE_PRE_SLEEP_DELTAS`` deltas with content
        ``L{lifetime}_pre_d{i}``.
-    7. Interruptible sleep (``CONFORMANCE_HANDLER_SLEEP_MS``).
-    8. Mid-sleep cancellation check — return without terminal if the
+    6. Interruptible sleep (``CONFORMANCE_HANDLER_SLEEP_MS``).
+    7. Mid-sleep cancellation check — return without terminal if the
        framework signalled cancel / shutdown so the per-row Path B / C
        contract takes over.
-    9. ``CONFORMANCE_POST_SLEEP_DELTAS`` deltas with content
+    8. ``CONFORMANCE_POST_SLEEP_DELTAS`` deltas with content
        ``L{lifetime}_post_d{i}``.
-    10. ``output_text.done`` carrying the composite final text
-        ``L{lifetime}_done|pre={N}|post={M}|chain={chain_id}`` (plus
-        ``|visited=[…]`` when the watermark knob is enabled).
-    11. ``content_part.done`` / ``output_item.done`` / ``response.completed``.
+    9. ``output_text.done`` carrying the composite final text
+       ``L{lifetime}_done|pre={N}|post={M}|chain={chain_id}``.
+    10. ``content_part.done`` / ``output_item.done`` / ``response.completed``.
     """
     # Lifetime tag: 0 for fresh entry, 1 for any recovered / resumed entry.
     # ``context.is_recovery`` IS preserved across lifetimes — the framework
@@ -170,17 +163,6 @@ async def handle_create(
 
     if context.is_recovery:
         yield stream.emit_in_progress()
-
-    # Optional metadata watermark — append this lifetime's lifetime tag
-    # to the visited list and flush so the marker survives crash. Tests
-    # that enable this knob assert the final text's visited list
-    # contains every lifetime that contributed to the response.
-    if _EMIT_WATERMARK:
-        visited = list(context.conversation_chain_metadata.get(WATERMARK_METADATA_KEY, []))
-        if lifetime not in visited:
-            visited.append(lifetime)
-            context.conversation_chain_metadata[WATERMARK_METADATA_KEY] = visited
-            await context.conversation_chain_metadata.flush()
 
     # Output item + content part — always at index 0 so the recovered
     # handler's repeat add at the same index exercises the slot-
@@ -222,13 +204,12 @@ async def handle_create(
     # (the framework's snapshot extraction uses delta accumulation, not
     # the emit_text_done payload), then emit text_done with the same
     # value so the wire's done event also carries the composite.
-    visited_now = list(context.conversation_chain_metadata.get(WATERMARK_METADATA_KEY, [])) if _EMIT_WATERMARK else None
     final = final_text(
         lifetime=lifetime,
         pre_count=_PRE_SLEEP_DELTAS,
         post_count=1,  # the composite delta itself
         chain_id=chain_id,
-        visited=visited_now,
+        visited=None,
     )
     yield text.emit_delta(final)
     yield text.emit_text_done(final)

@@ -38,7 +38,7 @@ def enable_entra_authentication(engine: Engine) -> None:
     @event.listens_for(engine, "do_connect")
     def provide_token(
         dialect: Dialect, conn_rec: Any, cargs: Any, cparams: dict[str, Any]  # pylint: disable=unused-argument
-    ) -> None:
+    ) -> Any:
         """Event handler that provides Entra credentials for each connection.
 
         :param dialect: The SQLAlchemy dialect being used.
@@ -49,16 +49,19 @@ def enable_entra_authentication(engine: Engine) -> None:
         :type cargs: Any
         :param cparams: The keyword connection parameters.
         :type cparams: dict[str, Any]
+        :return: A DBAPI connection authenticated with Entra credentials.
+        :rtype: Any
         """
-        credential = cparams.get("credential", None)
+        connection_params = cparams.copy()
+        credential = connection_params.pop("credential", None)
         if credential is None or not isinstance(credential, (TokenCredential)):
             raise CredentialValueError(
                 "credential is required and must be a TokenCredential. "
                 "Pass it via connect_args={'credential': DefaultAzureCredential()}"
             )
         # Check if credentials are already present
-        has_user = "user" in cparams
-        has_password = "password" in cparams
+        has_user = "user" in connection_params
+        has_password = "password" in connection_params
 
         # Only get Entra credentials if user or password is missing
         if not has_user or not has_password:
@@ -68,11 +71,8 @@ def enable_entra_authentication(engine: Engine) -> None:
                 raise EntraConnectionValueError("Could not retrieve Entra credentials") from e
             # Only update missing credentials
             if not has_user and "user" in entra_creds:
-                cparams["user"] = entra_creds["user"]
+                connection_params["user"] = entra_creds["user"]
             if not has_password and "password" in entra_creds:
-                cparams["password"] = entra_creds["password"]
+                connection_params["password"] = entra_creds["password"]
 
-        # Remove the helper-only parameter so the DBAPI (psycopg/psycopg2) doesn't see an
-        # unknown connection option and raise 'invalid connection option "credential"'.
-        if "credential" in cparams:
-            del cparams["credential"]
+        return dialect.connect(*cargs, **connection_params)

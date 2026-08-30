@@ -111,6 +111,13 @@ class EndpointHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """dead."""
 
 
+class EventStreamAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies authentication type being used for connecting to the event stream account."""
+
+    IDENTITY_BASED = "identityBased"
+    """identityBased authentication."""
+
+
 class GatewayVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The IoT hub Gateway version."""
 
@@ -169,8 +176,6 @@ class IotHubSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """B2."""
     B3 = "B3"
     """B3."""
-    GEN2 = "GEN2"
-    """GEN2."""
 
 
 class IotHubSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -182,8 +187,6 @@ class IotHubSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Standard."""
     BASIC = "Basic"
     """Basic."""
-    GENERATION2 = "Generation2"
-    """Generation2."""
 
 
 class IpFilterActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

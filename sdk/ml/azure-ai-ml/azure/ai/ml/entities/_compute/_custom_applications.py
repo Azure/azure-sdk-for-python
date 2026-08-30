@@ -21,8 +21,8 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 class ImageSettings:
     """Specifies an image configuration for a Custom Application.
 
-    :param reference: Image reference URL.
-    :type reference: str
+    :keyword reference: Image reference URL.
+    :paramtype reference: str
     """
 
     def __init__(self, *, reference: str):
@@ -39,10 +39,10 @@ class ImageSettings:
 class EndpointsSettings:
     """Specifies an endpoint configuration for a Custom Application.
 
-    :param target: Application port inside the container.
-    :type target: int
-    :param published: Port over which the application is exposed from container.
-    :type published: int
+    :keyword target: Application port inside the container.
+    :paramtype target: int
+    :keyword published: Port over which the application is exposed from container.
+    :paramtype published: int
     """
 
     def __init__(self, *, target: int, published: int):
@@ -85,10 +85,10 @@ class EndpointsSettings:
 class VolumeSettings:
     """Specifies the Bind Mount settings for a Custom Application.
 
-    :param source: The host path of the mount.
-    :type source: str
-    :param target: The path in the container for the mount.
-    :type target: str
+    :keyword source: The host path of the mount.
+    :paramtype source: str
+    :keyword target: The path in the container for the mount.
+    :paramtype target: str
     """
 
     def __init__(self, *, source: str, target: str):
@@ -111,18 +111,18 @@ class VolumeSettings:
 class CustomApplications:
     """Specifies the custom service application configuration.
 
-    :param name: Name of the Custom Application.
-    :type name: str
-    :param image: Describes the Image Specifications.
-    :type image: ImageSettings
-    :param type: Type of the Custom Application.
-    :type type: Optional[str]
-    :param endpoints: Configuring the endpoints for the container.
-    :type endpoints: List[EndpointsSettings]
-    :param environment_variables: Environment Variables for the container.
-    :type environment_variables: Optional[Dict[str, str]]
-    :param bind_mounts: Configuration of the bind mounts for the container.
-    :type bind_mounts: Optional[List[VolumeSettings]]
+    :keyword name: Name of the Custom Application.
+    :paramtype name: str
+    :keyword image: Describes the Image Specifications.
+    :paramtype image: ImageSettings
+    :keyword type: Type of the Custom Application.
+    :paramtype type: Optional[str]
+    :keyword endpoints: Configuring the endpoints for the container.
+    :paramtype endpoints: List[EndpointsSettings]
+    :keyword environment_variables: Environment Variables for the container.
+    :paramtype environment_variables: Optional[Dict[str, str]]
+    :keyword bind_mounts: Configuration of the bind mounts for the container.
+    :paramtype bind_mounts: Optional[List[VolumeSettings]]
     """
 
     def __init__(

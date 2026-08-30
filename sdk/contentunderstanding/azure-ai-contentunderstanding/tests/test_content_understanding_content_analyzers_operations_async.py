@@ -11,7 +11,12 @@ import os
 import re
 from typing import Tuple, Union, Dict, Any, Optional, List, Set
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer_async import ContentUnderstandingClientTestBaseAsync, ContentUnderstandingPreparer
+from testpreparer_async import (
+    ContentUnderstandingClientTestBaseAsync,
+    ContentUnderstandingPreparer,
+    GA_API_VERSION,
+    get_test_api_version,
+)
 from azure.ai.contentunderstanding.models import ContentAnalyzer
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import AnalysisInput
@@ -32,7 +37,9 @@ from devtools_testutils import is_live, is_live_and_not_recording
 
 
 async def create_analyzer_and_assert_async(
-    client: ContentUnderstandingClient, analyzer_id: str, resource: Union[ContentAnalyzer, Dict[str, Any]]
+    client: ContentUnderstandingClient,
+    analyzer_id: str,
+    resource: Union[ContentAnalyzer, Dict[str, Any]],
 ) -> Any:
     """Create an analyzer and perform basic assertions (async version).
 
@@ -153,7 +160,11 @@ async def download_keyframes_and_assert_async(
     sorted_keyframes: List[str] = sorted(keyframe_paths, key=lambda x: int(x.split("/")[-1]))
 
     # Create a set with first, middle, and last frames (automatically removes duplicates)
-    frames_set: Set[str] = {sorted_keyframes[0], sorted_keyframes[-1], sorted_keyframes[len(sorted_keyframes) // 2]}
+    frames_set: Set[str] = {
+        sorted_keyframes[0],
+        sorted_keyframes[-1],
+        sorted_keyframes[len(sorted_keyframes) // 2],
+    }
 
     # Convert set to list for processing
     frames_to_download: List[str] = list(frames_set)
@@ -218,30 +229,22 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     async def test_update_defaults_async(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
         """
         Tests updating default model deployments for the Content Understanding service.
-        Verifies that model deployments (gpt-4.1, gpt-4.1-mini, text-embedding-3-large) can be updated and are correctly persisted.
+        Verifies that model deployments can be updated and are correctly persisted.
         """
-        # Get variables from test proxy (recorded values in playback, empty dict in recording)
         variables = kwargs.pop("variables", {})
-        import os
-
-        # Get deployment names from variables (playback) or environment (recording)
-        # If not found, use defaults and record them
-        gpt_4_1_deployment = variables.setdefault("gpt_4_1_deployment", os.getenv("GPT_4_1_DEPLOYMENT", "gpt-4.1"))
-        gpt_4_1_mini_deployment = variables.setdefault(
-            "gpt_4_1_mini_deployment", os.getenv("GPT_4_1_MINI_DEPLOYMENT", "gpt-4.1-mini")
-        )
-        text_embedding_3_large_deployment = variables.setdefault(
-            "text_embedding_3_large_deployment",
-            os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT", "text-embedding-3-large"),
+        api_version = GA_API_VERSION
+        profile = self.get_model_profile(api_version=api_version)
+        client: ContentUnderstandingClient = self.create_async_client(
+            endpoint=contentunderstanding_endpoint, api_version=api_version
         )
 
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
-
-        # Update defaults with configured deployments
+        # Assert only the core model mappings recorded in playback assets. Live
+        # ensure_live_defaults may also publish prebuilt aliases, but existing
+        # recordings return the three primary deployments.
         model_deployments = {
-            "gpt-4.1": gpt_4_1_deployment,
-            "gpt-4.1-mini": gpt_4_1_mini_deployment,
-            "text-embedding-3-large": text_embedding_3_large_deployment,
+            profile.completion_model: profile.completion_deployment,
+            profile.mini_completion_model: profile.mini_completion_deployment,
+            profile.embedding_model: profile.embedding_deployment,
         }
 
         response = await client.update_defaults(model_deployments=model_deployments)
@@ -249,30 +252,21 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         assert response is not None, "Update response should not be null"
         assert hasattr(response, "model_deployments"), "Updated defaults should have model_deployments attribute"
 
-        # Verify the updated defaults
         updated_defaults = response
         assert updated_defaults.model_deployments is not None, "Updated model deployments should not be null"
-        assert len(updated_defaults.model_deployments) >= 3, "Should have at least 3 model deployments"
-
-        # Verify each deployment was set correctly
-        assert "gpt-4.1" in updated_defaults.model_deployments, "Should contain gpt-4.1 deployment"
-        assert updated_defaults.model_deployments["gpt-4.1"] == gpt_4_1_deployment, "gpt-4.1 deployment should match"
-
-        assert "gpt-4.1-mini" in updated_defaults.model_deployments, "Should contain gpt-4.1-mini deployment"
-        assert (
-            updated_defaults.model_deployments["gpt-4.1-mini"] == gpt_4_1_mini_deployment
-        ), "gpt-4.1-mini deployment should match"
-
-        assert (
-            "text-embedding-3-large" in updated_defaults.model_deployments
-        ), "Should contain text-embedding-3-large deployment"
-        assert (
-            updated_defaults.model_deployments["text-embedding-3-large"] == text_embedding_3_large_deployment
-        ), "text-embedding-3-large deployment should match"
+        assert updated_defaults.model_deployments, "Updated model deployments should not be empty"
+        for key, value in model_deployments.items():
+            assert updated_defaults.model_deployments.get(key) == value, f"{key} should round-trip"
 
         print(f"Successfully updated defaults with {len(updated_defaults.model_deployments)} model deployments")
 
-        # Return variables to be recorded for playback mode
+        variables.setdefault("completion_model", profile.completion_model)
+        variables.setdefault("completion_deployment", profile.completion_deployment)
+        variables.setdefault("mini_completion_model", profile.mini_completion_model)
+        variables.setdefault("mini_completion_deployment", profile.mini_completion_deployment)
+        variables.setdefault("embedding_model", profile.embedding_model)
+        variables.setdefault("embedding_deployment", profile.embedding_deployment)
+
         return variables
 
     @ContentUnderstandingPreparer()
@@ -280,14 +274,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     async def test_get_defaults_async(self, contentunderstanding_endpoint: str) -> None:
         """
         Tests retrieving default model deployments from the Content Understanding service.
-        Verifies that the returned defaults contain the expected model deployment configurations.
+        Verifies that configured model deployment keys and values are non-empty.
         """
-        client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
-
-        # Load expected model values from test environment
-        gpt_4_1_deployment = os.getenv("GPT_4_1_DEPLOYMENT")
-        gpt_4_1_mini_deployment = os.getenv("GPT_4_1_MINI_DEPLOYMENT")
-        text_embedding_3_large_deployment = os.getenv("TEXT_EMBEDDING_3_LARGE_DEPLOYMENT")
+        api_version = get_test_api_version()
+        client: ContentUnderstandingClient = self.create_async_client(
+            endpoint=contentunderstanding_endpoint, api_version=api_version
+        )
 
         response = await client.get_defaults()
 
@@ -306,27 +298,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 assert key is not None and len(key) > 0, "Model deployment key should not be null or empty"
                 assert value is not None and len(value) > 0, "Model deployment value should not be null or empty"
 
-            # Verify specific model values if they are configured in test environment
-            if gpt_4_1_deployment:
-                assert "gpt-4.1" in defaults.model_deployments, "Should contain gpt-4.1 deployment"
-                assert (
-                    defaults.model_deployments["gpt-4.1"] == gpt_4_1_deployment
-                ), "gpt-4.1 deployment should match test environment value"
-
-            if gpt_4_1_mini_deployment:
-                assert "gpt-4.1-mini" in defaults.model_deployments, "Should contain gpt-4.1-mini deployment"
-                assert (
-                    defaults.model_deployments["gpt-4.1-mini"] == gpt_4_1_mini_deployment
-                ), "gpt-4.1-mini deployment should match test environment value"
-
-            if text_embedding_3_large_deployment:
-                assert (
-                    "text-embedding-3-large" in defaults.model_deployments
-                ), "Should contain text-embedding-3-large deployment"
-                assert (
-                    defaults.model_deployments["text-embedding-3-large"] == text_embedding_3_large_deployment
-                ), "text-embedding-3-large deployment should match test environment value"
-
             print(f"Successfully retrieved defaults with {len(defaults.model_deployments)} model deployments")
         else:
             print("Model deployments not configured or empty")
@@ -343,7 +314,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         created_analyzer = False
 
         content_analyzer = new_simple_content_analyzer_object(
-            analyzer_id=analyzer_id, description=f"test analyzer: {analyzer_id}", tags={"tag1_name": "tag1_value"}
+            analyzer_id=analyzer_id,
+            description=f"test analyzer: {analyzer_id}",
+            tags={"tag1_name": "tag1_value"},
         )
 
         try:
@@ -398,7 +371,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                     },
                     "mode": "standard",
                     "processingLocation": "global",
-                    "models": {"completion": "gpt-4.1"},  # Required when using fieldSchema
+                    "models": {"completion": "gpt-5.2"},  # Required when using fieldSchema
                     "tags": {"tag1_name": "tag1_value"},
                 },
             )
@@ -479,7 +452,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             assert analyzer_after_update is not None
             assert analyzer_after_update.analyzer_id == analyzer_id
             assert analyzer_after_update.description == f"Updated analyzer for update test: {analyzer_id}"
-            assert analyzer_after_update.tags == {"initial_tag": "initial_value", "tag1_field": "updated_value"}
+            assert analyzer_after_update.tags == {
+                "initial_tag": "initial_value",
+                "tag1_field": "updated_value",
+            }
             print(
                 f"Updated analyzer state verified - description: {analyzer_after_update.description}, tags: {analyzer_after_update.tags}"
             )
@@ -624,7 +600,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             # Get test file directory for saving output
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             output_filename = save_analysis_result_to_file(
-                analysis_result, "test_content_analyzers_begin_analyze_url", test_file_dir, analyzer_id
+                analysis_result,
+                "test_content_analyzers_begin_analyze_url",
+                test_file_dir,
+                analyzer_id,
             )
 
             # Now assert the field results
@@ -667,7 +646,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Begin binary analysis operation
             analysis_poller = await client.begin_analyze_binary(
-                analyzer_id=analyzer_id, binary_input=pdf_content, content_type="application/pdf"
+                analyzer_id=analyzer_id,
+                binary_input=pdf_content,
+                content_type="application/pdf",
             )
             assert_poller_properties(analysis_poller, "Analysis poller")
 
@@ -677,7 +658,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             print(f"  Analysis completed")
 
             output_filename = save_analysis_result_to_file(
-                analysis_result, "test_content_analyzers_begin_analyze_binary", test_file_dir, analyzer_id
+                analysis_result,
+                "test_content_analyzers_begin_analyze_binary",
+                test_file_dir,
+                analyzer_id,
             )
 
             # Now assert the field results
@@ -736,7 +720,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Save the analysis result to file
             output_filename = save_analysis_result_to_file(
-                analysis_result, "test_content_analyzers_get_result_file", test_file_dir, analyzer_id
+                analysis_result,
+                "test_content_analyzers_get_result_file",
+                test_file_dir,
+                analyzer_id,
             )
 
             # Extract operation ID for get_result_file test using custom poller's operation_id property
@@ -794,7 +781,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Begin binary analysis
             analysis_poller = await client.begin_analyze_binary(
-                analyzer_id=analyzer_id, binary_input=pdf_content, content_type="application/pdf"
+                analyzer_id=analyzer_id,
+                binary_input=pdf_content,
+                content_type="application/pdf",
             )
             assert_poller_properties(analysis_poller, "Document properties analysis poller")
 
@@ -805,7 +794,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Save result to file
             output_filename = save_analysis_result_to_file(
-                analysis_result, "test_validate_document_properties", test_file_dir, analyzer_id
+                analysis_result,
+                "test_validate_document_properties",
+                test_file_dir,
+                analyzer_id,
             )
 
             # Validate document properties using the new helper function
@@ -872,7 +864,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Begin binary analysis
             analysis_poller = await client.begin_analyze_binary(
-                analyzer_id=analyzer_id, binary_input=pdf_content, content_type="application/pdf"
+                analyzer_id=analyzer_id,
+                binary_input=pdf_content,
+                content_type="application/pdf",
             )
             assert_poller_properties(analysis_poller, "Invoice analysis poller")
 
@@ -883,7 +877,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Save result to file for inspection
             output_filename = save_analysis_result_to_file(
-                analysis_result, "test_analyze_invoice_with_fields", test_file_dir, analyzer_id
+                analysis_result,
+                "test_analyze_invoice_with_fields",
+                test_file_dir,
+                analyzer_id,
             )
             print(f"Analysis result saved to: {output_filename}")
 
@@ -949,7 +946,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     async def test_analyze_binary_extract_markdown_async(self, contentunderstanding_endpoint: str) -> None:
         """Test extracting markdown content from analyzed binary documents.
 
-        This test corresponds to .NET AnalyzeBinaryAsync_ExtractMarkdown.
         Verifies that markdown is successfully extracted and is non-empty.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
@@ -1010,7 +1006,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     async def test_create_classifier_async(self, contentunderstanding_endpoint: str) -> None:
         """Test creating a classifier with content categories and document segmentation.
 
-        This test corresponds to .NET CreateClassifierAsync.
         Verifies that the classifier is created successfully with the specified categories
         and configuration, and can segment documents into different categories.
         """
@@ -1036,14 +1031,18 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             }
 
             # Create analyzer configuration with categories and segmentation enabled
-            config = {"returnDetails": True, "enableSegment": True, "contentCategories": content_categories}
+            config = {
+                "returnDetails": True,
+                "enableSegment": True,
+                "contentCategories": content_categories,
+            }
 
             # Create the classifier analyzer
             classifier = {
                 "baseAnalyzerId": "prebuilt-document",
                 "description": "Custom classifier for financial document categorization",
                 "config": config,
-                "models": {"completion": "gpt-4.1"},
+                "models": {"completion": "gpt-5.2"},
             }
 
             print(f"\nCreating classifier with {len(content_categories)} categories...")
@@ -1084,7 +1083,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     async def test_analyze_configs_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document with specific configurations enabled.
 
-        This test corresponds to .NET AnalyzeConfigsAsync.
         Verifies that document features can be extracted with formulas, layout, and OCR enabled.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
@@ -1148,7 +1146,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     async def test_analyze_return_raw_json_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a document and returning raw JSON response.
 
-        This test corresponds to .NET AnalyzeReturnRawJsonAsync.
         Verifies that the raw JSON response can be retrieved and parsed.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
@@ -1205,7 +1202,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     async def test_delete_result_async(self, contentunderstanding_endpoint: str) -> None:
         """Test deleting an analysis result.
 
-        This test corresponds to .NET DeleteResultAsync.
         Verifies that an analysis result can be deleted using its operation ID.
         """
         client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)

@@ -1,10 +1,74 @@
 # Release History
 
-## 2.0.0b10 (2026-07-31)
+## 2.2.0b1 (Unreleased)
+
+### Features Added
+
+- Added `AgentConfig.session_guid`, populated from the platform-owned
+  `FOUNDRY_AGENT_SESSION_GUID` environment variable for hosted session
+  incarnation identity.
+
+## 2.1.0 (2026-08-24)
+
+### Other Changes
+
+- Added compatibility bounds to runtime and development dependencies so installation cannot silently resolve to incompatible releases.
+
+## 2.1.0b2 (2026-08-18)
+
+### Other Changes
+
+- Updated the hosted task provider's `Foundry-Features` opt-in header from `Routines=V1Preview` to `Routines=V2Preview` to align with the `agentserver-persistence` contract. #48617
+
+## 2.1.0b1 (2026-08-11)
+
+### Features Added
+
+- `FoundryStateStore` now uses a file-backed local fallback when AgentServer is not hosted, and item operations accept an explicit `call_id` for forwarding recovered durable work outside the original request context.
+
+### Breaking Changes
+
+- The resilient task subsystem is now **strictly opt-in**. `AgentServerHost`
+  constructs the `TaskManager` only when resilient tasks are enabled via
+  `set_resilient_tasks_enabled(True)` (or a protocol option that maps to it,
+  e.g. the responses `resilient_background`). Previously the manager was always
+  constructed and a declared `@task` / `@multi_turn_task` implicitly enabled the
+  startup recovery scan. Now, declaring a task does **not** turn the subsystem
+  on: with the switch off, `get_task_manager()` raises `TaskManagerNotInitialized`
+  and `.run()` / `.start()` cannot run a task. Existing apps that rely on `@task`
+  must call `set_resilient_tasks_enabled(True)` (before host startup) to keep
+  durable tasks and crash recovery. Plain servers that use no tasks are
+  unaffected and continue to pay nothing.
+- Removed `TaskMetadata`, `TaskContext.metadata`, and `TaskRun.metadata`.
+  Durable application state now belongs in an explicit `FoundryStateStore`
+  and no longer shares task lifecycle PATCHes or lease renewal. Typed task
+  inputs may carry a top-level `call_id`, which the framework restores in
+  `FoundryAgentRequestContext` for every handler attempt.
+
+## 2.0.0 (2026-08-05)
+
+### Other Changes
+
+- Promoted `azure-ai-agentserver-core` to GA.
+
+## 2.0.0b11 (2026-08-05)
 
 ### Features Added
 
 - Added a shared `experimental` decorator for marking Agent Server preview feature surfaces with docstring notes and one-time runtime warnings. The resilient task primitive and Foundry storage public APIs are now marked experimental.
+
+### Breaking Changes
+
+- Removed the unused public `AgentServerHost.sse_keepalive_stream` helper.
+
+### Other Changes
+
+- The per-turn task `timeout` hard ceiling was raised from **1 day** to **7 days**. The default when unset is still **1 day**; a supplied value may now raise the per-turn budget up to 7 days. A value greater than 7 days (or a negative value) is still rejected at registration (`ValueError`, fail-fast, not clamped). This remains a per-turn cap only — multi-turn chains still live indefinitely across turns (the budget resets each turn).
+
+## 2.0.0b10 (2026-07-31)
+
+### Features Added
+
 - Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
 - Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — a process-global switch (default off) that force-enables the resilient `TaskManager`'s startup recovery scan even before any durable task is declared (useful when tasks are registered lazily after startup).
 

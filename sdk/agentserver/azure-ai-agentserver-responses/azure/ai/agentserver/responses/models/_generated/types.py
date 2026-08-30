@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import builtins
 from typing import Any, Literal, Optional, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
@@ -38,6 +37,9 @@ ApplyPatchOperationParamType = Literal["create_file", "delete_file", "update_fil
 AzureAISearchQueryType = Literal["simple", "semantic", "vector", "vector_simple_hybrid", "vector_semantic_hybrid"]
 """Available query types for Azure AI Search tool."""
 
+CallableToolAllowedCaller = Literal["direct", "programmatic"]
+"""Type of CallableToolAllowedCaller."""
+
 ClickButtonType = Literal["left", "right", "wheel", "back", "forward"]
 """Type of ClickButtonType."""
 
@@ -64,7 +66,7 @@ CustomToolParamFormatType = Literal["text", "grammar"]
 DetailEnum = Literal["low", "high", "auto", "original"]
 """Type of DetailEnum."""
 
-FileInputDetail = Literal["low", "high"]
+FileInputDetail = Literal["auto", "low", "high"]
 """Type of FileInputDetail."""
 
 FunctionAndCustomToolCallOutputType = Literal["input_text", "input_image", "input_file"]
@@ -147,6 +149,8 @@ features, of input images. This parameter is only supported for ``gpt-image-1`` 
 
 ItemFieldType = Literal[
     "message",
+    "program",
+    "program_output",
     "function_call",
     "tool_search_call",
     "tool_search_output",
@@ -261,6 +265,11 @@ MessageStatus = Literal["in_progress", "completed", "incomplete"]
 """Type of MessageStatus."""
 
 ModelIdsCompaction = Literal[
+    "gpt-5.6-sol",
+    "gpt-5.6-terra",
+    "gpt-5.6-luna",
+    "gpt-5.5",
+    "gpt-5.5-2026-04-23",
     "gpt-5.4",
     "gpt-5.4-mini",
     "gpt-5.4-nano",
@@ -349,10 +358,15 @@ ModelIdsCompaction = Literal[
     "o4-mini-deep-research-2025-06-26",
     "computer-use-preview",
     "computer-use-preview-2025-03-11",
+    "gpt-5.5-pro",
+    "gpt-5.5-pro-2026-04-23",
     "gpt-5-codex",
     "gpt-5-pro",
     "gpt-5-pro-2025-10-06",
     "gpt-5.1-codex-max",
+    "gpt-daybreak-blue-latest",
+    "gpt-daybreak-red-latest",
+    "gpt-5.6-cyber",
 ]
 """Model ID used to generate the response, like ``gpt-5`` or ``o3``. OpenAI offers a wide range of
 models with different capabilities, performance characteristics, and price points. Refer to the
@@ -363,6 +377,9 @@ ModerationEntryType = Literal["moderation_result", "error"]
 
 ModerationInputType = Literal["text", "image"]
 """Type of ModerationInputType."""
+
+ModerationMode = Literal["score", "block"]
+"""Type of ModerationMode."""
 
 OpenApiAuthType = Literal["anonymous", "project_connection", "managed_identity"]
 """Authentication type for OpenApi endpoint. Allowed types are:
@@ -383,6 +400,8 @@ OutputItemType = Literal[
     "computer_call",
     "computer_call_output",
     "reasoning",
+    "program",
+    "program_output",
     "tool_search_call",
     "tool_search_output",
     "additional_tools",
@@ -433,8 +452,17 @@ OutputMessageContentType = Literal["output_text", "refusal"]
 PageOrder = Literal["asc", "desc"]
 """Type of PageOrder."""
 
+ProgramOutputStatus = Literal["completed", "incomplete"]
+"""Type of ProgramOutputStatus."""
+
+PromptCacheModeEnum = Literal["implicit", "explicit"]
+"""Type of PromptCacheModeEnum."""
+
 PromptCacheRetentionEnum = Literal["in_memory", "24h"]
 """Type of PromptCacheRetentionEnum."""
+
+PromptCacheTTLEnum = Literal["30m"]
+"""Type of PromptCacheTTLEnum."""
 
 RankerVersionType = Literal["auto", "default-2024-11-15"]
 """Type of RankerVersionType."""
@@ -442,25 +470,22 @@ RankerVersionType = Literal["auto", "default-2024-11-15"]
 RealtimeMcpErrorType = Literal["protocol_error", "tool_execution_error", "http_error"]
 """Type of RealtimeMcpErrorType."""
 
-ReasoningEffort = Literal["none", "minimal", "low", "medium", "high", "xhigh"]
-"""Constrains effort on reasoning for
-`reasoning models <https://platform.openai.com/docs/guides/reasoning>`_.
-Currently supported values are ``none``, ``minimal``, ``low``, ``medium``, ``high``, and
-``xhigh``. Reducing
-reasoning effort can result in faster responses and fewer tokens used
-on reasoning in a response.
+ReasoningEffort = Literal["none", "minimal", "low", "medium", "high", "xhigh", "max"]
+"""Constrains effort on reasoning for reasoning models. Currently supported values are ``none``,
+``minimal``, ``low``, ``medium``, ``high``, ``xhigh``, and ``max``. Reducing reasoning effort
+can result in faster responses and fewer tokens used on reasoning in a response. Not all
+reasoning models support every value. See the `reasoning guide
+<https://platform.openai.com/docs/guides/reasoning>`_ for model-specific support."""
 
-* `gpt-5.1` defaults to `none`, which does not perform reasoning. The supported reasoning
-values for `gpt-5.1` are `none`, `low`, `medium`, and `high`. Tool calls are supported for all
-reasoning values in gpt-5.1.
-* All models before `gpt-5.1` default to `medium` reasoning effort, and do not support `none`.
-* The `gpt-5-pro` model defaults to (and only supports) `high` reasoning effort.
-* `xhigh` is supported for all models after `gpt-5.1-codex-max`."""
+ReasoningModeEnum = Literal["standard", "pro"]
+"""Type of ReasoningModeEnum."""
 
 ResponseErrorCode = Literal[
     "server_error",
     "rate_limit_exceeded",
     "invalid_prompt",
+    "data_residency_mismatch",
+    "bio_policy",
     "vector_store_timeout",
     "invalid_image",
     "invalid_image_format",
@@ -499,6 +524,11 @@ ResponseStreamEventType = Literal[
     "response.file_search_call.searching",
     "response.function_call_arguments.delta",
     "response.function_call_arguments.done",
+    "response.shell_call_command.added",
+    "response.shell_call_command.delta",
+    "response.shell_call_command.done",
+    "response.shell_call_output_content.delta",
+    "response.shell_call_output_content.done",
     "response.in_progress",
     "response.failed",
     "response.incomplete",
@@ -542,11 +572,17 @@ SearchContentType = Literal["text", "image"]
 SearchContextSize = Literal["low", "medium", "high"]
 """Type of SearchContextSize."""
 
-ServiceTierEnum = Literal["auto", "default", "flex", "priority"]
+ServiceTierEnum = Literal["auto", "default", "fast", "flex", "priority"]
 """Type of ServiceTierEnum."""
 
 TextResponseFormatConfigurationType = Literal["text", "json_schema", "json_object"]
 """Type of TextResponseFormatConfigurationType."""
+
+ToolCallCallerParamType = Literal["direct", "program"]
+"""Type of ToolCallCallerParamType."""
+
+ToolCallCallerType = Literal["direct", "program"]
+"""Type of ToolCallCallerType."""
 
 ToolCallStatus = Literal["in_progress", "completed", "incomplete", "failed"]
 """The status of a tool call."""
@@ -559,6 +595,7 @@ ToolChoiceParamType = Literal[
     "function",
     "mcp",
     "custom",
+    "programmatic_tool_calling",
     "apply_patch",
     "shell",
     "file_search",
@@ -583,6 +620,7 @@ ToolType = Literal[
     "web_search",
     "mcp",
     "code_interpreter",
+    "programmatic_tool_calling",
     "image_generation",
     "local_shell",
     "shell",
@@ -898,6 +936,8 @@ class ApplyPatchToolCallItemParam(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the apply patch tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCallerParam"
     :ivar status: The status of the apply patch tool call. One of ``in_progress`` or ``completed``.
      Required. Known values are: "in_progress" and "completed".
     :vartype status: ApplyPatchCallStatusParam
@@ -911,6 +951,7 @@ class ApplyPatchToolCallItemParam(TypedDict, total=False):
     id: Optional[str]
     call_id: Required[str]
     """The unique ID of the apply patch tool call generated by the model. Required."""
+    caller: Optional["ToolCallCallerParam"]
     status: Required[ApplyPatchCallStatusParam]
     """The status of the apply patch tool call. One of ``in_progress`` or ``completed``. Required.
      Known values are: \"in_progress\" and \"completed\"."""
@@ -928,6 +969,8 @@ class ApplyPatchToolCallOutputItemParam(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the apply patch tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCallerParam"
     :ivar status: The status of the apply patch tool call output. One of ``completed`` or
      ``failed``. Required. Known values are: "completed" and "failed".
     :vartype status: ApplyPatchCallOutputStatusParam
@@ -940,6 +983,7 @@ class ApplyPatchToolCallOutputItemParam(TypedDict, total=False):
     id: Optional[str]
     call_id: Required[str]
     """The unique ID of the apply patch tool call generated by the model. Required."""
+    caller: Optional["ToolCallCallerParam"]
     status: Required[ApplyPatchCallOutputStatusParam]
     """The status of the apply patch tool call output. One of ``completed`` or ``failed``. Required.
      Known values are: \"completed\" and \"failed\"."""
@@ -951,10 +995,13 @@ class ApplyPatchToolParam(TypedDict, total=False):
 
     :ivar type: The type of the tool. Always ``apply_patch``. Required. APPLY_PATCH.
     :vartype type: Literal["apply_patch"]
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[CallableToolAllowedCaller]
     """
 
     type: Required[Literal["apply_patch"]]
     """The type of the tool. Always ``apply_patch``. Required. APPLY_PATCH."""
+    allowed_callers: Optional[list[CallableToolAllowedCaller]]
 
 
 class ApplyPatchUpdateFileOperation(TypedDict, total=False):
@@ -1860,8 +1907,8 @@ class ClickParam(TypedDict, total=False):
     :vartype x: int
     :ivar y: The y-coordinate where the click occurred. Required.
     :vartype y: int
-    :ivar keys_property:
-    :vartype keys_property: list[str]
+    :ivar keys:
+    :vartype keys: list[str]
     """
 
     type: Required[Literal["click"]]
@@ -1914,6 +1961,8 @@ class CodeInterpreterTool(TypedDict, total=False):
     :ivar type: The type of the code interpreter tool. Always ``code_interpreter``. Required.
      CODE_INTERPRETER.
     :vartype type: Literal["code_interpreter"]
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[CallableToolAllowedCaller]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -1927,6 +1976,7 @@ class CodeInterpreterTool(TypedDict, total=False):
 
     type: Required[Literal["code_interpreter"]]
     """The type of the code interpreter tool. Always ``code_interpreter``. Required. CODE_INTERPRETER."""
+    allowed_callers: Optional[list[CallableToolAllowedCaller]]
     name: str
     """Optional user-defined name for this tool or configuration."""
     description: str
@@ -2112,6 +2162,8 @@ class ComputerScreenshotContent(TypedDict, total=False):
      ``high``, ``low``, ``auto``, or ``original``. Defaults to ``auto``. Required. Known values are:
      "low", "high", "auto", and "original".
     :vartype detail: ImageDetail
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     """
 
     type: Required[Literal["computer_screenshot"]]
@@ -2125,6 +2177,7 @@ class ComputerScreenshotContent(TypedDict, total=False):
     """The detail level of the screenshot image to be sent to the model. One of ``high``, ``low``,
      ``auto``, or ``original``. Defaults to ``auto``. Required. Known values are: \"low\", \"high\",
      \"auto\", and \"original\"."""
+    prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
 
 
 class ComputerScreenshotImage(TypedDict, total=False):
@@ -2382,19 +2435,14 @@ class CreateResponse(TypedDict, total=False):
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
      OpenAI detect and prevent abuse. Learn more: /docs/guides/safety-best-practices#safety-identifiers.
     :vartype user: str
-    :ivar safety_identifier: A stable identifier used to help detect users of your application that
-     may be violating OpenAI's usage policies. The IDs should be a string that uniquely identifies
-     each user, with a maximum length of 64 characters. We recommend hashing their username or email
-     address, in order to avoid sending us any identifying information. Learn more: /docs/guides/safety-best-practices#safety-identifiers.
+    :ivar safety_identifier:
     :vartype safety_identifier: str
-    :ivar prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize your
-     cache hit rates. Replaces the ``user`` field. Learn more: /docs/guides/prompt-caching.
+    :ivar prompt_cache_key:
     :vartype prompt_cache_key: str
-    :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
-     Literal["flex"], Literal["scale"], Literal["priority"]
-    :vartype service_tier: Literal["auto", "default", "flex", "scale", "priority"]
     :ivar prompt_cache_retention: Is either a Literal["in_memory"] type or a Literal["24h"] type.
     :vartype prompt_cache_retention: Literal["in_memory", "24h"]
+    :ivar prompt_cache_options:
+    :vartype prompt_cache_options: "PromptCacheOptionsParam"
     :ivar previous_response_id:
     :vartype previous_response_id: str
     :ivar model: The model deployment to use for the creation of this response.
@@ -2411,6 +2459,10 @@ class CreateResponse(TypedDict, total=False):
     :vartype tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
     :ivar prompt:
     :vartype prompt: "Prompt"
+    :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
+     Literal["flex"], Literal["scale"], Literal["priority"], Literal["fast"], Literal["ultrafast"]
+    :vartype service_tier: Literal["auto", "default", "flex", "scale", "priority", "fast",
+     "ultrafast"]
     :ivar truncation: Is either a Literal["auto"] type or a Literal["disabled"] type.
     :vartype truncation: Literal["auto", "disabled"]
     :ivar reasoning:
@@ -2453,19 +2505,11 @@ class CreateResponse(TypedDict, total=False):
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
      OpenAI detect and prevent abuse. Learn more: /docs/guides/safety-best-practices#safety-identifiers."""
-    safety_identifier: str
-    """A stable identifier used to help detect users of your application that may be violating
-     OpenAI's usage policies. The IDs should be a string that uniquely identifies each user, with a
-     maximum length of 64 characters. We recommend hashing their username or email address, in order
-     to avoid sending us any identifying information. Learn more: /docs/guides/safety-best-practices#safety-identifiers."""
-    prompt_cache_key: str
-    """Used by OpenAI to cache responses for similar requests to optimize your cache hit rates.
-     Replaces the ``user`` field. Learn more: /docs/guides/prompt-caching."""
-    service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority"]]
-    """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
-     Literal[\"scale\"], Literal[\"priority\"]"""
+    safety_identifier: Optional[str]
+    prompt_cache_key: Optional[str]
     prompt_cache_retention: Optional[Literal["in_memory", "24h"]]
     """Is either a Literal[\"in_memory\"] type or a Literal[\"24h\"] type."""
+    prompt_cache_options: "PromptCacheOptionsParam"
     previous_response_id: Optional[str]
     model: str
     """The model deployment to use for the creation of this response."""
@@ -2476,6 +2520,9 @@ class CreateResponse(TypedDict, total=False):
     tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
     """Is either a types.ToolChoiceOptions type or a ToolChoiceParam type."""
     prompt: "Prompt"
+    service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority", "fast", "ultrafast"]]
+    """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
+     Literal[\"scale\"], Literal[\"priority\"], Literal[\"fast\"], Literal[\"ultrafast\"]"""
     truncation: Optional[Literal["auto", "disabled"]]
     """Is either a Literal[\"auto\"] type or a Literal[\"disabled\"] type."""
     reasoning: Optional["Reasoning"]
@@ -2547,6 +2594,8 @@ class CustomToolCallOutputResource(TypedDict, total=False):
     :ivar call_id: The call ID, used to map this custom tool call output to a custom tool call.
      Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCallerParam"
     :ivar output: The output from the custom tool call generated by your code. Can be a string or
      an list of output content. Required. Is either a str type or a
      [FunctionAndCustomToolCallOutput] type.
@@ -2570,6 +2619,7 @@ class CustomToolCallOutputResource(TypedDict, total=False):
     """The unique ID of the custom tool call output in the OpenAI platform."""
     call_id: Required[str]
     """The call ID, used to map this custom tool call output to a custom tool call. Required."""
+    caller: Optional["ToolCallCallerParam"]
     output: Required[Union[str, list["FunctionAndCustomToolCallOutput"]]]
     """The output from the custom tool call generated by your code. Can be a string or an list of
      output content. Required. Is either a str type or a [FunctionAndCustomToolCallOutput] type."""
@@ -2595,6 +2645,8 @@ class CustomToolCallResource(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: An identifier used to map this custom tool call to a tool call output. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar namespace: The namespace of the custom tool being called.
     :vartype namespace: str
     :ivar name: The name of the custom tool being called. Required.
@@ -2619,6 +2671,7 @@ class CustomToolCallResource(TypedDict, total=False):
     """The unique ID of the custom tool call in the OpenAI platform."""
     call_id: Required[str]
     """An identifier used to map this custom tool call to a tool call output. Required."""
+    caller: Optional["ToolCallCaller"]
     namespace: str
     """The namespace of the custom tool being called."""
     name: Required[str]
@@ -2646,6 +2699,8 @@ class CustomToolParam(TypedDict, total=False):
     :vartype format: "CustomToolParamFormat"
     :ivar defer_loading: Whether this tool should be deferred and discovered via tool search.
     :vartype defer_loading: bool
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[CallableToolAllowedCaller]
     """
 
     type: Required[Literal["custom"]]
@@ -2658,6 +2713,7 @@ class CustomToolParam(TypedDict, total=False):
     """The input format for the custom tool. Default is unconstrained text."""
     defer_loading: bool
     """Whether this tool should be deferred and discovered via tool search."""
+    allowed_callers: Optional[list[CallableToolAllowedCaller]]
 
 
 class DeleteResponseResult(TypedDict, total=False):
@@ -2679,6 +2735,28 @@ class DeleteResponseResult(TypedDict, total=False):
     """Required. Default value is \"response\"."""
 
 
+class DirectToolCallCaller(TypedDict, total=False):
+    """DirectToolCallCaller.
+
+    :ivar type: Required. DIRECT.
+    :vartype type: Literal["direct"]
+    """
+
+    type: Required[Literal["direct"]]
+    """Required. DIRECT."""
+
+
+class DirectToolCallCallerParam(TypedDict, total=False):
+    """DirectToolCallCallerParam.
+
+    :ivar type: The caller type. Always ``direct``. Required. DIRECT.
+    :vartype type: Literal["direct"]
+    """
+
+    type: Required[Literal["direct"]]
+    """The caller type. Always ``direct``. Required. DIRECT."""
+
+
 class DoubleClickAction(TypedDict, total=False):
     """DoubleClick.
 
@@ -2689,8 +2767,8 @@ class DoubleClickAction(TypedDict, total=False):
     :vartype x: int
     :ivar y: The y-coordinate where the double click occurred. Required.
     :vartype y: int
-    :ivar keys_property: Required.
-    :vartype keys_property: list[str]
+    :ivar keys: Required.
+    :vartype keys: list[str]
     """
 
     type: Required[Literal["double_click"]]
@@ -2720,8 +2798,8 @@ class DragParam(TypedDict, total=False):
           { x: 200, y: 300 }
         ]
     :vartype path: list["CoordParam"]
-    :ivar keys_property:
-    :vartype keys_property: list[str]
+    :ivar keys:
+    :vartype keys: list[str]
     """
 
     type: Required[Literal["drag"]]
@@ -2757,10 +2835,10 @@ class Error(TypedDict, total=False):
     :vartype type: str
     :ivar details:
     :vartype details: list["Error"]
-    :ivar additional_info:
-    :vartype additional_info: dict[str, Any]
-    :ivar debug_info:
-    :vartype debug_info: dict[str, Any]
+    :ivar additionalInfo:
+    :vartype additionalInfo: dict[str, Any]
+    :ivar debugInfo:
+    :vartype debugInfo: dict[str, Any]
     """
 
     code: Required[Optional[str]]
@@ -2982,11 +3060,15 @@ class FunctionAndCustomToolCallOutputInputFileContent(TypedDict, total=False):  
     :vartype filename: str
     :ivar file_data: The content of the file to be sent to the model.
     :vartype file_data: str
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     :ivar file_url: The URL of the file to be sent to the model.
     :vartype file_url: str
-    :ivar detail: The detail level of the file to be sent to the model. Use ``low`` for the default
-     rendering behavior, or ``high`` to render the file at higher quality. Defaults to ``low``.
-     Known values are: "low" and "high".
+    :ivar detail: The detail level of the file to be sent to the model. Use ``auto`` to let the
+     system select the detail level; for GPT-5.6 and later models, ``auto`` uses high-quality
+     rendering, which may increase input token usage. Use ``low`` for lower-cost rendering, or
+     ``high`` to render the file at higher quality. Defaults to ``auto``. Known values are: "auto",
+     "low", and "high".
     :vartype detail: FileInputDetail
     """
 
@@ -2997,12 +3079,15 @@ class FunctionAndCustomToolCallOutputInputFileContent(TypedDict, total=False):  
     """The name of the file to be sent to the model."""
     file_data: str
     """The content of the file to be sent to the model."""
+    prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     file_url: str
     """The URL of the file to be sent to the model."""
     detail: FileInputDetail
-    """The detail level of the file to be sent to the model. Use ``low`` for the default rendering
-     behavior, or ``high`` to render the file at higher quality. Defaults to ``low``. Known values
-     are: \"low\" and \"high\"."""
+    """The detail level of the file to be sent to the model. Use ``auto`` to let the system select the
+     detail level; for GPT-5.6 and later models, ``auto`` uses high-quality rendering, which may
+     increase input token usage. Use ``low`` for lower-cost rendering, or ``high`` to render the
+     file at higher quality. Defaults to ``auto``. Known values are: \"auto\", \"low\", and
+     \"high\"."""
 
 
 class FunctionAndCustomToolCallOutputInputImageContent(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -3018,6 +3103,8 @@ class FunctionAndCustomToolCallOutputInputImageContent(TypedDict, total=False): 
      ``auto``, or ``original``. Defaults to ``auto``. Required. Known values are: "low", "high",
      "auto", and "original".
     :vartype detail: ImageDetail
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     """
 
     type: Required[Literal["input_image"]]
@@ -3028,6 +3115,7 @@ class FunctionAndCustomToolCallOutputInputImageContent(TypedDict, total=False): 
     """The detail level of the image to be sent to the model. One of ``high``, ``low``, ``auto``, or
      ``original``. Defaults to ``auto``. Required. Known values are: \"low\", \"high\", \"auto\",
      and \"original\"."""
+    prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
 
 
 class FunctionAndCustomToolCallOutputInputTextContent(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -3037,12 +3125,15 @@ class FunctionAndCustomToolCallOutputInputTextContent(TypedDict, total=False):  
     :vartype type: Literal["input_text"]
     :ivar text: The text input to the model. Required.
     :vartype text: str
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     """
 
     type: Required[Literal["input_text"]]
     """The type of the input item. Always ``input_text``. Required. INPUT_TEXT."""
     text: Required[str]
     """The text input to the model. Required."""
+    prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
 
 
 class FunctionCallOutputItemParam(TypedDict, total=False):
@@ -3050,7 +3141,7 @@ class FunctionCallOutputItemParam(TypedDict, total=False):
 
     :ivar id:
     :vartype id: str
-    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
+    :ivar call_id:
     :vartype call_id: str
     :ivar type: The type of the function tool call output. Always ``function_call_output``.
      Required. FUNCTION_CALL_OUTPUT.
@@ -3060,13 +3151,18 @@ class FunctionCallOutputItemParam(TypedDict, total=False):
      "_types.InputFileContentParam"]] type.
     :vartype output: Union[str, list[Union["InputTextContentParam",
      "InputImageContentParamAutoParam", "InputFileContentParam"]]]
+    :ivar name:
+    :vartype name: str
+    :ivar namespace:
+    :vartype namespace: str
+    :ivar caller:
+    :vartype caller: "ToolCallCallerParam"
     :ivar status: Known values are: "in_progress", "completed", and "incomplete".
     :vartype status: FunctionCallItemStatus
     """
 
     id: Optional[str]
-    call_id: Required[str]
-    """The unique ID of the function tool call generated by the model. Required."""
+    call_id: Optional[str]
     type: Required[Literal["function_call_output"]]
     """The type of the function tool call output. Always ``function_call_output``. Required.
      FUNCTION_CALL_OUTPUT."""
@@ -3076,6 +3172,9 @@ class FunctionCallOutputItemParam(TypedDict, total=False):
     """Text, image, or file output of the function tool call. Required. Is either a str type or a
      [Union[\"_types.InputTextContentParam\", \"_types.InputImageContentParamAutoParam\",
      \"_types.InputFileContentParam\"]] type."""
+    name: Optional[str]
+    namespace: Optional[str]
+    caller: Optional["ToolCallCallerParam"]
     status: Optional[FunctionCallItemStatus]
     """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
 
@@ -3123,6 +3222,8 @@ class FunctionShellCallItemParam(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the shell tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCallerParam"
     :ivar type: The type of the item. Always ``shell_call``. Required. SHELL_CALL.
     :vartype type: Literal["shell_call"]
     :ivar action: The shell commands and limits that describe how to run the tool call. Required.
@@ -3136,6 +3237,7 @@ class FunctionShellCallItemParam(TypedDict, total=False):
     id: Optional[str]
     call_id: Required[str]
     """The unique ID of the shell tool call generated by the model. Required."""
+    caller: Optional["ToolCallCallerParam"]
     type: Required[Literal["shell_call"]]
     """The type of the item. Always ``shell_call``. Required. SHELL_CALL."""
     action: Required["FunctionShellActionParam"]
@@ -3259,6 +3361,8 @@ class FunctionShellCallOutputItemParam(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the shell tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCallerParam"
     :ivar type: The type of the item. Always ``shell_call_output``. Required. SHELL_CALL_OUTPUT.
     :vartype type: Literal["shell_call_output"]
     :ivar output: Captured chunks of stdout and stderr output, along with their associated
@@ -3273,6 +3377,7 @@ class FunctionShellCallOutputItemParam(TypedDict, total=False):
     id: Optional[str]
     call_id: Required[str]
     """The unique ID of the shell tool call generated by the model. Required."""
+    caller: Optional["ToolCallCallerParam"]
     type: Required[Literal["shell_call_output"]]
     """The type of the item. Always ``shell_call_output``. Required. SHELL_CALL_OUTPUT."""
     output: Required[list["FunctionShellCallOutputContentParam"]]
@@ -3311,6 +3416,8 @@ class FunctionShellToolParam(TypedDict, total=False):
     :vartype type: Literal["shell"]
     :ivar environment:
     :vartype environment: "FunctionShellToolParamEnvironment"
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[CallableToolAllowedCaller]
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -3320,6 +3427,7 @@ class FunctionShellToolParam(TypedDict, total=False):
     type: Required[Literal["shell"]]
     """The type of the shell tool. Always ``shell``. Required. SHELL."""
     environment: Optional["FunctionShellToolParamEnvironment"]
+    allowed_callers: Optional[list[CallableToolAllowedCaller]]
     name: str
     """Optional user-defined name for this tool or configuration."""
     description: str
@@ -3368,10 +3476,14 @@ class FunctionTool(TypedDict, total=False):
     :vartype description: str
     :ivar parameters: Required.
     :vartype parameters: dict[str, Any]
+    :ivar output_schema:
+    :vartype output_schema: dict[str, Any]
     :ivar strict: Required.
     :vartype strict: bool
     :ivar defer_loading: Whether this function is deferred and loaded via tool search.
     :vartype defer_loading: bool
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[CallableToolAllowedCaller]
     """
 
     type: Required[Literal["function"]]
@@ -3381,10 +3493,12 @@ class FunctionTool(TypedDict, total=False):
     description: Optional[str]
     parameters: Required[Optional[dict[str, Any]]]
     """Required."""
+    output_schema: Optional[dict[str, Any]]
     strict: Required[Optional[bool]]
     """Required."""
     defer_loading: bool
     """Whether this function is deferred and loaded via tool search."""
+    allowed_callers: Optional[list[CallableToolAllowedCaller]]
 
 
 class FunctionToolParam(TypedDict, total=False):
@@ -3400,8 +3514,12 @@ class FunctionToolParam(TypedDict, total=False):
     :vartype strict: bool
     :ivar type: Required. Default value is "function".
     :vartype type: Literal["function"]
+    :ivar output_schema:
+    :vartype output_schema: dict[str, Any]
     :ivar defer_loading: Whether this function should be deferred and discovered via tool search.
     :vartype defer_loading: bool
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[CallableToolAllowedCaller]
     """
 
     name: Required[str]
@@ -3411,8 +3529,10 @@ class FunctionToolParam(TypedDict, total=False):
     strict: Optional[bool]
     type: Required[Literal["function"]]
     """Required. Default value is \"function\"."""
+    output_schema: Optional[dict[str, Any]]
     defer_loading: bool
     """Whether this function should be deferred and discovered via tool search."""
+    allowed_callers: Optional[list[CallableToolAllowedCaller]]
 
 
 class HybridSearchOptions(TypedDict, total=False):
@@ -3605,11 +3725,15 @@ class InputFileContent(TypedDict, total=False):
     :vartype filename: str
     :ivar file_data: The content of the file to be sent to the model.
     :vartype file_data: str
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     :ivar file_url: The URL of the file to be sent to the model.
     :vartype file_url: str
-    :ivar detail: The detail level of the file to be sent to the model. Use ``low`` for the default
-     rendering behavior, or ``high`` to render the file at higher quality. Defaults to ``low``.
-     Known values are: "low" and "high".
+    :ivar detail: The detail level of the file to be sent to the model. Use ``auto`` to let the
+     system select the detail level; for GPT-5.6 and later models, ``auto`` uses high-quality
+     rendering, which may increase input token usage. Use ``low`` for lower-cost rendering, or
+     ``high`` to render the file at higher quality. Defaults to ``auto``. Known values are: "auto",
+     "low", and "high".
     :vartype detail: FileInputDetail
     """
 
@@ -3620,12 +3744,15 @@ class InputFileContent(TypedDict, total=False):
     """The name of the file to be sent to the model."""
     file_data: str
     """The content of the file to be sent to the model."""
+    prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     file_url: str
     """The URL of the file to be sent to the model."""
     detail: FileInputDetail
-    """The detail level of the file to be sent to the model. Use ``low`` for the default rendering
-     behavior, or ``high`` to render the file at higher quality. Defaults to ``low``. Known values
-     are: \"low\" and \"high\"."""
+    """The detail level of the file to be sent to the model. Use ``auto`` to let the system select the
+     detail level; for GPT-5.6 and later models, ``auto`` uses high-quality rendering, which may
+     increase input token usage. Use ``low`` for lower-cost rendering, or ``high`` to render the
+     file at higher quality. Defaults to ``auto``. Known values are: \"auto\", \"low\", and
+     \"high\"."""
 
 
 class InputFileContentParam(TypedDict, total=False):
@@ -3642,10 +3769,14 @@ class InputFileContentParam(TypedDict, total=False):
     :vartype file_data: str
     :ivar file_url:
     :vartype file_url: str
-    :ivar detail: The detail level of the file to be sent to the model. Use ``low`` for the default
-     rendering behavior, or ``high`` to render the file at higher quality. Defaults to ``low``.
-     Known values are: "low" and "high".
+    :ivar detail: The detail level of the file to be sent to the model. Use ``auto`` to let the
+     system select the detail level; for GPT-5.6 and later models, ``auto`` uses high-quality
+     rendering, which may increase input token usage. Use ``low`` for lower-cost rendering, or
+     ``high`` to render the file at higher quality. Defaults to ``auto``. Known values are: "auto",
+     "low", and "high".
     :vartype detail: FileInputDetail
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointParam"
     """
 
     type: Required[Literal["input_file"]]
@@ -3655,9 +3786,12 @@ class InputFileContentParam(TypedDict, total=False):
     file_data: Optional[str]
     file_url: Optional[str]
     detail: FileInputDetail
-    """The detail level of the file to be sent to the model. Use ``low`` for the default rendering
-     behavior, or ``high`` to render the file at higher quality. Defaults to ``low``. Known values
-     are: \"low\" and \"high\"."""
+    """The detail level of the file to be sent to the model. Use ``auto`` to let the system select the
+     detail level; for GPT-5.6 and later models, ``auto`` uses high-quality rendering, which may
+     increase input token usage. Use ``low`` for lower-cost rendering, or ``high`` to render the
+     file at higher quality. Defaults to ``auto``. Known values are: \"auto\", \"low\", and
+     \"high\"."""
+    prompt_cache_breakpoint: Optional["PromptCacheBreakpointParam"]
 
 
 class InputImageContent(TypedDict, total=False):
@@ -3674,6 +3808,8 @@ class InputImageContent(TypedDict, total=False):
      ``auto``, or ``original``. Defaults to ``auto``. Required. Known values are: "low", "high",
      "auto", and "original".
     :vartype detail: ImageDetail
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     """
 
     type: Required[Literal["input_image"]]
@@ -3684,6 +3820,7 @@ class InputImageContent(TypedDict, total=False):
     """The detail level of the image to be sent to the model. One of ``high``, ``low``, ``auto``, or
      ``original``. Defaults to ``auto``. Required. Known values are: \"low\", \"high\", \"auto\",
      and \"original\"."""
+    prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
 
 
 class InputImageContentParamAutoParam(TypedDict, total=False):
@@ -3698,6 +3835,8 @@ class InputImageContentParamAutoParam(TypedDict, total=False):
     :vartype file_id: str
     :ivar detail: Known values are: "low", "high", "auto", and "original".
     :vartype detail: DetailEnum
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointParam"
     """
 
     type: Required[Literal["input_image"]]
@@ -3706,6 +3845,7 @@ class InputImageContentParamAutoParam(TypedDict, total=False):
     file_id: Optional[str]
     detail: Optional[DetailEnum]
     """Known values are: \"low\", \"high\", \"auto\", and \"original\"."""
+    prompt_cache_breakpoint: Optional["PromptCacheBreakpointParam"]
 
 
 class InputTextContent(TypedDict, total=False):
@@ -3716,12 +3856,15 @@ class InputTextContent(TypedDict, total=False):
     :vartype type: Literal["input_text"]
     :ivar text: The text input to the model. Required.
     :vartype text: str
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     """
 
     type: Required[Literal["input_text"]]
     """The type of the input item. Always ``input_text``. Required. Default value is \"input_text\"."""
     text: Required[str]
     """The text input to the model. Required."""
+    prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
 
 
 class InputTextContentParam(TypedDict, total=False):
@@ -3732,19 +3875,22 @@ class InputTextContentParam(TypedDict, total=False):
     :vartype type: Literal["input_text"]
     :ivar text: The text input to the model. Required.
     :vartype text: str
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointParam"
     """
 
     type: Required[Literal["input_text"]]
     """The type of the input item. Always ``input_text``. Required. Default value is \"input_text\"."""
     text: Required[str]
     """The text input to the model. Required."""
+    prompt_cache_breakpoint: Optional["PromptCacheBreakpointParam"]
 
 
 class ItemCodeInterpreterToolCall(TypedDict, total=False):
     """Code interpreter tool call.
 
     :ivar type: The type of the code interpreter tool call. Always ``code_interpreter_call``.
-     Required. CODE_INTERPRETER_CALL.
+     Required. Default value is "code_interpreter_call".
     :vartype type: Literal["code_interpreter_call"]
     :ivar id: The unique ID of the code interpreter tool call. Required.
     :vartype id: str
@@ -3762,8 +3908,8 @@ class ItemCodeInterpreterToolCall(TypedDict, total=False):
     """
 
     type: Required[Literal["code_interpreter_call"]]
-    """The type of the code interpreter tool call. Always ``code_interpreter_call``. Required.
-     CODE_INTERPRETER_CALL."""
+    """The type of the code interpreter tool call. Always ``code_interpreter_call``. Required. Default
+     value is \"code_interpreter_call\"."""
     id: Required[str]
     """The unique ID of the code interpreter tool call. Required."""
     status: Required[Literal["in_progress", "completed", "incomplete", "interpreting", "failed"]]
@@ -3782,7 +3928,8 @@ class ItemCodeInterpreterToolCall(TypedDict, total=False):
 class ItemComputerToolCall(TypedDict, total=False):
     """Computer tool call.
 
-    :ivar type: The type of the computer call. Always ``computer_call``. Required. COMPUTER_CALL.
+    :ivar type: The type of the computer call. Always ``computer_call``. Required. Default value is
+     "computer_call".
     :vartype type: Literal["computer_call"]
     :ivar id: The unique ID of the computer call. Required.
     :vartype id: str
@@ -3801,7 +3948,8 @@ class ItemComputerToolCall(TypedDict, total=False):
     """
 
     type: Required[Literal["computer_call"]]
-    """The type of the computer call. Always ``computer_call``. Required. COMPUTER_CALL."""
+    """The type of the computer call. Always ``computer_call``. Required. Default value is
+     \"computer_call\"."""
     id: Required[str]
     """The unique ID of the computer call. Required."""
     call_id: Required[str]
@@ -3819,13 +3967,15 @@ class ItemComputerToolCall(TypedDict, total=False):
 class ItemCustomToolCall(TypedDict, total=False):
     """Custom tool call.
 
-    :ivar type: The type of the custom tool call. Always ``custom_tool_call``. Required.
-     CUSTOM_TOOL_CALL.
+    :ivar type: The type of the custom tool call. Always ``custom_tool_call``. Required. Default
+     value is "custom_tool_call".
     :vartype type: Literal["custom_tool_call"]
     :ivar id: The unique ID of the custom tool call in the OpenAI platform.
     :vartype id: str
     :ivar call_id: An identifier used to map this custom tool call to a tool call output. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar namespace: The namespace of the custom tool being called.
     :vartype namespace: str
     :ivar name: The name of the custom tool being called. Required.
@@ -3835,11 +3985,13 @@ class ItemCustomToolCall(TypedDict, total=False):
     """
 
     type: Required[Literal["custom_tool_call"]]
-    """The type of the custom tool call. Always ``custom_tool_call``. Required. CUSTOM_TOOL_CALL."""
+    """The type of the custom tool call. Always ``custom_tool_call``. Required. Default value is
+     \"custom_tool_call\"."""
     id: str
     """The unique ID of the custom tool call in the OpenAI platform."""
     call_id: Required[str]
     """An identifier used to map this custom tool call to a tool call output. Required."""
+    caller: Optional["ToolCallCaller"]
     namespace: str
     """The namespace of the custom tool being called."""
     name: Required[str]
@@ -3852,13 +4004,15 @@ class ItemCustomToolCallOutput(TypedDict, total=False):
     """Custom tool call output.
 
     :ivar type: The type of the custom tool call output. Always ``custom_tool_call_output``.
-     Required. CUSTOM_TOOL_CALL_OUTPUT.
+     Required. Default value is "custom_tool_call_output".
     :vartype type: Literal["custom_tool_call_output"]
     :ivar id: The unique ID of the custom tool call output in the OpenAI platform.
     :vartype id: str
     :ivar call_id: The call ID, used to map this custom tool call output to a custom tool call.
      Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCallerParam"
     :ivar output: The output from the custom tool call generated by your code. Can be a string or
      an list of output content. Required. Is either a str type or a
      [FunctionAndCustomToolCallOutput] type.
@@ -3866,12 +4020,13 @@ class ItemCustomToolCallOutput(TypedDict, total=False):
     """
 
     type: Required[Literal["custom_tool_call_output"]]
-    """The type of the custom tool call output. Always ``custom_tool_call_output``. Required.
-     CUSTOM_TOOL_CALL_OUTPUT."""
+    """The type of the custom tool call output. Always ``custom_tool_call_output``. Required. Default
+     value is \"custom_tool_call_output\"."""
     id: str
     """The unique ID of the custom tool call output in the OpenAI platform."""
     call_id: Required[str]
     """The call ID, used to map this custom tool call output to a custom tool call. Required."""
+    caller: Optional["ToolCallCallerParam"]
     output: Required[Union[str, list["FunctionAndCustomToolCallOutput"]]]
     """The output from the custom tool call generated by your code. Can be a string or an list of
      output content. Required. Is either a str type or a [FunctionAndCustomToolCallOutput] type."""
@@ -3912,6 +4067,8 @@ class ItemFieldApplyPatchToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the apply patch tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar status: The status of the apply patch tool call. One of ``in_progress`` or ``completed``.
      Required. Known values are: "in_progress" and "completed".
     :vartype status: ApplyPatchCallStatus
@@ -3928,6 +4085,7 @@ class ItemFieldApplyPatchToolCall(TypedDict, total=False):
      Required."""
     call_id: Required[str]
     """The unique ID of the apply patch tool call generated by the model. Required."""
+    caller: Optional["ToolCallCaller"]
     status: Required[ApplyPatchCallStatus]
     """The status of the apply patch tool call. One of ``in_progress`` or ``completed``. Required.
      Known values are: \"in_progress\" and \"completed\"."""
@@ -3948,6 +4106,8 @@ class ItemFieldApplyPatchToolCallOutput(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the apply patch tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar status: The status of the apply patch tool call output. One of ``completed`` or
      ``failed``. Required. Known values are: "completed" and "failed".
     :vartype status: ApplyPatchCallOutputStatus
@@ -3964,6 +4124,7 @@ class ItemFieldApplyPatchToolCallOutput(TypedDict, total=False):
      API. Required."""
     call_id: Required[str]
     """The unique ID of the apply patch tool call generated by the model. Required."""
+    caller: Optional["ToolCallCaller"]
     status: Required[ApplyPatchCallOutputStatus]
     """The status of the apply patch tool call output. One of ``completed`` or ``failed``. Required.
      Known values are: \"completed\" and \"failed\"."""
@@ -4119,6 +4280,8 @@ class ItemFieldCustomToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: An identifier used to map this custom tool call to a tool call output. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar namespace: The namespace of the custom tool being called.
     :vartype namespace: str
     :ivar name: The name of the custom tool being called. Required.
@@ -4133,6 +4296,7 @@ class ItemFieldCustomToolCall(TypedDict, total=False):
     """The unique ID of the custom tool call in the OpenAI platform."""
     call_id: Required[str]
     """An identifier used to map this custom tool call to a tool call output. Required."""
+    caller: Optional["ToolCallCaller"]
     namespace: str
     """The namespace of the custom tool being called."""
     name: Required[str]
@@ -4152,6 +4316,8 @@ class ItemFieldCustomToolCallOutput(TypedDict, total=False):
     :ivar call_id: The call ID, used to map this custom tool call output to a custom tool call.
      Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCallerParam"
     :ivar output: The output from the custom tool call generated by your code. Can be a string or
      an list of output content. Required. Is either a str type or a
      [FunctionAndCustomToolCallOutput] type.
@@ -4165,6 +4331,7 @@ class ItemFieldCustomToolCallOutput(TypedDict, total=False):
     """The unique ID of the custom tool call output in the OpenAI platform."""
     call_id: Required[str]
     """The call ID, used to map this custom tool call output to a custom tool call. Required."""
+    caller: Optional["ToolCallCallerParam"]
     output: Required[Union[str, list["FunctionAndCustomToolCallOutput"]]]
     """The output from the custom tool call generated by your code. Can be a string or an list of
      output content. Required. Is either a str type or a [FunctionAndCustomToolCallOutput] type."""
@@ -4211,6 +4378,8 @@ class ItemFieldFunctionShellCall(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the shell tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar action: The shell commands and limits that describe how to run the tool call. Required.
     :vartype action: "FunctionShellAction"
     :ivar status: The status of the shell call. One of ``in_progress``, ``completed``, or
@@ -4228,6 +4397,7 @@ class ItemFieldFunctionShellCall(TypedDict, total=False):
     """The unique ID of the shell tool call. Populated when this item is returned via API. Required."""
     call_id: Required[str]
     """The unique ID of the shell tool call generated by the model. Required."""
+    caller: Optional["ToolCallCaller"]
     action: Required["FunctionShellAction"]
     """The shell commands and limits that describe how to run the tool call. Required."""
     status: Required[FunctionShellCallStatus]
@@ -4250,6 +4420,8 @@ class ItemFieldFunctionShellCallOutput(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the shell tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar status: The status of the shell call output. One of ``in_progress``, ``completed``, or
      ``incomplete``. Required. Known values are: "in_progress", "completed", and "incomplete".
     :vartype status: FunctionShellCallOutputStatusEnum
@@ -4267,6 +4439,7 @@ class ItemFieldFunctionShellCallOutput(TypedDict, total=False):
     """The unique ID of the shell call output. Populated when this item is returned via API. Required."""
     call_id: Required[str]
     """The unique ID of the shell tool call generated by the model. Required."""
+    caller: Optional["ToolCallCaller"]
     status: Required[FunctionShellCallOutputStatusEnum]
     """The status of the shell call output. One of ``in_progress``, ``completed``, or ``incomplete``.
      Required. Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
@@ -4288,6 +4461,8 @@ class ItemFieldFunctionToolCall(TypedDict, total=False):
     :vartype type: Literal["function_call"]
     :ivar call_id: The unique ID of the function tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar namespace: The namespace of the function to run.
     :vartype namespace: str
     :ivar name: The name of the function to run. Required.
@@ -4306,6 +4481,7 @@ class ItemFieldFunctionToolCall(TypedDict, total=False):
     """The type of the function tool call. Always ``function_call``. Required. FUNCTION_CALL."""
     call_id: Required[str]
     """The unique ID of the function tool call generated by the model. Required."""
+    caller: Optional["ToolCallCaller"]
     namespace: str
     """The namespace of the function to run."""
     name: Required[str]
@@ -4327,8 +4503,14 @@ class ItemFieldFunctionToolCallOutput(TypedDict, total=False):
     :ivar type: The type of the function tool call output. Always ``function_call_output``.
      Required. FUNCTION_CALL_OUTPUT.
     :vartype type: Literal["function_call_output"]
-    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
+    :ivar call_id: The unique ID of the function tool call generated by the model.
     :vartype call_id: str
+    :ivar name: The name of the tool that produced the output.
+    :vartype name: str
+    :ivar namespace: The namespace of the tool that produced the output.
+    :vartype namespace: str
+    :ivar caller:
+    :vartype caller: "ToolCallCallerParam"
     :ivar output: The output from the function call generated by your code. Can be a string or an
      list of output content. Required. Is either a str type or a [FunctionAndCustomToolCallOutput]
      type.
@@ -4345,8 +4527,13 @@ class ItemFieldFunctionToolCallOutput(TypedDict, total=False):
     type: Required[Literal["function_call_output"]]
     """The type of the function tool call output. Always ``function_call_output``. Required.
      FUNCTION_CALL_OUTPUT."""
-    call_id: Required[str]
-    """The unique ID of the function tool call generated by the model. Required."""
+    call_id: str
+    """The unique ID of the function tool call generated by the model."""
+    name: str
+    """The name of the tool that produced the output."""
+    namespace: str
+    """The namespace of the tool that produced the output."""
+    caller: Optional["ToolCallCallerParam"]
     output: Required[Union[str, list["FunctionAndCustomToolCallOutput"]]]
     """The output from the function call generated by your code. Can be a string or an list of output
      content. Required. Is either a str type or a [FunctionAndCustomToolCallOutput] type."""
@@ -4536,7 +4723,7 @@ class ItemFieldMcpToolCall(TypedDict, total=False):
     :vartype arguments: str
     :ivar output:
     :vartype output: str
-    :ivar error:
+    :ivar error: The error from the tool call, if any.
     :vartype error: dict[str, Any]
     :ivar status: The status of the tool call. One of ``in_progress``, ``completed``,
      ``incomplete``, ``calling``, or ``failed``. Known values are: "in_progress", "completed",
@@ -4558,6 +4745,7 @@ class ItemFieldMcpToolCall(TypedDict, total=False):
     """A JSON string of the arguments passed to the tool. Required."""
     output: Optional[str]
     error: dict[str, Any]
+    """The error from the tool call, if any."""
     status: MCPToolCallStatus
     """The status of the tool call. One of ``in_progress``, ``completed``, ``incomplete``,
      ``calling``, or ``failed``. Known values are: \"in_progress\", \"completed\", \"incomplete\",
@@ -4603,6 +4791,62 @@ class ItemFieldMessage(TypedDict, total=False):
     """The content of the message. Required."""
     phase: Optional[MessagePhase]
     """Known values are: \"commentary\" and \"final_answer\"."""
+
+
+class ItemFieldProgram(TypedDict, total=False):
+    """ItemFieldProgram.
+
+    :ivar type: The type of the item. Always ``program``. Required. PROGRAM.
+    :vartype type: Literal["program"]
+    :ivar id: The unique ID of the program item. Required.
+    :vartype id: str
+    :ivar call_id: The stable call ID of the program item. Required.
+    :vartype call_id: str
+    :ivar code: The JavaScript source executed by programmatic tool calling. Required.
+    :vartype code: str
+    :ivar fingerprint: Opaque program replay fingerprint that must be round-tripped. Required.
+    :vartype fingerprint: str
+    """
+
+    type: Required[Literal["program"]]
+    """The type of the item. Always ``program``. Required. PROGRAM."""
+    id: Required[str]
+    """The unique ID of the program item. Required."""
+    call_id: Required[str]
+    """The stable call ID of the program item. Required."""
+    code: Required[str]
+    """The JavaScript source executed by programmatic tool calling. Required."""
+    fingerprint: Required[str]
+    """Opaque program replay fingerprint that must be round-tripped. Required."""
+
+
+class ItemFieldProgramOutput(TypedDict, total=False):
+    """ItemFieldProgramOutput.
+
+    :ivar type: The type of the item. Always ``program_output``. Required. PROGRAM_OUTPUT.
+    :vartype type: Literal["program_output"]
+    :ivar id: The unique ID of the program output item. Required.
+    :vartype id: str
+    :ivar call_id: The call ID of the program item. Required.
+    :vartype call_id: str
+    :ivar result: The result produced by the program item. Required.
+    :vartype result: str
+    :ivar status: The terminal status of the program output item. Required. Known values are:
+     "completed" and "incomplete".
+    :vartype status: ProgramOutputStatus
+    """
+
+    type: Required[Literal["program_output"]]
+    """The type of the item. Always ``program_output``. Required. PROGRAM_OUTPUT."""
+    id: Required[str]
+    """The unique ID of the program output item. Required."""
+    call_id: Required[str]
+    """The call ID of the program item. Required."""
+    result: Required[str]
+    """The result produced by the program item. Required."""
+    status: Required[ProgramOutputStatus]
+    """The terminal status of the program output item. Required. Known values are: \"completed\" and
+     \"incomplete\"."""
 
 
 class ItemFieldReasoningItem(TypedDict, total=False):
@@ -4756,7 +5000,7 @@ class ItemFileSearchToolCall(TypedDict, total=False):
     :ivar id: The unique ID of the file search tool call. Required.
     :vartype id: str
     :ivar type: The type of the file search tool call. Always ``file_search_call``. Required.
-     FILE_SEARCH_CALL.
+     Default value is "file_search_call".
     :vartype type: Literal["file_search_call"]
     :ivar status: The status of the file search tool call. One of ``in_progress``, ``searching``,
      ``incomplete`` or ``failed``,. Required. Is one of the following types: Literal["in_progress"],
@@ -4771,7 +5015,8 @@ class ItemFileSearchToolCall(TypedDict, total=False):
     id: Required[str]
     """The unique ID of the file search tool call. Required."""
     type: Required[Literal["file_search_call"]]
-    """The type of the file search tool call. Always ``file_search_call``. Required. FILE_SEARCH_CALL."""
+    """The type of the file search tool call. Always ``file_search_call``. Required. Default value is
+     \"file_search_call\"."""
     status: Required[Literal["in_progress", "searching", "completed", "incomplete", "failed"]]
     """The status of the file search tool call. One of ``in_progress``, ``searching``, ``incomplete``
      or ``failed``,. Required. Is one of the following types: Literal[\"in_progress\"],
@@ -4784,11 +5029,13 @@ class ItemFileSearchToolCall(TypedDict, total=False):
 class ItemFunctionToolCall(TypedDict, total=False):
     """Function tool call.
 
-    :ivar type: The type of the function tool call. Always ``function_call``. Required.
-     FUNCTION_CALL.
+    :ivar type: The type of the function tool call. Always ``function_call``. Required. Default
+     value is "function_call".
     :vartype type: Literal["function_call"]
     :ivar call_id: The unique ID of the function tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar namespace: The namespace of the function to run.
     :vartype namespace: str
     :ivar name: The name of the function to run. Required.
@@ -4802,9 +5049,11 @@ class ItemFunctionToolCall(TypedDict, total=False):
     """
 
     type: Required[Literal["function_call"]]
-    """The type of the function tool call. Always ``function_call``. Required. FUNCTION_CALL."""
+    """The type of the function tool call. Always ``function_call``. Required. Default value is
+     \"function_call\"."""
     call_id: Required[str]
     """The unique ID of the function tool call generated by the model. Required."""
+    caller: Optional["ToolCallCaller"]
     namespace: str
     """The namespace of the function to run."""
     name: Required[str]
@@ -4821,7 +5070,7 @@ class ItemImageGenToolCall(TypedDict, total=False):
     """Image generation call.
 
     :ivar type: The type of the image generation call. Always ``image_generation_call``. Required.
-     IMAGE_GENERATION_CALL.
+     Default value is "image_generation_call".
     :vartype type: Literal["image_generation_call"]
     :ivar id: The unique ID of the image generation call. Required.
     :vartype id: str
@@ -4833,8 +5082,8 @@ class ItemImageGenToolCall(TypedDict, total=False):
     """
 
     type: Required[Literal["image_generation_call"]]
-    """The type of the image generation call. Always ``image_generation_call``. Required.
-     IMAGE_GENERATION_CALL."""
+    """The type of the image generation call. Always ``image_generation_call``. Required. Default
+     value is \"image_generation_call\"."""
     id: Required[str]
     """The unique ID of the image generation call. Required."""
     status: Required[Literal["in_progress", "completed", "generating", "failed"]]
@@ -4847,8 +5096,8 @@ class ItemImageGenToolCall(TypedDict, total=False):
 class ItemLocalShellToolCall(TypedDict, total=False):
     """Local shell call.
 
-    :ivar type: The type of the local shell call. Always ``local_shell_call``. Required.
-     LOCAL_SHELL_CALL.
+    :ivar type: The type of the local shell call. Always ``local_shell_call``. Required. Default
+     value is "local_shell_call".
     :vartype type: Literal["local_shell_call"]
     :ivar id: The unique ID of the local shell call. Required.
     :vartype id: str
@@ -4862,7 +5111,8 @@ class ItemLocalShellToolCall(TypedDict, total=False):
     """
 
     type: Required[Literal["local_shell_call"]]
-    """The type of the local shell call. Always ``local_shell_call``. Required. LOCAL_SHELL_CALL."""
+    """The type of the local shell call. Always ``local_shell_call``. Required. Default value is
+     \"local_shell_call\"."""
     id: Required[str]
     """The unique ID of the local shell call. Required."""
     call_id: Required[str]
@@ -4878,7 +5128,7 @@ class ItemLocalShellToolCallOutput(TypedDict, total=False):
     """Local shell call output.
 
     :ivar type: The type of the local shell tool call output. Always ``local_shell_call_output``.
-     Required. LOCAL_SHELL_CALL_OUTPUT.
+     Required. Default value is "local_shell_call_output".
     :vartype type: Literal["local_shell_call_output"]
     :ivar id: The unique ID of the local shell tool call generated by the model. Required.
     :vartype id: str
@@ -4891,7 +5141,7 @@ class ItemLocalShellToolCallOutput(TypedDict, total=False):
 
     type: Required[Literal["local_shell_call_output"]]
     """The type of the local shell tool call output. Always ``local_shell_call_output``. Required.
-     LOCAL_SHELL_CALL_OUTPUT."""
+     Default value is \"local_shell_call_output\"."""
     id: Required[str]
     """The unique ID of the local shell tool call generated by the model. Required."""
     output: Required[str]
@@ -4904,8 +5154,8 @@ class ItemLocalShellToolCallOutput(TypedDict, total=False):
 class ItemMcpApprovalRequest(TypedDict, total=False):
     """MCP approval request.
 
-    :ivar type: The type of the item. Always ``mcp_approval_request``. Required.
-     MCP_APPROVAL_REQUEST.
+    :ivar type: The type of the item. Always ``mcp_approval_request``. Required. Default value is
+     "mcp_approval_request".
     :vartype type: Literal["mcp_approval_request"]
     :ivar id: The unique ID of the approval request. Required.
     :vartype id: str
@@ -4918,7 +5168,8 @@ class ItemMcpApprovalRequest(TypedDict, total=False):
     """
 
     type: Required[Literal["mcp_approval_request"]]
-    """The type of the item. Always ``mcp_approval_request``. Required. MCP_APPROVAL_REQUEST."""
+    """The type of the item. Always ``mcp_approval_request``. Required. Default value is
+     \"mcp_approval_request\"."""
     id: Required[str]
     """The unique ID of the approval request. Required."""
     server_label: Required[str]
@@ -4932,7 +5183,8 @@ class ItemMcpApprovalRequest(TypedDict, total=False):
 class ItemMcpListTools(TypedDict, total=False):
     """MCP list tools.
 
-    :ivar type: The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS.
+    :ivar type: The type of the item. Always ``mcp_list_tools``. Required. Default value is
+     "mcp_list_tools".
     :vartype type: Literal["mcp_list_tools"]
     :ivar id: The unique ID of the list. Required.
     :vartype id: str
@@ -4945,7 +5197,7 @@ class ItemMcpListTools(TypedDict, total=False):
     """
 
     type: Required[Literal["mcp_list_tools"]]
-    """The type of the item. Always ``mcp_list_tools``. Required. MCP_LIST_TOOLS."""
+    """The type of the item. Always ``mcp_list_tools``. Required. Default value is \"mcp_list_tools\"."""
     id: Required[str]
     """The unique ID of the list. Required."""
     server_label: Required[str]
@@ -4958,7 +5210,7 @@ class ItemMcpListTools(TypedDict, total=False):
 class ItemMcpToolCall(TypedDict, total=False):
     """MCP tool call.
 
-    :ivar type: The type of the item. Always ``mcp_call``. Required. MCP_CALL.
+    :ivar type: The type of the item. Always ``mcp_call``. Required. Default value is "mcp_call".
     :vartype type: Literal["mcp_call"]
     :ivar id: The unique ID of the tool call. Required.
     :vartype id: str
@@ -4970,7 +5222,7 @@ class ItemMcpToolCall(TypedDict, total=False):
     :vartype arguments: str
     :ivar output:
     :vartype output: str
-    :ivar error:
+    :ivar error: The error from the tool call, if any.
     :vartype error: dict[str, Any]
     :ivar status: The status of the tool call. One of ``in_progress``, ``completed``,
      ``incomplete``, ``calling``, or ``failed``. Known values are: "in_progress", "completed",
@@ -4981,7 +5233,7 @@ class ItemMcpToolCall(TypedDict, total=False):
     """
 
     type: Required[Literal["mcp_call"]]
-    """The type of the item. Always ``mcp_call``. Required. MCP_CALL."""
+    """The type of the item. Always ``mcp_call``. Required. Default value is \"mcp_call\"."""
     id: Required[str]
     """The unique ID of the tool call. Required."""
     server_label: Required[str]
@@ -4992,6 +5244,7 @@ class ItemMcpToolCall(TypedDict, total=False):
     """A JSON string of the arguments passed to the tool. Required."""
     output: Optional[str]
     error: dict[str, Any]
+    """The error from the tool call, if any."""
     status: MCPToolCallStatus
     """The status of the tool call. One of ``in_progress``, ``completed``, ``incomplete``,
      ``calling``, or ``failed``. Known values are: \"in_progress\", \"completed\", \"incomplete\",
@@ -5002,7 +5255,8 @@ class ItemMcpToolCall(TypedDict, total=False):
 class ItemMessage(TypedDict, total=False):
     """Message.
 
-    :ivar type: The type of the message. Always set to ``message``. Required. MESSAGE.
+    :ivar type: The type of the message. Always set to ``message``. Required. Default value is
+     "message".
     :vartype type: Literal["message"]
     :ivar role: The role of the message. One of ``unknown``, ``user``, ``assistant``, ``system``,
      ``critic``, ``discriminator``, ``developer``, or ``tool``. Required. Known values are:
@@ -5015,7 +5269,7 @@ class ItemMessage(TypedDict, total=False):
     """
 
     type: Required[Literal["message"]]
-    """The type of the message. Always set to ``message``. Required. MESSAGE."""
+    """The type of the message. Always set to ``message``. Required. Default value is \"message\"."""
     role: Required[MessageRole]
     """The role of the message. One of ``unknown``, ``user``, ``assistant``, ``system``, ``critic``,
      ``discriminator``, ``developer``, or ``tool``. Required. Known values are: \"unknown\",
@@ -5032,7 +5286,8 @@ class ItemOutputMessage(TypedDict, total=False):
 
     :ivar id: The unique ID of the output message. Required.
     :vartype id: str
-    :ivar type: The type of the output message. Always ``message``. Required. OUTPUT_MESSAGE.
+    :ivar type: The type of the output message. Always ``message``. Required. Default value is
+     "output_message".
     :vartype type: Literal["output_message"]
     :ivar role: The role of the output message. Always ``assistant``. Required. Default value is
      "assistant".
@@ -5050,7 +5305,8 @@ class ItemOutputMessage(TypedDict, total=False):
     id: Required[str]
     """The unique ID of the output message. Required."""
     type: Required[Literal["output_message"]]
-    """The type of the output message. Always ``message``. Required. OUTPUT_MESSAGE."""
+    """The type of the output message. Always ``message``. Required. Default value is
+     \"output_message\"."""
     role: Required[Literal["assistant"]]
     """The role of the output message. Always ``assistant``. Required. Default value is \"assistant\"."""
     content: Required[list["OutputMessageContent"]]
@@ -5063,10 +5319,68 @@ class ItemOutputMessage(TypedDict, total=False):
      Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
 
 
+class ItemProgram(TypedDict, total=False):
+    """ItemProgram.
+
+    :ivar type: The type of the item. Always ``program``. Required. Default value is "program".
+    :vartype type: Literal["program"]
+    :ivar id: The unique ID of the program item. Required.
+    :vartype id: str
+    :ivar call_id: The stable call ID of the program item. Required.
+    :vartype call_id: str
+    :ivar code: The JavaScript source executed by programmatic tool calling. Required.
+    :vartype code: str
+    :ivar fingerprint: Opaque program replay fingerprint that must be round-tripped. Required.
+    :vartype fingerprint: str
+    """
+
+    type: Required[Literal["program"]]
+    """The type of the item. Always ``program``. Required. Default value is \"program\"."""
+    id: Required[str]
+    """The unique ID of the program item. Required."""
+    call_id: Required[str]
+    """The stable call ID of the program item. Required."""
+    code: Required[str]
+    """The JavaScript source executed by programmatic tool calling. Required."""
+    fingerprint: Required[str]
+    """Opaque program replay fingerprint that must be round-tripped. Required."""
+
+
+class ItemProgramOutput(TypedDict, total=False):
+    """ItemProgramOutput.
+
+    :ivar type: The type of the item. Always ``program_output``. Required. Default value is
+     "program_output".
+    :vartype type: Literal["program_output"]
+    :ivar id: The unique ID of the program output item. Required.
+    :vartype id: str
+    :ivar call_id: The call ID of the program item. Required.
+    :vartype call_id: str
+    :ivar result: The result produced by the program item. Required.
+    :vartype result: str
+    :ivar status: The terminal status of the program output item. Required. Known values are:
+     "completed" and "incomplete".
+    :vartype status: ProgramOutputStatus
+    """
+
+    type: Required[Literal["program_output"]]
+    """The type of the item. Always ``program_output``. Required. Default value is \"program_output\"."""
+    id: Required[str]
+    """The unique ID of the program output item. Required."""
+    call_id: Required[str]
+    """The call ID of the program item. Required."""
+    result: Required[str]
+    """The result produced by the program item. Required."""
+    status: Required[ProgramOutputStatus]
+    """The terminal status of the program output item. Required. Known values are: \"completed\" and
+     \"incomplete\"."""
+
+
 class ItemReasoningItem(TypedDict, total=False):
     """Reasoning.
 
-    :ivar type: The type of the object. Always ``reasoning``. Required. REASONING.
+    :ivar type: The type of the object. Always ``reasoning``. Required. Default value is
+     "reasoning".
     :vartype type: Literal["reasoning"]
     :ivar id: The unique identifier of the reasoning content. Required.
     :vartype id: str
@@ -5083,7 +5397,7 @@ class ItemReasoningItem(TypedDict, total=False):
     """
 
     type: Required[Literal["reasoning"]]
-    """The type of the object. Always ``reasoning``. Required. REASONING."""
+    """The type of the object. Always ``reasoning``. Required. Default value is \"reasoning\"."""
     id: Required[str]
     """The unique identifier of the reasoning content. Required."""
     encrypted_content: Optional[str]
@@ -5117,8 +5431,8 @@ class ItemWebSearchToolCall(TypedDict, total=False):
 
     :ivar id: The unique ID of the web search tool call. Required.
     :vartype id: str
-    :ivar type: The type of the web search tool call. Always ``web_search_call``. Required.
-     WEB_SEARCH_CALL.
+    :ivar type: The type of the web search tool call. Always ``web_search_call``. Required. Default
+     value is "web_search_call".
     :vartype type: Literal["web_search_call"]
     :ivar status: The status of the web search tool call. Required. Is one of the following types:
      Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["failed"],
@@ -5134,7 +5448,8 @@ class ItemWebSearchToolCall(TypedDict, total=False):
     id: Required[str]
     """The unique ID of the web search tool call. Required."""
     type: Required[Literal["web_search_call"]]
-    """The type of the web search tool call. Always ``web_search_call``. Required. WEB_SEARCH_CALL."""
+    """The type of the web search tool call. Always ``web_search_call``. Required. Default value is
+     \"web_search_call\"."""
     status: Required[Literal["in_progress", "searching", "completed", "failed", "incomplete"]]
     """The status of the web search tool call. Required. Is one of the following types:
      Literal[\"in_progress\"], Literal[\"searching\"], Literal[\"completed\"], Literal[\"failed\"],
@@ -5151,9 +5466,9 @@ class KeyPressAction(TypedDict, total=False):
     :ivar type: Specifies the event type. For a keypress action, this property is always set to
      ``keypress``. Required. KEYPRESS.
     :vartype type: Literal["keypress"]
-    :ivar keys_property: The combination of keys the model is requesting to be pressed. This is an
-     array of strings, each representing a key. Required.
-    :vartype keys_property: list[str]
+    :ivar keys: The combination of keys the model is requesting to be pressed. This is an array of
+     strings, each representing a key. Required.
+    :vartype keys: list[str]
     """
 
     type: Required[Literal["keypress"]]
@@ -5363,6 +5678,8 @@ class MCPTool(TypedDict, total=False):
     :vartype headers: dict[str, str]
     :ivar allowed_tools: Is either a [str] type or a MCPToolFilter type.
     :vartype allowed_tools: Union[list[str], "MCPToolFilter"]
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[CallableToolAllowedCaller]
     :ivar require_approval: Is one of the following types: MCPToolRequireApproval,
      Literal["always"], Literal["never"]
     :vartype require_approval: Union["MCPToolRequireApproval", Literal["always"], Literal["never"]]
@@ -5418,6 +5735,7 @@ class MCPTool(TypedDict, total=False):
     headers: Optional[dict[str, str]]
     allowed_tools: Optional[Union[list[str], "MCPToolFilter"]]
     """Is either a [str] type or a MCPToolFilter type."""
+    allowed_callers: Optional[list[CallableToolAllowedCaller]]
     require_approval: Optional[Union["MCPToolRequireApproval", Literal["always"], Literal["never"]]]
     """Is one of the following types: MCPToolRequireApproval, Literal[\"always\"], Literal[\"never\"]"""
     defer_loading: bool
@@ -5527,14 +5845,14 @@ class MemorySearchPreviewTool(TypedDict, total=False):
 class MemorySearchToolCallItemParam(TypedDict, total=False):
     """MemorySearchToolCallItemParam.
 
-    :ivar type: Required. MEMORY_SEARCH_CALL.
+    :ivar type: Required. Default value is "memory_search_call".
     :vartype type: Literal["memory_search_call"]
     :ivar results: The results returned from the memory search.
     :vartype results: list["MemorySearchItem"]
     """
 
     type: Required[Literal["memory_search_call"]]
-    """Required. MEMORY_SEARCH_CALL."""
+    """Required. Default value is \"memory_search_call\"."""
     results: Optional[list["MemorySearchItem"]]
     """The results returned from the memory search."""
 
@@ -5587,11 +5905,15 @@ class MessageContentInputFileContent(TypedDict, total=False):
     :vartype filename: str
     :ivar file_data: The content of the file to be sent to the model.
     :vartype file_data: str
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     :ivar file_url: The URL of the file to be sent to the model.
     :vartype file_url: str
-    :ivar detail: The detail level of the file to be sent to the model. Use ``low`` for the default
-     rendering behavior, or ``high`` to render the file at higher quality. Defaults to ``low``.
-     Known values are: "low" and "high".
+    :ivar detail: The detail level of the file to be sent to the model. Use ``auto`` to let the
+     system select the detail level; for GPT-5.6 and later models, ``auto`` uses high-quality
+     rendering, which may increase input token usage. Use ``low`` for lower-cost rendering, or
+     ``high`` to render the file at higher quality. Defaults to ``auto``. Known values are: "auto",
+     "low", and "high".
     :vartype detail: FileInputDetail
     """
 
@@ -5602,12 +5924,15 @@ class MessageContentInputFileContent(TypedDict, total=False):
     """The name of the file to be sent to the model."""
     file_data: str
     """The content of the file to be sent to the model."""
+    prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     file_url: str
     """The URL of the file to be sent to the model."""
     detail: FileInputDetail
-    """The detail level of the file to be sent to the model. Use ``low`` for the default rendering
-     behavior, or ``high`` to render the file at higher quality. Defaults to ``low``. Known values
-     are: \"low\" and \"high\"."""
+    """The detail level of the file to be sent to the model. Use ``auto`` to let the system select the
+     detail level; for GPT-5.6 and later models, ``auto`` uses high-quality rendering, which may
+     increase input token usage. Use ``low`` for lower-cost rendering, or ``high`` to render the
+     file at higher quality. Defaults to ``auto``. Known values are: \"auto\", \"low\", and
+     \"high\"."""
 
 
 class MessageContentInputImageContent(TypedDict, total=False):
@@ -5623,6 +5948,8 @@ class MessageContentInputImageContent(TypedDict, total=False):
      ``auto``, or ``original``. Defaults to ``auto``. Required. Known values are: "low", "high",
      "auto", and "original".
     :vartype detail: ImageDetail
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     """
 
     type: Required[Literal["input_image"]]
@@ -5633,6 +5960,7 @@ class MessageContentInputImageContent(TypedDict, total=False):
     """The detail level of the image to be sent to the model. One of ``high``, ``low``, ``auto``, or
      ``original``. Defaults to ``auto``. Required. Known values are: \"low\", \"high\", \"auto\",
      and \"original\"."""
+    prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
 
 
 class MessageContentInputTextContent(TypedDict, total=False):
@@ -5642,12 +5970,15 @@ class MessageContentInputTextContent(TypedDict, total=False):
     :vartype type: Literal["input_text"]
     :ivar text: The text input to the model. Required.
     :vartype text: str
+    :ivar prompt_cache_breakpoint:
+    :vartype prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
     """
 
     type: Required[Literal["input_text"]]
     """The type of the input item. Always ``input_text``. Required. INPUT_TEXT."""
     text: Required[str]
     """The text input to the model. Required."""
+    prompt_cache_breakpoint: "PromptCacheBreakpointConfig"
 
 
 class MessageContentOutputTextContent(TypedDict, total=False):
@@ -5657,9 +5988,9 @@ class MessageContentOutputTextContent(TypedDict, total=False):
     :vartype type: Literal["output_text"]
     :ivar text: The text output from the model. Required.
     :vartype text: str
-    :ivar annotations: The annotations of the text output. Required.
+    :ivar annotations: The annotations of the text output.
     :vartype annotations: list["Annotation"]
-    :ivar logprobs: Required.
+    :ivar logprobs:
     :vartype logprobs: list["LogProb"]
     """
 
@@ -5667,10 +5998,9 @@ class MessageContentOutputTextContent(TypedDict, total=False):
     """The type of the output text. Always ``output_text``. Required. OUTPUT_TEXT."""
     text: Required[str]
     """The text output from the model. Required."""
-    annotations: Required[list["Annotation"]]
-    """The annotations of the text output. Required."""
-    logprobs: Required[list["LogProb"]]
-    """Required."""
+    annotations: list["Annotation"]
+    """The annotations of the text output."""
+    logprobs: list["LogProb"]
 
 
 class MessageContentReasoningTextContent(TypedDict, total=False):
@@ -5753,6 +6083,17 @@ class Moderation(TypedDict, total=False):
     """Moderation for the response output. Required."""
 
 
+class ModerationConfigParam(TypedDict, total=False):
+    """The moderation policy for the response input.
+
+    :ivar mode: Required. Known values are: "score" and "block".
+    :vartype mode: ModerationMode
+    """
+
+    mode: Required[ModerationMode]
+    """Required. Known values are: \"score\" and \"block\"."""
+
+
 class ModerationErrorBody(TypedDict, total=False):
     """Moderation error.
 
@@ -5779,10 +6120,26 @@ class ModerationParam(TypedDict, total=False):
     :ivar model: The moderation model to use for moderated completions, e.g.
      'omni-moderation-latest'. Required.
     :vartype model: str
+    :ivar policy:
+    :vartype policy: "ModerationPolicyParam"
     """
 
     model: Required[str]
     """The moderation model to use for moderated completions, e.g. 'omni-moderation-latest'. Required."""
+    policy: Optional["ModerationPolicyParam"]
+
+
+class ModerationPolicyParam(TypedDict, total=False):
+    """The policy to apply to moderated response input and output.
+
+    :ivar input:
+    :vartype input: "ModerationConfigParam"
+    :ivar output:
+    :vartype output: "ModerationConfigParam"
+    """
+
+    input: Optional["ModerationConfigParam"]
+    output: Optional["ModerationConfigParam"]
 
 
 class ModerationResultBody(TypedDict, total=False):
@@ -5831,8 +6188,8 @@ class MoveParam(TypedDict, total=False):
     :vartype x: int
     :ivar y: The y-coordinate to move to. Required.
     :vartype y: int
-    :ivar keys_property:
-    :vartype keys_property: list[str]
+    :ivar keys:
+    :vartype keys: list[str]
     """
 
     type: Required[Literal["move"]]
@@ -6123,9 +6480,9 @@ class OutputContentOutputTextContent(TypedDict, total=False):
     :vartype type: Literal["output_text"]
     :ivar text: The text output from the model. Required.
     :vartype text: str
-    :ivar annotations: The annotations of the text output. Required.
+    :ivar annotations: The annotations of the text output.
     :vartype annotations: list["Annotation"]
-    :ivar logprobs: Required.
+    :ivar logprobs:
     :vartype logprobs: list["LogProb"]
     """
 
@@ -6133,10 +6490,9 @@ class OutputContentOutputTextContent(TypedDict, total=False):
     """The type of the output text. Always ``output_text``. Required. OUTPUT_TEXT."""
     text: Required[str]
     """The text output from the model. Required."""
-    annotations: Required[list["Annotation"]]
-    """The annotations of the text output. Required."""
-    logprobs: Required[list["LogProb"]]
-    """Required."""
+    annotations: list["Annotation"]
+    """The annotations of the text output."""
+    logprobs: list["LogProb"]
 
 
 class OutputContentReasoningTextContent(TypedDict, total=False):
@@ -6217,6 +6573,8 @@ class OutputItemApplyPatchToolCall(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the apply patch tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar status: The status of the apply patch tool call. One of ``in_progress`` or ``completed``.
      Required. Known values are: "in_progress" and "completed".
     :vartype status: ApplyPatchCallStatus
@@ -6235,6 +6593,7 @@ class OutputItemApplyPatchToolCall(TypedDict, total=False):
      Required."""
     call_id: Required[str]
     """The unique ID of the apply patch tool call generated by the model. Required."""
+    caller: Optional["ToolCallCaller"]
     status: Required[ApplyPatchCallStatus]
     """The status of the apply patch tool call. One of ``in_progress`` or ``completed``. Required.
      Known values are: \"in_progress\" and \"completed\"."""
@@ -6257,6 +6616,8 @@ class OutputItemApplyPatchToolCallOutput(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the apply patch tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar status: The status of the apply patch tool call output. One of ``completed`` or
      ``failed``. Required. Known values are: "completed" and "failed".
     :vartype status: ApplyPatchCallOutputStatus
@@ -6275,6 +6636,7 @@ class OutputItemApplyPatchToolCallOutput(TypedDict, total=False):
      API. Required."""
     call_id: Required[str]
     """The unique ID of the apply patch tool call generated by the model. Required."""
+    caller: Optional["ToolCallCaller"]
     status: Required[ApplyPatchCallOutputStatus]
     """The status of the apply patch tool call output. One of ``completed`` or ``failed``. Required.
      Known values are: \"completed\" and \"failed\"."""
@@ -6499,6 +6861,8 @@ class OutputItemFunctionShellCall(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the shell tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar action: The shell commands and limits that describe how to run the tool call. Required.
     :vartype action: "FunctionShellAction"
     :ivar status: The status of the shell call. One of ``in_progress``, ``completed``, or
@@ -6518,6 +6882,7 @@ class OutputItemFunctionShellCall(TypedDict, total=False):
     """The unique ID of the shell tool call. Populated when this item is returned via API. Required."""
     call_id: Required[str]
     """The unique ID of the shell tool call generated by the model. Required."""
+    caller: Optional["ToolCallCaller"]
     action: Required["FunctionShellAction"]
     """The shell commands and limits that describe how to run the tool call. Required."""
     status: Required[FunctionShellCallStatus]
@@ -6542,6 +6907,8 @@ class OutputItemFunctionShellCallOutput(TypedDict, total=False):
     :vartype id: str
     :ivar call_id: The unique ID of the shell tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar status: The status of the shell call output. One of ``in_progress``, ``completed``, or
      ``incomplete``. Required. Known values are: "in_progress", "completed", and "incomplete".
     :vartype status: FunctionShellCallOutputStatusEnum
@@ -6561,6 +6928,7 @@ class OutputItemFunctionShellCallOutput(TypedDict, total=False):
     """The unique ID of the shell call output. Populated when this item is returned via API. Required."""
     call_id: Required[str]
     """The unique ID of the shell tool call generated by the model. Required."""
+    caller: Optional["ToolCallCaller"]
     status: Required[FunctionShellCallOutputStatusEnum]
     """The status of the shell call output. One of ``in_progress``, ``completed``, or ``incomplete``.
      Required. Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
@@ -6584,6 +6952,8 @@ class OutputItemFunctionToolCall(TypedDict, total=False):
     :vartype type: Literal["function_call"]
     :ivar call_id: The unique ID of the function tool call generated by the model. Required.
     :vartype call_id: str
+    :ivar caller:
+    :vartype caller: "ToolCallCaller"
     :ivar namespace: The namespace of the function to run.
     :vartype namespace: str
     :ivar name: The name of the function to run. Required.
@@ -6606,6 +6976,7 @@ class OutputItemFunctionToolCall(TypedDict, total=False):
     """The type of the function tool call. Always ``function_call``. Required. FUNCTION_CALL."""
     call_id: Required[str]
     """The unique ID of the function tool call generated by the model. Required."""
+    caller: Optional["ToolCallCaller"]
     namespace: str
     """The namespace of the function to run."""
     name: Required[str]
@@ -6631,8 +7002,14 @@ class OutputItemFunctionToolCallOutput(TypedDict, total=False):
     :ivar type: The type of the function tool call output. Always ``function_call_output``.
      Required. FUNCTION_CALL_OUTPUT.
     :vartype type: Literal["function_call_output"]
-    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
+    :ivar call_id: The unique ID of the function tool call generated by the model.
     :vartype call_id: str
+    :ivar name: The name of the tool that produced the output.
+    :vartype name: str
+    :ivar namespace: The namespace of the tool that produced the output.
+    :vartype namespace: str
+    :ivar caller:
+    :vartype caller: "ToolCallCallerParam"
     :ivar output: The output from the function call generated by your code. Can be a string or an
      list of output content. Required. Is either a str type or a [FunctionAndCustomToolCallOutput]
      type.
@@ -6653,8 +7030,13 @@ class OutputItemFunctionToolCallOutput(TypedDict, total=False):
     type: Required[Literal["function_call_output"]]
     """The type of the function tool call output. Always ``function_call_output``. Required.
      FUNCTION_CALL_OUTPUT."""
-    call_id: Required[str]
-    """The unique ID of the function tool call generated by the model. Required."""
+    call_id: str
+    """The unique ID of the function tool call generated by the model."""
+    name: str
+    """The name of the tool that produced the output."""
+    namespace: str
+    """The namespace of the tool that produced the output."""
+    caller: Optional["ToolCallCallerParam"]
     output: Required[Union[str, list["FunctionAndCustomToolCallOutput"]]]
     """The output from the function call generated by your code. Can be a string or an list of output
      content. Required. Is either a str type or a [FunctionAndCustomToolCallOutput] type."""
@@ -6896,7 +7278,7 @@ class OutputItemMcpToolCall(TypedDict, total=False):
     :vartype arguments: str
     :ivar output:
     :vartype output: str
-    :ivar error:
+    :ivar error: The error from the tool call, if any.
     :vartype error: dict[str, Any]
     :ivar status: The status of the tool call. One of ``in_progress``, ``completed``,
      ``incomplete``, ``calling``, or ``failed``. Known values are: "in_progress", "completed",
@@ -6922,6 +7304,7 @@ class OutputItemMcpToolCall(TypedDict, total=False):
     """A JSON string of the arguments passed to the tool. Required."""
     output: Optional[str]
     error: dict[str, Any]
+    """The error from the tool call, if any."""
     status: MCPToolCallStatus
     """The status of the tool call. One of ``in_progress``, ``completed``, ``incomplete``,
      ``calling``, or ``failed``. Known values are: \"in_progress\", \"completed\", \"incomplete\",
@@ -7019,6 +7402,78 @@ class OutputItemOutputMessage(TypedDict, total=False):
     """The status of the message input. One of ``in_progress``, ``completed``, or ``incomplete``.
      Populated when input items are returned via API. Required. Is one of the following types:
      Literal[\"in_progress\"], Literal[\"completed\"], Literal[\"incomplete\"]"""
+
+
+class OutputItemProgram(TypedDict, total=False):
+    """OutputItemProgram.
+
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: "AgentReference"
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
+    :ivar type: The type of the item. Always ``program``. Required. PROGRAM.
+    :vartype type: Literal["program"]
+    :ivar id: The unique ID of the program item. Required.
+    :vartype id: str
+    :ivar call_id: The stable call ID of the program item. Required.
+    :vartype call_id: str
+    :ivar code: The JavaScript source executed by programmatic tool calling. Required.
+    :vartype code: str
+    :ivar fingerprint: Opaque program replay fingerprint that must be round-tripped. Required.
+    :vartype fingerprint: str
+    """
+
+    agent_reference: "AgentReference"
+    """The agent that created the item."""
+    response_id: str
+    """The response on which the item is created."""
+    type: Required[Literal["program"]]
+    """The type of the item. Always ``program``. Required. PROGRAM."""
+    id: Required[str]
+    """The unique ID of the program item. Required."""
+    call_id: Required[str]
+    """The stable call ID of the program item. Required."""
+    code: Required[str]
+    """The JavaScript source executed by programmatic tool calling. Required."""
+    fingerprint: Required[str]
+    """Opaque program replay fingerprint that must be round-tripped. Required."""
+
+
+class OutputItemProgramOutput(TypedDict, total=False):
+    """OutputItemProgramOutput.
+
+    :ivar agent_reference: The agent that created the item.
+    :vartype agent_reference: "AgentReference"
+    :ivar response_id: The response on which the item is created.
+    :vartype response_id: str
+    :ivar type: The type of the item. Always ``program_output``. Required. PROGRAM_OUTPUT.
+    :vartype type: Literal["program_output"]
+    :ivar id: The unique ID of the program output item. Required.
+    :vartype id: str
+    :ivar call_id: The call ID of the program item. Required.
+    :vartype call_id: str
+    :ivar result: The result produced by the program item. Required.
+    :vartype result: str
+    :ivar status: The terminal status of the program output item. Required. Known values are:
+     "completed" and "incomplete".
+    :vartype status: ProgramOutputStatus
+    """
+
+    agent_reference: "AgentReference"
+    """The agent that created the item."""
+    response_id: str
+    """The response on which the item is created."""
+    type: Required[Literal["program_output"]]
+    """The type of the item. Always ``program_output``. Required. PROGRAM_OUTPUT."""
+    id: Required[str]
+    """The unique ID of the program output item. Required."""
+    call_id: Required[str]
+    """The call ID of the program item. Required."""
+    result: Required[str]
+    """The result produced by the program item. Required."""
+    status: Required[ProgramOutputStatus]
+    """The terminal status of the program output item. Required. Known values are: \"completed\" and
+     \"incomplete\"."""
 
 
 class OutputItemReasoningItem(TypedDict, total=False):
@@ -7205,9 +7660,9 @@ class OutputMessageContentOutputTextContent(TypedDict, total=False):
     :vartype type: Literal["output_text"]
     :ivar text: The text output from the model. Required.
     :vartype text: str
-    :ivar annotations: The annotations of the text output. Required.
+    :ivar annotations: The annotations of the text output.
     :vartype annotations: list["Annotation"]
-    :ivar logprobs: Required.
+    :ivar logprobs:
     :vartype logprobs: list["LogProb"]
     """
 
@@ -7215,10 +7670,9 @@ class OutputMessageContentOutputTextContent(TypedDict, total=False):
     """The type of the output text. Always ``output_text``. Required. OUTPUT_TEXT."""
     text: Required[str]
     """The text output from the model. Required."""
-    annotations: Required[list["Annotation"]]
-    """The annotations of the text output. Required."""
-    logprobs: Required[list["LogProb"]]
-    """Required."""
+    annotations: list["Annotation"]
+    """The annotations of the text output."""
+    logprobs: list["LogProb"]
 
 
 class OutputMessageContentRefusalContent(TypedDict, total=False):
@@ -7236,6 +7690,49 @@ class OutputMessageContentRefusalContent(TypedDict, total=False):
     """The refusal explanation from the model. Required."""
 
 
+class ProgrammaticToolCallingParam(TypedDict, total=False):
+    """ProgrammaticToolCallingParam.
+
+    :ivar type: The type of the tool. Always ``programmatic_tool_calling``. Required.
+     PROGRAMMATIC_TOOL_CALLING.
+    :vartype type: Literal["programmatic_tool_calling"]
+    """
+
+    type: Required[Literal["programmatic_tool_calling"]]
+    """The type of the tool. Always ``programmatic_tool_calling``. Required.
+     PROGRAMMATIC_TOOL_CALLING."""
+
+
+class ProgramToolCallCaller(TypedDict, total=False):
+    """ProgramToolCallCaller.
+
+    :ivar type: Required. PROGRAM.
+    :vartype type: Literal["program"]
+    :ivar caller_id: The call ID of the program item that produced this tool call. Required.
+    :vartype caller_id: str
+    """
+
+    type: Required[Literal["program"]]
+    """Required. PROGRAM."""
+    caller_id: Required[str]
+    """The call ID of the program item that produced this tool call. Required."""
+
+
+class ProgramToolCallCallerParam(TypedDict, total=False):
+    """ProgramToolCallCallerParam.
+
+    :ivar type: The caller type. Always ``program``. Required. PROGRAM.
+    :vartype type: Literal["program"]
+    :ivar caller_id: The call ID of the program item that produced this tool call. Required.
+    :vartype caller_id: str
+    """
+
+    type: Required[Literal["program"]]
+    """The caller type. Always ``program``. Required. PROGRAM."""
+    caller_id: Required[str]
+    """The call ID of the program item that produced this tool call. Required."""
+
+
 class Prompt(TypedDict, total=False):
     """Reference to a prompt template and its variables. Learn more: /docs/guides/text?api-mode=responses#reusable-prompts.
 
@@ -7251,6 +7748,74 @@ class Prompt(TypedDict, total=False):
     """The unique identifier of the prompt template to use. Required."""
     version: Optional[str]
     variables: Optional["ResponsePromptVariables"]
+
+
+class PromptCacheBreakpointConfig(TypedDict, total=False):
+    """Prompt cache breakpoint.
+
+    :ivar mode: The breakpoint mode. Always ``explicit``. Required. Default value is "explicit".
+    :vartype mode: Literal["explicit"]
+    """
+
+    mode: Required[Literal["explicit"]]
+    """The breakpoint mode. Always ``explicit``. Required. Default value is \"explicit\"."""
+
+
+class PromptCacheBreakpointParam(TypedDict, total=False):
+    """Prompt cache breakpoint.
+
+    :ivar mode: The breakpoint mode. Always ``explicit``. Required. Default value is "explicit".
+    :vartype mode: Literal["explicit"]
+    """
+
+    mode: Required[Literal["explicit"]]
+    """The breakpoint mode. Always ``explicit``. Required. Default value is \"explicit\"."""
+
+
+class PromptCacheOptions(TypedDict, total=False):
+    """Prompt cache options.
+
+    :ivar ttl: The minimum lifetime applied to each cache breakpoint. Required. "30m"
+    :vartype ttl: PromptCacheTTLEnum
+    :ivar mode: Whether implicit prompt-cache breakpoints were enabled. Required. Known values are:
+     "implicit" and "explicit".
+    :vartype mode: PromptCacheModeEnum
+    """
+
+    ttl: Required[PromptCacheTTLEnum]
+    """The minimum lifetime applied to each cache breakpoint. Required. \"30m\""""
+    mode: Required[PromptCacheModeEnum]
+    """Whether implicit prompt-cache breakpoints were enabled. Required. Known values are:
+     \"implicit\" and \"explicit\"."""
+
+
+class PromptCacheOptionsParam(TypedDict, total=False):
+    """Prompt cache options.
+
+    :ivar ttl: The minimum lifetime applied to every implicit and explicit cache breakpoint written
+     by the request. Defaults to ``30m``, which is currently the only supported value. The backend
+     may retain cache entries for longer. "30m"
+    :vartype ttl: PromptCacheTTLEnum
+    :ivar mode: Controls whether OpenAI automatically creates an implicit cache breakpoint.
+     Defaults to ``implicit``. With ``implicit``, OpenAI creates one implicit breakpoint and writes
+     up to the latest three explicit breakpoints in the request. With ``explicit``, OpenAI does not
+     create an implicit breakpoint and writes up to the latest four explicit breakpoints. If there
+     are no explicit breakpoints, the request does not use prompt caching. Known values are:
+     "implicit" and "explicit".
+    :vartype mode: PromptCacheModeEnum
+    """
+
+    ttl: PromptCacheTTLEnum
+    """The minimum lifetime applied to every implicit and explicit cache breakpoint written by the
+     request. Defaults to ``30m``, which is currently the only supported value. The backend may
+     retain cache entries for longer. \"30m\""""
+    mode: PromptCacheModeEnum
+    """Controls whether OpenAI automatically creates an implicit cache breakpoint. Defaults to
+     ``implicit``. With ``implicit``, OpenAI creates one implicit breakpoint and writes up to the
+     latest three explicit breakpoints in the request. With ``explicit``, OpenAI does not create an
+     implicit breakpoint and writes up to the latest four explicit breakpoints. If there are no
+     explicit breakpoints, the request does not use prompt caching. Known values are: \"implicit\"
+     and \"explicit\"."""
 
 
 class RankingOptions(TypedDict, total=False):
@@ -7334,7 +7899,10 @@ class RealtimeMCPToolExecutionError(TypedDict, total=False):
 class Reasoning(TypedDict, total=False):
     """Reasoning.
 
-    :ivar effort: Known values are: "none", "minimal", "low", "medium", "high", and "xhigh".
+    :ivar mode: Controls the reasoning execution mode for the request. When returned on a response,
+     this is the effective execution mode. Known values are: "standard" and "pro".
+    :vartype mode: ReasoningModeEnum
+    :ivar effort: Known values are: "none", "minimal", "low", "medium", "high", "xhigh", and "max".
     :vartype effort: ReasoningEffort
     :ivar summary: Is one of the following types: Literal["auto"], Literal["concise"],
      Literal["detailed"]
@@ -7347,8 +7915,11 @@ class Reasoning(TypedDict, total=False):
     :vartype generate_summary: Literal["auto", "concise", "detailed"]
     """
 
+    mode: ReasoningModeEnum
+    """Controls the reasoning execution mode for the request. When returned on a response, this is the
+     effective execution mode. Known values are: \"standard\" and \"pro\"."""
     effort: Optional[ReasoningEffort]
-    """Known values are: \"none\", \"minimal\", \"low\", \"medium\", \"high\", and \"xhigh\"."""
+    """Known values are: \"none\", \"minimal\", \"low\", \"medium\", \"high\", \"xhigh\", and \"max\"."""
     summary: Optional[Literal["auto", "concise", "detailed"]]
     """Is one of the following types: Literal[\"auto\"], Literal[\"concise\"], Literal[\"detailed\"]"""
     context: Optional[Literal["auto", "current_turn", "all_turns"]]
@@ -7784,11 +8355,11 @@ class ResponseErrorInfo(TypedDict, total=False):
     """An error object returned when the model fails to generate a Response.
 
     :ivar code: Required. Known values are: "server_error", "rate_limit_exceeded",
-     "invalid_prompt", "vector_store_timeout", "invalid_image", "invalid_image_format",
-     "invalid_base64_image", "invalid_image_url", "image_too_large", "image_too_small",
-     "image_parse_error", "image_content_policy_violation", "invalid_image_mode",
-     "image_file_too_large", "unsupported_image_media_type", "empty_image_file",
-     "failed_to_download_image", and "image_file_not_found".
+     "invalid_prompt", "data_residency_mismatch", "bio_policy", "vector_store_timeout",
+     "invalid_image", "invalid_image_format", "invalid_base64_image", "invalid_image_url",
+     "image_too_large", "image_too_small", "image_parse_error", "image_content_policy_violation",
+     "invalid_image_mode", "image_file_too_large", "unsupported_image_media_type",
+     "empty_image_file", "failed_to_download_image", and "image_file_not_found".
     :vartype code: ResponseErrorCode
     :ivar message: A human-readable description of the error. Required.
     :vartype message: str
@@ -7796,11 +8367,11 @@ class ResponseErrorInfo(TypedDict, total=False):
 
     code: Required[ResponseErrorCode]
     """Required. Known values are: \"server_error\", \"rate_limit_exceeded\", \"invalid_prompt\",
-     \"vector_store_timeout\", \"invalid_image\", \"invalid_image_format\",
-     \"invalid_base64_image\", \"invalid_image_url\", \"image_too_large\", \"image_too_small\",
-     \"image_parse_error\", \"image_content_policy_violation\", \"invalid_image_mode\",
-     \"image_file_too_large\", \"unsupported_image_media_type\", \"empty_image_file\",
-     \"failed_to_download_image\", and \"image_file_not_found\"."""
+     \"data_residency_mismatch\", \"bio_policy\", \"vector_store_timeout\", \"invalid_image\",
+     \"invalid_image_format\", \"invalid_base64_image\", \"invalid_image_url\", \"image_too_large\",
+     \"image_too_small\", \"image_parse_error\", \"image_content_policy_violation\",
+     \"invalid_image_mode\", \"image_file_too_large\", \"unsupported_image_media_type\",
+     \"empty_image_file\", \"failed_to_download_image\", and \"image_file_not_found\"."""
     message: Required[str]
     """A human-readable description of the error. Required."""
 
@@ -8064,6 +8635,14 @@ class ResponseImageGenCallPartialImageEvent(TypedDict, total=False):
     :ivar partial_image_b64: Base64-encoded partial image data, suitable for rendering as an image.
      Required.
     :vartype partial_image_b64: str
+    :ivar size: The image size that was used.
+    :vartype size: str
+    :ivar quality: The image quality that was used.
+    :vartype quality: str
+    :ivar background: The background setting that was used.
+    :vartype background: str
+    :ivar output_format: The output format that was used.
+    :vartype output_format: str
     """
 
     type: Required[Literal["response.image_generation_call.partial_image"]]
@@ -8080,6 +8659,14 @@ class ResponseImageGenCallPartialImageEvent(TypedDict, total=False):
      Required."""
     partial_image_b64: Required[str]
     """Base64-encoded partial image data, suitable for rendering as an image. Required."""
+    size: str
+    """The image size that was used."""
+    quality: str
+    """The image quality that was used."""
+    background: str
+    """The background setting that was used."""
+    output_format: str
+    """The output format that was used."""
 
 
 class ResponseIncompleteDetails(TypedDict, total=False):
@@ -8393,17 +8980,10 @@ class ResponseObject(TypedDict, total=False):
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
      OpenAI detect and prevent abuse. Learn more: /docs/guides/safety-best-practices#safety-identifiers.
     :vartype user: str
-    :ivar safety_identifier: A stable identifier used to help detect users of your application that
-     may be violating OpenAI's usage policies. The IDs should be a string that uniquely identifies
-     each user, with a maximum length of 64 characters. We recommend hashing their username or email
-     address, in order to avoid sending us any identifying information. Learn more: /docs/guides/safety-best-practices#safety-identifiers.
+    :ivar safety_identifier:
     :vartype safety_identifier: str
-    :ivar prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize your
-     cache hit rates. Replaces the ``user`` field. Learn more: /docs/guides/prompt-caching.
+    :ivar prompt_cache_key:
     :vartype prompt_cache_key: str
-    :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
-     Literal["flex"], Literal["scale"], Literal["priority"]
-    :vartype service_tier: Literal["auto", "default", "flex", "scale", "priority"]
     :ivar prompt_cache_retention: Is either a Literal["in_memory"] type or a Literal["24h"] type.
     :vartype prompt_cache_retention: Literal["in_memory", "24h"]
     :ivar previous_response_id:
@@ -8422,6 +9002,10 @@ class ResponseObject(TypedDict, total=False):
     :vartype tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
     :ivar prompt:
     :vartype prompt: "Prompt"
+    :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
+     Literal["flex"], Literal["scale"], Literal["priority"], Literal["fast"], Literal["ultrafast"]
+    :vartype service_tier: Literal["auto", "default", "flex", "scale", "priority", "fast",
+     "ultrafast"]
     :ivar truncation: Is either a Literal["auto"] type or a Literal["disabled"] type.
     :vartype truncation: Literal["auto", "disabled"]
     :ivar id: Unique identifier for this Response. Required.
@@ -8443,11 +9027,9 @@ class ResponseObject(TypedDict, total=False):
     :vartype error: "ResponseErrorInfo"
     :ivar incomplete_details: Required.
     :vartype incomplete_details: "ResponseIncompleteDetails"
-    :ivar output: An array of content items generated by the model. The length and order of items in the
-     `output` array is dependent on the model's response. Rather than accessing the first
-     item in the `output` array and assuming it's an `assistant` message with the content
-     generated by the model, you might consider using the `output_text` property where
-     supported in SDKs. Required.
+    :ivar output: An array of content items generated by the model. The length and order of items
+     depends on the model response. Use the output_text property instead of assuming the first item
+     is an assistant message. Required.
     :vartype output: list["OutputItem"]
     :ivar reasoning:
     :vartype reasoning: "Reasoning"
@@ -8457,6 +9039,8 @@ class ResponseObject(TypedDict, total=False):
     :vartype output_text: str
     :ivar usage:
     :vartype usage: "ResponseUsage"
+    :ivar prompt_cache_options:
+    :vartype prompt_cache_options: "PromptCacheOptions"
     :ivar moderation:
     :vartype moderation: "Moderation"
     :ivar parallel_tool_calls: Whether to allow the model to run tool calls in parallel. Required.
@@ -8478,17 +9062,8 @@ class ResponseObject(TypedDict, total=False):
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
      OpenAI detect and prevent abuse. Learn more: /docs/guides/safety-best-practices#safety-identifiers."""
-    safety_identifier: str
-    """A stable identifier used to help detect users of your application that may be violating
-     OpenAI's usage policies. The IDs should be a string that uniquely identifies each user, with a
-     maximum length of 64 characters. We recommend hashing their username or email address, in order
-     to avoid sending us any identifying information. Learn more: /docs/guides/safety-best-practices#safety-identifiers."""
-    prompt_cache_key: str
-    """Used by OpenAI to cache responses for similar requests to optimize your cache hit rates.
-     Replaces the ``user`` field. Learn more: /docs/guides/prompt-caching."""
-    service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority"]]
-    """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
-     Literal[\"scale\"], Literal[\"priority\"]"""
+    safety_identifier: Optional[str]
+    prompt_cache_key: Optional[str]
     prompt_cache_retention: Optional[Literal["in_memory", "24h"]]
     """Is either a Literal[\"in_memory\"] type or a Literal[\"24h\"] type."""
     previous_response_id: Optional[str]
@@ -8501,6 +9076,9 @@ class ResponseObject(TypedDict, total=False):
     tool_choice: Union[ToolChoiceOptions, "ToolChoiceParam"]
     """Is either a types.ToolChoiceOptions type or a ToolChoiceParam type."""
     prompt: "Prompt"
+    service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority", "fast", "ultrafast"]]
+    """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
+     Literal[\"scale\"], Literal[\"priority\"], Literal[\"fast\"], Literal[\"ultrafast\"]"""
     truncation: Optional[Literal["auto", "disabled"]]
     """Is either a Literal[\"auto\"] type or a Literal[\"disabled\"] type."""
     id: Required[str]
@@ -8521,16 +9099,15 @@ class ResponseObject(TypedDict, total=False):
     incomplete_details: Required[Optional["ResponseIncompleteDetails"]]
     """Required."""
     output: Required[list["OutputItem"]]
-    """An array of content items generated by the model. The length and order of items in the
-     `output` array is dependent on the model's response. Rather than accessing the first
-     item in the `output` array and assuming it's an `assistant` message with the content
-     generated by the model, you might consider using the `output_text` property where
-     supported in SDKs. Required."""
+    """An array of content items generated by the model. The length and order of items depends on the
+     model response. Use the output_text property instead of assuming the first item is an assistant
+     message. Required."""
     reasoning: Optional["Reasoning"]
     instructions: Required[Optional[Union[str, list["Item"]]]]
     """Required. Is either a str type or a [Item] type."""
     output_text: Optional[str]
     usage: "ResponseUsage"
+    prompt_cache_options: "PromptCacheOptions"
     moderation: Optional["Moderation"]
     parallel_tool_calls: Required[bool]
     """Whether to allow the model to run tool calls in parallel. Required."""
@@ -8550,7 +9127,9 @@ class ResponseOutputItemAddedEvent(TypedDict, total=False):
     :vartype output_index: int
     :ivar sequence_number: The sequence number of this event. Required.
     :vartype sequence_number: int
-    :ivar item: The output item that was added. Required.
+    :ivar item: The output item that was added. For reasoning items, ``encrypted_content`` may be
+     incomplete while the item is in progress. Use the reasoning item from the corresponding
+     ``response.output_item.done`` event when passing it as input to a subsequent request. Required.
     :vartype item: "OutputItem"
     """
 
@@ -8562,7 +9141,9 @@ class ResponseOutputItemAddedEvent(TypedDict, total=False):
     sequence_number: Required[int]
     """The sequence number of this event. Required."""
     item: Required["OutputItem"]
-    """The output item that was added. Required."""
+    """The output item that was added. For reasoning items, ``encrypted_content`` may be incomplete
+     while the item is in progress. Use the reasoning item from the corresponding
+     ``response.output_item.done`` event when passing it as input to a subsequent request. Required."""
 
 
 class ResponseOutputItemDoneEvent(TypedDict, total=False):
@@ -8714,6 +9295,10 @@ class ResponseReasoningSummaryPartDoneEvent(TypedDict, total=False):
     :vartype output_index: int
     :ivar summary_index: The index of the summary part within the reasoning summary. Required.
     :vartype summary_index: int
+    :ivar status: The completion status of the summary part. Omitted when the part completed
+     normally and set to ``incomplete`` when generation was interrupted. Default value is
+     "incomplete".
+    :vartype status: Literal["incomplete"]
     :ivar sequence_number: The sequence number of this event. Required.
     :vartype sequence_number: int
     :ivar part: The completed summary part. Required.
@@ -8729,6 +9314,9 @@ class ResponseReasoningSummaryPartDoneEvent(TypedDict, total=False):
     """The index of the output item this summary part is associated with. Required."""
     summary_index: Required[int]
     """The index of the summary part within the reasoning summary. Required."""
+    status: Literal["incomplete"]
+    """The completion status of the summary part. Omitted when the part completed normally and set to
+     ``incomplete`` when generation was interrupted. Default value is \"incomplete\"."""
     sequence_number: Required[int]
     """The sequence number of this event. Required."""
     part: Required["ResponseReasoningSummaryPartDoneEventPart"]
@@ -9099,9 +9687,13 @@ class ResponseUsageInputTokensDetails(TypedDict, total=False):
 
     :ivar cached_tokens: Required.
     :vartype cached_tokens: int
+    :ivar cache_write_tokens: Required.
+    :vartype cache_write_tokens: int
     """
 
     cached_tokens: Required[int]
+    """Required."""
+    cache_write_tokens: Required[int]
     """Required."""
 
 
@@ -9221,8 +9813,8 @@ class ScrollParam(TypedDict, total=False):
     :vartype scroll_x: int
     :ivar scroll_y: The vertical scroll distance. Required.
     :vartype scroll_y: int
-    :ivar keys_property:
-    :vartype keys_property: list[str]
+    :ivar keys:
+    :vartype keys: list[str]
     """
 
     type: Required[Literal["scroll"]]
@@ -9400,6 +9992,18 @@ class SpecificFunctionShellParam(TypedDict, total=False):
 
     type: Required[Literal["shell"]]
     """The tool to call. Always ``shell``. Required. SHELL."""
+
+
+class SpecificProgrammaticToolCallingParam(TypedDict, total=False):
+    """SpecificProgrammaticToolCallingParam.
+
+    :ivar type: The tool to call. Always ``programmatic_tool_calling``. Required.
+     PROGRAMMATIC_TOOL_CALLING.
+    :vartype type: Literal["programmatic_tool_calling"]
+    """
+
+    type: Required[Literal["programmatic_tool_calling"]]
+    """The tool to call. Always ``programmatic_tool_calling``. Required. PROGRAMMATIC_TOOL_CALLING."""
 
 
 class StructuredOutputDefinition(TypedDict, total=False):
@@ -9851,7 +10455,7 @@ class TypeParam(TypedDict, total=False):
     :vartype text: str
     """
 
-    type: Required[Literal["builtins.type"]]
+    type: Required[Literal["type"]]
     """Specifies the event type. For a type action, this property is always set to ``type``. Required.
      TYPE."""
     text: Required[str]
@@ -10092,6 +10696,10 @@ class WebSearchTool(TypedDict, total=False):
     :ivar type: The type of the web search tool. One of ``web_search`` or
      ``web_search_2025_08_26``. Required. WEB_SEARCH.
     :vartype type: Literal["web_search"]
+    :ivar external_web_access: Allow live internet access for web search. Defaults to true when
+     omitted. When false, the web search tool runs in offline/cache-only mode and will not fetch new
+     external content.
+    :vartype external_web_access: bool
     :ivar filters:
     :vartype filters: "WebSearchToolFilters"
     :ivar user_location:
@@ -10112,6 +10720,9 @@ class WebSearchTool(TypedDict, total=False):
     type: Required[Literal["web_search"]]
     """The type of the web search tool. One of ``web_search`` or ``web_search_2025_08_26``. Required.
      WEB_SEARCH."""
+    external_web_access: bool
+    """Allow live internet access for web search. Defaults to true when omitted. When false, the web
+     search tool runs in offline/cache-only mode and will not fetch new external content."""
     filters: Optional["WebSearchToolFilters"]
     user_location: Optional["WebSearchApproximateLocation"]
     search_context_size: Literal["low", "medium", "high"]
@@ -10213,7 +10824,8 @@ class WorkIQPreviewToolParameters(TypedDict, total=False):
 class CompactResponseMethodPublicBody(TypedDict, total=False):
     """CompactResponseMethodPublicBody.
 
-    :ivar model: Required. Known values are: "gpt-5.4", "gpt-5.4-mini", "gpt-5.4-nano",
+    :ivar model: Required. Known values are: "gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna",
+     "gpt-5.5", "gpt-5.5-2026-04-23", "gpt-5.4", "gpt-5.4-mini", "gpt-5.4-nano",
      "gpt-5.4-mini-2026-03-17", "gpt-5.4-nano-2026-03-17", "gpt-5.3-chat-latest", "gpt-5.2",
      "gpt-5.2-2025-12-11", "gpt-5.2-chat-latest", "gpt-5.2-pro", "gpt-5.2-pro-2025-12-11",
      "gpt-5.1", "gpt-5.1-2025-11-13", "gpt-5.1-codex", "gpt-5.1-mini", "gpt-5.1-chat-latest",
@@ -10234,8 +10846,10 @@ class CompactResponseMethodPublicBody(TypedDict, total=False):
      "gpt-3.5-turbo-0613", "gpt-3.5-turbo-1106", "gpt-3.5-turbo-0125", "gpt-3.5-turbo-16k-0613",
      "o1-pro", "o1-pro-2025-03-19", "o3-pro", "o3-pro-2025-06-10", "o3-deep-research",
      "o3-deep-research-2025-06-26", "o4-mini-deep-research", "o4-mini-deep-research-2025-06-26",
-     "computer-use-preview", "computer-use-preview-2025-03-11", "gpt-5-codex", "gpt-5-pro",
-     "gpt-5-pro-2025-10-06", and "gpt-5.1-codex-max".
+     "computer-use-preview", "computer-use-preview-2025-03-11", "gpt-5.5-pro",
+     "gpt-5.5-pro-2026-04-23", "gpt-5-codex", "gpt-5-pro", "gpt-5-pro-2025-10-06",
+     "gpt-5.1-codex-max", "gpt-daybreak-blue-latest", "gpt-daybreak-red-latest", and
+     "gpt-5.6-cyber".
     :vartype model: ModelIdsCompaction
     :ivar input: Is either a str type or a [Item] type.
     :vartype input: Union[str, list["Item"]]
@@ -10247,12 +10861,15 @@ class CompactResponseMethodPublicBody(TypedDict, total=False):
     :vartype prompt_cache_key: str
     :ivar prompt_cache_retention: Known values are: "in_memory" and "24h".
     :vartype prompt_cache_retention: PromptCacheRetentionEnum
-    :ivar service_tier: Known values are: "auto", "default", "flex", and "priority".
+    :ivar prompt_cache_options:
+    :vartype prompt_cache_options: "PromptCacheOptionsParam"
+    :ivar service_tier: Known values are: "auto", "default", "fast", "flex", and "priority".
     :vartype service_tier: ServiceTierEnum
     """
 
     model: Required[Optional[ModelIdsCompaction]]
-    """Required. Known values are: \"gpt-5.4\", \"gpt-5.4-mini\", \"gpt-5.4-nano\",
+    """Required. Known values are: \"gpt-5.6-sol\", \"gpt-5.6-terra\", \"gpt-5.6-luna\", \"gpt-5.5\",
+     \"gpt-5.5-2026-04-23\", \"gpt-5.4\", \"gpt-5.4-mini\", \"gpt-5.4-nano\",
      \"gpt-5.4-mini-2026-03-17\", \"gpt-5.4-nano-2026-03-17\", \"gpt-5.3-chat-latest\", \"gpt-5.2\",
      \"gpt-5.2-2025-12-11\", \"gpt-5.2-chat-latest\", \"gpt-5.2-pro\", \"gpt-5.2-pro-2025-12-11\",
      \"gpt-5.1\", \"gpt-5.1-2025-11-13\", \"gpt-5.1-codex\", \"gpt-5.1-mini\",
@@ -10276,8 +10893,9 @@ class CompactResponseMethodPublicBody(TypedDict, total=False):
      \"gpt-3.5-turbo-16k-0613\", \"o1-pro\", \"o1-pro-2025-03-19\", \"o3-pro\",
      \"o3-pro-2025-06-10\", \"o3-deep-research\", \"o3-deep-research-2025-06-26\",
      \"o4-mini-deep-research\", \"o4-mini-deep-research-2025-06-26\", \"computer-use-preview\",
-     \"computer-use-preview-2025-03-11\", \"gpt-5-codex\", \"gpt-5-pro\", \"gpt-5-pro-2025-10-06\",
-     and \"gpt-5.1-codex-max\"."""
+     \"computer-use-preview-2025-03-11\", \"gpt-5.5-pro\", \"gpt-5.5-pro-2026-04-23\",
+     \"gpt-5-codex\", \"gpt-5-pro\", \"gpt-5-pro-2025-10-06\", \"gpt-5.1-codex-max\",
+     \"gpt-daybreak-blue-latest\", \"gpt-daybreak-red-latest\", and \"gpt-5.6-cyber\"."""
     input: Optional[Union[str, list["Item"]]]
     """Is either a str type or a [Item] type."""
     previous_response_id: Optional[str]
@@ -10285,8 +10903,9 @@ class CompactResponseMethodPublicBody(TypedDict, total=False):
     prompt_cache_key: Optional[str]
     prompt_cache_retention: Optional[PromptCacheRetentionEnum]
     """Known values are: \"in_memory\" and \"24h\"."""
+    prompt_cache_options: Optional["PromptCacheOptionsParam"]
     service_tier: Optional[ServiceTierEnum]
-    """Known values are: \"auto\", \"default\", \"flex\", and \"priority\"."""
+    """Known values are: \"auto\", \"default\", \"fast\", \"flex\", and \"priority\"."""
 
 
 Tool = Union[
@@ -10311,6 +10930,7 @@ Tool = Union[
     MemorySearchPreviewTool,
     NamespaceToolParam,
     OpenApiTool,
+    ProgrammaticToolCallingParam,
     SharepointPreviewTool,
     FunctionShellToolParam,
     ToolSearchToolParam,
@@ -10358,6 +10978,8 @@ OutputItem = Union[
     OpenApiToolCall,
     OpenApiToolCallOutput,
     OutputItemOutputMessage,
+    OutputItemProgram,
+    OutputItemProgramOutput,
     OutputItemReasoningItem,
     SharepointGroundingToolCall,
     SharepointGroundingToolCallOutput,
@@ -10393,6 +11015,8 @@ Item = Union[
     MemorySearchToolCallItemParam,
     ItemMessage,
     ItemOutputMessage,
+    ItemProgram,
+    ItemProgramOutput,
     ItemReasoningItem,
     FunctionShellCallItemParam,
     FunctionShellCallOutputItemParam,
@@ -10439,6 +11063,8 @@ ContainerNetworkPolicyParam = Union[ContainerNetworkPolicyAllowlistParam, Contai
 FunctionShellCallEnvironment = Union[ContainerReferenceResource, LocalEnvironmentResource]
 ContainerSkill = Union[InlineSkillParam, SkillReferenceParam]
 CustomToolParamFormat = Union[CustomGrammarFormatParam, CustomTextFormatParam]
+ToolCallCaller = Union[DirectToolCallCaller, ProgramToolCallCaller]
+ToolCallCallerParam = Union[DirectToolCallCallerParam, ProgramToolCallCallerParam]
 FunctionAndCustomToolCallOutput = Union[
     FunctionAndCustomToolCallOutputInputFileContent,
     FunctionAndCustomToolCallOutputInputImageContent,
@@ -10473,6 +11099,8 @@ ItemField = Union[
     ItemFieldMcpToolCall,
     ItemFieldMcpListTools,
     ItemFieldMessage,
+    ItemFieldProgram,
+    ItemFieldProgramOutput,
     ItemFieldReasoningItem,
     ItemFieldFunctionShellCall,
     ItemFieldFunctionShellCallOutput,
@@ -10552,6 +11180,7 @@ ToolChoiceParam = Union[
     ToolChoiceFunction,
     ToolChoiceImageGeneration,
     ToolChoiceMCP,
+    SpecificProgrammaticToolCallingParam,
     SpecificFunctionShellParam,
     ToolChoiceWebSearchPreview,
     ToolChoiceWebSearchPreview20250311,

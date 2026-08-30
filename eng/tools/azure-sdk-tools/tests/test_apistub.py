@@ -266,9 +266,10 @@ class TestRunOutputDirectory:
             open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
 
         def fake_pwsh(cmd, **kwargs):
-            out_idx = cmd.index("-OutputPath")
+            output_arg = "--output-path" if "extract_apiview_metadata.py" in cmd[1] else "-OutputPath"
+            out_idx = cmd.index(output_arg)
             out_dir = cmd[out_idx + 1]
-            if "Extract-APIViewMetadata-Python.ps1" in cmd[1]:
+            if "extract_apiview_metadata.py" in cmd[1]:
                 open(os.path.join(out_dir, "api.metadata.yml"), "w").close()
             else:
                 open(os.path.join(out_dir, "api.md"), "w").close()
@@ -325,9 +326,11 @@ class TestRunOutputDirectory:
             open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
 
         def fake_pwsh(cmd, **kwargs):
-            out_idx = cmd.index("-OutputPath")
+            output_arg = "--output-path" if "extract_apiview_metadata.py" in cmd[1] else "-OutputPath"
+            out_idx = cmd.index(output_arg)
             out_dir = cmd[out_idx + 1]
-            open(os.path.join(out_dir, "api.md"), "w").close()
+            output_file = "api.metadata.yml" if "extract_apiview_metadata.py" in cmd[1] else "api.md"
+            open(os.path.join(out_dir, output_file), "w").close()
             return MagicMock(returncode=0)
 
         with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
@@ -496,7 +499,42 @@ class TestRunOutputDirectory:
         cmds = run_venv_command.call_args.args[1]
         assert cmds[0:4] == ["-m", "pip", "download", "azure-core==1.0.0"]
         assert "--no-deps" in cmds
+        assert (
+            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+            in cmds
+        )
+        assert run_venv_command.call_args.kwargs["additional_environment_settings"] == {"PIP_EXTRA_INDEX_URL": ""}
         assert result == os.path.join(staging, "azure_core-1.0.0-py3-none-any.whl")
+
+    @patch("azpysdk.apistub.find_whl", return_value="azure_core-1.0.0-py3-none-any.whl")
+    def test_download_pypi_wheel_falls_back_to_public_pypi(self, _find_whl, tmp_path):
+        """download_pypi_wheel should retry public PyPI when the Azure SDK feed fails."""
+        stub = apistub()
+
+        with patch.object(stub, "run_venv_command", side_effect=[CalledProcessError(1, "pip"), None]) as run:
+            result = stub.download_pypi_wheel(sys.executable, "azure-core", "1.0.0", str(tmp_path))
+
+        assert run.call_count == 2
+        assert "--index-url=https://pypi.org/simple/" in run.call_args_list[1].args[1]
+        assert all(
+            call.kwargs["additional_environment_settings"] == {"PIP_EXTRA_INDEX_URL": ""} for call in run.call_args_list
+        )
+        assert result == os.path.join(str(tmp_path), "azure_core-1.0.0-py3-none-any.whl")
+
+    def test_download_pypi_wheel_reports_both_index_failures(self, tmp_path, caplog):
+        """download_pypi_wheel should propagate the public PyPI failure after both indexes fail."""
+        stub = apistub()
+        public_pypi_error = CalledProcessError(2, "pip", stderr="public PyPI unavailable")
+
+        with patch.object(
+            stub, "run_venv_command", side_effect=[CalledProcessError(1, "pip"), public_pypi_error]
+        ) as run:
+            with pytest.raises(CalledProcessError) as exc_info:
+                stub.download_pypi_wheel(sys.executable, "azure-core", "1.0.0", str(tmp_path))
+
+        assert run.call_count == 2
+        assert exc_info.value is public_pypi_error
+        assert "public PyPI unavailable" in caplog.text
 
     @patch("azpysdk.apistub.find_whl", return_value=None)
     def test_download_pypi_wheel_raises_when_no_wheel(self, _find_whl, tmp_path):
