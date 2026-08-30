@@ -80,6 +80,7 @@ namespace azure.ai.agentserver.core
                 port: int, 
                 project_endpoint: str, 
                 project_id: str, 
+                session_guid: str = "", 
                 session_id: str, 
                 sse_keepalive_interval: int, 
                 ws_ping_interval: float = 0.0
