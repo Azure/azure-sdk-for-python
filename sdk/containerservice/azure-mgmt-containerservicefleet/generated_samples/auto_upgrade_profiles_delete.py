@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-03-02-preview/AutoUpgradeProfiles_Delete.json
+# x-ms-original-file: 2026-06-01/AutoUpgradeProfiles_Delete.json
 if __name__ == "__main__":
     main()

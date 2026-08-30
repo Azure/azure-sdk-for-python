@@ -36,7 +36,7 @@ from azure.ai.projects.models import PromptAgentDefinition, WorkIQPreviewTool
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 tool_payload = WorkIQPreviewTool(
     project_connection_id=os.environ["WORK_IQ_PROJECT_CONNECTION_ID"],

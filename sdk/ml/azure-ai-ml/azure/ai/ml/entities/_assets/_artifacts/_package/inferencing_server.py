@@ -39,8 +39,8 @@ def _code_configuration_to_wire(code_configuration: Any) -> Optional[Dict[str, A
 class AzureMLOnlineInferencingServer:
     """Azure ML online inferencing configurations.
 
-    :param code_configuration: The code configuration of the inferencing server.
-    :type code_configuration: str
+    :keyword code_configuration: The code configuration of the inferencing server.
+    :paramtype code_configuration: str
     :ivar type: The type of the inferencing server.
     """
 
@@ -69,8 +69,8 @@ class AzureMLOnlineInferencingServer:
 class AzureMLBatchInferencingServer:
     """Azure ML batch inferencing configurations.
 
-    :param code_configuration: The code configuration of the inferencing server.
-    :type code_configuration: azure.ai.ml.entities.CodeConfiguration
+    :keyword code_configuration: The code configuration of the inferencing server.
+    :paramtype code_configuration: azure.ai.ml.entities.CodeConfiguration
     :ivar type: The type of the inferencing server.
     """
 
@@ -99,8 +99,8 @@ class AzureMLBatchInferencingServer:
 class TritonInferencingServer:
     """Azure ML triton inferencing configurations.
 
-    :param inference_configuration: The inference configuration of the inferencing server.
-    :type inference_configuration: azure.ai.ml.entities.CodeConfiguration
+    :keyword inference_configuration: The inference configuration of the inferencing server.
+    :paramtype inference_configuration: azure.ai.ml.entities.CodeConfiguration
     :ivar type: The type of the inferencing server.
     """
 
@@ -131,10 +131,10 @@ class TritonInferencingServer:
 class Route:
     """Route.
 
-    :param port: The port of the route.
-    :type port: str
-    :param path: The path of the route.
-    :type path: str
+    :keyword port: The port of the route.
+    :paramtype port: str
+    :keyword path: The path of the route.
+    :paramtype path: str
     """
 
     def __init__(self, *, port: Optional[str] = None, path: Optional[str] = None):
@@ -218,8 +218,8 @@ class OnlineInferenceConfiguration:
 class CustomInferencingServer:
     """Custom inferencing configurations.
 
-    :param inference_configuration: The inference configuration of the inferencing server.
-    :type inference_configuration: OnlineInferenceConfiguration
+    :keyword inference_configuration: The inference configuration of the inferencing server.
+    :paramtype inference_configuration: OnlineInferenceConfiguration
     :ivar type: The type of the inferencing server.
     """
 

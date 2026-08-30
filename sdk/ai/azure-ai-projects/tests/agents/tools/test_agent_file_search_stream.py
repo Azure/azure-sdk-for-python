@@ -14,7 +14,7 @@ from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 class TestAgentFileSearchStream(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_file_search_stream(self, **kwargs):
         """
         Test agent with File Search tool using streaming responses.

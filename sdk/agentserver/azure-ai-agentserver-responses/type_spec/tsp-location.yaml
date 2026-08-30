@@ -1,5 +1,5 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-service-agentserver-contracts
-commit: 486f5dcc2ca1d2b23d7ad4b35b4e8763db6a9d68
+commit: be2980b2e3b8fbf9e2034cbe441c388b2f6b54b2
 repo: Azure/azure-rest-api-specs
 emitterPackageJsonPath: eng/emitter-package.json
 entrypointFile: client.tsp

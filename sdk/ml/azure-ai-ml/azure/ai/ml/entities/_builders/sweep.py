@@ -73,18 +73,18 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     This class should not be instantiated directly. Instead, it should be created via the builder function: sweep.
 
-    :param trial: The ID or instance of the command component or job to be run for the step.
-    :type trial: Union[~azure.ai.ml.entities.CommandComponent, str]
-    :param compute: The compute definition containing the compute information for the step.
-    :type compute: str
-    :param limits: The limits for the sweep node.
-    :type limits: ~azure.ai.ml.sweep.SweepJobLimits
-    :param sampling_algorithm: The sampling algorithm to use to sample inside the search space.
+    :keyword trial: The ID or instance of the command component or job to be run for the step.
+    :paramtype trial: Union[~azure.ai.ml.entities.CommandComponent, str]
+    :keyword compute: The compute definition containing the compute information for the step.
+    :paramtype compute: str
+    :keyword limits: The limits for the sweep node.
+    :paramtype limits: ~azure.ai.ml.sweep.SweepJobLimits
+    :keyword sampling_algorithm: The sampling algorithm to use to sample inside the search space.
         Accepted values are: "random", "grid", or "bayesian".
-    :type sampling_algorithm: str
-    :param objective: The objective used to determine the target run with the local optimal
+    :paramtype sampling_algorithm: str
+    :keyword objective: The objective used to determine the target run with the local optimal
         hyperparameter in search space.
-    :type objective: ~azure.ai.ml.sweep.Objective
+    :paramtype objective: ~azure.ai.ml.sweep.Objective
     :param early_termination_policy: The early termination policy of the sweep node.
     :type early_termination_policy: Union[
 
@@ -94,8 +94,8 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     ]
 
-    :param search_space: The hyperparameter search space to run trials in.
-    :type search_space: Dict[str, Union[
+    :keyword search_space: The hyperparameter search space to run trials in.
+    :paramtype search_space: Dict[str, Union[
 
         ~azure.ai.ml.entities.Choice,
         ~azure.ai.ml.entities.LogNormal,
@@ -110,8 +110,8 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     ]]
 
-    :param inputs: Mapping of input data bindings used in the job.
-    :type inputs: Dict[str, Union[
+    :keyword inputs: Mapping of input data bindings used in the job.
+    :paramtype inputs: Dict[str, Union[
 
         ~azure.ai.ml.Input,
 
@@ -122,10 +122,10 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     ]]
 
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
-    :param identity: The identity that the training job will use while running on compute.
-    :type identity: Union[
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :paramtype outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
+    :keyword identity: The identity that the training job will use while running on compute.
+    :paramtype identity: Union[
 
         ~azure.ai.ml.ManagedIdentityConfiguration,
         ~azure.ai.ml.AmlTokenConfiguration,
@@ -133,10 +133,10 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     ]
 
-    :param queue_settings: The queue settings for the job.
-    :type queue_settings: ~azure.ai.ml.entities.QueueSettings
-    :param resources: Compute Resource configuration for the job.
-    :type resources: Optional[Union[dict, ~azure.ai.ml.entities.ResourceConfiguration]]
+    :keyword queue_settings: The queue settings for the job.
+    :paramtype queue_settings: ~azure.ai.ml.entities.QueueSettings
+    :keyword resources: Compute Resource configuration for the job.
+    :paramtype resources: Optional[Union[dict, ~azure.ai.ml.entities.ResourceConfiguration]]
     """
 
     def __init__(
