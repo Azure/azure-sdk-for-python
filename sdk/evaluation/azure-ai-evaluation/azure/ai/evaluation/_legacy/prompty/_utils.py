@@ -260,7 +260,7 @@ def render_jinja_template(template_str: str, *, trim_blocks=True, keep_trailing_
         # template authoring mistake - keep it on the generic type so it stays distinct.
         raise PromptyException(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
     except TemplateError as e:
-        # A malformed or unrenderable template is authored input, so surface the
+        # A template that fails to parse or render is authored input, so surface the
         # dedicated type callers can catch instead of the generic PromptyException.
         raise JinjaTemplateError(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
     except Exception as e:  # pylint: disable=broad-except
