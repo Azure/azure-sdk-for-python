@@ -457,6 +457,8 @@ def test_voice_upgrade_rejects_duplicate_traceparent():
 
 
 def test_voice_upgrade_ignores_context_extraction_failure(monkeypatch):
+    observed_baggage = []
+
     def fail_extract(*_args, **_kwargs):
         raise RuntimeError("context extraction failed")
 
@@ -465,11 +467,17 @@ def test_voice_upgrade_ignores_context_extraction_failure(monkeypatch):
 
     @app.on_session_start
     async def on_session_start(session, _event):
+        observed_baggage.append(baggage.get_baggage("customer-secret"))
         await session.send(SessionReady())
 
-    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+    with TestClient(app).websocket_connect(
+        "/invocations_ws",
+        headers={"baggage": "customer-secret=private-sentinel"},
+    ) as websocket:
         websocket.send_json(_session_start_frame())
         assert websocket.receive_json()["type"] == "session.ready"
+
+    assert observed_baggage == [None]
 
 
 def test_voice_upgrade_ignores_context_attachment_failure(monkeypatch):

@@ -131,6 +131,7 @@ _VOICE_DISCONNECT_EVENT = _session_transport._VOICE_DISCONNECT_EVENT_SCOPE_KEY  
 _VOICE_TERMINATION_DEADLINE = "azure.ai.agentserver.invocations.voice.termination_deadline"
 _VOICE_CONNECTION_TRACE = "azure.ai.agentserver.invocations.voice.connection_trace"
 _VOICE_CONNECTION_CONTEXT = "azure.ai.agentserver.invocations.voice.connection_context"
+_VOICE_PROPAGATION_HEADERS = "azure.ai.agentserver.invocations.voice.propagation_headers"
 _VOICE_ROUTE_CONFLICT = "VoiceAgentServerHost cannot own /invocations_ws because the route is already registered"
 _VOICE_TRACE_PROPAGATOR = _get_voice_trace_propagator()
 _VOICE_BAGGAGE_KEYS = frozenset(
@@ -322,7 +323,10 @@ def _extract_voice_websocket_context(websocket: WebSocket) -> Any:
         if base_context is None or _VOICE_TRACE_PROPAGATOR is None:
             _record_propagation_failure("extraction_error")
             return None
-        raw_headers: list[tuple[bytes, bytes]] = websocket.scope.get("headers", [])
+        raw_headers: list[tuple[bytes, bytes]] = websocket.scope.get(
+            _VOICE_PROPAGATION_HEADERS,
+            websocket.scope.get("headers", []),
+        )
         traceparents = [value for name, value in raw_headers if name.lower() == b"traceparent"]
         if not traceparents:
             failure = "missing"
@@ -585,6 +589,17 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] == "websocket":
             scope = dict(scope)
+            raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
+            scope[_VOICE_PROPAGATION_HEADERS] = raw_headers
+            propagation_headers = {
+                b"baggage",
+                b"traceparent",
+                b"tracestate",
+                REQUEST_ID.encode("ascii"),
+            }
+            scope["headers"] = [
+                (name, value) for name, value in raw_headers if name.lower() not in propagation_headers
+            ]
             self._ensure_ws_route_registered()
         await super().__call__(scope, receive, send)
 
@@ -613,13 +628,16 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
         scope = getattr(websocket, "scope", None)
         try:
             extracted_context = _extract_voice_websocket_context(websocket)
-            try:
-                extracted_context = _websocket_session_context(
-                    session_id,
-                    context=extracted_context,
-                )
-            except BaseException:  # pylint: disable=broad-exception-caught
-                pass
+            if extracted_context is not None and _is_valid_voice_correlation_id(
+                "azure.ai.agentserver.session_id", session_id
+            ):
+                try:
+                    extracted_context = _websocket_session_context(
+                        session_id,
+                        context=extracted_context,
+                    )
+                except BaseException:  # pylint: disable=broad-exception-caught
+                    pass
             parent_attachment = _attach_context(extracted_context)
             if parent_attachment is not None:
                 connection_attributes: dict[str, Any] = {"network.protocol.name": "websocket"}
