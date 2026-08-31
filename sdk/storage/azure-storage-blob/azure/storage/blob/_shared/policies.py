@@ -152,6 +152,15 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
             request.http_request.url = urljoin(request.http_request.url, message_id)
 
 
+class RangeHeaderPolicy(SansIOHTTPPolicy):
+    """Policy that converts the Range header to x-ms-range."""
+
+    def on_request(self, request):
+        range_value = request.http_request.headers.pop("Range", None)
+        if range_value is not None:
+            request.http_request.headers["x-ms-range"] = range_value
+
+
 class StorageHeadersPolicy(HeadersPolicy):
     request_id_header_name = "x-ms-client-request-id"
 
@@ -467,17 +476,26 @@ def _validate_content_response(
             # Raises exception if missing
             content_length = int(response.http_response.headers[CONTENT_LENGTH_HEADER])
 
-            # Patch response to return response iterator wrapped in structured message decoder
-            original_stream_download = response.http_response.stream_download
+            def _make_wrapper(original):
+                def wrapped(*args, **kwargs):
+                    iterator = original(*args, **kwargs)
+                    decoder = decoder_cls(iterator, content_length, block_size=DATA_BLOCK_SIZE)
+                    if hasattr(iterator, "request"):
+                        decoder.request = iterator.request  # type: ignore
+                    if hasattr(iterator, "response"):
+                        decoder.response = iterator.response  # type: ignore
+                    return decoder
 
-            def wrapped_stream_download(*args, **kwargs):
-                iterator = original_stream_download(*args, **kwargs)
-                decoder = decoder_cls(iterator, content_length, block_size=DATA_BLOCK_SIZE)
-                decoder.request = iterator.request  # type: ignore
-                decoder.response = iterator.response  # type: ignore
-                return decoder
+                return wrapped
 
-            response.http_response.stream_download = wrapped_stream_download
+            # Patch response to return response iterator wrapped in structured message decoder.
+            # TypeSpec-generated code calls iter_bytes()/iter_raw() instead of stream_download().
+            if hasattr(response.http_response, "iter_bytes"):
+                response.http_response.iter_bytes = _make_wrapper(response.http_response.iter_bytes)
+            if hasattr(response.http_response, "iter_raw"):
+                response.http_response.iter_raw = _make_wrapper(response.http_response.iter_raw)
+            if hasattr(response.http_response, "stream_download"):
+                response.http_response.stream_download = _make_wrapper(response.http_response.stream_download)
 
 
 class StorageContentValidation(SansIOHTTPPolicy):
