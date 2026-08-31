@@ -2,7 +2,9 @@
 
 ## 3.1.0b2 (2026-08-31)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+
+- Regenerated the client with the latest TypeSpec tooling.
 
 ## 3.1.0b1 (2026-05-19)
 
