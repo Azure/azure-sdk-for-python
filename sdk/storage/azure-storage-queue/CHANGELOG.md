@@ -1,8 +1,14 @@
 # Release History
 
-## 12.19.0b1 (Unreleased)
+## 12.18.0 (Unreleased)
+
+This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
+
+### Breaking Changes
+- Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.
 
 ### Features Added
+- Stable release of features from 12.18.0b1
 
 ## 12.18.0b1 (2026-08-10)
 
@@ -14,7 +20,6 @@
 
 ### Bugs Fixed
 - Return type of get_access_policies is now the publicly exposed AccessPolicy model. Previously we were leaking the internal generated AccessPolicy model without exposing it in the api.
-
 
 ## 12.17.0 (2026-06-08)
 

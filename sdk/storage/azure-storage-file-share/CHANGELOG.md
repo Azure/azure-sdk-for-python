@@ -1,8 +1,14 @@
 # Release History
 
-## 12.28.0b1 (Unreleased)
+## 12.27.0 (Unreleased)
+
+This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
+
+### Breaking Changes
+- Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.
 
 ### Features Added
+- Stable release of features from 12.27.0b1
 
 ## 12.27.0b1 (2026-08-10)
 
@@ -19,11 +25,6 @@ service responses.
 
 ### Bugs Fixed
 - Return type of get_share_access_policies is now the publicly exposed SignedIdentifier model containing the publicly exposed AccessPolicy model. Previously we were leaking the internal generated SignedIdentifier model without exposing it in the api.
-
-
-### Other Changes
-- Custom transports that use legacy azure-core Request/Response types will not be supported moving forward
-- Removed support for Python 3.9, Python 3.10 or later is required to use this package
 
 ## 12.26.0 (2026-06-08)
 
