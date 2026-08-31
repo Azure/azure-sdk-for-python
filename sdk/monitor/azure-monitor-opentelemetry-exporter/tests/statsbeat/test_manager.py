@@ -672,6 +672,7 @@ class TestStatsbeatManager(unittest.TestCase):
         )
         exporter = Mock()
         exporter.client._config.host = "https://dc.services.visualstudio.com"
+        exporter._update_connection_string.return_value = True
         self.manager._config = config
         self.manager._exporter = exporter
         self.manager._metrics = Mock()
@@ -722,14 +723,11 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertEqual(self.manager._config.connection_string, _DEFAULT_EU_STATS_CONNECTION_STRING)
         self.assertEqual(self.manager._config.endpoint, "https://westeurope-5.in.applicationinsights.azure.com/")
         self.assertEqual(self.manager._config.region, "westeurope")
-        # Exporter is repointed at the EU statsbeat resource.
-        self.assertEqual(exporter._instrumentation_key, "7dc56bab-3c0c-4e9f-9ebb-d1acadee8d0f")
-        self.assertEqual(exporter._endpoint, "https://westeurope-5.in.applicationinsights.azure.com/")
-        self.assertEqual(exporter.client._config.host, "https://westeurope-5.in.applicationinsights.azure.com/")
+        exporter._update_connection_string.assert_called_once_with(_DEFAULT_EU_STATS_CONNECTION_STRING)
         # Metric infrastructure is preserved, only the host dimension is refreshed.
         self.assertIs(self.manager._meter_provider, meter_provider)
         self.assertIs(self.manager._metrics, metrics)
-        metrics.update_endpoint.assert_called_once_with("https://westeurope-5.in.applicationinsights.azure.com/")
+        metrics.update_endpoint_host.assert_called_once_with("https://westeurope-5.in.applicationinsights.azure.com/")
 
     def test_update_endpoint_same_boundary_keeps_exporter_route(self):
         """A redirect within the same data boundary refreshes host/config but not the destination."""
@@ -743,7 +741,8 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertEqual(self.manager._config.region, "eastus")
         # Destination is unchanged - the exporter was never repointed.
         self.assertEqual(exporter.client._config.host, "https://dc.services.visualstudio.com")
-        self.manager._metrics.update_endpoint.assert_called_once_with(
+        exporter._update_connection_string.assert_not_called()
+        self.manager._metrics.update_endpoint_host.assert_called_once_with(
             "https://eastus-8.in.applicationinsights.azure.com/"
         )
 
@@ -756,7 +755,7 @@ class TestStatsbeatManager(unittest.TestCase):
 
         self.assertTrue(result)
         self.assertEqual(self.manager._config.connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
-        self.assertEqual(exporter._instrumentation_key, "c4a29126-a7cb-47e5-b348-11414998b11e")
+        exporter._update_connection_string.assert_called_once_with(_DEFAULT_NON_EU_STATS_CONNECTION_STRING)
 
     def test_update_endpoint_no_exporter_available(self):
         """Without a live exporter a boundary change cannot be applied, so nothing is mutated."""
@@ -772,26 +771,20 @@ class TestStatsbeatManager(unittest.TestCase):
     def test_update_endpoint_unparseable_connection_string_is_refused(self):
         """If the derived statsbeat connection string is unusable, the route is left untouched."""
         exporter = self._setup_initialized_manager_for_update()
-        unusable = mock.Mock()
-        unusable.instrumentation_key = ""
-        unusable.endpoint = ""
+        exporter._update_connection_string.return_value = False
 
-        with mock.patch(
-            "azure.monitor.opentelemetry.exporter.statsbeat._manager.ConnectionStringParser",
-            return_value=unusable,
-        ):
-            result = self.manager.update_endpoint("https://westeurope-5.in.applicationinsights.azure.com/")
+        result = self.manager.update_endpoint("https://westeurope-5.in.applicationinsights.azure.com/")
 
         self.assertFalse(result)
         # Neither the exporter nor the stored config moved off the original ROW route.
         self.assertEqual(exporter.client._config.host, "https://dc.services.visualstudio.com")
         self.assertEqual(self.manager._config.connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
         self.assertEqual(self.manager._config.endpoint, "https://dc.services.visualstudio.com")
-        self.manager._metrics.update_endpoint.assert_not_called()
+        self.manager._metrics.update_endpoint_host.assert_not_called()
 
     def test_update_endpoint_swallows_exceptions(self):
         self._setup_initialized_manager_for_update()
-        self.manager._metrics.update_endpoint.side_effect = Exception("boom")
+        self.manager._metrics.update_endpoint_host.side_effect = Exception("boom")
 
         self.assertFalse(self.manager.update_endpoint("https://eastus-8.in.applicationinsights.azure.com/"))
 

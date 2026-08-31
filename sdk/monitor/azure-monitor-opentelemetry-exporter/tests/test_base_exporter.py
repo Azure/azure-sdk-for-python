@@ -311,6 +311,23 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_directory, "test/path")
         mock_get_temp_dir.assert_not_called()
 
+    def test_update_connection_string_updates_endpoint_fields(self):
+        """A valid connection string updates the exporter and generated client endpoint."""
+        exporter = BaseExporter(disable_offline_storage=True)
+        connection_string = (
+            "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;"
+            "AadAudience=https://monitor.azure.com/"
+        )
+
+        self.assertTrue(exporter._update_connection_string(connection_string))
+        self.assertEqual(exporter._connection_string, connection_string)
+        self.assertEqual(exporter._instrumentation_key, "4321abcd-5678-4efa-8abc-1234567890ab")
+        self.assertEqual(exporter._endpoint, "https://westeurope-5.in.applicationinsights.azure.com/")
+        self.assertEqual(exporter._region, "westeurope")
+        self.assertEqual(exporter._aad_audience, "https://monitor.azure.com/")
+        self.assertEqual(exporter.client._config.host, "https://westeurope-5.in.applicationinsights.azure.com/")
+
     # ========================================================================
     # ONESETTINGS LOCAL STORAGE TOGGLE TESTS
     # ========================================================================

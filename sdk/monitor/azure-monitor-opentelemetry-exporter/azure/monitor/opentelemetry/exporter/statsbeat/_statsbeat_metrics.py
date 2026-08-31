@@ -197,14 +197,8 @@ class _StatsbeatMetrics:
             description="Statsbeat metric tracking tracking enabled features",
         )
 
-    def update_endpoint(self, endpoint: str) -> None:
-        """Refresh the network ``host`` dimension after an accepted ingestion redirect.
-
-        The ``endpoint`` dimension intentionally stays ``breeze``; only ``host`` changes so that the
-        regional ingestion stamp the customer was redirected to is recorded.
-
-        :param str endpoint: The redirected ingestion endpoint.
-        """
+    def update_endpoint_host(self, endpoint: str) -> None:
+        # Refresh the network ``host`` dimension after an accepted ingestion redirect.
         _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
 
     # pylint: disable=unused-argument

@@ -987,7 +987,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         )
         self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["host"], "dc")
 
-        metric.update_endpoint("https://westeurope-5.in.applicationinsights.azure.com/")
+        metric.update_endpoint_host("https://westeurope-5.in.applicationinsights.azure.com/")
 
         # The full regional ingestion stamp is recorded in host...
         self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["host"], "westeurope-5")
