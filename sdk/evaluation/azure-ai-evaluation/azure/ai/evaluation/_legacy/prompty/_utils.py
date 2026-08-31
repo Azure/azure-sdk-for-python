@@ -31,6 +31,8 @@ from typing import (
     cast,
 )
 
+from jinja2 import TemplateError
+from jinja2.exceptions import SecurityError
 from jinja2.sandbox import SandboxedEnvironment
 from openai import AsyncStream
 from openai.types.chat import ChatCompletion, ChatCompletionChunk, ChatCompletionUserMessageParam
@@ -253,6 +255,14 @@ def render_jinja_template(template_str: str, *, trim_blocks=True, keep_trailing_
             env = SandboxedEnvironment(trim_blocks=trim_blocks, keep_trailing_newline=keep_trailing_newline)
         template = env.from_string(template_str)
         return template.render(**kwargs)
+    except SecurityError as e:
+        # SecurityError subclasses TemplateError, but a blocked sandbox escape is not a
+        # template authoring mistake - keep it on the generic type so it stays distinct.
+        raise PromptyException(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
+    except TemplateError as e:
+        # A malformed or unrenderable template is authored input, so surface the
+        # dedicated type callers can catch instead of the generic PromptyException.
+        raise JinjaTemplateError(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
     except Exception as e:  # pylint: disable=broad-except
         raise PromptyException(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
 

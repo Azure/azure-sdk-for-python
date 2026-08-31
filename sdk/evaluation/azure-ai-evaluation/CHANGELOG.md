@@ -1,5 +1,15 @@
 # Release History
 
+## 1.18.5 (Unreleased)
+
+### Bugs Fixed
+
+- Prompt templates that fail to parse or render now raise `JinjaTemplateError` instead of the generic
+  `PromptyException`, so callers can distinguish an authoring error in the template from other prompty
+  failures without matching on message text. `JinjaTemplateError` subclasses `PromptyException`, so
+  existing `except PromptyException` handlers are unaffected. Blocked sandbox escapes continue to raise
+  `PromptyException` rather than being reclassified as template errors.
+
 ## 1.18.4 (2026-08-27)
 
 ### Bugs Fixed
