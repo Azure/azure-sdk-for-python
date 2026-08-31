@@ -14,6 +14,7 @@
 
 * Added `sample_synthetic_multiturn_evaluation.py`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
 * Added `sample_rle.py`, demonstrating a hosted RLE Wordle rollout.
+* Added `sample_rle_async.py`, demonstrating a hosted RLE Wordle rollout with an asynchronous client.
 * Added `sample_rle_environment_management.py`, demonstrating hosted RLE environment creation and pagination.
 
 ## 2.5.0 (2026-08-20)

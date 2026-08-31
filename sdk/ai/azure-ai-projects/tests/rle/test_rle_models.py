@@ -195,11 +195,23 @@ def test_rle_symbols_exported_from_public_namespace():
     # not top-level package exports. Only ``RLEError`` is surfaced at the package root (for excepts).
     assert getattr(projects, "RLEError")
     assert not hasattr(operations, "RLEError")
+    assert getattr(operations, "RLEOperations")
     assert getattr(operations, "OpenEnvClient")
     assert getattr(operations, "OpenEnvInstance")
     assert getattr(operations, "RLEInstanceAcquireTimeoutError")
     assert getattr(aio_operations, "AsyncOpenEnvClient")
     assert getattr(aio_operations, "AsyncOpenEnvInstance")
+    assert getattr(aio_operations, "RLEOperations")
+    for generated_operation_name in (
+        "RLEnvironmentsOperations",
+        "RLEInstanceGroupsOperations",
+        "RLEInstancesOperations",
+        "RLEInstanceRuntimeOperations",
+    ):
+        assert generated_operation_name not in operations.__all__
+        assert not hasattr(operations, generated_operation_name)
+        assert generated_operation_name not in aio_operations.__all__
+        assert not hasattr(aio_operations, generated_operation_name)
     assert getattr(models, "RLEStepResult")
     assert getattr(models, "RLEnvironmentState")
     assert getattr(models, "RLEInstance")
@@ -285,6 +297,7 @@ class _FakeInstanceGroups:
         self.created = []
         self.routes = []
         self.deleted = []
+        self.calls = []
 
     def create_instance_group(self, environment_name, environment_version, body):
         self.created.append(body)
@@ -301,6 +314,10 @@ class _FakeInstanceGroups:
     def delete_instance_group(self, environment_name, environment_version, instance_group_id):
         self.routes.append((environment_name, environment_version))
         self.deleted.append(instance_group_id)
+
+    def list_instance_groups(self, environment_name, environment_version, **kwargs):
+        self.calls.append(("list_instance_groups", environment_name, environment_version, kwargs))
+        return SimpleNamespace(data=[], next_continuation_token=None)
 
 
 class _FakeInstances:
@@ -1012,6 +1029,30 @@ def test_environment_list_helpers_forward_continuation_token_pagination():
     ]
 
 
+def test_instance_group_list_helper_forwards_continuation_token_pagination():
+    ops = RLEOperations(object(), object(), object(), object())
+    instance_groups = _FakeInstanceGroups()
+    ops._instance_groups = instance_groups
+
+    assert list(
+        ops.list_instance_groups(
+            "wordle", "42", limit=5, continuation_token="groups-first", order="desc"
+        )
+    ) == []
+    assert instance_groups.calls == [
+        (
+            "list_instance_groups",
+            "wordle",
+            "42",
+            {
+                "limit": 5,
+                "continuation_token_parameter": "groups-first",
+                "order": "desc",
+            },
+        )
+    ]
+
+
 def test_async_environment_list_helpers_return_pagers():
     async def run():
         ops = AsyncRLEOperations(object(), object(), object(), object())
@@ -1042,6 +1083,33 @@ def test_async_environment_list_helpers_return_pagers():
                 "wordle",
                 {"limit": 5, "continuation_token_parameter": "last", "order": "desc"},
             ),
+        ]
+
+    asyncio.run(run())
+
+
+def test_async_instance_group_list_helper_returns_pager():
+    async def run():
+        ops = AsyncRLEOperations(object(), object(), object(), object())
+        instance_groups = _AsyncFakeInstanceGroups()
+        ops._instance_groups = instance_groups
+
+        pager = ops.list_instance_groups(
+            "wordle", "42", limit=5, continuation_token="groups-first", order="desc"
+        )
+
+        assert [item async for item in pager] == []
+        assert instance_groups.calls == [
+            (
+                "list_instance_groups",
+                "wordle",
+                "42",
+                {
+                    "limit": 5,
+                    "continuation_token_parameter": "groups-first",
+                    "order": "desc",
+                },
+            )
         ]
 
     asyncio.run(run())
@@ -1217,6 +1285,7 @@ class _AsyncFakeInstanceGroups:
         self.created = []
         self.routes = []
         self.deleted = []
+        self.calls = []
 
     async def create_instance_group(self, environment_name, environment_version, body):
         self.created.append(body)
@@ -1235,6 +1304,10 @@ class _AsyncFakeInstanceGroups:
     ):
         self.routes.append((environment_name, environment_version))
         self.deleted.append(instance_group_id)
+
+    async def list_instance_groups(self, environment_name, environment_version, **kwargs):
+        self.calls.append(("list_instance_groups", environment_name, environment_version, kwargs))
+        return SimpleNamespace(data=[], next_continuation_token=None)
 
 
 class _AsyncFakeInstances:

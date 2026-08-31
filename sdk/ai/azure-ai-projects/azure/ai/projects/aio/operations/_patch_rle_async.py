@@ -24,9 +24,11 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ...models import (
     CreateRLEInstanceGroupRequest,
     CreateRLEnvironmentRequest,
+    ListRLEInstanceGroupsResponse,
     ListRLEnvironmentVersionsResponse,
     ListRLEnvironmentsResponse,
     RLEInstance,
+    RLEInstanceGroup,
     RLEInstanceStatus,
     RLEnvironment,
     RLEnvironmentState,
@@ -884,6 +886,57 @@ class RLEOperations:
         async def extract_data(
             response: ListRLEnvironmentVersionsResponse,
         ) -> tuple[Optional[str], AsyncList[RLEnvironment]]:
+            return response.next_continuation_token, AsyncList(response.data)
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_instance_groups(
+        self,
+        environment_name: str,
+        environment_version: str,
+        *,
+        limit: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        order: Optional[Union[str, RLEPaginationOrder]] = None,
+        **kwargs: Any,
+    ) -> AsyncItemPaged[RLEInstanceGroup]:
+        """List instance groups for a hosted RLE environment version.
+
+        :param environment_name: Environment name. Required.
+        :type environment_name: str
+        :param environment_version: Environment version identifier. Required.
+        :type environment_version: str
+        :keyword limit: Maximum number of instance groups to return. Valid range is [1, 100].
+        :paramtype limit: int or None
+        :keyword continuation_token: Opaque continuation token from a previous page. Omit to fetch the first page.
+        :paramtype continuation_token: str or None
+        :keyword order: Sort order for the page. Known values are "asc" and "desc".
+        :paramtype order: str or ~azure.ai.projects.models.RLEPaginationOrder or None
+        :return: An async iterator over RLE instance groups.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RLEInstanceGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _validate_pagination_limit(limit)
+        operation_kwargs = dict(kwargs)
+
+        async def get_next(
+            next_token: Optional[str] = None,
+        ) -> ListRLEInstanceGroupsResponse:
+            return await self._instance_groups.list_instance_groups(
+                environment_name,
+                environment_version,
+                limit=limit,
+                continuation_token_parameter=(
+                    continuation_token if next_token is None else next_token
+                ),
+                order=order,
+                **operation_kwargs,
+            )
+
+        async def extract_data(
+            response: ListRLEInstanceGroupsResponse,
+        ) -> tuple[Optional[str], AsyncList[RLEInstanceGroup]]:
             return response.next_continuation_token, AsyncList(response.data)
 
         return AsyncItemPaged(get_next, extract_data)

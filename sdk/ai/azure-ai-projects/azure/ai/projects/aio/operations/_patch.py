@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+import sys
 from typing import Any, List
 from ._patch_agents_async import AgentsOperations, BetaAgentsOperations
 from ._patch_datasets_async import BetaDatasetsOperations, DatasetsOperations
@@ -31,6 +32,13 @@ from ._operations import (
     BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
+)
+
+_RLE_GENERATED_OPERATION_NAMES = (
+    "RLEnvironmentsOperations",
+    "RLEInstanceGroupsOperations",
+    "RLEInstancesOperations",
+    "RLEInstanceRuntimeOperations",
 )
 
 
@@ -119,3 +127,9 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    operations_module = sys.modules[__package__]
+    operations_module.__all__[:] = [
+        name for name in operations_module.__all__ if name not in _RLE_GENERATED_OPERATION_NAMES
+    ]
+    for name in _RLE_GENERATED_OPERATION_NAMES:
+        operations_module.__dict__.pop(name, None)

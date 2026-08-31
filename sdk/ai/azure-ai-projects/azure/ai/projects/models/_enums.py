@@ -1349,6 +1349,7 @@ class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FIXED_RATIO = "FixedRatio"
     """FIXED_RATIO."""
 
+
 class RLEInstanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Runtime status of an RLE instance, as observed by RLE from the backing runtime."""
 
@@ -1363,6 +1364,7 @@ class RLEInstanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETED = "Deleted"
     """The backing runtime has been torn down / removed."""
 
+
 class RLEnvironmentDiskImageConversionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the asynchronous ACR image to disk image conversion. Serialized as its string name."""
 
@@ -1375,6 +1377,7 @@ class RLEnvironmentDiskImageConversionStatus(str, Enum, metaclass=CaseInsensitiv
     FAILED = "Failed"
     """Disk image conversion failed. See ``diskImageConversionError`` for details."""
 
+
 class RLEnvironmentVersionBump(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Semantic-version component to bump when creating a new version of an existing RLE environment."""
 
@@ -1384,6 +1387,7 @@ class RLEnvironmentVersionBump(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Increment the minor version component."""
     PATCH = "Patch"
     """Increment the patch version component."""
+
 
 class RLEPaginationOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sort order for continuation-token pagination."""

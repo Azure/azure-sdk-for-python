@@ -16645,6 +16645,7 @@ class WorkIQPreviewToolboxTool(
 
 # RLE (reinforcement learning) grafted from generated code
 
+
 class CreateRLEInstanceGroupRequest(_Model):
     """Request body for creating an RLE instance group. The environment name and version are supplied
     in the request URI.
@@ -16666,9 +16667,7 @@ class CreateRLEInstanceGroupRequest(_Model):
     )
     """Maximum number of concurrently-active instances the group may hold. Optional; defaults to 1
      when omitted."""
-    metadata: Optional[dict[str, str]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional free-form correlation/tag key-values. ``external_job_id`` is a reserved well-known key
      for the upstream Training API job / AML run."""
     resource_profile: Optional["_models.RLEInstanceGroupResourceProfile"] = rest_field(
@@ -16696,6 +16695,7 @@ class CreateRLEInstanceGroupRequest(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
 class CreateRLEnvironmentRequest(_Model):
     """Request body for creating a hosted RLE environment.
 
@@ -16710,13 +16710,9 @@ class CreateRLEnvironmentRequest(_Model):
     :vartype version_bump: str or ~azure.ai.projects.models.RLEnvironmentVersionBump
     """
 
-    name: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional caller-provided display name for the environment."""
-    acr_image_path: str = rest_field(
-        name="acrImagePath", visibility=["read", "create", "update", "delete", "query"]
-    )
+    acr_image_path: str = rest_field(name="acrImagePath", visibility=["read", "create", "update", "delete", "query"])
     """Container image reference (Azure Container Registry path) that backs the environment. Required."""
     version_bump: Optional[Union[str, "_models.RLEnvironmentVersionBump"]] = rest_field(
         name="versionBump", visibility=["read", "create", "update", "delete", "query"]
@@ -16744,6 +16740,7 @@ class CreateRLEnvironmentRequest(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
 class ListRLEInstanceGroupsResponse(_Model):
     """A page of RLE instance groups, with an opaque continuation token for fetching the next page.
 
@@ -16754,9 +16751,7 @@ class ListRLEInstanceGroupsResponse(_Model):
     :vartype next_continuation_token: str
     """
 
-    data: list["_models.RLEInstanceGroup"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    data: list["_models.RLEInstanceGroup"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Instance groups on this page. Required."""
     next_continuation_token: Optional[str] = rest_field(
         name="nextContinuationToken",
@@ -16782,6 +16777,7 @@ class ListRLEInstanceGroupsResponse(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
 class ListRLEnvironmentsResponse(_Model):
     """A page of hosted RLE environments, with an opaque continuation token for fetching the next
     page.
@@ -16793,9 +16789,7 @@ class ListRLEnvironmentsResponse(_Model):
     :vartype next_continuation_token: str
     """
 
-    data: list["_models.RLEnvironment"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    data: list["_models.RLEnvironment"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Environments on this page. Required."""
     next_continuation_token: Optional[str] = rest_field(
         name="nextContinuationToken",
@@ -16821,6 +16815,7 @@ class ListRLEnvironmentsResponse(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
 class ListRLEnvironmentVersionsResponse(_Model):
     """A page of environment versions, with an opaque continuation token for fetching the next page.
 
@@ -16832,9 +16827,7 @@ class ListRLEnvironmentVersionsResponse(_Model):
     :vartype next_continuation_token: str
     """
 
-    data: list["_models.RLEnvironment"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    data: list["_models.RLEnvironment"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Environment versions on this page. Each item is a full environment snapshot for a specific
      version. Required."""
     next_continuation_token: Optional[str] = rest_field(
@@ -16860,6 +16853,7 @@ class ListRLEnvironmentVersionsResponse(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
 
 class RLEInstance(_Model):
     """A leased runtime unit owned by an RLE instance group (replaces the former "sandbox" concept).
@@ -16895,14 +16889,11 @@ class RLEInstance(_Model):
     """Base URL clients use to reach the instance's data-plane (OpenEnv) endpoints, when running."""
     error: Optional[str] = rest_field(visibility=["read"])
     """Failure detail when the instance enters the ``Failed`` state."""
-    created_at_utc: datetime.datetime = rest_field(
-        name="createdAtUtc", visibility=["read"], format="rfc3339"
-    )
+    created_at_utc: datetime.datetime = rest_field(name="createdAtUtc", visibility=["read"], format="rfc3339")
     """Timestamp the instance was created, in UTC. Required."""
-    updated_at_utc: datetime.datetime = rest_field(
-        name="updatedAtUtc", visibility=["read"], format="rfc3339"
-    )
+    updated_at_utc: datetime.datetime = rest_field(name="updatedAtUtc", visibility=["read"], format="rfc3339")
     """Timestamp the instance was last updated, in UTC. Required."""
+
 
 class RLEInstanceGroup(_Model):
     """A first-class group of RLE instances leased for a single reinforcement-learning training job.
@@ -16941,18 +16932,12 @@ class RLEInstanceGroup(_Model):
     """Foundry project identifier that owns this instance group. Required."""
     environment_name: str = rest_field(name="environmentName", visibility=["read"])
     """Name of the registered RLE environment the group's instances are leased from. Required."""
-    environment_version: str = rest_field(
-        name="environmentVersion", visibility=["read"]
-    )
+    environment_version: str = rest_field(name="environmentVersion", visibility=["read"])
     """Version of the registered RLE environment the group's instances are leased from. Required."""
-    max_active_instances: int = rest_field(
-        name="maxActiveInstances", visibility=["read"]
-    )
+    max_active_instances: int = rest_field(name="maxActiveInstances", visibility=["read"])
     """Maximum number of concurrently-active instances the group may hold. Defaults to 1 when omitted
      on create. Required."""
-    metadata: Optional[dict[str, str]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Free-form correlation/tag key-values, persisted opaquely by RLE and echoed on responses.
      ``external_job_id`` is a reserved well-known key that carries the upstream Training API job /
      AML run this group backs."""
@@ -16962,13 +16947,9 @@ class RLEInstanceGroup(_Model):
     )
     """Forward-compatible resource allocation hints. Recorded but not scheduled against in this
      version."""
-    created_at_utc: datetime.datetime = rest_field(
-        name="createdAtUtc", visibility=["read"], format="rfc3339"
-    )
+    created_at_utc: datetime.datetime = rest_field(name="createdAtUtc", visibility=["read"], format="rfc3339")
     """Timestamp the instance group was created, in UTC. Required."""
-    updated_at_utc: datetime.datetime = rest_field(
-        name="updatedAtUtc", visibility=["read"], format="rfc3339"
-    )
+    updated_at_utc: datetime.datetime = rest_field(name="updatedAtUtc", visibility=["read"], format="rfc3339")
     """Timestamp the instance group was last updated, in UTC. Required."""
 
     @overload
@@ -16989,6 +16970,7 @@ class RLEInstanceGroup(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
 class RLEInstanceGroupResourceProfile(_Model):
     """Forward-compatible resource allocation hints for an instance group. Recorded but not scheduled
     against in this version.
@@ -17001,17 +16983,11 @@ class RLEInstanceGroupResourceProfile(_Model):
     :vartype disk: str
     """
 
-    cpu: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    cpu: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Requested CPU allocation hint, encoded as a string (e.g. \"1\", \"2\", \"500m\")."""
-    memory: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    memory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Requested memory allocation hint, for example \"2Gi\"."""
-    disk: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    disk: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Requested disk allocation hint, for example \"10Gi\"."""
 
     @overload
@@ -17032,6 +17008,7 @@ class RLEInstanceGroupResourceProfile(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
 
 class RLEnvironment(_Model):
     """A hosted reinforcement-learning environment that instances are leased from.
@@ -17073,25 +17050,20 @@ class RLEnvironment(_Model):
     """Container image reference (Azure Container Registry path) that backs the environment. Required."""
     version: str = rest_field(visibility=["read"])
     """Latest version identifier for the environment image. Required."""
-    disk_image_conversion_status: Union[
-        str, "_models.RLEnvironmentDiskImageConversionStatus"
-    ] = rest_field(name="diskImageConversionStatus", visibility=["read"])
+    disk_image_conversion_status: Union[str, "_models.RLEnvironmentDiskImageConversionStatus"] = rest_field(
+        name="diskImageConversionStatus", visibility=["read"]
+    )
     """Status of the asynchronous conversion from the ACR container image to a disk image usable by
      leased instances. Required. Known values are: \"NotRequested\", \"Pending\", \"Ready\", and
      \"Failed\"."""
-    disk_image_conversion_error: Optional[str] = rest_field(
-        name="diskImageConversionError", visibility=["read"]
-    )
+    disk_image_conversion_error: Optional[str] = rest_field(name="diskImageConversionError", visibility=["read"])
     """Error details from the most recent disk image conversion attempt, when
      ``diskImageConversionStatus`` is ``Failed``."""
-    created_at_utc: datetime.datetime = rest_field(
-        name="createdAtUtc", visibility=["read"], format="rfc3339"
-    )
+    created_at_utc: datetime.datetime = rest_field(name="createdAtUtc", visibility=["read"], format="rfc3339")
     """Timestamp the environment was first created, in UTC. Required."""
-    updated_at_utc: datetime.datetime = rest_field(
-        name="updatedAtUtc", visibility=["read"], format="rfc3339"
-    )
+    updated_at_utc: datetime.datetime = rest_field(name="updatedAtUtc", visibility=["read"], format="rfc3339")
     """Timestamp the environment was last updated, in UTC. Required."""
+
 
 class RLEnvironmentState(_Model):
     """Snapshot returned by the RLE environment ``state`` endpoint.
@@ -17102,13 +17074,9 @@ class RLEnvironmentState(_Model):
     :vartype step_count: int
     """
 
-    episode_id: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    episode_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Current episode identifier, when one is active."""
-    step_count: Optional[int] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    step_count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of completed steps in the current episode."""
 
     @overload
@@ -17129,6 +17097,7 @@ class RLEnvironmentState(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
 class RLEResetRequest(_Model):
     """Request body for starting or restarting an RLE environment episode.
 
@@ -17138,13 +17107,9 @@ class RLEResetRequest(_Model):
     :vartype episode_id: str
     """
 
-    seed: Optional[int] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    seed: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional deterministic seed for the next episode."""
-    episode_id: Optional[str] = rest_field(
-        name="episodeId", visibility=["read", "create", "update", "delete", "query"]
-    )
+    episode_id: Optional[str] = rest_field(name="episodeId", visibility=["read", "create", "update", "delete", "query"])
     """Optional caller-provided episode identifier."""
 
     @overload
@@ -17165,6 +17130,7 @@ class RLEResetRequest(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
 class RLEStepRequest(_Model):
     """Request body for applying an action to the current RLE episode.
 
@@ -17172,9 +17138,7 @@ class RLEStepRequest(_Model):
     :vartype action: dict[str, any]
     """
 
-    action: dict[str, Any] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    action: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Environment-specific action payload. Required."""
 
     @overload
@@ -17193,6 +17157,7 @@ class RLEStepRequest(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
 
 class RLEStepResult(_Model):
     """Outcome returned by RLE ``reset`` and ``step`` in the OpenEnv / Gymnasium wire shape.
@@ -17214,33 +17179,19 @@ class RLEStepResult(_Model):
     :vartype metadata: dict[str, any]
     """
 
-    observation: Optional[dict[str, Any]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    observation: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Environment-specific observation payload."""
-    reward: Optional[float] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    reward: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Reward for the transition, when the environment provides one."""
-    terminated: Optional[bool] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    terminated: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """True when the episode reached a natural terminal state."""
-    truncated: Optional[bool] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    truncated: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """True when an external limit ended the episode."""
-    done: Optional[bool] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    done: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Legacy single terminal flag. New payloads should prefer ``terminated`` and ``truncated``."""
-    info: Optional[dict[str, Any]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    info: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Gymnasium info payload."""
-    metadata: Optional[dict[str, Any]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    metadata: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Legacy metadata payload."""
 
     @overload
