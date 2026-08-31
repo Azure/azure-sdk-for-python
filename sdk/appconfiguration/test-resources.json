@@ -57,7 +57,6 @@
     },
     "variables": {
         "roleDefinitionId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b', subscription().subscriptionId)]",
-        "roleAssignmentName": "[guid(resourceGroup().id, parameters('testApplicationOid'), variables('roleDefinitionId'))]",
         "uniqueAzConfigName": "[format('{0}-{1}', parameters('baseName'), parameters('azConfigPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('azConfigPrefix'), parameters('azConfigEndpointSuffix'))]",
         "azureKeyVaultUrl": "[format('https://{0}{1}/', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]",
@@ -84,7 +83,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2018-09-01-preview",
-            "name": "[variables('roleAssignmentName')]",
+            "name": "[guid(resourceGroup().id)]",
             "properties": {
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
                 "principalId": "[parameters('testApplicationOid')]"

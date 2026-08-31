@@ -16,7 +16,7 @@ DESCRIPTION:
 USAGE: python snapshot_sample_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+    1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL used to access the Azure App Configuration.
 """
 
 import asyncio
@@ -24,14 +24,15 @@ import os
 from uuid import uuid4
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
+from azure.identity.aio import DefaultAzureCredential
 
 
 async def main():
-    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+    endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
     config_setting1 = ConfigurationSetting(key="my_key1", label="my_label1")
     config_setting2 = ConfigurationSetting(key="my_key1", label="my_label2")
     snapshot_name = str(uuid4())
-    async with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
+    async with AzureAppConfigurationClient(endpoint, DefaultAzureCredential()) as client:
         await client.add_configuration_setting(config_setting1)
         await client.add_configuration_setting(config_setting2)
 

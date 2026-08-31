@@ -15,20 +15,21 @@ DESCRIPTION:
 USAGE: python list_labels_sample_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+    1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL used to access the Azure App Configuration.
 """
 
 import os
 import asyncio
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
+from azure.identity.aio import DefaultAzureCredential
 
 
 async def main():
-    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+    endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 
     # Create an app config client
-    client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
+    client = AzureAppConfigurationClient(endpoint, DefaultAzureCredential())
 
     config_setting1 = ConfigurationSetting(
         key="MyKey1", label="my label1", content_type="my content type", tags={"my tag1": "my tag1 value"}

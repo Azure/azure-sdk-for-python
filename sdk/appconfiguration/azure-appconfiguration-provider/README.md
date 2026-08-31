@@ -6,35 +6,11 @@ Using the provider enables loading sets of configurations from an Azure App Conf
 
 ## Getting started
 
-### Get credentials
-
-Use the [Azure CLI][azure_cli] snippet below to get the connection string from the Configuration Store.
-
-```Powershell
-az appconfig credential list --name <config-store-name>
-```
-
-Alternatively, get the connection string from the Azure Portal.
-
 ### Creating a provider
 
-You can create a client with a connection string:
+#### Microsoft Entra ID (recommended)
 
-<!-- SNIPPET:connection_string_sample.create_provider_connection_string -->
-
-```python
-import os
-from azure.appconfiguration.provider import load
-
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-
-# Connecting to Azure App Configuration using connection string
-config = load(connection_string=connection_string, **kwargs)
-```
-
-<!-- END SNIPPET -->
-
-or with Entra ID:
+Microsoft Entra ID authentication is recommended for connecting to Azure App Configuration.
 
 <!-- SNIPPET:entra_id_sample.create_provider_entra_id -->
 
@@ -52,7 +28,31 @@ config = load(endpoint=endpoint, credential=credential, **kwargs)
 
 <!-- END SNIPPET -->
 
-these providers will by default load all configurations with `(No Label)` from your configuration store into a dictionary of key/values.
+#### Connection string
+
+Use the [Azure CLI][azure_cli] snippet below to get the connection string from the Configuration Store:
+
+```Powershell
+az appconfig credential list --name <config-store-name>
+```
+
+You can also get the connection string from the Azure portal.
+
+<!-- SNIPPET:connection_string_sample.create_provider_connection_string -->
+
+```python
+import os
+from azure.appconfiguration.provider import load
+
+connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
+# Connecting to Azure App Configuration using connection string
+config = load(connection_string=connection_string, **kwargs)
+```
+
+<!-- END SNIPPET -->
+
+These providers will by default load all configurations with `(No Label)` from your configuration store into a dictionary of key/values.
 
 ### Features
 
@@ -155,10 +155,7 @@ The provider can be configured to refresh configurations from the store on a set
 <!-- SNIPPET:refresh_sample.refresh_provider -->
 
 ```python
-import os
 from azure.appconfiguration.provider import load, WatchKey
-
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
 config = load(
     endpoint=endpoint,
@@ -358,10 +355,7 @@ To enable refresh for feature flags you need to enable refresh. This will allow 
 <!-- SNIPPET:refresh_sample_feature_flags.refresh_feature_flags -->
 
 ```python
-import os
 from azure.appconfiguration.provider import load, WatchKey
-
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
 config = load(
     endpoint=endpoint,
