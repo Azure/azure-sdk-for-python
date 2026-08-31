@@ -33,10 +33,10 @@ steps:
         - bash: |
             set -Eeuo pipefail
 
-            source_repo="$(ApiReviewSourceDir)"
-            tooling_dir="$(ApiReviewToolingDir)"
-            output_dir="${{ parameters.outputDir }}"
-            state_dir="${{ parameters.workingDir }}/state"
+            source_repo="$SOURCE_REPO"
+            tooling_dir="$TOOLING_DIR"
+            output_dir="$OUTPUT_DIR"
+            state_dir="$WORKING_DIR/state"
 
             mkdir -p "$source_repo" "$output_dir" "$state_dir"
 
@@ -60,10 +60,10 @@ steps:
               printf '%s' "$matches"
             }
 
-            package_dir=$(find_package_dir "$source_repo" "${{ parameters.packageName }}")
+            package_dir=$(find_package_dir "$source_repo" "$PACKAGE_NAME")
             package_relative_path=$(realpath --relative-to="$source_repo" "$package_dir")
 
-            echo "Generating ${{ parameters.kind }} API review artifact from ${{ parameters.ref }}"
+            echo "Generating $KIND API review artifact from $REF"
             common_tasks_dir="$source_repo/scripts/devops_tasks"
             if [ ! -f "$common_tasks_dir/common_tasks.py" ]; then
               echo "Expected Python SDK common_tasks.py was not found at $common_tasks_dir/common_tasks.py" >&2
@@ -71,7 +71,7 @@ steps:
             fi
             install -D "$tooling_dir/eng/common/scripts/Export-APIViewMarkdown.ps1" "$source_repo/eng/common/scripts/Export-APIViewMarkdown.ps1"
             install -D "$tooling_dir/eng/scripts/extract_apiview_metadata.py" "$source_repo/eng/scripts/extract_apiview_metadata.py"
-            (cd "$source_repo" && PYTHONPATH="$common_tasks_dir${PYTHONPATH:+:$PYTHONPATH}" python -m azpysdk.main apistub --dest-dir "$package_dir" "${{ parameters.packageName }}")
+            (cd "$source_repo" && PYTHONPATH="$common_tasks_dir${PYTHONPATH:+:$PYTHONPATH}" python -m azpysdk.main apistub --dest-dir "$package_dir" "$PACKAGE_NAME")
 
             if [ ! -f "$package_dir/api.md" ]; then
               echo "Expected api.md was not generated at $package_dir/api.md" >&2
@@ -89,3 +89,11 @@ steps:
             printf '%s' "$package_relative_path" > "$state_dir/package-relative-path.txt"
             printf '%s' "$version" > "$state_dir/version.txt"
           displayName: 'Generate ${{ parameters.kind }} Python API review bundle'
+          env:
+            SOURCE_REPO: $(ApiReviewSourceDir)
+            TOOLING_DIR: $(ApiReviewToolingDir)
+            OUTPUT_DIR: ${{ parameters.outputDir }}
+            WORKING_DIR: ${{ parameters.workingDir }}
+            PACKAGE_NAME: ${{ parameters.packageName }}
+            KIND: ${{ parameters.kind }}
+            REF: ${{ parameters.ref }}
