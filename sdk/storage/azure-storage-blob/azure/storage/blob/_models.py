@@ -1555,19 +1555,3 @@ class BlobQueryError(object):
         self.is_fatal = is_fatal
         self.description = description
         self.position = position
-
-
-class SessionOptions(object):
-    """Options for session-based authentication.
-
-    :keyword session_provider: Creates, caches, and invalidates per-container sessions.
-        When omitted, one is created and scoped to the client. Supply a shared instance
-        to reuse the session cache across multiple clients.
-    :paramtype session_provider: ~azure.storage.blob.SessionProvider or None
-    """
-
-    session_provider: Optional["SessionProvider"]
-    """Creates, caches, and invalidates per-container sessions."""
-
-    def __init__(self, *, session_provider: Optional["SessionProvider"] = None) -> None:
-        self.session_provider = session_provider

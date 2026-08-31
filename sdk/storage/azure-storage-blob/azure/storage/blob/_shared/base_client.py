@@ -61,6 +61,7 @@ from .policies import (
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .shared_access_signature import QueryStringConstants
+from .session import ContainerSessionProvider
 from .._version import VERSION
 from .._shared_access_signature import _is_credential_sastoken
 
@@ -134,26 +135,30 @@ class StorageAccountHostsMixin(object):
         self._hosts = kwargs.get("_hosts", {})
         self.scheme = parsed_url.scheme
         self._is_localhost = False
+        self.account_name = kwargs.pop("session_account_name", None)
 
         if service not in ["blob", "queue", "file-share", "dfs"]:
             raise ValueError(f"Invalid service: {service}")
         service_name = service.split("-")[0]
         account = parsed_url.netloc.split(f".{service_name}.core.")
 
-        self.account_name = account[0] if len(account) > 1 else None
+        if self.account_name is None:
+            self.account_name = account[0] if len(account) > 1 else None
         if (
             not self.account_name
             and parsed_url.netloc.startswith("localhost")
             or parsed_url.netloc.startswith("127.0.0.1")
         ):
             self._is_localhost = True
-            self.account_name = parsed_url.path.strip("/")
+            if self.account_name is None:
+                self.account_name = parsed_url.path.strip("/")
 
         secondary_hostname = ""
         if len(account) > 1:
-            self.account_name, primary_hostname, secondary_hostname = _construct_endpoints(
+            derived_name, primary_hostname, secondary_hostname = _construct_endpoints(
                 parsed_url.netloc, account[0]
             )
+            self.account_name = self.account_name or derived_name
         else:
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
 
@@ -332,18 +337,9 @@ class StorageAccountHostsMixin(object):
             StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
         use_session = bool(kwargs.pop("use_session", False))
-        session_options = kwargs.pop("session_options", None)
+        session_provider = kwargs.pop("session_provider", None)
         if use_session:
-            if not hasattr(credential, "get_token"):
-                raise ValueError(
-                    "use_session=True requires a TokenCredential; received "
-                    f"{type(credential).__name__ if credential is not None else 'None'}."
-                )
-
-            session_provider = getattr(session_options, "session_provider", None)
             if session_provider is None:
-                from .session_provider import ContainerSessionProvider  # module-level import would cycle
-
                 sub_kwargs = dict(kwargs)
                 sub_kwargs.pop("_configuration", None)
                 sub_kwargs.pop("pipeline", None)

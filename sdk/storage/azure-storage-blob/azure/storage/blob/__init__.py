@@ -26,8 +26,7 @@ from ._shared.models import (
     UserDelegationKey,
     Services,
 )
-from ._shared.session import SessionProvider
-from ._shared.session_provider import ContainerSessionProvider
+from ._shared.session import ContainerSessionProvider, SessionProvider
 from ._generated.models import RehydratePriority
 from ._models import (
     BlobType,
@@ -64,7 +63,6 @@ from ._models import (
     ObjectReplicationPolicy,
     ObjectReplicationRule,
     ImmutabilityPolicy,
-    SessionOptions,
 )
 from ._list_blobs_helper import BlobPrefix
 

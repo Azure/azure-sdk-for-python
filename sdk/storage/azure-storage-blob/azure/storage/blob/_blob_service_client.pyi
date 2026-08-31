@@ -57,6 +57,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_chunk_get_size: int = 4 * 1024 * 1024,
         audience: Optional[str] = None,
         use_session: bool = False,
+        session_provider: Optional[Any] = None,
+        session_account_name: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...
     def __enter__(self) -> Self: ...

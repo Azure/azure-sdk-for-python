@@ -982,7 +982,7 @@ class StorageSessionPolicy(HTTPPolicy):
     def __init__(
         self,
         *,
-        account_name: str,
+        account_name: Optional[str],
         session_provider: SessionProvider,
     ) -> None:
         """Constructs a StorageSessionPolicy.
@@ -990,16 +990,14 @@ class StorageSessionPolicy(HTTPPolicy):
         :keyword str account_name: Storage account name; used as the signer
             identity when signing session-authenticated requests.
         :keyword session_provider: Creates, caches, and invalidates per-container sessions.
-        :paramtype session_provider: ~azure.storage.blob._shared.policies.SessionProvider
-        :raises ValueError: if `account_name` or `session_provider` is `None`.
+        :paramtype session_provider: ~azure.storage.blob._shared.session.SessionProvider
+        :raises ValueError: if `account_name` is `None`.
         """
         if account_name is None:
             raise ValueError(
                 "Unable to determine the account name from the service URL. "
-                "Supply session_options.account_name when using a custom endpoint."
+                "Supply session_account_name when using a custom endpoint."
             )
-        if session_provider is None:
-            raise ValueError("session_provider is required.")
         super().__init__()
         self._account_name = account_name
         self._session_provider = session_provider
@@ -1020,7 +1018,7 @@ class StorageSessionPolicy(HTTPPolicy):
 
         :param ~azure.core.pipeline.PipelineRequest request: The request to (maybe) sign.
         :return: The session that was applied, else None.
-        :rtype: ~azure.storage.blob._shared.policies.Session or None
+        :rtype: ~azure.storage.blob._shared.session.Session or None
         """
         if not self._session_provider.is_request_eligible(request):
             return None
@@ -1045,7 +1043,7 @@ class StorageSessionPolicy(HTTPPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: The original request.
         :param ~azure.core.pipeline.PipelineResponse response: The response to inspect.
         :param session: The session that signed the request, or `None` if bearer was used.
-        :type session: ~azure.storage.blob._shared.policies.Session or None
+        :type session: ~azure.storage.blob._shared.session.Session or None
         :return: The final response.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
