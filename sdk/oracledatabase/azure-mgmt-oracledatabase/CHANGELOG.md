@@ -118,7 +118,6 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `CloudVmClusterProperties` deleted or renamed its instance variable `hostname`
   - Model `CloudVmClusterProperties` deleted or renamed its instance variable `scan_dns_name`
   - Model `ExadbVmClusterProperties` deleted or renamed its instance variable `hostname`
