@@ -15,7 +15,7 @@ from azure.mgmt.resource.policy import PolicyClient
     pip install azure-identity
     pip install azure-mgmt-resource-policy
 # USAGE
-    python get_policy_assignment_with_resource_percentage_selector.py
+    python update_policy_exemption_with_resource_selectors.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,24 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.policy_assignments.get(
-        scope="subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
-        policy_assignment_name="CostManagement",
+    response = client.policy_exemptions.update(
+        scope="subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/resourceGroups/demoCluster",
+        policy_exemption_name="DemoExpensiveVM",
+        parameters={
+            "properties": {
+                "assignmentScopeValidation": "Default",
+                "resourceSelectors": [
+                    {
+                        "name": "SDPRegions",
+                        "selectors": [{"in": ["eastus2euap", "centraluseuap"], "kind": "resourceLocation"}],
+                    }
+                ],
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/getPolicyAssignmentWithResourcePercentageSelector.json
+# x-ms-original-file: 2026-01-01-preview/updatePolicyExemptionWithResourceSelectors.json
 if __name__ == "__main__":
     main()

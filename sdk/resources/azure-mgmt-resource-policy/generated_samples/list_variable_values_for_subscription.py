@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.resource.policy import PolicyClient
     pip install azure-identity
     pip install azure-mgmt-resource-policy
 # USAGE
-    python acquire_policy_token_at_resource_group.py
+    python list_variable_values_for_subscription.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,18 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.policy_tokens.acquire_at_resource_group(
-        resource_group_name="testRG",
-        parameters={
-            "operation": {
-                "httpMethod": "delete",
-                "uri": "https://management.azure.com/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/resourceGroups/testRG/providers/Microsoft.Compute/virtualMachines/testVM?api-version=2024-01-01",
-            }
-        },
+    response = client.variable_values.list(
+        variable_name="DemoTestVariable",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-07-01/acquirePolicyTokenAtResourceGroup.json
+# x-ms-original-file: 2026-01-01-preview/listVariableValuesForSubscription.json
 if __name__ == "__main__":
     main()

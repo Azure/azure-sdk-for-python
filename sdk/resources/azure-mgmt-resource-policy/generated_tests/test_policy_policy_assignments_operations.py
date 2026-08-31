@@ -56,16 +56,12 @@ class TestPolicyPolicyAssignmentsOperations(AzureMgmtRecordedTestCase):
                     "nonComplianceMessages": [{"message": "str", "policyDefinitionReferenceId": "str"}],
                     "notScopes": ["str"],
                     "overrides": [
-                        {
-                            "kind": "str",
-                            "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"], "progress": 0}],
-                            "value": "str",
-                        }
+                        {"kind": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"]}], "value": "str"}
                     ],
                     "parameters": {"str": {"value": {}}},
                     "policyDefinitionId": "str",
                     "resourceSelectors": [
-                        {"name": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"], "progress": 0}]}
+                        {"name": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"]}]}
                     ],
                     "scope": "str",
                     "selfServeExemptionSettings": {"enabled": bool, "policyDefinitionReferenceIds": ["str"]},
@@ -100,14 +96,10 @@ class TestPolicyPolicyAssignmentsOperations(AzureMgmtRecordedTestCase):
                 "location": "str",
                 "properties": {
                     "overrides": [
-                        {
-                            "kind": "str",
-                            "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"], "progress": 0}],
-                            "value": "str",
-                        }
+                        {"kind": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"]}], "value": "str"}
                     ],
                     "resourceSelectors": [
-                        {"name": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"], "progress": 0}]}
+                        {"name": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"]}]}
                     ],
                     "selfServeExemptionSettings": {"enabled": bool, "policyDefinitionReferenceIds": ["str"]},
                 },
@@ -167,16 +159,12 @@ class TestPolicyPolicyAssignmentsOperations(AzureMgmtRecordedTestCase):
                     "nonComplianceMessages": [{"message": "str", "policyDefinitionReferenceId": "str"}],
                     "notScopes": ["str"],
                     "overrides": [
-                        {
-                            "kind": "str",
-                            "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"], "progress": 0}],
-                            "value": "str",
-                        }
+                        {"kind": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"]}], "value": "str"}
                     ],
                     "parameters": {"str": {"value": {}}},
                     "policyDefinitionId": "str",
                     "resourceSelectors": [
-                        {"name": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"], "progress": 0}]}
+                        {"name": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"]}]}
                     ],
                     "scope": "str",
                     "selfServeExemptionSettings": {"enabled": bool, "policyDefinitionReferenceIds": ["str"]},
@@ -212,14 +200,10 @@ class TestPolicyPolicyAssignmentsOperations(AzureMgmtRecordedTestCase):
                 "location": "str",
                 "properties": {
                     "overrides": [
-                        {
-                            "kind": "str",
-                            "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"], "progress": 0}],
-                            "value": "str",
-                        }
+                        {"kind": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"]}], "value": "str"}
                     ],
                     "resourceSelectors": [
-                        {"name": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"], "progress": 0}]}
+                        {"name": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"]}]}
                     ],
                     "selfServeExemptionSettings": {"enabled": bool, "policyDefinitionReferenceIds": ["str"]},
                 },

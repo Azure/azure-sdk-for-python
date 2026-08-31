@@ -16,8 +16,12 @@ from ._operations import PolicyAssignmentsOperations  # type: ignore
 from ._operations import DataPolicyManifestsOperations  # type: ignore
 from ._operations import PolicyDefinitionsOperations  # type: ignore
 from ._operations import PolicyDefinitionVersionsOperations  # type: ignore
+from ._operations import PolicyEnrollmentsOperations  # type: ignore
+from ._operations import PolicyExemptionsOperations  # type: ignore
 from ._operations import PolicySetDefinitionsOperations  # type: ignore
 from ._operations import PolicySetDefinitionVersionsOperations  # type: ignore
+from ._operations import VariablesOperations  # type: ignore
+from ._operations import VariableValuesOperations  # type: ignore
 from ._operations import PolicyTokensOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
@@ -29,8 +33,12 @@ __all__ = [
     "DataPolicyManifestsOperations",
     "PolicyDefinitionsOperations",
     "PolicyDefinitionVersionsOperations",
+    "PolicyEnrollmentsOperations",
+    "PolicyExemptionsOperations",
     "PolicySetDefinitionsOperations",
     "PolicySetDefinitionVersionsOperations",
+    "VariablesOperations",
+    "VariableValuesOperations",
     "PolicyTokensOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

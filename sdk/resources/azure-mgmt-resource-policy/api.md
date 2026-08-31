@@ -6,9 +6,13 @@ namespace azure.mgmt.resource.policy
         policy_assignments: PolicyAssignmentsOperations
         policy_definition_versions: PolicyDefinitionVersionsOperations
         policy_definitions: PolicyDefinitionsOperations
+        policy_enrollments: PolicyEnrollmentsOperations
+        policy_exemptions: PolicyExemptionsOperations
         policy_set_definition_versions: PolicySetDefinitionVersionsOperations
         policy_set_definitions: PolicySetDefinitionsOperations
         policy_tokens: PolicyTokensOperations
+        variable_values: VariableValuesOperations
+        variables: VariablesOperations
 
         def __init__(
                 self, 
@@ -39,9 +43,13 @@ namespace azure.mgmt.resource.policy.aio
         policy_assignments: PolicyAssignmentsOperations
         policy_definition_versions: PolicyDefinitionVersionsOperations
         policy_definitions: PolicyDefinitionsOperations
+        policy_enrollments: PolicyEnrollmentsOperations
+        policy_exemptions: PolicyExemptionsOperations
         policy_set_definition_versions: PolicySetDefinitionVersionsOperations
         policy_set_definitions: PolicySetDefinitionsOperations
         policy_tokens: PolicyTokensOperations
+        variable_values: VariableValuesOperations
+        variables: VariablesOperations
 
         def __init__(
                 self, 
@@ -76,7 +84,7 @@ namespace azure.mgmt.resource.policy.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-11-01', params_added_on={'2025-11-01': ['api_version', 'policy_mode', 'accept']}, api_versions_list=['2025-11-01', '2025-12-01-preview', '2026-01-01-preview', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-11-01', params_added_on={'2025-11-01': ['api_version', 'policy_mode', 'accept']}, api_versions_list=['2025-11-01', '2025-12-01-preview', '2026-01-01-preview'])
         async def get_by_policy_mode(
                 self, 
                 policy_mode: str, 
@@ -84,7 +92,7 @@ namespace azure.mgmt.resource.policy.aio.operations
             ) -> DataPolicyManifest: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01', params_added_on={'2025-11-01': ['api_version', 'filter', 'accept']}, api_versions_list=['2025-11-01', '2025-12-01-preview', '2026-01-01-preview', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-11-01', params_added_on={'2025-11-01': ['api_version', 'filter', 'accept']}, api_versions_list=['2025-11-01', '2025-12-01-preview', '2026-01-01-preview'])
         def list(
                 self, 
                 *, 
@@ -605,6 +613,278 @@ namespace azure.mgmt.resource.policy.aio.operations
             ) -> AsyncItemPaged[PolicyDefinition]: ...
 
 
+    class azure.mgmt.resource.policy.aio.operations.PolicyEnrollmentsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: PolicyEnrollment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: PolicyEnrollment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'scope', 'policy_enrollment_name']}, api_versions_list=['2026-01-01-preview'])
+        async def delete(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'scope', 'policy_enrollment_name', 'accept']}, api_versions_list=['2026-01-01-preview'])
+        async def get(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'filter', 'accept']}, api_versions_list=['2026-01-01-preview'])
+        def list(
+                self, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[PolicyEnrollment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'management_group_id', 'filter', 'accept']}, api_versions_list=['2026-01-01-preview'])
+        def list_for_management_group(
+                self, 
+                management_group_id: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[PolicyEnrollment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['subscription_id', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'filter', 'accept']}, api_versions_list=['2026-01-01-preview'])
+        def list_for_resource(
+                self, 
+                resource_group_name: str, 
+                resource_provider_namespace: str, 
+                parent_resource_path: str, 
+                resource_type: str, 
+                resource_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[PolicyEnrollment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'filter', 'accept']}, api_versions_list=['2026-01-01-preview'])
+        def list_for_resource_group(
+                self, 
+                resource_group_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[PolicyEnrollment]: ...
+
+        @overload
+        async def update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: PolicyEnrollmentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @overload
+        async def update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: PolicyEnrollmentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @overload
+        async def update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+
+    class azure.mgmt.resource.policy.aio.operations.PolicyExemptionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: PolicyExemption, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: PolicyExemption, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'scope', 'policy_exemption_name']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        async def delete(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'scope', 'policy_exemption_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        async def get(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'filter', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list(
+                self, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[PolicyExemption]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'filter', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list_for_management_group(
+                self, 
+                management_group_id: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[PolicyExemption]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['subscription_id', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'filter', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list_for_resource(
+                self, 
+                resource_group_name: str, 
+                resource_provider_namespace: str, 
+                parent_resource_path: str, 
+                resource_type: str, 
+                resource_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[PolicyExemption]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'filter', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list_for_resource_group(
+                self, 
+                resource_group_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[PolicyExemption]: ...
+
+        @overload
+        async def update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: PolicyExemptionUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @overload
+        async def update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: PolicyExemptionUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @overload
+        async def update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+
     class azure.mgmt.resource.policy.aio.operations.PolicySetDefinitionVersionsOperations:
 
         def __init__(
@@ -986,35 +1266,256 @@ namespace azure.mgmt.resource.policy.aio.operations
                 **kwargs: Any
             ) -> PolicyTokenResponse: ...
 
-        @overload
-        async def acquire_at_resource_group(
+
+    class azure.mgmt.resource.policy.aio.operations.VariableValuesOperations:
+
+        def __init__(
                 self, 
-                resource_group_name: str, 
-                parameters: PolicyTokenRequest, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                variable_name: str, 
+                variable_value_name: str, 
+                parameters: VariableValue, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> PolicyTokenResponse: ...
+            ) -> VariableValue: ...
 
         @overload
-        async def acquire_at_resource_group(
+        async def create_or_update(
                 self, 
-                resource_group_name: str, 
-                parameters: PolicyTokenRequest, 
+                variable_name: str, 
+                variable_value_name: str, 
+                parameters: VariableValue, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> PolicyTokenResponse: ...
+            ) -> VariableValue: ...
 
         @overload
-        async def acquire_at_resource_group(
+        async def create_or_update(
                 self, 
-                resource_group_name: str, 
+                variable_name: str, 
+                variable_value_name: str, 
                 parameters: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> PolicyTokenResponse: ...
+            ) -> VariableValue: ...
+
+        @overload
+        async def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                variable_value_name: str, 
+                parameters: VariableValue, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VariableValue: ...
+
+        @overload
+        async def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                variable_value_name: str, 
+                parameters: VariableValue, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VariableValue: ...
+
+        @overload
+        async def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                variable_value_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VariableValue: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'variable_name', 'variable_value_name']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        async def delete(
+                self, 
+                variable_name: str, 
+                variable_value_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'variable_name', 'variable_value_name']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        async def delete_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                variable_value_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'variable_name', 'variable_value_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        async def get(
+                self, 
+                variable_name: str, 
+                variable_value_name: str, 
+                **kwargs: Any
+            ) -> VariableValue: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'variable_name', 'variable_value_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        async def get_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                variable_value_name: str, 
+                **kwargs: Any
+            ) -> VariableValue: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'variable_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list(
+                self, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VariableValue]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'variable_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list_for_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VariableValue]: ...
+
+
+    class azure.mgmt.resource.policy.aio.operations.VariablesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                variable_name: str, 
+                parameters: Variable, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                variable_name: str, 
+                parameters: Variable, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                variable_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @overload
+        async def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                parameters: Variable, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @overload
+        async def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                parameters: Variable, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @overload
+        async def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'variable_name']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        async def delete(
+                self, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'variable_name']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        async def delete_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'variable_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        async def get(
+                self, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'variable_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        async def get_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list(self, **kwargs: Any) -> AsyncItemPaged[Variable]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list_for_management_group(
+                self, 
+                management_group_id: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[Variable]: ...
 
 
 namespace azure.mgmt.resource.policy.models
@@ -1123,24 +1624,16 @@ namespace azure.mgmt.resource.policy.models
         PLAIN_TEXT = "PlainText"
 
 
+    class azure.mgmt.resource.policy.models.AssignmentScopeValidation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEFAULT = "Default"
+        DO_NOT_VALIDATE = "DoNotValidate"
+
+
     class azure.mgmt.resource.policy.models.AssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CUSTOM = "Custom"
         NOT_SPECIFIED = "NotSpecified"
         SYSTEM = "System"
         SYSTEM_HIDDEN = "SystemHidden"
-
-
-    class azure.mgmt.resource.policy.models.ComplianceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        COMPLIANT = "Compliant"
-        CONFLICT = "Conflict"
-        ERROR = "Error"
-        EXEMPT = "Exempt"
-        NON_COMPLIANT = "NonCompliant"
-        NOT_APPLICABLE = "NotApplicable"
-        NOT_SPECIFIED = "NotSpecified"
-        PARTIAL = "Partial"
-        PROTECTED = "Protected"
-        UNKNOWN = "Unknown"
 
 
     class azure.mgmt.resource.policy.models.CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1287,6 +1780,16 @@ namespace azure.mgmt.resource.policy.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resource.policy.models.ExemptionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MITIGATED = "Mitigated"
+        WAIVER = "Waiver"
+
+
+    class azure.mgmt.resource.policy.models.ExemptionManagementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ADMIN = "Admin"
+        USER_SELF_SERVE = "UserSelfServe"
+
+
     class azure.mgmt.resource.policy.models.ExtensionResource(Resource):
         id: str
         name: str
@@ -1302,7 +1805,6 @@ namespace azure.mgmt.resource.policy.models
     class azure.mgmt.resource.policy.models.ExternalEvaluationEndpointInvocationResult(_Model):
         additional_info: Optional[Any]
         claims: Optional[Any]
-        compliance_state: Optional[Union[str, ComplianceState]]
         endpoint_kind: Optional[str]
         expiration: Optional[datetime]
         message: Optional[str]
@@ -1318,7 +1820,6 @@ namespace azure.mgmt.resource.policy.models
                 *, 
                 additional_info: Optional[Any] = ..., 
                 claims: Optional[Any] = ..., 
-                compliance_state: Optional[Union[str, ComplianceState]] = ..., 
                 endpoint_kind: Optional[str] = ..., 
                 expiration: Optional[datetime] = ..., 
                 message: Optional[str] = ..., 
@@ -1792,6 +2293,197 @@ namespace azure.mgmt.resource.policy.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resource.policy.models.PolicyEnrollment(ExtensionResource):
+        e_tag: Optional[str]
+        id: str
+        name: str
+        properties: Optional[PolicyEnrollmentProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                e_tag: Optional[str] = ..., 
+                properties: Optional[PolicyEnrollmentProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.resource.policy.models.PolicyEnrollmentProperties(_Model):
+        assignment_scope_validation: Optional[Union[str, AssignmentScopeValidation]]
+        description: Optional[str]
+        display_name: Optional[str]
+        metadata: Optional[Any]
+        policy_assignment_id: str
+        policy_assignment_instance_id: Optional[str]
+        policy_definition_reference_ids: Optional[list[str]]
+        resource_selectors: Optional[list[ResourceSelector]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                assignment_scope_validation: Optional[Union[str, AssignmentScopeValidation]] = ..., 
+                description: Optional[str] = ..., 
+                display_name: Optional[str] = ..., 
+                metadata: Optional[Any] = ..., 
+                policy_assignment_id: str, 
+                policy_definition_reference_ids: Optional[list[str]] = ..., 
+                resource_selectors: Optional[list[ResourceSelector]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resource.policy.models.PolicyEnrollmentUpdate(_Model):
+        properties: Optional[PolicyEnrollmentUpdateProperties]
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[PolicyEnrollmentUpdateProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.resource.policy.models.PolicyEnrollmentUpdateProperties(_Model):
+        assignment_scope_validation: Optional[Union[str, AssignmentScopeValidation]]
+        resource_selectors: Optional[list[ResourceSelector]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                assignment_scope_validation: Optional[Union[str, AssignmentScopeValidation]] = ..., 
+                resource_selectors: Optional[list[ResourceSelector]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resource.policy.models.PolicyExemption(ExtensionResource):
+        id: str
+        name: str
+        properties: Optional[PolicyExemptionProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[PolicyExemptionProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.resource.policy.models.PolicyExemptionProperties(_Model):
+        assignment_scope_validation: Optional[Union[str, AssignmentScopeValidation]]
+        description: Optional[str]
+        display_name: Optional[str]
+        exemption_category: Union[str, ExemptionCategory]
+        exemption_management_mode: Optional[Union[str, ExemptionManagementMode]]
+        expires_on: Optional[datetime]
+        metadata: Optional[Any]
+        policy_assignment_id: str
+        policy_definition_reference_ids: Optional[list[str]]
+        resource_selectors: Optional[list[ResourceSelector]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                assignment_scope_validation: Optional[Union[str, AssignmentScopeValidation]] = ..., 
+                description: Optional[str] = ..., 
+                display_name: Optional[str] = ..., 
+                exemption_category: Union[str, ExemptionCategory], 
+                exemption_management_mode: Optional[Union[str, ExemptionManagementMode]] = ..., 
+                expires_on: Optional[datetime] = ..., 
+                metadata: Optional[Any] = ..., 
+                policy_assignment_id: str, 
+                policy_definition_reference_ids: Optional[list[str]] = ..., 
+                resource_selectors: Optional[list[ResourceSelector]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resource.policy.models.PolicyExemptionUpdate(_Model):
+        properties: Optional[PolicyExemptionUpdateProperties]
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[PolicyExemptionUpdateProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.resource.policy.models.PolicyExemptionUpdateProperties(_Model):
+        assignment_scope_validation: Optional[Union[str, AssignmentScopeValidation]]
+        exemption_management_mode: Optional[Union[str, ExemptionManagementMode]]
+        resource_selectors: Optional[list[ResourceSelector]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                assignment_scope_validation: Optional[Union[str, AssignmentScopeValidation]] = ..., 
+                exemption_management_mode: Optional[Union[str, ExemptionManagementMode]] = ..., 
+                resource_selectors: Optional[list[ResourceSelector]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.resource.policy.models.PolicyLogInfo(_Model):
         policy_assignment_id: Optional[str]
         policy_assignment_name: Optional[str]
@@ -2054,6 +2746,64 @@ namespace azure.mgmt.resource.policy.models
         STATIC = "Static"
 
 
+    class azure.mgmt.resource.policy.models.PolicyVariableColumn(_Model):
+        column_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                column_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resource.policy.models.PolicyVariableProperties(_Model):
+        columns: list[PolicyVariableColumn]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                columns: list[PolicyVariableColumn]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resource.policy.models.PolicyVariableValueColumnValue(_Model):
+        column_name: str
+        column_value: Any
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                column_name: str, 
+                column_value: Any
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resource.policy.models.PolicyVariableValueProperties(_Model):
+        values_property: list[PolicyVariableValueColumnValue]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                values_property: list[PolicyVariableValueColumnValue]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.resource.policy.models.ProxyResource(Resource):
         id: str
         name: str
@@ -2110,7 +2860,6 @@ namespace azure.mgmt.resource.policy.models
         in_property: Optional[list[str]]
         kind: Optional[Union[str, SelectorKind]]
         not_in: Optional[list[str]]
-        progress: Optional[int]
 
         @overload
         def __init__(
@@ -2118,8 +2867,7 @@ namespace azure.mgmt.resource.policy.models
                 *, 
                 in_property: Optional[list[str]] = ..., 
                 kind: Optional[Union[str, SelectorKind]] = ..., 
-                not_in: Optional[list[str]] = ..., 
-                progress: Optional[int] = ...
+                not_in: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -2130,7 +2878,6 @@ namespace azure.mgmt.resource.policy.models
         GROUP_PRINCIPAL_ID = "groupPrincipalId"
         POLICY_DEFINITION_REFERENCE_ID = "policyDefinitionReferenceId"
         RESOURCE_LOCATION = "resourceLocation"
-        RESOURCE_ROLLOUT_PERCENTAGE = "resourceRolloutPercentage"
         RESOURCE_TYPE = "resourceType"
         RESOURCE_WITHOUT_LOCATION = "resourceWithoutLocation"
         USER_PRINCIPAL_ID = "userPrincipalId"
@@ -2181,6 +2928,58 @@ namespace azure.mgmt.resource.policy.models
         principal_id: Optional[str]
 
 
+    class azure.mgmt.resource.policy.models.Variable(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[PolicyVariableProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[PolicyVariableProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.resource.policy.models.VariableValue(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[PolicyVariableValueProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[PolicyVariableValueProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
 namespace azure.mgmt.resource.policy.operations
 
     class azure.mgmt.resource.policy.operations.DataPolicyManifestsOperations:
@@ -2192,7 +2991,7 @@ namespace azure.mgmt.resource.policy.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01', params_added_on={'2025-11-01': ['api_version', 'policy_mode', 'accept']}, api_versions_list=['2025-11-01', '2025-12-01-preview', '2026-01-01-preview', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-11-01', params_added_on={'2025-11-01': ['api_version', 'policy_mode', 'accept']}, api_versions_list=['2025-11-01', '2025-12-01-preview', '2026-01-01-preview'])
         def get_by_policy_mode(
                 self, 
                 policy_mode: str, 
@@ -2200,7 +2999,7 @@ namespace azure.mgmt.resource.policy.operations
             ) -> DataPolicyManifest: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01', params_added_on={'2025-11-01': ['api_version', 'filter', 'accept']}, api_versions_list=['2025-11-01', '2025-12-01-preview', '2026-01-01-preview', '2026-06-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-11-01', params_added_on={'2025-11-01': ['api_version', 'filter', 'accept']}, api_versions_list=['2025-11-01', '2025-12-01-preview', '2026-01-01-preview'])
         def list(
                 self, 
                 *, 
@@ -2721,6 +3520,278 @@ namespace azure.mgmt.resource.policy.operations
             ) -> ItemPaged[PolicyDefinition]: ...
 
 
+    class azure.mgmt.resource.policy.operations.PolicyEnrollmentsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: PolicyEnrollment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: PolicyEnrollment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'scope', 'policy_enrollment_name']}, api_versions_list=['2026-01-01-preview'])
+        def delete(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'scope', 'policy_enrollment_name', 'accept']}, api_versions_list=['2026-01-01-preview'])
+        def get(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'filter', 'accept']}, api_versions_list=['2026-01-01-preview'])
+        def list(
+                self, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[PolicyEnrollment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'management_group_id', 'filter', 'accept']}, api_versions_list=['2026-01-01-preview'])
+        def list_for_management_group(
+                self, 
+                management_group_id: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[PolicyEnrollment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['subscription_id', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'filter', 'accept']}, api_versions_list=['2026-01-01-preview'])
+        def list_for_resource(
+                self, 
+                resource_group_name: str, 
+                resource_provider_namespace: str, 
+                parent_resource_path: str, 
+                resource_type: str, 
+                resource_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[PolicyEnrollment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'filter', 'accept']}, api_versions_list=['2026-01-01-preview'])
+        def list_for_resource_group(
+                self, 
+                resource_group_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[PolicyEnrollment]: ...
+
+        @overload
+        def update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: PolicyEnrollmentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @overload
+        def update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: PolicyEnrollmentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+        @overload
+        def update(
+                self, 
+                scope: str, 
+                policy_enrollment_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyEnrollment: ...
+
+
+    class azure.mgmt.resource.policy.operations.PolicyExemptionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: PolicyExemption, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: PolicyExemption, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'scope', 'policy_exemption_name']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def delete(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'scope', 'policy_exemption_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def get(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'filter', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list(
+                self, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[PolicyExemption]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'filter', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list_for_management_group(
+                self, 
+                management_group_id: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[PolicyExemption]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['subscription_id', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'filter', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list_for_resource(
+                self, 
+                resource_group_name: str, 
+                resource_provider_namespace: str, 
+                parent_resource_path: str, 
+                resource_type: str, 
+                resource_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[PolicyExemption]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'filter', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list_for_resource_group(
+                self, 
+                resource_group_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[PolicyExemption]: ...
+
+        @overload
+        def update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: PolicyExemptionUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @overload
+        def update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: PolicyExemptionUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+        @overload
+        def update(
+                self, 
+                scope: str, 
+                policy_exemption_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PolicyExemption: ...
+
+
     class azure.mgmt.resource.policy.operations.PolicySetDefinitionVersionsOperations:
 
         def __init__(
@@ -3102,35 +4173,256 @@ namespace azure.mgmt.resource.policy.operations
                 **kwargs: Any
             ) -> PolicyTokenResponse: ...
 
-        @overload
-        def acquire_at_resource_group(
+
+    class azure.mgmt.resource.policy.operations.VariableValuesOperations:
+
+        def __init__(
                 self, 
-                resource_group_name: str, 
-                parameters: PolicyTokenRequest, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                variable_name: str, 
+                variable_value_name: str, 
+                parameters: VariableValue, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> PolicyTokenResponse: ...
+            ) -> VariableValue: ...
 
         @overload
-        def acquire_at_resource_group(
+        def create_or_update(
                 self, 
-                resource_group_name: str, 
-                parameters: PolicyTokenRequest, 
+                variable_name: str, 
+                variable_value_name: str, 
+                parameters: VariableValue, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> PolicyTokenResponse: ...
+            ) -> VariableValue: ...
 
         @overload
-        def acquire_at_resource_group(
+        def create_or_update(
                 self, 
-                resource_group_name: str, 
+                variable_name: str, 
+                variable_value_name: str, 
                 parameters: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> PolicyTokenResponse: ...
+            ) -> VariableValue: ...
+
+        @overload
+        def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                variable_value_name: str, 
+                parameters: VariableValue, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VariableValue: ...
+
+        @overload
+        def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                variable_value_name: str, 
+                parameters: VariableValue, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VariableValue: ...
+
+        @overload
+        def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                variable_value_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VariableValue: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'variable_name', 'variable_value_name']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def delete(
+                self, 
+                variable_name: str, 
+                variable_value_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'variable_name', 'variable_value_name']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def delete_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                variable_value_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'variable_name', 'variable_value_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def get(
+                self, 
+                variable_name: str, 
+                variable_value_name: str, 
+                **kwargs: Any
+            ) -> VariableValue: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'variable_name', 'variable_value_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def get_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                variable_value_name: str, 
+                **kwargs: Any
+            ) -> VariableValue: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'variable_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list(
+                self, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[VariableValue]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'variable_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list_for_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[VariableValue]: ...
+
+
+    class azure.mgmt.resource.policy.operations.VariablesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                variable_name: str, 
+                parameters: Variable, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                variable_name: str, 
+                parameters: Variable, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                variable_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @overload
+        def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                parameters: Variable, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @overload
+        def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                parameters: Variable, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @overload
+        def create_or_update_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'variable_name']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def delete(
+                self, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'variable_name']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def delete_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'variable_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def get(
+                self, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'variable_name', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def get_at_management_group(
+                self, 
+                management_group_id: str, 
+                variable_name: str, 
+                **kwargs: Any
+            ) -> Variable: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list(self, **kwargs: Any) -> ItemPaged[Variable]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-01-preview', params_added_on={'2025-12-01-preview': ['api_version', 'management_group_id', 'accept']}, api_versions_list=['2025-12-01-preview', '2026-01-01-preview'])
+        def list_for_management_group(
+                self, 
+                management_group_id: str, 
+                **kwargs: Any
+            ) -> ItemPaged[Variable]: ...
 
 
 namespace azure.mgmt.resource.policy.types
@@ -3376,6 +4668,96 @@ namespace azure.mgmt.resource.policy.types
         version: str
 
 
+    class azure.mgmt.resource.policy.types.PolicyEnrollment(ExtensionResource):
+        key "eTag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PolicyEnrollmentProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        eTag: str
+        id: str
+        name: str
+        properties: PolicyEnrollmentProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resource.policy.types.PolicyEnrollmentProperties(TypedDict, total=False):
+        key "assignmentScopeValidation": Union[str, AssignmentScopeValidation]
+        key "description": str
+        key "displayName": str
+        key "metadata": Any
+        key "policyAssignmentId": Required[str]
+        key "policyAssignmentInstanceId": str
+        assignmentScopeValidation: Union[str, AssignmentScopeValidation]
+        description: str
+        displayName: str
+        metadata: Any
+        policyAssignmentId: str
+        policyAssignmentInstanceId: str
+        policyDefinitionReferenceIds: list[str]
+        resourceSelectors: list[ResourceSelector]
+
+
+    class azure.mgmt.resource.policy.types.PolicyEnrollmentUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('PolicyEnrollmentUpdateProperties', module='types')
+        properties: PolicyEnrollmentUpdateProperties
+
+
+    class azure.mgmt.resource.policy.types.PolicyEnrollmentUpdateProperties(TypedDict, total=False):
+        key "assignmentScopeValidation": Union[str, AssignmentScopeValidation]
+        assignmentScopeValidation: Union[str, AssignmentScopeValidation]
+        resourceSelectors: list[ResourceSelector]
+
+
+    class azure.mgmt.resource.policy.types.PolicyExemption(ExtensionResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PolicyExemptionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PolicyExemptionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resource.policy.types.PolicyExemptionProperties(TypedDict, total=False):
+        key "assignmentScopeValidation": Union[str, AssignmentScopeValidation]
+        key "description": str
+        key "displayName": str
+        key "exemptionCategory": Required[Union[str, ExemptionCategory]]
+        key "exemptionManagementMode": Union[str, ExemptionManagementMode]
+        key "expiresOn": str
+        key "metadata": Any
+        key "policyAssignmentId": Required[str]
+        assignmentScopeValidation: Union[str, AssignmentScopeValidation]
+        description: str
+        displayName: str
+        exemptionCategory: Union[str, ExemptionCategory]
+        exemptionManagementMode: Union[str, ExemptionManagementMode]
+        expiresOn: str
+        metadata: Any
+        policyAssignmentId: str
+        policyDefinitionReferenceIds: list[str]
+        resourceSelectors: list[ResourceSelector]
+
+
+    class azure.mgmt.resource.policy.types.PolicyExemptionUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('PolicyExemptionUpdateProperties', module='types')
+        properties: PolicyExemptionUpdateProperties
+
+
+    class azure.mgmt.resource.policy.types.PolicyExemptionUpdateProperties(TypedDict, total=False):
+        key "assignmentScopeValidation": Union[str, AssignmentScopeValidation]
+        key "exemptionManagementMode": Union[str, ExemptionManagementMode]
+        assignmentScopeValidation: Union[str, AssignmentScopeValidation]
+        exemptionManagementMode: Union[str, ExemptionManagementMode]
+        resourceSelectors: list[ResourceSelector]
+
+
     class azure.mgmt.resource.policy.types.PolicySetDefinition(ProxyResource):
         key "id": str
         key "name": str
@@ -3453,6 +4835,28 @@ namespace azure.mgmt.resource.policy.types
         operation: PolicyTokenOperation
 
 
+    class azure.mgmt.resource.policy.types.PolicyVariableColumn(TypedDict, total=False):
+        key "columnName": Required[str]
+        columnName: str
+
+
+    class azure.mgmt.resource.policy.types.PolicyVariableProperties(TypedDict, total=False):
+        key "columns": Required[list[PolicyVariableColumn]]
+        columns: list[PolicyVariableColumn]
+
+
+    class azure.mgmt.resource.policy.types.PolicyVariableValueColumnValue(TypedDict, total=False):
+        key "columnName": Required[str]
+        key "columnValue": Required[Any]
+        columnName: str
+        columnValue: Any
+
+
+    class azure.mgmt.resource.policy.types.PolicyVariableValueProperties(TypedDict, total=False):
+        key "values": Required[list[PolicyVariableValueColumnValue]]
+        values: list[PolicyVariableValueColumnValue]
+
+
     class azure.mgmt.resource.policy.types.ProxyResource(Resource):
         key "id": str
         key "name": str
@@ -3483,11 +4887,9 @@ namespace azure.mgmt.resource.policy.types
 
     class azure.mgmt.resource.policy.types.Selector(TypedDict):
         key "kind": Union[str, SelectorKind]
-        key "progress": int
         in: list[str]
         kind: Union[str, SelectorKind]
         notIn: list[str]
-        progress: int
 
 
     class azure.mgmt.resource.policy.types.SelfServeExemptionSettings(TypedDict, total=False):
@@ -3516,6 +4918,32 @@ namespace azure.mgmt.resource.policy.types
         key "principalId": str
         clientId: str
         principalId: str
+
+
+    class azure.mgmt.resource.policy.types.Variable(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PolicyVariableProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PolicyVariableProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resource.policy.types.VariableValue(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PolicyVariableValueProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PolicyVariableValueProperties
+        systemData: SystemData
+        type: str
 
 
 ```

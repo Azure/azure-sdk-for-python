@@ -60,6 +60,16 @@ class AliasType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Alias value is secret."""
 
 
+class AssignmentScopeValidation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The option to validate whether the exemption or enrollment is at or under the assignment scope."""
+
+    DEFAULT = "Default"
+    """This option will validate the exemption is at or under the assignment scope."""
+    DO_NOT_VALIDATE = "DoNotValidate"
+    """This option will bypass the validation the exemption scope is at or under the policy assignment
+    scope."""
+
+
 class AssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of policy assignment. Possible values are NotSpecified, System, SystemHidden, and
     Custom. Immutable.
@@ -73,35 +83,6 @@ class AssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The system hidden assignment type."""
     CUSTOM = "Custom"
     """The custom assignment type."""
-
-
-class ComplianceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The compliance state of the resource against the policy. Possible values are NotSpecified,
-    NonCompliant, Partial, Conflict, NotApplicable, Compliant, Error, Unknown, Exempt, and
-    Protected.
-    """
-
-    NOT_SPECIFIED = "NotSpecified"
-    """Indicates a policy evaluation result for which no specific value is set by the evaluator."""
-    NON_COMPLIANT = "NonCompliant"
-    """Indicates a non-compliant policy evaluation."""
-    PARTIAL = "Partial"
-    """Indicates a partially completed policy evaluation."""
-    CONFLICT = "Conflict"
-    """Indicates a policy evaluation result, where the Policy definitions conflicted so that the
-    evaluation couldn't complete."""
-    NOT_APPLICABLE = "NotApplicable"
-    """Indicates a policy evaluation result, where the Policy is not applicable."""
-    COMPLIANT = "Compliant"
-    """Indicates a policy evaluation result, where the Policy is compliant."""
-    ERROR = "Error"
-    """Indicates a policy evaluation result, where the Policy evaluation resulted in an error."""
-    UNKNOWN = "Unknown"
-    """Indicates a policy evaluation result that is unknown."""
-    EXEMPT = "Exempt"
-    """Indicates a policy evaluation result, where the Policy is exempt."""
-    PROTECTED = "Protected"
-    """Indicates a policy evaluation result, where the resource is protected."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -128,6 +109,29 @@ class EnforcementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy effect is not enforced during resource creation or update until the resource or
     scope of the resource is enrolled to the assignment instance. Enrollment occurs upon deployment
     of the policy enrollment resource."""
+
+
+class ExemptionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy exemption category. Possible values are Waiver and Mitigated."""
+
+    WAIVER = "Waiver"
+    """This category of exemptions usually means the scope is not applicable for the policy."""
+    MITIGATED = "Mitigated"
+    """This category of exemptions usually means the mitigation actions have been applied to the
+    scope."""
+
+
+class ExemptionManagementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode indicating how the policy exemption is managed. Possible values are Admin and
+    UserSelfServe.
+    """
+
+    ADMIN = "Admin"
+    """This mode means the exemption is managed by an administrator and requires permission for the
+    policy exemption action."""
+    USER_SELF_SERVE = "UserSelfServe"
+    """This mode means the exemption is managed by the user it applies to, through the self-serve
+    exemption settings on the policy assignment."""
 
 
 class ExternalEndpointResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -233,8 +237,6 @@ class SelectorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The selector kind to filter policies by the resource without location."""
     POLICY_DEFINITION_REFERENCE_ID = "policyDefinitionReferenceId"
     """The selector kind to filter policies by the policy definition reference ID."""
-    RESOURCE_ROLLOUT_PERCENTAGE = "resourceRolloutPercentage"
-    """The selector kind to filter policies by the resource rollout percentage."""
     USER_PRINCIPAL_ID = "userPrincipalId"
     """The selector kind to filter policies by the user principal ID."""
     GROUP_PRINCIPAL_ID = "groupPrincipalId"

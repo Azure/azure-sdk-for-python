@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12,9 +12,12 @@ from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
     from .models import (
+        AssignmentScopeValidation,
         AssignmentType,
         CreatedByType,
         EnforcementMode,
+        ExemptionCategory,
+        ExemptionManagementMode,
         OverrideKind,
         ParameterType,
         PolicyType,
@@ -669,6 +672,230 @@ class PolicyDefinitionVersionProperties(TypedDict, total=False):
      enforcement evaluation."""
 
 
+class PolicyEnrollment(ExtensionResource):
+    """The policy enrollment.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The properties of the policy enrollment.
+    :vartype properties: "PolicyEnrollmentProperties"
+    :ivar eTag: The ETag for the policy enrollment.
+    :vartype eTag: str
+    """
+
+    properties: "PolicyEnrollmentProperties"
+    """The properties of the policy enrollment."""
+    eTag: str
+    """The ETag for the policy enrollment."""
+
+
+class PolicyEnrollmentProperties(TypedDict, total=False):
+    """The policy enrollment properties.
+
+    :ivar policyAssignmentId: The ID of the policy assignment that is being enrolled. Required.
+    :vartype policyAssignmentId: str
+    :ivar policyAssignmentInstanceId: The policy assignment instance ID associated with this
+     enrollment. The value is set to the instance ID of the policy assignment the policyAssignmentId
+     references when the enrollment is created or updated. The format is a GUID string.
+    :vartype policyAssignmentInstanceId: str
+    :ivar policyDefinitionReferenceIds: The policy definition reference IDs for policy definitions
+     in an assigned policy set definition. These IDs correspond to a subset of
+     ``policyDefinitions[*].policyDefinitionReferenceId`` in the policy set definition. When
+     specified and not empty, only the referenced policy definitions will be enrolled to. Otherwise,
+     the entire policy set is enrolled to.
+    :vartype policyDefinitionReferenceIds: list[str]
+    :ivar displayName: The display name of the policy enrollment.
+    :vartype displayName: str
+    :ivar description: The description of the policy enrollment.
+    :vartype description: str
+    :ivar metadata: The policy enrollment metadata. Metadata is an open ended object and is
+     typically a collection of key value pairs.
+    :vartype metadata: Any
+    :ivar assignmentScopeValidation: The option whether to validate the enrollment is at or under
+     the assignment scope. Known values are: "Default" and "DoNotValidate".
+    :vartype assignmentScopeValidation: Union[str, "AssignmentScopeValidation"]
+    :ivar resourceSelectors: The resource selector list to filter policies by resource properties.
+    :vartype resourceSelectors: list["ResourceSelector"]
+    """
+
+    policyAssignmentId: Required[str]
+    """The ID of the policy assignment that is being enrolled. Required."""
+    policyAssignmentInstanceId: str
+    """The policy assignment instance ID associated with this enrollment. The value is set to the
+     instance ID of the policy assignment the policyAssignmentId references when the enrollment is
+     created or updated. The format is a GUID string."""
+    policyDefinitionReferenceIds: list[str]
+    """The policy definition reference IDs for policy definitions in an assigned policy set
+     definition. These IDs correspond to a subset of
+     ``policyDefinitions[*].policyDefinitionReferenceId`` in the policy set definition. When
+     specified and not empty, only the referenced policy definitions will be enrolled to. Otherwise,
+     the entire policy set is enrolled to."""
+    displayName: str
+    """The display name of the policy enrollment."""
+    description: str
+    """The description of the policy enrollment."""
+    metadata: Any
+    """The policy enrollment metadata. Metadata is an open ended object and is typically a collection
+     of key value pairs."""
+    assignmentScopeValidation: Union[str, "AssignmentScopeValidation"]
+    """The option whether to validate the enrollment is at or under the assignment scope. Known values
+     are: \"Default\" and \"DoNotValidate\"."""
+    resourceSelectors: list["ResourceSelector"]
+    """The resource selector list to filter policies by resource properties."""
+
+
+class PolicyEnrollmentUpdate(TypedDict, total=False):
+    """The policy enrollment for Patch request.
+
+    :ivar properties: The policy enrollment properties for Patch request.
+    :vartype properties: "PolicyEnrollmentUpdateProperties"
+    """
+
+    properties: "PolicyEnrollmentUpdateProperties"
+    """The policy enrollment properties for Patch request."""
+
+
+class PolicyEnrollmentUpdateProperties(TypedDict, total=False):
+    """The policy enrollment properties for Patch request.
+
+    :ivar assignmentScopeValidation: The option whether to validate the enrollment is at or under
+     the assignment scope. Known values are: "Default" and "DoNotValidate".
+    :vartype assignmentScopeValidation: Union[str, "AssignmentScopeValidation"]
+    :ivar resourceSelectors: The resource selector list to filter policies by resource properties.
+    :vartype resourceSelectors: list["ResourceSelector"]
+    """
+
+    assignmentScopeValidation: Union[str, "AssignmentScopeValidation"]
+    """The option whether to validate the enrollment is at or under the assignment scope. Known values
+     are: \"Default\" and \"DoNotValidate\"."""
+    resourceSelectors: list["ResourceSelector"]
+    """The resource selector list to filter policies by resource properties."""
+
+
+class PolicyExemption(ExtensionResource):
+    """The policy exemption.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: Properties for the policy exemption.
+    :vartype properties: "PolicyExemptionProperties"
+    """
+
+    properties: "PolicyExemptionProperties"
+    """Properties for the policy exemption."""
+
+
+class PolicyExemptionProperties(TypedDict, total=False):
+    """The policy exemption properties.
+
+    :ivar policyAssignmentId: The ID of the policy assignment that is being exempted. Required.
+    :vartype policyAssignmentId: str
+    :ivar policyDefinitionReferenceIds: The policy definition reference ID list when the associated
+     policy assignment is an assignment of a policy set definition.
+    :vartype policyDefinitionReferenceIds: list[str]
+    :ivar exemptionCategory: The policy exemption category. Possible values are Waiver and
+     Mitigated. Required. Known values are: "Waiver" and "Mitigated".
+    :vartype exemptionCategory: Union[str, "ExemptionCategory"]
+    :ivar expiresOn: The expiration date and time (in UTC ISO 8601 format yyyy-MM-ddTHH:mm:ssZ) of
+     the policy exemption.
+    :vartype expiresOn: str
+    :ivar displayName: The display name of the policy exemption.
+    :vartype displayName: str
+    :ivar description: The description of the policy exemption.
+    :vartype description: str
+    :ivar metadata: The policy exemption metadata. Metadata is an open ended object and is
+     typically a collection of key value pairs.
+    :vartype metadata: Any
+    :ivar resourceSelectors: The resource selector list to filter policies by resource properties.
+    :vartype resourceSelectors: list["ResourceSelector"]
+    :ivar assignmentScopeValidation: The option whether validate the exemption is at or under the
+     assignment scope. Known values are: "Default" and "DoNotValidate".
+    :vartype assignmentScopeValidation: Union[str, "AssignmentScopeValidation"]
+    :ivar exemptionManagementMode: The mode indicating how the policy exemption is managed. Known
+     values are: "Admin" and "UserSelfServe".
+    :vartype exemptionManagementMode: Union[str, "ExemptionManagementMode"]
+    """
+
+    policyAssignmentId: Required[str]
+    """The ID of the policy assignment that is being exempted. Required."""
+    policyDefinitionReferenceIds: list[str]
+    """The policy definition reference ID list when the associated policy assignment is an assignment
+     of a policy set definition."""
+    exemptionCategory: Required[Union[str, "ExemptionCategory"]]
+    """The policy exemption category. Possible values are Waiver and Mitigated. Required. Known values
+     are: \"Waiver\" and \"Mitigated\"."""
+    expiresOn: str
+    """The expiration date and time (in UTC ISO 8601 format yyyy-MM-ddTHH:mm:ssZ) of the policy
+     exemption."""
+    displayName: str
+    """The display name of the policy exemption."""
+    description: str
+    """The description of the policy exemption."""
+    metadata: Any
+    """The policy exemption metadata. Metadata is an open ended object and is typically a collection
+     of key value pairs."""
+    resourceSelectors: list["ResourceSelector"]
+    """The resource selector list to filter policies by resource properties."""
+    assignmentScopeValidation: Union[str, "AssignmentScopeValidation"]
+    """The option whether validate the exemption is at or under the assignment scope. Known values
+     are: \"Default\" and \"DoNotValidate\"."""
+    exemptionManagementMode: Union[str, "ExemptionManagementMode"]
+    """The mode indicating how the policy exemption is managed. Known values are: \"Admin\" and
+     \"UserSelfServe\"."""
+
+
+class PolicyExemptionUpdate(TypedDict, total=False):
+    """The policy exemption for Patch request.
+
+    :ivar properties: The policy exemption properties for Patch request.
+    :vartype properties: "PolicyExemptionUpdateProperties"
+    """
+
+    properties: "PolicyExemptionUpdateProperties"
+    """The policy exemption properties for Patch request."""
+
+
+class PolicyExemptionUpdateProperties(TypedDict, total=False):
+    """The policy exemption properties for Patch request.
+
+    :ivar resourceSelectors: The resource selector list to filter policies by resource properties.
+    :vartype resourceSelectors: list["ResourceSelector"]
+    :ivar assignmentScopeValidation: The option whether validate the exemption is at or under the
+     assignment scope. Known values are: "Default" and "DoNotValidate".
+    :vartype assignmentScopeValidation: Union[str, "AssignmentScopeValidation"]
+    :ivar exemptionManagementMode: The mode indicating how the policy exemption is managed. Known
+     values are: "Admin" and "UserSelfServe".
+    :vartype exemptionManagementMode: Union[str, "ExemptionManagementMode"]
+    """
+
+    resourceSelectors: list["ResourceSelector"]
+    """The resource selector list to filter policies by resource properties."""
+    assignmentScopeValidation: Union[str, "AssignmentScopeValidation"]
+    """The option whether validate the exemption is at or under the assignment scope. Known values
+     are: \"Default\" and \"DoNotValidate\"."""
+    exemptionManagementMode: Union[str, "ExemptionManagementMode"]
+    """The mode indicating how the policy exemption is managed. Known values are: \"Admin\" and
+     \"UserSelfServe\"."""
+
+
 class PolicySetDefinition(ProxyResource):
     """The policy set definition.
 
@@ -843,6 +1070,56 @@ class PolicyTokenRequest(TypedDict, total=False):
     """The change reference."""
 
 
+class PolicyVariableColumn(TypedDict, total=False):
+    """The variable column.
+
+    :ivar columnName: The name of this policy variable column. Required.
+    :vartype columnName: str
+    """
+
+    columnName: Required[str]
+    """The name of this policy variable column. Required."""
+
+
+class PolicyVariableProperties(TypedDict, total=False):
+    """The variable properties.
+
+    :ivar columns: Variable column definitions. Required.
+    :vartype columns: list["PolicyVariableColumn"]
+    """
+
+    columns: Required[list["PolicyVariableColumn"]]
+    """Variable column definitions. Required."""
+
+
+class PolicyVariableValueColumnValue(TypedDict, total=False):
+    """The name value tuple for this variable value column.
+
+    :ivar columnName: Column name for the variable value. Required.
+    :vartype columnName: str
+    :ivar columnValue: Column value for the variable value; this can be an integer, double,
+     boolean, null or a string. Required.
+    :vartype columnValue: Any
+    """
+
+    columnName: Required[str]
+    """Column name for the variable value. Required."""
+    columnValue: Required[Any]
+    """Column value for the variable value; this can be an integer, double, boolean, null or a string.
+     Required."""
+
+
+class PolicyVariableValueProperties(TypedDict, total=False):
+    """The variable value properties.
+
+    :ivar values: Variable value column value array. Required.
+    :vartype values: list["PolicyVariableValueColumnValue"]
+    """
+
+    values: Required[list["PolicyVariableValueColumnValue"]]
+    """Variable value column value array. Required."""
+
+
 class ResourceSelector(TypedDict, total=False):
     """The resource selector to filter policies by resource properties.
 
@@ -864,22 +1141,19 @@ Selector = TypedDict(
         "kind": Union[str, "SelectorKind"],
         "in": list[str],
         "notIn": list[str],
-        "progress": int,
     },
     total=False,
 )
 Selector.__doc__ = """The selector expression.
 
 :ivar kind: The selector kind. Known values are: "resourceLocation", "resourceType",
- "resourceWithoutLocation", "policyDefinitionReferenceId", "resourceRolloutPercentage",
- "userPrincipalId", and "groupPrincipalId".
+ "resourceWithoutLocation", "policyDefinitionReferenceId", "userPrincipalId", and
+ "groupPrincipalId".
 :vartype kind: Union[str, "SelectorKind"]
 :ivar in: The list of values to filter in.
 :vartype in: list[str]
 :ivar notIn: The list of values to filter out.
 :vartype notIn: list[str]
-:ivar progress: The percent of total resources that will be governed by the policy.
-:vartype progress: int
 """
 
 
@@ -947,3 +1221,47 @@ class UserAssignedIdentitiesValue(TypedDict, total=False):
     """The principal id of user assigned identity."""
     clientId: str
     """The client id of user assigned identity."""
+
+
+class Variable(ProxyResource):
+    """The variable.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: Properties for the variable.
+    :vartype properties: "PolicyVariableProperties"
+    """
+
+    properties: "PolicyVariableProperties"
+    """Properties for the variable."""
+
+
+class VariableValue(ProxyResource):
+    """The variable value.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: Properties for the variable value.
+    :vartype properties: "PolicyVariableValueProperties"
+    """
+
+    properties: "PolicyVariableValueProperties"
+    """Properties for the variable value."""

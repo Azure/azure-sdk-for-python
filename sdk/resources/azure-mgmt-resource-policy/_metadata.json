@@ -1,9 +1,9 @@
 {
-  "apiVersion": "2026-07-01",
+  "apiVersion": "2026-01-01-preview",
   "apiVersions": {
-    "Microsoft.Authorization": "2026-07-01"
+    "Microsoft.Authorization": "2026-01-01-preview"
   },
-  "commit": "e97a33424f6e7bce32dfc0b5d989a7485d586853",
+  "commit": "fb93aacb4b6f5bcd058e6730b113f1fcdcba8157",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/resources/resource-manager/Microsoft.Authorization/policy",
   "emitterVersion": "0.63.5",

@@ -38,14 +38,3 @@ class TestPolicyPolicyTokensOperations(AzureMgmtRecordedTestCase):
 
         # please add some check logic here by yourself
         # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_tokens_acquire_at_resource_group(self, resource_group):
-        response = self.client.policy_tokens.acquire_at_resource_group(
-            resource_group_name=resource_group.name,
-            parameters={"operation": {"httpMethod": "str", "uri": "str", "content": {}}, "changeReference": "str"},
-        )
-
-        # please add some check logic here by yourself
-        # ...

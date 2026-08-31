@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.resource.policy import PolicyClient
     pip install azure-identity
     pip install azure-mgmt-resource-policy
 # USAGE
-    python create_policy_assignment_with_resource_percentage_selector.py
+    python delete_policy_enrollment.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,24 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.policy_assignments.create(
-        scope="subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
-        policy_assignment_name="CostManagement",
-        parameters={
-            "properties": {
-                "description": "Limit resources by rollout percentage",
-                "displayName": "Limit resources by rollout percentage",
-                "metadata": {"assignedBy": "Special Someone"},
-                "policyDefinitionId": "/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policySetDefinitions/CostManagement",
-                "resourceSelectors": [
-                    {"name": "SDPRollout", "selectors": [{"kind": "resourcePercentage", "progress": 80}]}
-                ],
-            }
-        },
+    client.policy_enrollments.delete(
+        scope="subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/resourceGroups/demoCluster",
+        policy_enrollment_name="DemoExpensiveVM",
     )
-    print(response)
 
 
-# x-ms-original-file: 2026-07-01/createPolicyAssignmentWithResourcePercentageSelector.json
+# x-ms-original-file: 2026-01-01-preview/deletePolicyEnrollment.json
 if __name__ == "__main__":
     main()
