@@ -5665,7 +5665,7 @@ namespace azure.ai.ml.entities
 
 
     class azure.ai.ml.entities.FixedInputData(MonitorInputData):
-        type
+        type: MonitorInputDataType
 
         def __init__(
                 self, 
@@ -6685,7 +6685,7 @@ namespace azure.ai.ml.entities
 
 
     @experimental
-    class azure.ai.ml.entities.ModelPackage(Resource, PackageRequest):
+    class azure.ai.ml.entities.ModelPackage(Resource):
         property base_path: str    # Read-only
         property creation_context: Optional[SystemData]    # Read-only
         property id: Optional[str]    # Read-only
@@ -6769,10 +6769,8 @@ namespace azure.ai.ml.entities
                 self, 
                 *, 
                 alert_enabled: bool = False, 
-                baseline_dataset: MonitorInputData = ..., 
                 data_segment: Optional[DataSegment] = ..., 
                 metric_thresholds: ModelPerformanceMetricThreshold, 
-                model_type: MonitorModelType = ..., 
                 production_data: ProductionData, 
                 properties: Optional[Dict[str, str]] = ..., 
                 reference_data: ReferenceData
@@ -6806,11 +6804,7 @@ namespace azure.ai.ml.entities
                 self, 
                 *, 
                 data_context: Optional[MonitorDatasetContext] = ..., 
-                dataset_context: Optional[Union[str, MonitorDatasetContext]] = ..., 
-                input_dataset: Optional[Input] = ..., 
                 job_type: Optional[str] = ..., 
-                pre_processing_component: Optional[str] = ..., 
-                target_column_name: Optional[str] = ..., 
                 target_columns: Optional[Dict] = ..., 
                 type: Optional[MonitorInputDataType] = ..., 
                 uri: Optional[str] = ...
@@ -8604,7 +8598,7 @@ namespace azure.ai.ml.entities
 
 
     class azure.ai.ml.entities.StaticInputData(MonitorInputData):
-        type
+        type: MonitorInputDataType
 
         def __init__(
                 self, 
@@ -8853,7 +8847,7 @@ namespace azure.ai.ml.entities
 
 
     class azure.ai.ml.entities.TrailingInputData(MonitorInputData):
-        type
+        type: MonitorInputDataType
 
         def __init__(
                 self, 
@@ -9252,7 +9246,7 @@ namespace azure.ai.ml.exceptions
                 self, 
                 message: str, 
                 no_personal_data_message: str, 
-                *args, 
+                *args: Any, 
                 *, 
                 error_category: ErrorCategory = ErrorCategory.UNKNOWN, 
                 target: ErrorTarget = ErrorTarget.UNKNOWN, 
@@ -9269,7 +9263,7 @@ namespace azure.ai.ml.exceptions
                 self, 
                 message: str, 
                 no_personal_data_message: str, 
-                *args, 
+                *args: Any, 
                 *, 
                 error_category: ErrorCategory = ErrorCategory.UNKNOWN, 
                 target: ErrorTarget = ErrorTarget.UNKNOWN, 
@@ -9282,7 +9276,7 @@ namespace azure.ai.ml.exceptions
         property no_personal_data_message: str
         property target: ErrorTarget
 
-        def __init__(self, object_name): ...
+        def __init__(self, object_name: str): ...
 
 
     class azure.ai.ml.exceptions.CloudArtifactsNotSupportedError(MlException):
@@ -9295,7 +9289,7 @@ namespace azure.ai.ml.exceptions
                 endpoint_name: str, 
                 invalid_artifact: str, 
                 deployment_name: Optional[str] = None, 
-                error_category = ErrorCategory.USER_ERROR
+                error_category: ErrorCategory = ErrorCategory.USER_ERROR
             ): ...
 
 
@@ -9308,7 +9302,7 @@ namespace azure.ai.ml.exceptions
                 self, 
                 message: str, 
                 no_personal_data_message: str, 
-                *args, 
+                *args: Any, 
                 *, 
                 error_category: ErrorCategory = ErrorCategory.UNKNOWN, 
                 target: ErrorTarget = ErrorTarget.UNKNOWN, 
@@ -9325,7 +9319,7 @@ namespace azure.ai.ml.exceptions
                 self, 
                 message: str, 
                 no_personal_data_message: str, 
-                *args, 
+                *args: Any, 
                 *, 
                 error_category: ErrorCategory = ErrorCategory.UNKNOWN, 
                 target: ErrorTarget = ErrorTarget.UNKNOWN, 
@@ -9338,7 +9332,7 @@ namespace azure.ai.ml.exceptions
         property no_personal_data_message: str
         property target: ErrorTarget
 
-        def __init__(self, error_category = ErrorCategory.UNKNOWN): ...
+        def __init__(self, error_category: ErrorCategory = ErrorCategory.UNKNOWN): ...
 
 
     class azure.ai.ml.exceptions.EmptyDirectoryError(MlException):
@@ -9416,7 +9410,7 @@ namespace azure.ai.ml.exceptions
                 self, 
                 message: str, 
                 no_personal_data_message: str, 
-                error_category = ErrorCategory.USER_ERROR
+                error_category: ErrorCategory = ErrorCategory.USER_ERROR
             ): ...
 
 
@@ -9427,8 +9421,8 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                error_category = ErrorCategory.USER_ERROR, 
-                msg = None
+                error_category: ErrorCategory = ErrorCategory.USER_ERROR, 
+                msg: str = None
             ): ...
 
 
@@ -9441,7 +9435,7 @@ namespace azure.ai.ml.exceptions
                 self, 
                 message: str, 
                 no_personal_data_message: str, 
-                *args, 
+                *args: Any, 
                 *, 
                 error_category: ErrorCategory = ErrorCategory.UNKNOWN, 
                 target: ErrorTarget = ErrorTarget.UNKNOWN, 
@@ -9456,10 +9450,10 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                error_category, 
-                no_personal_data_message, 
-                message, 
-                *args, 
+                error_category: ErrorCategory, 
+                no_personal_data_message: str, 
+                message: str, 
+                *args: Any, 
                 **kwargs
             ): ...
 
@@ -9471,8 +9465,8 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                message, 
-                no_personal_data_message = None
+                message: str, 
+                no_personal_data_message: str = None
             ): ...
 
 
@@ -9483,8 +9477,8 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                error_category = ErrorCategory.USER_ERROR, 
-                msg = None
+                error_category: ErrorCategory = ErrorCategory.USER_ERROR, 
+                msg: str = None
             ): ...
 
 
@@ -9496,7 +9490,7 @@ namespace azure.ai.ml.exceptions
         def __init__(
                 self, 
                 error: Union[str, Exception], 
-                error_category = ErrorCategory.UNKNOWN
+                error_category: ErrorCategory = ErrorCategory.UNKNOWN
             ): ...
 
 
@@ -9507,9 +9501,9 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                endpoint_name, 
-                deployment_name = None, 
-                error_category = ErrorCategory.UNKNOWN
+                endpoint_name: str, 
+                deployment_name: str = None, 
+                error_category: ErrorCategory = ErrorCategory.UNKNOWN
             ): ...
 
 
@@ -9522,7 +9516,7 @@ namespace azure.ai.ml.exceptions
                 self, 
                 endpoint_name: str, 
                 deployment_name: Optional[str] = None, 
-                error_category = ErrorCategory.USER_ERROR
+                error_category: ErrorCategory = ErrorCategory.USER_ERROR
             ): ...
 
 
@@ -9533,8 +9527,8 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                func_name, 
-                missing_args
+                func_name: str, 
+                missing_args: list
             ): ...
 
 
@@ -9547,7 +9541,7 @@ namespace azure.ai.ml.exceptions
                 self, 
                 message: str, 
                 no_personal_data_message: str, 
-                *args, 
+                *args: Any, 
                 *, 
                 error_category: ErrorCategory = ErrorCategory.UNKNOWN, 
                 target: ErrorTarget = ErrorTarget.UNKNOWN, 
@@ -9564,7 +9558,7 @@ namespace azure.ai.ml.exceptions
                 self, 
                 message: str, 
                 no_personal_data_message: str, 
-                *args, 
+                *args: Any, 
                 *, 
                 error_category: ErrorCategory = ErrorCategory.UNKNOWN, 
                 target: ErrorTarget = ErrorTarget.UNKNOWN, 
@@ -9580,7 +9574,7 @@ namespace azure.ai.ml.exceptions
         def __init__(
                 self, 
                 endpoint_name: str, 
-                error_category = ErrorCategory.UNKNOWN
+                error_category: ErrorCategory = ErrorCategory.UNKNOWN
             ): ...
 
 
@@ -9591,8 +9585,8 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                func_name, 
-                keyword
+                func_name: str, 
+                keyword: str
             ): ...
 
 
@@ -9603,8 +9597,8 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                func_name, 
-                keywords
+                func_name: str, 
+                keywords: list
             ): ...
 
 
@@ -9635,7 +9629,7 @@ namespace azure.ai.ml.exceptions
                 required_artifact: str, 
                 required_artifact_type: str, 
                 deployment_name: Optional[str] = None, 
-                error_category = ErrorCategory.USER_ERROR
+                error_category: ErrorCategory = ErrorCategory.USER_ERROR
             ): ...
 
 
@@ -9648,7 +9642,7 @@ namespace azure.ai.ml.exceptions
                 self, 
                 message: str, 
                 no_personal_data_message: str, 
-                *args, 
+                *args: Any, 
                 *, 
                 error_category: ErrorCategory = ErrorCategory.UNKNOWN, 
                 target: ErrorTarget = ErrorTarget.UNKNOWN, 
@@ -9663,10 +9657,10 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                func_name, 
-                min_number, 
-                max_number, 
-                given_number
+                func_name: str, 
+                min_number: int, 
+                max_number: int, 
+                given_number: int
             ): ...
 
 
@@ -9677,8 +9671,8 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                keyword, 
-                keywords = None
+                keyword: str, 
+                keywords: list = None
             ): ...
 
 
@@ -9689,9 +9683,9 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                func_name, 
-                keyword, 
-                keywords = None
+                func_name: str, 
+                keyword: str, 
+                keywords: list = None
             ): ...
 
 
@@ -9700,7 +9694,7 @@ namespace azure.ai.ml.exceptions
         property no_personal_data_message: str
         property target: ErrorTarget
 
-        def __init__(self, operation_name): ...
+        def __init__(self, operation_name: str): ...
 
 
     class azure.ai.ml.exceptions.UnsupportedParameterKindError(UserErrorException):
@@ -9710,8 +9704,8 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                func_name, 
-                parameter_kind = None
+                func_name: str, 
+                parameter_kind: str = None
             ): ...
 
 
@@ -9722,9 +9716,9 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                message, 
-                no_personal_data_message = None, 
-                error_category = ErrorCategory.USER_ERROR, 
+                message: str, 
+                no_personal_data_message: str = None, 
+                error_category: ErrorCategory = ErrorCategory.USER_ERROR, 
                 target: ErrorTarget = ErrorTarget.PIPELINE
             ): ...
 
@@ -9736,8 +9730,8 @@ namespace azure.ai.ml.exceptions
 
         def __init__(
                 self, 
-                output = None, 
-                error_category = ErrorCategory.USER_ERROR
+                output: str = None, 
+                error_category: ErrorCategory = ErrorCategory.USER_ERROR
             ): ...
 
 
@@ -9908,14 +9902,14 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: ServiceClient2020404Preview, 
+                service_client: ServiceClient042024PreviewArm, 
                 connections_operations: WorkspaceConnectionsOperations
             ): ...
 
         def list(
                 self, 
                 connection_name: str, 
-                **kwargs
+                **kwargs: Any
             ) -> Iterable[AzureOpenAIDeployment]: ...
 
 
@@ -10061,7 +10055,7 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: Union[ServiceClient012024, ServiceClient102021Dataplane], 
+                service_client: ServiceClient012024, 
                 all_operations: OperationsContainer, 
                 preflight_operation: Optional[DeploymentsOperations] = None, 
                 **kwargs: Dict
@@ -10141,7 +10135,7 @@ namespace azure.ai.ml.operations
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
                 service_client: ServiceClient022023Preview, 
-                service_client_2024: ServiceClient042024Preview, 
+                service_client_2024_arm: ServiceClient042024PreviewArm, 
                 **kwargs: Dict
             ) -> None: ...
 
@@ -10233,8 +10227,7 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane], 
-                service_client_012024_preview: ServiceClient012024_preview, 
+                service_client: ServiceClient042023_preview, 
                 datastore_operations: DatastoreOperations, 
                 **kwargs: Any
             ): ...
@@ -10326,7 +10319,6 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                serviceclient_2024_01_01_preview: ServiceClient012024Preview, 
                 serviceclient_2024_10_01_preview: ServiceClient102024Preview, 
                 **kwargs: Dict
             ): ...
@@ -10419,6 +10411,7 @@ namespace azure.ai.ml.operations
                 self, 
                 name: str, 
                 version: Optional[str] = None, 
+                label: Optional[str] = None, 
                 **kwargs: Any
             ) -> DeploymentTemplate: ...
 
@@ -10453,7 +10446,7 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: Union[ServiceClient042023Preview, ServiceClient102021Dataplane], 
+                service_client: ServiceClient042023Preview, 
                 all_operations: OperationsContainer, 
                 **kwargs: Any
             ): ...
@@ -10514,7 +10507,7 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane], 
+                service_client: ServiceClient082023Preview, 
                 datastore_operations: DatastoreOperations, 
                 all_operations: Optional[OperationsContainer] = None, 
                 **kwargs: dict
@@ -10880,6 +10873,14 @@ namespace azure.ai.ml.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        @monitor_with_activity(ops_logger, 'Job.Delete', ActivityType.PUBLICAPI)
+        def begin_delete(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
         @monitor_with_telemetry_mixin(ops_logger, 'Job.CreateOrUpdate', ActivityType.PUBLICAPI)
         def create_or_update(
                 self, 
@@ -10933,6 +10934,18 @@ namespace azure.ai.ml.operations
         @distributed_trace
         @monitor_with_activity(ops_logger, 'Job.Stream', ActivityType.PUBLICAPI)
         def stream(self, name: str) -> None: ...
+
+        @distributed_trace
+        @monitor_with_telemetry_mixin(ops_logger, 'Job.Update', ActivityType.PUBLICAPI)
+        def update(
+                self, 
+                name: str, 
+                *, 
+                description: Optional[str] = ..., 
+                display_name: Optional[str] = ..., 
+                properties: Optional[Dict[str, str]] = ..., 
+                tags: Optional[Dict[str, str]] = ...
+            ) -> Job: ...
 
         @distributed_trace
         @monitor_with_telemetry_mixin(ops_logger, 'Job.Validate', ActivityType.PUBLICAPI)
@@ -10989,7 +11002,7 @@ namespace azure.ai.ml.operations
                 self, 
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
-                service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane], 
+                service_client: ServiceClient082023Preview, 
                 datastore_operations: DatastoreOperations, 
                 service_client_model_dataplane: ServiceClientModelDataPlane = None, 
                 all_operations: Optional[OperationsContainer] = None, 
@@ -11253,7 +11266,6 @@ namespace azure.ai.ml.operations
                 operation_scope: OperationScope, 
                 operation_config: OperationConfig, 
                 service_client_06_2023_preview: ServiceClient062023Preview, 
-                service_client_01_2024_preview: ServiceClient012024Preview, 
                 all_operations: OperationsContainer, 
                 credential: TokenCredential, 
                 **kwargs: Any
