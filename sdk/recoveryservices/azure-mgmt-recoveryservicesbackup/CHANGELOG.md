@@ -1,11 +1,11 @@
 # Release History
 
-## 11.1.0 (2026-08-29)
+## 11.1.0 (2026-08-31)
 
 ### Features Added
 
   - Added model `InstantItemRecoveryOperationResultRequest`
-  - Operation group `ItemLevelRecoveryConnectionsOperations` added method `list_instant_item_recovery_operation_result`
+  - Model `ItemLevelRecoveryConnectionsOperations` added method `list_instant_item_recovery_operation_result`
 
 ## 11.0.0 (2026-08-13)
 
