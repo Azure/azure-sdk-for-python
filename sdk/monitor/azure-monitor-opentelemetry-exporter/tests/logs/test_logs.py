@@ -32,6 +32,7 @@ from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     _MICROSOFT_CUSTOM_EVENT_NAME,
+    _MICROSOFT_CUSTOM_MEASUREMENTS,
     _DEFAULT_LOG_MESSAGE,
     _APPLICATION_ID_RESOURCE_KEY,
 )
@@ -621,6 +622,36 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.name, "event_name")
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
         self.assertEqual(envelope.data.base_data.properties.get("logger_name"), "custom-event-logger")
+
+    def test_log_to_envelope_custom_measurements(self):
+        exporter = self._exporter
+        attributes = {
+            "test": "attribute",
+            _MICROSOFT_CUSTOM_MEASUREMENTS: '{"itemsProcessed": 42.0, "queueDepth": 7}',
+        }
+        expected = {"itemsProcessed": 42.0, "queueDepth": 7.0}
+        cases = {
+            "MessageData": {},
+            "EventData": {_MICROSOFT_CUSTOM_EVENT_NAME: "event_name"},
+            "ExceptionData": {EXCEPTION_TYPE: "ZeroDivisionError", EXCEPTION_MESSAGE: "division by zero"},
+        }
+        for base_type, extra_attributes in cases.items():
+            with self.subTest(base_type=base_type):
+                log_data = _logs.ReadWriteLogRecord(
+                    LogRecord(
+                        timestamp=1646865018558419456,
+                        severity_text="INFO",
+                        severity_number=SeverityNumber.INFO,
+                        body="Test message",
+                        attributes={**attributes, **extra_attributes},
+                    ),
+                    resource=Resource.create(attributes={"asd": "test_resource"}),
+                    instrumentation_scope=InstrumentationScope("test_name"),
+                )
+                envelope = exporter._log_to_envelope(log_data)
+                self.assertEqual(envelope.data.base_type, base_type)
+                self.assertEqual(envelope.data.base_data.measurements, expected)
+                self.assertIsNone(envelope.data.base_data.properties.get(_MICROSOFT_CUSTOM_MEASUREMENTS))
 
     def test_log_to_envelope_timestamp(self):
         exporter = self._exporter
