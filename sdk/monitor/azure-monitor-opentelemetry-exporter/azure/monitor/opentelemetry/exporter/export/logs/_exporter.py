@@ -3,6 +3,7 @@
 import json
 import logging
 import datetime
+import re
 from typing import Dict, Optional, Sequence, Any
 
 from opentelemetry._logs.severity import SeverityNumber
@@ -346,7 +347,8 @@ def _get_availability_time(log_record) -> Optional[datetime.datetime]:
     if not isinstance(test_timestamp, str):
         return None
     try:
-        return datetime.datetime.fromisoformat(test_timestamp.replace("Z", "+00:00")).astimezone(datetime.timezone.utc)
+        normalized_timestamp = re.sub(r"(\.\d{6})\d+", r"\1", test_timestamp.replace("Z", "+00:00"))
+        return datetime.datetime.fromisoformat(normalized_timestamp).astimezone(datetime.timezone.utc)
     except (ValueError, OverflowError):
         return None
 

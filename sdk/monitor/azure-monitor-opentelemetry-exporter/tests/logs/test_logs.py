@@ -688,7 +688,7 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(log_data)
 
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Availability")
-        self.assertEqual(envelope.time, datetime.datetime.fromisoformat(test_timestamp))
+        self.assertEqual(envelope.time, datetime.datetime(2025, 4, 19, 12, 10, 59, 993000, tzinfo=datetime.timezone.utc))
         self.assertEqual(envelope.data.base_type, "AvailabilityData")
         self.assertEqual(envelope.data.base_data.id, "test-id")
         self.assertEqual(envelope.data.base_data.name, "test-name")
