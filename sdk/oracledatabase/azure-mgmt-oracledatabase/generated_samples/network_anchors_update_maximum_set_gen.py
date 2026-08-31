@@ -32,21 +32,21 @@ def main():
 
     response = client.network_anchors.begin_update(
         resource_group_name="rgopenapi",
-        network_anchor_name="networkanchor1",
+        network_anchor_name="resource1",
         properties={
             "properties": {
                 "isOracleDnsForwardingEndpointEnabled": True,
                 "isOracleDnsListeningEndpointEnabled": True,
                 "isOracleToAzureDnsZoneSyncEnabled": True,
-                "ociBackupCidrBlock": "waoztwkdpplgjtkiwkfnnohu",
+                "ociBackupCidrBlock": "zll",
             },
-            "tags": {"key8038": "oqbirdmumdslewkcradmyvojgorraz"},
-            "zones": ["zone1"],
+            "tags": {"key2518": "example"},
+            "zones": ["example"],
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/NetworkAnchors_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/NetworkAnchors_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

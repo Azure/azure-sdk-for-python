@@ -33,11 +33,11 @@ def main():
 
     response = client.exadb_vm_clusters.begin_remove_vms(
         resource_group_name="rgopenapi",
-        exadb_vm_cluster_name="exadbVmClusterName1",
+        exadb_vm_cluster_name="resource1",
         body={
             "dbNodes": [
                 {
-                    "dbNodeId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Oracle.Database/exadbVmClusters/vmCluster/dbNodes/dbNodeName"
+                    "dbNodeId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Oracle.Database/exadbVmClusters/vmcluster1/dbNodes/node1"
                 }
             ]
         },
@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/ExadbVmClusters_RemoveVms_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ExadbVmClusters_RemoveVms_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

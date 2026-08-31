@@ -32,12 +32,12 @@ def main():
 
     response = client.db_systems.begin_update(
         resource_group_name="rgopenapi",
-        db_system_name="dbsystem1",
-        properties={"properties": {"source": "None"}, "tags": {"key5457": "loashrzuxxqkberqvpnkr"}, "zones": ["zone1"]},
+        db_system_name="resource1",
+        properties={"properties": {"source": "None"}, "tags": {"key7827": "example"}, "zones": ["example"]},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/DbSystems_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/DbSystems_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

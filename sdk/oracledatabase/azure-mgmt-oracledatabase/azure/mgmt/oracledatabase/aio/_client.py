@@ -28,6 +28,8 @@ from .operations import (
     AutonomousDatabasesOperations,
     CloudExadataInfrastructuresOperations,
     CloudVmClustersOperations,
+    DatabaseEditionsOperations,
+    DatabaseSystemShapeResourcesOperations,
     DbNodesOperations,
     DbServersOperations,
     DbSystemShapesOperations,
@@ -41,6 +43,8 @@ from .operations import (
     FlexComponentsOperations,
     GiMinorVersionsOperations,
     GiVersionsOperations,
+    GoldenGateConnectionsOperations,
+    GoldenGateDeploymentsOperations,
     NetworkAnchorsOperations,
     Operations,
     OracleSubscriptionsOperations,
@@ -124,6 +128,17 @@ class OracleDatabaseMgmtClient:  # pylint: disable=too-many-instance-attributes,
     :vartype db_systems: azure.mgmt.oracledatabase.aio.operations.DbSystemsOperations
     :ivar db_versions: DbVersionsOperations operations
     :vartype db_versions: azure.mgmt.oracledatabase.aio.operations.DbVersionsOperations
+    :ivar database_editions: DatabaseEditionsOperations operations
+    :vartype database_editions: azure.mgmt.oracledatabase.aio.operations.DatabaseEditionsOperations
+    :ivar database_system_shape_resources: DatabaseSystemShapeResourcesOperations operations
+    :vartype database_system_shape_resources:
+     azure.mgmt.oracledatabase.aio.operations.DatabaseSystemShapeResourcesOperations
+    :ivar golden_gate_connections: GoldenGateConnectionsOperations operations
+    :vartype golden_gate_connections:
+     azure.mgmt.oracledatabase.aio.operations.GoldenGateConnectionsOperations
+    :ivar golden_gate_deployments: GoldenGateDeploymentsOperations operations
+    :vartype golden_gate_deployments:
+     azure.mgmt.oracledatabase.aio.operations.GoldenGateDeploymentsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -133,10 +148,9 @@ class OracleDatabaseMgmtClient:  # pylint: disable=too-many-instance-attributes,
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2025-11-01-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -249,6 +263,18 @@ class OracleDatabaseMgmtClient:  # pylint: disable=too-many-instance-attributes,
         )
         self.db_systems = DbSystemsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.db_versions = DbVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_editions = DatabaseEditionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.database_system_shape_resources = DatabaseSystemShapeResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.golden_gate_connections = GoldenGateConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.golden_gate_deployments = GoldenGateDeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

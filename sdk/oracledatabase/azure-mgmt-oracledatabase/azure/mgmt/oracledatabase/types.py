@@ -10,7 +10,7 @@
 from typing import Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import DataBaseType, DbSystemSourceType, SourceType
+from .models._enums import ConnectionType, DataBaseType, DbSystemSourceType, SourceType
 
 if TYPE_CHECKING:
     from .models import (
@@ -21,45 +21,60 @@ if TYPE_CHECKING:
         AutonomousDatabaseLifecycleState,
         AutonomousMaintenanceScheduleType,
         AzureResourceProvisioningState,
+        BackupDestinationType,
+        CategoryType,
         CloneType,
         CloudAccountProvisioningState,
         CloudExadataInfrastructureLifecycleState,
         CloudVmClusterLifecycleState,
         ComputeModel,
+        ConnectionLifecycleState,
+        ConnectionType,
         ConsumerGroup,
         CreatedByType,
+        CredentialType,
         DataSafeStatusType,
         DatabaseEditionType,
         DayOfWeekName,
         DbNodeActionEnum,
         DbSystemDatabaseEditionType,
         DbSystemLifecycleState,
+        DeploymentLifecycleState,
+        DeploymentType,
         DisasterRecoveryType,
         DiskRedundancy,
         DiskRedundancyType,
         ExadataVmClusterStorageManagementType,
         ExadbVmClusterLifecycleState,
         ExascaleDbStorageVaultLifecycleState,
+        FrequencyType,
         GenerateType,
         GridImageType,
         HostFormatType,
         Intent,
         IormLifecycleState,
+        KafkaConnectionTechnologyType,
         LicenseModel,
+        MicrosoftFabricConnectionTechnologyType,
         MonthName,
         Objective,
         OpenModeType,
         OperationsInsightsStatusType,
+        OracleConnectionTechnologyType,
         OracleSubscriptionProvisioningState,
         PatchingMode,
         PermissionLevelType,
         Preference,
         ProtocolType,
+        ProximityPlacementGroupEntityType,
         RefreshableModelType,
         RefreshableStatusType,
         RepeatCadenceType,
         RoleType,
+        RoutingMethod,
+        SessionMode,
         SessionModeType,
+        SetupType,
         ShapeAttribute,
         SourceType,
         StorageManagementType,
@@ -155,6 +170,45 @@ class Resource(TypedDict, total=False):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    """
+
+
+class AssignUnassignConnection(TypedDict, total=False):
+    """The payload for assigning or unassigning a connection on a deployment.
+
+    :ivar connectionId: The Azure resource ID of the connection to assign or unassign. Required.
+    :vartype connectionId: str
+    """
+
+    connectionId: Required[str]
+    """The Azure resource ID of the connection to assign or unassign. Required."""
+
+
+class AssignUnassignDeployment(TypedDict, total=False):
+    """The payload for assigning or unassigning a deployment on a connection.
+
+    :ivar deploymentId: The Azure resource ID of the deployment to assign or unassign. Required.
+    :vartype deploymentId: str
+    """
+
+    deploymentId: Required[str]
+    """The Azure resource ID of the deployment to assign or unassign. Required."""
+
+
 class TrackedResource(Resource):
     """Tracked Resource.
 
@@ -205,23 +259,6 @@ class AutonomousDatabase(TrackedResource):
 
     properties: "AutonomousDatabaseBaseProperties"
     """The resource-specific properties for this resource."""
-
-
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    """
 
 
 class AutonomousDatabaseBackup(ProxyResource):
@@ -285,6 +322,9 @@ class AutonomousDatabaseBackupProperties(TypedDict, total=False):
     :ivar provisioningState: Azure resource provisioning state. Known values are: "Succeeded",
      "Failed", "Canceled", and "Provisioning".
     :vartype provisioningState: Union[str, "AzureResourceProvisioningState"]
+    :ivar backupDestination: The destination where this backup is stored. Known values are: "OCI"
+     and "AZURE".
+    :vartype backupDestination: Union[str, "BackupDestinationType"]
     """
 
     autonomousDatabaseOcid: str
@@ -321,6 +361,8 @@ class AutonomousDatabaseBackupProperties(TypedDict, total=False):
     provisioningState: Union[str, "AzureResourceProvisioningState"]
     """Azure resource provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      and \"Provisioning\"."""
+    backupDestination: Union[str, "BackupDestinationType"]
+    """The destination where this backup is stored. Known values are: \"OCI\" and \"AZURE\"."""
 
 
 class AutonomousDatabaseBackupUpdate(TypedDict, total=False):
@@ -372,7 +414,7 @@ class AutonomousDatabaseCloneProperties(TypedDict, total=False):
     :ivar dbVersion: A valid Oracle Database version for Autonomous Database.
     :vartype dbVersion: str
     :ivar dbWorkload: The Autonomous Database workload type. Known values are: "OLTP", "DW", "AJD",
-     and "APEX".
+     "APEX", and "LH".
     :vartype dbWorkload: Union[str, "WorkloadType"]
     :ivar displayName: The user-friendly name for the Autonomous Database.
     :vartype displayName: str
@@ -550,6 +592,21 @@ class AutonomousDatabaseCloneProperties(TypedDict, total=False):
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelistedIps: list[str]
+    :ivar isScheduleAzUpdateToEarliest: Update AZ at the earliest available opportunity.
+    :vartype isScheduleAzUpdateToEarliest: bool
+    :ivar timeScheduledAzUpdate: The date and time when the Autonomous Database availability zone
+     is to be updated.
+    :vartype timeScheduledAzUpdate: str
+    :ivar zone: The logical zone where the Autonomous Database is provisioned.
+    :vartype zone: str
+    :ivar backupDestination: Backup destination for auto and long-term backups. Existing backups
+     stay in their original destination when this value changes. Known values are: "OCI" and
+     "AZURE".
+    :vartype backupDestination: Union[str, "BackupDestinationType"]
+    :ivar resourceAnchorId: Azure Resource Anchor ID.
+    :vartype resourceAnchorId: str
+    :ivar networkAnchorId: Azure Network Anchor ID.
+    :vartype networkAnchorId: str
     :ivar dataBaseType: Database type to be created. Required. Clone DB.
     :vartype dataBaseType: Literal[DataBaseType.CLONE]
     :ivar source: The source of the database. Known values are: "None", "Database", "BackupFromId",
@@ -601,8 +658,8 @@ class AutonomousDatabaseCloneProperties(TypedDict, total=False):
     dbVersion: str
     """A valid Oracle Database version for Autonomous Database."""
     dbWorkload: Union[str, "WorkloadType"]
-    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", and
-     \"APEX\"."""
+    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", \"APEX\",
+     and \"LH\"."""
     displayName: str
     """The user-friendly name for the Autonomous Database."""
     isAutoScalingEnabled: bool
@@ -760,6 +817,19 @@ class AutonomousDatabaseCloneProperties(TypedDict, total=False):
     """The client IP access control list (ACL). This is an array of CIDR notations and/or IP
      addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25']."""
+    isScheduleAzUpdateToEarliest: bool
+    """Update AZ at the earliest available opportunity."""
+    timeScheduledAzUpdate: str
+    """The date and time when the Autonomous Database availability zone is to be updated."""
+    zone: str
+    """The logical zone where the Autonomous Database is provisioned."""
+    backupDestination: Union[str, "BackupDestinationType"]
+    """Backup destination for auto and long-term backups. Existing backups stay in their original
+     destination when this value changes. Known values are: \"OCI\" and \"AZURE\"."""
+    resourceAnchorId: str
+    """Azure Resource Anchor ID."""
+    networkAnchorId: str
+    """Azure Network Anchor ID."""
     dataBaseType: Required[Literal[DataBaseType.CLONE]]
     """Database type to be created. Required. Clone DB."""
     source: Union[str, "SourceType"]
@@ -811,7 +881,7 @@ class AutonomousDatabaseCrossRegionDisasterRecoveryProperties(TypedDict, total=F
     :ivar dbVersion: A valid Oracle Database version for Autonomous Database.
     :vartype dbVersion: str
     :ivar dbWorkload: The Autonomous Database workload type. Known values are: "OLTP", "DW", "AJD",
-     and "APEX".
+     "APEX", and "LH".
     :vartype dbWorkload: Union[str, "WorkloadType"]
     :ivar displayName: The user-friendly name for the Autonomous Database.
     :vartype displayName: str
@@ -989,6 +1059,21 @@ class AutonomousDatabaseCrossRegionDisasterRecoveryProperties(TypedDict, total=F
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelistedIps: list[str]
+    :ivar isScheduleAzUpdateToEarliest: Update AZ at the earliest available opportunity.
+    :vartype isScheduleAzUpdateToEarliest: bool
+    :ivar timeScheduledAzUpdate: The date and time when the Autonomous Database availability zone
+     is to be updated.
+    :vartype timeScheduledAzUpdate: str
+    :ivar zone: The logical zone where the Autonomous Database is provisioned.
+    :vartype zone: str
+    :ivar backupDestination: Backup destination for auto and long-term backups. Existing backups
+     stay in their original destination when this value changes. Known values are: "OCI" and
+     "AZURE".
+    :vartype backupDestination: Union[str, "BackupDestinationType"]
+    :ivar resourceAnchorId: Azure Resource Anchor ID.
+    :vartype resourceAnchorId: str
+    :ivar networkAnchorId: Azure Network Anchor ID.
+    :vartype networkAnchorId: str
     :ivar dataBaseType: Database type to be created. Required. Cross Region Disaster Recovery.
     :vartype dataBaseType: Literal[DataBaseType.CROSS_REGION_DISASTER_RECOVERY]
     :ivar source: The source of the database. Required. cross region disaster recovery source.
@@ -1034,8 +1119,8 @@ class AutonomousDatabaseCrossRegionDisasterRecoveryProperties(TypedDict, total=F
     dbVersion: str
     """A valid Oracle Database version for Autonomous Database."""
     dbWorkload: Union[str, "WorkloadType"]
-    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", and
-     \"APEX\"."""
+    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", \"APEX\",
+     and \"LH\"."""
     displayName: str
     """The user-friendly name for the Autonomous Database."""
     isAutoScalingEnabled: bool
@@ -1193,6 +1278,19 @@ class AutonomousDatabaseCrossRegionDisasterRecoveryProperties(TypedDict, total=F
     """The client IP access control list (ACL). This is an array of CIDR notations and/or IP
      addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25']."""
+    isScheduleAzUpdateToEarliest: bool
+    """Update AZ at the earliest available opportunity."""
+    timeScheduledAzUpdate: str
+    """The date and time when the Autonomous Database availability zone is to be updated."""
+    zone: str
+    """The logical zone where the Autonomous Database is provisioned."""
+    backupDestination: Union[str, "BackupDestinationType"]
+    """Backup destination for auto and long-term backups. Existing backups stay in their original
+     destination when this value changes. Known values are: \"OCI\" and \"AZURE\"."""
+    resourceAnchorId: str
+    """Azure Resource Anchor ID."""
+    networkAnchorId: str
+    """Azure Network Anchor ID."""
     dataBaseType: Required[Literal[DataBaseType.CROSS_REGION_DISASTER_RECOVERY]]
     """Database type to be created. Required. Cross Region Disaster Recovery."""
     source: Required[Literal[SourceType.CROSS_REGION_DISASTER_RECOVERY]]
@@ -1243,7 +1341,7 @@ class AutonomousDatabaseFromBackupTimestampProperties(TypedDict, total=False):  
     :ivar dbVersion: A valid Oracle Database version for Autonomous Database.
     :vartype dbVersion: str
     :ivar dbWorkload: The Autonomous Database workload type. Known values are: "OLTP", "DW", "AJD",
-     and "APEX".
+     "APEX", and "LH".
     :vartype dbWorkload: Union[str, "WorkloadType"]
     :ivar displayName: The user-friendly name for the Autonomous Database.
     :vartype displayName: str
@@ -1421,6 +1519,21 @@ class AutonomousDatabaseFromBackupTimestampProperties(TypedDict, total=False):  
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelistedIps: list[str]
+    :ivar isScheduleAzUpdateToEarliest: Update AZ at the earliest available opportunity.
+    :vartype isScheduleAzUpdateToEarliest: bool
+    :ivar timeScheduledAzUpdate: The date and time when the Autonomous Database availability zone
+     is to be updated.
+    :vartype timeScheduledAzUpdate: str
+    :ivar zone: The logical zone where the Autonomous Database is provisioned.
+    :vartype zone: str
+    :ivar backupDestination: Backup destination for auto and long-term backups. Existing backups
+     stay in their original destination when this value changes. Known values are: "OCI" and
+     "AZURE".
+    :vartype backupDestination: Union[str, "BackupDestinationType"]
+    :ivar resourceAnchorId: Azure Resource Anchor ID.
+    :vartype resourceAnchorId: str
+    :ivar networkAnchorId: Azure Network Anchor ID.
+    :vartype networkAnchorId: str
     :ivar dataBaseType: Database type to be created. Required. Clone DB from backup timestamp.
     :vartype dataBaseType: Literal[DataBaseType.CLONE_FROM_BACKUP_TIMESTAMP]
     :ivar source: The source of the database. Required. Backup from timestamp source.
@@ -1460,8 +1573,8 @@ class AutonomousDatabaseFromBackupTimestampProperties(TypedDict, total=False):  
     dbVersion: str
     """A valid Oracle Database version for Autonomous Database."""
     dbWorkload: Union[str, "WorkloadType"]
-    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", and
-     \"APEX\"."""
+    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", \"APEX\",
+     and \"LH\"."""
     displayName: str
     """The user-friendly name for the Autonomous Database."""
     isAutoScalingEnabled: bool
@@ -1619,6 +1732,19 @@ class AutonomousDatabaseFromBackupTimestampProperties(TypedDict, total=False):  
     """The client IP access control list (ACL). This is an array of CIDR notations and/or IP
      addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25']."""
+    isScheduleAzUpdateToEarliest: bool
+    """Update AZ at the earliest available opportunity."""
+    timeScheduledAzUpdate: str
+    """The date and time when the Autonomous Database availability zone is to be updated."""
+    zone: str
+    """The logical zone where the Autonomous Database is provisioned."""
+    backupDestination: Union[str, "BackupDestinationType"]
+    """Backup destination for auto and long-term backups. Existing backups stay in their original
+     destination when this value changes. Known values are: \"OCI\" and \"AZURE\"."""
+    resourceAnchorId: str
+    """Azure Resource Anchor ID."""
+    networkAnchorId: str
+    """Azure Network Anchor ID."""
     dataBaseType: Required[Literal[DataBaseType.CLONE_FROM_BACKUP_TIMESTAMP]]
     """Database type to be created. Required. Clone DB from backup timestamp."""
     source: Required[Literal[SourceType.BACKUP_FROM_TIMESTAMP]]
@@ -1675,7 +1801,7 @@ class AutonomousDatabaseProperties(TypedDict, total=False):
     :ivar dbVersion: A valid Oracle Database version for Autonomous Database.
     :vartype dbVersion: str
     :ivar dbWorkload: The Autonomous Database workload type. Known values are: "OLTP", "DW", "AJD",
-     and "APEX".
+     "APEX", and "LH".
     :vartype dbWorkload: Union[str, "WorkloadType"]
     :ivar displayName: The user-friendly name for the Autonomous Database.
     :vartype displayName: str
@@ -1853,6 +1979,21 @@ class AutonomousDatabaseProperties(TypedDict, total=False):
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelistedIps: list[str]
+    :ivar isScheduleAzUpdateToEarliest: Update AZ at the earliest available opportunity.
+    :vartype isScheduleAzUpdateToEarliest: bool
+    :ivar timeScheduledAzUpdate: The date and time when the Autonomous Database availability zone
+     is to be updated.
+    :vartype timeScheduledAzUpdate: str
+    :ivar zone: The logical zone where the Autonomous Database is provisioned.
+    :vartype zone: str
+    :ivar backupDestination: Backup destination for auto and long-term backups. Existing backups
+     stay in their original destination when this value changes. Known values are: "OCI" and
+     "AZURE".
+    :vartype backupDestination: Union[str, "BackupDestinationType"]
+    :ivar resourceAnchorId: Azure Resource Anchor ID.
+    :vartype resourceAnchorId: str
+    :ivar networkAnchorId: Azure Network Anchor ID.
+    :vartype networkAnchorId: str
     :ivar dataBaseType: Database type to be created. Required. Regular DB.
     :vartype dataBaseType: Literal[DataBaseType.REGULAR]
     """
@@ -1879,8 +2020,8 @@ class AutonomousDatabaseProperties(TypedDict, total=False):
     dbVersion: str
     """A valid Oracle Database version for Autonomous Database."""
     dbWorkload: Union[str, "WorkloadType"]
-    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", and
-     \"APEX\"."""
+    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", \"APEX\",
+     and \"LH\"."""
     displayName: str
     """The user-friendly name for the Autonomous Database."""
     isAutoScalingEnabled: bool
@@ -2038,6 +2179,19 @@ class AutonomousDatabaseProperties(TypedDict, total=False):
     """The client IP access control list (ACL). This is an array of CIDR notations and/or IP
      addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25']."""
+    isScheduleAzUpdateToEarliest: bool
+    """Update AZ at the earliest available opportunity."""
+    timeScheduledAzUpdate: str
+    """The date and time when the Autonomous Database availability zone is to be updated."""
+    zone: str
+    """The logical zone where the Autonomous Database is provisioned."""
+    backupDestination: Union[str, "BackupDestinationType"]
+    """Backup destination for auto and long-term backups. Existing backups stay in their original
+     destination when this value changes. Known values are: \"OCI\" and \"AZURE\"."""
+    resourceAnchorId: str
+    """Azure Resource Anchor ID."""
+    networkAnchorId: str
+    """Azure Network Anchor ID."""
     dataBaseType: Required[Literal[DataBaseType.REGULAR]]
     """Database type to be created. Required. Regular DB."""
 
@@ -2235,6 +2389,38 @@ class AzureSubscriptions(TypedDict, total=False):
     """Azure Subscription Ids to be updated. Required."""
 
 
+class BackupScheduleType(TypedDict, total=False):
+    """Backup schedule type.
+
+    :ivar bucketName: Bucket name.
+    :vartype bucketName: str
+    :ivar compartmentId: Compartment ID.
+    :vartype compartmentId: str
+    :ivar frequencyBackupScheduled: Backup schedule frequency. Known values are: "Daily", "Weekly",
+     and "Monthly".
+    :vartype frequencyBackupScheduled: Union[str, "FrequencyType"]
+    :ivar isMetadataOnly: Indicates whether the backup contains metadata only.
+    :vartype isMetadataOnly: bool
+    :ivar namespaceName: Namespace.
+    :vartype namespaceName: str
+    :ivar timeBackupScheduled: Scheduled backup time.
+    :vartype timeBackupScheduled: str
+    """
+
+    bucketName: str
+    """Bucket name."""
+    compartmentId: str
+    """Compartment ID."""
+    frequencyBackupScheduled: Union[str, "FrequencyType"]
+    """Backup schedule frequency. Known values are: \"Daily\", \"Weekly\", and \"Monthly\"."""
+    isMetadataOnly: bool
+    """Indicates whether the backup contains metadata only."""
+    namespaceName: str
+    """Namespace."""
+    timeBackupScheduled: str
+    """Scheduled backup time."""
+
+
 class CloudExadataInfrastructure(TrackedResource):
     """CloudExadataInfrastructure resource definition.
 
@@ -2272,6 +2458,8 @@ class CloudExadataInfrastructureProperties(TypedDict, total=False):
     :vartype definedFileSystemConfiguration: list["DefinedFileSystemConfiguration"]
     :ivar ocid: Exadata infra ocid.
     :vartype ocid: str
+    :ivar resourceAnchorId: Azure Resource Anchor ID.
+    :vartype resourceAnchorId: str
     :ivar computeCount: The number of compute servers for the cloud Exadata infrastructure.
     :vartype computeCount: int
     :ivar storageCount: The number of storage servers for the cloud Exadata infrastructure.
@@ -2306,6 +2494,8 @@ class CloudExadataInfrastructureProperties(TypedDict, total=False):
     :vartype lifecycleState: Union[str, "CloudExadataInfrastructureLifecycleState"]
     :ivar shape: The model name of the cloud Exadata infrastructure resource. Required.
     :vartype shape: str
+    :ivar proximityPlacementGroup: Proximity placement group settings.
+    :vartype proximityPlacementGroup: "ProximityPlacementGroup"
     :ivar ociUrl: HTTPS link to OCI resources exposed to Azure Customer via Azure Interface.
     :vartype ociUrl: str
     :ivar cpuCount: The total number of CPU cores allocated.
@@ -2363,6 +2553,8 @@ class CloudExadataInfrastructureProperties(TypedDict, total=False):
     """Defined file system configurations."""
     ocid: str
     """Exadata infra ocid."""
+    resourceAnchorId: str
+    """Azure Resource Anchor ID."""
     computeCount: int
     """The number of compute servers for the cloud Exadata infrastructure."""
     storageCount: int
@@ -2395,6 +2587,8 @@ class CloudExadataInfrastructureProperties(TypedDict, total=False):
      \"Updating\", \"Terminating\", \"Terminated\", \"MaintenanceInProgress\", and \"Failed\"."""
     shape: Required[str]
     """The model name of the cloud Exadata infrastructure resource. Required."""
+    proximityPlacementGroup: "ProximityPlacementGroup"
+    """Proximity placement group settings."""
     ociUrl: str
     """HTTPS link to OCI resources exposed to Azure Customer via Azure Interface."""
     cpuCount: int
@@ -2526,6 +2720,10 @@ class CloudVmClusterProperties(TypedDict, total=False):
 
     :ivar ocid: Cloud VM Cluster ocid.
     :vartype ocid: str
+    :ivar resourceAnchorId: Azure Resource Anchor ID.
+    :vartype resourceAnchorId: str
+    :ivar networkAnchorId: Azure Network Anchor ID.
+    :vartype networkAnchorId: str
     :ivar listenerPort: The port number configured for the listener on the cloud VM cluster.
     :vartype listenerPort: int
     :ivar nodeCount: The number of nodes in the cloud VM cluster.
@@ -2549,8 +2747,7 @@ class CloudVmClusterProperties(TypedDict, total=False):
     :vartype timeZone: str
     :ivar zoneId: The OCID of the zone the cloud VM cluster is associated with.
     :vartype zoneId: str
-    :ivar hostname: The hostname for the cloud VM cluster. Hostname and domain combined length
-     cannot exceed 112 characters. Required.
+    :ivar hostname: The hostname for the cloud VM cluster. Required.
     :vartype hostname: str
     :ivar domain: The domain name for the cloud VM cluster.
     :vartype domain: str
@@ -2570,12 +2767,23 @@ class CloudVmClusterProperties(TypedDict, total=False):
      </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in the Exadata documentation for details
      on the impact of the configuration settings on storage.
     :vartype dataStoragePercentage: int
+    :ivar recoStoragePercentage: The percentage assigned to RECO storage (database redo logs,
+     archive logs, and recovery manager backups). See `Storage Configuration
+     </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in the Exadata documentation for details
+     on the impact of the configuration settings on storage.
+    :vartype recoStoragePercentage: int
+    :ivar sparseStoragePercentage: The percentage assigned to SPARSE storage (Exadata snapshots).
+     See `Storage Configuration </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in the
+     Exadata documentation for details on the impact of the configuration settings on storage.
+    :vartype sparseStoragePercentage: int
     :ivar isLocalBackupEnabled: If true, database backup on local Exadata storage is configured for
      the cloud VM cluster. If false, database backup on local Exadata storage is not available in
      the cloud VM cluster.
     :vartype isLocalBackupEnabled: bool
     :ivar cloudExadataInfrastructureId: Cloud Exadata Infrastructure ID. Required.
     :vartype cloudExadataInfrastructureId: str
+    :ivar proximityPlacementGroup: Proximity placement group settings.
+    :vartype proximityPlacementGroup: "ProximityPlacementGroup"
     :ivar isSparseDiskgroupEnabled: If true, sparse disk group is configured for the cloud VM
      cluster. If false, sparse disk group is not created.
     :vartype isSparseDiskgroupEnabled: bool
@@ -2660,10 +2868,17 @@ class CloudVmClusterProperties(TypedDict, total=False):
     :ivar storageManagementType: Specifies whether the type of storage management for the VM
      cluster is ASM or Exascale. Known values are: "ASM" and "Exascale".
     :vartype storageManagementType: Union[str, "ExadataVmClusterStorageManagementType"]
+    :ivar isAcceleratedNetworkEnabled: Indicates if the Accelerated Networking feature is enabled
+     or disabled for provisioning an Exadata VM cluster. The default value is: false.
+    :vartype isAcceleratedNetworkEnabled: bool
     """
 
     ocid: str
     """Cloud VM Cluster ocid."""
+    resourceAnchorId: str
+    """Azure Resource Anchor ID."""
+    networkAnchorId: str
+    """Azure Network Anchor ID."""
     listenerPort: int
     """The port number configured for the listener on the cloud VM cluster."""
     nodeCount: int
@@ -2688,8 +2903,7 @@ class CloudVmClusterProperties(TypedDict, total=False):
     zoneId: str
     """The OCID of the zone the cloud VM cluster is associated with."""
     hostname: Required[str]
-    """The hostname for the cloud VM cluster. Hostname and domain combined length cannot exceed 112
-     characters. Required."""
+    """The hostname for the cloud VM cluster. Required."""
     domain: str
     """The domain name for the cloud VM cluster."""
     cpuCoreCount: Required[int]
@@ -2707,11 +2921,21 @@ class CloudVmClusterProperties(TypedDict, total=False):
      backups). Accepted values are 35, 40, 60 and 80. The default is 80 percent assigned to DATA
      storage. See `Storage Configuration </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in
      the Exadata documentation for details on the impact of the configuration settings on storage."""
+    recoStoragePercentage: int
+    """The percentage assigned to RECO storage (database redo logs, archive logs, and recovery manager
+     backups). See `Storage Configuration </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in
+     the Exadata documentation for details on the impact of the configuration settings on storage."""
+    sparseStoragePercentage: int
+    """The percentage assigned to SPARSE storage (Exadata snapshots). See `Storage Configuration
+     </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in the Exadata documentation for details
+     on the impact of the configuration settings on storage."""
     isLocalBackupEnabled: bool
     """If true, database backup on local Exadata storage is configured for the cloud VM cluster. If
      false, database backup on local Exadata storage is not available in the cloud VM cluster."""
     cloudExadataInfrastructureId: Required[str]
     """Cloud Exadata Infrastructure ID. Required."""
+    proximityPlacementGroup: "ProximityPlacementGroup"
+    """Proximity placement group settings."""
     isSparseDiskgroupEnabled: bool
     """If true, sparse disk group is configured for the cloud VM cluster. If false, sparse disk group
      is not created."""
@@ -2793,6 +3017,9 @@ class CloudVmClusterProperties(TypedDict, total=False):
     storageManagementType: Union[str, "ExadataVmClusterStorageManagementType"]
     """Specifies whether the type of storage management for the VM cluster is ASM or Exascale. Known
      values are: \"ASM\" and \"Exascale\"."""
+    isAcceleratedNetworkEnabled: bool
+    """Indicates if the Accelerated Networking feature is enabled or disabled for provisioning an
+     Exadata VM cluster. The default value is: false."""
 
 
 class CloudVmClusterUpdate(TypedDict, total=False):
@@ -2841,6 +3068,9 @@ class CloudVmClusterUpdateProperties(TypedDict, total=False):
     :vartype displayName: str
     :ivar computeNodes: The list of compute servers to be added to the cloud VM cluster.
     :vartype computeNodes: list[str]
+    :ivar isAcceleratedNetworkEnabled: Indicates if the Accelerated Networking feature is enabled
+     or disabled for provisioning an Exadata VM cluster. The default value is: false.
+    :vartype isAcceleratedNetworkEnabled: bool
     """
 
     storageSizeInGbs: int
@@ -2870,6 +3100,9 @@ class CloudVmClusterUpdateProperties(TypedDict, total=False):
     """Display Name."""
     computeNodes: list[str]
     """The list of compute servers to be added to the cloud VM cluster."""
+    isAcceleratedNetworkEnabled: bool
+    """Indicates if the Accelerated Networking feature is enabled or disabled for provisioning an
+     Exadata VM cluster. The default value is: false."""
 
 
 class ConfigureExascaleCloudExadataInfrastructureDetails(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -3211,6 +3444,10 @@ class DbSystemProperties(TypedDict, total=False):
     :ivar dataCollectionOptions: Indicates user preferences for the various diagnostic collection
      options for the Base DB.
     :vartype dataCollectionOptions: "DataCollectionOptions"
+    :ivar characterSet: The character set for the DB system. The default is AL32UTF8.
+    :vartype characterSet: str
+    :ivar ncharacterSet: The national character set for the DB system. The default is AL16UTF16.
+    :vartype ncharacterSet: str
     :ivar source: The source of the database for creating a new database. Required. for creating a
      new database.
     :vartype source: Literal[DbSystemSourceType.NONE]
@@ -3315,6 +3552,10 @@ class DbSystemProperties(TypedDict, total=False):
     """The number of compute servers for the DB system."""
     dataCollectionOptions: "DataCollectionOptions"
     """Indicates user preferences for the various diagnostic collection options for the Base DB."""
+    characterSet: str
+    """The character set for the DB system. The default is AL32UTF8."""
+    ncharacterSet: str
+    """The national character set for the DB system. The default is AL16UTF16."""
     source: Required[Literal[DbSystemSourceType.NONE]]
     """The source of the database for creating a new database. Required. for creating a new database."""
     databaseEdition: Required[Union[str, "DbSystemDatabaseEditionType"]]
@@ -3387,6 +3628,139 @@ class DefinedFileSystemConfiguration(TypedDict, total=False):
     """Minimum size of mount path in Gb."""
     mountPoint: str
     """Mount path for the file system."""
+
+
+class DeploymentProperties(TypedDict, total=False):
+    """GoldenGate Deployment resource model.
+
+    :ivar backupSchedule: Backup schedule.
+    :vartype backupSchedule: "BackupScheduleType"
+    :ivar compartment: OCI compartment.
+    :vartype compartment: str
+    :ivar ocid: The OCID of the deployment being referenced.
+    :vartype ocid: str
+    :ivar cpuCoreCount: The minimum number of OCPUs to be made available for this deployment.
+    :vartype cpuCoreCount: int
+    :ivar displayName: Display name. Required.
+    :vartype displayName: str
+    :ivar category: The deployment category. Known values are: "DataReplication",
+     "StreamAnalytics", and "DataTransforms".
+    :vartype category: Union[str, "CategoryType"]
+    :ivar deploymentType: The type of deployment. Known values are: "Ogg", "DatabaseOracle",
+     "BigData", "DatabaseMicrosoftSQLServer", "DatabaseMySQL", "DatabasePostGreSQL",
+     "DatabaseDB2ZOS", "DATABASE_DB2I", "GGSA", and "DataTransforms".
+    :vartype deploymentType: Union[str, "DeploymentType"]
+    :ivar deploymentUrl: HTTPS link to OCI resource exposed to Azure Customer via Azure Interface.
+    :vartype deploymentUrl: str
+    :ivar environmentType: Environment type. Known values are: "Production" and
+     "DevelopmentOrTesting".
+    :vartype environmentType: Union[str, "SetupType"]
+    :ivar isAutoScalingEnabled: Indicates if auto scaling is enabled for the deployment's CPU core
+     count.
+    :vartype isAutoScalingEnabled: bool
+    :ivar ingressIps: Connection IP address.
+    :vartype ingressIps: list[str]
+    :ivar isPublic: True if this object is publicly available.
+    :vartype isPublic: bool
+    :ivar licenseModel: The Oracle license model that applies to a Deployment. Known values are:
+     "LicenseIncluded" and "BringYourOwnLicense".
+    :vartype licenseModel: Union[str, "LicenseModel"]
+    :ivar lifecycleDetails: Describes the object's current state in detail.
+    :vartype lifecycleDetails: str
+    :ivar lifecycleState: Possible lifecycle states. Known values are: "Creating", "Updating",
+     "Active", "InActive", "Deleting", "Deleted", "Failed", "Needs Attention", "In Progress",
+     "Canceling", "Canceled", "Succeeded", and "Waiting".
+    :vartype lifecycleState: Union[str, "DeploymentLifecycleState"]
+    :ivar timeCreated: The date time the resource was created in OCI.
+    :vartype timeCreated: str
+    :ivar timeUpdated: The date time the resource was last updated in OCI.
+    :vartype timeUpdated: str
+    :ivar maintenanceConfiguration: Maintenance configuration.
+    :vartype maintenanceConfiguration: "MaintenanceConfigurationType"
+    :ivar maintenanceWindow: Maintenance window.
+    :vartype maintenanceWindow: "MaintenanceWindowType"
+    :ivar networkAnchorId: Azure network anchor ID. Required.
+    :vartype networkAnchorId: str
+    :ivar oggData: Deployment data for creating an OGG deployment.
+    :vartype oggData: "OggDeploymentDetails"
+    :ivar privateIpAddress: The private IP address of VCN representing the access point for the
+     associated endpoint service in the GoldenGate service VCN.
+    :vartype privateIpAddress: str
+    :ivar provisioningState: Deployment provisioning state. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Provisioning".
+    :vartype provisioningState: Union[str, "AzureResourceProvisioningState"]
+    :ivar resourceAnchorId: Corresponding Azure resource anchor ID. Required.
+    :vartype resourceAnchorId: str
+    :ivar storageUtilizationInBytes: Storage utilization in bytes.
+    :vartype storageUtilizationInBytes: int
+    :ivar timeZone: The time zone of the deployment, for example, UTC.
+    :vartype timeZone: str
+    :ivar version: The current version.
+    :vartype version: str
+    """
+
+    backupSchedule: "BackupScheduleType"
+    """Backup schedule."""
+    compartment: str
+    """OCI compartment."""
+    ocid: str
+    """The OCID of the deployment being referenced."""
+    cpuCoreCount: int
+    """The minimum number of OCPUs to be made available for this deployment."""
+    displayName: Required[str]
+    """Display name. Required."""
+    category: Union[str, "CategoryType"]
+    """The deployment category. Known values are: \"DataReplication\", \"StreamAnalytics\", and
+     \"DataTransforms\"."""
+    deploymentType: Union[str, "DeploymentType"]
+    """The type of deployment. Known values are: \"Ogg\", \"DatabaseOracle\", \"BigData\",
+     \"DatabaseMicrosoftSQLServer\", \"DatabaseMySQL\", \"DatabasePostGreSQL\", \"DatabaseDB2ZOS\",
+     \"DATABASE_DB2I\", \"GGSA\", and \"DataTransforms\"."""
+    deploymentUrl: str
+    """HTTPS link to OCI resource exposed to Azure Customer via Azure Interface."""
+    environmentType: Union[str, "SetupType"]
+    """Environment type. Known values are: \"Production\" and \"DevelopmentOrTesting\"."""
+    isAutoScalingEnabled: bool
+    """Indicates if auto scaling is enabled for the deployment's CPU core count."""
+    ingressIps: list[str]
+    """Connection IP address."""
+    isPublic: bool
+    """True if this object is publicly available."""
+    licenseModel: Union[str, "LicenseModel"]
+    """The Oracle license model that applies to a Deployment. Known values are: \"LicenseIncluded\"
+     and \"BringYourOwnLicense\"."""
+    lifecycleDetails: str
+    """Describes the object's current state in detail."""
+    lifecycleState: Union[str, "DeploymentLifecycleState"]
+    """Possible lifecycle states. Known values are: \"Creating\", \"Updating\", \"Active\",
+     \"InActive\", \"Deleting\", \"Deleted\", \"Failed\", \"Needs Attention\", \"In Progress\",
+     \"Canceling\", \"Canceled\", \"Succeeded\", and \"Waiting\"."""
+    timeCreated: str
+    """The date time the resource was created in OCI."""
+    timeUpdated: str
+    """The date time the resource was last updated in OCI."""
+    maintenanceConfiguration: "MaintenanceConfigurationType"
+    """Maintenance configuration."""
+    maintenanceWindow: "MaintenanceWindowType"
+    """Maintenance window."""
+    networkAnchorId: Required[str]
+    """Azure network anchor ID. Required."""
+    oggData: "OggDeploymentDetails"
+    """Deployment data for creating an OGG deployment."""
+    privateIpAddress: str
+    """The private IP address of VCN representing the access point for the associated endpoint service
+     in the GoldenGate service VCN."""
+    provisioningState: Union[str, "AzureResourceProvisioningState"]
+    """Deployment provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", and
+     \"Provisioning\"."""
+    resourceAnchorId: Required[str]
+    """Corresponding Azure resource anchor ID. Required."""
+    storageUtilizationInBytes: int
+    """Storage utilization in bytes."""
+    timeZone: str
+    """The time zone of the deployment, for example, UTC."""
+    version: str
+    """The current version."""
 
 
 class DisasterRecoveryConfigurationDetails(TypedDict, total=False):
@@ -3919,6 +4293,12 @@ class ExascaleDbStorageVaultProperties(TypedDict, total=False):
     :ivar attachedShapeAttributes: The shapeAttribute of the Exadata VM cluster(s) associated with
      the Exadata Database Storage Vault.
     :vartype attachedShapeAttributes: list[Union[str, "ShapeAttribute"]]
+    :ivar isAutoscaleEnabled: Indicates if autoscale feature is enabled for the Storage Vault. The
+     default value is: false.
+    :vartype isAutoscaleEnabled: bool
+    :ivar autoscaleLimitInGbs: Maximum limit storage size in gigabytes, that is applicable for the
+     Database Storage Vault.
+    :vartype autoscaleLimitInGbs: int
     """
 
     additionalFlashCacheInPercent: int
@@ -3953,6 +4333,10 @@ class ExascaleDbStorageVaultProperties(TypedDict, total=False):
     attachedShapeAttributes: list[Union[str, "ShapeAttribute"]]
     """The shapeAttribute of the Exadata VM cluster(s) associated with the Exadata Database Storage
      Vault."""
+    isAutoscaleEnabled: bool
+    """Indicates if autoscale feature is enabled for the Storage Vault. The default value is: false."""
+    autoscaleLimitInGbs: int
+    """Maximum limit storage size in gigabytes, that is applicable for the Database Storage Vault."""
 
 
 class ExascaleDbStorageVaultTagsUpdate(TypedDict, total=False):
@@ -4002,6 +4386,379 @@ class GenerateAutonomousDatabaseWalletDetails(TypedDict, total=False):
     """The password to encrypt the keys inside the wallet. Required."""
 
 
+class GoldenGateConnection(TrackedResource):
+    """GoldenGate Connection resource model.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ConnectionBaseProperties"
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    """
+
+    properties: "ConnectionBaseProperties"
+    """The resource-specific properties for this resource."""
+    zones: list[str]
+    """The availability zones."""
+
+
+class GoldenGateConnectionUpdate(TypedDict, total=False):
+    """The type used for update operations of the GoldenGateConnection.
+
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "GoldenGateConnectionUpdateProperties"
+    """
+
+    zones: list[str]
+    """The availability zones."""
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "GoldenGateConnectionUpdateProperties"
+    """The resource-specific properties for this resource."""
+
+
+class GoldenGateConnectionUpdateProperties(TypedDict, total=False):
+    """The updatable properties of the GoldenGateConnection.
+
+    :ivar connectionType: The connection type to be created. Known values are: "GOLDENGATE",
+     "KAFKA", "KAFKA_SCHEMA_REGISTRY", "MYSQL", "JAVA_MESSAGE_SERVICE", "MICROSOFT_SQLSERVER",
+     "OCI_OBJECT_STORAGE", "ORACLE", "AZURE_DATA_LAKE_STORAGE", "POSTGRESQL",
+     "AZURE_SYNAPSE_ANALYTICS", "SNOWFLAKE", "AMAZON_S3", "HDFS", "ORACLE_NOSQL", "MONGODB",
+     "AMAZON_KINESIS", "AMAZON_REDSHIFT", "DB2", "REDIS", "ELASTICSEARCH", "GENERIC",
+     "GOOGLE_CLOUD_STORAGE", "GOOGLE_BIGQUERY", "DATABRICKS", "GOOGLE_PUBSUB", "MICROSOFT_FABRIC",
+     and "ICEBERG".
+    :vartype connectionType: Union[str, "ConnectionType"]
+    :ivar displayName: The connection display name.
+    :vartype displayName: str
+    :ivar routingMethod: Controls the network traffic direction to the target. Known values are:
+     "SHARED_SERVICE_ENDPOINT", "SHARED_DEPLOYMENT_ENDPOINT", and "DEDICATED_ENDPOINT".
+    :vartype routingMethod: Union[str, "RoutingMethod"]
+    :ivar vaultId: The customer's vault OCID.
+    :vartype vaultId: str
+    :ivar keyId: The customer's master key OCID.
+    :vartype keyId: str
+    :ivar doesUseSecretIds: Indicates whether secret OCIDs are used for credential fields.
+    :vartype doesUseSecretIds: bool
+    """
+
+    connectionType: Union[str, "ConnectionType"]
+    """The connection type to be created. Known values are: \"GOLDENGATE\", \"KAFKA\",
+     \"KAFKA_SCHEMA_REGISTRY\", \"MYSQL\", \"JAVA_MESSAGE_SERVICE\", \"MICROSOFT_SQLSERVER\",
+     \"OCI_OBJECT_STORAGE\", \"ORACLE\", \"AZURE_DATA_LAKE_STORAGE\", \"POSTGRESQL\",
+     \"AZURE_SYNAPSE_ANALYTICS\", \"SNOWFLAKE\", \"AMAZON_S3\", \"HDFS\", \"ORACLE_NOSQL\",
+     \"MONGODB\", \"AMAZON_KINESIS\", \"AMAZON_REDSHIFT\", \"DB2\", \"REDIS\", \"ELASTICSEARCH\",
+     \"GENERIC\", \"GOOGLE_CLOUD_STORAGE\", \"GOOGLE_BIGQUERY\", \"DATABRICKS\", \"GOOGLE_PUBSUB\",
+     \"MICROSOFT_FABRIC\", and \"ICEBERG\"."""
+    displayName: str
+    """The connection display name."""
+    routingMethod: Union[str, "RoutingMethod"]
+    """Controls the network traffic direction to the target. Known values are:
+     \"SHARED_SERVICE_ENDPOINT\", \"SHARED_DEPLOYMENT_ENDPOINT\", and \"DEDICATED_ENDPOINT\"."""
+    vaultId: str
+    """The customer's vault OCID."""
+    keyId: str
+    """The customer's master key OCID."""
+    doesUseSecretIds: bool
+    """Indicates whether secret OCIDs are used for credential fields."""
+
+
+class GoldenGateDeployment(TrackedResource):
+    """GoldenGate Deployment resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "DeploymentProperties"
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    """
+
+    properties: "DeploymentProperties"
+    """The resource-specific properties for this resource."""
+    zones: list[str]
+    """The availability zones."""
+
+
+class GoldenGateDeploymentUpdate(TypedDict, total=False):
+    """The type used for update operations of the GoldenGateDeployment.
+
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "GoldenGateDeploymentUpdateProperties"
+    """
+
+    zones: list[str]
+    """The availability zones."""
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "GoldenGateDeploymentUpdateProperties"
+    """The resource-specific properties for this resource."""
+
+
+class GoldenGateDeploymentUpdateProperties(TypedDict, total=False):
+    """The updatable properties of the GoldenGateDeployment.
+
+    :ivar backupSchedule: Backup schedule.
+    :vartype backupSchedule: "BackupScheduleType"
+    :ivar cpuCoreCount: The minimum number of OCPUs to be made available for this deployment.
+    :vartype cpuCoreCount: int
+    :ivar licenseModel: The Oracle license model that applies to a Deployment. Known values are:
+     "LicenseIncluded" and "BringYourOwnLicense".
+    :vartype licenseModel: Union[str, "LicenseModel"]
+    :ivar maintenanceConfiguration: Maintenance configuration.
+    :vartype maintenanceConfiguration: "MaintenanceConfigurationType"
+    :ivar maintenanceWindow: Maintenance window.
+    :vartype maintenanceWindow: "MaintenanceWindowType"
+    """
+
+    backupSchedule: "BackupScheduleType"
+    """Backup schedule."""
+    cpuCoreCount: int
+    """The minimum number of OCPUs to be made available for this deployment."""
+    licenseModel: Union[str, "LicenseModel"]
+    """The Oracle license model that applies to a Deployment. Known values are: \"LicenseIncluded\"
+     and \"BringYourOwnLicense\"."""
+    maintenanceConfiguration: "MaintenanceConfigurationType"
+    """Maintenance configuration."""
+    maintenanceWindow: "MaintenanceWindowType"
+    """Maintenance window."""
+
+
+class GroupToRolesMappingDetails(TypedDict, total=False):
+    """Group-to-roles mapping properties.
+
+    :ivar administratorGroupId: The OCID of the IDP group which will be mapped to goldengate role
+     administratorGroup.It grants full access to the user, including the ability to alter general,
+     non-security related operational parameters and profiles of the server.
+    :vartype administratorGroupId: str
+    :ivar operatorGroupId: The OCID of the IDP group which will be mapped to goldengate role
+     operatorGroup.It allows users to perform only operational actions, like starting and stopping
+     resources. Operators cannot alter the operational parameters or profiles of the MA server.
+    :vartype operatorGroupId: str
+    :ivar securityGroupId: The OCID of the IDP group which will be mapped to goldengate role
+     securityGroup.It grants administration of security related objects and invoke security related
+     service requests. This role has full privileges.
+    :vartype securityGroupId: str
+    :ivar userGroupId: The OCID of the IDP group which will be mapped to goldengate role userGroup.
+     It allows information-only service requests, which do not alter or affect the operation of
+     either the MA. Examples of query and read-only information include performance metric
+     information and resource status and monitoring information.
+    :vartype userGroupId: str
+    :ivar identityDomainId: The OCID of the Identity Domain when IAM credential store is used.
+    :vartype identityDomainId: str
+    :ivar key: The base64 encoded content of the PEM file containing the private key.
+    :vartype key: str
+    """
+
+    administratorGroupId: str
+    """The OCID of the IDP group which will be mapped to goldengate role administratorGroup.It grants
+     full access to the user, including the ability to alter general, non-security related
+     operational parameters and profiles of the server."""
+    operatorGroupId: str
+    """The OCID of the IDP group which will be mapped to goldengate role operatorGroup.It allows users
+     to perform only operational actions, like starting and stopping resources. Operators cannot
+     alter the operational parameters or profiles of the MA server."""
+    securityGroupId: str
+    """The OCID of the IDP group which will be mapped to goldengate role securityGroup.It grants
+     administration of security related objects and invoke security related service requests. This
+     role has full privileges."""
+    userGroupId: str
+    """The OCID of the IDP group which will be mapped to goldengate role userGroup. It allows
+     information-only service requests, which do not alter or affect the operation of either the MA.
+     Examples of query and read-only information include performance metric information and resource
+     status and monitoring information."""
+    identityDomainId: str
+    """The OCID of the Identity Domain when IAM credential store is used."""
+    key: str
+    """The base64 encoded content of the PEM file containing the private key."""
+
+
+class KafkaBootstrapServer(TypedDict, total=False):
+    """The Kafka bootstrap server with host name, and an optional port.
+
+    :ivar host: The name or address of a host. Required.
+    :vartype host: str
+    :ivar port: The port of an endpoint usually specified for a connection.
+    :vartype port: int
+    """
+
+    host: Required[str]
+    """The name or address of a host. Required."""
+    port: int
+    """The port of an endpoint usually specified for a connection."""
+
+
+class KafkaConnectionDetails(TypedDict, total=False):
+    """The metadata of a Kafka Connection.
+
+    :ivar displayName: The connection display name. Required.
+    :vartype displayName: str
+    :ivar resourceAnchorId: The corresponding resource anchor Azure ID. Required.
+    :vartype resourceAnchorId: str
+    :ivar networkAnchorId: The corresponding network anchor Azure ID. Required.
+    :vartype networkAnchorId: str
+    :ivar compartmentId: The OCID of the compartment being referenced.
+    :vartype compartmentId: str
+    :ivar ocid: The OCID of the connection being referenced.
+    :vartype ocid: str
+    :ivar routingMethod: Controls the network traffic direction to the target. Known values are:
+     "SHARED_SERVICE_ENDPOINT", "SHARED_DEPLOYMENT_ENDPOINT", and "DEDICATED_ENDPOINT".
+    :vartype routingMethod: Union[str, "RoutingMethod"]
+    :ivar vaultId: The customer's vault OCID.
+    :vartype vaultId: str
+    :ivar keyId: The customer's master key OCID.
+    :vartype keyId: str
+    :ivar doesUseSecretIds: Indicates whether secret OCIDs are used for credential fields.
+    :vartype doesUseSecretIds: bool
+    :ivar provisioningState: Connection provisioning state. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Provisioning".
+    :vartype provisioningState: Union[str, "AzureResourceProvisioningState"]
+    :ivar lifecycleState: The connection lifecycle state. Known values are: "CREATING", "UPDATING",
+     "ACTIVE", "DELETING", "DELETED", and "FAILED".
+    :vartype lifecycleState: Union[str, "ConnectionLifecycleState"]
+    :ivar lifecycleDetails: The description of lifecycle state in detail.
+    :vartype lifecycleDetails: str
+    :ivar timeCreated: The date time the resource was created in OCI.
+    :vartype timeCreated: str
+    :ivar timeUpdated: The date time the resource was last updated in OCI.
+    :vartype timeUpdated: str
+    :ivar connectionType: Required. A Kafka Connection.
+    :vartype connectionType: Literal[ConnectionType.KAFKA]
+    :ivar technologyType: The Kafka technology type. Required. Known values are: "APACHE_KAFKA",
+     "AZURE_EVENT_HUBS", "CONFLUENT_KAFKA", and "OCI_STREAMING".
+    :vartype technologyType: Union[str, "KafkaConnectionTechnologyType"]
+    :ivar bootstrapServers: The list of KafkaBootstrapServer objects specified by host/port.
+    :vartype bootstrapServers: list["KafkaBootstrapServer"]
+    :ivar securityProtocol: The Kafka security protocol used to connect to the broker.
+    :vartype securityProtocol: str
+    :ivar username: The username used to authenticate to Kafka.
+    :vartype username: str
+    :ivar passwordSecretId: The OCID of the Secret where the password is stored.
+    :vartype passwordSecretId: str
+    :ivar trustStoreSecretId: The OCID of the Secret where the truststore is stored.
+    :vartype trustStoreSecretId: str
+    :ivar trustStorePasswordSecretId: The OCID of the Secret where the truststore password is
+     stored.
+    :vartype trustStorePasswordSecretId: str
+    :ivar keyStoreSecretId: The OCID of the Secret where the keystore is stored.
+    :vartype keyStoreSecretId: str
+    :ivar keyStorePasswordSecretId: The OCID of the Secret where the keystore password is stored.
+    :vartype keyStorePasswordSecretId: str
+    :ivar sslKeyPasswordSecretId: The OCID of the Secret where the SSL key password is stored.
+    :vartype sslKeyPasswordSecretId: str
+    :ivar consumerProperties: The additional consumer properties in string format.
+    :vartype consumerProperties: str
+    :ivar producerProperties: The additional producer properties in string format.
+    :vartype producerProperties: str
+    :ivar streamPoolId: The OCID of the stream pool being referenced.
+    :vartype streamPoolId: str
+    :ivar clusterId: The OCID of the Kafka cluster being referenced.
+    :vartype clusterId: str
+    :ivar shouldUseResourcePrincipal: Indicates if resource principal should be used for
+     authentication.
+    :vartype shouldUseResourcePrincipal: bool
+    """
+
+    displayName: Required[str]
+    """The connection display name. Required."""
+    resourceAnchorId: Required[str]
+    """The corresponding resource anchor Azure ID. Required."""
+    networkAnchorId: Required[str]
+    """The corresponding network anchor Azure ID. Required."""
+    compartmentId: str
+    """The OCID of the compartment being referenced."""
+    ocid: str
+    """The OCID of the connection being referenced."""
+    routingMethod: Union[str, "RoutingMethod"]
+    """Controls the network traffic direction to the target. Known values are:
+     \"SHARED_SERVICE_ENDPOINT\", \"SHARED_DEPLOYMENT_ENDPOINT\", and \"DEDICATED_ENDPOINT\"."""
+    vaultId: str
+    """The customer's vault OCID."""
+    keyId: str
+    """The customer's master key OCID."""
+    doesUseSecretIds: bool
+    """Indicates whether secret OCIDs are used for credential fields."""
+    provisioningState: Union[str, "AzureResourceProvisioningState"]
+    """Connection provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", and
+     \"Provisioning\"."""
+    lifecycleState: Union[str, "ConnectionLifecycleState"]
+    """The connection lifecycle state. Known values are: \"CREATING\", \"UPDATING\", \"ACTIVE\",
+     \"DELETING\", \"DELETED\", and \"FAILED\"."""
+    lifecycleDetails: str
+    """The description of lifecycle state in detail."""
+    timeCreated: str
+    """The date time the resource was created in OCI."""
+    timeUpdated: str
+    """The date time the resource was last updated in OCI."""
+    connectionType: Required[Literal[ConnectionType.KAFKA]]
+    """Required. A Kafka Connection."""
+    technologyType: Required[Union[str, "KafkaConnectionTechnologyType"]]
+    """The Kafka technology type. Required. Known values are: \"APACHE_KAFKA\", \"AZURE_EVENT_HUBS\",
+     \"CONFLUENT_KAFKA\", and \"OCI_STREAMING\"."""
+    bootstrapServers: list["KafkaBootstrapServer"]
+    """The list of KafkaBootstrapServer objects specified by host/port."""
+    securityProtocol: str
+    """The Kafka security protocol used to connect to the broker."""
+    username: str
+    """The username used to authenticate to Kafka."""
+    passwordSecretId: str
+    """The OCID of the Secret where the password is stored."""
+    trustStoreSecretId: str
+    """The OCID of the Secret where the truststore is stored."""
+    trustStorePasswordSecretId: str
+    """The OCID of the Secret where the truststore password is stored."""
+    keyStoreSecretId: str
+    """The OCID of the Secret where the keystore is stored."""
+    keyStorePasswordSecretId: str
+    """The OCID of the Secret where the keystore password is stored."""
+    sslKeyPasswordSecretId: str
+    """The OCID of the Secret where the SSL key password is stored."""
+    consumerProperties: str
+    """The additional consumer properties in string format."""
+    producerProperties: str
+    """The additional producer properties in string format."""
+    streamPoolId: str
+    """The OCID of the stream pool being referenced."""
+    clusterId: str
+    """The OCID of the Kafka cluster being referenced."""
+    shouldUseResourcePrincipal: bool
+    """Indicates if resource principal should be used for authentication."""
+
+
 class LongTermBackUpScheduleDetails(TypedDict, total=False):
     """Details for the long-term backup schedule.
 
@@ -4029,6 +4786,34 @@ class LongTermBackUpScheduleDetails(TypedDict, total=False):
     """Retention period, in days, for backups."""
     isDisabled: bool
     """Indicates if the long-term backup schedule should be deleted. The default value is ``FALSE``."""
+
+
+class MaintenanceConfigurationType(TypedDict, total=False):
+    """Maintenance configuration type.
+
+    :ivar bundleReleaseUpgradePeriodInDays: Bundle release period.
+    :vartype bundleReleaseUpgradePeriodInDays: int
+    :ivar interimReleaseUpgradePeriodInDays: Interim release upgrade period in days.
+    :vartype interimReleaseUpgradePeriodInDays: int
+    :ivar isInterimReleaseAutoUpgradeEnabled: Indicates whether interim release auto-upgrade is
+     enabled.
+    :vartype isInterimReleaseAutoUpgradeEnabled: bool
+    :ivar majorReleaseUpgradePeriodInDays: Major release upgrade period in days.
+    :vartype majorReleaseUpgradePeriodInDays: int
+    :ivar securityPatchUpgradePeriodInDays: Security patch upgrade period in days.
+    :vartype securityPatchUpgradePeriodInDays: int
+    """
+
+    bundleReleaseUpgradePeriodInDays: int
+    """Bundle release period."""
+    interimReleaseUpgradePeriodInDays: int
+    """Interim release upgrade period in days."""
+    isInterimReleaseAutoUpgradeEnabled: bool
+    """Indicates whether interim release auto-upgrade is enabled."""
+    majorReleaseUpgradePeriodInDays: int
+    """Major release upgrade period in days."""
+    securityPatchUpgradePeriodInDays: int
+    """Security patch upgrade period in days."""
 
 
 class MaintenanceWindow(TypedDict, total=False):
@@ -4108,6 +4893,118 @@ class MaintenanceWindow(TypedDict, total=False):
      server patching operations."""
     isMonthlyPatchingEnabled: bool
     """is Monthly Patching Enabled."""
+
+
+class MaintenanceWindowType(TypedDict, total=False):
+    """Maintenance window.
+
+    :ivar day: The day of week. Known values are: "Monday", "Tuesday", "Wednesday", "Thursday",
+     "Friday", "Saturday", and "Sunday".
+    :vartype day: Union[str, "DayOfWeekName"]
+    :ivar startHour: Start time in UTC.
+    :vartype startHour: int
+    """
+
+    day: Union[str, "DayOfWeekName"]
+    """The day of week. Known values are: \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\",
+     \"Friday\", \"Saturday\", and \"Sunday\"."""
+    startHour: int
+    """Start time in UTC."""
+
+
+class MicrosoftFabricConnectionDetails(TypedDict, total=False):
+    """The metadata of a Microsoft Fabric Connection.
+
+    :ivar displayName: The connection display name. Required.
+    :vartype displayName: str
+    :ivar resourceAnchorId: The corresponding resource anchor Azure ID. Required.
+    :vartype resourceAnchorId: str
+    :ivar networkAnchorId: The corresponding network anchor Azure ID. Required.
+    :vartype networkAnchorId: str
+    :ivar compartmentId: The OCID of the compartment being referenced.
+    :vartype compartmentId: str
+    :ivar ocid: The OCID of the connection being referenced.
+    :vartype ocid: str
+    :ivar routingMethod: Controls the network traffic direction to the target. Known values are:
+     "SHARED_SERVICE_ENDPOINT", "SHARED_DEPLOYMENT_ENDPOINT", and "DEDICATED_ENDPOINT".
+    :vartype routingMethod: Union[str, "RoutingMethod"]
+    :ivar vaultId: The customer's vault OCID.
+    :vartype vaultId: str
+    :ivar keyId: The customer's master key OCID.
+    :vartype keyId: str
+    :ivar doesUseSecretIds: Indicates whether secret OCIDs are used for credential fields.
+    :vartype doesUseSecretIds: bool
+    :ivar provisioningState: Connection provisioning state. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Provisioning".
+    :vartype provisioningState: Union[str, "AzureResourceProvisioningState"]
+    :ivar lifecycleState: The connection lifecycle state. Known values are: "CREATING", "UPDATING",
+     "ACTIVE", "DELETING", "DELETED", and "FAILED".
+    :vartype lifecycleState: Union[str, "ConnectionLifecycleState"]
+    :ivar lifecycleDetails: The description of lifecycle state in detail.
+    :vartype lifecycleDetails: str
+    :ivar timeCreated: The date time the resource was created in OCI.
+    :vartype timeCreated: str
+    :ivar timeUpdated: The date time the resource was last updated in OCI.
+    :vartype timeUpdated: str
+    :ivar connectionType: Required. A Microsoft Fabric Connection.
+    :vartype connectionType: Literal[ConnectionType.MICROSOFT_FABRIC]
+    :ivar technologyType: The Microsoft Fabric technology type. Required. Known values are:
+     "MICROSOFT_FABRIC_LAKEHOUSE" and "MICROSOFT_FABRIC_MIRROR".
+    :vartype technologyType: Union[str, "MicrosoftFabricConnectionTechnologyType"]
+    :ivar tenantId: Azure tenant ID of the application. Required.
+    :vartype tenantId: str
+    :ivar clientId: Azure client ID of the application. Required.
+    :vartype clientId: str
+    :ivar clientSecretSecretId: The OCID of the Secret where the client secret is stored.
+    :vartype clientSecretSecretId: str
+    :ivar endpoint: The Microsoft Fabric service endpoint.
+    :vartype endpoint: str
+    """
+
+    displayName: Required[str]
+    """The connection display name. Required."""
+    resourceAnchorId: Required[str]
+    """The corresponding resource anchor Azure ID. Required."""
+    networkAnchorId: Required[str]
+    """The corresponding network anchor Azure ID. Required."""
+    compartmentId: str
+    """The OCID of the compartment being referenced."""
+    ocid: str
+    """The OCID of the connection being referenced."""
+    routingMethod: Union[str, "RoutingMethod"]
+    """Controls the network traffic direction to the target. Known values are:
+     \"SHARED_SERVICE_ENDPOINT\", \"SHARED_DEPLOYMENT_ENDPOINT\", and \"DEDICATED_ENDPOINT\"."""
+    vaultId: str
+    """The customer's vault OCID."""
+    keyId: str
+    """The customer's master key OCID."""
+    doesUseSecretIds: bool
+    """Indicates whether secret OCIDs are used for credential fields."""
+    provisioningState: Union[str, "AzureResourceProvisioningState"]
+    """Connection provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", and
+     \"Provisioning\"."""
+    lifecycleState: Union[str, "ConnectionLifecycleState"]
+    """The connection lifecycle state. Known values are: \"CREATING\", \"UPDATING\", \"ACTIVE\",
+     \"DELETING\", \"DELETED\", and \"FAILED\"."""
+    lifecycleDetails: str
+    """The description of lifecycle state in detail."""
+    timeCreated: str
+    """The date time the resource was created in OCI."""
+    timeUpdated: str
+    """The date time the resource was last updated in OCI."""
+    connectionType: Required[Literal[ConnectionType.MICROSOFT_FABRIC]]
+    """Required. A Microsoft Fabric Connection."""
+    technologyType: Required[Union[str, "MicrosoftFabricConnectionTechnologyType"]]
+    """The Microsoft Fabric technology type. Required. Known values are:
+     \"MICROSOFT_FABRIC_LAKEHOUSE\" and \"MICROSOFT_FABRIC_MIRROR\"."""
+    tenantId: Required[str]
+    """Azure tenant ID of the application. Required."""
+    clientId: Required[str]
+    """Azure client ID of the application. Required."""
+    clientSecretSecretId: str
+    """The OCID of the Secret where the client secret is stored."""
+    endpoint: str
+    """The Microsoft Fabric service endpoint."""
 
 
 class Month(TypedDict, total=False):
@@ -4203,6 +5100,8 @@ class NetworkAnchorProperties(TypedDict, total=False):
     :ivar dnsForwardingEndpointNsgRulesUrl: Deep link to OCI console DNS Forwarding endpoint NSG
      rules.
     :vartype dnsForwardingEndpointNsgRulesUrl: str
+    :ivar proximityPlacementGroup: Proximity placement group settings.
+    :vartype proximityPlacementGroup: "ProximityPlacementGroup"
     """
 
     resourceAnchorId: Required[str]
@@ -4244,6 +5143,8 @@ class NetworkAnchorProperties(TypedDict, total=False):
     """Deep link to OCI console DNS Listening endpoint NSG rules."""
     dnsForwardingEndpointNsgRulesUrl: str
     """Deep link to OCI console DNS Forwarding endpoint NSG rules."""
+    proximityPlacementGroup: "ProximityPlacementGroup"
+    """Proximity placement group settings."""
 
 
 class NetworkAnchorUpdate(TypedDict, total=False):
@@ -4307,6 +5208,171 @@ class NsgCidr(TypedDict, total=False):
      from. Required."""
     destinationPortRange: "PortRange"
     """Destination port range to specify particular destination ports for TCP rules."""
+
+
+class OggDeploymentDetails(TypedDict, total=False):
+    """OGG deployment details.
+
+    :ivar adminPassword: The password associated with the GoldenGate deployment console username.
+     The password must be 8 to 30 characters long and must contain at least 1 uppercase, 1
+     lowercase, 1 numeric, and 1 special character. Special characters such as '$', '^', or '?' are
+     not allowed.
+    :vartype adminPassword: str
+    :ivar adminUsername: The GoldenGate deployment console username.
+    :vartype adminUsername: str
+    :ivar certificate: The base64 encoded content of the PEM file containing the SSL certificate.
+    :vartype certificate: str
+    :ivar credentialStore: The type of credential store for OGG. Known values are: "GoldenGate" and
+     "IAM".
+    :vartype credentialStore: Union[str, "CredentialType"]
+    :ivar deploymentName: The name given to the GoldenGate service deployment. Required.
+    :vartype deploymentName: str
+    :ivar groupToRolesMapping: Defines the IDP Groups to GoldenGate roles mapping.
+    :vartype groupToRolesMapping: "GroupToRolesMappingDetails"
+    :ivar oggVersion: OGG version.
+    :vartype oggVersion: str
+    :ivar passwordSecretId: The OCID of the Secret where the deployment password is stored.
+    :vartype passwordSecretId: str
+    """
+
+    adminPassword: str
+    """The password associated with the GoldenGate deployment console username. The password must be 8
+     to 30 characters long and must contain at least 1 uppercase, 1 lowercase, 1 numeric, and 1
+     special character. Special characters such as '$', '^', or '?' are not allowed."""
+    adminUsername: str
+    """The GoldenGate deployment console username."""
+    certificate: str
+    """The base64 encoded content of the PEM file containing the SSL certificate."""
+    credentialStore: Union[str, "CredentialType"]
+    """The type of credential store for OGG. Known values are: \"GoldenGate\" and \"IAM\"."""
+    deploymentName: Required[str]
+    """The name given to the GoldenGate service deployment. Required."""
+    groupToRolesMapping: "GroupToRolesMappingDetails"
+    """Defines the IDP Groups to GoldenGate roles mapping."""
+    oggVersion: str
+    """OGG version."""
+    passwordSecretId: str
+    """The OCID of the Secret where the deployment password is stored."""
+
+
+class OracleConnectionDetails(TypedDict, total=False):
+    """The metadata of an Oracle Database Connection.
+
+    :ivar displayName: The connection display name. Required.
+    :vartype displayName: str
+    :ivar resourceAnchorId: The corresponding resource anchor Azure ID. Required.
+    :vartype resourceAnchorId: str
+    :ivar networkAnchorId: The corresponding network anchor Azure ID. Required.
+    :vartype networkAnchorId: str
+    :ivar compartmentId: The OCID of the compartment being referenced.
+    :vartype compartmentId: str
+    :ivar ocid: The OCID of the connection being referenced.
+    :vartype ocid: str
+    :ivar routingMethod: Controls the network traffic direction to the target. Known values are:
+     "SHARED_SERVICE_ENDPOINT", "SHARED_DEPLOYMENT_ENDPOINT", and "DEDICATED_ENDPOINT".
+    :vartype routingMethod: Union[str, "RoutingMethod"]
+    :ivar vaultId: The customer's vault OCID.
+    :vartype vaultId: str
+    :ivar keyId: The customer's master key OCID.
+    :vartype keyId: str
+    :ivar doesUseSecretIds: Indicates whether secret OCIDs are used for credential fields.
+    :vartype doesUseSecretIds: bool
+    :ivar provisioningState: Connection provisioning state. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Provisioning".
+    :vartype provisioningState: Union[str, "AzureResourceProvisioningState"]
+    :ivar lifecycleState: The connection lifecycle state. Known values are: "CREATING", "UPDATING",
+     "ACTIVE", "DELETING", "DELETED", and "FAILED".
+    :vartype lifecycleState: Union[str, "ConnectionLifecycleState"]
+    :ivar lifecycleDetails: The description of lifecycle state in detail.
+    :vartype lifecycleDetails: str
+    :ivar timeCreated: The date time the resource was created in OCI.
+    :vartype timeCreated: str
+    :ivar timeUpdated: The date time the resource was last updated in OCI.
+    :vartype timeUpdated: str
+    :ivar connectionType: Required. An Oracle Database Connection.
+    :vartype connectionType: Literal[ConnectionType.ORACLE]
+    :ivar technologyType: The Oracle technology type. Required. Known values are:
+     "AMAZON_RDS_ORACLE", "OCI_AUTONOMOUS_DATABASE", "ORACLE_DATABASE", "ORACLE_EXADATA",
+     "ORACLE_EXADATA_DATABASE_AT_AZURE", "ORACLE_EXADATA_DATABASE_AT_GOOGLE_CLOUD",
+     "ORACLE_EXADATA_DATABASE_AT_AWS", "ORACLE_AUTONOMOUS_DATABASE_AT_AZURE",
+     "ORACLE_AUTONOMOUS_DATABASE_AT_GOOGLE_CLOUD", and "ORACLE_AUTONOMOUS_DATABASE_AT_AWS".
+    :vartype technologyType: Union[str, "OracleConnectionTechnologyType"]
+    :ivar sessionMode: The mode of the database connection session to be established by the data
+     client. Known values are: "DIRECT" and "REDIRECT".
+    :vartype sessionMode: Union[str, "SessionMode"]
+    :ivar username: The username that is used to connect the associated system of the given
+     technology. Required.
+    :vartype username: str
+    :ivar connectionString: The connection string used to connect the associated database.
+    :vartype connectionString: str
+    :ivar authenticationMode: The authentication mode used to connect the associated database.
+    :vartype authenticationMode: str
+    :ivar passwordSecretId: The OCID of the Secret where the password is stored.
+    :vartype passwordSecretId: str
+    :ivar walletSecretId: The OCID of the Secret where the wallet is stored.
+    :vartype walletSecretId: str
+    :ivar databaseId: The OCID of the associated database.
+    :vartype databaseId: str
+    :ivar privateIp: The private IP of the associated database endpoint.
+    :vartype privateIp: str
+    """
+
+    displayName: Required[str]
+    """The connection display name. Required."""
+    resourceAnchorId: Required[str]
+    """The corresponding resource anchor Azure ID. Required."""
+    networkAnchorId: Required[str]
+    """The corresponding network anchor Azure ID. Required."""
+    compartmentId: str
+    """The OCID of the compartment being referenced."""
+    ocid: str
+    """The OCID of the connection being referenced."""
+    routingMethod: Union[str, "RoutingMethod"]
+    """Controls the network traffic direction to the target. Known values are:
+     \"SHARED_SERVICE_ENDPOINT\", \"SHARED_DEPLOYMENT_ENDPOINT\", and \"DEDICATED_ENDPOINT\"."""
+    vaultId: str
+    """The customer's vault OCID."""
+    keyId: str
+    """The customer's master key OCID."""
+    doesUseSecretIds: bool
+    """Indicates whether secret OCIDs are used for credential fields."""
+    provisioningState: Union[str, "AzureResourceProvisioningState"]
+    """Connection provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", and
+     \"Provisioning\"."""
+    lifecycleState: Union[str, "ConnectionLifecycleState"]
+    """The connection lifecycle state. Known values are: \"CREATING\", \"UPDATING\", \"ACTIVE\",
+     \"DELETING\", \"DELETED\", and \"FAILED\"."""
+    lifecycleDetails: str
+    """The description of lifecycle state in detail."""
+    timeCreated: str
+    """The date time the resource was created in OCI."""
+    timeUpdated: str
+    """The date time the resource was last updated in OCI."""
+    connectionType: Required[Literal[ConnectionType.ORACLE]]
+    """Required. An Oracle Database Connection."""
+    technologyType: Required[Union[str, "OracleConnectionTechnologyType"]]
+    """The Oracle technology type. Required. Known values are: \"AMAZON_RDS_ORACLE\",
+     \"OCI_AUTONOMOUS_DATABASE\", \"ORACLE_DATABASE\", \"ORACLE_EXADATA\",
+     \"ORACLE_EXADATA_DATABASE_AT_AZURE\", \"ORACLE_EXADATA_DATABASE_AT_GOOGLE_CLOUD\",
+     \"ORACLE_EXADATA_DATABASE_AT_AWS\", \"ORACLE_AUTONOMOUS_DATABASE_AT_AZURE\",
+     \"ORACLE_AUTONOMOUS_DATABASE_AT_GOOGLE_CLOUD\", and \"ORACLE_AUTONOMOUS_DATABASE_AT_AWS\"."""
+    sessionMode: Union[str, "SessionMode"]
+    """The mode of the database connection session to be established by the data client. Known values
+     are: \"DIRECT\" and \"REDIRECT\"."""
+    username: Required[str]
+    """The username that is used to connect the associated system of the given technology. Required."""
+    connectionString: str
+    """The connection string used to connect the associated database."""
+    authenticationMode: str
+    """The authentication mode used to connect the associated database."""
+    passwordSecretId: str
+    """The OCID of the Secret where the password is stored."""
+    walletSecretId: str
+    """The OCID of the Secret where the wallet is stored."""
+    databaseId: str
+    """The OCID of the associated database."""
+    privateIp: str
+    """The private IP of the associated database endpoint."""
 
 
 class OracleSubscription(ProxyResource):
@@ -4594,6 +5660,27 @@ class ProfileType(TypedDict, total=False):
     """Connection string value. Required."""
 
 
+class ProximityPlacementGroup(TypedDict, total=False):
+    """Proximity placement group properties.
+
+    :ivar proximityPlacementGroupId: Proximity placement group ID. Required.
+    :vartype proximityPlacementGroupId: str
+    :ivar proximityAnchorId: Proximity Anchor ID.
+    :vartype proximityAnchorId: str
+    :ivar entityTypeIntendedToUse: Entity type intended to use the proximity placement group.
+     Required. Known values are: "CloudExadataInfrastructure" and "OtherProducts".
+    :vartype entityTypeIntendedToUse: Union[str, "ProximityPlacementGroupEntityType"]
+    """
+
+    proximityPlacementGroupId: Required[str]
+    """Proximity placement group ID. Required."""
+    proximityAnchorId: str
+    """Proximity Anchor ID."""
+    entityTypeIntendedToUse: Required[Union[str, "ProximityPlacementGroupEntityType"]]
+    """Entity type intended to use the proximity placement group. Required. Known values are:
+     \"CloudExadataInfrastructure\" and \"OtherProducts\"."""
+
+
 class RemoveVirtualMachineFromExadbVmClusterDetails(TypedDict, total=False):  # pylint: disable=name-too-long
     """Details of removing Virtual Machines from the Exadata VM cluster on Exascale Infrastructure.
     Applies to Exadata Database Service on Exascale Infrastructure only.
@@ -4824,4 +5911,5 @@ AutonomousDatabaseBaseProperties = Union[
     AutonomousDatabaseCrossRegionDisasterRecoveryProperties,
     AutonomousDatabaseProperties,
 ]
+ConnectionBaseProperties = Union[KafkaConnectionDetails, MicrosoftFabricConnectionDetails, OracleConnectionDetails]
 DbSystemBaseProperties = Union[DbSystemProperties]

@@ -32,11 +32,11 @@ def main():
 
     response = client.resource_anchors.get(
         resource_group_name="rgopenapi",
-        resource_anchor_name="resourceanchor1",
+        resource_anchor_name="resource1",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/ResourceAnchors_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ResourceAnchors_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

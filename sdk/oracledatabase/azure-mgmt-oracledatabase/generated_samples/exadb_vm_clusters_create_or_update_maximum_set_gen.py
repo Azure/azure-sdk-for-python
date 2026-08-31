@@ -33,25 +33,25 @@ def main():
 
     response = client.exadb_vm_clusters.begin_create_or_update(
         resource_group_name="rgopenapi",
-        exadb_vm_cluster_name="vmcluster1",
+        exadb_vm_cluster_name="resource1",
         resource={
-            "location": "dsmvbplxdvesmvsgdvorgxalwpqxwt",
+            "location": "eastus",
             "properties": {
-                "backupSubnetCidr": "ca",
+                "backupSubnetCidr": "example",
                 "backupSubnetOcid": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
-                "clusterName": "p",
+                "clusterName": "lnmm",
                 "dataCollectionOptions": {
                     "isDiagnosticsEventsEnabled": True,
                     "isHealthMonitoringEnabled": True,
                     "isIncidentLogsEnabled": True,
                 },
-                "displayName": "zvnuzwcpevcsnhaheojscyiytcgxvtsuownoyrjddolqzpaalbyrgqgactzrafocjglzjzosrqewmsvdovubrczmlrjoahwgckbbhvimqfhmnrpuszndasfutdyyrvszdawdxvyfpgtoaemjvqpavsfsedbdhbqmqqtxxjthmjbswjbaymibfpbpzuy",
-                "domain": "akltvmctvumwfuqi",
+                "displayName": "resource1",
+                "domain": "tzc",
                 "enabledEcpuCount": 0,
-                "exascaleDbStorageVaultId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Oracle.Database/exascaleDbStorageVaults/storageVaultName",
+                "exascaleDbStorageVaultId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Oracle.Database/exascaleDbStorageVaults/vault1",
                 "gridImageOcid": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
                 "gridImageType": "ReleaseUpdate",
-                "hostname": "uwrzwwhrr",
+                "hostname": "resource1",
                 "iormConfigCache": {
                     "dbPlans": [{"dbName": "db1", "flashCacheLimit": "none", "share": 32}],
                     "lifecycleDetails": "Disabled",
@@ -60,33 +60,34 @@ def main():
                 },
                 "licenseModel": "LicenseIncluded",
                 "lifecycleState": "Provisioning",
-                "nodeCount": 30,
+                "nodeCount": 5,
                 "nsgCidrs": [{"destinationPortRange": {"max": 1522, "min": 1520}, "source": "10.0.0.0/16"}],
                 "ocid": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
                 "privateZoneOcid": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
                 "scanDnsRecordId": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
-                "scanListenerPortTcp": 30,
-                "scanListenerPortTcpSsl": 14,
-                "shape": "pzfyfjznebdsakeira",
-                "snapshotFileSystemStorage": {"totalSizeInGbs": 18},
-                "sshPublicKeys": ["wzzayf"],
+                "scanListenerPortTcp": 29,
+                "scanListenerPortTcpSsl": 6,
+                "shape": "kwxhzzn",
+                "shapeAttribute": "SMART_STORAGE",
+                "snapshotFileSystemStorage": {"totalSizeInGbs": 27},
+                "sshPublicKeys": ["ocw"],
                 "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1",
                 "subnetOcid": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
-                "systemVersion": "ssqzevdtjtcnxpdspcyqzgdtmonqjj",
-                "timeZone": "lkqvpvoczhoytxmeukzepgqgpdvdnigwxfojzfanqhracxsvgchwahzcifrkxlknixdrsopatguwccnejgyehnwfrvfedlefgneiudaqxbqnjkjedmcjocfvjdabwlyridcjvhzmlomgotwvnqqsrdjufsmebedckwwurmdoddknnfsm",
-                "totalEcpuCount": 10,
-                "totalFileSystemStorage": {"totalSizeInGbs": 18},
-                "vmFileSystemStorage": {"totalSizeInGbs": 18},
+                "systemVersion": "example",
+                "timeZone": "2026-06-01T00:00:00Z",
+                "totalEcpuCount": 33,
+                "totalFileSystemStorage": {"totalSizeInGbs": 27},
+                "vmFileSystemStorage": {"totalSizeInGbs": 27},
                 "vnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Microsoft.Network/virtualNetworks/vnet1",
                 "zoneOcid": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
             },
-            "tags": {"key8577": "xkdpkp"},
-            "zones": ["ozwhowofqaq"],
+            "tags": {"key9568": "fwg"},
+            "zones": ["uwwf"],
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/ExadbVmClusters_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ExadbVmClusters_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -32,11 +32,11 @@ def main():
 
     response = client.exascale_db_storage_vaults.get(
         resource_group_name="rgopenapi",
-        exascale_db_storage_vault_name="storagevault1",
+        exascale_db_storage_vault_name="resource1",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/ExascaleDbStorageVaults_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ExascaleDbStorageVaults_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

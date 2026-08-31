@@ -33,29 +33,35 @@ def main():
 
     response = client.network_anchors.begin_create_or_update(
         resource_group_name="rgopenapi",
-        network_anchor_name="networkAnchor1",
+        network_anchor_name="resource1",
         resource={
-            "location": "igamtwfkkmjnkcceh",
+            "location": "eastus",
             "properties": {
-                "dnsForwardingRules": [{"domainNames": "domain1, domain2", "forwardingIpAddress": "qe"}],
+                "dnsForwardingRules": [{"domainNames": "ghs", "forwardingIpAddress": "example"}],
+                "dnsListeningEndpointAllowedCidrs": "toqgyp",
                 "isOracleDnsForwardingEndpointEnabled": True,
                 "isOracleDnsListeningEndpointEnabled": True,
                 "isOracleToAzureDnsZoneSyncEnabled": True,
-                "ociBackupCidrBlock": "i",
+                "ociBackupCidrBlock": "example",
                 "ociSubnetId": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
-                "ociVcnDnsLabel": "taqimtjhlsshwakiaocbsrewvkq",
+                "ociVcnDnsLabel": "example",
                 "ociVcnId": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
-                "resourceAnchorId": "ivxnsdkelptazxrbzzrs",
+                "proximityPlacementGroup": {
+                    "entityTypeIntendedToUse": "CloudExadataInfrastructure",
+                    "proximityAnchorId": "example",
+                    "proximityPlacementGroupId": "example",
+                },
+                "resourceAnchorId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Oracle.Database/resourceAnchors/anchor1",
                 "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1",
                 "vnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Microsoft.Network/virtualNetworks/vnet1",
             },
-            "tags": {"key4863": "dqpczcjijybwwtgo"},
-            "zones": ["qwrgwcmycokwbhdafhoheaxzoxx"],
+            "tags": {"key6589": "mcg"},
+            "zones": ["zznbkklaih"],
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/NetworkAnchors_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/NetworkAnchors_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -32,11 +32,11 @@ def main():
 
     response = client.db_versions.get(
         location="eastus",
-        dbversionsname="23.0.0.0.0",
+        dbversionsname="resource1",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/DbVersions_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/DbVersions_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

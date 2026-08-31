@@ -1,5 +1,128 @@
 # Release History
 
+## 4.0.0 (2026-08-31)
+
+### Features Added
+
+  - Client `OracleDatabaseMgmtClient` added operation group `database_editions`
+  - Client `OracleDatabaseMgmtClient` added operation group `database_system_shape_resources`
+  - Client `OracleDatabaseMgmtClient` added operation group `golden_gate_connections`
+  - Client `OracleDatabaseMgmtClient` added operation group `golden_gate_deployments`
+  - Model `AutonomousDatabaseBackupProperties` added property `backup_destination`
+  - Model `AutonomousDatabaseBaseProperties` added property `backup_destination`
+  - Model `AutonomousDatabaseBaseProperties` added property `is_schedule_az_update_to_earliest`
+  - Model `AutonomousDatabaseBaseProperties` added property `network_anchor_id`
+  - Model `AutonomousDatabaseBaseProperties` added property `resource_anchor_id`
+  - Model `AutonomousDatabaseBaseProperties` added property `time_scheduled_az_update`
+  - Model `AutonomousDatabaseBaseProperties` added property `zone`
+  - Model `AutonomousDatabaseCloneProperties` added property `backup_destination`
+  - Model `AutonomousDatabaseCloneProperties` added property `is_schedule_az_update_to_earliest`
+  - Model `AutonomousDatabaseCloneProperties` added property `network_anchor_id`
+  - Model `AutonomousDatabaseCloneProperties` added property `resource_anchor_id`
+  - Model `AutonomousDatabaseCloneProperties` added property `time_scheduled_az_update`
+  - Model `AutonomousDatabaseCloneProperties` added property `zone`
+  - Model `AutonomousDatabaseCrossRegionDisasterRecoveryProperties` added property `backup_destination`
+  - Model `AutonomousDatabaseCrossRegionDisasterRecoveryProperties` added property `is_schedule_az_update_to_earliest`
+  - Model `AutonomousDatabaseCrossRegionDisasterRecoveryProperties` added property `network_anchor_id`
+  - Model `AutonomousDatabaseCrossRegionDisasterRecoveryProperties` added property `resource_anchor_id`
+  - Model `AutonomousDatabaseCrossRegionDisasterRecoveryProperties` added property `time_scheduled_az_update`
+  - Model `AutonomousDatabaseCrossRegionDisasterRecoveryProperties` added property `zone`
+  - Model `AutonomousDatabaseFromBackupTimestampProperties` added property `backup_destination`
+  - Model `AutonomousDatabaseFromBackupTimestampProperties` added property `is_schedule_az_update_to_earliest`
+  - Model `AutonomousDatabaseFromBackupTimestampProperties` added property `network_anchor_id`
+  - Model `AutonomousDatabaseFromBackupTimestampProperties` added property `resource_anchor_id`
+  - Model `AutonomousDatabaseFromBackupTimestampProperties` added property `time_scheduled_az_update`
+  - Model `AutonomousDatabaseFromBackupTimestampProperties` added property `zone`
+  - Model `AutonomousDatabaseProperties` added property `backup_destination`
+  - Model `AutonomousDatabaseProperties` added property `is_schedule_az_update_to_earliest`
+  - Model `AutonomousDatabaseProperties` added property `network_anchor_id`
+  - Model `AutonomousDatabaseProperties` added property `resource_anchor_id`
+  - Model `AutonomousDatabaseProperties` added property `time_scheduled_az_update`
+  - Model `AutonomousDatabaseProperties` added property `zone`
+  - Enum `BaseDbSystemShapes` added member `VM_BASE_DBX86`
+  - Model `CloudExadataInfrastructureProperties` added property `proximity_placement_group`
+  - Model `CloudExadataInfrastructureProperties` added property `resource_anchor_id`
+  - Model `CloudVmClusterProperties` added property `hostname_v2`
+  - Model `CloudVmClusterProperties` added property `is_accelerated_network_enabled`
+  - Model `CloudVmClusterProperties` added property `network_anchor_id`
+  - Model `CloudVmClusterProperties` added property `proximity_placement_group`
+  - Model `CloudVmClusterProperties` added property `reco_storage_percentage`
+  - Model `CloudVmClusterProperties` added property `resource_anchor_id`
+  - Model `CloudVmClusterProperties` added property `scan_dns_name_v2`
+  - Model `CloudVmClusterProperties` added property `sparse_storage_percentage`
+  - Model `CloudVmClusterUpdateProperties` added property `is_accelerated_network_enabled`
+  - Model `DbSystemBaseProperties` added property `character_set`
+  - Model `DbSystemBaseProperties` added property `data_collection_options`
+  - Model `DbSystemBaseProperties` added property `ncharacter_set`
+  - Model `DbSystemProperties` added property `character_set`
+  - Model `DbSystemProperties` added property `data_collection_options`
+  - Model `DbSystemProperties` added property `ncharacter_set`
+  - Model `ExadbVmClusterProperties` added property `hostname_v2`
+  - Model `ExadbVmClusterProperties` added property `scan_dns_name_v2`
+  - Model `ExascaleDbStorageVaultProperties` added property `autoscale_limit_in_gbs`
+  - Model `ExascaleDbStorageVaultProperties` added property `is_autoscale_enabled`
+  - Model `NetworkAnchorProperties` added property `proximity_placement_group`
+  - Enum `SystemShapes` added member `EXADATA_X11_MV`
+  - Enum `WorkloadType` added member `LH`
+  - Added model `AssignUnassignConnection`
+  - Added model `AssignUnassignDeployment`
+  - Added model `AssignedConnection`
+  - Added model `AssignedDeployment`
+  - Added enum `BackupDestinationType`
+  - Added model `BackupScheduleType`
+  - Added enum `CategoryType`
+  - Added model `ConnectionBaseProperties`
+  - Added enum `ConnectionLifecycleState`
+  - Added enum `ConnectionType`
+  - Added enum `CredentialType`
+  - Added model `DatabaseEdition`
+  - Added model `DatabaseEditionProperties`
+  - Added model `DatabaseSystemShape`
+  - Added model `DatabaseSystemShapeProperties`
+  - Added model `DeploymentConnectionAssignmentProperties`
+  - Added enum `DeploymentLifecycleState`
+  - Added model `DeploymentProperties`
+  - Added enum `DeploymentType`
+  - Added enum `FrequencyType`
+  - Added enum `GiMinorVersionSortOrder`
+  - Added model `GoldenGateConnection`
+  - Added enum `GoldenGateConnectionAssignmentLifecycleState`
+  - Added model `GoldenGateConnectionUpdate`
+  - Added model `GoldenGateConnectionUpdateProperties`
+  - Added model `GoldenGateDeployment`
+  - Added model `GoldenGateDeploymentUpdate`
+  - Added model `GoldenGateDeploymentUpdateProperties`
+  - Added model `GroupToRolesMappingDetails`
+  - Added model `KafkaBootstrapServer`
+  - Added model `KafkaConnectionDetails`
+  - Added enum `KafkaConnectionTechnologyType`
+  - Added model `MaintenanceConfigurationType`
+  - Added model `MaintenanceWindowType`
+  - Added model `MicrosoftFabricConnectionDetails`
+  - Added enum `MicrosoftFabricConnectionTechnologyType`
+  - Added model `OggDeploymentDetails`
+  - Added model `OracleConnectionDetails`
+  - Added enum `OracleConnectionTechnologyType`
+  - Added model `ProximityPlacementGroup`
+  - Added enum `ProximityPlacementGroupEntityType`
+  - Added enum `RoutingMethod`
+  - Added enum `SessionMode`
+  - Added enum `SetupType`
+  - Model `GiMinorVersionsOperations` added parameter `is_gi_version_for_provisioning` in method `list_by_parent`
+  - Model `GiMinorVersionsOperations` added parameter `shape` in method `list_by_parent`
+  - Model `GiMinorVersionsOperations` added parameter `sort_order` in method `list_by_parent`
+  - Added operation group `DatabaseEditionsOperations`
+  - Added operation group `DatabaseSystemShapeResourcesOperations`
+  - Added operation group `GoldenGateConnectionsOperations`
+  - Added operation group `GoldenGateDeploymentsOperations`
+
+### Breaking Changes
+
+  - Model `CloudVmClusterProperties` deleted or renamed its instance variable `hostname`
+  - Model `CloudVmClusterProperties` deleted or renamed its instance variable `scan_dns_name`
+  - Model `ExadbVmClusterProperties` deleted or renamed its instance variable `hostname`
+  - Model `ExadbVmClusterProperties` deleted or renamed its instance variable `scan_dns_name`
+
 ## 3.1.0 (2026-08-27)
 
 WARNING: Stable SDK version 3.1.0 is used with preview API version 2025-11-01-preview. If this is expected, delete this line; otherwise, check this PR.

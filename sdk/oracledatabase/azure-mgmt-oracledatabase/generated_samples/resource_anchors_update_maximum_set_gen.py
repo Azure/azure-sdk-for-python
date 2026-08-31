@@ -32,12 +32,12 @@ def main():
 
     response = client.resource_anchors.begin_update(
         resource_group_name="rgopenapi",
-        resource_anchor_name="resourceanchor1",
-        properties={"tags": {"key3998": "beigadznkpzbohlefgofq"}},
+        resource_anchor_name="resource1",
+        properties={"tags": {"key7593": "example"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/ResourceAnchors_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ResourceAnchors_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

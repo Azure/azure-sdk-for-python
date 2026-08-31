@@ -32,12 +32,12 @@ def main():
 
     response = client.gi_minor_versions.get(
         location="eastus",
-        giversionname="19.0.0.0",
-        gi_minor_version_name="minorversion",
+        giversionname="resource1",
+        gi_minor_version_name="resource1",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/GiMinorVersions_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/GiMinorVersions_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

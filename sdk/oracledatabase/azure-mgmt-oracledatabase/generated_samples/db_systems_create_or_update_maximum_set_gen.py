@@ -33,40 +33,50 @@ def main():
 
     response = client.db_systems.begin_create_or_update(
         resource_group_name="rgopenapi",
-        db_system_name="dbsystem1",
+        db_system_name="resource1",
         resource={
-            "location": "uuh",
+            "location": "eastus",
             "properties": {
                 "adminPassword": "********",
-                "clusterName": "icshqxm",
-                "computeCount": 28,
+                "characterSet": "example",
+                "clusterName": "puw",
+                "computeCount": 10,
                 "computeModel": "ECPU",
+                "dataCollectionOptions": {
+                    "isDiagnosticsEventsEnabled": True,
+                    "isHealthMonitoringEnabled": True,
+                    "isIncidentLogsEnabled": True,
+                },
                 "databaseEdition": "StandardEdition",
                 "dbSystemOptions": {"storageManagement": "LVM"},
-                "dbVersion": "nuzcyzulicdscaxxleansibdtqxhf",
+                "dbVersion": "example",
                 "diskRedundancy": "High",
-                "displayName": "cpvibowyttzngughrisxfglqnffhtbjacuskwmixpczatxyrmrrgjsokonbolesdufrvuganmokwjkziisezqbvhmxtftldjulyixvmrcpmtlhynhbdlufcjdmmlbvcjdwbumjzdgwrxthntbbzscyrgmcfmkkowpujydlofklcrhdhoefeyl",
+                "displayName": "resource1",
+                "domain": "l",
                 "gridImageOcid": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
-                "hostname": "krixp",
-                "initialDataStorageSizeInGb": 19,
+                "hostname": "b",
+                "initialDataStorageSizeInGb": 40,
+                "licenseModel": "LicenseIncluded",
                 "lifecycleState": "Provisioning",
-                "networkAnchorId": "/subscriptions/00000000-0000-4025-0000-000000000000/resourceGroups/rg001/providers/Oracle.Database/networkAnchors/networkanchor1",
-                "nodeCount": 24,
+                "ncharacterSet": "fkdieg",
+                "networkAnchorId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Oracle.Database/networkAnchors/networkanchor1",
+                "nodeCount": 11,
                 "ocid": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
-                "resourceAnchorId": "/subscriptions/00000000-0000-4025-0000-000000000000/resourceGroups/rg001/providers/Oracle.Database/resourceAnchors/resourceanchor1",
-                "shape": "kcknzpixkpolhxpcvpzwhjjvyafciktxguoljnixmztvkfryxaqogtrefbjbibzlbojjnuhrrxninevocnigpzenshgqozclxyhzwkavncfvekfpmbxhinwqvupoacgascnmqvplqckjrqbxsejzprsvgvmvkbuvncffjv",
+                "pdbName": "resource1",
+                "resourceAnchorId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Oracle.Database/resourceAnchors/anchor1",
+                "shape": "example",
                 "source": "None",
-                "sshPublicKeys": ["qtozhgwrjzkmwvdsggbivnbcwgykjnuvugqwmzompvbyfi"],
+                "sshPublicKeys": ["example"],
                 "storageVolumePerformanceMode": "Balanced",
-                "timeZone": "gyrlmvdtseawpykcpwlgexrcffciyavsshsekacwcfkubcqdbrliy",
+                "timeZone": "2026-06-01T00:00:00Z",
             },
-            "tags": {"key2549": "orxnddawgxmye"},
-            "zones": ["pstozrrpkhlaffxt"],
+            "tags": {"key1855": "hczjcgfrxqk"},
+            "zones": ["example"],
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/DbSystems_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/DbSystems_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

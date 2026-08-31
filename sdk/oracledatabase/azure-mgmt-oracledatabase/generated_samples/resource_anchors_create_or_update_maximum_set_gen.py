@@ -32,16 +32,16 @@ def main():
 
     response = client.resource_anchors.begin_create_or_update(
         resource_group_name="rgopenapi",
-        resource_anchor_name="resourceanchor1",
+        resource_anchor_name="resource1",
         resource={
-            "location": "at",
+            "location": "qbkti",
             "properties": {"linkedCompartmentId": "ocid1.autonomousdatabase.oc1..aaaaa3klq"},
-            "tags": {"key236": "wbucrnidikivbujndfk"},
+            "tags": {"key2309": "example"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/ResourceAnchors_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ResourceAnchors_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

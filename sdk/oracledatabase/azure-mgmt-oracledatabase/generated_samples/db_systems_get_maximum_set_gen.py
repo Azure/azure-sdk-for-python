@@ -32,11 +32,11 @@ def main():
 
     response = client.db_systems.get(
         resource_group_name="rgopenapi",
-        db_system_name="dbsystem1",
+        db_system_name="resource1",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/DbSystems_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/DbSystems_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

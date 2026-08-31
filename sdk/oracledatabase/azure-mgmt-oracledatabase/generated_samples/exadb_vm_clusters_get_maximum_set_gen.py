@@ -32,11 +32,11 @@ def main():
 
     response = client.exadb_vm_clusters.get(
         resource_group_name="rgopenapi",
-        exadb_vm_cluster_name="exadbVmClusterName1",
+        exadb_vm_cluster_name="resource1",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/ExadbVmClusters_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ExadbVmClusters_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

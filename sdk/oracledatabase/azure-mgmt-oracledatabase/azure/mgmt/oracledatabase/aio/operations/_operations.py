@@ -79,6 +79,10 @@ from ...operations._operations import (
     build_cloud_vm_clusters_list_private_ip_addresses_request,
     build_cloud_vm_clusters_remove_vms_request,
     build_cloud_vm_clusters_update_request,
+    build_database_editions_get_request,
+    build_database_editions_list_by_location_request,
+    build_database_system_shape_resources_get_request,
+    build_database_system_shape_resources_list_by_location_request,
     build_db_nodes_action_request,
     build_db_nodes_get_request,
     build_db_nodes_list_by_parent_request,
@@ -120,6 +124,26 @@ from ...operations._operations import (
     build_gi_minor_versions_list_by_parent_request,
     build_gi_versions_get_request,
     build_gi_versions_list_by_location_request,
+    build_golden_gate_connections_assign_deployment_request,
+    build_golden_gate_connections_create_or_update_request,
+    build_golden_gate_connections_delete_request,
+    build_golden_gate_connections_get_assigned_deployment_request,
+    build_golden_gate_connections_get_request,
+    build_golden_gate_connections_list_assigned_deployments_by_parent_request,
+    build_golden_gate_connections_list_by_resource_group_request,
+    build_golden_gate_connections_list_by_subscription_request,
+    build_golden_gate_connections_unassign_deployment_request,
+    build_golden_gate_connections_update_request,
+    build_golden_gate_deployments_assign_connection_request,
+    build_golden_gate_deployments_create_or_update_request,
+    build_golden_gate_deployments_delete_request,
+    build_golden_gate_deployments_get_assigned_connection_request,
+    build_golden_gate_deployments_get_request,
+    build_golden_gate_deployments_list_assigned_connections_by_parent_request,
+    build_golden_gate_deployments_list_by_resource_group_request,
+    build_golden_gate_deployments_list_by_subscription_request,
+    build_golden_gate_deployments_unassign_connection_request,
+    build_golden_gate_deployments_update_request,
     build_network_anchors_create_or_update_request,
     build_network_anchors_delete_request,
     build_network_anchors_get_request,
@@ -1289,7 +1313,20 @@ class CloudExadataInfrastructuresOperations:  # pylint: disable=docstring-missin
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2025-08-15-preview", "2025-09-01", "2025-11-01-preview"],
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
+        ],
     )
     async def _configure_exascale_initial(
         self,
@@ -1471,7 +1508,20 @@ class CloudExadataInfrastructuresOperations:  # pylint: disable=docstring-missin
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2025-08-15-preview", "2025-09-01", "2025-11-01-preview"],
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2025-08-15-preview",
+            "2025-09-01",
+            "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
+        ],
     )
     async def begin_configure_exascale(
         self,
@@ -5038,6 +5088,14 @@ class OracleSubscriptionsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _add_azure_subscriptions_initial(
@@ -5175,6 +5233,14 @@ class OracleSubscriptionsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_add_azure_subscriptions(
@@ -5780,6 +5846,14 @@ class GiVersionsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_location(
@@ -5796,7 +5870,7 @@ class GiVersionsOperations:  # pylint: disable=docstring-missing-param
         :param location: The name of the Azure region. Required.
         :type location: str
         :keyword shape: If provided, filters the results for the given shape. Known values are:
-         "Exadata.X9M", "Exadata.X11M", and "ExaDbXS". Default value is None.
+         "Exadata.X9M", "Exadata.X11M", "Exadata.X11MV", and "ExaDbXS". Default value is None.
         :paramtype shape: str or ~azure.mgmt.oracledatabase.models.SystemShapes
         :keyword zone: Filters the result for the given Azure Availability Zone. Default value is None.
         :paramtype zone: str
@@ -5926,7 +6000,8 @@ class GiMinorVersionsOperations:  # pylint: disable=docstring-missing-param
                 "shape_family",
                 "zone",
                 "accept",
-            ]
+            ],
+            "2026-04-01-preview": ["shape", "is_gi_version_for_provisioning", "sort_order"],
         },
         api_versions_list=[
             "2024-12-01-preview",
@@ -5939,6 +6014,14 @@ class GiMinorVersionsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_parent(
@@ -5948,6 +6031,9 @@ class GiMinorVersionsOperations:  # pylint: disable=docstring-missing-param
         *,
         shape_family: Optional[Union[str, _models.ShapeFamily]] = None,
         zone: Optional[str] = None,
+        shape: Optional[str] = None,
+        is_gi_version_for_provisioning: Optional[bool] = None,
+        sort_order: Optional[Union[str, _models.GiMinorVersionSortOrder]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.GiMinorVersion"]:
         """List GiMinorVersion resources by GiVersion.
@@ -5962,6 +6048,15 @@ class GiMinorVersionsOperations:  # pylint: disable=docstring-missing-param
         :paramtype shape_family: str or ~azure.mgmt.oracledatabase.models.ShapeFamily
         :keyword zone: Filters the result for the given Azure Availability Zone. Default value is None.
         :paramtype zone: str
+        :keyword shape: If provided, filters the results to the set of GI minor versions supported for
+         the given shape. Default value is None.
+        :paramtype shape: str
+        :keyword is_gi_version_for_provisioning: If true, filters the results to GI minor versions
+         supported during VM cluster provisioning. Default value is None.
+        :paramtype is_gi_version_for_provisioning: bool
+        :keyword sort_order: Sort order for the returned GI minor versions. Known values are: "ASC" and
+         "DESC". Default value is None.
+        :paramtype sort_order: str or ~azure.mgmt.oracledatabase.models.GiMinorVersionSortOrder
         :return: An iterator like instance of GiMinorVersion
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.oracledatabase.models.GiMinorVersion]
@@ -5989,6 +6084,9 @@ class GiMinorVersionsOperations:  # pylint: disable=docstring-missing-param
                     subscription_id=self._config.subscription_id,
                     shape_family=shape_family,
                     zone=zone,
+                    shape=shape,
+                    is_gi_version_for_provisioning=is_gi_version_for_provisioning,
+                    sort_order=sort_order,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6080,6 +6178,14 @@ class GiMinorVersionsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def get(
@@ -6260,6 +6366,14 @@ class DbSystemShapesOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_location(
@@ -6769,6 +6883,14 @@ class FlexComponentsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def get(self, location: str, flex_component_name: str, **kwargs: Any) -> _models.FlexComponent:
@@ -6853,6 +6975,14 @@ class FlexComponentsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_parent(
@@ -6863,7 +6993,7 @@ class FlexComponentsOperations:  # pylint: disable=docstring-missing-param
         :param location: The name of the Azure region. Required.
         :type location: str
         :keyword shape: If provided, filters the results for the given shape. Known values are:
-         "Exadata.X9M", "Exadata.X11M", and "ExaDbXS". Default value is None.
+         "Exadata.X9M", "Exadata.X11M", "Exadata.X11MV", and "ExaDbXS". Default value is None.
         :paramtype shape: str or ~azure.mgmt.oracledatabase.models.SystemShapes
         :return: An iterator like instance of FlexComponent
         :rtype:
@@ -8887,6 +9017,14 @@ class AutonomousDatabasesOperations:  # pylint: disable=docstring-missing-param,
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _change_disaster_recovery_configuration_initial(  # pylint: disable=name-too-long
@@ -9078,6 +9216,14 @@ class AutonomousDatabasesOperations:  # pylint: disable=docstring-missing-param,
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_change_disaster_recovery_configuration(  # pylint: disable=name-too-long
@@ -9177,6 +9323,14 @@ class AutonomousDatabasesOperations:  # pylint: disable=docstring-missing-param,
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _action_initial(
@@ -9361,6 +9515,14 @@ class AutonomousDatabasesOperations:  # pylint: disable=docstring-missing-param,
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_action(
@@ -10863,6 +11025,14 @@ class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ExadbVmCluster"]:
@@ -10981,6 +11151,14 @@ class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _create_or_update_initial(
@@ -11168,6 +11346,14 @@ class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_create_or_update(
@@ -11268,6 +11454,14 @@ class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def get(self, resource_group_name: str, exadb_vm_cluster_name: str, **kwargs: Any) -> _models.ExadbVmCluster:
@@ -11362,6 +11556,14 @@ class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _update_initial(
@@ -11547,6 +11749,14 @@ class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_update(
@@ -11640,6 +11850,14 @@ class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _delete_initial(
@@ -11720,6 +11938,14 @@ class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_delete(
@@ -11795,6 +12021,14 @@ class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_resource_group(
@@ -11919,6 +12153,14 @@ class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _remove_vms_initial(
@@ -12108,6 +12350,14 @@ class ExadbVmClustersOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_remove_vms(
@@ -12231,6 +12481,14 @@ class ExascaleDbNodesOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def get(
@@ -12330,6 +12588,14 @@ class ExascaleDbNodesOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_parent(
@@ -12458,6 +12724,14 @@ class ExascaleDbNodesOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _action_initial(
@@ -12655,6 +12929,14 @@ class ExascaleDbNodesOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_action(
@@ -12777,6 +13059,14 @@ class ExascaleDbStorageVaultsOperations:  # pylint: disable=docstring-missing-pa
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def get(
@@ -12873,6 +13163,14 @@ class ExascaleDbStorageVaultsOperations:  # pylint: disable=docstring-missing-pa
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _create_initial(
@@ -13063,6 +13361,14 @@ class ExascaleDbStorageVaultsOperations:  # pylint: disable=docstring-missing-pa
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_create(
@@ -13164,6 +13470,14 @@ class ExascaleDbStorageVaultsOperations:  # pylint: disable=docstring-missing-pa
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _update_initial(
@@ -13352,6 +13666,14 @@ class ExascaleDbStorageVaultsOperations:  # pylint: disable=docstring-missing-pa
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_update(
@@ -13451,6 +13773,14 @@ class ExascaleDbStorageVaultsOperations:  # pylint: disable=docstring-missing-pa
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _delete_initial(
@@ -13536,6 +13866,14 @@ class ExascaleDbStorageVaultsOperations:  # pylint: disable=docstring-missing-pa
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_delete(
@@ -13611,6 +13949,14 @@ class ExascaleDbStorageVaultsOperations:  # pylint: disable=docstring-missing-pa
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_resource_group(
@@ -13727,6 +14073,14 @@ class ExascaleDbStorageVaultsOperations:  # pylint: disable=docstring-missing-pa
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ExascaleDbStorageVault"]:
@@ -13852,6 +14206,14 @@ class NetworkAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkAnchor"]:
@@ -13967,6 +14329,14 @@ class NetworkAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _create_or_update_initial(
@@ -14151,6 +14521,14 @@ class NetworkAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_create_or_update(
@@ -14248,6 +14626,14 @@ class NetworkAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def get(self, resource_group_name: str, network_anchor_name: str, **kwargs: Any) -> _models.NetworkAnchor:
@@ -14339,6 +14725,14 @@ class NetworkAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _update_initial(
@@ -14521,6 +14915,14 @@ class NetworkAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_update(
@@ -14611,6 +15013,14 @@ class NetworkAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _delete_initial(
@@ -14688,6 +15098,14 @@ class NetworkAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_delete(
@@ -14760,6 +15178,14 @@ class NetworkAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_resource_group(
@@ -14891,6 +15317,14 @@ class ResourceAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ResourceAnchor"]:
@@ -15006,6 +15440,14 @@ class ResourceAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _create_or_update_initial(
@@ -15190,6 +15632,14 @@ class ResourceAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_create_or_update(
@@ -15287,6 +15737,14 @@ class ResourceAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def get(self, resource_group_name: str, resource_anchor_name: str, **kwargs: Any) -> _models.ResourceAnchor:
@@ -15378,6 +15836,14 @@ class ResourceAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _update_initial(
@@ -15560,6 +16026,14 @@ class ResourceAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_update(
@@ -15650,6 +16124,14 @@ class ResourceAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _delete_initial(
@@ -15727,6 +16209,14 @@ class ResourceAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_delete(
@@ -15799,6 +16289,14 @@ class ResourceAnchorsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_resource_group(
@@ -15928,6 +16426,14 @@ class DbSystemsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.DbSystem"]:
@@ -16040,6 +16546,14 @@ class DbSystemsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _create_or_update_initial(
@@ -16222,6 +16736,14 @@ class DbSystemsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_create_or_update(
@@ -16311,6 +16833,14 @@ class DbSystemsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def get(self, resource_group_name: str, db_system_name: str, **kwargs: Any) -> _models.DbSystem:
@@ -16400,6 +16930,14 @@ class DbSystemsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _update_initial(
@@ -16580,6 +17118,14 @@ class DbSystemsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_update(
@@ -16668,6 +17214,14 @@ class DbSystemsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def _delete_initial(
@@ -16743,6 +17297,14 @@ class DbSystemsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_delete(self, resource_group_name: str, db_system_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -16811,6 +17373,14 @@ class DbSystemsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.DbSystem"]:
@@ -16939,6 +17509,14 @@ class DbVersionsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     async def get(self, location: str, dbversionsname: str, **kwargs: Any) -> _models.DbVersion:
@@ -17032,6 +17610,14 @@ class DbVersionsOperations:  # pylint: disable=docstring-missing-param
             "2025-08-15-preview",
             "2025-09-01",
             "2025-11-01-preview",
+            "2025-11-15-preview",
+            "2025-12-01-preview",
+            "2026-01-01-preview",
+            "2026-02-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_location(
@@ -17051,8 +17637,8 @@ class DbVersionsOperations:  # pylint: disable=docstring-missing-param
         :param location: The name of the Azure region. Required.
         :type location: str
         :keyword db_system_shape: If provided, filters the results to the set of database versions
-         which are supported for the given shape. e.g., VM.Standard.E5.Flex. "VM.Standard.x86" Default
-         value is None.
+         which are supported for the given shape. e.g., VM.Standard.E5.Flex. Known values are:
+         "VM.Standard.x86" and "VM.BaseDB.x86". Default value is None.
         :paramtype db_system_shape: str or ~azure.mgmt.oracledatabase.models.BaseDbSystemShapes
         :keyword db_system_id: The DB system AzureId. If provided, filters the results to the set of
          database versions which are supported for the DB system. Default value is None.
@@ -17167,3 +17753,3888 @@ class DbVersionsOperations:  # pylint: disable=docstring-missing-param
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+
+class DatabaseEditionsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.oracledatabase.aio.OracleDatabaseMgmtClient`'s
+        :attr:`database_editions` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: OracleDatabaseMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "location", "databaseeditionname", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def get(self, location: str, databaseeditionname: str, **kwargs: Any) -> _models.DatabaseEdition:
+        """Get a DatabaseEdition.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param databaseeditionname: DatabaseEdition name. Required.
+        :type databaseeditionname: str
+        :return: DatabaseEdition. The DatabaseEdition is compatible with MutableMapping
+        :rtype: ~azure.mgmt.oracledatabase.models.DatabaseEdition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DatabaseEdition] = kwargs.pop("cls", None)
+
+        _request = build_database_editions_get_request(
+            location=location,
+            databaseeditionname=databaseeditionname,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DatabaseEdition, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={"2026-04-01-preview": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    def list_by_location(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.DatabaseEdition"]:
+        """List DatabaseEdition resources by SubscriptionLocationResource.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: An iterator like instance of DatabaseEdition
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.oracledatabase.models.DatabaseEdition]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.DatabaseEdition]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_database_editions_list_by_location_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.DatabaseEdition],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class DatabaseSystemShapeResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.oracledatabase.aio.OracleDatabaseMgmtClient`'s
+        :attr:`database_system_shape_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: OracleDatabaseMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "location", "databasesystemshapename", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def get(self, location: str, databasesystemshapename: str, **kwargs: Any) -> _models.DatabaseSystemShape:
+        """Get a DatabaseSystemShape.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param databasesystemshapename: DatabaseSystemShape name. Required.
+        :type databasesystemshapename: str
+        :return: DatabaseSystemShape. The DatabaseSystemShape is compatible with MutableMapping
+        :rtype: ~azure.mgmt.oracledatabase.models.DatabaseSystemShape
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DatabaseSystemShape] = kwargs.pop("cls", None)
+
+        _request = build_database_system_shape_resources_get_request(
+            location=location,
+            databasesystemshapename=databasesystemshapename,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DatabaseSystemShape, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "location",
+                "shape_attribute",
+                "zone",
+                "availability_domain",
+                "database_shape_family",
+                "database_edition",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    def list_by_location(
+        self,
+        location: str,
+        *,
+        shape_attribute: Optional[str] = None,
+        zone: Optional[str] = None,
+        availability_domain: Optional[str] = None,
+        database_shape_family: Optional[str] = None,
+        database_edition: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.DatabaseSystemShape"]:
+        """List DatabaseSystemShape resources by SubscriptionLocationResource.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :keyword shape_attribute: Filters the result for the given Shape Attribute, such as
+         BLOCK_STORAGE or SMART_STORAGE. Default value is None.
+        :paramtype shape_attribute: str
+        :keyword zone: Filters the result for the given Azure Availability Zone. Default value is None.
+        :paramtype zone: str
+        :keyword availability_domain: If provided, filters the result by availability domain. Example:
+         GWjz:US-ASHBURN-AD-1. Default value is None.
+        :paramtype availability_domain: str
+        :keyword database_shape_family: If provided, filters the result by database shape family.
+         Example: VIRTUALMACHINE. Default value is None.
+        :paramtype database_shape_family: str
+        :keyword database_edition: If provided, filters the result by database edition. Default value
+         is None.
+        :paramtype database_edition: str
+        :return: An iterator like instance of DatabaseSystemShape
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.oracledatabase.models.DatabaseSystemShape]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.DatabaseSystemShape]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_database_system_shape_resources_list_by_location_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    shape_attribute=shape_attribute,
+                    zone=zone,
+                    availability_domain=availability_domain,
+                    database_shape_family=database_shape_family,
+                    database_edition=database_edition,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.DatabaseSystemShape],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class GoldenGateConnectionsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.oracledatabase.aio.OracleDatabaseMgmtClient`'s
+        :attr:`golden_gate_connections` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: OracleDatabaseMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.GoldenGateConnection"]:
+        """List GoldenGateConnection resources by subscription ID.
+
+        :return: An iterator like instance of GoldenGateConnection
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.oracledatabase.models.GoldenGateConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.GoldenGateConnection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_golden_gate_connections_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.GoldenGateConnection],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        resource: Union[_models.GoldenGateConnection, _types.GoldenGateConnection, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_golden_gate_connections_create_or_update_request(
+            resource_group_name=resource_group_name,
+            golden_gate_connection_name=golden_gate_connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        resource: _models.GoldenGateConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateConnection]:
+        """Create a GoldenGateConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.GoldenGateConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateConnection. The
+         GoldenGateConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        resource: _types.GoldenGateConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateConnection]:
+        """Create a GoldenGateConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.oracledatabase.types.GoldenGateConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateConnection. The
+         GoldenGateConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateConnection]:
+        """Create a GoldenGateConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateConnection. The
+         GoldenGateConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        resource: Union[_models.GoldenGateConnection, _types.GoldenGateConnection, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateConnection]:
+        """Create a GoldenGateConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param resource: Resource create parameters. Is either a GoldenGateConnection type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.GoldenGateConnection or
+         ~azure.mgmt.oracledatabase.types.GoldenGateConnection or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns GoldenGateConnection. The
+         GoldenGateConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GoldenGateConnection] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                golden_gate_connection_name=golden_gate_connection_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.GoldenGateConnection, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.GoldenGateConnection].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.GoldenGateConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def get(
+        self, resource_group_name: str, golden_gate_connection_name: str, **kwargs: Any
+    ) -> _models.GoldenGateConnection:
+        """Get a GoldenGateConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :return: GoldenGateConnection. The GoldenGateConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.oracledatabase.models.GoldenGateConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.GoldenGateConnection] = kwargs.pop("cls", None)
+
+        _request = build_golden_gate_connections_get_request(
+            resource_group_name=resource_group_name,
+            golden_gate_connection_name=golden_gate_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.GoldenGateConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        properties: Union[_models.GoldenGateConnectionUpdate, _types.GoldenGateConnectionUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_golden_gate_connections_update_request(
+            resource_group_name=resource_group_name,
+            golden_gate_connection_name=golden_gate_connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        properties: _models.GoldenGateConnectionUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateConnection]:
+        """Update a GoldenGateConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.GoldenGateConnectionUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateConnection. The
+         GoldenGateConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        properties: _types.GoldenGateConnectionUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateConnection]:
+        """Update a GoldenGateConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.oracledatabase.types.GoldenGateConnectionUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateConnection. The
+         GoldenGateConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateConnection]:
+        """Update a GoldenGateConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateConnection. The
+         GoldenGateConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        properties: Union[_models.GoldenGateConnectionUpdate, _types.GoldenGateConnectionUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateConnection]:
+        """Update a GoldenGateConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param properties: The resource properties to be updated. Is either a
+         GoldenGateConnectionUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.GoldenGateConnectionUpdate or
+         ~azure.mgmt.oracledatabase.types.GoldenGateConnectionUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns GoldenGateConnection. The
+         GoldenGateConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GoldenGateConnection] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                golden_gate_connection_name=golden_gate_connection_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.GoldenGateConnection, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.GoldenGateConnection].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.GoldenGateConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, golden_gate_connection_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_golden_gate_connections_delete_request(
+            resource_group_name=resource_group_name,
+            golden_gate_connection_name=golden_gate_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, golden_gate_connection_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a GoldenGateConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                golden_gate_connection_name=golden_gate_connection_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.GoldenGateConnection"]:
+        """List GoldenGateConnection resources by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of GoldenGateConnection
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.oracledatabase.models.GoldenGateConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.GoldenGateConnection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_golden_gate_connections_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.GoldenGateConnection],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def _assign_deployment_initial(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        body: Union[_models.AssignUnassignDeployment, _types.AssignUnassignDeployment, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_golden_gate_connections_assign_deployment_request(
+            resource_group_name=resource_group_name,
+            golden_gate_connection_name=golden_gate_connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_assign_deployment(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        body: _models.AssignUnassignDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedDeployment]:
+        """Assign a GoldenGate deployment to a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AssignUnassignDeployment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedDeployment. The AssignedDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_assign_deployment(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        body: _types.AssignUnassignDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedDeployment]:
+        """Assign a GoldenGate deployment to a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.oracledatabase.types.AssignUnassignDeployment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedDeployment. The AssignedDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_assign_deployment(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedDeployment]:
+        """Assign a GoldenGate deployment to a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedDeployment. The AssignedDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def begin_assign_deployment(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        body: Union[_models.AssignUnassignDeployment, _types.AssignUnassignDeployment, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedDeployment]:
+        """Assign a GoldenGate deployment to a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param body: The content of the action request. Is either a AssignUnassignDeployment type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AssignUnassignDeployment or
+         ~azure.mgmt.oracledatabase.types.AssignUnassignDeployment or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns AssignedDeployment. The AssignedDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AssignedDeployment] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._assign_deployment_initial(
+                resource_group_name=resource_group_name,
+                golden_gate_connection_name=golden_gate_connection_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AssignedDeployment, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AssignedDeployment].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AssignedDeployment](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def _unassign_deployment_initial(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        body: Union[_models.AssignUnassignDeployment, _types.AssignUnassignDeployment, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_golden_gate_connections_unassign_deployment_request(
+            resource_group_name=resource_group_name,
+            golden_gate_connection_name=golden_gate_connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_unassign_deployment(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        body: _models.AssignUnassignDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedDeployment]:
+        """Unassign a GoldenGate deployment from a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AssignUnassignDeployment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedDeployment. The AssignedDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_unassign_deployment(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        body: _types.AssignUnassignDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedDeployment]:
+        """Unassign a GoldenGate deployment from a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.oracledatabase.types.AssignUnassignDeployment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedDeployment. The AssignedDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_unassign_deployment(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedDeployment]:
+        """Unassign a GoldenGate deployment from a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedDeployment. The AssignedDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def begin_unassign_deployment(
+        self,
+        resource_group_name: str,
+        golden_gate_connection_name: str,
+        body: Union[_models.AssignUnassignDeployment, _types.AssignUnassignDeployment, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedDeployment]:
+        """Unassign a GoldenGate deployment from a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param body: The content of the action request. Is either a AssignUnassignDeployment type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AssignUnassignDeployment or
+         ~azure.mgmt.oracledatabase.types.AssignUnassignDeployment or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns AssignedDeployment. The AssignedDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AssignedDeployment] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._unassign_deployment_initial(
+                resource_group_name=resource_group_name,
+                golden_gate_connection_name=golden_gate_connection_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AssignedDeployment, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AssignedDeployment].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AssignedDeployment](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    def list_assigned_deployments_by_parent(
+        self, resource_group_name: str, golden_gate_connection_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AssignedDeployment"]:
+        """List assigned deployments by GoldenGate connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :return: An iterator like instance of AssignedDeployment
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.oracledatabase.models.AssignedDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AssignedDeployment]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_golden_gate_connections_list_assigned_deployments_by_parent_request(
+                    resource_group_name=resource_group_name,
+                    golden_gate_connection_name=golden_gate_connection_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AssignedDeployment],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_connection_name",
+                "assignment_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def get_assigned_deployment(
+        self, resource_group_name: str, golden_gate_connection_name: str, assignment_id: str, **kwargs: Any
+    ) -> _models.AssignedDeployment:
+        """Get assigned deployment by GoldenGate connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_connection_name: The name of the GoldenGateConnection. Required.
+        :type golden_gate_connection_name: str
+        :param assignment_id: Assigned Deployment assignment OCID. Required.
+        :type assignment_id: str
+        :return: AssignedDeployment. The AssignedDeployment is compatible with MutableMapping
+        :rtype: ~azure.mgmt.oracledatabase.models.AssignedDeployment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AssignedDeployment] = kwargs.pop("cls", None)
+
+        _request = build_golden_gate_connections_get_assigned_deployment_request(
+            resource_group_name=resource_group_name,
+            golden_gate_connection_name=golden_gate_connection_name,
+            assignment_id=assignment_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AssignedDeployment, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class GoldenGateDeploymentsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.oracledatabase.aio.OracleDatabaseMgmtClient`'s
+        :attr:`golden_gate_deployments` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: OracleDatabaseMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.GoldenGateDeployment"]:
+        """List GoldenGateDeployment resources by subscription ID.
+
+        :return: An iterator like instance of GoldenGateDeployment
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.oracledatabase.models.GoldenGateDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.GoldenGateDeployment]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_golden_gate_deployments_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.GoldenGateDeployment],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        resource: Union[_models.GoldenGateDeployment, _types.GoldenGateDeployment, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_golden_gate_deployments_create_or_update_request(
+            resource_group_name=resource_group_name,
+            golden_gate_deployment_name=golden_gate_deployment_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        resource: _models.GoldenGateDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateDeployment]:
+        """Create a GoldenGateDeployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.GoldenGateDeployment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateDeployment. The
+         GoldenGateDeployment is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        resource: _types.GoldenGateDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateDeployment]:
+        """Create a GoldenGateDeployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.oracledatabase.types.GoldenGateDeployment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateDeployment. The
+         GoldenGateDeployment is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateDeployment]:
+        """Create a GoldenGateDeployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateDeployment. The
+         GoldenGateDeployment is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        resource: Union[_models.GoldenGateDeployment, _types.GoldenGateDeployment, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateDeployment]:
+        """Create a GoldenGateDeployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param resource: Resource create parameters. Is either a GoldenGateDeployment type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.oracledatabase.models.GoldenGateDeployment or
+         ~azure.mgmt.oracledatabase.types.GoldenGateDeployment or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns GoldenGateDeployment. The
+         GoldenGateDeployment is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GoldenGateDeployment] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                golden_gate_deployment_name=golden_gate_deployment_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.GoldenGateDeployment, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.GoldenGateDeployment].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.GoldenGateDeployment](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def get(
+        self, resource_group_name: str, golden_gate_deployment_name: str, **kwargs: Any
+    ) -> _models.GoldenGateDeployment:
+        """Get a GoldenGateDeployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :return: GoldenGateDeployment. The GoldenGateDeployment is compatible with MutableMapping
+        :rtype: ~azure.mgmt.oracledatabase.models.GoldenGateDeployment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.GoldenGateDeployment] = kwargs.pop("cls", None)
+
+        _request = build_golden_gate_deployments_get_request(
+            resource_group_name=resource_group_name,
+            golden_gate_deployment_name=golden_gate_deployment_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.GoldenGateDeployment, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        properties: Union[_models.GoldenGateDeploymentUpdate, _types.GoldenGateDeploymentUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_golden_gate_deployments_update_request(
+            resource_group_name=resource_group_name,
+            golden_gate_deployment_name=golden_gate_deployment_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        properties: _models.GoldenGateDeploymentUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateDeployment]:
+        """Update a GoldenGateDeployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.GoldenGateDeploymentUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateDeployment. The
+         GoldenGateDeployment is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        properties: _types.GoldenGateDeploymentUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateDeployment]:
+        """Update a GoldenGateDeployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.oracledatabase.types.GoldenGateDeploymentUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateDeployment. The
+         GoldenGateDeployment is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateDeployment]:
+        """Update a GoldenGateDeployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns GoldenGateDeployment. The
+         GoldenGateDeployment is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        properties: Union[_models.GoldenGateDeploymentUpdate, _types.GoldenGateDeploymentUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.GoldenGateDeployment]:
+        """Update a GoldenGateDeployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param properties: The resource properties to be updated. Is either a
+         GoldenGateDeploymentUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.oracledatabase.models.GoldenGateDeploymentUpdate or
+         ~azure.mgmt.oracledatabase.types.GoldenGateDeploymentUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns GoldenGateDeployment. The
+         GoldenGateDeployment is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.GoldenGateDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GoldenGateDeployment] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                golden_gate_deployment_name=golden_gate_deployment_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.GoldenGateDeployment, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.GoldenGateDeployment].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.GoldenGateDeployment](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, golden_gate_deployment_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_golden_gate_deployments_delete_request(
+            resource_group_name=resource_group_name,
+            golden_gate_deployment_name=golden_gate_deployment_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, golden_gate_deployment_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a GoldenGateDeployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                golden_gate_deployment_name=golden_gate_deployment_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.GoldenGateDeployment"]:
+        """List GoldenGateDeployment resources by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of GoldenGateDeployment
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.oracledatabase.models.GoldenGateDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.GoldenGateDeployment]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_golden_gate_deployments_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.GoldenGateDeployment],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def _assign_connection_initial(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        body: Union[_models.AssignUnassignConnection, _types.AssignUnassignConnection, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_golden_gate_deployments_assign_connection_request(
+            resource_group_name=resource_group_name,
+            golden_gate_deployment_name=golden_gate_deployment_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_assign_connection(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        body: _models.AssignUnassignConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedConnection]:
+        """Assign a GoldenGate connection to a deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AssignUnassignConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedConnection. The AssignedConnection
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_assign_connection(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        body: _types.AssignUnassignConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedConnection]:
+        """Assign a GoldenGate connection to a deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.oracledatabase.types.AssignUnassignConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedConnection. The AssignedConnection
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_assign_connection(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedConnection]:
+        """Assign a GoldenGate connection to a deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedConnection. The AssignedConnection
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def begin_assign_connection(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        body: Union[_models.AssignUnassignConnection, _types.AssignUnassignConnection, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedConnection]:
+        """Assign a GoldenGate connection to a deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param body: The content of the action request. Is either a AssignUnassignConnection type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AssignUnassignConnection or
+         ~azure.mgmt.oracledatabase.types.AssignUnassignConnection or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns AssignedConnection. The AssignedConnection
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AssignedConnection] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._assign_connection_initial(
+                resource_group_name=resource_group_name,
+                golden_gate_deployment_name=golden_gate_deployment_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AssignedConnection, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AssignedConnection].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AssignedConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def _unassign_connection_initial(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        body: Union[_models.AssignUnassignConnection, _types.AssignUnassignConnection, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_golden_gate_deployments_unassign_connection_request(
+            resource_group_name=resource_group_name,
+            golden_gate_deployment_name=golden_gate_deployment_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_unassign_connection(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        body: _models.AssignUnassignConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedConnection]:
+        """Unassign a GoldenGate connection from a deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AssignUnassignConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedConnection. The AssignedConnection
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_unassign_connection(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        body: _types.AssignUnassignConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedConnection]:
+        """Unassign a GoldenGate connection from a deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.oracledatabase.types.AssignUnassignConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedConnection. The AssignedConnection
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_unassign_connection(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedConnection]:
+        """Unassign a GoldenGate connection from a deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AssignedConnection. The AssignedConnection
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def begin_unassign_connection(
+        self,
+        resource_group_name: str,
+        golden_gate_deployment_name: str,
+        body: Union[_models.AssignUnassignConnection, _types.AssignUnassignConnection, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AssignedConnection]:
+        """Unassign a GoldenGate connection from a deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param body: The content of the action request. Is either a AssignUnassignConnection type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.oracledatabase.models.AssignUnassignConnection or
+         ~azure.mgmt.oracledatabase.types.AssignUnassignConnection or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns AssignedConnection. The AssignedConnection
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.oracledatabase.models.AssignedConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AssignedConnection] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._unassign_connection_initial(
+                resource_group_name=resource_group_name,
+                golden_gate_deployment_name=golden_gate_deployment_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AssignedConnection, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AssignedConnection].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AssignedConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    def list_assigned_connections_by_parent(
+        self, resource_group_name: str, golden_gate_deployment_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AssignedConnection"]:
+        """List assigned connections by GoldenGate deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :return: An iterator like instance of AssignedConnection
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.oracledatabase.models.AssignedConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AssignedConnection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_golden_gate_deployments_list_assigned_connections_by_parent_request(
+                    resource_group_name=resource_group_name,
+                    golden_gate_deployment_name=golden_gate_deployment_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AssignedConnection],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "golden_gate_deployment_name",
+                "assignment_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-05-01-preview", "2026-06-01"],
+    )
+    async def get_assigned_connection(
+        self, resource_group_name: str, golden_gate_deployment_name: str, assignment_id: str, **kwargs: Any
+    ) -> _models.AssignedConnection:
+        """Get assigned connection by GoldenGate deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param golden_gate_deployment_name: The name of the GoldenGateDeployment. Required.
+        :type golden_gate_deployment_name: str
+        :param assignment_id: Assigned Connection assignment OCID. Required.
+        :type assignment_id: str
+        :return: AssignedConnection. The AssignedConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.oracledatabase.models.AssignedConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AssignedConnection] = kwargs.pop("cls", None)
+
+        _request = build_golden_gate_deployments_get_assigned_connection_request(
+            resource_group_name=resource_group_name,
+            golden_gate_deployment_name=golden_gate_deployment_name,
+            assignment_id=assignment_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AssignedConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

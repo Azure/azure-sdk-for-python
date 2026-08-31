@@ -32,10 +32,10 @@ def main():
 
     client.resource_anchors.begin_delete(
         resource_group_name="rgopenapi",
-        resource_anchor_name="resourceanchor1",
+        resource_anchor_name="resource1",
     ).result()
 
 
-# x-ms-original-file: 2025-11-01-preview/ResourceAnchors_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ResourceAnchors_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

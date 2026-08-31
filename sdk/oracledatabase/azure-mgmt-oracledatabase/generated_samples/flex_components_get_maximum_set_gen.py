@@ -32,11 +32,11 @@ def main():
 
     response = client.flex_components.get(
         location="eastus",
-        flex_component_name="flexname1",
+        flex_component_name="resource1",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/FlexComponents_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/FlexComponents_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -12,7 +12,7 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import DataBaseType, DbSystemSourceType, SourceType
+from ._enums import ConnectionType, DataBaseType, DbSystemSourceType, SourceType
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -179,6 +179,161 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.oracledatabase.models.SystemData
+    """
+
+
+class AssignedConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Assigned Connection resource belonging to GoldenGate Deployment.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.oracledatabase.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.oracledatabase.models.DeploymentConnectionAssignmentProperties
+    """
+
+    properties: Optional["_models.DeploymentConnectionAssignmentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DeploymentConnectionAssignmentProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AssignedDeployment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Assigned Deployment resource belonging to GoldenGate Connection.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.oracledatabase.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.oracledatabase.models.DeploymentConnectionAssignmentProperties
+    """
+
+    properties: Optional["_models.DeploymentConnectionAssignmentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DeploymentConnectionAssignmentProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AssignUnassignConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The payload for assigning or unassigning a connection on a deployment.
+
+    :ivar connection_id: The Azure resource ID of the connection to assign or unassign. Required.
+    :vartype connection_id: str
+    """
+
+    connection_id: str = rest_field(name="connectionId", visibility=["read", "create", "update", "delete", "query"])
+    """The Azure resource ID of the connection to assign or unassign. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AssignUnassignDeployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The payload for assigning or unassigning a deployment on a connection.
+
+    :ivar deployment_id: The Azure resource ID of the deployment to assign or unassign. Required.
+    :vartype deployment_id: str
+    """
+
+    deployment_id: str = rest_field(name="deploymentId", visibility=["read", "create", "update", "delete", "query"])
+    """The Azure resource ID of the deployment to assign or unassign. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        deployment_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
@@ -270,23 +425,6 @@ class AutonomousDatabase(TrackedResource):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.oracledatabase.models.SystemData
-    """
-
-
 class AutonomousDatabaseBackup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutonomousDatabaseBackup resource definition.
 
@@ -369,6 +507,9 @@ class AutonomousDatabaseBackupProperties(_Model):  # pylint: disable=docstring-k
      "Failed", "Canceled", and "Provisioning".
     :vartype provisioning_state: str or
      ~azure.mgmt.oracledatabase.models.AzureResourceProvisioningState
+    :ivar backup_destination: The destination where this backup is stored. Known values are: "OCI"
+     and "AZURE".
+    :vartype backup_destination: str or ~azure.mgmt.oracledatabase.models.BackupDestinationType
     """
 
     autonomous_database_ocid: Optional[str] = rest_field(name="autonomousDatabaseOcid", visibility=["read"])
@@ -415,6 +556,10 @@ class AutonomousDatabaseBackupProperties(_Model):  # pylint: disable=docstring-k
     )
     """Azure resource provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      and \"Provisioning\"."""
+    backup_destination: Optional[Union[str, "_models.BackupDestinationType"]] = rest_field(
+        name="backupDestination", visibility=["read"]
+    )
+    """The destination where this backup is stored. Known values are: \"OCI\" and \"AZURE\"."""
 
     @overload
     def __init__(
@@ -530,7 +675,7 @@ class AutonomousDatabaseBaseProperties(_Model):  # pylint: disable=docstring-key
     :ivar db_version: A valid Oracle Database version for Autonomous Database.
     :vartype db_version: str
     :ivar db_workload: The Autonomous Database workload type. Known values are: "OLTP", "DW",
-     "AJD", and "APEX".
+     "AJD", "APEX", and "LH".
     :vartype db_workload: str or ~azure.mgmt.oracledatabase.models.WorkloadType
     :ivar display_name: The user-friendly name for the Autonomous Database.
     :vartype display_name: str
@@ -717,6 +862,21 @@ class AutonomousDatabaseBaseProperties(_Model):  # pylint: disable=docstring-key
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelisted_ips: list[str]
+    :ivar is_schedule_az_update_to_earliest: Update AZ at the earliest available opportunity.
+    :vartype is_schedule_az_update_to_earliest: bool
+    :ivar time_scheduled_az_update: The date and time when the Autonomous Database availability
+     zone is to be updated.
+    :vartype time_scheduled_az_update: str
+    :ivar zone: The logical zone where the Autonomous Database is provisioned.
+    :vartype zone: str
+    :ivar backup_destination: Backup destination for auto and long-term backups. Existing backups
+     stay in their original destination when this value changes. Known values are: "OCI" and
+     "AZURE".
+    :vartype backup_destination: str or ~azure.mgmt.oracledatabase.models.BackupDestinationType
+    :ivar resource_anchor_id: Azure Resource Anchor ID.
+    :vartype resource_anchor_id: str
+    :ivar network_anchor_id: Azure Network Anchor ID.
+    :vartype network_anchor_id: str
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -757,8 +917,8 @@ class AutonomousDatabaseBaseProperties(_Model):  # pylint: disable=docstring-key
     db_workload: Optional[Union[str, "_models.WorkloadType"]] = rest_field(
         name="dbWorkload", visibility=["read", "create"]
     )
-    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", and
-     \"APEX\"."""
+    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", \"APEX\",
+     and \"LH\"."""
     display_name: Optional[str] = rest_field(name="displayName", visibility=["read", "create", "update"])
     """The user-friendly name for the Autonomous Database."""
     is_auto_scaling_enabled: Optional[bool] = rest_field(
@@ -974,6 +1134,23 @@ class AutonomousDatabaseBaseProperties(_Model):  # pylint: disable=docstring-key
     """The client IP access control list (ACL). This is an array of CIDR notations and/or IP
      addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25']."""
+    is_schedule_az_update_to_earliest: Optional[bool] = rest_field(
+        name="isScheduleAzUpdateToEarliest", visibility=["update"]
+    )
+    """Update AZ at the earliest available opportunity."""
+    time_scheduled_az_update: Optional[str] = rest_field(name="timeScheduledAzUpdate", visibility=["update"])
+    """The date and time when the Autonomous Database availability zone is to be updated."""
+    zone: Optional[str] = rest_field(visibility=["read", "create", "update"])
+    """The logical zone where the Autonomous Database is provisioned."""
+    backup_destination: Optional[Union[str, "_models.BackupDestinationType"]] = rest_field(
+        name="backupDestination", visibility=["read", "create", "update"]
+    )
+    """Backup destination for auto and long-term backups. Existing backups stay in their original
+     destination when this value changes. Known values are: \"OCI\" and \"AZURE\"."""
+    resource_anchor_id: Optional[str] = rest_field(name="resourceAnchorId", visibility=["read", "create"])
+    """Azure Resource Anchor ID."""
+    network_anchor_id: Optional[str] = rest_field(name="networkAnchorId", visibility=["read", "create"])
+    """Azure Network Anchor ID."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -1014,6 +1191,12 @@ class AutonomousDatabaseBaseProperties(_Model):  # pylint: disable=docstring-key
         role: Optional[Union[str, "_models.RoleType"]] = None,
         backup_retention_period_in_days: Optional[int] = None,
         whitelisted_ips: Optional[list[str]] = None,
+        is_schedule_az_update_to_earliest: Optional[bool] = None,
+        time_scheduled_az_update: Optional[str] = None,
+        zone: Optional[str] = None,
+        backup_destination: Optional[Union[str, "_models.BackupDestinationType"]] = None,
+        resource_anchor_id: Optional[str] = None,
+        network_anchor_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1126,7 +1309,7 @@ class AutonomousDatabaseCloneProperties(
     :ivar db_version: A valid Oracle Database version for Autonomous Database.
     :vartype db_version: str
     :ivar db_workload: The Autonomous Database workload type. Known values are: "OLTP", "DW",
-     "AJD", and "APEX".
+     "AJD", "APEX", and "LH".
     :vartype db_workload: str or ~azure.mgmt.oracledatabase.models.WorkloadType
     :ivar display_name: The user-friendly name for the Autonomous Database.
     :vartype display_name: str
@@ -1313,6 +1496,21 @@ class AutonomousDatabaseCloneProperties(
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelisted_ips: list[str]
+    :ivar is_schedule_az_update_to_earliest: Update AZ at the earliest available opportunity.
+    :vartype is_schedule_az_update_to_earliest: bool
+    :ivar time_scheduled_az_update: The date and time when the Autonomous Database availability
+     zone is to be updated.
+    :vartype time_scheduled_az_update: str
+    :ivar zone: The logical zone where the Autonomous Database is provisioned.
+    :vartype zone: str
+    :ivar backup_destination: Backup destination for auto and long-term backups. Existing backups
+     stay in their original destination when this value changes. Known values are: "OCI" and
+     "AZURE".
+    :vartype backup_destination: str or ~azure.mgmt.oracledatabase.models.BackupDestinationType
+    :ivar resource_anchor_id: Azure Resource Anchor ID.
+    :vartype resource_anchor_id: str
+    :ivar network_anchor_id: Azure Network Anchor ID.
+    :vartype network_anchor_id: str
     :ivar data_base_type: Database type to be created. Required. Clone DB.
     :vartype data_base_type: str or ~azure.mgmt.oracledatabase.models.CLONE
     :ivar source: The source of the database. Known values are: "None", "Database", "BackupFromId",
@@ -1411,6 +1609,12 @@ class AutonomousDatabaseCloneProperties(
         role: Optional[Union[str, "_models.RoleType"]] = None,
         backup_retention_period_in_days: Optional[int] = None,
         whitelisted_ips: Optional[list[str]] = None,
+        is_schedule_az_update_to_earliest: Optional[bool] = None,
+        time_scheduled_az_update: Optional[str] = None,
+        zone: Optional[str] = None,
+        backup_destination: Optional[Union[str, "_models.BackupDestinationType"]] = None,
+        resource_anchor_id: Optional[str] = None,
+        network_anchor_id: Optional[str] = None,
         source: Optional[Union[str, "_models.SourceType"]] = None,
         refreshable_model: Optional[Union[str, "_models.RefreshableModelType"]] = None,
         time_until_reconnect_clone_enabled: Optional[str] = None,
@@ -1458,7 +1662,7 @@ class AutonomousDatabaseCrossRegionDisasterRecoveryProperties(
     :ivar db_version: A valid Oracle Database version for Autonomous Database.
     :vartype db_version: str
     :ivar db_workload: The Autonomous Database workload type. Known values are: "OLTP", "DW",
-     "AJD", and "APEX".
+     "AJD", "APEX", and "LH".
     :vartype db_workload: str or ~azure.mgmt.oracledatabase.models.WorkloadType
     :ivar display_name: The user-friendly name for the Autonomous Database.
     :vartype display_name: str
@@ -1645,6 +1849,21 @@ class AutonomousDatabaseCrossRegionDisasterRecoveryProperties(
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelisted_ips: list[str]
+    :ivar is_schedule_az_update_to_earliest: Update AZ at the earliest available opportunity.
+    :vartype is_schedule_az_update_to_earliest: bool
+    :ivar time_scheduled_az_update: The date and time when the Autonomous Database availability
+     zone is to be updated.
+    :vartype time_scheduled_az_update: str
+    :ivar zone: The logical zone where the Autonomous Database is provisioned.
+    :vartype zone: str
+    :ivar backup_destination: Backup destination for auto and long-term backups. Existing backups
+     stay in their original destination when this value changes. Known values are: "OCI" and
+     "AZURE".
+    :vartype backup_destination: str or ~azure.mgmt.oracledatabase.models.BackupDestinationType
+    :ivar resource_anchor_id: Azure Resource Anchor ID.
+    :vartype resource_anchor_id: str
+    :ivar network_anchor_id: Azure Network Anchor ID.
+    :vartype network_anchor_id: str
     :ivar data_base_type: Database type to be created. Required. Cross Region Disaster Recovery.
     :vartype data_base_type: str or
      ~azure.mgmt.oracledatabase.models.CROSS_REGION_DISASTER_RECOVERY
@@ -1737,6 +1956,12 @@ class AutonomousDatabaseCrossRegionDisasterRecoveryProperties(
         role: Optional[Union[str, "_models.RoleType"]] = None,
         backup_retention_period_in_days: Optional[int] = None,
         whitelisted_ips: Optional[list[str]] = None,
+        is_schedule_az_update_to_earliest: Optional[bool] = None,
+        time_scheduled_az_update: Optional[str] = None,
+        zone: Optional[str] = None,
+        backup_destination: Optional[Union[str, "_models.BackupDestinationType"]] = None,
+        resource_anchor_id: Optional[str] = None,
+        network_anchor_id: Optional[str] = None,
         source_location: Optional[str] = None,
         source_ocid: Optional[str] = None,
         is_replicate_automatic_backups: Optional[bool] = None,
@@ -1784,7 +2009,7 @@ class AutonomousDatabaseFromBackupTimestampProperties(
     :ivar db_version: A valid Oracle Database version for Autonomous Database.
     :vartype db_version: str
     :ivar db_workload: The Autonomous Database workload type. Known values are: "OLTP", "DW",
-     "AJD", and "APEX".
+     "AJD", "APEX", and "LH".
     :vartype db_workload: str or ~azure.mgmt.oracledatabase.models.WorkloadType
     :ivar display_name: The user-friendly name for the Autonomous Database.
     :vartype display_name: str
@@ -1971,6 +2196,21 @@ class AutonomousDatabaseFromBackupTimestampProperties(
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelisted_ips: list[str]
+    :ivar is_schedule_az_update_to_earliest: Update AZ at the earliest available opportunity.
+    :vartype is_schedule_az_update_to_earliest: bool
+    :ivar time_scheduled_az_update: The date and time when the Autonomous Database availability
+     zone is to be updated.
+    :vartype time_scheduled_az_update: str
+    :ivar zone: The logical zone where the Autonomous Database is provisioned.
+    :vartype zone: str
+    :ivar backup_destination: Backup destination for auto and long-term backups. Existing backups
+     stay in their original destination when this value changes. Known values are: "OCI" and
+     "AZURE".
+    :vartype backup_destination: str or ~azure.mgmt.oracledatabase.models.BackupDestinationType
+    :ivar resource_anchor_id: Azure Resource Anchor ID.
+    :vartype resource_anchor_id: str
+    :ivar network_anchor_id: Azure Network Anchor ID.
+    :vartype network_anchor_id: str
     :ivar data_base_type: Database type to be created. Required. Clone DB from backup timestamp.
     :vartype data_base_type: str or ~azure.mgmt.oracledatabase.models.CLONE_FROM_BACKUP_TIMESTAMP
     :ivar source: The source of the database. Required. Backup from timestamp source.
@@ -2046,6 +2286,12 @@ class AutonomousDatabaseFromBackupTimestampProperties(
         role: Optional[Union[str, "_models.RoleType"]] = None,
         backup_retention_period_in_days: Optional[int] = None,
         whitelisted_ips: Optional[list[str]] = None,
+        is_schedule_az_update_to_earliest: Optional[bool] = None,
+        time_scheduled_az_update: Optional[str] = None,
+        zone: Optional[str] = None,
+        backup_destination: Optional[Union[str, "_models.BackupDestinationType"]] = None,
+        resource_anchor_id: Optional[str] = None,
+        network_anchor_id: Optional[str] = None,
         timestamp: Optional[datetime.datetime] = None,
         use_latest_available_backup_time_stamp: Optional[bool] = None,
     ) -> None: ...
@@ -2199,7 +2445,7 @@ class AutonomousDatabaseProperties(
     :ivar db_version: A valid Oracle Database version for Autonomous Database.
     :vartype db_version: str
     :ivar db_workload: The Autonomous Database workload type. Known values are: "OLTP", "DW",
-     "AJD", and "APEX".
+     "AJD", "APEX", and "LH".
     :vartype db_workload: str or ~azure.mgmt.oracledatabase.models.WorkloadType
     :ivar display_name: The user-friendly name for the Autonomous Database.
     :vartype display_name: str
@@ -2386,6 +2632,21 @@ class AutonomousDatabaseProperties(
      notations and/or IP addresses. Values should be separate strings, separated by commas. Example:
      ['1.1.1.1','1.1.1.0/24','1.1.2.25'].
     :vartype whitelisted_ips: list[str]
+    :ivar is_schedule_az_update_to_earliest: Update AZ at the earliest available opportunity.
+    :vartype is_schedule_az_update_to_earliest: bool
+    :ivar time_scheduled_az_update: The date and time when the Autonomous Database availability
+     zone is to be updated.
+    :vartype time_scheduled_az_update: str
+    :ivar zone: The logical zone where the Autonomous Database is provisioned.
+    :vartype zone: str
+    :ivar backup_destination: Backup destination for auto and long-term backups. Existing backups
+     stay in their original destination when this value changes. Known values are: "OCI" and
+     "AZURE".
+    :vartype backup_destination: str or ~azure.mgmt.oracledatabase.models.BackupDestinationType
+    :ivar resource_anchor_id: Azure Resource Anchor ID.
+    :vartype resource_anchor_id: str
+    :ivar network_anchor_id: Azure Network Anchor ID.
+    :vartype network_anchor_id: str
     :ivar data_base_type: Database type to be created. Required. Regular DB.
     :vartype data_base_type: str or ~azure.mgmt.oracledatabase.models.REGULAR
     """
@@ -2431,6 +2692,12 @@ class AutonomousDatabaseProperties(
         role: Optional[Union[str, "_models.RoleType"]] = None,
         backup_retention_period_in_days: Optional[int] = None,
         whitelisted_ips: Optional[list[str]] = None,
+        is_schedule_az_update_to_earliest: Optional[bool] = None,
+        time_scheduled_az_update: Optional[str] = None,
+        zone: Optional[str] = None,
+        backup_destination: Optional[Union[str, "_models.BackupDestinationType"]] = None,
+        resource_anchor_id: Optional[str] = None,
+        network_anchor_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2827,7 +3094,7 @@ class AutonomousDbVersionProperties(_Model):  # pylint: disable=docstring-keywor
     :ivar version: Supported Autonomous Db versions. Required.
     :vartype version: str
     :ivar db_workload: The Autonomous Database workload type. Known values are: "OLTP", "DW",
-     "AJD", and "APEX".
+     "AJD", "APEX", and "LH".
     :vartype db_workload: str or ~azure.mgmt.oracledatabase.models.WorkloadType
     :ivar is_default_for_free: True if this version of the Oracle Database software's default is
      free.
@@ -2848,8 +3115,8 @@ class AutonomousDbVersionProperties(_Model):  # pylint: disable=docstring-keywor
     db_workload: Optional[Union[str, "_models.WorkloadType"]] = rest_field(
         name="dbWorkload", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", and
-     \"APEX\"."""
+    """The Autonomous Database workload type. Known values are: \"OLTP\", \"DW\", \"AJD\", \"APEX\",
+     and \"LH\"."""
     is_default_for_free: Optional[bool] = rest_field(
         name="isDefaultForFree", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2908,6 +3175,72 @@ class AzureSubscriptions(_Model):  # pylint: disable=docstring-keyword-should-ma
         self,
         *,
         azure_subscription_ids: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BackupScheduleType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Backup schedule type.
+
+    :ivar bucket_name: Bucket name.
+    :vartype bucket_name: str
+    :ivar compartment_id: Compartment ID.
+    :vartype compartment_id: str
+    :ivar frequency_backup_scheduled: Backup schedule frequency. Known values are: "Daily",
+     "Weekly", and "Monthly".
+    :vartype frequency_backup_scheduled: str or ~azure.mgmt.oracledatabase.models.FrequencyType
+    :ivar is_metadata_only: Indicates whether the backup contains metadata only.
+    :vartype is_metadata_only: bool
+    :ivar namespace_name: Namespace.
+    :vartype namespace_name: str
+    :ivar time_backup_scheduled: Scheduled backup time.
+    :vartype time_backup_scheduled: str
+    """
+
+    bucket_name: Optional[str] = rest_field(
+        name="bucketName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Bucket name."""
+    compartment_id: Optional[str] = rest_field(
+        name="compartmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Compartment ID."""
+    frequency_backup_scheduled: Optional[Union[str, "_models.FrequencyType"]] = rest_field(
+        name="frequencyBackupScheduled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backup schedule frequency. Known values are: \"Daily\", \"Weekly\", and \"Monthly\"."""
+    is_metadata_only: Optional[bool] = rest_field(
+        name="isMetadataOnly", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the backup contains metadata only."""
+    namespace_name: Optional[str] = rest_field(
+        name="namespaceName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Namespace."""
+    time_backup_scheduled: Optional[str] = rest_field(
+        name="timeBackupScheduled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Scheduled backup time."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        bucket_name: Optional[str] = None,
+        compartment_id: Optional[str] = None,
+        frequency_backup_scheduled: Optional[Union[str, "_models.FrequencyType"]] = None,
+        is_metadata_only: Optional[bool] = None,
+        namespace_name: Optional[str] = None,
+        time_backup_scheduled: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2996,6 +3329,8 @@ class CloudExadataInfrastructureProperties(_Model):  # pylint: disable=docstring
      list[~azure.mgmt.oracledatabase.models.DefinedFileSystemConfiguration]
     :ivar ocid: Exadata infra ocid.
     :vartype ocid: str
+    :ivar resource_anchor_id: Azure Resource Anchor ID.
+    :vartype resource_anchor_id: str
     :ivar compute_count: The number of compute servers for the cloud Exadata infrastructure.
     :vartype compute_count: int
     :ivar storage_count: The number of storage servers for the cloud Exadata infrastructure.
@@ -3032,6 +3367,8 @@ class CloudExadataInfrastructureProperties(_Model):  # pylint: disable=docstring
      ~azure.mgmt.oracledatabase.models.CloudExadataInfrastructureLifecycleState
     :ivar shape: The model name of the cloud Exadata infrastructure resource. Required.
     :vartype shape: str
+    :ivar proximity_placement_group: Proximity placement group settings.
+    :vartype proximity_placement_group: ~azure.mgmt.oracledatabase.models.ProximityPlacementGroup
     :ivar oci_url: HTTPS link to OCI resources exposed to Azure Customer via Azure Interface.
     :vartype oci_url: str
     :ivar cpu_count: The total number of CPU cores allocated.
@@ -3091,6 +3428,8 @@ class CloudExadataInfrastructureProperties(_Model):  # pylint: disable=docstring
     """Defined file system configurations."""
     ocid: Optional[str] = rest_field(visibility=["read"])
     """Exadata infra ocid."""
+    resource_anchor_id: Optional[str] = rest_field(name="resourceAnchorId", visibility=["read", "create"])
+    """Azure Resource Anchor ID."""
     compute_count: Optional[int] = rest_field(name="computeCount", visibility=["read", "create", "update"])
     """The number of compute servers for the cloud Exadata infrastructure."""
     storage_count: Optional[int] = rest_field(name="storageCount", visibility=["read", "create", "update"])
@@ -3133,6 +3472,10 @@ class CloudExadataInfrastructureProperties(_Model):  # pylint: disable=docstring
      \"Updating\", \"Terminating\", \"Terminated\", \"MaintenanceInProgress\", and \"Failed\"."""
     shape: str = rest_field(visibility=["read", "create"])
     """The model name of the cloud Exadata infrastructure resource. Required."""
+    proximity_placement_group: Optional["_models.ProximityPlacementGroup"] = rest_field(
+        name="proximityPlacementGroup", visibility=["read", "create"]
+    )
+    """Proximity placement group settings."""
     oci_url: Optional[str] = rest_field(name="ociUrl", visibility=["read"])
     """HTTPS link to OCI resources exposed to Azure Customer via Azure Interface."""
     cpu_count: Optional[int] = rest_field(name="cpuCount", visibility=["read"])
@@ -3184,10 +3527,12 @@ class CloudExadataInfrastructureProperties(_Model):  # pylint: disable=docstring
         *,
         shape: str,
         display_name: str,
+        resource_anchor_id: Optional[str] = None,
         compute_count: Optional[int] = None,
         storage_count: Optional[int] = None,
         maintenance_window: Optional["_models.MaintenanceWindow"] = None,
         customer_contacts: Optional[list["_models.CustomerContact"]] = None,
+        proximity_placement_group: Optional["_models.ProximityPlacementGroup"] = None,
         database_server_type: Optional[str] = None,
         storage_server_type: Optional[str] = None,
     ) -> None: ...
@@ -3358,6 +3703,10 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
 
     :ivar ocid: Cloud VM Cluster ocid.
     :vartype ocid: str
+    :ivar resource_anchor_id: Azure Resource Anchor ID.
+    :vartype resource_anchor_id: str
+    :ivar network_anchor_id: Azure Network Anchor ID.
+    :vartype network_anchor_id: str
     :ivar listener_port: The port number configured for the listener on the cloud VM cluster.
     :vartype listener_port: int
     :ivar node_count: The number of nodes in the cloud VM cluster.
@@ -3382,9 +3731,8 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
     :vartype time_zone: str
     :ivar zone_id: The OCID of the zone the cloud VM cluster is associated with.
     :vartype zone_id: str
-    :ivar hostname: The hostname for the cloud VM cluster. Hostname and domain combined length
-     cannot exceed 112 characters. Required.
-    :vartype hostname: str
+    :ivar hostname_v2: The hostname for the cloud VM cluster. Required.
+    :vartype hostname_v2: str
     :ivar domain: The domain name for the cloud VM cluster.
     :vartype domain: str
     :ivar cpu_core_count: The number of CPU cores enabled on the cloud VM cluster. Required.
@@ -3403,12 +3751,23 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
      </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in the Exadata documentation for details
      on the impact of the configuration settings on storage.
     :vartype data_storage_percentage: int
+    :ivar reco_storage_percentage: The percentage assigned to RECO storage (database redo logs,
+     archive logs, and recovery manager backups). See `Storage Configuration
+     </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in the Exadata documentation for details
+     on the impact of the configuration settings on storage.
+    :vartype reco_storage_percentage: int
+    :ivar sparse_storage_percentage: The percentage assigned to SPARSE storage (Exadata snapshots).
+     See `Storage Configuration </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in the
+     Exadata documentation for details on the impact of the configuration settings on storage.
+    :vartype sparse_storage_percentage: int
     :ivar is_local_backup_enabled: If true, database backup on local Exadata storage is configured
      for the cloud VM cluster. If false, database backup on local Exadata storage is not available
      in the cloud VM cluster.
     :vartype is_local_backup_enabled: bool
     :ivar cloud_exadata_infrastructure_id: Cloud Exadata Infrastructure ID. Required.
     :vartype cloud_exadata_infrastructure_id: str
+    :ivar proximity_placement_group: Proximity placement group settings.
+    :vartype proximity_placement_group: ~azure.mgmt.oracledatabase.models.ProximityPlacementGroup
     :ivar is_sparse_diskgroup_enabled: If true, sparse disk group is configured for the cloud VM
      cluster. If false, sparse disk group is not created.
     :vartype is_sparse_diskgroup_enabled: bool
@@ -3433,9 +3792,9 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
      Service instance to enable failover. If one node fails, the VIP is reassigned to another active
      node in the cluster. **Note:** For a single-node DB system, this list is empty.
     :vartype vip_ids: list[str]
-    :ivar scan_dns_name: The FQDN of the DNS record for the SCAN IP addresses that are associated
-     with the cloud VM cluster.
-    :vartype scan_dns_name: str
+    :ivar scan_dns_name_v2: The FQDN of the DNS record for the SCAN IP addresses that are
+     associated with the cloud VM cluster.
+    :vartype scan_dns_name_v2: str
     :ivar scan_listener_port_tcp: The TCP Single Client Access Name (SCAN) port. The default port
      is 1521.
     :vartype scan_listener_port_tcp: int
@@ -3495,10 +3854,17 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
      cluster is ASM or Exascale. Known values are: "ASM" and "Exascale".
     :vartype storage_management_type: str or
      ~azure.mgmt.oracledatabase.models.ExadataVmClusterStorageManagementType
+    :ivar is_accelerated_network_enabled: Indicates if the Accelerated Networking feature is
+     enabled or disabled for provisioning an Exadata VM cluster. The default value is: false.
+    :vartype is_accelerated_network_enabled: bool
     """
 
     ocid: Optional[str] = rest_field(visibility=["read"])
     """Cloud VM Cluster ocid."""
+    resource_anchor_id: Optional[str] = rest_field(name="resourceAnchorId", visibility=["read", "create"])
+    """Azure Resource Anchor ID."""
+    network_anchor_id: Optional[str] = rest_field(name="networkAnchorId", visibility=["read", "create"])
+    """Azure Network Anchor ID."""
     listener_port: Optional[int] = rest_field(name="listenerPort", visibility=["read"])
     """The port number configured for the listener on the cloud VM cluster."""
     node_count: Optional[int] = rest_field(name="nodeCount", visibility=["read"])
@@ -3530,9 +3896,8 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
      </Content/Database/References/timezones.htm>`_."""
     zone_id: Optional[str] = rest_field(name="zoneId", visibility=["read", "create"])
     """The OCID of the zone the cloud VM cluster is associated with."""
-    hostname: str = rest_field(visibility=["read", "create"])
-    """The hostname for the cloud VM cluster. Hostname and domain combined length cannot exceed 112
-     characters. Required."""
+    hostname_v2: str = rest_field(name="hostname", visibility=["read", "create"])
+    """The hostname for the cloud VM cluster. Required."""
     domain: Optional[str] = rest_field(visibility=["read", "create"])
     """The domain name for the cloud VM cluster."""
     cpu_core_count: int = rest_field(name="cpuCoreCount", visibility=["read", "create", "update", "delete", "query"])
@@ -3552,6 +3917,14 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
      backups). Accepted values are 35, 40, 60 and 80. The default is 80 percent assigned to DATA
      storage. See `Storage Configuration </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in
      the Exadata documentation for details on the impact of the configuration settings on storage."""
+    reco_storage_percentage: Optional[int] = rest_field(name="recoStoragePercentage", visibility=["read", "create"])
+    """The percentage assigned to RECO storage (database redo logs, archive logs, and recovery manager
+     backups). See `Storage Configuration </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in
+     the Exadata documentation for details on the impact of the configuration settings on storage."""
+    sparse_storage_percentage: Optional[int] = rest_field(name="sparseStoragePercentage", visibility=["read", "create"])
+    """The percentage assigned to SPARSE storage (Exadata snapshots). See `Storage Configuration
+     </Content/Database/Concepts/exaoverview.htm#Exadata>`_ in the Exadata documentation for details
+     on the impact of the configuration settings on storage."""
     is_local_backup_enabled: Optional[bool] = rest_field(name="isLocalBackupEnabled", visibility=["read", "create"])
     """If true, database backup on local Exadata storage is configured for the cloud VM cluster. If
      false, database backup on local Exadata storage is not available in the cloud VM cluster."""
@@ -3559,6 +3932,10 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
         name="cloudExadataInfrastructureId", visibility=["read", "create"]
     )
     """Cloud Exadata Infrastructure ID. Required."""
+    proximity_placement_group: Optional["_models.ProximityPlacementGroup"] = rest_field(
+        name="proximityPlacementGroup", visibility=["read", "create"]
+    )
+    """Proximity placement group settings."""
     is_sparse_diskgroup_enabled: Optional[bool] = rest_field(
         name="isSparseDiskgroupEnabled", visibility=["read", "create"]
     )
@@ -3591,7 +3968,7 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
      (CRS) creates and maintains one VIP address for each node in the Exadata Cloud Service instance
      to enable failover. If one node fails, the VIP is reassigned to another active node in the
      cluster. **Note:** For a single-node DB system, this list is empty."""
-    scan_dns_name: Optional[str] = rest_field(name="scanDnsName", visibility=["read"])
+    scan_dns_name_v2: Optional[str] = rest_field(name="scanDnsName", visibility=["read"])
     """The FQDN of the DNS record for the SCAN IP addresses that are associated with the cloud VM
      cluster."""
     scan_listener_port_tcp: Optional[int] = rest_field(name="scanListenerPortTcp", visibility=["read", "create"])
@@ -3658,12 +4035,17 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
     )
     """Specifies whether the type of storage management for the VM cluster is ASM or Exascale. Known
      values are: \"ASM\" and \"Exascale\"."""
+    is_accelerated_network_enabled: Optional[bool] = rest_field(
+        name="isAcceleratedNetworkEnabled", visibility=["read", "create", "update"]
+    )
+    """Indicates if the Accelerated Networking feature is enabled or disabled for provisioning an
+     Exadata VM cluster. The default value is: false."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        hostname: str,
+        hostname_v2: str,
         cpu_core_count: int,
         cloud_exadata_infrastructure_id: str,
         ssh_public_keys: list[str],
@@ -3671,6 +4053,8 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
         gi_version: str,
         subnet_id: str,
         display_name: str,
+        resource_anchor_id: Optional[str] = None,
+        network_anchor_id: Optional[str] = None,
         storage_size_in_gbs: Optional[int] = None,
         file_system_configuration_details: Optional[list["_models.FileSystemConfigurationDetails"]] = None,
         data_storage_size_in_tbs: Optional[float] = None,
@@ -3682,7 +4066,10 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
         ocpu_count: Optional[float] = None,
         cluster_name: Optional[str] = None,
         data_storage_percentage: Optional[int] = None,
+        reco_storage_percentage: Optional[int] = None,
+        sparse_storage_percentage: Optional[int] = None,
         is_local_backup_enabled: Optional[bool] = None,
+        proximity_placement_group: Optional["_models.ProximityPlacementGroup"] = None,
         is_sparse_diskgroup_enabled: Optional[bool] = None,
         system_version: Optional[str] = None,
         license_model: Optional[Union[str, "_models.LicenseModel"]] = None,
@@ -3694,6 +4081,7 @@ class CloudVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
         compute_nodes: Optional[list[str]] = None,
         db_servers: Optional[list[str]] = None,
         exascale_db_storage_vault_id: Optional[str] = None,
+        is_accelerated_network_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -3774,6 +4162,9 @@ class CloudVmClusterUpdateProperties(_Model):  # pylint: disable=docstring-keywo
     :vartype display_name: str
     :ivar compute_nodes: The list of compute servers to be added to the cloud VM cluster.
     :vartype compute_nodes: list[str]
+    :ivar is_accelerated_network_enabled: Indicates if the Accelerated Networking feature is
+     enabled or disabled for provisioning an Exadata VM cluster. The default value is: false.
+    :vartype is_accelerated_network_enabled: bool
     """
 
     storage_size_in_gbs: Optional[int] = rest_field(name="storageSizeInGbs", visibility=["read", "update"])
@@ -3823,6 +4214,11 @@ class CloudVmClusterUpdateProperties(_Model):  # pylint: disable=docstring-keywo
     """Display Name."""
     compute_nodes: Optional[list[str]] = rest_field(name="computeNodes", visibility=["update"])
     """The list of compute servers to be added to the cloud VM cluster."""
+    is_accelerated_network_enabled: Optional[bool] = rest_field(
+        name="isAcceleratedNetworkEnabled", visibility=["read", "create", "update"]
+    )
+    """Indicates if the Accelerated Networking feature is enabled or disabled for provisioning an
+     Exadata VM cluster. The default value is: false."""
 
     @overload
     def __init__(
@@ -3840,6 +4236,7 @@ class CloudVmClusterUpdateProperties(_Model):  # pylint: disable=docstring-keywo
         data_collection_options: Optional["_models.DataCollectionOptions"] = None,
         display_name: Optional[str] = None,
         compute_nodes: Optional[list[str]] = None,
+        is_accelerated_network_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -3872,6 +4269,130 @@ class ConfigureExascaleCloudExadataInfrastructureDetails(
         self,
         *,
         total_storage_in_gbs: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConnectionBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """GoldenGate Connection base resource model.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    KafkaConnectionDetails, MicrosoftFabricConnectionDetails, OracleConnectionDetails
+
+    :ivar connection_type: The connection type to be created. Required. Known values are:
+     "GOLDENGATE", "KAFKA", "KAFKA_SCHEMA_REGISTRY", "MYSQL", "JAVA_MESSAGE_SERVICE",
+     "MICROSOFT_SQLSERVER", "OCI_OBJECT_STORAGE", "ORACLE", "AZURE_DATA_LAKE_STORAGE", "POSTGRESQL",
+     "AZURE_SYNAPSE_ANALYTICS", "SNOWFLAKE", "AMAZON_S3", "HDFS", "ORACLE_NOSQL", "MONGODB",
+     "AMAZON_KINESIS", "AMAZON_REDSHIFT", "DB2", "REDIS", "ELASTICSEARCH", "GENERIC",
+     "GOOGLE_CLOUD_STORAGE", "GOOGLE_BIGQUERY", "DATABRICKS", "GOOGLE_PUBSUB", "MICROSOFT_FABRIC",
+     and "ICEBERG".
+    :vartype connection_type: str or ~azure.mgmt.oracledatabase.models.ConnectionType
+    :ivar display_name: The connection display name. Required.
+    :vartype display_name: str
+    :ivar resource_anchor_id: The corresponding resource anchor Azure ID. Required.
+    :vartype resource_anchor_id: str
+    :ivar network_anchor_id: The corresponding network anchor Azure ID. Required.
+    :vartype network_anchor_id: str
+    :ivar compartment_id: The OCID of the compartment being referenced.
+    :vartype compartment_id: str
+    :ivar ocid: The OCID of the connection being referenced.
+    :vartype ocid: str
+    :ivar routing_method: Controls the network traffic direction to the target. Known values are:
+     "SHARED_SERVICE_ENDPOINT", "SHARED_DEPLOYMENT_ENDPOINT", and "DEDICATED_ENDPOINT".
+    :vartype routing_method: str or ~azure.mgmt.oracledatabase.models.RoutingMethod
+    :ivar vault_id: The customer's vault OCID.
+    :vartype vault_id: str
+    :ivar key_id: The customer's master key OCID.
+    :vartype key_id: str
+    :ivar does_use_secret_ids: Indicates whether secret OCIDs are used for credential fields.
+    :vartype does_use_secret_ids: bool
+    :ivar provisioning_state: Connection provisioning state. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Provisioning".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.oracledatabase.models.AzureResourceProvisioningState
+    :ivar lifecycle_state: The connection lifecycle state. Known values are: "CREATING",
+     "UPDATING", "ACTIVE", "DELETING", "DELETED", and "FAILED".
+    :vartype lifecycle_state: str or ~azure.mgmt.oracledatabase.models.ConnectionLifecycleState
+    :ivar lifecycle_details: The description of lifecycle state in detail.
+    :vartype lifecycle_details: str
+    :ivar time_created: The date time the resource was created in OCI.
+    :vartype time_created: str
+    :ivar time_updated: The date time the resource was last updated in OCI.
+    :vartype time_updated: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    connection_type: str = rest_discriminator(
+        name="connectionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connection type to be created. Required. Known values are: \"GOLDENGATE\", \"KAFKA\",
+     \"KAFKA_SCHEMA_REGISTRY\", \"MYSQL\", \"JAVA_MESSAGE_SERVICE\", \"MICROSOFT_SQLSERVER\",
+     \"OCI_OBJECT_STORAGE\", \"ORACLE\", \"AZURE_DATA_LAKE_STORAGE\", \"POSTGRESQL\",
+     \"AZURE_SYNAPSE_ANALYTICS\", \"SNOWFLAKE\", \"AMAZON_S3\", \"HDFS\", \"ORACLE_NOSQL\",
+     \"MONGODB\", \"AMAZON_KINESIS\", \"AMAZON_REDSHIFT\", \"DB2\", \"REDIS\", \"ELASTICSEARCH\",
+     \"GENERIC\", \"GOOGLE_CLOUD_STORAGE\", \"GOOGLE_BIGQUERY\", \"DATABRICKS\", \"GOOGLE_PUBSUB\",
+     \"MICROSOFT_FABRIC\", and \"ICEBERG\"."""
+    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
+    """The connection display name. Required."""
+    resource_anchor_id: str = rest_field(name="resourceAnchorId", visibility=["read", "create"])
+    """The corresponding resource anchor Azure ID. Required."""
+    network_anchor_id: str = rest_field(name="networkAnchorId", visibility=["read", "create"])
+    """The corresponding network anchor Azure ID. Required."""
+    compartment_id: Optional[str] = rest_field(name="compartmentId", visibility=["read"])
+    """The OCID of the compartment being referenced."""
+    ocid: Optional[str] = rest_field(visibility=["read"])
+    """The OCID of the connection being referenced."""
+    routing_method: Optional[Union[str, "_models.RoutingMethod"]] = rest_field(
+        name="routingMethod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls the network traffic direction to the target. Known values are:
+     \"SHARED_SERVICE_ENDPOINT\", \"SHARED_DEPLOYMENT_ENDPOINT\", and \"DEDICATED_ENDPOINT\"."""
+    vault_id: Optional[str] = rest_field(name="vaultId", visibility=["read", "create", "update", "delete", "query"])
+    """The customer's vault OCID."""
+    key_id: Optional[str] = rest_field(name="keyId", visibility=["read", "create", "update", "delete", "query"])
+    """The customer's master key OCID."""
+    does_use_secret_ids: Optional[bool] = rest_field(
+        name="doesUseSecretIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether secret OCIDs are used for credential fields."""
+    provisioning_state: Optional[Union[str, "_models.AzureResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Connection provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", and
+     \"Provisioning\"."""
+    lifecycle_state: Optional[Union[str, "_models.ConnectionLifecycleState"]] = rest_field(
+        name="lifecycleState", visibility=["read"]
+    )
+    """The connection lifecycle state. Known values are: \"CREATING\", \"UPDATING\", \"ACTIVE\",
+     \"DELETING\", \"DELETED\", and \"FAILED\"."""
+    lifecycle_details: Optional[str] = rest_field(name="lifecycleDetails", visibility=["read"])
+    """The description of lifecycle state in detail."""
+    time_created: Optional[str] = rest_field(name="timeCreated", visibility=["read"])
+    """The date time the resource was created in OCI."""
+    time_updated: Optional[str] = rest_field(name="timeUpdated", visibility=["read"])
+    """The date time the resource was last updated in OCI."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_type: str,
+        display_name: str,
+        resource_anchor_id: str,
+        network_anchor_id: str,
+        routing_method: Optional[Union[str, "_models.RoutingMethod"]] = None,
+        vault_id: Optional[str] = None,
+        key_id: Optional[str] = None,
+        does_use_secret_ids: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -4045,6 +4566,337 @@ class CustomerContact(_Model):  # pylint: disable=docstring-keyword-should-match
         self,
         *,
         email: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DatabaseEdition(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """DatabaseEdition resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.oracledatabase.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.oracledatabase.models.DatabaseEditionProperties
+    """
+
+    properties: Optional["_models.DatabaseEditionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DatabaseEditionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DatabaseEditionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """DatabaseEdition resource model.
+
+    :ivar database_edition: The Oracle database edition. Required. Known values are:
+     "StandardEdition", "EnterpriseEdition", "EnterpriseEditionHighPerformance",
+     "EnterpriseEditionExtreme", and "EnterpriseEditionDeveloper".
+    :vartype database_edition: str or ~azure.mgmt.oracledatabase.models.DbSystemDatabaseEditionType
+    """
+
+    database_edition: Union[str, "_models.DbSystemDatabaseEditionType"] = rest_field(
+        name="databaseEdition", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Oracle database edition. Required. Known values are: \"StandardEdition\",
+     \"EnterpriseEdition\", \"EnterpriseEditionHighPerformance\", \"EnterpriseEditionExtreme\", and
+     \"EnterpriseEditionDeveloper\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        database_edition: Union[str, "_models.DbSystemDatabaseEditionType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DatabaseSystemShape(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """DatabaseSystemShape resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.oracledatabase.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.oracledatabase.models.DatabaseSystemShapeProperties
+    """
+
+    properties: Optional["_models.DatabaseSystemShapeProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DatabaseSystemShapeProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DatabaseSystemShapeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """DatabaseSystemShape resource model.
+
+    :ivar shape_family: The family of the shape used for the DB system.
+    :vartype shape_family: str
+    :ivar shape_name: The shape used for the DB system. Required.
+    :vartype shape_name: str
+    :ivar available_core_count: The maximum number of CPU cores that can be enabled on the DB
+     system for this shape. Required.
+    :vartype available_core_count: int
+    :ivar minimum_core_count: The minimum number of CPU cores that can be enabled on the DB system
+     for this shape.
+    :vartype minimum_core_count: int
+    :ivar runtime_minimum_core_count: The runtime minimum number of CPU cores that can be enabled
+     on the DB system for this shape.
+    :vartype runtime_minimum_core_count: int
+    :ivar core_count_increment: The discrete number by which the CPU core count for this shape can
+     be increased or decreased.
+    :vartype core_count_increment: int
+    :ivar min_storage_count: The minimum number of Exadata storage servers available for the
+     Exadata infrastructure.
+    :vartype min_storage_count: int
+    :ivar max_storage_count: The maximum number of Exadata storage servers available for the
+     Exadata infrastructure.
+    :vartype max_storage_count: int
+    :ivar available_data_storage_per_server_in_tbs: The maximum data storage available per storage
+     server for this shape. Only applicable to ExaCC Elastic shapes.
+    :vartype available_data_storage_per_server_in_tbs: float
+    :ivar available_memory_per_node_in_gbs: The maximum memory available per database node for this
+     shape. Only applicable to ExaCC Elastic shapes.
+    :vartype available_memory_per_node_in_gbs: int
+    :ivar available_db_node_per_node_in_gbs: The maximum Db Node storage available per database
+     node for this shape. Only applicable to ExaCC Elastic shapes.
+    :vartype available_db_node_per_node_in_gbs: int
+    :ivar min_core_count_per_node: The minimum number of CPU cores that can be enabled per node for
+     this shape.
+    :vartype min_core_count_per_node: int
+    :ivar available_memory_in_gbs: The maximum memory that can be enabled for this shape.
+    :vartype available_memory_in_gbs: int
+    :ivar min_memory_per_node_in_gbs: The minimum memory that need be allocated per node for this
+     shape.
+    :vartype min_memory_per_node_in_gbs: int
+    :ivar available_db_node_storage_in_gbs: The maximum Db Node storage that can be enabled for
+     this shape.
+    :vartype available_db_node_storage_in_gbs: int
+    :ivar min_db_node_storage_per_node_in_gbs: The minimum Db Node storage that need be allocated
+     per node for this shape.
+    :vartype min_db_node_storage_per_node_in_gbs: int
+    :ivar available_data_storage_in_tbs: The maximum DATA storage that can be enabled for this
+     shape.
+    :vartype available_data_storage_in_tbs: int
+    :ivar min_data_storage_in_tbs: The minimum data storage that need be allocated for this shape.
+    :vartype min_data_storage_in_tbs: int
+    :ivar minimum_node_count: The minimum number of database nodes available for this shape.
+    :vartype minimum_node_count: int
+    :ivar maximum_node_count: The maximum number of database nodes available for this shape.
+    :vartype maximum_node_count: int
+    :ivar available_core_count_per_node: The maximum number of CPU cores per database node that can
+     be enabled for this shape. Only applicable to the flex Exadata shape and ExaCC Elastic shapes.
+    :vartype available_core_count_per_node: int
+    :ivar compute_model: The compute model of the DB system for this shape. Known values are:
+     "ECPU" and "OCPU".
+    :vartype compute_model: str or ~azure.mgmt.oracledatabase.models.ComputeModel
+    :ivar are_server_types_supported: Indicates if the shape supports database and storage server
+     types.
+    :vartype are_server_types_supported: bool
+    :ivar display_name: The display name of the shape used for the DB system.
+    :vartype display_name: str
+    :ivar shape_attributes: The shapeAttributes of the DB system shape..
+    :vartype shape_attributes: list[str]
+    """
+
+    shape_family: Optional[str] = rest_field(
+        name="shapeFamily", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The family of the shape used for the DB system."""
+    shape_name: str = rest_field(name="shapeName", visibility=["read", "create", "update", "delete", "query"])
+    """The shape used for the DB system. Required."""
+    available_core_count: int = rest_field(
+        name="availableCoreCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of CPU cores that can be enabled on the DB system for this shape. Required."""
+    minimum_core_count: Optional[int] = rest_field(
+        name="minimumCoreCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum number of CPU cores that can be enabled on the DB system for this shape."""
+    runtime_minimum_core_count: Optional[int] = rest_field(
+        name="runtimeMinimumCoreCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The runtime minimum number of CPU cores that can be enabled on the DB system for this shape."""
+    core_count_increment: Optional[int] = rest_field(
+        name="coreCountIncrement", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The discrete number by which the CPU core count for this shape can be increased or decreased."""
+    min_storage_count: Optional[int] = rest_field(
+        name="minStorageCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum number of Exadata storage servers available for the Exadata infrastructure."""
+    max_storage_count: Optional[int] = rest_field(
+        name="maxStorageCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of Exadata storage servers available for the Exadata infrastructure."""
+    available_data_storage_per_server_in_tbs: Optional[float] = rest_field(
+        name="availableDataStoragePerServerInTbs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum data storage available per storage server for this shape. Only applicable to ExaCC
+     Elastic shapes."""
+    available_memory_per_node_in_gbs: Optional[int] = rest_field(
+        name="availableMemoryPerNodeInGbs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum memory available per database node for this shape. Only applicable to ExaCC Elastic
+     shapes."""
+    available_db_node_per_node_in_gbs: Optional[int] = rest_field(
+        name="availableDbNodePerNodeInGbs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum Db Node storage available per database node for this shape. Only applicable to
+     ExaCC Elastic shapes."""
+    min_core_count_per_node: Optional[int] = rest_field(
+        name="minCoreCountPerNode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum number of CPU cores that can be enabled per node for this shape."""
+    available_memory_in_gbs: Optional[int] = rest_field(
+        name="availableMemoryInGbs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum memory that can be enabled for this shape."""
+    min_memory_per_node_in_gbs: Optional[int] = rest_field(
+        name="minMemoryPerNodeInGbs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum memory that need be allocated per node for this shape."""
+    available_db_node_storage_in_gbs: Optional[int] = rest_field(
+        name="availableDbNodeStorageInGbs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum Db Node storage that can be enabled for this shape."""
+    min_db_node_storage_per_node_in_gbs: Optional[int] = rest_field(
+        name="minDbNodeStoragePerNodeInGbs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum Db Node storage that need be allocated per node for this shape."""
+    available_data_storage_in_tbs: Optional[int] = rest_field(
+        name="availableDataStorageInTbs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum DATA storage that can be enabled for this shape."""
+    min_data_storage_in_tbs: Optional[int] = rest_field(
+        name="minDataStorageInTbs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum data storage that need be allocated for this shape."""
+    minimum_node_count: Optional[int] = rest_field(
+        name="minimumNodeCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum number of database nodes available for this shape."""
+    maximum_node_count: Optional[int] = rest_field(
+        name="maximumNodeCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of database nodes available for this shape."""
+    available_core_count_per_node: Optional[int] = rest_field(
+        name="availableCoreCountPerNode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of CPU cores per database node that can be enabled for this shape. Only
+     applicable to the flex Exadata shape and ExaCC Elastic shapes."""
+    compute_model: Optional[Union[str, "_models.ComputeModel"]] = rest_field(
+        name="computeModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compute model of the DB system for this shape. Known values are: \"ECPU\" and \"OCPU\"."""
+    are_server_types_supported: Optional[bool] = rest_field(
+        name="areServerTypesSupported", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates if the shape supports database and storage server types."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The display name of the shape used for the DB system."""
+    shape_attributes: Optional[list[str]] = rest_field(name="shapeAttributes", visibility=["read", "create"])
+    """The shapeAttributes of the DB system shape.."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        shape_name: str,
+        available_core_count: int,
+        shape_family: Optional[str] = None,
+        minimum_core_count: Optional[int] = None,
+        runtime_minimum_core_count: Optional[int] = None,
+        core_count_increment: Optional[int] = None,
+        min_storage_count: Optional[int] = None,
+        max_storage_count: Optional[int] = None,
+        available_data_storage_per_server_in_tbs: Optional[float] = None,
+        available_memory_per_node_in_gbs: Optional[int] = None,
+        available_db_node_per_node_in_gbs: Optional[int] = None,
+        min_core_count_per_node: Optional[int] = None,
+        available_memory_in_gbs: Optional[int] = None,
+        min_memory_per_node_in_gbs: Optional[int] = None,
+        available_db_node_storage_in_gbs: Optional[int] = None,
+        min_db_node_storage_per_node_in_gbs: Optional[int] = None,
+        available_data_storage_in_tbs: Optional[int] = None,
+        min_data_storage_in_tbs: Optional[int] = None,
+        minimum_node_count: Optional[int] = None,
+        maximum_node_count: Optional[int] = None,
+        available_core_count_per_node: Optional[int] = None,
+        compute_model: Optional[Union[str, "_models.ComputeModel"]] = None,
+        are_server_types_supported: Optional[bool] = None,
+        display_name: Optional[str] = None,
+        shape_attributes: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -4857,6 +5709,10 @@ class DbSystemBaseProperties(_Model):  # pylint: disable=docstring-keyword-shoul
     :ivar data_collection_options: Indicates user preferences for the various diagnostic collection
      options for the Base DB.
     :vartype data_collection_options: ~azure.mgmt.oracledatabase.models.DataCollectionOptions
+    :ivar character_set: The character set for the DB system. The default is AL32UTF8.
+    :vartype character_set: str
+    :ivar ncharacter_set: The national character set for the DB system. The default is AL16UTF16.
+    :vartype ncharacter_set: str
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -4963,6 +5819,10 @@ class DbSystemBaseProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         name="dataCollectionOptions", visibility=["read", "create"]
     )
     """Indicates user preferences for the various diagnostic collection options for the Base DB."""
+    character_set: Optional[str] = rest_field(name="characterSet", visibility=["read", "create"])
+    """The character set for the DB system. The default is AL32UTF8."""
+    ncharacter_set: Optional[str] = rest_field(name="ncharacterSet", visibility=["read", "create"])
+    """The national character set for the DB system. The default is AL16UTF16."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -4987,6 +5847,8 @@ class DbSystemBaseProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         compute_model: Optional[Union[str, "_models.ComputeModel"]] = None,
         compute_count: Optional[int] = None,
         data_collection_options: Optional["_models.DataCollectionOptions"] = None,
+        character_set: Optional[str] = None,
+        ncharacter_set: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -5129,6 +5991,10 @@ class DbSystemProperties(
     :ivar data_collection_options: Indicates user preferences for the various diagnostic collection
      options for the Base DB.
     :vartype data_collection_options: ~azure.mgmt.oracledatabase.models.DataCollectionOptions
+    :ivar character_set: The character set for the DB system. The default is AL32UTF8.
+    :vartype character_set: str
+    :ivar ncharacter_set: The national character set for the DB system. The default is AL16UTF16.
+    :vartype ncharacter_set: str
     :ivar source: The source of the database for creating a new database. Required. for creating a
      new database.
     :vartype source: str or ~azure.mgmt.oracledatabase.models.NONE
@@ -5196,6 +6062,8 @@ class DbSystemProperties(
         compute_model: Optional[Union[str, "_models.ComputeModel"]] = None,
         compute_count: Optional[int] = None,
         data_collection_options: Optional["_models.DataCollectionOptions"] = None,
+        character_set: Optional[str] = None,
+        ncharacter_set: Optional[str] = None,
         admin_password: Optional[str] = None,
         pdb_name: Optional[str] = None,
     ) -> None: ...
@@ -5678,6 +6546,250 @@ class DefinedFileSystemConfiguration(_Model):  # pylint: disable=docstring-keywo
         is_resizable: Optional[bool] = None,
         min_size_gb: Optional[int] = None,
         mount_point: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeploymentConnectionAssignmentProperties(_Model):
+    """Deployment-connection assignment properties.
+
+    :ivar connection_id: The OCID of the connection being referenced. Required.
+    :vartype connection_id: str
+    :ivar deployment_id: The OCID of the deployment being referenced. Required.
+    :vartype deployment_id: str
+    :ivar compartment_id: The OCID of the compartment being referenced.
+    :vartype compartment_id: str
+    :ivar deployment_name: The deployment name.
+    :vartype deployment_name: str
+    :ivar connection_name: The connection name.
+    :vartype connection_name: str
+    :ivar ocid: The OCID of the assignment being referenced.
+    :vartype ocid: str
+    :ivar lifecycle_state: The assignment lifecycle state. Known values are: "CREATING", "ACTIVE",
+     "FAILED", "UPDATING", "DELETING", and "DELETED".
+    :vartype lifecycle_state: str or
+     ~azure.mgmt.oracledatabase.models.GoldenGateConnectionAssignmentLifecycleState
+    :ivar time_created: The time the assignment was created.
+    :vartype time_created: str
+    :ivar time_updated: The time the assignment was last updated.
+    :vartype time_updated: str
+    :ivar alias_name: The assignment alias name.
+    :vartype alias_name: str
+    :ivar provisioning_state: Deployment-connection assignment provisioning state. Known values
+     are: "Succeeded", "Failed", "Canceled", and "Provisioning".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.oracledatabase.models.AzureResourceProvisioningState
+    """
+
+    connection_id: str = rest_field(name="connectionId", visibility=["read"])
+    """The OCID of the connection being referenced. Required."""
+    deployment_id: str = rest_field(name="deploymentId", visibility=["read"])
+    """The OCID of the deployment being referenced. Required."""
+    compartment_id: Optional[str] = rest_field(name="compartmentId", visibility=["read"])
+    """The OCID of the compartment being referenced."""
+    deployment_name: Optional[str] = rest_field(name="deploymentName", visibility=["read"])
+    """The deployment name."""
+    connection_name: Optional[str] = rest_field(name="connectionName", visibility=["read"])
+    """The connection name."""
+    ocid: Optional[str] = rest_field(visibility=["read"])
+    """The OCID of the assignment being referenced."""
+    lifecycle_state: Optional[Union[str, "_models.GoldenGateConnectionAssignmentLifecycleState"]] = rest_field(
+        name="lifecycleState", visibility=["read"]
+    )
+    """The assignment lifecycle state. Known values are: \"CREATING\", \"ACTIVE\", \"FAILED\",
+     \"UPDATING\", \"DELETING\", and \"DELETED\"."""
+    time_created: Optional[str] = rest_field(name="timeCreated", visibility=["read"])
+    """The time the assignment was created."""
+    time_updated: Optional[str] = rest_field(name="timeUpdated", visibility=["read"])
+    """The time the assignment was last updated."""
+    alias_name: Optional[str] = rest_field(name="aliasName", visibility=["read"])
+    """The assignment alias name."""
+    provisioning_state: Optional[Union[str, "_models.AzureResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Deployment-connection assignment provisioning state. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", and \"Provisioning\"."""
+
+
+class DeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """GoldenGate Deployment resource model.
+
+    :ivar backup_schedule: Backup schedule.
+    :vartype backup_schedule: ~azure.mgmt.oracledatabase.models.BackupScheduleType
+    :ivar compartment: OCI compartment.
+    :vartype compartment: str
+    :ivar ocid: The OCID of the deployment being referenced.
+    :vartype ocid: str
+    :ivar cpu_core_count: The minimum number of OCPUs to be made available for this deployment.
+    :vartype cpu_core_count: int
+    :ivar display_name: Display name. Required.
+    :vartype display_name: str
+    :ivar category: The deployment category. Known values are: "DataReplication",
+     "StreamAnalytics", and "DataTransforms".
+    :vartype category: str or ~azure.mgmt.oracledatabase.models.CategoryType
+    :ivar deployment_type: The type of deployment. Known values are: "Ogg", "DatabaseOracle",
+     "BigData", "DatabaseMicrosoftSQLServer", "DatabaseMySQL", "DatabasePostGreSQL",
+     "DatabaseDB2ZOS", "DATABASE_DB2I", "GGSA", and "DataTransforms".
+    :vartype deployment_type: str or ~azure.mgmt.oracledatabase.models.DeploymentType
+    :ivar deployment_url: HTTPS link to OCI resource exposed to Azure Customer via Azure Interface.
+    :vartype deployment_url: str
+    :ivar environment_type: Environment type. Known values are: "Production" and
+     "DevelopmentOrTesting".
+    :vartype environment_type: str or ~azure.mgmt.oracledatabase.models.SetupType
+    :ivar is_auto_scaling_enabled: Indicates if auto scaling is enabled for the deployment's CPU
+     core count.
+    :vartype is_auto_scaling_enabled: bool
+    :ivar ingress_ips: Connection IP address.
+    :vartype ingress_ips: list[str]
+    :ivar is_public: True if this object is publicly available.
+    :vartype is_public: bool
+    :ivar license_model: The Oracle license model that applies to a Deployment. Known values are:
+     "LicenseIncluded" and "BringYourOwnLicense".
+    :vartype license_model: str or ~azure.mgmt.oracledatabase.models.LicenseModel
+    :ivar lifecycle_details: Describes the object's current state in detail.
+    :vartype lifecycle_details: str
+    :ivar lifecycle_state: Possible lifecycle states. Known values are: "Creating", "Updating",
+     "Active", "InActive", "Deleting", "Deleted", "Failed", "Needs Attention", "In Progress",
+     "Canceling", "Canceled", "Succeeded", and "Waiting".
+    :vartype lifecycle_state: str or ~azure.mgmt.oracledatabase.models.DeploymentLifecycleState
+    :ivar time_created: The date time the resource was created in OCI.
+    :vartype time_created: str
+    :ivar time_updated: The date time the resource was last updated in OCI.
+    :vartype time_updated: str
+    :ivar maintenance_configuration: Maintenance configuration.
+    :vartype maintenance_configuration:
+     ~azure.mgmt.oracledatabase.models.MaintenanceConfigurationType
+    :ivar maintenance_window: Maintenance window.
+    :vartype maintenance_window: ~azure.mgmt.oracledatabase.models.MaintenanceWindowType
+    :ivar network_anchor_id: Azure network anchor ID. Required.
+    :vartype network_anchor_id: str
+    :ivar ogg_data: Deployment data for creating an OGG deployment.
+    :vartype ogg_data: ~azure.mgmt.oracledatabase.models.OggDeploymentDetails
+    :ivar private_ip_address: The private IP address of VCN representing the access point for the
+     associated endpoint service in the GoldenGate service VCN.
+    :vartype private_ip_address: str
+    :ivar provisioning_state: Deployment provisioning state. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Provisioning".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.oracledatabase.models.AzureResourceProvisioningState
+    :ivar resource_anchor_id: Corresponding Azure resource anchor ID. Required.
+    :vartype resource_anchor_id: str
+    :ivar storage_utilization_in_bytes: Storage utilization in bytes.
+    :vartype storage_utilization_in_bytes: int
+    :ivar time_zone: The time zone of the deployment, for example, UTC.
+    :vartype time_zone: str
+    :ivar version: The current version.
+    :vartype version: str
+    """
+
+    backup_schedule: Optional["_models.BackupScheduleType"] = rest_field(
+        name="backupSchedule", visibility=["read", "create", "update"]
+    )
+    """Backup schedule."""
+    compartment: Optional[str] = rest_field(visibility=["read"])
+    """OCI compartment."""
+    ocid: Optional[str] = rest_field(visibility=["read"])
+    """The OCID of the deployment being referenced."""
+    cpu_core_count: Optional[int] = rest_field(name="cpuCoreCount", visibility=["read", "create", "update"])
+    """The minimum number of OCPUs to be made available for this deployment."""
+    display_name: str = rest_field(name="displayName", visibility=["read", "create"])
+    """Display name. Required."""
+    category: Optional[Union[str, "_models.CategoryType"]] = rest_field(visibility=["read", "create"])
+    """The deployment category. Known values are: \"DataReplication\", \"StreamAnalytics\", and
+     \"DataTransforms\"."""
+    deployment_type: Optional[Union[str, "_models.DeploymentType"]] = rest_field(
+        name="deploymentType", visibility=["read", "create"]
+    )
+    """The type of deployment. Known values are: \"Ogg\", \"DatabaseOracle\", \"BigData\",
+     \"DatabaseMicrosoftSQLServer\", \"DatabaseMySQL\", \"DatabasePostGreSQL\", \"DatabaseDB2ZOS\",
+     \"DATABASE_DB2I\", \"GGSA\", and \"DataTransforms\"."""
+    deployment_url: Optional[str] = rest_field(name="deploymentUrl", visibility=["read"])
+    """HTTPS link to OCI resource exposed to Azure Customer via Azure Interface."""
+    environment_type: Optional[Union[str, "_models.SetupType"]] = rest_field(
+        name="environmentType", visibility=["read", "create"]
+    )
+    """Environment type. Known values are: \"Production\" and \"DevelopmentOrTesting\"."""
+    is_auto_scaling_enabled: Optional[bool] = rest_field(name="isAutoScalingEnabled", visibility=["create"])
+    """Indicates if auto scaling is enabled for the deployment's CPU core count."""
+    ingress_ips: Optional[list[str]] = rest_field(name="ingressIps", visibility=["read"])
+    """Connection IP address."""
+    is_public: Optional[bool] = rest_field(name="isPublic", visibility=["create"])
+    """True if this object is publicly available."""
+    license_model: Optional[Union[str, "_models.LicenseModel"]] = rest_field(
+        name="licenseModel", visibility=["read", "create", "update"]
+    )
+    """The Oracle license model that applies to a Deployment. Known values are: \"LicenseIncluded\"
+     and \"BringYourOwnLicense\"."""
+    lifecycle_details: Optional[str] = rest_field(name="lifecycleDetails", visibility=["read"])
+    """Describes the object's current state in detail."""
+    lifecycle_state: Optional[Union[str, "_models.DeploymentLifecycleState"]] = rest_field(
+        name="lifecycleState", visibility=["read"]
+    )
+    """Possible lifecycle states. Known values are: \"Creating\", \"Updating\", \"Active\",
+     \"InActive\", \"Deleting\", \"Deleted\", \"Failed\", \"Needs Attention\", \"In Progress\",
+     \"Canceling\", \"Canceled\", \"Succeeded\", and \"Waiting\"."""
+    time_created: Optional[str] = rest_field(name="timeCreated", visibility=["read"])
+    """The date time the resource was created in OCI."""
+    time_updated: Optional[str] = rest_field(name="timeUpdated", visibility=["read"])
+    """The date time the resource was last updated in OCI."""
+    maintenance_configuration: Optional["_models.MaintenanceConfigurationType"] = rest_field(
+        name="maintenanceConfiguration", visibility=["read", "create", "update"]
+    )
+    """Maintenance configuration."""
+    maintenance_window: Optional["_models.MaintenanceWindowType"] = rest_field(
+        name="maintenanceWindow", visibility=["read", "create", "update"]
+    )
+    """Maintenance window."""
+    network_anchor_id: str = rest_field(name="networkAnchorId", visibility=["read", "create"])
+    """Azure network anchor ID. Required."""
+    ogg_data: Optional["_models.OggDeploymentDetails"] = rest_field(name="oggData", visibility=["read", "create"])
+    """Deployment data for creating an OGG deployment."""
+    private_ip_address: Optional[str] = rest_field(name="privateIpAddress", visibility=["read"])
+    """The private IP address of VCN representing the access point for the associated endpoint service
+     in the GoldenGate service VCN."""
+    provisioning_state: Optional[Union[str, "_models.AzureResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Deployment provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", and
+     \"Provisioning\"."""
+    resource_anchor_id: str = rest_field(name="resourceAnchorId", visibility=["read", "create"])
+    """Corresponding Azure resource anchor ID. Required."""
+    storage_utilization_in_bytes: Optional[int] = rest_field(name="storageUtilizationInBytes", visibility=["read"])
+    """Storage utilization in bytes."""
+    time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create"])
+    """The time zone of the deployment, for example, UTC."""
+    version: Optional[str] = rest_field(visibility=["read", "create"])
+    """The current version."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        display_name: str,
+        network_anchor_id: str,
+        resource_anchor_id: str,
+        backup_schedule: Optional["_models.BackupScheduleType"] = None,
+        cpu_core_count: Optional[int] = None,
+        category: Optional[Union[str, "_models.CategoryType"]] = None,
+        deployment_type: Optional[Union[str, "_models.DeploymentType"]] = None,
+        environment_type: Optional[Union[str, "_models.SetupType"]] = None,
+        is_auto_scaling_enabled: Optional[bool] = None,
+        is_public: Optional[bool] = None,
+        license_model: Optional[Union[str, "_models.LicenseModel"]] = None,
+        maintenance_configuration: Optional["_models.MaintenanceConfigurationType"] = None,
+        maintenance_window: Optional["_models.MaintenanceWindowType"] = None,
+        ogg_data: Optional["_models.OggDeploymentDetails"] = None,
+        time_zone: Optional[str] = None,
+        version: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -6308,8 +7420,9 @@ class ExadbVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
     :vartype grid_image_type: str or ~azure.mgmt.oracledatabase.models.GridImageType
     :ivar gi_version: Oracle Grid Infrastructure (GI) software version.
     :vartype gi_version: str
-    :ivar hostname: The hostname for the  Exadata VM cluster on Exascale Infrastructure. Required.
-    :vartype hostname: str
+    :ivar hostname_v2: The hostname for the  Exadata VM cluster on Exascale Infrastructure.
+     Required.
+    :vartype hostname_v2: str
     :ivar license_model: The Oracle license model that applies to the Exadata VM cluster on
      Exascale Infrastructure. The default is LICENSE_INCLUDED. Known values are: "LicenseIncluded"
      and "BringYourOwnLicense".
@@ -6355,9 +7468,9 @@ class ExadbVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
     :vartype vm_file_system_storage: ~azure.mgmt.oracledatabase.models.ExadbVmClusterStorageDetails
     :ivar lifecycle_details: Additional information about the current lifecycle state.
     :vartype lifecycle_details: str
-    :ivar scan_dns_name: The FQDN of the DNS record for the SCAN IP addresses that are associated
-     with the Exadata VM cluster on Exascale Infrastructure.
-    :vartype scan_dns_name: str
+    :ivar scan_dns_name_v2: The FQDN of the DNS record for the SCAN IP addresses that are
+     associated with the Exadata VM cluster on Exascale Infrastructure.
+    :vartype scan_dns_name_v2: str
     :ivar scan_ip_ids: The Single Client Access Name (SCAN) IP addresses associated with the
      Exadata VM cluster on Exascale Infrastructure. SCAN IP addresses are typically used for load
      balancing and are not assigned to any interface. Oracle Clusterware directs the requests to the
@@ -6437,7 +7550,7 @@ class ExadbVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
     """The type of Grid Image. Known values are: \"ReleaseUpdate\" and \"CustomImage\"."""
     gi_version: Optional[str] = rest_field(name="giVersion", visibility=["read"])
     """Oracle Grid Infrastructure (GI) software version."""
-    hostname: str = rest_field(visibility=["read", "create"])
+    hostname_v2: str = rest_field(name="hostname", visibility=["read", "create"])
     """The hostname for the  Exadata VM cluster on Exascale Infrastructure. Required."""
     license_model: Optional[Union[str, "_models.LicenseModel"]] = rest_field(
         name="licenseModel", visibility=["read", "create"]
@@ -6481,7 +7594,7 @@ class ExadbVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
     """Filesystem storage details. Required."""
     lifecycle_details: Optional[str] = rest_field(name="lifecycleDetails", visibility=["read"])
     """Additional information about the current lifecycle state."""
-    scan_dns_name: Optional[str] = rest_field(name="scanDnsName", visibility=["read"])
+    scan_dns_name_v2: Optional[str] = rest_field(name="scanDnsName", visibility=["read"])
     """The FQDN of the DNS record for the SCAN IP addresses that are associated with the Exadata VM
      cluster on Exascale Infrastructure."""
     scan_ip_ids: Optional[list[str]] = rest_field(name="scanIpIds", visibility=["read"])
@@ -6529,7 +7642,7 @@ class ExadbVmClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
         display_name: str,
         enabled_ecpu_count: int,
         exascale_db_storage_vault_id: str,
-        hostname: str,
+        hostname_v2: str,
         node_count: int,
         shape: str,
         ssh_public_keys: list[str],
@@ -7014,6 +8127,12 @@ class ExascaleDbStorageVaultProperties(_Model):  # pylint: disable=docstring-key
      with the Exadata Database Storage Vault.
     :vartype attached_shape_attributes: list[str or
      ~azure.mgmt.oracledatabase.models.ShapeAttribute]
+    :ivar is_autoscale_enabled: Indicates if autoscale feature is enabled for the Storage Vault.
+     The default value is: false.
+    :vartype is_autoscale_enabled: bool
+    :ivar autoscale_limit_in_gbs: Maximum limit storage size in gigabytes, that is applicable for
+     the Database Storage Vault.
+    :vartype autoscale_limit_in_gbs: int
     """
 
     additional_flash_cache_in_percent: Optional[int] = rest_field(
@@ -7060,6 +8179,14 @@ class ExascaleDbStorageVaultProperties(_Model):  # pylint: disable=docstring-key
     )
     """The shapeAttribute of the Exadata VM cluster(s) associated with the Exadata Database Storage
      Vault."""
+    is_autoscale_enabled: Optional[bool] = rest_field(
+        name="isAutoscaleEnabled", visibility=["read", "create", "update"]
+    )
+    """Indicates if autoscale feature is enabled for the Storage Vault. The default value is: false."""
+    autoscale_limit_in_gbs: Optional[int] = rest_field(
+        name="autoscaleLimitInGbs", visibility=["read", "create", "update"]
+    )
+    """Maximum limit storage size in gigabytes, that is applicable for the Database Storage Vault."""
 
     @overload
     def __init__(
@@ -7071,6 +8198,8 @@ class ExascaleDbStorageVaultProperties(_Model):  # pylint: disable=docstring-key
         description: Optional[str] = None,
         time_zone: Optional[str] = None,
         exadata_infrastructure_id: Optional[str] = None,
+        is_autoscale_enabled: Optional[bool] = None,
+        autoscale_limit_in_gbs: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -7434,6 +8563,614 @@ class GiVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
+class GoldenGateConnection(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """GoldenGate Connection resource model.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.oracledatabase.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.oracledatabase.models.ConnectionBaseProperties
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    """
+
+    properties: Optional["_models.ConnectionBaseProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The availability zones."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ConnectionBaseProperties"] = None,
+        zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GoldenGateConnectionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the GoldenGateConnection.
+
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.oracledatabase.models.GoldenGateConnectionUpdateProperties
+    """
+
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The availability zones."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.GoldenGateConnectionUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        zones: Optional[list[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.GoldenGateConnectionUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GoldenGateConnectionUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the GoldenGateConnection.
+
+    :ivar connection_type: The connection type to be created. Known values are: "GOLDENGATE",
+     "KAFKA", "KAFKA_SCHEMA_REGISTRY", "MYSQL", "JAVA_MESSAGE_SERVICE", "MICROSOFT_SQLSERVER",
+     "OCI_OBJECT_STORAGE", "ORACLE", "AZURE_DATA_LAKE_STORAGE", "POSTGRESQL",
+     "AZURE_SYNAPSE_ANALYTICS", "SNOWFLAKE", "AMAZON_S3", "HDFS", "ORACLE_NOSQL", "MONGODB",
+     "AMAZON_KINESIS", "AMAZON_REDSHIFT", "DB2", "REDIS", "ELASTICSEARCH", "GENERIC",
+     "GOOGLE_CLOUD_STORAGE", "GOOGLE_BIGQUERY", "DATABRICKS", "GOOGLE_PUBSUB", "MICROSOFT_FABRIC",
+     and "ICEBERG".
+    :vartype connection_type: str or ~azure.mgmt.oracledatabase.models.ConnectionType
+    :ivar display_name: The connection display name.
+    :vartype display_name: str
+    :ivar routing_method: Controls the network traffic direction to the target. Known values are:
+     "SHARED_SERVICE_ENDPOINT", "SHARED_DEPLOYMENT_ENDPOINT", and "DEDICATED_ENDPOINT".
+    :vartype routing_method: str or ~azure.mgmt.oracledatabase.models.RoutingMethod
+    :ivar vault_id: The customer's vault OCID.
+    :vartype vault_id: str
+    :ivar key_id: The customer's master key OCID.
+    :vartype key_id: str
+    :ivar does_use_secret_ids: Indicates whether secret OCIDs are used for credential fields.
+    :vartype does_use_secret_ids: bool
+    """
+
+    connection_type: Optional[Union[str, "_models.ConnectionType"]] = rest_field(
+        name="connectionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connection type to be created. Known values are: \"GOLDENGATE\", \"KAFKA\",
+     \"KAFKA_SCHEMA_REGISTRY\", \"MYSQL\", \"JAVA_MESSAGE_SERVICE\", \"MICROSOFT_SQLSERVER\",
+     \"OCI_OBJECT_STORAGE\", \"ORACLE\", \"AZURE_DATA_LAKE_STORAGE\", \"POSTGRESQL\",
+     \"AZURE_SYNAPSE_ANALYTICS\", \"SNOWFLAKE\", \"AMAZON_S3\", \"HDFS\", \"ORACLE_NOSQL\",
+     \"MONGODB\", \"AMAZON_KINESIS\", \"AMAZON_REDSHIFT\", \"DB2\", \"REDIS\", \"ELASTICSEARCH\",
+     \"GENERIC\", \"GOOGLE_CLOUD_STORAGE\", \"GOOGLE_BIGQUERY\", \"DATABRICKS\", \"GOOGLE_PUBSUB\",
+     \"MICROSOFT_FABRIC\", and \"ICEBERG\"."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connection display name."""
+    routing_method: Optional[Union[str, "_models.RoutingMethod"]] = rest_field(
+        name="routingMethod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls the network traffic direction to the target. Known values are:
+     \"SHARED_SERVICE_ENDPOINT\", \"SHARED_DEPLOYMENT_ENDPOINT\", and \"DEDICATED_ENDPOINT\"."""
+    vault_id: Optional[str] = rest_field(name="vaultId", visibility=["read", "create", "update", "delete", "query"])
+    """The customer's vault OCID."""
+    key_id: Optional[str] = rest_field(name="keyId", visibility=["read", "create", "update", "delete", "query"])
+    """The customer's master key OCID."""
+    does_use_secret_ids: Optional[bool] = rest_field(
+        name="doesUseSecretIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether secret OCIDs are used for credential fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_type: Optional[Union[str, "_models.ConnectionType"]] = None,
+        display_name: Optional[str] = None,
+        routing_method: Optional[Union[str, "_models.RoutingMethod"]] = None,
+        vault_id: Optional[str] = None,
+        key_id: Optional[str] = None,
+        does_use_secret_ids: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GoldenGateDeployment(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """GoldenGate Deployment resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.oracledatabase.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.oracledatabase.models.DeploymentProperties
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    """
+
+    properties: Optional["_models.DeploymentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The availability zones."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.DeploymentProperties"] = None,
+        zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GoldenGateDeploymentUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the GoldenGateDeployment.
+
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.oracledatabase.models.GoldenGateDeploymentUpdateProperties
+    """
+
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The availability zones."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.GoldenGateDeploymentUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        zones: Optional[list[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.GoldenGateDeploymentUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GoldenGateDeploymentUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the GoldenGateDeployment.
+
+    :ivar backup_schedule: Backup schedule.
+    :vartype backup_schedule: ~azure.mgmt.oracledatabase.models.BackupScheduleType
+    :ivar cpu_core_count: The minimum number of OCPUs to be made available for this deployment.
+    :vartype cpu_core_count: int
+    :ivar license_model: The Oracle license model that applies to a Deployment. Known values are:
+     "LicenseIncluded" and "BringYourOwnLicense".
+    :vartype license_model: str or ~azure.mgmt.oracledatabase.models.LicenseModel
+    :ivar maintenance_configuration: Maintenance configuration.
+    :vartype maintenance_configuration:
+     ~azure.mgmt.oracledatabase.models.MaintenanceConfigurationType
+    :ivar maintenance_window: Maintenance window.
+    :vartype maintenance_window: ~azure.mgmt.oracledatabase.models.MaintenanceWindowType
+    """
+
+    backup_schedule: Optional["_models.BackupScheduleType"] = rest_field(
+        name="backupSchedule", visibility=["read", "create", "update"]
+    )
+    """Backup schedule."""
+    cpu_core_count: Optional[int] = rest_field(name="cpuCoreCount", visibility=["read", "create", "update"])
+    """The minimum number of OCPUs to be made available for this deployment."""
+    license_model: Optional[Union[str, "_models.LicenseModel"]] = rest_field(
+        name="licenseModel", visibility=["read", "create", "update"]
+    )
+    """The Oracle license model that applies to a Deployment. Known values are: \"LicenseIncluded\"
+     and \"BringYourOwnLicense\"."""
+    maintenance_configuration: Optional["_models.MaintenanceConfigurationType"] = rest_field(
+        name="maintenanceConfiguration", visibility=["read", "create", "update"]
+    )
+    """Maintenance configuration."""
+    maintenance_window: Optional["_models.MaintenanceWindowType"] = rest_field(
+        name="maintenanceWindow", visibility=["read", "create", "update"]
+    )
+    """Maintenance window."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        backup_schedule: Optional["_models.BackupScheduleType"] = None,
+        cpu_core_count: Optional[int] = None,
+        license_model: Optional[Union[str, "_models.LicenseModel"]] = None,
+        maintenance_configuration: Optional["_models.MaintenanceConfigurationType"] = None,
+        maintenance_window: Optional["_models.MaintenanceWindowType"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GroupToRolesMappingDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Group-to-roles mapping properties.
+
+    :ivar administrator_group_id: The OCID of the IDP group which will be mapped to goldengate role
+     administratorGroup.It grants full access to the user, including the ability to alter general,
+     non-security related operational parameters and profiles of the server.
+    :vartype administrator_group_id: str
+    :ivar operator_group_id: The OCID of the IDP group which will be mapped to goldengate role
+     operatorGroup.It allows users to perform only operational actions, like starting and stopping
+     resources. Operators cannot alter the operational parameters or profiles of the MA server.
+    :vartype operator_group_id: str
+    :ivar security_group_id: The OCID of the IDP group which will be mapped to goldengate role
+     securityGroup.It grants administration of security related objects and invoke security related
+     service requests. This role has full privileges.
+    :vartype security_group_id: str
+    :ivar user_group_id: The OCID of the IDP group which will be mapped to goldengate role
+     userGroup. It allows information-only service requests, which do not alter or affect the
+     operation of either the MA. Examples of query and read-only information include performance
+     metric information and resource status and monitoring information.
+    :vartype user_group_id: str
+    :ivar identity_domain_id: The OCID of the Identity Domain when IAM credential store is used.
+    :vartype identity_domain_id: str
+    :ivar key: The base64 encoded content of the PEM file containing the private key.
+    :vartype key: str
+    """
+
+    administrator_group_id: Optional[str] = rest_field(
+        name="administratorGroupId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the IDP group which will be mapped to goldengate role administratorGroup.It grants
+     full access to the user, including the ability to alter general, non-security related
+     operational parameters and profiles of the server."""
+    operator_group_id: Optional[str] = rest_field(
+        name="operatorGroupId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the IDP group which will be mapped to goldengate role operatorGroup.It allows users
+     to perform only operational actions, like starting and stopping resources. Operators cannot
+     alter the operational parameters or profiles of the MA server."""
+    security_group_id: Optional[str] = rest_field(
+        name="securityGroupId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the IDP group which will be mapped to goldengate role securityGroup.It grants
+     administration of security related objects and invoke security related service requests. This
+     role has full privileges."""
+    user_group_id: Optional[str] = rest_field(
+        name="userGroupId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the IDP group which will be mapped to goldengate role userGroup. It allows
+     information-only service requests, which do not alter or affect the operation of either the MA.
+     Examples of query and read-only information include performance metric information and resource
+     status and monitoring information."""
+    identity_domain_id: Optional[str] = rest_field(
+        name="identityDomainId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the Identity Domain when IAM credential store is used."""
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The base64 encoded content of the PEM file containing the private key."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        administrator_group_id: Optional[str] = None,
+        operator_group_id: Optional[str] = None,
+        security_group_id: Optional[str] = None,
+        user_group_id: Optional[str] = None,
+        identity_domain_id: Optional[str] = None,
+        key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KafkaBootstrapServer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Kafka bootstrap server with host name, and an optional port.
+
+    :ivar host: The name or address of a host. Required.
+    :vartype host: str
+    :ivar port: The port of an endpoint usually specified for a connection.
+    :vartype port: int
+    """
+
+    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name or address of a host. Required."""
+    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The port of an endpoint usually specified for a connection."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        host: str,
+        port: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KafkaConnectionDetails(
+    ConnectionBaseProperties, discriminator="KAFKA"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The metadata of a Kafka Connection.
+
+    :ivar display_name: The connection display name. Required.
+    :vartype display_name: str
+    :ivar resource_anchor_id: The corresponding resource anchor Azure ID. Required.
+    :vartype resource_anchor_id: str
+    :ivar network_anchor_id: The corresponding network anchor Azure ID. Required.
+    :vartype network_anchor_id: str
+    :ivar compartment_id: The OCID of the compartment being referenced.
+    :vartype compartment_id: str
+    :ivar ocid: The OCID of the connection being referenced.
+    :vartype ocid: str
+    :ivar routing_method: Controls the network traffic direction to the target. Known values are:
+     "SHARED_SERVICE_ENDPOINT", "SHARED_DEPLOYMENT_ENDPOINT", and "DEDICATED_ENDPOINT".
+    :vartype routing_method: str or ~azure.mgmt.oracledatabase.models.RoutingMethod
+    :ivar vault_id: The customer's vault OCID.
+    :vartype vault_id: str
+    :ivar key_id: The customer's master key OCID.
+    :vartype key_id: str
+    :ivar does_use_secret_ids: Indicates whether secret OCIDs are used for credential fields.
+    :vartype does_use_secret_ids: bool
+    :ivar provisioning_state: Connection provisioning state. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Provisioning".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.oracledatabase.models.AzureResourceProvisioningState
+    :ivar lifecycle_state: The connection lifecycle state. Known values are: "CREATING",
+     "UPDATING", "ACTIVE", "DELETING", "DELETED", and "FAILED".
+    :vartype lifecycle_state: str or ~azure.mgmt.oracledatabase.models.ConnectionLifecycleState
+    :ivar lifecycle_details: The description of lifecycle state in detail.
+    :vartype lifecycle_details: str
+    :ivar time_created: The date time the resource was created in OCI.
+    :vartype time_created: str
+    :ivar time_updated: The date time the resource was last updated in OCI.
+    :vartype time_updated: str
+    :ivar connection_type: Required. A Kafka Connection.
+    :vartype connection_type: str or ~azure.mgmt.oracledatabase.models.KAFKA
+    :ivar technology_type: The Kafka technology type. Required. Known values are: "APACHE_KAFKA",
+     "AZURE_EVENT_HUBS", "CONFLUENT_KAFKA", and "OCI_STREAMING".
+    :vartype technology_type: str or
+     ~azure.mgmt.oracledatabase.models.KafkaConnectionTechnologyType
+    :ivar bootstrap_servers: The list of KafkaBootstrapServer objects specified by host/port.
+    :vartype bootstrap_servers: list[~azure.mgmt.oracledatabase.models.KafkaBootstrapServer]
+    :ivar security_protocol: The Kafka security protocol used to connect to the broker.
+    :vartype security_protocol: str
+    :ivar username: The username used to authenticate to Kafka.
+    :vartype username: str
+    :ivar password_secret_id: The OCID of the Secret where the password is stored.
+    :vartype password_secret_id: str
+    :ivar trust_store_secret_id: The OCID of the Secret where the truststore is stored.
+    :vartype trust_store_secret_id: str
+    :ivar trust_store_password_secret_id: The OCID of the Secret where the truststore password is
+     stored.
+    :vartype trust_store_password_secret_id: str
+    :ivar key_store_secret_id: The OCID of the Secret where the keystore is stored.
+    :vartype key_store_secret_id: str
+    :ivar key_store_password_secret_id: The OCID of the Secret where the keystore password is
+     stored.
+    :vartype key_store_password_secret_id: str
+    :ivar ssl_key_password_secret_id: The OCID of the Secret where the SSL key password is stored.
+    :vartype ssl_key_password_secret_id: str
+    :ivar consumer_properties: The additional consumer properties in string format.
+    :vartype consumer_properties: str
+    :ivar producer_properties: The additional producer properties in string format.
+    :vartype producer_properties: str
+    :ivar stream_pool_id: The OCID of the stream pool being referenced.
+    :vartype stream_pool_id: str
+    :ivar cluster_id: The OCID of the Kafka cluster being referenced.
+    :vartype cluster_id: str
+    :ivar should_use_resource_principal: Indicates if resource principal should be used for
+     authentication.
+    :vartype should_use_resource_principal: bool
+    """
+
+    connection_type: Literal[ConnectionType.KAFKA] = rest_discriminator(name="connectionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A Kafka Connection."""
+    technology_type: Union[str, "_models.KafkaConnectionTechnologyType"] = rest_field(
+        name="technologyType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Kafka technology type. Required. Known values are: \"APACHE_KAFKA\", \"AZURE_EVENT_HUBS\",
+     \"CONFLUENT_KAFKA\", and \"OCI_STREAMING\"."""
+    bootstrap_servers: Optional[list["_models.KafkaBootstrapServer"]] = rest_field(
+        name="bootstrapServers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of KafkaBootstrapServer objects specified by host/port."""
+    security_protocol: Optional[str] = rest_field(
+        name="securityProtocol", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Kafka security protocol used to connect to the broker."""
+    username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The username used to authenticate to Kafka."""
+    password_secret_id: Optional[str] = rest_field(
+        name="passwordSecretId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the Secret where the password is stored."""
+    trust_store_secret_id: Optional[str] = rest_field(
+        name="trustStoreSecretId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the Secret where the truststore is stored."""
+    trust_store_password_secret_id: Optional[str] = rest_field(
+        name="trustStorePasswordSecretId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the Secret where the truststore password is stored."""
+    key_store_secret_id: Optional[str] = rest_field(
+        name="keyStoreSecretId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the Secret where the keystore is stored."""
+    key_store_password_secret_id: Optional[str] = rest_field(
+        name="keyStorePasswordSecretId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the Secret where the keystore password is stored."""
+    ssl_key_password_secret_id: Optional[str] = rest_field(
+        name="sslKeyPasswordSecretId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the Secret where the SSL key password is stored."""
+    consumer_properties: Optional[str] = rest_field(
+        name="consumerProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The additional consumer properties in string format."""
+    producer_properties: Optional[str] = rest_field(
+        name="producerProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The additional producer properties in string format."""
+    stream_pool_id: Optional[str] = rest_field(
+        name="streamPoolId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the stream pool being referenced."""
+    cluster_id: Optional[str] = rest_field(name="clusterId", visibility=["read", "create", "update", "delete", "query"])
+    """The OCID of the Kafka cluster being referenced."""
+    should_use_resource_principal: Optional[bool] = rest_field(
+        name="shouldUseResourcePrincipal", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates if resource principal should be used for authentication."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        display_name: str,
+        resource_anchor_id: str,
+        network_anchor_id: str,
+        technology_type: Union[str, "_models.KafkaConnectionTechnologyType"],
+        routing_method: Optional[Union[str, "_models.RoutingMethod"]] = None,
+        vault_id: Optional[str] = None,
+        key_id: Optional[str] = None,
+        does_use_secret_ids: Optional[bool] = None,
+        bootstrap_servers: Optional[list["_models.KafkaBootstrapServer"]] = None,
+        security_protocol: Optional[str] = None,
+        username: Optional[str] = None,
+        password_secret_id: Optional[str] = None,
+        trust_store_secret_id: Optional[str] = None,
+        trust_store_password_secret_id: Optional[str] = None,
+        key_store_secret_id: Optional[str] = None,
+        key_store_password_secret_id: Optional[str] = None,
+        ssl_key_password_secret_id: Optional[str] = None,
+        consumer_properties: Optional[str] = None,
+        producer_properties: Optional[str] = None,
+        stream_pool_id: Optional[str] = None,
+        cluster_id: Optional[str] = None,
+        should_use_resource_principal: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.connection_type = ConnectionType.KAFKA  # type: ignore
+
+
 class LongTermBackUpScheduleDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details for the long-term backup schedule.
 
@@ -7478,6 +9215,65 @@ class LongTermBackUpScheduleDetails(_Model):  # pylint: disable=docstring-keywor
         time_of_backup: Optional[datetime.datetime] = None,
         retention_period_in_days: Optional[int] = None,
         is_disabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MaintenanceConfigurationType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Maintenance configuration type.
+
+    :ivar bundle_release_upgrade_period_in_days: Bundle release period.
+    :vartype bundle_release_upgrade_period_in_days: int
+    :ivar interim_release_upgrade_period_in_days: Interim release upgrade period in days.
+    :vartype interim_release_upgrade_period_in_days: int
+    :ivar is_interim_release_auto_upgrade_enabled: Indicates whether interim release auto-upgrade
+     is enabled.
+    :vartype is_interim_release_auto_upgrade_enabled: bool
+    :ivar major_release_upgrade_period_in_days: Major release upgrade period in days.
+    :vartype major_release_upgrade_period_in_days: int
+    :ivar security_patch_upgrade_period_in_days: Security patch upgrade period in days.
+    :vartype security_patch_upgrade_period_in_days: int
+    """
+
+    bundle_release_upgrade_period_in_days: Optional[int] = rest_field(
+        name="bundleReleaseUpgradePeriodInDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Bundle release period."""
+    interim_release_upgrade_period_in_days: Optional[int] = rest_field(
+        name="interimReleaseUpgradePeriodInDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Interim release upgrade period in days."""
+    is_interim_release_auto_upgrade_enabled: Optional[bool] = rest_field(
+        name="isInterimReleaseAutoUpgradeEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether interim release auto-upgrade is enabled."""
+    major_release_upgrade_period_in_days: Optional[int] = rest_field(
+        name="majorReleaseUpgradePeriodInDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Major release upgrade period in days."""
+    security_patch_upgrade_period_in_days: Optional[int] = rest_field(
+        name="securityPatchUpgradePeriodInDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Security patch upgrade period in days."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        bundle_release_upgrade_period_in_days: Optional[int] = None,
+        interim_release_upgrade_period_in_days: Optional[int] = None,
+        is_interim_release_auto_upgrade_enabled: Optional[bool] = None,
+        major_release_upgrade_period_in_days: Optional[int] = None,
+        security_patch_upgrade_period_in_days: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -7614,6 +9410,144 @@ class MaintenanceWindow(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
+class MaintenanceWindowType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Maintenance window.
+
+    :ivar day: The day of week. Known values are: "Monday", "Tuesday", "Wednesday", "Thursday",
+     "Friday", "Saturday", and "Sunday".
+    :vartype day: str or ~azure.mgmt.oracledatabase.models.DayOfWeekName
+    :ivar start_hour: Start time in UTC.
+    :vartype start_hour: int
+    """
+
+    day: Optional[Union[str, "_models.DayOfWeekName"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The day of week. Known values are: \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\",
+     \"Friday\", \"Saturday\", and \"Sunday\"."""
+    start_hour: Optional[int] = rest_field(name="startHour", visibility=["read", "create", "update", "delete", "query"])
+    """Start time in UTC."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        day: Optional[Union[str, "_models.DayOfWeekName"]] = None,
+        start_hour: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftFabricConnectionDetails(
+    ConnectionBaseProperties, discriminator="MICROSOFT_FABRIC"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The metadata of a Microsoft Fabric Connection.
+
+    :ivar display_name: The connection display name. Required.
+    :vartype display_name: str
+    :ivar resource_anchor_id: The corresponding resource anchor Azure ID. Required.
+    :vartype resource_anchor_id: str
+    :ivar network_anchor_id: The corresponding network anchor Azure ID. Required.
+    :vartype network_anchor_id: str
+    :ivar compartment_id: The OCID of the compartment being referenced.
+    :vartype compartment_id: str
+    :ivar ocid: The OCID of the connection being referenced.
+    :vartype ocid: str
+    :ivar routing_method: Controls the network traffic direction to the target. Known values are:
+     "SHARED_SERVICE_ENDPOINT", "SHARED_DEPLOYMENT_ENDPOINT", and "DEDICATED_ENDPOINT".
+    :vartype routing_method: str or ~azure.mgmt.oracledatabase.models.RoutingMethod
+    :ivar vault_id: The customer's vault OCID.
+    :vartype vault_id: str
+    :ivar key_id: The customer's master key OCID.
+    :vartype key_id: str
+    :ivar does_use_secret_ids: Indicates whether secret OCIDs are used for credential fields.
+    :vartype does_use_secret_ids: bool
+    :ivar provisioning_state: Connection provisioning state. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Provisioning".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.oracledatabase.models.AzureResourceProvisioningState
+    :ivar lifecycle_state: The connection lifecycle state. Known values are: "CREATING",
+     "UPDATING", "ACTIVE", "DELETING", "DELETED", and "FAILED".
+    :vartype lifecycle_state: str or ~azure.mgmt.oracledatabase.models.ConnectionLifecycleState
+    :ivar lifecycle_details: The description of lifecycle state in detail.
+    :vartype lifecycle_details: str
+    :ivar time_created: The date time the resource was created in OCI.
+    :vartype time_created: str
+    :ivar time_updated: The date time the resource was last updated in OCI.
+    :vartype time_updated: str
+    :ivar connection_type: Required. A Microsoft Fabric Connection.
+    :vartype connection_type: str or ~azure.mgmt.oracledatabase.models.MICROSOFT_FABRIC
+    :ivar technology_type: The Microsoft Fabric technology type. Required. Known values are:
+     "MICROSOFT_FABRIC_LAKEHOUSE" and "MICROSOFT_FABRIC_MIRROR".
+    :vartype technology_type: str or
+     ~azure.mgmt.oracledatabase.models.MicrosoftFabricConnectionTechnologyType
+    :ivar tenant_id: Azure tenant ID of the application. Required.
+    :vartype tenant_id: str
+    :ivar client_id: Azure client ID of the application. Required.
+    :vartype client_id: str
+    :ivar client_secret_secret_id: The OCID of the Secret where the client secret is stored.
+    :vartype client_secret_secret_id: str
+    :ivar endpoint: The Microsoft Fabric service endpoint.
+    :vartype endpoint: str
+    """
+
+    connection_type: Literal[ConnectionType.MICROSOFT_FABRIC] = rest_discriminator(name="connectionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A Microsoft Fabric Connection."""
+    technology_type: Union[str, "_models.MicrosoftFabricConnectionTechnologyType"] = rest_field(
+        name="technologyType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Fabric technology type. Required. Known values are:
+     \"MICROSOFT_FABRIC_LAKEHOUSE\" and \"MICROSOFT_FABRIC_MIRROR\"."""
+    tenant_id: str = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """Azure tenant ID of the application. Required."""
+    client_id: str = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """Azure client ID of the application. Required."""
+    client_secret_secret_id: Optional[str] = rest_field(
+        name="clientSecretSecretId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the Secret where the client secret is stored."""
+    endpoint: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Microsoft Fabric service endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        resource_anchor_id: str,
+        network_anchor_id: str,
+        technology_type: Union[str, "_models.MicrosoftFabricConnectionTechnologyType"],
+        tenant_id: str,
+        client_id: str,
+        routing_method: Optional[Union[str, "_models.RoutingMethod"]] = None,
+        vault_id: Optional[str] = None,
+        key_id: Optional[str] = None,
+        does_use_secret_ids: Optional[bool] = None,
+        client_secret_secret_id: Optional[str] = None,
+        endpoint: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.connection_type = ConnectionType.MICROSOFT_FABRIC  # type: ignore
+
+
 class Month(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Month resource properties.
 
@@ -7747,6 +9681,8 @@ class NetworkAnchorProperties(_Model):  # pylint: disable=docstring-keyword-shou
     :ivar dns_forwarding_endpoint_nsg_rules_url: Deep link to OCI console DNS Forwarding endpoint
      NSG rules.
     :vartype dns_forwarding_endpoint_nsg_rules_url: str
+    :ivar proximity_placement_group: Proximity placement group settings.
+    :vartype proximity_placement_group: ~azure.mgmt.oracledatabase.models.ProximityPlacementGroup
     """
 
     resource_anchor_id: str = rest_field(name="resourceAnchorId", visibility=["read", "create"])
@@ -7810,6 +9746,10 @@ class NetworkAnchorProperties(_Model):  # pylint: disable=docstring-keyword-shou
         name="dnsForwardingEndpointNsgRulesUrl", visibility=["read"]
     )
     """Deep link to OCI console DNS Forwarding endpoint NSG rules."""
+    proximity_placement_group: Optional["_models.ProximityPlacementGroup"] = rest_field(
+        name="proximityPlacementGroup", visibility=["read", "create"]
+    )
+    """Proximity placement group settings."""
 
     @overload
     def __init__(
@@ -7824,6 +9764,7 @@ class NetworkAnchorProperties(_Model):  # pylint: disable=docstring-keyword-shou
         is_oracle_dns_forwarding_endpoint_enabled: Optional[bool] = None,
         dns_forwarding_rules: Optional[list["_models.DnsForwardingRule"]] = None,
         dns_listening_endpoint_allowed_cidrs: Optional[str] = None,
+        proximity_placement_group: Optional["_models.ProximityPlacementGroup"] = None,
     ) -> None: ...
 
     @overload
@@ -7969,6 +9910,87 @@ class NsgCidr(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
         super().__init__(*args, **kwargs)
 
 
+class OggDeploymentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """OGG deployment details.
+
+    :ivar admin_password: The password associated with the GoldenGate deployment console username.
+     The password must be 8 to 30 characters long and must contain at least 1 uppercase, 1
+     lowercase, 1 numeric, and 1 special character. Special characters such as '$', '^', or '?' are
+     not allowed.
+    :vartype admin_password: str
+    :ivar admin_username: The GoldenGate deployment console username.
+    :vartype admin_username: str
+    :ivar certificate: The base64 encoded content of the PEM file containing the SSL certificate.
+    :vartype certificate: str
+    :ivar credential_store: The type of credential store for OGG. Known values are: "GoldenGate"
+     and "IAM".
+    :vartype credential_store: str or ~azure.mgmt.oracledatabase.models.CredentialType
+    :ivar deployment_name: The name given to the GoldenGate service deployment. Required.
+    :vartype deployment_name: str
+    :ivar group_to_roles_mapping: Defines the IDP Groups to GoldenGate roles mapping.
+    :vartype group_to_roles_mapping: ~azure.mgmt.oracledatabase.models.GroupToRolesMappingDetails
+    :ivar ogg_version: OGG version.
+    :vartype ogg_version: str
+    :ivar password_secret_id: The OCID of the Secret where the deployment password is stored.
+    :vartype password_secret_id: str
+    """
+
+    admin_password: Optional[str] = rest_field(
+        name="adminPassword", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The password associated with the GoldenGate deployment console username. The password must be 8
+     to 30 characters long and must contain at least 1 uppercase, 1 lowercase, 1 numeric, and 1
+     special character. Special characters such as '$', '^', or '?' are not allowed."""
+    admin_username: Optional[str] = rest_field(
+        name="adminUsername", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The GoldenGate deployment console username."""
+    certificate: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The base64 encoded content of the PEM file containing the SSL certificate."""
+    credential_store: Optional[Union[str, "_models.CredentialType"]] = rest_field(
+        name="credentialStore", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of credential store for OGG. Known values are: \"GoldenGate\" and \"IAM\"."""
+    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
+    """The name given to the GoldenGate service deployment. Required."""
+    group_to_roles_mapping: Optional["_models.GroupToRolesMappingDetails"] = rest_field(
+        name="groupToRolesMapping", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the IDP Groups to GoldenGate roles mapping."""
+    ogg_version: Optional[str] = rest_field(
+        name="oggVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OGG version."""
+    password_secret_id: Optional[str] = rest_field(
+        name="passwordSecretId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the Secret where the deployment password is stored."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        deployment_name: str,
+        admin_password: Optional[str] = None,
+        admin_username: Optional[str] = None,
+        certificate: Optional[str] = None,
+        credential_store: Optional[Union[str, "_models.CredentialType"]] = None,
+        group_to_roles_mapping: Optional["_models.GroupToRolesMappingDetails"] = None,
+        ogg_version: Optional[str] = None,
+        password_secret_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
@@ -8055,6 +10077,146 @@ class OperationDisplay(_Model):
     description: Optional[str] = rest_field(visibility=["read"])
     """The short, localized friendly description of the operation; suitable for tool tips and detailed
      views."""
+
+
+class OracleConnectionDetails(
+    ConnectionBaseProperties, discriminator="ORACLE"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The metadata of an Oracle Database Connection.
+
+    :ivar display_name: The connection display name. Required.
+    :vartype display_name: str
+    :ivar resource_anchor_id: The corresponding resource anchor Azure ID. Required.
+    :vartype resource_anchor_id: str
+    :ivar network_anchor_id: The corresponding network anchor Azure ID. Required.
+    :vartype network_anchor_id: str
+    :ivar compartment_id: The OCID of the compartment being referenced.
+    :vartype compartment_id: str
+    :ivar ocid: The OCID of the connection being referenced.
+    :vartype ocid: str
+    :ivar routing_method: Controls the network traffic direction to the target. Known values are:
+     "SHARED_SERVICE_ENDPOINT", "SHARED_DEPLOYMENT_ENDPOINT", and "DEDICATED_ENDPOINT".
+    :vartype routing_method: str or ~azure.mgmt.oracledatabase.models.RoutingMethod
+    :ivar vault_id: The customer's vault OCID.
+    :vartype vault_id: str
+    :ivar key_id: The customer's master key OCID.
+    :vartype key_id: str
+    :ivar does_use_secret_ids: Indicates whether secret OCIDs are used for credential fields.
+    :vartype does_use_secret_ids: bool
+    :ivar provisioning_state: Connection provisioning state. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Provisioning".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.oracledatabase.models.AzureResourceProvisioningState
+    :ivar lifecycle_state: The connection lifecycle state. Known values are: "CREATING",
+     "UPDATING", "ACTIVE", "DELETING", "DELETED", and "FAILED".
+    :vartype lifecycle_state: str or ~azure.mgmt.oracledatabase.models.ConnectionLifecycleState
+    :ivar lifecycle_details: The description of lifecycle state in detail.
+    :vartype lifecycle_details: str
+    :ivar time_created: The date time the resource was created in OCI.
+    :vartype time_created: str
+    :ivar time_updated: The date time the resource was last updated in OCI.
+    :vartype time_updated: str
+    :ivar connection_type: Required. An Oracle Database Connection.
+    :vartype connection_type: str or ~azure.mgmt.oracledatabase.models.ORACLE
+    :ivar technology_type: The Oracle technology type. Required. Known values are:
+     "AMAZON_RDS_ORACLE", "OCI_AUTONOMOUS_DATABASE", "ORACLE_DATABASE", "ORACLE_EXADATA",
+     "ORACLE_EXADATA_DATABASE_AT_AZURE", "ORACLE_EXADATA_DATABASE_AT_GOOGLE_CLOUD",
+     "ORACLE_EXADATA_DATABASE_AT_AWS", "ORACLE_AUTONOMOUS_DATABASE_AT_AZURE",
+     "ORACLE_AUTONOMOUS_DATABASE_AT_GOOGLE_CLOUD", and "ORACLE_AUTONOMOUS_DATABASE_AT_AWS".
+    :vartype technology_type: str or
+     ~azure.mgmt.oracledatabase.models.OracleConnectionTechnologyType
+    :ivar session_mode: The mode of the database connection session to be established by the data
+     client. Known values are: "DIRECT" and "REDIRECT".
+    :vartype session_mode: str or ~azure.mgmt.oracledatabase.models.SessionMode
+    :ivar username: The username that is used to connect the associated system of the given
+     technology. Required.
+    :vartype username: str
+    :ivar connection_string: The connection string used to connect the associated database.
+    :vartype connection_string: str
+    :ivar authentication_mode: The authentication mode used to connect the associated database.
+    :vartype authentication_mode: str
+    :ivar password_secret_id: The OCID of the Secret where the password is stored.
+    :vartype password_secret_id: str
+    :ivar wallet_secret_id: The OCID of the Secret where the wallet is stored.
+    :vartype wallet_secret_id: str
+    :ivar database_id: The OCID of the associated database.
+    :vartype database_id: str
+    :ivar private_ip: The private IP of the associated database endpoint.
+    :vartype private_ip: str
+    """
+
+    connection_type: Literal[ConnectionType.ORACLE] = rest_discriminator(name="connectionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. An Oracle Database Connection."""
+    technology_type: Union[str, "_models.OracleConnectionTechnologyType"] = rest_field(
+        name="technologyType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Oracle technology type. Required. Known values are: \"AMAZON_RDS_ORACLE\",
+     \"OCI_AUTONOMOUS_DATABASE\", \"ORACLE_DATABASE\", \"ORACLE_EXADATA\",
+     \"ORACLE_EXADATA_DATABASE_AT_AZURE\", \"ORACLE_EXADATA_DATABASE_AT_GOOGLE_CLOUD\",
+     \"ORACLE_EXADATA_DATABASE_AT_AWS\", \"ORACLE_AUTONOMOUS_DATABASE_AT_AZURE\",
+     \"ORACLE_AUTONOMOUS_DATABASE_AT_GOOGLE_CLOUD\", and \"ORACLE_AUTONOMOUS_DATABASE_AT_AWS\"."""
+    session_mode: Optional[Union[str, "_models.SessionMode"]] = rest_field(
+        name="sessionMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The mode of the database connection session to be established by the data client. Known values
+     are: \"DIRECT\" and \"REDIRECT\"."""
+    username: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The username that is used to connect the associated system of the given technology. Required."""
+    connection_string: Optional[str] = rest_field(
+        name="connectionString", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connection string used to connect the associated database."""
+    authentication_mode: Optional[str] = rest_field(
+        name="authenticationMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication mode used to connect the associated database."""
+    password_secret_id: Optional[str] = rest_field(
+        name="passwordSecretId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the Secret where the password is stored."""
+    wallet_secret_id: Optional[str] = rest_field(
+        name="walletSecretId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the Secret where the wallet is stored."""
+    database_id: Optional[str] = rest_field(
+        name="databaseId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OCID of the associated database."""
+    private_ip: Optional[str] = rest_field(name="privateIp", visibility=["read", "create", "update", "delete", "query"])
+    """The private IP of the associated database endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        resource_anchor_id: str,
+        network_anchor_id: str,
+        technology_type: Union[str, "_models.OracleConnectionTechnologyType"],
+        username: str,
+        routing_method: Optional[Union[str, "_models.RoutingMethod"]] = None,
+        vault_id: Optional[str] = None,
+        key_id: Optional[str] = None,
+        does_use_secret_ids: Optional[bool] = None,
+        session_mode: Optional[Union[str, "_models.SessionMode"]] = None,
+        connection_string: Optional[str] = None,
+        authentication_mode: Optional[str] = None,
+        password_secret_id: Optional[str] = None,
+        wallet_secret_id: Optional[str] = None,
+        database_id: Optional[str] = None,
+        private_ip: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.connection_type = ConnectionType.ORACLE  # type: ignore
 
 
 class OracleSubscription(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -8608,6 +10770,49 @@ class ProfileType(_Model):  # pylint: disable=docstring-keyword-should-match-key
         consumer_group: Optional[Union[str, "_models.ConsumerGroup"]] = None,
         is_regional: Optional[bool] = None,
         tls_authentication: Optional[Union[str, "_models.TlsAuthenticationType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProximityPlacementGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Proximity placement group properties.
+
+    :ivar proximity_placement_group_id: Proximity placement group ID. Required.
+    :vartype proximity_placement_group_id: str
+    :ivar proximity_anchor_id: Proximity Anchor ID.
+    :vartype proximity_anchor_id: str
+    :ivar entity_type_intended_to_use: Entity type intended to use the proximity placement group.
+     Required. Known values are: "CloudExadataInfrastructure" and "OtherProducts".
+    :vartype entity_type_intended_to_use: str or
+     ~azure.mgmt.oracledatabase.models.ProximityPlacementGroupEntityType
+    """
+
+    proximity_placement_group_id: str = rest_field(name="proximityPlacementGroupId", visibility=["read", "create"])
+    """Proximity placement group ID. Required."""
+    proximity_anchor_id: Optional[str] = rest_field(name="proximityAnchorId", visibility=["read", "create"])
+    """Proximity Anchor ID."""
+    entity_type_intended_to_use: Union[str, "_models.ProximityPlacementGroupEntityType"] = rest_field(
+        name="entityTypeIntendedToUse", visibility=["read", "create"]
+    )
+    """Entity type intended to use the proximity placement group. Required. Known values are:
+     \"CloudExadataInfrastructure\" and \"OtherProducts\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        proximity_placement_group_id: str,
+        entity_type_intended_to_use: Union[str, "_models.ProximityPlacementGroupEntityType"],
+        proximity_anchor_id: Optional[str] = None,
     ) -> None: ...
 
     @overload

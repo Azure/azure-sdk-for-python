@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -136,11 +137,33 @@ class AzureResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMet
     """Indicates that resource in Provisioning state."""
 
 
+class BackupDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Backup destination type enum."""
+
+    OCI = "OCI"
+    """Store backups in OCI object storage."""
+    AZURE = "AZURE"
+    """Store backups in Azure Blob Storage."""
+
+
 class BaseDbSystemShapes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allowed values for BaseDb System Shapes."""
 
     VM_STANDARD_X86 = "VM.Standard.x86"
     """Vm Standard X86."""
+    VM_BASE_DBX86 = "VM.BaseDB.x86"
+    """Vm Standard X86."""
+
+
+class CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category."""
+
+    DATA_REPLICATION = "DataReplication"
+    """Data replication."""
+    STREAM_ANALYTICS = "StreamAnalytics"
+    """Stream analytics."""
+    DATA_TRANSFORMS = "DataTransforms"
+    """Data transforms."""
 
 
 class CloneType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -210,6 +233,84 @@ class ComputeModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OCPU model type."""
 
 
+class ConnectionLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Possible lifecycle states for connection."""
+
+    CREATING = "CREATING"
+    """Indicates that the resource is in creating state."""
+    UPDATING = "UPDATING"
+    """Indicates that the resource is in updating state."""
+    ACTIVE = "ACTIVE"
+    """Indicates that the resource is in active state."""
+    DELETING = "DELETING"
+    """Indicates that the resource is in deleting state."""
+    DELETED = "DELETED"
+    """Indicates that the resource is in deleted state."""
+    FAILED = "FAILED"
+    """Indicates that the resource is in failed state."""
+
+
+class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known values for connection type."""
+
+    GOLDEN_GATE = "GOLDENGATE"
+    """A GoldenGate Connection."""
+    KAFKA = "KAFKA"
+    """A Kafka Connection."""
+    KAFKA_SCHEMA_REGISTRY = "KAFKA_SCHEMA_REGISTRY"
+    """A Kafka (e.g. Confluent) Schema Registry Connection."""
+    MY_SQL = "MYSQL"
+    """A MySQL Connection."""
+    JAVA_MESSAGE_SERVICE = "JAVA_MESSAGE_SERVICE"
+    """A Java Message Service Connection."""
+    MICROSOFT_SQL_SERVER = "MICROSOFT_SQLSERVER"
+    """A Microsoft SQL Server Connection."""
+    OCI_OBJECT_STORAGE = "OCI_OBJECT_STORAGE"
+    """An OCI Object Storage Connection."""
+    ORACLE = "ORACLE"
+    """An Oracle Database Connection."""
+    AZURE_DATA_LAKE_STORAGE = "AZURE_DATA_LAKE_STORAGE"
+    """An Azure Data Lake Storage Connection."""
+    POSTGRE_SQL = "POSTGRESQL"
+    """A PostgreSQL Database Connection."""
+    AZURE_SYNAPSE_ANALYTICS = "AZURE_SYNAPSE_ANALYTICS"
+    """An Azure Synapse Analytics Connection."""
+    SNOWFLAKE = "SNOWFLAKE"
+    """A Snowflake Connection."""
+    AMAZON_S3 = "AMAZON_S3"
+    """An Amazon S3 Connection."""
+    HDFS = "HDFS"
+    """A Hadoop Distributed File System Connection."""
+    ORACLE_NO_SQL = "ORACLE_NOSQL"
+    """An Oracle NoSQL Connection."""
+    MONGO_DB_CONNECTION = "MONGODB"
+    """A MongoDB Connection."""
+    AMAZON_KINESIS = "AMAZON_KINESIS"
+    """An Amazon Kinesis Connection."""
+    AMAZON_REDSHIFT = "AMAZON_REDSHIFT"
+    """An Amazon Redshift Connection."""
+    DB2_CONNECTION = "DB2"
+    """A DB2 Connection."""
+    REDIS = "REDIS"
+    """A Redis Database Connection."""
+    ELASTICSEARCH = "ELASTICSEARCH"
+    """An Elasticsearch Connection."""
+    GENERIC = "GENERIC"
+    """A Generic Connection."""
+    GOOGLE_CLOUD_STORAGE = "GOOGLE_CLOUD_STORAGE"
+    """A Google Cloud Storage Connection."""
+    GOOGLE_BIG_QUERY = "GOOGLE_BIGQUERY"
+    """A Google BigQuery Connection."""
+    DATABRICKS = "DATABRICKS"
+    """A Databricks Connection."""
+    GOOGLE_PUB_SUB = "GOOGLE_PUBSUB"
+    """A Google PubSub Connection."""
+    MICROSOFT_FABRIC = "MICROSOFT_FABRIC"
+    """A Microsoft Fabric Connection."""
+    ICEBERG = "ICEBERG"
+    """An Iceberg Connection."""
+
+
 class ConsumerGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Consumer group enum."""
 
@@ -236,6 +337,15 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a managed identity."""
     KEY = "Key"
     """The entity was created by a key."""
+
+
+class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Credential type."""
+
+    GOLDEN_GATE = "GoldenGate"
+    """The GoldenGate credential."""
+    IAM = "IAM"
+    """The IAM credential."""
 
 
 class DatabaseEditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -414,6 +524,62 @@ class DbSystemSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """for creating a new database."""
 
 
+class DeploymentLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Deployment lifecycle state enum."""
+
+    CREATING = "Creating"
+    """Indicates that the resource is in creating state."""
+    UPDATING = "Updating"
+    """Indicates that the resource is in updating state."""
+    ACTIVE = "Active"
+    """Indicates that the resource is in active state."""
+    IN_ACTIVE = "InActive"
+    """Indicates that the resource is in inactive state."""
+    DELETING = "Deleting"
+    """Indicates that the resource is in deleting state."""
+    DELETED = "Deleted"
+    """Indicates that the resource is in deleted state."""
+    FAILED = "Failed"
+    """Indicates that the resource is in failed state."""
+    NEEDS_ATTENTION = "Needs Attention"
+    """Indicates that the resource is in needs-attention state."""
+    IN_PROGRESS = "In Progress"
+    """Indicates that the resource is in in-progress state."""
+    CANCELING = "Canceling"
+    """Indicates that the resource is in canceling state."""
+    CANCELED = "Canceled"
+    """Indicates that the resource is in canceled state."""
+    SUCCEEDED = "Succeeded"
+    """Indicates that the resource is in succeeded state."""
+    WAITING = "Waiting"
+    """Indicates that the resource is in waiting state."""
+
+
+class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Deployment type enum."""
+
+    OGG = "Ogg"
+    """The OGG deployment."""
+    DATABASE_ORACLE = "DatabaseOracle"
+    """The Oracle database deployment."""
+    BIG_DATA = "BigData"
+    """The big data deployment."""
+    DATABASE_MICROSOFT_SQL_SERVER = "DatabaseMicrosoftSQLServer"
+    """The Microsoft SQL Server database deployment."""
+    DATABASE_MY_SQL = "DatabaseMySQL"
+    """The MySQL database deployment."""
+    DATABASE_POST_GRE_SQL = "DatabasePostGreSQL"
+    """The PostgreSQL database deployment."""
+    DATABASE_DB2_ZOS = "DatabaseDB2ZOS"
+    """The DB2 z/OS database deployment."""
+    DATABASE_DB2_I = "DATABASE_DB2I"
+    """The DB2 i database deployment."""
+    GGSA = "GGSA"
+    """The GGSA deployment."""
+    DATA_TRANSFORMS = "DataTransforms"
+    """The data transforms deployment."""
+
+
 class DisasterRecoveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disaster recovery type enum."""
 
@@ -514,6 +680,17 @@ class ExascaleDbStorageVaultLifecycleState(str, Enum, metaclass=CaseInsensitiveE
     """Indicates that resource in Failed state."""
 
 
+class FrequencyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Frequency type enum."""
+
+    DAILY = "Daily"
+    """The daily frequency."""
+    WEEKLY = "Weekly"
+    """The weekly frequency."""
+    MONTHLY = "Monthly"
+    """The monthly frequency."""
+
+
 class GenerateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Generate type enum."""
 
@@ -521,6 +698,34 @@ class GenerateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Generate single."""
     ALL = "All"
     """Generate all."""
+
+
+class GiMinorVersionSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed values for GI minor version sort order."""
+
+    ASC = "ASC"
+    """Ascending sort order."""
+    DESC = "DESC"
+    """Descending sort order."""
+
+
+class GoldenGateConnectionAssignmentLifecycleState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Possible lifecycle states for connection assignments."""
+
+    CREATING = "CREATING"
+    """Indicates that the resource is in creating state."""
+    ACTIVE = "ACTIVE"
+    """Indicates that the resource is in active state."""
+    FAILED = "FAILED"
+    """Indicates that the resource is in failed state."""
+    UPDATING = "UPDATING"
+    """Indicates that the resource is in updating state."""
+    DELETING = "DELETING"
+    """Indicates that the resource is in deleting state."""
+    DELETED = "DELETED"
+    """Indicates that the resource is in deleted state."""
 
 
 class GridImageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -574,6 +779,19 @@ class IormLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates that resource in Failed state."""
 
 
+class KafkaConnectionTechnologyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed values for Kafka technology type."""
+
+    APACHE_KAFKA = "APACHE_KAFKA"
+    """The Apache Kafka type."""
+    AZURE_EVENT_HUBS = "AZURE_EVENT_HUBS"
+    """The Azure Event Hubs type."""
+    CONFLUENT_KAFKA = "CONFLUENT_KAFKA"
+    """The Confluent Kafka type."""
+    OCI_STREAMING = "OCI_STREAMING"
+    """The OCI Streaming type."""
+
+
 class LicenseModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LicenseModel enum."""
 
@@ -581,6 +799,15 @@ class LicenseModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """License included."""
     BRING_YOUR_OWN_LICENSE = "BringYourOwnLicense"
     """Bring Your Own License."""
+
+
+class MicrosoftFabricConnectionTechnologyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed values for Microsoft Fabric technology type."""
+
+    MICROSOFT_FABRIC_LAKEHOUSE = "MICROSOFT_FABRIC_LAKEHOUSE"
+    """The Microsoft Fabric Lakehouse type."""
+    MICROSOFT_FABRIC_MIRROR = "MICROSOFT_FABRIC_MIRROR"
+    """The Microsoft Fabric Mirror type."""
 
 
 class MonthName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -653,6 +880,31 @@ class OperationsInsightsStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """FailedDisabling status."""
 
 
+class OracleConnectionTechnologyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed values for Oracle technology type."""
+
+    AMAZON_RDS_ORACLE = "AMAZON_RDS_ORACLE"
+    """Oracle databases hosted on Amazon RDS."""
+    OCI_AUTONOMOUS_DATABASE = "OCI_AUTONOMOUS_DATABASE"
+    """OCI Autonomous Database."""
+    ORACLE_DATABASE = "ORACLE_DATABASE"
+    """On-premise Oracle database."""
+    ORACLE_EXADATA = "ORACLE_EXADATA"
+    """On-premise Exadata database."""
+    ORACLE_EXADATA_DATABASE_AT_AZURE = "ORACLE_EXADATA_DATABASE_AT_AZURE"
+    """Exadata database on Azure."""
+    ORACLE_EXADATA_DATABASE_AT_GOOGLE_CLOUD = "ORACLE_EXADATA_DATABASE_AT_GOOGLE_CLOUD"
+    """Exadata database on GCP."""
+    ORACLE_EXADATA_DATABASE_AT_AWS = "ORACLE_EXADATA_DATABASE_AT_AWS"
+    """Exadata database on AWS."""
+    ORACLE_AUTONOMOUS_DATABASE_AT_AZURE = "ORACLE_AUTONOMOUS_DATABASE_AT_AZURE"
+    """Autonomous database on Azure."""
+    ORACLE_AUTONOMOUS_DATABASE_AT_GOOGLE_CLOUD = "ORACLE_AUTONOMOUS_DATABASE_AT_GOOGLE_CLOUD"
+    """Autonomous database on GCP."""
+    ORACLE_AUTONOMOUS_DATABASE_AT_AWS = "ORACLE_AUTONOMOUS_DATABASE_AT_AWS"
+    """Autonomous database on AWS."""
+
+
 class OracleSubscriptionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OracleSubscriptionProvisioningState enum."""
 
@@ -713,6 +965,15 @@ class ProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TCPS protocol."""
 
 
+class ProximityPlacementGroupEntityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Entity types for proximity placement group usage."""
+
+    CLOUD_EXADATA_INFRASTRUCTURE = "CloudExadataInfrastructure"
+    """Cloud Exadata Infrastructure."""
+    OTHER_PRODUCTS = "OtherProducts"
+    """Other products."""
+
+
 class RefreshableModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Refreshable model type enum."""
 
@@ -770,6 +1031,28 @@ class RoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SnapshotStandby role."""
 
 
+class RoutingMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed network traffic routing method."""
+
+    SHARED_SERVICE_ENDPOINT = "SHARED_SERVICE_ENDPOINT"
+    """Indicates that traffic flows through the GoldenGate service network to public hosts."""
+    SHARED_DEPLOYMENT_ENDPOINT = "SHARED_DEPLOYMENT_ENDPOINT"
+    """Indicates that traffic flows from the assigned deployment's private endpoint through the
+    deployment's subnet."""
+    DEDICATED_ENDPOINT = "DEDICATED_ENDPOINT"
+    """Indicates that a dedicated private endpoint is created in the target VCN subnet for the
+    connection."""
+
+
+class SessionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed modes for database connection session."""
+
+    DIRECT = "DIRECT"
+    """For a non-RAC database."""
+    REDIRECT = "REDIRECT"
+    """For a RAC database."""
+
+
 class SessionModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Session mode type enum."""
 
@@ -777,6 +1060,15 @@ class SessionModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Direct session mode."""
     REDIRECT = "Redirect"
     """Redirect session mode."""
+
+
+class SetupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Setup type enum."""
+
+    PRODUCTION = "Production"
+    """Production setup."""
+    DEVELOPMENT_OR_TESTING = "DevelopmentOrTesting"
+    """Development or testing setup."""
 
 
 class ShapeAttribute(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -867,6 +1159,8 @@ class SystemShapes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Exadata X9M shape."""
     EXADATA_X11_M = "Exadata.X11M"
     """Exadata X11M shape."""
+    EXADATA_X11_MV = "Exadata.X11MV"
+    """Exadata X11M shape."""
     EXA_DB_XS = "ExaDbXS"
     """Exadata DB on Exascale Infrastructure shape."""
 
@@ -907,6 +1201,8 @@ class WorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APEX = "APEX"
     """APEX - indicates an Autonomous Database with the Oracle APEX Application Development workload
     type."""
+    LH = "LH"
+    """LH - indicates an Oracle Autonomous AI Lakehouse database."""
 
 
 class ZoneType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

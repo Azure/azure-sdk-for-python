@@ -1,9 +1,9 @@
 {
-  "apiVersion": "2025-11-01-preview",
+  "apiVersion": "2026-06-01",
   "apiVersions": {
-    "Oracle.Database": "2025-11-01-preview"
+    "Oracle.Database": "2026-06-01"
   },
-  "commit": "522b63d1686e55a555a400c08ba65aef9f947f78",
+  "commit": "4e6e13d398d4c2616237322a62394fc4f1dfeb81",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/oracle/resource-manager/Oracle.Database/OracleDatabase",
   "emitterVersion": "0.63.5",

@@ -32,12 +32,12 @@ def main():
 
     response = client.cloud_exadata_infrastructures.begin_configure_exascale(
         resource_group_name="rgopenapi",
-        cloudexadatainfrastructurename="Replace this value with a string matching RegExp .*",
-        body={"totalStorageInGbs": 19},
+        cloudexadatainfrastructurename="resource1",
+        body={"totalStorageInGbs": 14},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/CloudExadataInfrastructures_ConfigureExascale_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/CloudExadataInfrastructures_ConfigureExascale_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -32,10 +32,10 @@ def main():
 
     client.exadb_vm_clusters.begin_delete(
         resource_group_name="rgopenapi",
-        exadb_vm_cluster_name="exadaVmClusterName1",
+        exadb_vm_cluster_name="resource1",
     ).result()
 
 
-# x-ms-original-file: 2025-11-01-preview/ExadbVmClusters_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ExadbVmClusters_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -32,12 +32,12 @@ def main():
 
     response = client.exadb_vm_clusters.begin_update(
         resource_group_name="rgopenapi",
-        exadb_vm_cluster_name="exadbvmcluster1",
-        properties={"properties": {"nodeCount": 17}, "tags": {"key4195": "bhfxtsousuywcolaictwfdd"}, "zones": ["yd"]},
+        exadb_vm_cluster_name="resource1",
+        properties={"properties": {"nodeCount": 12}, "tags": {"key1801": "example"}, "zones": ["example"]},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/ExadbVmClusters_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ExadbVmClusters_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

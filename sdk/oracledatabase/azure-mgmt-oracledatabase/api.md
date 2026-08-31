@@ -9,6 +9,8 @@ namespace azure.mgmt.oracledatabase
         autonomous_databases: AutonomousDatabasesOperations
         cloud_exadata_infrastructures: CloudExadataInfrastructuresOperations
         cloud_vm_clusters: CloudVmClustersOperations
+        database_editions: DatabaseEditionsOperations
+        database_system_shape_resources: DatabaseSystemShapeResourcesOperations
         db_nodes: DbNodesOperations
         db_servers: DbServersOperations
         db_system_shapes: DbSystemShapesOperations
@@ -22,6 +24,8 @@ namespace azure.mgmt.oracledatabase
         flex_components: FlexComponentsOperations
         gi_minor_versions: GiMinorVersionsOperations
         gi_versions: GiVersionsOperations
+        golden_gate_connections: GoldenGateConnectionsOperations
+        golden_gate_deployments: GoldenGateDeploymentsOperations
         network_anchors: NetworkAnchorsOperations
         operations: Operations
         oracle_subscriptions: OracleSubscriptionsOperations
@@ -62,6 +66,8 @@ namespace azure.mgmt.oracledatabase.aio
         autonomous_databases: AutonomousDatabasesOperations
         cloud_exadata_infrastructures: CloudExadataInfrastructuresOperations
         cloud_vm_clusters: CloudVmClustersOperations
+        database_editions: DatabaseEditionsOperations
+        database_system_shape_resources: DatabaseSystemShapeResourcesOperations
         db_nodes: DbNodesOperations
         db_servers: DbServersOperations
         db_system_shapes: DbSystemShapesOperations
@@ -75,6 +81,8 @@ namespace azure.mgmt.oracledatabase.aio
         flex_components: FlexComponentsOperations
         gi_minor_versions: GiMinorVersionsOperations
         gi_versions: GiVersionsOperations
+        golden_gate_connections: GoldenGateConnectionsOperations
+        golden_gate_deployments: GoldenGateDeploymentsOperations
         network_anchors: NetworkAnchorsOperations
         operations: Operations
         oracle_subscriptions: OracleSubscriptionsOperations
@@ -935,6 +943,64 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> List[PrivateIpAddressProperties]: ...
 
 
+    class azure.mgmt.oracledatabase.aio.operations.DatabaseEditionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'location', 'databaseeditionname', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        async def get(
+                self, 
+                location: str, 
+                databaseeditionname: str, 
+                **kwargs: Any
+            ) -> DatabaseEdition: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_location(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[DatabaseEdition]: ...
+
+
+    class azure.mgmt.oracledatabase.aio.operations.DatabaseSystemShapeResourcesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'location', 'databasesystemshapename', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        async def get(
+                self, 
+                location: str, 
+                databasesystemshapename: str, 
+                **kwargs: Any
+            ) -> DatabaseSystemShape: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'location', 'shape_attribute', 'zone', 'availability_domain', 'database_shape_family', 'database_edition', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_location(
+                self, 
+                location: str, 
+                *, 
+                availability_domain: Optional[str] = ..., 
+                database_edition: Optional[str] = ..., 
+                database_shape_family: Optional[str] = ..., 
+                shape_attribute: Optional[str] = ..., 
+                zone: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[DatabaseSystemShape]: ...
+
+
     class azure.mgmt.oracledatabase.aio.operations.DbNodesOperations:
 
         def __init__(
@@ -1040,7 +1106,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> DbSystemShape: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'zone', 'accept'], '2025-08-01-preview': ['shape_attribute']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'zone', 'accept'], '2025-08-01-preview': ['shape_attribute']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_location(
                 self, 
                 location: str, 
@@ -1093,7 +1159,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncLROPoller[DbSystem]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'db_system_name']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'db_system_name']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1135,7 +1201,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncLROPoller[DbSystem]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'db_system_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'db_system_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1144,7 +1210,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> DbSystem: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -1152,7 +1218,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncItemPaged[DbSystem]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[DbSystem]: ...
 
 
@@ -1165,7 +1231,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'location', 'dbversionsname', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'location', 'dbversionsname', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def get(
                 self, 
                 location: str, 
@@ -1174,7 +1240,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> DbVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'location', 'db_system_shape', 'db_system_id', 'storage_management', 'is_upgrade_supported', 'is_database_software_image_supported', 'shape_family', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'location', 'db_system_shape', 'db_system_id', 'storage_management', 'is_upgrade_supported', 'is_database_software_image_supported', 'shape_family', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_location(
                 self, 
                 location: str, 
@@ -1279,7 +1345,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncLROPoller[ExadbVmCluster]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1354,7 +1420,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncLROPoller[ExadbVmCluster]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1363,7 +1429,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> ExadbVmCluster: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -1371,7 +1437,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncItemPaged[ExadbVmCluster]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[ExadbVmCluster]: ...
 
 
@@ -1420,7 +1486,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncLROPoller[DbActionResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'exascale_db_node_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'exascale_db_node_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1430,7 +1496,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> ExascaleDbNode: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_parent(
                 self, 
                 resource_group_name: str, 
@@ -1481,7 +1547,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncLROPoller[ExascaleDbStorageVault]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exascale_db_storage_vault_name']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exascale_db_storage_vault_name']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1523,7 +1589,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncLROPoller[ExascaleDbStorageVault]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exascale_db_storage_vault_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exascale_db_storage_vault_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1532,7 +1598,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> ExascaleDbStorageVault: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -1540,7 +1606,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncItemPaged[ExascaleDbStorageVault]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[ExascaleDbStorageVault]: ...
 
 
@@ -1553,7 +1619,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-01-01-preview', params_added_on={'2025-01-01-preview': ['api_version', 'subscription_id', 'location', 'flex_component_name', 'accept']}, api_versions_list=['2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-01-01-preview', params_added_on={'2025-01-01-preview': ['api_version', 'subscription_id', 'location', 'flex_component_name', 'accept']}, api_versions_list=['2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def get(
                 self, 
                 location: str, 
@@ -1562,7 +1628,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> FlexComponent: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-01-01-preview', params_added_on={'2025-01-01-preview': ['api_version', 'subscription_id', 'location', 'shape', 'accept']}, api_versions_list=['2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-01-01-preview', params_added_on={'2025-01-01-preview': ['api_version', 'subscription_id', 'location', 'shape', 'accept']}, api_versions_list=['2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_parent(
                 self, 
                 location: str, 
@@ -1581,7 +1647,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'giversionname', 'gi_minor_version_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'giversionname', 'gi_minor_version_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def get(
                 self, 
                 location: str, 
@@ -1591,13 +1657,16 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> GiMinorVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'giversionname', 'shape_family', 'zone', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'giversionname', 'shape_family', 'zone', 'accept'], '2026-04-01-preview': ['shape', 'is_gi_version_for_provisioning', 'sort_order']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_parent(
                 self, 
                 location: str, 
                 giversionname: str, 
                 *, 
+                is_gi_version_for_provisioning: Optional[bool] = ..., 
+                shape: Optional[str] = ..., 
                 shape_family: Optional[Union[str, ShapeFamily]] = ..., 
+                sort_order: Optional[Union[str, GiMinorVersionSortOrder]] = ..., 
                 zone: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[GiMinorVersion]: ...
@@ -1620,7 +1689,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> GiVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'shape', 'zone', 'accept'], '2025-08-01-preview': ['shape_attribute']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'shape', 'zone', 'accept'], '2025-08-01-preview': ['shape_attribute']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_location(
                 self, 
                 location: str, 
@@ -1630,6 +1699,386 @@ namespace azure.mgmt.oracledatabase.aio.operations
                 zone: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[GiVersion]: ...
+
+
+    class azure.mgmt.oracledatabase.aio.operations.GoldenGateConnectionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_assign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: AssignUnassignDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedDeployment]: ...
+
+        @overload
+        async def begin_assign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: AssignUnassignDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedDeployment]: ...
+
+        @overload
+        async def begin_assign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedDeployment]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                resource: GoldenGateConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateConnection]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                resource: GoldenGateConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateConnection]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateConnection]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_connection_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_unassign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: AssignUnassignDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedDeployment]: ...
+
+        @overload
+        async def begin_unassign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: AssignUnassignDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedDeployment]: ...
+
+        @overload
+        async def begin_unassign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedDeployment]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                properties: GoldenGateConnectionUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateConnection]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                properties: GoldenGateConnectionUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateConnection]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateConnection]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_connection_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                **kwargs: Any
+            ) -> GoldenGateConnection: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_connection_name', 'assignment_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        async def get_assigned_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                assignment_id: str, 
+                **kwargs: Any
+            ) -> AssignedDeployment: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_connection_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_assigned_deployments_by_parent(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AssignedDeployment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[GoldenGateConnection]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[GoldenGateConnection]: ...
+
+
+    class azure.mgmt.oracledatabase.aio.operations.GoldenGateDeploymentsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_assign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: AssignUnassignConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedConnection]: ...
+
+        @overload
+        async def begin_assign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: AssignUnassignConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedConnection]: ...
+
+        @overload
+        async def begin_assign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedConnection]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                resource: GoldenGateDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateDeployment]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                resource: GoldenGateDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateDeployment]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateDeployment]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_deployment_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_unassign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: AssignUnassignConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedConnection]: ...
+
+        @overload
+        async def begin_unassign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: AssignUnassignConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedConnection]: ...
+
+        @overload
+        async def begin_unassign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AssignedConnection]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                properties: GoldenGateDeploymentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateDeployment]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                properties: GoldenGateDeploymentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateDeployment]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GoldenGateDeployment]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_deployment_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                **kwargs: Any
+            ) -> GoldenGateDeployment: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_deployment_name', 'assignment_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        async def get_assigned_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                assignment_id: str, 
+                **kwargs: Any
+            ) -> AssignedConnection: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_deployment_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_assigned_connections_by_parent(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AssignedConnection]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[GoldenGateDeployment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[GoldenGateDeployment]: ...
 
 
     class azure.mgmt.oracledatabase.aio.operations.NetworkAnchorsOperations:
@@ -1674,7 +2123,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncLROPoller[NetworkAnchor]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'network_anchor_name']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'network_anchor_name']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1716,7 +2165,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncLROPoller[NetworkAnchor]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'network_anchor_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'network_anchor_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1725,7 +2174,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> NetworkAnchor: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -1733,7 +2182,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncItemPaged[NetworkAnchor]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[NetworkAnchor]: ...
 
 
@@ -1899,7 +2348,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncLROPoller[ResourceAnchor]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_anchor_name']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_anchor_name']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1941,7 +2390,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncLROPoller[ResourceAnchor]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_anchor_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_anchor_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1950,7 +2399,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> ResourceAnchor: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -1958,7 +2407,7 @@ namespace azure.mgmt.oracledatabase.aio.operations
             ) -> AsyncItemPaged[ResourceAnchor]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[ResourceAnchor]: ...
 
 
@@ -2122,6 +2571,70 @@ namespace azure.mgmt.oracledatabase.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.oracledatabase.models.AssignUnassignConnection(_Model):
+        connection_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.AssignUnassignDeployment(_Model):
+        deployment_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.AssignedConnection(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[DeploymentConnectionAssignmentProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[DeploymentConnectionAssignmentProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.AssignedDeployment(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[DeploymentConnectionAssignmentProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[DeploymentConnectionAssignmentProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.oracledatabase.models.AutonomousDatabase(TrackedResource):
         id: str
         location: str
@@ -2172,6 +2685,7 @@ namespace azure.mgmt.oracledatabase.models
 
     class azure.mgmt.oracledatabase.models.AutonomousDatabaseBackupProperties(_Model):
         autonomous_database_ocid: Optional[str]
+        backup_destination: Optional[Union[str, BackupDestinationType]]
         backup_type: Optional[Union[str, AutonomousDatabaseBackupType]]
         database_size_in_tbs: Optional[float]
         db_version: Optional[str]
@@ -2242,6 +2756,7 @@ namespace azure.mgmt.oracledatabase.models
         autonomous_database_id: Optional[str]
         autonomous_maintenance_schedule_type: Optional[Union[str, AutonomousMaintenanceScheduleType]]
         available_upgrade_versions: Optional[list[str]]
+        backup_destination: Optional[Union[str, BackupDestinationType]]
         backup_retention_period_in_days: Optional[int]
         character_set: Optional[str]
         compute_count: Optional[float]
@@ -2267,6 +2782,7 @@ namespace azure.mgmt.oracledatabase.models
         is_preview: Optional[bool]
         is_preview_version_with_service_terms_accepted: Optional[bool]
         is_remote_data_guard_enabled: Optional[bool]
+        is_schedule_az_update_to_earliest: Optional[bool]
         license_model: Optional[Union[str, LicenseModel]]
         lifecycle_details: Optional[str]
         lifecycle_state: Optional[Union[str, AutonomousDatabaseLifecycleState]]
@@ -2276,6 +2792,7 @@ namespace azure.mgmt.oracledatabase.models
         long_term_backup_schedule: Optional[LongTermBackUpScheduleDetails]
         memory_per_oracle_compute_unit_in_gbs: Optional[int]
         ncharacter_set: Optional[str]
+        network_anchor_id: Optional[str]
         next_long_term_backup_time_stamp: Optional[datetime]
         oci_url: Optional[str]
         ocid: Optional[str]
@@ -2290,6 +2807,7 @@ namespace azure.mgmt.oracledatabase.models
         provisionable_cpus: Optional[list[int]]
         provisioning_state: Optional[Union[str, AzureResourceProvisioningState]]
         remote_disaster_recovery_configuration: Optional[DisasterRecoveryConfigurationDetails]
+        resource_anchor_id: Optional[str]
         role: Optional[Union[str, RoleType]]
         scheduled_operations_list: Optional[list[ScheduledOperationsType]]
         service_console_url: Optional[str]
@@ -2308,10 +2826,12 @@ namespace azure.mgmt.oracledatabase.models
         time_of_last_refresh_point: Optional[str]
         time_of_last_switchover: Optional[str]
         time_reclamation_of_free_autonomous_database: Optional[str]
+        time_scheduled_az_update: Optional[str]
         used_data_storage_size_in_gbs: Optional[int]
         used_data_storage_size_in_tbs: Optional[int]
         vnet_id: Optional[str]
         whitelisted_ips: Optional[list[str]]
+        zone: Optional[str]
 
         @overload
         def __init__(
@@ -2320,6 +2840,7 @@ namespace azure.mgmt.oracledatabase.models
                 admin_password: Optional[str] = ..., 
                 autonomous_database_id: Optional[str] = ..., 
                 autonomous_maintenance_schedule_type: Optional[Union[str, AutonomousMaintenanceScheduleType]] = ..., 
+                backup_destination: Optional[Union[str, BackupDestinationType]] = ..., 
                 backup_retention_period_in_days: Optional[int] = ..., 
                 character_set: Optional[str] = ..., 
                 compute_count: Optional[float] = ..., 
@@ -2338,20 +2859,25 @@ namespace azure.mgmt.oracledatabase.models
                 is_local_data_guard_enabled: Optional[bool] = ..., 
                 is_mtls_connection_required: Optional[bool] = ..., 
                 is_preview_version_with_service_terms_accepted: Optional[bool] = ..., 
+                is_schedule_az_update_to_earliest: Optional[bool] = ..., 
                 license_model: Optional[Union[str, LicenseModel]] = ..., 
                 local_adg_auto_failover_max_data_loss_limit: Optional[int] = ..., 
                 long_term_backup_schedule: Optional[LongTermBackUpScheduleDetails] = ..., 
                 ncharacter_set: Optional[str] = ..., 
+                network_anchor_id: Optional[str] = ..., 
                 open_mode: Optional[Union[str, OpenModeType]] = ..., 
                 peer_db_id: Optional[str] = ..., 
                 permission_level: Optional[Union[str, PermissionLevelType]] = ..., 
                 private_endpoint_ip: Optional[str] = ..., 
                 private_endpoint_label: Optional[str] = ..., 
+                resource_anchor_id: Optional[str] = ..., 
                 role: Optional[Union[str, RoleType]] = ..., 
                 scheduled_operations_list: Optional[list[ScheduledOperationsType]] = ..., 
                 subnet_id: Optional[str] = ..., 
+                time_scheduled_az_update: Optional[str] = ..., 
                 vnet_id: Optional[str] = ..., 
-                whitelisted_ips: Optional[list[str]] = ...
+                whitelisted_ips: Optional[list[str]] = ..., 
+                zone: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -2398,6 +2924,7 @@ namespace azure.mgmt.oracledatabase.models
         autonomous_database_id: str
         autonomous_maintenance_schedule_type: Union[str, AutonomousMaintenanceScheduleType]
         available_upgrade_versions: list[str]
+        backup_destination: Union[str, BackupDestinationType]
         backup_retention_period_in_days: int
         character_set: str
         clone_type: Union[str, CloneType]
@@ -2426,6 +2953,7 @@ namespace azure.mgmt.oracledatabase.models
         is_reconnect_clone_enabled: Optional[bool]
         is_refreshable_clone: Optional[bool]
         is_remote_data_guard_enabled: bool
+        is_schedule_az_update_to_earliest: bool
         license_model: Union[str, LicenseModel]
         lifecycle_details: str
         lifecycle_state: Union[str, AutonomousDatabaseLifecycleState]
@@ -2435,6 +2963,7 @@ namespace azure.mgmt.oracledatabase.models
         long_term_backup_schedule: LongTermBackUpScheduleDetails
         memory_per_oracle_compute_unit_in_gbs: int
         ncharacter_set: str
+        network_anchor_id: str
         next_long_term_backup_time_stamp: datetime
         oci_url: str
         ocid: str
@@ -2451,6 +2980,7 @@ namespace azure.mgmt.oracledatabase.models
         refreshable_model: Optional[Union[str, RefreshableModelType]]
         refreshable_status: Optional[Union[str, RefreshableStatusType]]
         remote_disaster_recovery_configuration: DisasterRecoveryConfigurationDetails
+        resource_anchor_id: str
         role: Union[str, RoleType]
         scheduled_operations_list: list[ScheduledOperationsType]
         service_console_url: str
@@ -2471,11 +3001,13 @@ namespace azure.mgmt.oracledatabase.models
         time_of_last_refresh_point: str
         time_of_last_switchover: str
         time_reclamation_of_free_autonomous_database: str
+        time_scheduled_az_update: str
         time_until_reconnect_clone_enabled: Optional[str]
         used_data_storage_size_in_gbs: int
         used_data_storage_size_in_tbs: int
         vnet_id: str
         whitelisted_ips: list[str]
+        zone: str
 
         @overload
         def __init__(
@@ -2484,6 +3016,7 @@ namespace azure.mgmt.oracledatabase.models
                 admin_password: Optional[str] = ..., 
                 autonomous_database_id: Optional[str] = ..., 
                 autonomous_maintenance_schedule_type: Optional[Union[str, AutonomousMaintenanceScheduleType]] = ..., 
+                backup_destination: Optional[Union[str, BackupDestinationType]] = ..., 
                 backup_retention_period_in_days: Optional[int] = ..., 
                 character_set: Optional[str] = ..., 
                 clone_type: Union[str, CloneType], 
@@ -2502,24 +3035,29 @@ namespace azure.mgmt.oracledatabase.models
                 is_local_data_guard_enabled: Optional[bool] = ..., 
                 is_mtls_connection_required: Optional[bool] = ..., 
                 is_preview_version_with_service_terms_accepted: Optional[bool] = ..., 
+                is_schedule_az_update_to_earliest: Optional[bool] = ..., 
                 license_model: Optional[Union[str, LicenseModel]] = ..., 
                 local_adg_auto_failover_max_data_loss_limit: Optional[int] = ..., 
                 long_term_backup_schedule: Optional[LongTermBackUpScheduleDetails] = ..., 
                 ncharacter_set: Optional[str] = ..., 
+                network_anchor_id: Optional[str] = ..., 
                 open_mode: Optional[Union[str, OpenModeType]] = ..., 
                 peer_db_id: Optional[str] = ..., 
                 permission_level: Optional[Union[str, PermissionLevelType]] = ..., 
                 private_endpoint_ip: Optional[str] = ..., 
                 private_endpoint_label: Optional[str] = ..., 
                 refreshable_model: Optional[Union[str, RefreshableModelType]] = ..., 
+                resource_anchor_id: Optional[str] = ..., 
                 role: Optional[Union[str, RoleType]] = ..., 
                 scheduled_operations_list: Optional[list[ScheduledOperationsType]] = ..., 
                 source: Optional[Union[str, SourceType]] = ..., 
                 source_id: str, 
                 subnet_id: Optional[str] = ..., 
+                time_scheduled_az_update: Optional[str] = ..., 
                 time_until_reconnect_clone_enabled: Optional[str] = ..., 
                 vnet_id: Optional[str] = ..., 
-                whitelisted_ips: Optional[list[str]] = ...
+                whitelisted_ips: Optional[list[str]] = ..., 
+                zone: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -2534,6 +3072,7 @@ namespace azure.mgmt.oracledatabase.models
         autonomous_database_id: str
         autonomous_maintenance_schedule_type: Union[str, AutonomousMaintenanceScheduleType]
         available_upgrade_versions: list[str]
+        backup_destination: Union[str, BackupDestinationType]
         backup_retention_period_in_days: int
         character_set: str
         compute_count: float
@@ -2560,6 +3099,7 @@ namespace azure.mgmt.oracledatabase.models
         is_preview_version_with_service_terms_accepted: bool
         is_remote_data_guard_enabled: bool
         is_replicate_automatic_backups: Optional[bool]
+        is_schedule_az_update_to_earliest: bool
         license_model: Union[str, LicenseModel]
         lifecycle_details: str
         lifecycle_state: Union[str, AutonomousDatabaseLifecycleState]
@@ -2569,6 +3109,7 @@ namespace azure.mgmt.oracledatabase.models
         long_term_backup_schedule: LongTermBackUpScheduleDetails
         memory_per_oracle_compute_unit_in_gbs: int
         ncharacter_set: str
+        network_anchor_id: str
         next_long_term_backup_time_stamp: datetime
         oci_url: str
         ocid: str
@@ -2584,6 +3125,7 @@ namespace azure.mgmt.oracledatabase.models
         provisioning_state: Union[str, AzureResourceProvisioningState]
         remote_disaster_recovery_configuration: DisasterRecoveryConfigurationDetails
         remote_disaster_recovery_type: Union[str, DisasterRecoveryType]
+        resource_anchor_id: str
         role: Union[str, RoleType]
         scheduled_operations_list: list[ScheduledOperationsType]
         service_console_url: str
@@ -2606,10 +3148,12 @@ namespace azure.mgmt.oracledatabase.models
         time_of_last_refresh_point: str
         time_of_last_switchover: str
         time_reclamation_of_free_autonomous_database: str
+        time_scheduled_az_update: str
         used_data_storage_size_in_gbs: int
         used_data_storage_size_in_tbs: int
         vnet_id: str
         whitelisted_ips: list[str]
+        zone: str
 
         @overload
         def __init__(
@@ -2618,6 +3162,7 @@ namespace azure.mgmt.oracledatabase.models
                 admin_password: Optional[str] = ..., 
                 autonomous_database_id: Optional[str] = ..., 
                 autonomous_maintenance_schedule_type: Optional[Union[str, AutonomousMaintenanceScheduleType]] = ..., 
+                backup_destination: Optional[Union[str, BackupDestinationType]] = ..., 
                 backup_retention_period_in_days: Optional[int] = ..., 
                 character_set: Optional[str] = ..., 
                 compute_count: Optional[float] = ..., 
@@ -2636,16 +3181,19 @@ namespace azure.mgmt.oracledatabase.models
                 is_mtls_connection_required: Optional[bool] = ..., 
                 is_preview_version_with_service_terms_accepted: Optional[bool] = ..., 
                 is_replicate_automatic_backups: Optional[bool] = ..., 
+                is_schedule_az_update_to_earliest: Optional[bool] = ..., 
                 license_model: Optional[Union[str, LicenseModel]] = ..., 
                 local_adg_auto_failover_max_data_loss_limit: Optional[int] = ..., 
                 long_term_backup_schedule: Optional[LongTermBackUpScheduleDetails] = ..., 
                 ncharacter_set: Optional[str] = ..., 
+                network_anchor_id: Optional[str] = ..., 
                 open_mode: Optional[Union[str, OpenModeType]] = ..., 
                 peer_db_id: Optional[str] = ..., 
                 permission_level: Optional[Union[str, PermissionLevelType]] = ..., 
                 private_endpoint_ip: Optional[str] = ..., 
                 private_endpoint_label: Optional[str] = ..., 
                 remote_disaster_recovery_type: Union[str, DisasterRecoveryType], 
+                resource_anchor_id: Optional[str] = ..., 
                 role: Optional[Union[str, RoleType]] = ..., 
                 scheduled_operations_list: Optional[list[ScheduledOperationsType]] = ..., 
                 source: Literal[SourceType.CROSS_REGION_DISASTER_RECOVERY], 
@@ -2653,8 +3201,10 @@ namespace azure.mgmt.oracledatabase.models
                 source_location: Optional[str] = ..., 
                 source_ocid: Optional[str] = ..., 
                 subnet_id: Optional[str] = ..., 
+                time_scheduled_az_update: Optional[str] = ..., 
                 vnet_id: Optional[str] = ..., 
-                whitelisted_ips: Optional[list[str]] = ...
+                whitelisted_ips: Optional[list[str]] = ..., 
+                zone: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -2669,6 +3219,7 @@ namespace azure.mgmt.oracledatabase.models
         autonomous_database_id: str
         autonomous_maintenance_schedule_type: Union[str, AutonomousMaintenanceScheduleType]
         available_upgrade_versions: list[str]
+        backup_destination: Union[str, BackupDestinationType]
         backup_retention_period_in_days: int
         character_set: str
         clone_type: Union[str, CloneType]
@@ -2695,6 +3246,7 @@ namespace azure.mgmt.oracledatabase.models
         is_preview: bool
         is_preview_version_with_service_terms_accepted: bool
         is_remote_data_guard_enabled: bool
+        is_schedule_az_update_to_earliest: bool
         license_model: Union[str, LicenseModel]
         lifecycle_details: str
         lifecycle_state: Union[str, AutonomousDatabaseLifecycleState]
@@ -2704,6 +3256,7 @@ namespace azure.mgmt.oracledatabase.models
         long_term_backup_schedule: LongTermBackUpScheduleDetails
         memory_per_oracle_compute_unit_in_gbs: int
         ncharacter_set: str
+        network_anchor_id: str
         next_long_term_backup_time_stamp: datetime
         oci_url: str
         ocid: str
@@ -2718,6 +3271,7 @@ namespace azure.mgmt.oracledatabase.models
         provisionable_cpus: list[int]
         provisioning_state: Union[str, AzureResourceProvisioningState]
         remote_disaster_recovery_configuration: DisasterRecoveryConfigurationDetails
+        resource_anchor_id: str
         role: Union[str, RoleType]
         scheduled_operations_list: list[ScheduledOperationsType]
         service_console_url: str
@@ -2738,12 +3292,14 @@ namespace azure.mgmt.oracledatabase.models
         time_of_last_refresh_point: str
         time_of_last_switchover: str
         time_reclamation_of_free_autonomous_database: str
+        time_scheduled_az_update: str
         timestamp: Optional[datetime]
         use_latest_available_backup_time_stamp: Optional[bool]
         used_data_storage_size_in_gbs: int
         used_data_storage_size_in_tbs: int
         vnet_id: str
         whitelisted_ips: list[str]
+        zone: str
 
         @overload
         def __init__(
@@ -2752,6 +3308,7 @@ namespace azure.mgmt.oracledatabase.models
                 admin_password: Optional[str] = ..., 
                 autonomous_database_id: Optional[str] = ..., 
                 autonomous_maintenance_schedule_type: Optional[Union[str, AutonomousMaintenanceScheduleType]] = ..., 
+                backup_destination: Optional[Union[str, BackupDestinationType]] = ..., 
                 backup_retention_period_in_days: Optional[int] = ..., 
                 character_set: Optional[str] = ..., 
                 clone_type: Union[str, CloneType], 
@@ -2770,24 +3327,29 @@ namespace azure.mgmt.oracledatabase.models
                 is_local_data_guard_enabled: Optional[bool] = ..., 
                 is_mtls_connection_required: Optional[bool] = ..., 
                 is_preview_version_with_service_terms_accepted: Optional[bool] = ..., 
+                is_schedule_az_update_to_earliest: Optional[bool] = ..., 
                 license_model: Optional[Union[str, LicenseModel]] = ..., 
                 local_adg_auto_failover_max_data_loss_limit: Optional[int] = ..., 
                 long_term_backup_schedule: Optional[LongTermBackUpScheduleDetails] = ..., 
                 ncharacter_set: Optional[str] = ..., 
+                network_anchor_id: Optional[str] = ..., 
                 open_mode: Optional[Union[str, OpenModeType]] = ..., 
                 peer_db_id: Optional[str] = ..., 
                 permission_level: Optional[Union[str, PermissionLevelType]] = ..., 
                 private_endpoint_ip: Optional[str] = ..., 
                 private_endpoint_label: Optional[str] = ..., 
+                resource_anchor_id: Optional[str] = ..., 
                 role: Optional[Union[str, RoleType]] = ..., 
                 scheduled_operations_list: Optional[list[ScheduledOperationsType]] = ..., 
                 source: Literal[SourceType.BACKUP_FROM_TIMESTAMP], 
                 source_id: str, 
                 subnet_id: Optional[str] = ..., 
+                time_scheduled_az_update: Optional[str] = ..., 
                 timestamp: Optional[datetime] = ..., 
                 use_latest_available_backup_time_stamp: Optional[bool] = ..., 
                 vnet_id: Optional[str] = ..., 
-                whitelisted_ips: Optional[list[str]] = ...
+                whitelisted_ips: Optional[list[str]] = ..., 
+                zone: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -2878,6 +3440,7 @@ namespace azure.mgmt.oracledatabase.models
         autonomous_database_id: str
         autonomous_maintenance_schedule_type: Union[str, AutonomousMaintenanceScheduleType]
         available_upgrade_versions: list[str]
+        backup_destination: Union[str, BackupDestinationType]
         backup_retention_period_in_days: int
         character_set: str
         compute_count: float
@@ -2903,6 +3466,7 @@ namespace azure.mgmt.oracledatabase.models
         is_preview: bool
         is_preview_version_with_service_terms_accepted: bool
         is_remote_data_guard_enabled: bool
+        is_schedule_az_update_to_earliest: bool
         license_model: Union[str, LicenseModel]
         lifecycle_details: str
         lifecycle_state: Union[str, AutonomousDatabaseLifecycleState]
@@ -2912,6 +3476,7 @@ namespace azure.mgmt.oracledatabase.models
         long_term_backup_schedule: LongTermBackUpScheduleDetails
         memory_per_oracle_compute_unit_in_gbs: int
         ncharacter_set: str
+        network_anchor_id: str
         next_long_term_backup_time_stamp: datetime
         oci_url: str
         ocid: str
@@ -2926,6 +3491,7 @@ namespace azure.mgmt.oracledatabase.models
         provisionable_cpus: list[int]
         provisioning_state: Union[str, AzureResourceProvisioningState]
         remote_disaster_recovery_configuration: DisasterRecoveryConfigurationDetails
+        resource_anchor_id: str
         role: Union[str, RoleType]
         scheduled_operations_list: list[ScheduledOperationsType]
         service_console_url: str
@@ -2944,10 +3510,12 @@ namespace azure.mgmt.oracledatabase.models
         time_of_last_refresh_point: str
         time_of_last_switchover: str
         time_reclamation_of_free_autonomous_database: str
+        time_scheduled_az_update: str
         used_data_storage_size_in_gbs: int
         used_data_storage_size_in_tbs: int
         vnet_id: str
         whitelisted_ips: list[str]
+        zone: str
 
         @overload
         def __init__(
@@ -2956,6 +3524,7 @@ namespace azure.mgmt.oracledatabase.models
                 admin_password: Optional[str] = ..., 
                 autonomous_database_id: Optional[str] = ..., 
                 autonomous_maintenance_schedule_type: Optional[Union[str, AutonomousMaintenanceScheduleType]] = ..., 
+                backup_destination: Optional[Union[str, BackupDestinationType]] = ..., 
                 backup_retention_period_in_days: Optional[int] = ..., 
                 character_set: Optional[str] = ..., 
                 compute_count: Optional[float] = ..., 
@@ -2973,20 +3542,25 @@ namespace azure.mgmt.oracledatabase.models
                 is_local_data_guard_enabled: Optional[bool] = ..., 
                 is_mtls_connection_required: Optional[bool] = ..., 
                 is_preview_version_with_service_terms_accepted: Optional[bool] = ..., 
+                is_schedule_az_update_to_earliest: Optional[bool] = ..., 
                 license_model: Optional[Union[str, LicenseModel]] = ..., 
                 local_adg_auto_failover_max_data_loss_limit: Optional[int] = ..., 
                 long_term_backup_schedule: Optional[LongTermBackUpScheduleDetails] = ..., 
                 ncharacter_set: Optional[str] = ..., 
+                network_anchor_id: Optional[str] = ..., 
                 open_mode: Optional[Union[str, OpenModeType]] = ..., 
                 peer_db_id: Optional[str] = ..., 
                 permission_level: Optional[Union[str, PermissionLevelType]] = ..., 
                 private_endpoint_ip: Optional[str] = ..., 
                 private_endpoint_label: Optional[str] = ..., 
+                resource_anchor_id: Optional[str] = ..., 
                 role: Optional[Union[str, RoleType]] = ..., 
                 scheduled_operations_list: Optional[list[ScheduledOperationsType]] = ..., 
                 subnet_id: Optional[str] = ..., 
+                time_scheduled_az_update: Optional[str] = ..., 
                 vnet_id: Optional[str] = ..., 
-                whitelisted_ips: Optional[list[str]] = ...
+                whitelisted_ips: Optional[list[str]] = ..., 
+                zone: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -3171,8 +3745,44 @@ namespace azure.mgmt.oracledatabase.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.oracledatabase.models.BackupDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE = "AZURE"
+        OCI = "OCI"
+
+
+    class azure.mgmt.oracledatabase.models.BackupScheduleType(_Model):
+        bucket_name: Optional[str]
+        compartment_id: Optional[str]
+        frequency_backup_scheduled: Optional[Union[str, FrequencyType]]
+        is_metadata_only: Optional[bool]
+        namespace_name: Optional[str]
+        time_backup_scheduled: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bucket_name: Optional[str] = ..., 
+                compartment_id: Optional[str] = ..., 
+                frequency_backup_scheduled: Optional[Union[str, FrequencyType]] = ..., 
+                is_metadata_only: Optional[bool] = ..., 
+                namespace_name: Optional[str] = ..., 
+                time_backup_scheduled: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.oracledatabase.models.BaseDbSystemShapes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        VM_BASE_DBX86 = "VM.BaseDB.x86"
         VM_STANDARD_X86 = "VM.Standard.x86"
+
+
+    class azure.mgmt.oracledatabase.models.CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DATA_REPLICATION = "DataReplication"
+        DATA_TRANSFORMS = "DataTransforms"
+        STREAM_ANALYTICS = "StreamAnalytics"
 
 
     class azure.mgmt.oracledatabase.models.CloneType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3256,6 +3866,8 @@ namespace azure.mgmt.oracledatabase.models
         oci_url: Optional[str]
         ocid: Optional[str]
         provisioning_state: Optional[Union[str, AzureResourceProvisioningState]]
+        proximity_placement_group: Optional[ProximityPlacementGroup]
+        resource_anchor_id: Optional[str]
         shape: str
         storage_count: Optional[int]
         storage_server_type: Optional[str]
@@ -3272,6 +3884,8 @@ namespace azure.mgmt.oracledatabase.models
                 database_server_type: Optional[str] = ..., 
                 display_name: str, 
                 maintenance_window: Optional[MaintenanceWindow] = ..., 
+                proximity_placement_group: Optional[ProximityPlacementGroup] = ..., 
+                resource_anchor_id: Optional[str] = ..., 
                 shape: str, 
                 storage_count: Optional[int] = ..., 
                 storage_server_type: Optional[str] = ...
@@ -3372,8 +3986,9 @@ namespace azure.mgmt.oracledatabase.models
         exascale_db_storage_vault_id: Optional[str]
         file_system_configuration_details: Optional[list[FileSystemConfigurationDetails]]
         gi_version: str
-        hostname: str
+        hostname_v2: str
         iorm_config_cache: Optional[ExadataIormConfig]
+        is_accelerated_network_enabled: Optional[bool]
         is_local_backup_enabled: Optional[bool]
         is_sparse_diskgroup_enabled: Optional[bool]
         last_update_history_entry_id: Optional[str]
@@ -3382,6 +3997,7 @@ namespace azure.mgmt.oracledatabase.models
         lifecycle_state: Optional[Union[str, CloudVmClusterLifecycleState]]
         listener_port: Optional[int]
         memory_size_in_gbs: Optional[int]
+        network_anchor_id: Optional[str]
         node_count: Optional[int]
         nsg_cidrs: Optional[list[NsgCidr]]
         nsg_url: Optional[str]
@@ -3389,12 +4005,16 @@ namespace azure.mgmt.oracledatabase.models
         ocid: Optional[str]
         ocpu_count: Optional[float]
         provisioning_state: Optional[Union[str, AzureResourceProvisioningState]]
-        scan_dns_name: Optional[str]
+        proximity_placement_group: Optional[ProximityPlacementGroup]
+        reco_storage_percentage: Optional[int]
+        resource_anchor_id: Optional[str]
+        scan_dns_name_v2: Optional[str]
         scan_dns_record_id: Optional[str]
         scan_ip_ids: Optional[list[str]]
         scan_listener_port_tcp: Optional[int]
         scan_listener_port_tcp_ssl: Optional[int]
         shape: Optional[str]
+        sparse_storage_percentage: Optional[int]
         ssh_public_keys: list[str]
         storage_management_type: Optional[Union[str, ExadataVmClusterStorageManagementType]]
         storage_size_in_gbs: Optional[int]
@@ -3426,15 +4046,21 @@ namespace azure.mgmt.oracledatabase.models
                 exascale_db_storage_vault_id: Optional[str] = ..., 
                 file_system_configuration_details: Optional[list[FileSystemConfigurationDetails]] = ..., 
                 gi_version: str, 
-                hostname: str, 
+                hostname_v2: str, 
+                is_accelerated_network_enabled: Optional[bool] = ..., 
                 is_local_backup_enabled: Optional[bool] = ..., 
                 is_sparse_diskgroup_enabled: Optional[bool] = ..., 
                 license_model: Optional[Union[str, LicenseModel]] = ..., 
                 memory_size_in_gbs: Optional[int] = ..., 
+                network_anchor_id: Optional[str] = ..., 
                 nsg_cidrs: Optional[list[NsgCidr]] = ..., 
                 ocpu_count: Optional[float] = ..., 
+                proximity_placement_group: Optional[ProximityPlacementGroup] = ..., 
+                reco_storage_percentage: Optional[int] = ..., 
+                resource_anchor_id: Optional[str] = ..., 
                 scan_listener_port_tcp: Optional[int] = ..., 
                 scan_listener_port_tcp_ssl: Optional[int] = ..., 
+                sparse_storage_percentage: Optional[int] = ..., 
                 ssh_public_keys: list[str], 
                 storage_size_in_gbs: Optional[int] = ..., 
                 subnet_id: str, 
@@ -3472,6 +4098,7 @@ namespace azure.mgmt.oracledatabase.models
         db_node_storage_size_in_gbs: Optional[int]
         display_name: Optional[str]
         file_system_configuration_details: Optional[list[FileSystemConfigurationDetails]]
+        is_accelerated_network_enabled: Optional[bool]
         license_model: Optional[Union[str, LicenseModel]]
         memory_size_in_gbs: Optional[int]
         ocpu_count: Optional[float]
@@ -3489,6 +4116,7 @@ namespace azure.mgmt.oracledatabase.models
                 db_node_storage_size_in_gbs: Optional[int] = ..., 
                 display_name: Optional[str] = ..., 
                 file_system_configuration_details: Optional[list[FileSystemConfigurationDetails]] = ..., 
+                is_accelerated_network_enabled: Optional[bool] = ..., 
                 license_model: Optional[Union[str, LicenseModel]] = ..., 
                 memory_size_in_gbs: Optional[int] = ..., 
                 ocpu_count: Optional[float] = ..., 
@@ -3519,6 +4147,50 @@ namespace azure.mgmt.oracledatabase.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.oracledatabase.models.ConnectionBaseProperties(_Model):
+        compartment_id: Optional[str]
+        connection_type: str
+        display_name: str
+        does_use_secret_ids: Optional[bool]
+        key_id: Optional[str]
+        lifecycle_details: Optional[str]
+        lifecycle_state: Optional[Union[str, ConnectionLifecycleState]]
+        network_anchor_id: str
+        ocid: Optional[str]
+        provisioning_state: Optional[Union[str, AzureResourceProvisioningState]]
+        resource_anchor_id: str
+        routing_method: Optional[Union[str, RoutingMethod]]
+        time_created: Optional[str]
+        time_updated: Optional[str]
+        vault_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_type: str, 
+                display_name: str, 
+                does_use_secret_ids: Optional[bool] = ..., 
+                key_id: Optional[str] = ..., 
+                network_anchor_id: str, 
+                resource_anchor_id: str, 
+                routing_method: Optional[Union[str, RoutingMethod]] = ..., 
+                vault_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.ConnectionLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE = "ACTIVE"
+        CREATING = "CREATING"
+        DELETED = "DELETED"
+        DELETING = "DELETING"
+        FAILED = "FAILED"
+        UPDATING = "UPDATING"
+
+
     class azure.mgmt.oracledatabase.models.ConnectionStringType(_Model):
         all_connection_strings: Optional[AllConnectionStringType]
         dedicated: Optional[str]
@@ -3541,6 +4213,37 @@ namespace azure.mgmt.oracledatabase.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AMAZON_KINESIS = "AMAZON_KINESIS"
+        AMAZON_REDSHIFT = "AMAZON_REDSHIFT"
+        AMAZON_S3 = "AMAZON_S3"
+        AZURE_DATA_LAKE_STORAGE = "AZURE_DATA_LAKE_STORAGE"
+        AZURE_SYNAPSE_ANALYTICS = "AZURE_SYNAPSE_ANALYTICS"
+        DATABRICKS = "DATABRICKS"
+        DB2_CONNECTION = "DB2"
+        ELASTICSEARCH = "ELASTICSEARCH"
+        GENERIC = "GENERIC"
+        GOLDEN_GATE = "GOLDENGATE"
+        GOOGLE_BIG_QUERY = "GOOGLE_BIGQUERY"
+        GOOGLE_CLOUD_STORAGE = "GOOGLE_CLOUD_STORAGE"
+        GOOGLE_PUB_SUB = "GOOGLE_PUBSUB"
+        HDFS = "HDFS"
+        ICEBERG = "ICEBERG"
+        JAVA_MESSAGE_SERVICE = "JAVA_MESSAGE_SERVICE"
+        KAFKA = "KAFKA"
+        KAFKA_SCHEMA_REGISTRY = "KAFKA_SCHEMA_REGISTRY"
+        MICROSOFT_FABRIC = "MICROSOFT_FABRIC"
+        MICROSOFT_SQL_SERVER = "MICROSOFT_SQLSERVER"
+        MONGO_DB_CONNECTION = "MONGODB"
+        MY_SQL = "MYSQL"
+        OCI_OBJECT_STORAGE = "OCI_OBJECT_STORAGE"
+        ORACLE = "ORACLE"
+        ORACLE_NO_SQL = "ORACLE_NOSQL"
+        POSTGRE_SQL = "POSTGRESQL"
+        REDIS = "REDIS"
+        SNOWFLAKE = "SNOWFLAKE"
 
 
     class azure.mgmt.oracledatabase.models.ConnectionUrlType(_Model):
@@ -3582,6 +4285,11 @@ namespace azure.mgmt.oracledatabase.models
         KEY = "Key"
         MANAGED_IDENTITY = "ManagedIdentity"
         USER = "User"
+
+
+    class azure.mgmt.oracledatabase.models.CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        GOLDEN_GATE = "GoldenGate"
+        IAM = "IAM"
 
 
     class azure.mgmt.oracledatabase.models.CustomerContact(_Model):
@@ -3631,9 +4339,121 @@ namespace azure.mgmt.oracledatabase.models
         REGISTERING = "Registering"
 
 
+    class azure.mgmt.oracledatabase.models.DatabaseEdition(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[DatabaseEditionProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[DatabaseEditionProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.DatabaseEditionProperties(_Model):
+        database_edition: Union[str, DbSystemDatabaseEditionType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                database_edition: Union[str, DbSystemDatabaseEditionType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.oracledatabase.models.DatabaseEditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ENTERPRISE_EDITION = "EnterpriseEdition"
         STANDARD_EDITION = "StandardEdition"
+
+
+    class azure.mgmt.oracledatabase.models.DatabaseSystemShape(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[DatabaseSystemShapeProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[DatabaseSystemShapeProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.DatabaseSystemShapeProperties(_Model):
+        are_server_types_supported: Optional[bool]
+        available_core_count: int
+        available_core_count_per_node: Optional[int]
+        available_data_storage_in_tbs: Optional[int]
+        available_data_storage_per_server_in_tbs: Optional[float]
+        available_db_node_per_node_in_gbs: Optional[int]
+        available_db_node_storage_in_gbs: Optional[int]
+        available_memory_in_gbs: Optional[int]
+        available_memory_per_node_in_gbs: Optional[int]
+        compute_model: Optional[Union[str, ComputeModel]]
+        core_count_increment: Optional[int]
+        display_name: Optional[str]
+        max_storage_count: Optional[int]
+        maximum_node_count: Optional[int]
+        min_core_count_per_node: Optional[int]
+        min_data_storage_in_tbs: Optional[int]
+        min_db_node_storage_per_node_in_gbs: Optional[int]
+        min_memory_per_node_in_gbs: Optional[int]
+        min_storage_count: Optional[int]
+        minimum_core_count: Optional[int]
+        minimum_node_count: Optional[int]
+        runtime_minimum_core_count: Optional[int]
+        shape_attributes: Optional[list[str]]
+        shape_family: Optional[str]
+        shape_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                are_server_types_supported: Optional[bool] = ..., 
+                available_core_count: int, 
+                available_core_count_per_node: Optional[int] = ..., 
+                available_data_storage_in_tbs: Optional[int] = ..., 
+                available_data_storage_per_server_in_tbs: Optional[float] = ..., 
+                available_db_node_per_node_in_gbs: Optional[int] = ..., 
+                available_db_node_storage_in_gbs: Optional[int] = ..., 
+                available_memory_in_gbs: Optional[int] = ..., 
+                available_memory_per_node_in_gbs: Optional[int] = ..., 
+                compute_model: Optional[Union[str, ComputeModel]] = ..., 
+                core_count_increment: Optional[int] = ..., 
+                display_name: Optional[str] = ..., 
+                max_storage_count: Optional[int] = ..., 
+                maximum_node_count: Optional[int] = ..., 
+                min_core_count_per_node: Optional[int] = ..., 
+                min_data_storage_in_tbs: Optional[int] = ..., 
+                min_db_node_storage_per_node_in_gbs: Optional[int] = ..., 
+                min_memory_per_node_in_gbs: Optional[int] = ..., 
+                min_storage_count: Optional[int] = ..., 
+                minimum_core_count: Optional[int] = ..., 
+                minimum_node_count: Optional[int] = ..., 
+                runtime_minimum_core_count: Optional[int] = ..., 
+                shape_attributes: Optional[list[str]] = ..., 
+                shape_family: Optional[str] = ..., 
+                shape_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.oracledatabase.models.DayOfWeek(_Model):
@@ -3922,6 +4742,7 @@ namespace azure.mgmt.oracledatabase.models
 
 
     class azure.mgmt.oracledatabase.models.DbSystemBaseProperties(_Model):
+        character_set: Optional[str]
         cluster_name: Optional[str]
         compute_count: Optional[int]
         compute_model: Optional[Union[str, ComputeModel]]
@@ -3939,6 +4760,7 @@ namespace azure.mgmt.oracledatabase.models
         lifecycle_state: Optional[Union[str, DbSystemLifecycleState]]
         listener_port: Optional[int]
         memory_size_in_gbs: Optional[int]
+        ncharacter_set: Optional[str]
         network_anchor_id: str
         node_count: Optional[int]
         oci_url: Optional[str]
@@ -3958,6 +4780,7 @@ namespace azure.mgmt.oracledatabase.models
         def __init__(
                 self, 
                 *, 
+                character_set: Optional[str] = ..., 
                 cluster_name: Optional[str] = ..., 
                 compute_count: Optional[int] = ..., 
                 compute_model: Optional[Union[str, ComputeModel]] = ..., 
@@ -3969,6 +4792,7 @@ namespace azure.mgmt.oracledatabase.models
                 hostname: str, 
                 initial_data_storage_size_in_gb: Optional[int] = ..., 
                 license_model_v2: Optional[Union[str, LicenseModel]] = ..., 
+                ncharacter_set: Optional[str] = ..., 
                 network_anchor_id: str, 
                 node_count: Optional[int] = ..., 
                 resource_anchor_id: str, 
@@ -4020,6 +4844,7 @@ namespace azure.mgmt.oracledatabase.models
 
     class azure.mgmt.oracledatabase.models.DbSystemProperties(DbSystemBaseProperties, discriminator='None'):
         admin_password: Optional[str]
+        character_set: str
         cluster_name: str
         compute_count: int
         compute_model: Union[str, ComputeModel]
@@ -4039,6 +4864,7 @@ namespace azure.mgmt.oracledatabase.models
         lifecycle_state: Union[str, DbSystemLifecycleState]
         listener_port: int
         memory_size_in_gbs: int
+        ncharacter_set: str
         network_anchor_id: str
         node_count: int
         oci_url: str
@@ -4060,6 +4886,7 @@ namespace azure.mgmt.oracledatabase.models
                 self, 
                 *, 
                 admin_password: Optional[str] = ..., 
+                character_set: Optional[str] = ..., 
                 cluster_name: Optional[str] = ..., 
                 compute_count: Optional[int] = ..., 
                 compute_model: Optional[Union[str, ComputeModel]] = ..., 
@@ -4073,6 +4900,7 @@ namespace azure.mgmt.oracledatabase.models
                 hostname: str, 
                 initial_data_storage_size_in_gb: Optional[int] = ..., 
                 license_model_v2: Optional[Union[str, LicenseModel]] = ..., 
+                ncharacter_set: Optional[str] = ..., 
                 network_anchor_id: str, 
                 node_count: Optional[int] = ..., 
                 pdb_name: Optional[str] = ..., 
@@ -4261,6 +5089,104 @@ namespace azure.mgmt.oracledatabase.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.DeploymentConnectionAssignmentProperties(_Model):
+        alias_name: Optional[str]
+        compartment_id: Optional[str]
+        connection_id: str
+        connection_name: Optional[str]
+        deployment_id: str
+        deployment_name: Optional[str]
+        lifecycle_state: Optional[Union[str, GoldenGateConnectionAssignmentLifecycleState]]
+        ocid: Optional[str]
+        provisioning_state: Optional[Union[str, AzureResourceProvisioningState]]
+        time_created: Optional[str]
+        time_updated: Optional[str]
+
+
+    class azure.mgmt.oracledatabase.models.DeploymentLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE = "Active"
+        CANCELED = "Canceled"
+        CANCELING = "Canceling"
+        CREATING = "Creating"
+        DELETED = "Deleted"
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        IN_ACTIVE = "InActive"
+        IN_PROGRESS = "In Progress"
+        NEEDS_ATTENTION = "Needs Attention"
+        SUCCEEDED = "Succeeded"
+        UPDATING = "Updating"
+        WAITING = "Waiting"
+
+
+    class azure.mgmt.oracledatabase.models.DeploymentProperties(_Model):
+        backup_schedule: Optional[BackupScheduleType]
+        category: Optional[Union[str, CategoryType]]
+        compartment: Optional[str]
+        cpu_core_count: Optional[int]
+        deployment_type: Optional[Union[str, DeploymentType]]
+        deployment_url: Optional[str]
+        display_name: str
+        environment_type: Optional[Union[str, SetupType]]
+        ingress_ips: Optional[list[str]]
+        is_auto_scaling_enabled: Optional[bool]
+        is_public: Optional[bool]
+        license_model: Optional[Union[str, LicenseModel]]
+        lifecycle_details: Optional[str]
+        lifecycle_state: Optional[Union[str, DeploymentLifecycleState]]
+        maintenance_configuration: Optional[MaintenanceConfigurationType]
+        maintenance_window: Optional[MaintenanceWindowType]
+        network_anchor_id: str
+        ocid: Optional[str]
+        ogg_data: Optional[OggDeploymentDetails]
+        private_ip_address: Optional[str]
+        provisioning_state: Optional[Union[str, AzureResourceProvisioningState]]
+        resource_anchor_id: str
+        storage_utilization_in_bytes: Optional[int]
+        time_created: Optional[str]
+        time_updated: Optional[str]
+        time_zone: Optional[str]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                backup_schedule: Optional[BackupScheduleType] = ..., 
+                category: Optional[Union[str, CategoryType]] = ..., 
+                cpu_core_count: Optional[int] = ..., 
+                deployment_type: Optional[Union[str, DeploymentType]] = ..., 
+                display_name: str, 
+                environment_type: Optional[Union[str, SetupType]] = ..., 
+                is_auto_scaling_enabled: Optional[bool] = ..., 
+                is_public: Optional[bool] = ..., 
+                license_model: Optional[Union[str, LicenseModel]] = ..., 
+                maintenance_configuration: Optional[MaintenanceConfigurationType] = ..., 
+                maintenance_window: Optional[MaintenanceWindowType] = ..., 
+                network_anchor_id: str, 
+                ogg_data: Optional[OggDeploymentDetails] = ..., 
+                resource_anchor_id: str, 
+                time_zone: Optional[str] = ..., 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BIG_DATA = "BigData"
+        DATABASE_DB2_I = "DATABASE_DB2I"
+        DATABASE_DB2_ZOS = "DatabaseDB2ZOS"
+        DATABASE_MICROSOFT_SQL_SERVER = "DatabaseMicrosoftSQLServer"
+        DATABASE_MY_SQL = "DatabaseMySQL"
+        DATABASE_ORACLE = "DatabaseOracle"
+        DATABASE_POST_GRE_SQL = "DatabasePostGreSQL"
+        DATA_TRANSFORMS = "DataTransforms"
+        GGSA = "GGSA"
+        OGG = "Ogg"
 
 
     class azure.mgmt.oracledatabase.models.DisasterRecoveryConfigurationDetails(_Model):
@@ -4528,7 +5454,7 @@ namespace azure.mgmt.oracledatabase.models
         gi_version: Optional[str]
         grid_image_ocid: Optional[str]
         grid_image_type: Optional[Union[str, GridImageType]]
-        hostname: str
+        hostname_v2: str
         iorm_config_cache: Optional[ExadataIormConfig]
         license_model: Optional[Union[str, LicenseModel]]
         lifecycle_details: Optional[str]
@@ -4542,7 +5468,7 @@ namespace azure.mgmt.oracledatabase.models
         ocid: Optional[str]
         private_zone_ocid: Optional[str]
         provisioning_state: Optional[Union[str, AzureResourceProvisioningState]]
-        scan_dns_name: Optional[str]
+        scan_dns_name_v2: Optional[str]
         scan_dns_record_id: Optional[str]
         scan_ip_ids: Optional[list[str]]
         scan_listener_port_tcp: Optional[int]
@@ -4574,7 +5500,7 @@ namespace azure.mgmt.oracledatabase.models
                 enabled_ecpu_count: int, 
                 exascale_db_storage_vault_id: str, 
                 grid_image_ocid: Optional[str] = ..., 
-                hostname: str, 
+                hostname_v2: str, 
                 license_model: Optional[Union[str, LicenseModel]] = ..., 
                 node_count: int, 
                 nsg_cidrs: Optional[list[NsgCidr]] = ..., 
@@ -4780,11 +5706,13 @@ namespace azure.mgmt.oracledatabase.models
     class azure.mgmt.oracledatabase.models.ExascaleDbStorageVaultProperties(_Model):
         additional_flash_cache_in_percent: Optional[int]
         attached_shape_attributes: Optional[list[Union[str, ShapeAttribute]]]
+        autoscale_limit_in_gbs: Optional[int]
         description: Optional[str]
         display_name: str
         exadata_infrastructure_id: Optional[str]
         high_capacity_database_storage: Optional[ExascaleDbStorageDetails]
         high_capacity_database_storage_input: ExascaleDbStorageInputDetails
+        is_autoscale_enabled: Optional[bool]
         lifecycle_details: Optional[str]
         lifecycle_state: Optional[Union[str, ExascaleDbStorageVaultLifecycleState]]
         oci_url: Optional[str]
@@ -4798,10 +5726,12 @@ namespace azure.mgmt.oracledatabase.models
                 self, 
                 *, 
                 additional_flash_cache_in_percent: Optional[int] = ..., 
+                autoscale_limit_in_gbs: Optional[int] = ..., 
                 description: Optional[str] = ..., 
                 display_name: str, 
                 exadata_infrastructure_id: Optional[str] = ..., 
                 high_capacity_database_storage_input: ExascaleDbStorageInputDetails, 
+                is_autoscale_enabled: Optional[bool] = ..., 
                 time_zone: Optional[str] = ...
             ) -> None: ...
 
@@ -4870,6 +5800,12 @@ namespace azure.mgmt.oracledatabase.models
         shape: Optional[str]
 
 
+    class azure.mgmt.oracledatabase.models.FrequencyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DAILY = "Daily"
+        MONTHLY = "Monthly"
+        WEEKLY = "Weekly"
+
+
     class azure.mgmt.oracledatabase.models.GenerateAutonomousDatabaseWalletDetails(_Model):
         generate_type: Optional[Union[str, GenerateType]]
         is_regional: Optional[bool]
@@ -4927,6 +5863,11 @@ namespace azure.mgmt.oracledatabase.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.oracledatabase.models.GiMinorVersionSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ASC = "ASC"
+        DESC = "DESC"
+
+
     class azure.mgmt.oracledatabase.models.GiVersion(ProxyResource):
         id: str
         name: str
@@ -4959,9 +5900,172 @@ namespace azure.mgmt.oracledatabase.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.oracledatabase.models.GoldenGateConnection(TrackedResource):
+        id: str
+        location: str
+        name: str
+        properties: Optional[ConnectionBaseProperties]
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: str, 
+                properties: Optional[ConnectionBaseProperties] = ..., 
+                tags: Optional[dict[str, str]] = ..., 
+                zones: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.GoldenGateConnectionAssignmentLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE = "ACTIVE"
+        CREATING = "CREATING"
+        DELETED = "DELETED"
+        DELETING = "DELETING"
+        FAILED = "FAILED"
+        UPDATING = "UPDATING"
+
+
+    class azure.mgmt.oracledatabase.models.GoldenGateConnectionUpdate(_Model):
+        properties: Optional[GoldenGateConnectionUpdateProperties]
+        tags: Optional[dict[str, str]]
+        zones: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[GoldenGateConnectionUpdateProperties] = ..., 
+                tags: Optional[dict[str, str]] = ..., 
+                zones: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.GoldenGateConnectionUpdateProperties(_Model):
+        connection_type: Optional[Union[str, ConnectionType]]
+        display_name: Optional[str]
+        does_use_secret_ids: Optional[bool]
+        key_id: Optional[str]
+        routing_method: Optional[Union[str, RoutingMethod]]
+        vault_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_type: Optional[Union[str, ConnectionType]] = ..., 
+                display_name: Optional[str] = ..., 
+                does_use_secret_ids: Optional[bool] = ..., 
+                key_id: Optional[str] = ..., 
+                routing_method: Optional[Union[str, RoutingMethod]] = ..., 
+                vault_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.GoldenGateDeployment(TrackedResource):
+        id: str
+        location: str
+        name: str
+        properties: Optional[DeploymentProperties]
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: str, 
+                properties: Optional[DeploymentProperties] = ..., 
+                tags: Optional[dict[str, str]] = ..., 
+                zones: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.GoldenGateDeploymentUpdate(_Model):
+        properties: Optional[GoldenGateDeploymentUpdateProperties]
+        tags: Optional[dict[str, str]]
+        zones: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[GoldenGateDeploymentUpdateProperties] = ..., 
+                tags: Optional[dict[str, str]] = ..., 
+                zones: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.GoldenGateDeploymentUpdateProperties(_Model):
+        backup_schedule: Optional[BackupScheduleType]
+        cpu_core_count: Optional[int]
+        license_model: Optional[Union[str, LicenseModel]]
+        maintenance_configuration: Optional[MaintenanceConfigurationType]
+        maintenance_window: Optional[MaintenanceWindowType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                backup_schedule: Optional[BackupScheduleType] = ..., 
+                cpu_core_count: Optional[int] = ..., 
+                license_model: Optional[Union[str, LicenseModel]] = ..., 
+                maintenance_configuration: Optional[MaintenanceConfigurationType] = ..., 
+                maintenance_window: Optional[MaintenanceWindowType] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.oracledatabase.models.GridImageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CUSTOM_IMAGE = "CustomImage"
         RELEASE_UPDATE = "ReleaseUpdate"
+
+
+    class azure.mgmt.oracledatabase.models.GroupToRolesMappingDetails(_Model):
+        administrator_group_id: Optional[str]
+        identity_domain_id: Optional[str]
+        key: Optional[str]
+        operator_group_id: Optional[str]
+        security_group_id: Optional[str]
+        user_group_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                administrator_group_id: Optional[str] = ..., 
+                identity_domain_id: Optional[str] = ..., 
+                key: Optional[str] = ..., 
+                operator_group_id: Optional[str] = ..., 
+                security_group_id: Optional[str] = ..., 
+                user_group_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.oracledatabase.models.HardwareType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4987,6 +6091,93 @@ namespace azure.mgmt.oracledatabase.models
         UPDATING = "Updating"
 
 
+    class azure.mgmt.oracledatabase.models.KafkaBootstrapServer(_Model):
+        host: str
+        port: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                host: str, 
+                port: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.KafkaConnectionDetails(ConnectionBaseProperties, discriminator='KAFKA'):
+        bootstrap_servers: Optional[list[KafkaBootstrapServer]]
+        cluster_id: Optional[str]
+        compartment_id: str
+        connection_type: Literal[ConnectionType.KAFKA]
+        consumer_properties: Optional[str]
+        display_name: str
+        does_use_secret_ids: bool
+        key_id: str
+        key_store_password_secret_id: Optional[str]
+        key_store_secret_id: Optional[str]
+        lifecycle_details: str
+        lifecycle_state: Union[str, ConnectionLifecycleState]
+        network_anchor_id: str
+        ocid: str
+        password_secret_id: Optional[str]
+        producer_properties: Optional[str]
+        provisioning_state: Union[str, AzureResourceProvisioningState]
+        resource_anchor_id: str
+        routing_method: Union[str, RoutingMethod]
+        security_protocol: Optional[str]
+        should_use_resource_principal: Optional[bool]
+        ssl_key_password_secret_id: Optional[str]
+        stream_pool_id: Optional[str]
+        technology_type: Union[str, KafkaConnectionTechnologyType]
+        time_created: str
+        time_updated: str
+        trust_store_password_secret_id: Optional[str]
+        trust_store_secret_id: Optional[str]
+        username: Optional[str]
+        vault_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bootstrap_servers: Optional[list[KafkaBootstrapServer]] = ..., 
+                cluster_id: Optional[str] = ..., 
+                consumer_properties: Optional[str] = ..., 
+                display_name: str, 
+                does_use_secret_ids: Optional[bool] = ..., 
+                key_id: Optional[str] = ..., 
+                key_store_password_secret_id: Optional[str] = ..., 
+                key_store_secret_id: Optional[str] = ..., 
+                network_anchor_id: str, 
+                password_secret_id: Optional[str] = ..., 
+                producer_properties: Optional[str] = ..., 
+                resource_anchor_id: str, 
+                routing_method: Optional[Union[str, RoutingMethod]] = ..., 
+                security_protocol: Optional[str] = ..., 
+                should_use_resource_principal: Optional[bool] = ..., 
+                ssl_key_password_secret_id: Optional[str] = ..., 
+                stream_pool_id: Optional[str] = ..., 
+                technology_type: Union[str, KafkaConnectionTechnologyType], 
+                trust_store_password_secret_id: Optional[str] = ..., 
+                trust_store_secret_id: Optional[str] = ..., 
+                username: Optional[str] = ..., 
+                vault_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.KafkaConnectionTechnologyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APACHE_KAFKA = "APACHE_KAFKA"
+        AZURE_EVENT_HUBS = "AZURE_EVENT_HUBS"
+        CONFLUENT_KAFKA = "CONFLUENT_KAFKA"
+        OCI_STREAMING = "OCI_STREAMING"
+
+
     class azure.mgmt.oracledatabase.models.LicenseModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         BRING_YOUR_OWN_LICENSE = "BringYourOwnLicense"
         LICENSE_INCLUDED = "LicenseIncluded"
@@ -5006,6 +6197,28 @@ namespace azure.mgmt.oracledatabase.models
                 repeat_cadence: Optional[Union[str, RepeatCadenceType]] = ..., 
                 retention_period_in_days: Optional[int] = ..., 
                 time_of_backup: Optional[datetime] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.MaintenanceConfigurationType(_Model):
+        bundle_release_upgrade_period_in_days: Optional[int]
+        interim_release_upgrade_period_in_days: Optional[int]
+        is_interim_release_auto_upgrade_enabled: Optional[bool]
+        major_release_upgrade_period_in_days: Optional[int]
+        security_patch_upgrade_period_in_days: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bundle_release_upgrade_period_in_days: Optional[int] = ..., 
+                interim_release_upgrade_period_in_days: Optional[int] = ..., 
+                is_interim_release_auto_upgrade_enabled: Optional[bool] = ..., 
+                major_release_upgrade_period_in_days: Optional[int] = ..., 
+                security_patch_upgrade_period_in_days: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -5042,6 +6255,71 @@ namespace azure.mgmt.oracledatabase.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.MaintenanceWindowType(_Model):
+        day: Optional[Union[str, DayOfWeekName]]
+        start_hour: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                day: Optional[Union[str, DayOfWeekName]] = ..., 
+                start_hour: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.MicrosoftFabricConnectionDetails(ConnectionBaseProperties, discriminator='MICROSOFT_FABRIC'):
+        client_id: str
+        client_secret_secret_id: Optional[str]
+        compartment_id: str
+        connection_type: Literal[ConnectionType.MICROSOFT_FABRIC]
+        display_name: str
+        does_use_secret_ids: bool
+        endpoint: Optional[str]
+        key_id: str
+        lifecycle_details: str
+        lifecycle_state: Union[str, ConnectionLifecycleState]
+        network_anchor_id: str
+        ocid: str
+        provisioning_state: Union[str, AzureResourceProvisioningState]
+        resource_anchor_id: str
+        routing_method: Union[str, RoutingMethod]
+        technology_type: Union[str, MicrosoftFabricConnectionTechnologyType]
+        tenant_id: str
+        time_created: str
+        time_updated: str
+        vault_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                client_id: str, 
+                client_secret_secret_id: Optional[str] = ..., 
+                display_name: str, 
+                does_use_secret_ids: Optional[bool] = ..., 
+                endpoint: Optional[str] = ..., 
+                key_id: Optional[str] = ..., 
+                network_anchor_id: str, 
+                resource_anchor_id: str, 
+                routing_method: Optional[Union[str, RoutingMethod]] = ..., 
+                technology_type: Union[str, MicrosoftFabricConnectionTechnologyType], 
+                tenant_id: str, 
+                vault_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.MicrosoftFabricConnectionTechnologyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MICROSOFT_FABRIC_LAKEHOUSE = "MICROSOFT_FABRIC_LAKEHOUSE"
+        MICROSOFT_FABRIC_MIRROR = "MICROSOFT_FABRIC_MIRROR"
 
 
     class azure.mgmt.oracledatabase.models.Month(_Model):
@@ -5114,6 +6392,7 @@ namespace azure.mgmt.oracledatabase.models
         oci_vcn_dns_label: Optional[str]
         oci_vcn_id: Optional[str]
         provisioning_state: Optional[Union[str, AzureResourceProvisioningState]]
+        proximity_placement_group: Optional[ProximityPlacementGroup]
         resource_anchor_id: str
         subnet_id: str
         vnet_id: Optional[str]
@@ -5129,6 +6408,7 @@ namespace azure.mgmt.oracledatabase.models
                 is_oracle_to_azure_dns_zone_sync_enabled: Optional[bool] = ..., 
                 oci_backup_cidr_block: Optional[str] = ..., 
                 oci_vcn_dns_label: Optional[str] = ..., 
+                proximity_placement_group: Optional[ProximityPlacementGroup] = ..., 
                 resource_anchor_id: str, 
                 subnet_id: str
             ) -> None: ...
@@ -5199,6 +6479,34 @@ namespace azure.mgmt.oracledatabase.models
         LOW_LATENCY = "LowLatency"
 
 
+    class azure.mgmt.oracledatabase.models.OggDeploymentDetails(_Model):
+        admin_password: Optional[str]
+        admin_username: Optional[str]
+        certificate: Optional[str]
+        credential_store: Optional[Union[str, CredentialType]]
+        deployment_name: str
+        group_to_roles_mapping: Optional[GroupToRolesMappingDetails]
+        ogg_version: Optional[str]
+        password_secret_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                admin_password: Optional[str] = ..., 
+                admin_username: Optional[str] = ..., 
+                certificate: Optional[str] = ..., 
+                credential_store: Optional[Union[str, CredentialType]] = ..., 
+                deployment_name: str, 
+                group_to_roles_mapping: Optional[GroupToRolesMappingDetails] = ..., 
+                ogg_version: Optional[str] = ..., 
+                password_secret_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.oracledatabase.models.OpenModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         READ_ONLY = "ReadOnly"
         READ_WRITE = "ReadWrite"
@@ -5236,6 +6544,71 @@ namespace azure.mgmt.oracledatabase.models
         FAILED_DISABLING = "FailedDisabling"
         FAILED_ENABLING = "FailedEnabling"
         NOT_ENABLED = "NotEnabled"
+
+
+    class azure.mgmt.oracledatabase.models.OracleConnectionDetails(ConnectionBaseProperties, discriminator='ORACLE'):
+        authentication_mode: Optional[str]
+        compartment_id: str
+        connection_string: Optional[str]
+        connection_type: Literal[ConnectionType.ORACLE]
+        database_id: Optional[str]
+        display_name: str
+        does_use_secret_ids: bool
+        key_id: str
+        lifecycle_details: str
+        lifecycle_state: Union[str, ConnectionLifecycleState]
+        network_anchor_id: str
+        ocid: str
+        password_secret_id: Optional[str]
+        private_ip: Optional[str]
+        provisioning_state: Union[str, AzureResourceProvisioningState]
+        resource_anchor_id: str
+        routing_method: Union[str, RoutingMethod]
+        session_mode: Optional[Union[str, SessionMode]]
+        technology_type: Union[str, OracleConnectionTechnologyType]
+        time_created: str
+        time_updated: str
+        username: str
+        vault_id: str
+        wallet_secret_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                authentication_mode: Optional[str] = ..., 
+                connection_string: Optional[str] = ..., 
+                database_id: Optional[str] = ..., 
+                display_name: str, 
+                does_use_secret_ids: Optional[bool] = ..., 
+                key_id: Optional[str] = ..., 
+                network_anchor_id: str, 
+                password_secret_id: Optional[str] = ..., 
+                private_ip: Optional[str] = ..., 
+                resource_anchor_id: str, 
+                routing_method: Optional[Union[str, RoutingMethod]] = ..., 
+                session_mode: Optional[Union[str, SessionMode]] = ..., 
+                technology_type: Union[str, OracleConnectionTechnologyType], 
+                username: str, 
+                vault_id: Optional[str] = ..., 
+                wallet_secret_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.OracleConnectionTechnologyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AMAZON_RDS_ORACLE = "AMAZON_RDS_ORACLE"
+        OCI_AUTONOMOUS_DATABASE = "OCI_AUTONOMOUS_DATABASE"
+        ORACLE_AUTONOMOUS_DATABASE_AT_AWS = "ORACLE_AUTONOMOUS_DATABASE_AT_AWS"
+        ORACLE_AUTONOMOUS_DATABASE_AT_AZURE = "ORACLE_AUTONOMOUS_DATABASE_AT_AZURE"
+        ORACLE_AUTONOMOUS_DATABASE_AT_GOOGLE_CLOUD = "ORACLE_AUTONOMOUS_DATABASE_AT_GOOGLE_CLOUD"
+        ORACLE_DATABASE = "ORACLE_DATABASE"
+        ORACLE_EXADATA = "ORACLE_EXADATA"
+        ORACLE_EXADATA_DATABASE_AT_AWS = "ORACLE_EXADATA_DATABASE_AT_AWS"
+        ORACLE_EXADATA_DATABASE_AT_AZURE = "ORACLE_EXADATA_DATABASE_AT_AZURE"
+        ORACLE_EXADATA_DATABASE_AT_GOOGLE_CLOUD = "ORACLE_EXADATA_DATABASE_AT_GOOGLE_CLOUD"
 
 
     class azure.mgmt.oracledatabase.models.OracleSubscription(ProxyResource):
@@ -5493,6 +6866,29 @@ namespace azure.mgmt.oracledatabase.models
         TCPS = "TCPS"
 
 
+    class azure.mgmt.oracledatabase.models.ProximityPlacementGroup(_Model):
+        entity_type_intended_to_use: Union[str, ProximityPlacementGroupEntityType]
+        proximity_anchor_id: Optional[str]
+        proximity_placement_group_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                entity_type_intended_to_use: Union[str, ProximityPlacementGroupEntityType], 
+                proximity_anchor_id: Optional[str] = ..., 
+                proximity_placement_group_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.oracledatabase.models.ProximityPlacementGroupEntityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CLOUD_EXADATA_INFRASTRUCTURE = "CloudExadataInfrastructure"
+        OTHER_PRODUCTS = "OtherProducts"
+
+
     class azure.mgmt.oracledatabase.models.ProxyResource(Resource):
         id: str
         name: str
@@ -5607,6 +7003,12 @@ namespace azure.mgmt.oracledatabase.models
         STANDBY = "Standby"
 
 
+    class azure.mgmt.oracledatabase.models.RoutingMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEDICATED_ENDPOINT = "DEDICATED_ENDPOINT"
+        SHARED_DEPLOYMENT_ENDPOINT = "SHARED_DEPLOYMENT_ENDPOINT"
+        SHARED_SERVICE_ENDPOINT = "SHARED_SERVICE_ENDPOINT"
+
+
     class azure.mgmt.oracledatabase.models.SaasSubscriptionDetails(_Model):
         id: Optional[str]
         is_auto_renew: Optional[bool]
@@ -5658,9 +7060,19 @@ namespace azure.mgmt.oracledatabase.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.oracledatabase.models.SessionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DIRECT = "DIRECT"
+        REDIRECT = "REDIRECT"
+
+
     class azure.mgmt.oracledatabase.models.SessionModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DIRECT = "Direct"
         REDIRECT = "Redirect"
+
+
+    class azure.mgmt.oracledatabase.models.SetupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEVELOPMENT_OR_TESTING = "DevelopmentOrTesting"
+        PRODUCTION = "Production"
 
 
     class azure.mgmt.oracledatabase.models.ShapeAttribute(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -5731,6 +7143,7 @@ namespace azure.mgmt.oracledatabase.models
 
     class azure.mgmt.oracledatabase.models.SystemShapes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EXADATA_X11_M = "Exadata.X11M"
+        EXADATA_X11_MV = "Exadata.X11MV"
         EXADATA_X9_M = "Exadata.X9M"
         EXA_DB_XS = "ExaDbXS"
 
@@ -5844,6 +7257,7 @@ namespace azure.mgmt.oracledatabase.models
         AJD = "AJD"
         APEX = "APEX"
         DW = "DW"
+        LH = "LH"
         OLTP = "OLTP"
 
 
@@ -6682,6 +8096,64 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> List[PrivateIpAddressProperties]: ...
 
 
+    class azure.mgmt.oracledatabase.operations.DatabaseEditionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'location', 'databaseeditionname', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def get(
+                self, 
+                location: str, 
+                databaseeditionname: str, 
+                **kwargs: Any
+            ) -> DatabaseEdition: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_location(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> ItemPaged[DatabaseEdition]: ...
+
+
+    class azure.mgmt.oracledatabase.operations.DatabaseSystemShapeResourcesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'location', 'databasesystemshapename', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def get(
+                self, 
+                location: str, 
+                databasesystemshapename: str, 
+                **kwargs: Any
+            ) -> DatabaseSystemShape: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'location', 'shape_attribute', 'zone', 'availability_domain', 'database_shape_family', 'database_edition', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_location(
+                self, 
+                location: str, 
+                *, 
+                availability_domain: Optional[str] = ..., 
+                database_edition: Optional[str] = ..., 
+                database_shape_family: Optional[str] = ..., 
+                shape_attribute: Optional[str] = ..., 
+                zone: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[DatabaseSystemShape]: ...
+
+
     class azure.mgmt.oracledatabase.operations.DbNodesOperations:
 
         def __init__(
@@ -6787,7 +8259,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> DbSystemShape: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'zone', 'accept'], '2025-08-01-preview': ['shape_attribute']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'zone', 'accept'], '2025-08-01-preview': ['shape_attribute']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_location(
                 self, 
                 location: str, 
@@ -6840,7 +8312,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> LROPoller[DbSystem]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'db_system_name']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'db_system_name']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -6882,7 +8354,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> LROPoller[DbSystem]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'db_system_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'db_system_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -6891,7 +8363,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> DbSystem: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -6899,7 +8371,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> ItemPaged[DbSystem]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[DbSystem]: ...
 
 
@@ -6912,7 +8384,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'location', 'dbversionsname', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'location', 'dbversionsname', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def get(
                 self, 
                 location: str, 
@@ -6921,7 +8393,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> DbVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'location', 'db_system_shape', 'db_system_id', 'storage_management', 'is_upgrade_supported', 'is_database_software_image_supported', 'shape_family', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'location', 'db_system_shape', 'db_system_id', 'storage_management', 'is_upgrade_supported', 'is_database_software_image_supported', 'shape_family', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_location(
                 self, 
                 location: str, 
@@ -7026,7 +8498,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> LROPoller[ExadbVmCluster]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -7101,7 +8573,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> LROPoller[ExadbVmCluster]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -7110,7 +8582,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> ExadbVmCluster: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -7118,7 +8590,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> ItemPaged[ExadbVmCluster]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[ExadbVmCluster]: ...
 
 
@@ -7167,7 +8639,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> LROPoller[DbActionResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'exascale_db_node_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'exascale_db_node_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -7177,7 +8649,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> ExascaleDbNode: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exadb_vm_cluster_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_parent(
                 self, 
                 resource_group_name: str, 
@@ -7228,7 +8700,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> LROPoller[ExascaleDbStorageVault]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exascale_db_storage_vault_name']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exascale_db_storage_vault_name']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -7270,7 +8742,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> LROPoller[ExascaleDbStorageVault]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exascale_db_storage_vault_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'exascale_db_storage_vault_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -7279,7 +8751,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> ExascaleDbStorageVault: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -7287,7 +8759,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> ItemPaged[ExascaleDbStorageVault]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[ExascaleDbStorageVault]: ...
 
 
@@ -7300,7 +8772,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-01-01-preview', params_added_on={'2025-01-01-preview': ['api_version', 'subscription_id', 'location', 'flex_component_name', 'accept']}, api_versions_list=['2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-01-01-preview', params_added_on={'2025-01-01-preview': ['api_version', 'subscription_id', 'location', 'flex_component_name', 'accept']}, api_versions_list=['2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def get(
                 self, 
                 location: str, 
@@ -7309,7 +8781,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> FlexComponent: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-01-01-preview', params_added_on={'2025-01-01-preview': ['api_version', 'subscription_id', 'location', 'shape', 'accept']}, api_versions_list=['2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-01-01-preview', params_added_on={'2025-01-01-preview': ['api_version', 'subscription_id', 'location', 'shape', 'accept']}, api_versions_list=['2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_parent(
                 self, 
                 location: str, 
@@ -7328,7 +8800,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'giversionname', 'gi_minor_version_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'giversionname', 'gi_minor_version_name', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def get(
                 self, 
                 location: str, 
@@ -7338,13 +8810,16 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> GiMinorVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'giversionname', 'shape_family', 'zone', 'accept']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'giversionname', 'shape_family', 'zone', 'accept'], '2026-04-01-preview': ['shape', 'is_gi_version_for_provisioning', 'sort_order']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_parent(
                 self, 
                 location: str, 
                 giversionname: str, 
                 *, 
+                is_gi_version_for_provisioning: Optional[bool] = ..., 
+                shape: Optional[str] = ..., 
                 shape_family: Optional[Union[str, ShapeFamily]] = ..., 
+                sort_order: Optional[Union[str, GiMinorVersionSortOrder]] = ..., 
                 zone: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[GiMinorVersion]: ...
@@ -7367,7 +8842,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> GiVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'shape', 'zone', 'accept'], '2025-08-01-preview': ['shape_attribute']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2024-12-01-preview', params_added_on={'2024-12-01-preview': ['api_version', 'subscription_id', 'location', 'shape', 'zone', 'accept'], '2025-08-01-preview': ['shape_attribute']}, api_versions_list=['2024-12-01-preview', '2025-01-01-preview', '2025-03-01', '2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_location(
                 self, 
                 location: str, 
@@ -7377,6 +8852,386 @@ namespace azure.mgmt.oracledatabase.operations
                 zone: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[GiVersion]: ...
+
+
+    class azure.mgmt.oracledatabase.operations.GoldenGateConnectionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_assign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: AssignUnassignDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedDeployment]: ...
+
+        @overload
+        def begin_assign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: AssignUnassignDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedDeployment]: ...
+
+        @overload
+        def begin_assign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedDeployment]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                resource: GoldenGateConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateConnection]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                resource: GoldenGateConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateConnection]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateConnection]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_connection_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_unassign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: AssignUnassignDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedDeployment]: ...
+
+        @overload
+        def begin_unassign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: AssignUnassignDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedDeployment]: ...
+
+        @overload
+        def begin_unassign_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedDeployment]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                properties: GoldenGateConnectionUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateConnection]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                properties: GoldenGateConnectionUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateConnection]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateConnection]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_connection_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                **kwargs: Any
+            ) -> GoldenGateConnection: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_connection_name', 'assignment_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def get_assigned_deployment(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                assignment_id: str, 
+                **kwargs: Any
+            ) -> AssignedDeployment: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_connection_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_assigned_deployments_by_parent(
+                self, 
+                resource_group_name: str, 
+                golden_gate_connection_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[AssignedDeployment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[GoldenGateConnection]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_subscription(self, **kwargs: Any) -> ItemPaged[GoldenGateConnection]: ...
+
+
+    class azure.mgmt.oracledatabase.operations.GoldenGateDeploymentsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_assign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: AssignUnassignConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedConnection]: ...
+
+        @overload
+        def begin_assign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: AssignUnassignConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedConnection]: ...
+
+        @overload
+        def begin_assign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedConnection]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                resource: GoldenGateDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateDeployment]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                resource: GoldenGateDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateDeployment]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateDeployment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_deployment_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_unassign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: AssignUnassignConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedConnection]: ...
+
+        @overload
+        def begin_unassign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: AssignUnassignConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedConnection]: ...
+
+        @overload
+        def begin_unassign_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AssignedConnection]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                properties: GoldenGateDeploymentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateDeployment]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                properties: GoldenGateDeploymentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateDeployment]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GoldenGateDeployment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_deployment_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                **kwargs: Any
+            ) -> GoldenGateDeployment: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_deployment_name', 'assignment_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def get_assigned_connection(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                assignment_id: str, 
+                **kwargs: Any
+            ) -> AssignedConnection: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'golden_gate_deployment_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_assigned_connections_by_parent(
+                self, 
+                resource_group_name: str, 
+                golden_gate_deployment_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[AssignedConnection]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[GoldenGateDeployment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
+        def list_by_subscription(self, **kwargs: Any) -> ItemPaged[GoldenGateDeployment]: ...
 
 
     class azure.mgmt.oracledatabase.operations.NetworkAnchorsOperations:
@@ -7421,7 +9276,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> LROPoller[NetworkAnchor]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'network_anchor_name']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'network_anchor_name']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -7463,7 +9318,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> LROPoller[NetworkAnchor]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'network_anchor_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'network_anchor_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -7472,7 +9327,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> NetworkAnchor: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -7480,7 +9335,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> ItemPaged[NetworkAnchor]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[NetworkAnchor]: ...
 
 
@@ -7646,7 +9501,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> LROPoller[ResourceAnchor]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_anchor_name']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_anchor_name']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -7688,7 +9543,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> LROPoller[ResourceAnchor]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_anchor_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_anchor_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -7697,7 +9552,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> ResourceAnchor: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -7705,7 +9560,7 @@ namespace azure.mgmt.oracledatabase.operations
             ) -> ItemPaged[ResourceAnchor]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-06-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-08-15-preview', '2025-09-01', '2025-11-01-preview', '2025-11-15-preview', '2025-12-01-preview', '2026-01-01-preview', '2026-02-01-preview', '2026-03-01-preview', '2026-04-01-preview', '2026-05-01-preview', '2026-06-01'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[ResourceAnchor]: ...
 
 
@@ -7827,6 +9682,16 @@ namespace azure.mgmt.oracledatabase.types
         ordsVersion: str
 
 
+    class azure.mgmt.oracledatabase.types.AssignUnassignConnection(TypedDict, total=False):
+        key "connectionId": Required[str]
+        connectionId: str
+
+
+    class azure.mgmt.oracledatabase.types.AssignUnassignDeployment(TypedDict, total=False):
+        key "deploymentId": Required[str]
+        deploymentId: str
+
+
     class azure.mgmt.oracledatabase.types.AutonomousDatabase(TrackedResource):
         key "id": str
         key "location": Required[str]
@@ -7858,6 +9723,7 @@ namespace azure.mgmt.oracledatabase.types
 
     class azure.mgmt.oracledatabase.types.AutonomousDatabaseBackupProperties(TypedDict, total=False):
         key "autonomousDatabaseOcid": str
+        key "backupDestination": Union[str, BackupDestinationType]
         key "backupType": Union[str, AutonomousDatabaseBackupType]
         key "databaseSizeInTbs": float
         key "dbVersion": str
@@ -7874,6 +9740,7 @@ namespace azure.mgmt.oracledatabase.types
         key "timeEnded": str
         key "timeStarted": str
         autonomousDatabaseOcid: str
+        backupDestination: Union[str, BackupDestinationType]
         backupType: Union[str, AutonomousDatabaseBackupType]
         databaseSizeInTbs: float
         dbVersion: str
@@ -7908,6 +9775,7 @@ namespace azure.mgmt.oracledatabase.types
         key "apexDetails": ForwardRef('ApexDetailsType', module='types')
         key "autonomousDatabaseId": str
         key "autonomousMaintenanceScheduleType": Union[str, AutonomousMaintenanceScheduleType]
+        key "backupDestination": Union[str, BackupDestinationType]
         key "backupRetentionPeriodInDays": int
         key "characterSet": str
         key "cloneType": Required[Union[str, CloneType]]
@@ -7935,6 +9803,7 @@ namespace azure.mgmt.oracledatabase.types
         key "isReconnectCloneEnabled": bool
         key "isRefreshableClone": bool
         key "isRemoteDataGuardEnabled": bool
+        key "isScheduleAzUpdateToEarliest": bool
         key "licenseModel": Union[str, LicenseModel]
         key "lifecycleDetails": str
         key "lifecycleState": Union[str, AutonomousDatabaseLifecycleState]
@@ -7944,6 +9813,7 @@ namespace azure.mgmt.oracledatabase.types
         key "longTermBackupSchedule": ForwardRef('LongTermBackUpScheduleDetails', module='types')
         key "memoryPerOracleComputeUnitInGbs": int
         key "ncharacterSet": str
+        key "networkAnchorId": str
         key "nextLongTermBackupTimeStamp": str
         key "ociUrl": str
         key "ocid": str
@@ -7958,6 +9828,7 @@ namespace azure.mgmt.oracledatabase.types
         key "refreshableModel": Union[str, RefreshableModelType]
         key "refreshableStatus": Union[str, RefreshableStatusType]
         key "remoteDisasterRecoveryConfiguration": ForwardRef('DisasterRecoveryConfigurationDetails', module='types')
+        key "resourceAnchorId": str
         key "role": Union[str, RoleType]
         key "serviceConsoleUrl": str
         key "source": Union[str, SourceType]
@@ -7976,10 +9847,12 @@ namespace azure.mgmt.oracledatabase.types
         key "timeOfLastRefreshPoint": str
         key "timeOfLastSwitchover": str
         key "timeReclamationOfFreeAutonomousDatabase": str
+        key "timeScheduledAzUpdate": str
         key "timeUntilReconnectCloneEnabled": str
         key "usedDataStorageSizeInGbs": int
         key "usedDataStorageSizeInTbs": int
         key "vnetId": str
+        key "zone": str
         actualUsedDataStorageSizeInTbs: float
         adminPassword: str
         allocatedStorageSizeInTbs: float
@@ -7987,6 +9860,7 @@ namespace azure.mgmt.oracledatabase.types
         autonomousDatabaseId: str
         autonomousMaintenanceScheduleType: Union[str, AutonomousMaintenanceScheduleType]
         availableUpgradeVersions: list[str]
+        backupDestination: Union[str, BackupDestinationType]
         backupRetentionPeriodInDays: int
         characterSet: str
         cloneType: Union[str, CloneType]
@@ -8015,6 +9889,7 @@ namespace azure.mgmt.oracledatabase.types
         isReconnectCloneEnabled: bool
         isRefreshableClone: bool
         isRemoteDataGuardEnabled: bool
+        isScheduleAzUpdateToEarliest: bool
         licenseModel: Union[str, LicenseModel]
         lifecycleDetails: str
         lifecycleState: Union[str, AutonomousDatabaseLifecycleState]
@@ -8024,6 +9899,7 @@ namespace azure.mgmt.oracledatabase.types
         longTermBackupSchedule: LongTermBackUpScheduleDetails
         memoryPerOracleComputeUnitInGbs: int
         ncharacterSet: str
+        networkAnchorId: str
         nextLongTermBackupTimeStamp: str
         ociUrl: str
         ocid: str
@@ -8040,6 +9916,7 @@ namespace azure.mgmt.oracledatabase.types
         refreshableModel: Union[str, RefreshableModelType]
         refreshableStatus: Union[str, RefreshableStatusType]
         remoteDisasterRecoveryConfiguration: DisasterRecoveryConfigurationDetails
+        resourceAnchorId: str
         role: Union[str, RoleType]
         scheduledOperationsList: list[ScheduledOperationsType]
         serviceConsoleUrl: str
@@ -8060,11 +9937,13 @@ namespace azure.mgmt.oracledatabase.types
         timeOfLastRefreshPoint: str
         timeOfLastSwitchover: str
         timeReclamationOfFreeAutonomousDatabase: str
+        timeScheduledAzUpdate: str
         timeUntilReconnectCloneEnabled: str
         usedDataStorageSizeInGbs: int
         usedDataStorageSizeInTbs: int
         vnetId: str
         whitelistedIps: list[str]
+        zone: str
 
 
     class azure.mgmt.oracledatabase.types.AutonomousDatabaseCrossRegionDisasterRecoveryProperties(TypedDict, total=False):
@@ -8074,6 +9953,7 @@ namespace azure.mgmt.oracledatabase.types
         key "apexDetails": ForwardRef('ApexDetailsType', module='types')
         key "autonomousDatabaseId": str
         key "autonomousMaintenanceScheduleType": Union[str, AutonomousMaintenanceScheduleType]
+        key "backupDestination": Union[str, BackupDestinationType]
         key "backupRetentionPeriodInDays": int
         key "characterSet": str
         key "computeCount": float
@@ -8099,6 +9979,7 @@ namespace azure.mgmt.oracledatabase.types
         key "isPreviewVersionWithServiceTermsAccepted": bool
         key "isRemoteDataGuardEnabled": bool
         key "isReplicateAutomaticBackups": bool
+        key "isScheduleAzUpdateToEarliest": bool
         key "licenseModel": Union[str, LicenseModel]
         key "lifecycleDetails": str
         key "lifecycleState": Union[str, AutonomousDatabaseLifecycleState]
@@ -8108,6 +9989,7 @@ namespace azure.mgmt.oracledatabase.types
         key "longTermBackupSchedule": ForwardRef('LongTermBackUpScheduleDetails', module='types')
         key "memoryPerOracleComputeUnitInGbs": int
         key "ncharacterSet": str
+        key "networkAnchorId": str
         key "nextLongTermBackupTimeStamp": str
         key "ociUrl": str
         key "ocid": str
@@ -8121,6 +10003,7 @@ namespace azure.mgmt.oracledatabase.types
         key "provisioningState": Union[str, AzureResourceProvisioningState]
         key "remoteDisasterRecoveryConfiguration": ForwardRef('DisasterRecoveryConfigurationDetails', module='types')
         key "remoteDisasterRecoveryType": Required[Union[str, DisasterRecoveryType]]
+        key "resourceAnchorId": str
         key "role": Union[str, RoleType]
         key "serviceConsoleUrl": str
         key "source": Required[Literal[SourceType.CROSS_REGION_DISASTER_RECOVERY]]
@@ -8141,9 +10024,11 @@ namespace azure.mgmt.oracledatabase.types
         key "timeOfLastRefreshPoint": str
         key "timeOfLastSwitchover": str
         key "timeReclamationOfFreeAutonomousDatabase": str
+        key "timeScheduledAzUpdate": str
         key "usedDataStorageSizeInGbs": int
         key "usedDataStorageSizeInTbs": int
         key "vnetId": str
+        key "zone": str
         actualUsedDataStorageSizeInTbs: float
         adminPassword: str
         allocatedStorageSizeInTbs: float
@@ -8151,6 +10036,7 @@ namespace azure.mgmt.oracledatabase.types
         autonomousDatabaseId: str
         autonomousMaintenanceScheduleType: Union[str, AutonomousMaintenanceScheduleType]
         availableUpgradeVersions: list[str]
+        backupDestination: Union[str, BackupDestinationType]
         backupRetentionPeriodInDays: int
         characterSet: str
         computeCount: float
@@ -8177,6 +10063,7 @@ namespace azure.mgmt.oracledatabase.types
         isPreviewVersionWithServiceTermsAccepted: bool
         isRemoteDataGuardEnabled: bool
         isReplicateAutomaticBackups: bool
+        isScheduleAzUpdateToEarliest: bool
         licenseModel: Union[str, LicenseModel]
         lifecycleDetails: str
         lifecycleState: Union[str, AutonomousDatabaseLifecycleState]
@@ -8186,6 +10073,7 @@ namespace azure.mgmt.oracledatabase.types
         longTermBackupSchedule: LongTermBackUpScheduleDetails
         memoryPerOracleComputeUnitInGbs: int
         ncharacterSet: str
+        networkAnchorId: str
         nextLongTermBackupTimeStamp: str
         ociUrl: str
         ocid: str
@@ -8201,6 +10089,7 @@ namespace azure.mgmt.oracledatabase.types
         provisioningState: Union[str, AzureResourceProvisioningState]
         remoteDisasterRecoveryConfiguration: DisasterRecoveryConfigurationDetails
         remoteDisasterRecoveryType: Union[str, DisasterRecoveryType]
+        resourceAnchorId: str
         role: Union[str, RoleType]
         scheduledOperationsList: list[ScheduledOperationsType]
         serviceConsoleUrl: str
@@ -8223,10 +10112,12 @@ namespace azure.mgmt.oracledatabase.types
         timeOfLastRefreshPoint: str
         timeOfLastSwitchover: str
         timeReclamationOfFreeAutonomousDatabase: str
+        timeScheduledAzUpdate: str
         usedDataStorageSizeInGbs: int
         usedDataStorageSizeInTbs: int
         vnetId: str
         whitelistedIps: list[str]
+        zone: str
 
 
     class azure.mgmt.oracledatabase.types.AutonomousDatabaseFromBackupTimestampProperties(TypedDict, total=False):
@@ -8236,6 +10127,7 @@ namespace azure.mgmt.oracledatabase.types
         key "apexDetails": ForwardRef('ApexDetailsType', module='types')
         key "autonomousDatabaseId": str
         key "autonomousMaintenanceScheduleType": Union[str, AutonomousMaintenanceScheduleType]
+        key "backupDestination": Union[str, BackupDestinationType]
         key "backupRetentionPeriodInDays": int
         key "characterSet": str
         key "cloneType": Required[Union[str, CloneType]]
@@ -8261,6 +10153,7 @@ namespace azure.mgmt.oracledatabase.types
         key "isPreview": bool
         key "isPreviewVersionWithServiceTermsAccepted": bool
         key "isRemoteDataGuardEnabled": bool
+        key "isScheduleAzUpdateToEarliest": bool
         key "licenseModel": Union[str, LicenseModel]
         key "lifecycleDetails": str
         key "lifecycleState": Union[str, AutonomousDatabaseLifecycleState]
@@ -8270,6 +10163,7 @@ namespace azure.mgmt.oracledatabase.types
         key "longTermBackupSchedule": ForwardRef('LongTermBackUpScheduleDetails', module='types')
         key "memoryPerOracleComputeUnitInGbs": int
         key "ncharacterSet": str
+        key "networkAnchorId": str
         key "nextLongTermBackupTimeStamp": str
         key "ociUrl": str
         key "ocid": str
@@ -8282,6 +10176,7 @@ namespace azure.mgmt.oracledatabase.types
         key "privateEndpointLabel": str
         key "provisioningState": Union[str, AzureResourceProvisioningState]
         key "remoteDisasterRecoveryConfiguration": ForwardRef('DisasterRecoveryConfigurationDetails', module='types')
+        key "resourceAnchorId": str
         key "role": Union[str, RoleType]
         key "serviceConsoleUrl": str
         key "source": Required[Literal[SourceType.BACKUP_FROM_TIMESTAMP]]
@@ -8300,11 +10195,13 @@ namespace azure.mgmt.oracledatabase.types
         key "timeOfLastRefreshPoint": str
         key "timeOfLastSwitchover": str
         key "timeReclamationOfFreeAutonomousDatabase": str
+        key "timeScheduledAzUpdate": str
         key "timestamp": str
         key "useLatestAvailableBackupTimeStamp": bool
         key "usedDataStorageSizeInGbs": int
         key "usedDataStorageSizeInTbs": int
         key "vnetId": str
+        key "zone": str
         actualUsedDataStorageSizeInTbs: float
         adminPassword: str
         allocatedStorageSizeInTbs: float
@@ -8312,6 +10209,7 @@ namespace azure.mgmt.oracledatabase.types
         autonomousDatabaseId: str
         autonomousMaintenanceScheduleType: Union[str, AutonomousMaintenanceScheduleType]
         availableUpgradeVersions: list[str]
+        backupDestination: Union[str, BackupDestinationType]
         backupRetentionPeriodInDays: int
         characterSet: str
         cloneType: Union[str, CloneType]
@@ -8338,6 +10236,7 @@ namespace azure.mgmt.oracledatabase.types
         isPreview: bool
         isPreviewVersionWithServiceTermsAccepted: bool
         isRemoteDataGuardEnabled: bool
+        isScheduleAzUpdateToEarliest: bool
         licenseModel: Union[str, LicenseModel]
         lifecycleDetails: str
         lifecycleState: Union[str, AutonomousDatabaseLifecycleState]
@@ -8347,6 +10246,7 @@ namespace azure.mgmt.oracledatabase.types
         longTermBackupSchedule: LongTermBackUpScheduleDetails
         memoryPerOracleComputeUnitInGbs: int
         ncharacterSet: str
+        networkAnchorId: str
         nextLongTermBackupTimeStamp: str
         ociUrl: str
         ocid: str
@@ -8361,6 +10261,7 @@ namespace azure.mgmt.oracledatabase.types
         provisionableCpus: list[int]
         provisioningState: Union[str, AzureResourceProvisioningState]
         remoteDisasterRecoveryConfiguration: DisasterRecoveryConfigurationDetails
+        resourceAnchorId: str
         role: Union[str, RoleType]
         scheduledOperationsList: list[ScheduledOperationsType]
         serviceConsoleUrl: str
@@ -8381,12 +10282,14 @@ namespace azure.mgmt.oracledatabase.types
         timeOfLastRefreshPoint: str
         timeOfLastSwitchover: str
         timeReclamationOfFreeAutonomousDatabase: str
+        timeScheduledAzUpdate: str
         timestamp: str
         useLatestAvailableBackupTimeStamp: bool
         usedDataStorageSizeInGbs: int
         usedDataStorageSizeInTbs: int
         vnetId: str
         whitelistedIps: list[str]
+        zone: str
 
 
     class azure.mgmt.oracledatabase.types.AutonomousDatabaseLifecycleAction(TypedDict, total=False):
@@ -8401,6 +10304,7 @@ namespace azure.mgmt.oracledatabase.types
         key "apexDetails": ForwardRef('ApexDetailsType', module='types')
         key "autonomousDatabaseId": str
         key "autonomousMaintenanceScheduleType": Union[str, AutonomousMaintenanceScheduleType]
+        key "backupDestination": Union[str, BackupDestinationType]
         key "backupRetentionPeriodInDays": int
         key "characterSet": str
         key "computeCount": float
@@ -8425,6 +10329,7 @@ namespace azure.mgmt.oracledatabase.types
         key "isPreview": bool
         key "isPreviewVersionWithServiceTermsAccepted": bool
         key "isRemoteDataGuardEnabled": bool
+        key "isScheduleAzUpdateToEarliest": bool
         key "licenseModel": Union[str, LicenseModel]
         key "lifecycleDetails": str
         key "lifecycleState": Union[str, AutonomousDatabaseLifecycleState]
@@ -8434,6 +10339,7 @@ namespace azure.mgmt.oracledatabase.types
         key "longTermBackupSchedule": ForwardRef('LongTermBackUpScheduleDetails', module='types')
         key "memoryPerOracleComputeUnitInGbs": int
         key "ncharacterSet": str
+        key "networkAnchorId": str
         key "nextLongTermBackupTimeStamp": str
         key "ociUrl": str
         key "ocid": str
@@ -8446,6 +10352,7 @@ namespace azure.mgmt.oracledatabase.types
         key "privateEndpointLabel": str
         key "provisioningState": Union[str, AzureResourceProvisioningState]
         key "remoteDisasterRecoveryConfiguration": ForwardRef('DisasterRecoveryConfigurationDetails', module='types')
+        key "resourceAnchorId": str
         key "role": Union[str, RoleType]
         key "serviceConsoleUrl": str
         key "sqlWebDeveloperUrl": str
@@ -8462,9 +10369,11 @@ namespace azure.mgmt.oracledatabase.types
         key "timeOfLastRefreshPoint": str
         key "timeOfLastSwitchover": str
         key "timeReclamationOfFreeAutonomousDatabase": str
+        key "timeScheduledAzUpdate": str
         key "usedDataStorageSizeInGbs": int
         key "usedDataStorageSizeInTbs": int
         key "vnetId": str
+        key "zone": str
         actualUsedDataStorageSizeInTbs: float
         adminPassword: str
         allocatedStorageSizeInTbs: float
@@ -8472,6 +10381,7 @@ namespace azure.mgmt.oracledatabase.types
         autonomousDatabaseId: str
         autonomousMaintenanceScheduleType: Union[str, AutonomousMaintenanceScheduleType]
         availableUpgradeVersions: list[str]
+        backupDestination: Union[str, BackupDestinationType]
         backupRetentionPeriodInDays: int
         characterSet: str
         computeCount: float
@@ -8497,6 +10407,7 @@ namespace azure.mgmt.oracledatabase.types
         isPreview: bool
         isPreviewVersionWithServiceTermsAccepted: bool
         isRemoteDataGuardEnabled: bool
+        isScheduleAzUpdateToEarliest: bool
         licenseModel: Union[str, LicenseModel]
         lifecycleDetails: str
         lifecycleState: Union[str, AutonomousDatabaseLifecycleState]
@@ -8506,6 +10417,7 @@ namespace azure.mgmt.oracledatabase.types
         longTermBackupSchedule: LongTermBackUpScheduleDetails
         memoryPerOracleComputeUnitInGbs: int
         ncharacterSet: str
+        networkAnchorId: str
         nextLongTermBackupTimeStamp: str
         ociUrl: str
         ocid: str
@@ -8520,6 +10432,7 @@ namespace azure.mgmt.oracledatabase.types
         provisionableCpus: list[int]
         provisioningState: Union[str, AzureResourceProvisioningState]
         remoteDisasterRecoveryConfiguration: DisasterRecoveryConfigurationDetails
+        resourceAnchorId: str
         role: Union[str, RoleType]
         scheduledOperationsList: list[ScheduledOperationsType]
         serviceConsoleUrl: str
@@ -8538,10 +10451,12 @@ namespace azure.mgmt.oracledatabase.types
         timeOfLastRefreshPoint: str
         timeOfLastSwitchover: str
         timeReclamationOfFreeAutonomousDatabase: str
+        timeScheduledAzUpdate: str
         usedDataStorageSizeInGbs: int
         usedDataStorageSizeInTbs: int
         vnetId: str
         whitelistedIps: list[str]
+        zone: str
 
 
     class azure.mgmt.oracledatabase.types.AutonomousDatabaseStandbySummary(TypedDict, total=False):
@@ -8614,6 +10529,21 @@ namespace azure.mgmt.oracledatabase.types
         azureSubscriptionIds: list[str]
 
 
+    class azure.mgmt.oracledatabase.types.BackupScheduleType(TypedDict, total=False):
+        key "bucketName": str
+        key "compartmentId": str
+        key "frequencyBackupScheduled": Union[str, FrequencyType]
+        key "isMetadataOnly": bool
+        key "namespaceName": str
+        key "timeBackupScheduled": str
+        bucketName: str
+        compartmentId: str
+        frequencyBackupScheduled: Union[str, FrequencyType]
+        isMetadataOnly: bool
+        namespaceName: str
+        timeBackupScheduled: str
+
+
     class azure.mgmt.oracledatabase.types.CloudExadataInfrastructure(TrackedResource):
         key "id": str
         key "location": Required[str]
@@ -8661,6 +10591,8 @@ namespace azure.mgmt.oracledatabase.types
         key "ociUrl": str
         key "ocid": str
         key "provisioningState": Union[str, AzureResourceProvisioningState]
+        key "proximityPlacementGroup": ForwardRef('ProximityPlacementGroup', module='types')
+        key "resourceAnchorId": str
         key "shape": Required[str]
         key "storageCount": int
         key "storageServerType": str
@@ -8697,6 +10629,8 @@ namespace azure.mgmt.oracledatabase.types
         ociUrl: str
         ocid: str
         provisioningState: Union[str, AzureResourceProvisioningState]
+        proximityPlacementGroup: ProximityPlacementGroup
+        resourceAnchorId: str
         shape: str
         storageCount: int
         storageServerType: str
@@ -8758,6 +10692,7 @@ namespace azure.mgmt.oracledatabase.types
         key "giVersion": Required[str]
         key "hostname": Required[str]
         key "iormConfigCache": ForwardRef('ExadataIormConfig', module='types')
+        key "isAcceleratedNetworkEnabled": bool
         key "isLocalBackupEnabled": bool
         key "isSparseDiskgroupEnabled": bool
         key "lastUpdateHistoryEntryId": str
@@ -8766,17 +10701,22 @@ namespace azure.mgmt.oracledatabase.types
         key "lifecycleState": Union[str, CloudVmClusterLifecycleState]
         key "listenerPort": int
         key "memorySizeInGbs": int
+        key "networkAnchorId": str
         key "nodeCount": int
         key "nsgUrl": str
         key "ociUrl": str
         key "ocid": str
         key "ocpuCount": float
         key "provisioningState": Union[str, AzureResourceProvisioningState]
+        key "proximityPlacementGroup": ForwardRef('ProximityPlacementGroup', module='types')
+        key "recoStoragePercentage": int
+        key "resourceAnchorId": str
         key "scanDnsName": str
         key "scanDnsRecordId": str
         key "scanListenerPortTcp": int
         key "scanListenerPortTcpSsl": int
         key "shape": str
+        key "sparseStoragePercentage": int
         key "sshPublicKeys": Required[list[str]]
         key "storageManagementType": Union[str, ExadataVmClusterStorageManagementType]
         key "storageSizeInGbs": int
@@ -8807,6 +10747,7 @@ namespace azure.mgmt.oracledatabase.types
         giVersion: str
         hostname: str
         iormConfigCache: ExadataIormConfig
+        isAcceleratedNetworkEnabled: bool
         isLocalBackupEnabled: bool
         isSparseDiskgroupEnabled: bool
         lastUpdateHistoryEntryId: str
@@ -8815,6 +10756,7 @@ namespace azure.mgmt.oracledatabase.types
         lifecycleState: Union[str, CloudVmClusterLifecycleState]
         listenerPort: int
         memorySizeInGbs: int
+        networkAnchorId: str
         nodeCount: int
         nsgCidrs: list[NsgCidr]
         nsgUrl: str
@@ -8822,12 +10764,16 @@ namespace azure.mgmt.oracledatabase.types
         ocid: str
         ocpuCount: float
         provisioningState: Union[str, AzureResourceProvisioningState]
+        proximityPlacementGroup: ProximityPlacementGroup
+        recoStoragePercentage: int
+        resourceAnchorId: str
         scanDnsName: str
         scanDnsRecordId: str
         scanIpIds: list[str]
         scanListenerPortTcp: int
         scanListenerPortTcpSsl: int
         shape: str
+        sparseStoragePercentage: int
         sshPublicKeys: list[str]
         storageManagementType: Union[str, ExadataVmClusterStorageManagementType]
         storageSizeInGbs: int
@@ -8853,6 +10799,7 @@ namespace azure.mgmt.oracledatabase.types
         key "dataStorageSizeInTbs": float
         key "dbNodeStorageSizeInGbs": int
         key "displayName": str
+        key "isAcceleratedNetworkEnabled": bool
         key "licenseModel": Union[str, LicenseModel]
         key "memorySizeInGbs": int
         key "ocpuCount": float
@@ -8864,6 +10811,7 @@ namespace azure.mgmt.oracledatabase.types
         dbNodeStorageSizeInGbs: int
         displayName: str
         fileSystemConfigurationDetails: list[FileSystemConfigurationDetails]
+        isAcceleratedNetworkEnabled: bool
         licenseModel: Union[str, LicenseModel]
         memorySizeInGbs: int
         ocpuCount: float
@@ -8888,6 +10836,37 @@ namespace azure.mgmt.oracledatabase.types
         low: str
         medium: str
         profiles: list[ProfileType]
+
+
+    class azure.mgmt.oracledatabase.types.ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AMAZON_KINESIS = "AMAZON_KINESIS"
+        AMAZON_REDSHIFT = "AMAZON_REDSHIFT"
+        AMAZON_S3 = "AMAZON_S3"
+        AZURE_DATA_LAKE_STORAGE = "AZURE_DATA_LAKE_STORAGE"
+        AZURE_SYNAPSE_ANALYTICS = "AZURE_SYNAPSE_ANALYTICS"
+        DATABRICKS = "DATABRICKS"
+        DB2_CONNECTION = "DB2"
+        ELASTICSEARCH = "ELASTICSEARCH"
+        GENERIC = "GENERIC"
+        GOLDEN_GATE = "GOLDENGATE"
+        GOOGLE_BIG_QUERY = "GOOGLE_BIGQUERY"
+        GOOGLE_CLOUD_STORAGE = "GOOGLE_CLOUD_STORAGE"
+        GOOGLE_PUB_SUB = "GOOGLE_PUBSUB"
+        HDFS = "HDFS"
+        ICEBERG = "ICEBERG"
+        JAVA_MESSAGE_SERVICE = "JAVA_MESSAGE_SERVICE"
+        KAFKA = "KAFKA"
+        KAFKA_SCHEMA_REGISTRY = "KAFKA_SCHEMA_REGISTRY"
+        MICROSOFT_FABRIC = "MICROSOFT_FABRIC"
+        MICROSOFT_SQL_SERVER = "MICROSOFT_SQLSERVER"
+        MONGO_DB_CONNECTION = "MONGODB"
+        MY_SQL = "MYSQL"
+        OCI_OBJECT_STORAGE = "OCI_OBJECT_STORAGE"
+        ORACLE = "ORACLE"
+        ORACLE_NO_SQL = "ORACLE_NOSQL"
+        POSTGRE_SQL = "POSTGRESQL"
+        REDIS = "REDIS"
+        SNOWFLAKE = "SNOWFLAKE"
 
 
     class azure.mgmt.oracledatabase.types.ConnectionUrlType(TypedDict, total=False):
@@ -8976,6 +10955,7 @@ namespace azure.mgmt.oracledatabase.types
 
     class azure.mgmt.oracledatabase.types.DbSystemBaseProperties(TypedDict, total=False):
         key "adminPassword": str
+        key "characterSet": str
         key "clusterName": str
         key "computeCount": int
         key "computeModel": Union[str, ComputeModel]
@@ -8995,6 +10975,7 @@ namespace azure.mgmt.oracledatabase.types
         key "lifecycleState": Union[str, DbSystemLifecycleState]
         key "listenerPort": int
         key "memorySizeInGbs": int
+        key "ncharacterSet": str
         key "networkAnchorId": Required[str]
         key "nodeCount": int
         key "ociUrl": str
@@ -9010,6 +10991,7 @@ namespace azure.mgmt.oracledatabase.types
         key "timeZone": str
         key "version": str
         adminPassword: str
+        characterSet: str
         clusterName: str
         computeCount: int
         computeModel: Union[str, ComputeModel]
@@ -9029,6 +11011,7 @@ namespace azure.mgmt.oracledatabase.types
         lifecycleState: Union[str, DbSystemLifecycleState]
         listenerPort: int
         memorySizeInGbs: int
+        ncharacterSet: str
         networkAnchorId: str
         nodeCount: int
         ociUrl: str
@@ -9053,6 +11036,7 @@ namespace azure.mgmt.oracledatabase.types
 
     class azure.mgmt.oracledatabase.types.DbSystemProperties(TypedDict, total=False):
         key "adminPassword": str
+        key "characterSet": str
         key "clusterName": str
         key "computeCount": int
         key "computeModel": Union[str, ComputeModel]
@@ -9072,6 +11056,7 @@ namespace azure.mgmt.oracledatabase.types
         key "lifecycleState": Union[str, DbSystemLifecycleState]
         key "listenerPort": int
         key "memorySizeInGbs": int
+        key "ncharacterSet": str
         key "networkAnchorId": Required[str]
         key "nodeCount": int
         key "ociUrl": str
@@ -9087,6 +11072,7 @@ namespace azure.mgmt.oracledatabase.types
         key "timeZone": str
         key "version": str
         adminPassword: str
+        characterSet: str
         clusterName: str
         computeCount: int
         computeModel: Union[str, ComputeModel]
@@ -9106,6 +11092,7 @@ namespace azure.mgmt.oracledatabase.types
         lifecycleState: Union[str, DbSystemLifecycleState]
         listenerPort: int
         memorySizeInGbs: int
+        ncharacterSet: str
         networkAnchorId: str
         nodeCount: int
         ociUrl: str
@@ -9148,6 +11135,62 @@ namespace azure.mgmt.oracledatabase.types
         isResizable: bool
         minSizeGb: int
         mountPoint: str
+
+
+    class azure.mgmt.oracledatabase.types.DeploymentProperties(TypedDict, total=False):
+        key "backupSchedule": ForwardRef('BackupScheduleType', module='types')
+        key "category": Union[str, CategoryType]
+        key "compartment": str
+        key "cpuCoreCount": int
+        key "deploymentType": Union[str, DeploymentType]
+        key "deploymentUrl": str
+        key "displayName": Required[str]
+        key "environmentType": Union[str, SetupType]
+        key "isAutoScalingEnabled": bool
+        key "isPublic": bool
+        key "licenseModel": Union[str, LicenseModel]
+        key "lifecycleDetails": str
+        key "lifecycleState": Union[str, DeploymentLifecycleState]
+        key "maintenanceConfiguration": ForwardRef('MaintenanceConfigurationType', module='types')
+        key "maintenanceWindow": ForwardRef('MaintenanceWindowType', module='types')
+        key "networkAnchorId": Required[str]
+        key "ocid": str
+        key "oggData": ForwardRef('OggDeploymentDetails', module='types')
+        key "privateIpAddress": str
+        key "provisioningState": Union[str, AzureResourceProvisioningState]
+        key "resourceAnchorId": Required[str]
+        key "storageUtilizationInBytes": int
+        key "timeCreated": str
+        key "timeUpdated": str
+        key "timeZone": str
+        key "version": str
+        backupSchedule: BackupScheduleType
+        category: Union[str, CategoryType]
+        compartment: str
+        cpuCoreCount: int
+        deploymentType: Union[str, DeploymentType]
+        deploymentUrl: str
+        displayName: str
+        environmentType: Union[str, SetupType]
+        ingressIps: list[str]
+        isAutoScalingEnabled: bool
+        isPublic: bool
+        licenseModel: Union[str, LicenseModel]
+        lifecycleDetails: str
+        lifecycleState: Union[str, DeploymentLifecycleState]
+        maintenanceConfiguration: MaintenanceConfigurationType
+        maintenanceWindow: MaintenanceWindowType
+        networkAnchorId: str
+        ocid: str
+        oggData: OggDeploymentDetails
+        privateIpAddress: str
+        provisioningState: Union[str, AzureResourceProvisioningState]
+        resourceAnchorId: str
+        storageUtilizationInBytes: int
+        timeCreated: str
+        timeUpdated: str
+        timeZone: str
+        version: str
 
 
     class azure.mgmt.oracledatabase.types.DisasterRecoveryConfigurationDetails(TypedDict, total=False):
@@ -9349,11 +11392,13 @@ namespace azure.mgmt.oracledatabase.types
 
     class azure.mgmt.oracledatabase.types.ExascaleDbStorageVaultProperties(TypedDict, total=False):
         key "additionalFlashCacheInPercent": int
+        key "autoscaleLimitInGbs": int
         key "description": str
         key "displayName": Required[str]
         key "exadataInfrastructureId": str
         key "highCapacityDatabaseStorage": ForwardRef('ExascaleDbStorageDetails', module='types')
         key "highCapacityDatabaseStorageInput": Required[ExascaleDbStorageInputDetails]
+        key "isAutoscaleEnabled": bool
         key "lifecycleDetails": str
         key "lifecycleState": Union[str, ExascaleDbStorageVaultLifecycleState]
         key "ociUrl": str
@@ -9363,11 +11408,13 @@ namespace azure.mgmt.oracledatabase.types
         key "vmClusterCount": int
         additionalFlashCacheInPercent: int
         attachedShapeAttributes: list[Union[str, ShapeAttribute]]
+        autoscaleLimitInGbs: int
         description: str
         displayName: str
         exadataInfrastructureId: str
         highCapacityDatabaseStorage: ExascaleDbStorageDetails
         highCapacityDatabaseStorageInput: ExascaleDbStorageInputDetails
+        isAutoscaleEnabled: bool
         lifecycleDetails: str
         lifecycleState: Union[str, ExascaleDbStorageVaultLifecycleState]
         ociUrl: str
@@ -9397,6 +11444,166 @@ namespace azure.mgmt.oracledatabase.types
         password: str
 
 
+    class azure.mgmt.oracledatabase.types.GoldenGateConnection(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ConnectionBaseProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: ConnectionBaseProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.oracledatabase.types.GoldenGateConnectionUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('GoldenGateConnectionUpdateProperties', module='types')
+        properties: GoldenGateConnectionUpdateProperties
+        tags: dict[str, str]
+        zones: list[str]
+
+
+    class azure.mgmt.oracledatabase.types.GoldenGateConnectionUpdateProperties(TypedDict, total=False):
+        key "connectionType": Union[str, ConnectionType]
+        key "displayName": str
+        key "doesUseSecretIds": bool
+        key "keyId": str
+        key "routingMethod": Union[str, RoutingMethod]
+        key "vaultId": str
+        connectionType: Union[str, ConnectionType]
+        displayName: str
+        doesUseSecretIds: bool
+        keyId: str
+        routingMethod: Union[str, RoutingMethod]
+        vaultId: str
+
+
+    class azure.mgmt.oracledatabase.types.GoldenGateDeployment(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('DeploymentProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: DeploymentProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.oracledatabase.types.GoldenGateDeploymentUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('GoldenGateDeploymentUpdateProperties', module='types')
+        properties: GoldenGateDeploymentUpdateProperties
+        tags: dict[str, str]
+        zones: list[str]
+
+
+    class azure.mgmt.oracledatabase.types.GoldenGateDeploymentUpdateProperties(TypedDict, total=False):
+        key "backupSchedule": ForwardRef('BackupScheduleType', module='types')
+        key "cpuCoreCount": int
+        key "licenseModel": Union[str, LicenseModel]
+        key "maintenanceConfiguration": ForwardRef('MaintenanceConfigurationType', module='types')
+        key "maintenanceWindow": ForwardRef('MaintenanceWindowType', module='types')
+        backupSchedule: BackupScheduleType
+        cpuCoreCount: int
+        licenseModel: Union[str, LicenseModel]
+        maintenanceConfiguration: MaintenanceConfigurationType
+        maintenanceWindow: MaintenanceWindowType
+
+
+    class azure.mgmt.oracledatabase.types.GroupToRolesMappingDetails(TypedDict, total=False):
+        key "administratorGroupId": str
+        key "identityDomainId": str
+        key "key": str
+        key "operatorGroupId": str
+        key "securityGroupId": str
+        key "userGroupId": str
+        administratorGroupId: str
+        identityDomainId: str
+        key: str
+        operatorGroupId: str
+        securityGroupId: str
+        userGroupId: str
+
+
+    class azure.mgmt.oracledatabase.types.KafkaBootstrapServer(TypedDict, total=False):
+        key "host": Required[str]
+        key "port": int
+        host: str
+        port: int
+
+
+    class azure.mgmt.oracledatabase.types.KafkaConnectionDetails(TypedDict, total=False):
+        key "clusterId": str
+        key "compartmentId": str
+        key "connectionType": Required[Literal[ConnectionType.KAFKA]]
+        key "consumerProperties": str
+        key "displayName": Required[str]
+        key "doesUseSecretIds": bool
+        key "keyId": str
+        key "keyStorePasswordSecretId": str
+        key "keyStoreSecretId": str
+        key "lifecycleDetails": str
+        key "lifecycleState": Union[str, ConnectionLifecycleState]
+        key "networkAnchorId": Required[str]
+        key "ocid": str
+        key "passwordSecretId": str
+        key "producerProperties": str
+        key "provisioningState": Union[str, AzureResourceProvisioningState]
+        key "resourceAnchorId": Required[str]
+        key "routingMethod": Union[str, RoutingMethod]
+        key "securityProtocol": str
+        key "shouldUseResourcePrincipal": bool
+        key "sslKeyPasswordSecretId": str
+        key "streamPoolId": str
+        key "technologyType": Required[Union[str, KafkaConnectionTechnologyType]]
+        key "timeCreated": str
+        key "timeUpdated": str
+        key "trustStorePasswordSecretId": str
+        key "trustStoreSecretId": str
+        key "username": str
+        key "vaultId": str
+        bootstrapServers: list[KafkaBootstrapServer]
+        clusterId: str
+        compartmentId: str
+        connectionType: Literal[ConnectionType.KAFKA]
+        consumerProperties: str
+        displayName: str
+        doesUseSecretIds: bool
+        keyId: str
+        keyStorePasswordSecretId: str
+        keyStoreSecretId: str
+        lifecycleDetails: str
+        lifecycleState: Union[str, ConnectionLifecycleState]
+        networkAnchorId: str
+        ocid: str
+        passwordSecretId: str
+        producerProperties: str
+        provisioningState: Union[str, AzureResourceProvisioningState]
+        resourceAnchorId: str
+        routingMethod: Union[str, RoutingMethod]
+        securityProtocol: str
+        shouldUseResourcePrincipal: bool
+        sslKeyPasswordSecretId: str
+        streamPoolId: str
+        technologyType: Union[str, KafkaConnectionTechnologyType]
+        timeCreated: str
+        timeUpdated: str
+        trustStorePasswordSecretId: str
+        trustStoreSecretId: str
+        username: str
+        vaultId: str
+
+
     class azure.mgmt.oracledatabase.types.LongTermBackUpScheduleDetails(TypedDict, total=False):
         key "isDisabled": bool
         key "repeatCadence": Union[str, RepeatCadenceType]
@@ -9406,6 +11613,19 @@ namespace azure.mgmt.oracledatabase.types
         repeatCadence: Union[str, RepeatCadenceType]
         retentionPeriodInDays: int
         timeOfBackup: str
+
+
+    class azure.mgmt.oracledatabase.types.MaintenanceConfigurationType(TypedDict, total=False):
+        key "bundleReleaseUpgradePeriodInDays": int
+        key "interimReleaseUpgradePeriodInDays": int
+        key "isInterimReleaseAutoUpgradeEnabled": bool
+        key "majorReleaseUpgradePeriodInDays": int
+        key "securityPatchUpgradePeriodInDays": int
+        bundleReleaseUpgradePeriodInDays: int
+        interimReleaseUpgradePeriodInDays: int
+        isInterimReleaseAutoUpgradeEnabled: bool
+        majorReleaseUpgradePeriodInDays: int
+        securityPatchUpgradePeriodInDays: int
 
 
     class azure.mgmt.oracledatabase.types.MaintenanceWindow(TypedDict, total=False):
@@ -9425,6 +11645,56 @@ namespace azure.mgmt.oracledatabase.types
         patchingMode: Union[str, PatchingMode]
         preference: Union[str, Preference]
         weeksOfMonth: list[int]
+
+
+    class azure.mgmt.oracledatabase.types.MaintenanceWindowType(TypedDict, total=False):
+        key "day": Union[str, DayOfWeekName]
+        key "startHour": int
+        day: Union[str, DayOfWeekName]
+        startHour: int
+
+
+    class azure.mgmt.oracledatabase.types.MicrosoftFabricConnectionDetails(TypedDict, total=False):
+        key "clientId": Required[str]
+        key "clientSecretSecretId": str
+        key "compartmentId": str
+        key "connectionType": Required[Literal[ConnectionType.MICROSOFT_FABRIC]]
+        key "displayName": Required[str]
+        key "doesUseSecretIds": bool
+        key "endpoint": str
+        key "keyId": str
+        key "lifecycleDetails": str
+        key "lifecycleState": Union[str, ConnectionLifecycleState]
+        key "networkAnchorId": Required[str]
+        key "ocid": str
+        key "provisioningState": Union[str, AzureResourceProvisioningState]
+        key "resourceAnchorId": Required[str]
+        key "routingMethod": Union[str, RoutingMethod]
+        key "technologyType": Required[Union[str, MicrosoftFabricConnectionTechnologyType]]
+        key "tenantId": Required[str]
+        key "timeCreated": str
+        key "timeUpdated": str
+        key "vaultId": str
+        clientId: str
+        clientSecretSecretId: str
+        compartmentId: str
+        connectionType: Literal[ConnectionType.MICROSOFT_FABRIC]
+        displayName: str
+        doesUseSecretIds: bool
+        endpoint: str
+        keyId: str
+        lifecycleDetails: str
+        lifecycleState: Union[str, ConnectionLifecycleState]
+        networkAnchorId: str
+        ocid: str
+        provisioningState: Union[str, AzureResourceProvisioningState]
+        resourceAnchorId: str
+        routingMethod: Union[str, RoutingMethod]
+        technologyType: Union[str, MicrosoftFabricConnectionTechnologyType]
+        tenantId: str
+        timeCreated: str
+        timeUpdated: str
+        vaultId: str
 
 
     class azure.mgmt.oracledatabase.types.Month(TypedDict, total=False):
@@ -9465,6 +11735,7 @@ namespace azure.mgmt.oracledatabase.types
         key "ociVcnDnsLabel": str
         key "ociVcnId": str
         key "provisioningState": Union[str, AzureResourceProvisioningState]
+        key "proximityPlacementGroup": ForwardRef('ProximityPlacementGroup', module='types')
         key "resourceAnchorId": Required[str]
         key "subnetId": Required[str]
         key "vnetId": str
@@ -9484,6 +11755,7 @@ namespace azure.mgmt.oracledatabase.types
         ociVcnDnsLabel: str
         ociVcnId: str
         provisioningState: Union[str, AzureResourceProvisioningState]
+        proximityPlacementGroup: ProximityPlacementGroup
         resourceAnchorId: str
         subnetId: str
         vnetId: str
@@ -9512,6 +11784,76 @@ namespace azure.mgmt.oracledatabase.types
         key "source": Required[str]
         destinationPortRange: PortRange
         source: str
+
+
+    class azure.mgmt.oracledatabase.types.OggDeploymentDetails(TypedDict, total=False):
+        key "adminPassword": str
+        key "adminUsername": str
+        key "certificate": str
+        key "credentialStore": Union[str, CredentialType]
+        key "deploymentName": Required[str]
+        key "groupToRolesMapping": ForwardRef('GroupToRolesMappingDetails', module='types')
+        key "oggVersion": str
+        key "passwordSecretId": str
+        adminPassword: str
+        adminUsername: str
+        certificate: str
+        credentialStore: Union[str, CredentialType]
+        deploymentName: str
+        groupToRolesMapping: GroupToRolesMappingDetails
+        oggVersion: str
+        passwordSecretId: str
+
+
+    class azure.mgmt.oracledatabase.types.OracleConnectionDetails(TypedDict, total=False):
+        key "authenticationMode": str
+        key "compartmentId": str
+        key "connectionString": str
+        key "connectionType": Required[Literal[ConnectionType.ORACLE]]
+        key "databaseId": str
+        key "displayName": Required[str]
+        key "doesUseSecretIds": bool
+        key "keyId": str
+        key "lifecycleDetails": str
+        key "lifecycleState": Union[str, ConnectionLifecycleState]
+        key "networkAnchorId": Required[str]
+        key "ocid": str
+        key "passwordSecretId": str
+        key "privateIp": str
+        key "provisioningState": Union[str, AzureResourceProvisioningState]
+        key "resourceAnchorId": Required[str]
+        key "routingMethod": Union[str, RoutingMethod]
+        key "sessionMode": Union[str, SessionMode]
+        key "technologyType": Required[Union[str, OracleConnectionTechnologyType]]
+        key "timeCreated": str
+        key "timeUpdated": str
+        key "username": Required[str]
+        key "vaultId": str
+        key "walletSecretId": str
+        authenticationMode: str
+        compartmentId: str
+        connectionString: str
+        connectionType: Literal[ConnectionType.ORACLE]
+        databaseId: str
+        displayName: str
+        doesUseSecretIds: bool
+        keyId: str
+        lifecycleDetails: str
+        lifecycleState: Union[str, ConnectionLifecycleState]
+        networkAnchorId: str
+        ocid: str
+        passwordSecretId: str
+        privateIp: str
+        provisioningState: Union[str, AzureResourceProvisioningState]
+        resourceAnchorId: str
+        routingMethod: Union[str, RoutingMethod]
+        sessionMode: Union[str, SessionMode]
+        technologyType: Union[str, OracleConnectionTechnologyType]
+        timeCreated: str
+        timeUpdated: str
+        username: str
+        vaultId: str
+        walletSecretId: str
 
 
     class azure.mgmt.oracledatabase.types.OracleSubscription(ProxyResource):
@@ -9633,6 +11975,15 @@ namespace azure.mgmt.oracledatabase.types
         syntaxFormat: Union[str, SyntaxFormatType]
         tlsAuthentication: Union[str, TlsAuthenticationType]
         value: str
+
+
+    class azure.mgmt.oracledatabase.types.ProximityPlacementGroup(TypedDict, total=False):
+        key "entityTypeIntendedToUse": Required[Union[str, ProximityPlacementGroupEntityType]]
+        key "proximityAnchorId": str
+        key "proximityPlacementGroupId": Required[str]
+        entityTypeIntendedToUse: Union[str, ProximityPlacementGroupEntityType]
+        proximityAnchorId: str
+        proximityPlacementGroupId: str
 
 
     class azure.mgmt.oracledatabase.types.ProxyResource(Resource):

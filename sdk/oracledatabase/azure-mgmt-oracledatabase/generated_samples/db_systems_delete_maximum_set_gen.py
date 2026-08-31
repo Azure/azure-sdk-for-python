@@ -32,10 +32,10 @@ def main():
 
     client.db_systems.begin_delete(
         resource_group_name="rgopenapi",
-        db_system_name="dbsystem1",
+        db_system_name="resource1",
     ).result()
 
 
-# x-ms-original-file: 2025-11-01-preview/DbSystems_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/DbSystems_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

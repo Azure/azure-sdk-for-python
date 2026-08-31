@@ -32,12 +32,12 @@ def main():
 
     response = client.exascale_db_nodes.list_by_parent(
         resource_group_name="rgopenapi",
-        exadb_vm_cluster_name="vmcluster",
+        exadb_vm_cluster_name="resource1",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-11-01-preview/ExascaleDbNodes_ListByParent_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ExascaleDbNodes_ListByParent_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
