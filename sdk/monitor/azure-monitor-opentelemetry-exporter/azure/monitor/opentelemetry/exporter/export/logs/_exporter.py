@@ -111,7 +111,8 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
             return _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def force_flush(self, timeout_millis: float = 10_000) -> bool:
-        """Ensure that export of any received log records completes as soon as possible."""
+        # Ensure that export of any received log records completes as soon as possible.
+
         return True
 
     def shutdown(self) -> None:
