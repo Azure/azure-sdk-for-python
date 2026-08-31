@@ -255,7 +255,11 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
             duration=availability_data["duration"],
             success=availability_data["success"].lower() == "true",
             run_location=availability_data.get("run_location"),
-            message=availability_data.get("message") or _map_body_to_message(log_record.body),
+            message=(
+                availability_data["message"]
+                if "message" in availability_data
+                else _map_body_to_message(log_record.body)
+            ),
             properties=properties,
             measurements=measurements,
         )
@@ -327,7 +331,10 @@ def _get_availability_data(log_record) -> Optional[Dict[str, str]]:
         "run_location": log_record.attributes.get(_MICROSOFT_AVAILABILITY_RUN_LOCATION),
         "message": log_record.attributes.get(_MICROSOFT_AVAILABILITY_MESSAGE),
     }
-    if not all(availability_data[field] is not None and str(availability_data[field]) for field in ("id", "name", "duration", "success")):
+    if not all(
+        availability_data[field] is not None and str(availability_data[field])
+        for field in ("id", "name", "duration", "success")
+    ):
         return None
     return {key: str(value) for key, value in availability_data.items() if value is not None}
 
@@ -340,7 +347,7 @@ def _get_availability_time(log_record) -> Optional[datetime.datetime]:
         return None
     try:
         return datetime.datetime.fromisoformat(test_timestamp.replace("Z", "+00:00")).astimezone(datetime.timezone.utc)
-    except ValueError:
+    except (ValueError, OverflowError):
         return None
 
 

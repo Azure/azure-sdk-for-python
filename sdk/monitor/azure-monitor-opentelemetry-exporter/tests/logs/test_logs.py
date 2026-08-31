@@ -699,6 +699,31 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.measurements, {"itemsProcessed": 42.0})
         self.assertEqual(envelope.data.base_data.properties, {"test": "attribute", "logger_name": "test_name"})
 
+    def test_log_to_envelope_availability_preserves_empty_message(self):
+        exporter = self._exporter
+        log_data = _logs.ReadWriteLogRecord(
+            LogRecord(
+                timestamp=1646865018558419456,
+                severity_text="INFO",
+                severity_number=SeverityNumber.INFO,
+                body="availability log",
+                attributes={
+                    _MICROSOFT_AVAILABILITY_ID: "test-id",
+                    _MICROSOFT_AVAILABILITY_NAME: "test-name",
+                    _MICROSOFT_AVAILABILITY_DURATION: "00:00:05",
+                    _MICROSOFT_AVAILABILITY_SUCCESS: "true",
+                    _MICROSOFT_AVAILABILITY_MESSAGE: "",
+                },
+            ),
+            resource=Resource.create(attributes={"asd": "test_resource"}),
+            instrumentation_scope=InstrumentationScope("test_name"),
+        )
+
+        envelope = exporter._log_to_envelope(log_data)
+
+        self.assertEqual(envelope.data.base_type, "AvailabilityData")
+        self.assertEqual(envelope.data.base_data.message, "")
+
     def test_log_to_envelope_availability_missing_required_attribute(self):
         exporter = self._exporter
         for availability_id in (None, ""):
