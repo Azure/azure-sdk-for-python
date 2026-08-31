@@ -148,8 +148,18 @@ extends:
                 displayName: Check Package Approval Status
                 dependsOn:
                   - Build_Extended
+                  - Analyze
                 condition: >-
-                  in(dependencies.Build_Extended.result, 'Succeeded', 'SucceededWithIssues')
+                  and(
+                    in(dependencies.Build_Extended.result, 'Succeeded', 'SucceededWithIssues'),
+                    or(
+                      in(dependencies.Analyze.result, 'Succeeded', 'SucceededWithIssues'),
+                      and(
+                        eq(dependencies.Analyze.result, 'Skipped'),
+                        eq(variables['Skip.Analyze'], 'true')
+                      )
+                    )
+                  )
                 pool:
                   name: $(LINUXPOOL)
                   image: $(LINUXVMIMAGE)

@@ -246,12 +246,6 @@ stages:
                     EnablePipAuth: true
                     EnableUvAuth: false
 
-                - task: UsePythonVersion@0
-                  inputs:
-                    versionSpec: '3.10'
-
-                - template: /eng/common/pipelines/templates/steps/install-azsdk-cli.yml
-
                 - template: /eng/common/pipelines/templates/steps/mark-release-completion.yml
                   parameters:
                     ConfigFileDir: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo'
