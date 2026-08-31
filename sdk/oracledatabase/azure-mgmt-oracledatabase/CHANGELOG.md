@@ -108,9 +108,9 @@
   - Added enum `RoutingMethod`
   - Added enum `SessionMode`
   - Added enum `SetupType`
-  - Model `GiMinorVersionsOperations` added parameter `is_gi_version_for_provisioning` in method `list_by_parent`
-  - Model `GiMinorVersionsOperations` added parameter `shape` in method `list_by_parent`
-  - Model `GiMinorVersionsOperations` added parameter `sort_order` in method `list_by_parent`
+  - Operation group `GiMinorVersionsOperations` added parameter `is_gi_version_for_provisioning` in method `list_by_parent`
+  - Operation group `GiMinorVersionsOperations` added parameter `shape` in method `list_by_parent`
+  - Operation group `GiMinorVersionsOperations` added parameter `sort_order` in method `list_by_parent`
   - Added operation group `DatabaseEditionsOperations`
   - Added operation group `DatabaseSystemShapeResourcesOperations`
   - Added operation group `GoldenGateConnectionsOperations`
@@ -118,6 +118,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `CloudVmClusterProperties` deleted or renamed its instance variable `hostname`
   - Model `CloudVmClusterProperties` deleted or renamed its instance variable `scan_dns_name`
   - Model `ExadbVmClusterProperties` deleted or renamed its instance variable `hostname`
