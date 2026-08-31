@@ -123,15 +123,6 @@
   - Model `ExadbVmClusterProperties` deleted or renamed its instance variable `hostname`
   - Model `ExadbVmClusterProperties` deleted or renamed its instance variable `scan_dns_name`
 
-## 3.1.0 (2026-08-27)
-
-WARNING: Stable SDK version 3.1.0 is used with preview API version 2025-11-01-preview. If this is expected, delete this line; otherwise, check this PR.
-
-### Features Added
-
-  - Model `DbSystemBaseProperties` added property `data_collection_options`
-  - Model `DbSystemProperties` added property `data_collection_options`
-
 ## 3.0.0 (2025-10-15)
 
 ### Features Added
