@@ -381,9 +381,10 @@ from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.identity.aio import DefaultAzureCredential
 
 endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+credential = DefaultAzureCredential()
 
 # Create an app config client
-client = AzureAppConfigurationClient(endpoint, DefaultAzureCredential())
+client = AzureAppConfigurationClient(endpoint, credential)
 ```
 
 <!-- END SNIPPET -->

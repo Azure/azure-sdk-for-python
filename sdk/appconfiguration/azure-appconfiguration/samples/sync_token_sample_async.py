@@ -26,10 +26,11 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def handle_event_grid_notifications(event_grid_events):
     endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+    credential = DefaultAzureCredential()
 
     all_keys = []
 
-    async with AzureAppConfigurationClient(endpoint, DefaultAzureCredential()) as client:
+    async with AzureAppConfigurationClient(endpoint, credential) as client:
         for event_grid_event in event_grid_events:
             if event_grid_event["eventType"] == "Microsoft.KeyValueModified":
                 sync_token = event_grid_event["data"]["syncToken"]
@@ -40,6 +41,7 @@ async def handle_event_grid_notifications(event_grid_events):
                 )
 
                 all_keys.append(new_key)
+    await credential.close()
 
 
 if __name__ == "__main__":

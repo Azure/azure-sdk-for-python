@@ -27,9 +27,10 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def main():
     endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+    credential = DefaultAzureCredential()
 
     # Create an app config client
-    client = AzureAppConfigurationClient(endpoint, DefaultAzureCredential())
+    client = AzureAppConfigurationClient(endpoint, credential)
 
     config_setting = ConfigurationSetting(
         key="MyKey", value="my value", content_type="my content type", tags={"my tag": "my tag value"}
@@ -45,6 +46,7 @@ async def main():
         print(item)
 
     await client.delete_configuration_setting(key="MyKey")
+    await credential.close()
 
 
 if __name__ == "__main__":

@@ -155,6 +155,7 @@ The provider can be configured to refresh configurations from the store on a set
 <!-- SNIPPET:refresh_sample.refresh_provider -->
 
 ```python
+import os
 from azure.appconfiguration.provider import load, WatchKey
 
 config = load(
@@ -355,6 +356,7 @@ To enable refresh for feature flags you need to enable refresh. This will allow 
 <!-- SNIPPET:refresh_sample_feature_flags.refresh_feature_flags -->
 
 ```python
+import os
 from azure.appconfiguration.provider import load, WatchKey
 
 config = load(

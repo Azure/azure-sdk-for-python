@@ -28,13 +28,15 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def main():
     endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
-    async with AzureAppConfigurationClient(endpoint, DefaultAzureCredential()) as client:
+    credential = DefaultAzureCredential()
+    async with AzureAppConfigurationClient(endpoint, credential) as client:
         request = HttpRequest(
             method="GET",
             url="/kv?api-version=2023-10-01",
         )
         response = await client.send_request(request)
         print(response.status_code)
+    await credential.close()
 
 
 if __name__ == "__main__":
