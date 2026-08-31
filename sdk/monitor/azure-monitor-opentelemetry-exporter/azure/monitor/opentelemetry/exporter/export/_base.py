@@ -257,19 +257,6 @@ class BaseExporter:
             # Collect customer sdkstats metrics
             collect_customer_sdkstats(self)
 
-    def _update_connection_string(self, connection_string: str) -> bool:
-        # Update the statsbeat exporter route after an accepted ingestion redirect.
-        parsed = ConnectionStringParser(connection_string)
-        if not parsed.instrumentation_key or not parsed.endpoint:
-            return False
-        self._connection_string = parsed._connection_string
-        self._instrumentation_key = parsed.instrumentation_key
-        self._endpoint = parsed.endpoint
-        self._region = parsed.region
-        self._aad_audience = parsed.aad_audience
-        self.client._config.host = parsed.endpoint  # pylint: disable=protected-access
-        return True
-
     # Maximum number of blobs to drain from storage per invocation.
     # Prevents a retry storm when many blobs have accumulated during
     # sustained throttling (e.g. 429).
@@ -778,6 +765,19 @@ class BaseExporter:
 
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, "_is_customer_sdkstats", False)
+
+    def _update_connection_string(self, connection_string: str) -> bool:
+        # Update the statsbeat exporter route after an accepted ingestion redirect.
+        parsed = ConnectionStringParser(connection_string)
+        if not parsed.instrumentation_key or not parsed.endpoint:
+            return False
+        self._connection_string = parsed._connection_string
+        self._instrumentation_key = parsed.instrumentation_key
+        self._endpoint = parsed.endpoint
+        self._region = parsed.region
+        self._aad_audience = parsed.aad_audience
+        self.client._config.host = parsed.endpoint  # pylint: disable=protected-access
+        return True
 
     def _update_statsbeat_endpoint(self, endpoint: str) -> None:
         # Point internal statsbeat at the customer's effective ingestion route.
