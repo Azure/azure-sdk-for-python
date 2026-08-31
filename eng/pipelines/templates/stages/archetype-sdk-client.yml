@@ -95,22 +95,22 @@ extends:
     EnableCompiledCodeql: ${{ parameters.EnableCompiledCodeql }}
     stages:
       - ${{ if and(eq(parameters.SkipPrValidation, true), eq(variables['Build.Reason'], 'Manual')) }}:
-          - stage: NoOp
-            displayName: No-op
-            variables:
-              - template: /eng/pipelines/templates/variables/globals.yml
-              - template: /eng/pipelines/templates/variables/image.yml
-            jobs:
-              - job: NoOp
-                displayName: No-op
-                pool:
-                  name: $(LINUXPOOL)
-                  image: $(LINUXVMIMAGE)
-                  os: linux
-                steps:
-                  - checkout: none
-                  - pwsh: Write-Host "PR validation skipped because SkipPrValidation was set to true for a manual run."
-                    displayName: Skip PR validation
+        - stage: NoOp
+          displayName: No-op
+          variables:
+            - template: /eng/pipelines/templates/variables/globals.yml
+            - template: /eng/pipelines/templates/variables/image.yml
+          jobs:
+            - job: NoOp
+              displayName: No-op
+              pool:
+                name: $(LINUXPOOL)
+                image: $(LINUXVMIMAGE)
+                os: linux
+              steps:
+                - checkout: none
+                - pwsh: Write-Host "PR validation skipped because SkipPrValidation was set to true for a manual run."
+                  displayName: Skip PR validation
 
       - stage: Build
         condition: not(and(eq(${{ parameters.SkipPrValidation }}, true), eq(variables['Build.Reason'], 'Manual')))
