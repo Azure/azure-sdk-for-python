@@ -180,6 +180,7 @@ class apistub(Check):
                 return getattr(e, "returncode", 1)
 
             generate_from_pypi = getattr(args, "generate_from_pypi", None)
+            package_version = generate_from_pypi or parsed.version
 
             if generate_from_pypi:
                 pkg_path = self.download_pypi_wheel(executable, package_name, generate_from_pypi, staging_directory)
@@ -248,7 +249,14 @@ class apistub(Check):
 
                         logger.info(f"Extracting API metadata for {package_name}")
                         metadata_result = run(
-                            [executable, metadata_script, "--output-path", out_token_path],
+                            [
+                                executable,
+                                metadata_script,
+                                "--output-path",
+                                out_token_path,
+                                "--package-version",
+                                package_version,
+                            ],
                             check=True,
                             capture_output=True,
                             text=True,
