@@ -12,6 +12,11 @@
 
 - Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
 
+### Other Changes
+
+- Changed the default Azure Monitor trace sampling rate to 100%. Explicit OpenTelemetry sampler environment variables continue to take precedence.
+- Disabled Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation by default. Pass `instrumentation_options` to `configure_observability` to enable individual libraries.
+
 ## 2.1.0 (2026-08-24)
 
 ### Other Changes
