@@ -96,6 +96,15 @@ _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 _MICROSOFT_CUSTOM_MEASUREMENTS = "microsoft.custom_measurements"
 
+# Track Availability telemetry constants
+_MICROSOFT_AVAILABILITY_ID = "microsoft.availability.id"
+_MICROSOFT_AVAILABILITY_NAME = "microsoft.availability.name"
+_MICROSOFT_AVAILABILITY_DURATION = "microsoft.availability.duration"
+_MICROSOFT_AVAILABILITY_SUCCESS = "microsoft.availability.success"
+_MICROSOFT_AVAILABILITY_RUN_LOCATION = "microsoft.availability.runLocation"
+_MICROSOFT_AVAILABILITY_MESSAGE = "microsoft.availability.message"
+_MICROSOFT_AVAILABILITY_TEST_TIMESTAMP = "microsoft.availability.testTimestamp"
+
 # ONE SETTINGS
 _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED = "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED"
 _ONE_SETTINGS_PYTHON_KEY = "python"
