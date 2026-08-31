@@ -186,6 +186,7 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    assert __package__ is not None
     operations_module = sys.modules[__package__]
     operations_module.__all__[:] = [
         name for name in operations_module.__all__ if name not in _RLE_GENERATED_OPERATION_NAMES
