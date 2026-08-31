@@ -253,18 +253,80 @@ class TestJobOperations:
         assert job.compute == expected
 
     @patch.object(Job, "_from_rest_object")
-    def test_archive(self, mock_method, mock_job_operation: JobOperations) -> None:
+    def test_archive_falls_back_to_legacy_put_when_runhistory_unavailable(
+        self, mock_method, mock_job_operation: JobOperations
+    ) -> None:
+        """When the lazy RunHistory client can't be constructed (e.g. workspace discovery
+        fails), archive() must fall through to the legacy create_or_update PUT path rather
+        than raising, so callers aren't newly broken by the RunHistory shortcut."""
         mock_method.return_value = Command(component=None)
         mock_job_operation.archive(name="random_name")
         mock_job_operation.service_client_01_2024_preview_arm.jobs.get.assert_called_once()
         mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
 
     @patch.object(Job, "_from_rest_object")
-    def test_restore(self, mock_method, mock_job_operation: JobOperations) -> None:
+    def test_restore_falls_back_to_legacy_put_when_runhistory_unavailable(
+        self, mock_method, mock_job_operation: JobOperations
+    ) -> None:
+        """Same fallback guarantee as test_archive_falls_back_to_legacy_put_when_runhistory_unavailable,
+        but for restore()."""
         mock_method.return_value = Command(component=None)
         mock_job_operation.restore(name="random_name")
         mock_job_operation.service_client_01_2024_preview_arm.jobs.get.assert_called_once()
         mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
+
+    @patch.object(JobOperations, "_get_job")
+    def test_archive_command_job_uses_runhistory_patch_shortcut(
+        self, mock_get_job, mock_job_operation: JobOperations
+    ) -> None:
+        """archive() on a CommandJob must PATCH RunHistory's 'hidden' flag directly and must
+        NOT fall back to the legacy create_or_update PUT round-trip (the round-trip is what
+        produced 'Could not find member secretsConfiguration on object of type CommandJob' when
+        a job fetched via the 2024-01-01-preview contract was re-PUT against the 2025-01-01-preview
+        endpoint, which had dropped that field)."""
+        from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
+
+        fake_job = Mock()
+        fake_job.properties.job_type = RestJobType.COMMAND
+        fake_job.properties.experiment_name = "exp1"
+        mock_get_job.return_value = fake_job
+        mock_job_operation._runs_operations_client = Mock()
+
+        mock_job_operation.archive(name="random_name")
+
+        add_mod = mock_job_operation._runs_operations._operation.add_or_modify_by_experiment_name
+        add_mod.assert_called_once()
+        call_kwargs = add_mod.call_args.kwargs
+        assert call_kwargs["experiment_name"] == "exp1"
+        assert call_kwargs["run_id"] == "random_name"
+        assert call_kwargs["body"].hidden is True
+        mock_job_operation._operation_2023_02_preview.create_or_update.assert_not_called()
+        mock_job_operation.service_client_01_2025_preview.jobs.create_or_update.assert_not_called()
+
+    @patch.object(JobOperations, "_get_job")
+    def test_restore_command_job_uses_runhistory_patch_shortcut(
+        self, mock_get_job, mock_job_operation: JobOperations
+    ) -> None:
+        """restore() on a CommandJob must PATCH RunHistory's 'hidden' flag to False directly
+        and must NOT fall back to the legacy create_or_update PUT round-trip."""
+        from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
+
+        fake_job = Mock()
+        fake_job.properties.job_type = RestJobType.COMMAND
+        fake_job.properties.experiment_name = "exp1"
+        mock_get_job.return_value = fake_job
+        mock_job_operation._runs_operations_client = Mock()
+
+        mock_job_operation.restore(name="random_name")
+
+        add_mod = mock_job_operation._runs_operations._operation.add_or_modify_by_experiment_name
+        add_mod.assert_called_once()
+        call_kwargs = add_mod.call_args.kwargs
+        assert call_kwargs["experiment_name"] == "exp1"
+        assert call_kwargs["run_id"] == "random_name"
+        assert call_kwargs["body"].hidden is False
+        mock_job_operation._operation_2023_02_preview.create_or_update.assert_not_called()
+        mock_job_operation.service_client_01_2025_preview.jobs.create_or_update.assert_not_called()
 
     def test_delete(self, mock_job_operation: JobOperations) -> None:
         mock_job_operation.begin_delete(name="random_name")

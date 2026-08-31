@@ -18,6 +18,7 @@
 
 ### Other Changes
 - Migrated SDK entities and their consumers off the per-version msrest REST clients onto the shared `arm_ml_service` hybrid client. This is an internal change; the on-the-wire request/response contract is unchanged.
+- Added unit test coverage asserting that `MLClient.jobs.archive`/`restore` route `CommandJob` through the RunHistory PATCH shortcut (not the legacy MFE PUT round-trip); the previous tests only asserted the pre-shortcut fallback behavior and never exercised the new path. No production code changed.
 
 ## 1.34.1 (2026-07-15)
 
