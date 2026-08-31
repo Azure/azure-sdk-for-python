@@ -119,6 +119,7 @@
         "azure.mgmt.dataprotection.models.PatchResourceRequestInput": "Microsoft.DataProtection.PatchResourceRequestInput",
         "azure.mgmt.dataprotection.models.PolicyInfo": "Microsoft.DataProtection.PolicyInfo",
         "azure.mgmt.dataprotection.models.PolicyParameters": "Microsoft.DataProtection.PolicyParameters",
+        "azure.mgmt.dataprotection.models.PostgreSqlFlexibleServerBackupDatasourceParameters": "Microsoft.DataProtection.PostgreSqlFlexibleServerBackupDatasourceParameters",
         "azure.mgmt.dataprotection.models.ProtectionStatusDetails": "Microsoft.DataProtection.ProtectionStatusDetails",
         "azure.mgmt.dataprotection.models.RangeBasedItemLevelRestoreCriteria": "Microsoft.DataProtection.RangeBasedItemLevelRestoreCriteria",
         "azure.mgmt.dataprotection.models.RecoveryPointDataStoreDetails": "Microsoft.DataProtection.RecoveryPointDataStoreDetails",
@@ -134,6 +135,7 @@
         "azure.mgmt.dataprotection.models.RestoreFilesTargetInfo": "Microsoft.DataProtection.RestoreFilesTargetInfo",
         "azure.mgmt.dataprotection.models.RestoreJobRecoveryPointDetails": "Microsoft.DataProtection.RestoreJobRecoveryPointDetails",
         "azure.mgmt.dataprotection.models.RestoreTargetInfo": "Microsoft.DataProtection.RestoreTargetInfo",
+        "azure.mgmt.dataprotection.models.ResumeProtectionRequest": "Microsoft.DataProtection.ResumeProtectionRequest",
         "azure.mgmt.dataprotection.models.RetentionTag": "Microsoft.DataProtection.RetentionTag",
         "azure.mgmt.dataprotection.models.ScheduleBasedBackupCriteria": "Microsoft.DataProtection.ScheduleBasedBackupCriteria",
         "azure.mgmt.dataprotection.models.ScheduleBasedTriggerContext": "Microsoft.DataProtection.ScheduleBasedTriggerContext",
@@ -169,6 +171,7 @@
         "azure.mgmt.dataprotection.models.BlobBackupRuleMode": "Microsoft.DataProtection.BlobBackupRuleMode",
         "azure.mgmt.dataprotection.models.BlobBackupPatternType": "Microsoft.DataProtection.BlobBackupPatternType",
         "azure.mgmt.dataprotection.models.AKSVolumeTypes": "Microsoft.DataProtection.AKSVolumeTypes",
+        "azure.mgmt.dataprotection.models.BackupSolutionType": "Microsoft.DataProtection.BackupSolutionType",
         "azure.mgmt.dataprotection.models.Status": "Microsoft.DataProtection.Status",
         "azure.mgmt.dataprotection.models.CurrentProtectionState": "Microsoft.DataProtection.CurrentProtectionState",
         "azure.mgmt.dataprotection.models.SecretStoreType": "Microsoft.DataProtection.SecretStoreType",
@@ -179,6 +182,7 @@
         "azure.mgmt.dataprotection.models.ExistingResourcePolicy": "Microsoft.DataProtection.ExistingResourcePolicy",
         "azure.mgmt.dataprotection.models.RestoreTargetLocationType": "Microsoft.DataProtection.RestoreTargetLocationType",
         "azure.mgmt.dataprotection.models.SourceDataStoreType": "Microsoft.DataProtection.SourceDataStoreType",
+        "azure.mgmt.dataprotection.models.ResumeProtectionRequestObjectType": "Microsoft.DataProtection.ResumeProtectionRequestObjectType",
         "azure.mgmt.dataprotection.models.SyncType": "Microsoft.DataProtection.SyncType",
         "azure.mgmt.dataprotection.models.AlertsState": "Microsoft.DataProtection.AlertsState",
         "azure.mgmt.dataprotection.models.ProvisioningState": "Microsoft.DataProtection.ProvisioningState",
@@ -354,5 +358,5 @@
         "azure.mgmt.dataprotection.operations.BackupInstancesExtensionRoutingOperations.list": "Microsoft.DataProtection.BackupInstancesExtensionRoutingOperationGroup.list",
         "azure.mgmt.dataprotection.aio.operations.BackupInstancesExtensionRoutingOperations.list": "Microsoft.DataProtection.BackupInstancesExtensionRoutingOperationGroup.list"
     },
-    "CrossLanguageVersion": "6dd052749fec"
+    "CrossLanguageVersion": "cb99eef1dbd7"
 }

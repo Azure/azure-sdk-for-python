@@ -61,6 +61,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/VaultCRUD/PutBackupVaultWithCMK.json
+# x-ms-original-file: 2026-04-01-preview/VaultCRUD/PutBackupVaultWithCMK.json
 if __name__ == "__main__":
     main()
