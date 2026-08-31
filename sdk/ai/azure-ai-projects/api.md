@@ -275,12 +275,75 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> None: ...
 
+        @overload
+        async def generate_agent(
+                self, 
+                body: GenerateVoiceAgentRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentDetails: ...
+
         @distributed_trace_async
         async def get(
                 self, 
                 agent_name: str, 
                 **kwargs: Any
             ) -> AgentDetails: ...
+
+        @overload
+        async def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                *, 
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
+                agent_display_name: Optional[str] = ..., 
+                app_version: Optional[str] = ..., 
+                bot_service_arm_id: Optional[str] = ..., 
+                can_respond_without_mention: Optional[bool] = ..., 
+                color_icon_base64: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                developer_name: Optional[str] = ..., 
+                developer_website_url: Optional[str] = ..., 
+                full_description: Optional[str] = ..., 
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
+                outline_icon_base64: Optional[str] = ..., 
+                privacy_url: Optional[str] = ..., 
+                publish_as_autopilot: Optional[bool] = ..., 
+                publish_scope: Union[str, Microsoft365PublishScope], 
+                short_description: Optional[str] = ..., 
+                terms_of_use_url: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @overload
+        async def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @overload
+        async def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get_microsoft365_publish_defaults(
+                self, 
+                agent_name: str, 
+                *, 
+                publish_as_digital_worker: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> Microsoft365PublishDefaults: ...
 
         @distributed_trace_async
         async def get_session(
@@ -353,6 +416,51 @@ namespace azure.ai.projects.aio.operations
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentVersionDetails]: ...
+
+        @overload
+        async def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                *, 
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
+                agent_display_name: Optional[str] = ..., 
+                app_version: Optional[str] = ..., 
+                bot_service_arm_id: Optional[str] = ..., 
+                can_respond_without_mention: Optional[bool] = ..., 
+                color_icon_base64: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                developer_name: Optional[str] = ..., 
+                developer_website_url: Optional[str] = ..., 
+                full_description: Optional[str] = ..., 
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
+                outline_icon_base64: Optional[str] = ..., 
+                privacy_url: Optional[str] = ..., 
+                publish_as_autopilot: Optional[bool] = ..., 
+                publish_scope: Union[str, Microsoft365PublishScope], 
+                short_description: Optional[str] = ..., 
+                terms_of_use_url: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
+
+        @overload
+        async def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
+
+        @overload
+        async def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
 
         @distributed_trace_async
         async def stop_session(
@@ -1537,6 +1645,7 @@ namespace azure.ai.projects.aio.operations
                 routine_name: str, 
                 *, 
                 action: Optional[RoutineAction] = ..., 
+                authorization: Optional[RoutineAuthorization] = ..., 
                 content_type: str = "application/json", 
                 description: Optional[str] = ..., 
                 enabled: Optional[bool] = ..., 
@@ -2467,7 +2576,29 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
+        READ1_ON1_DEVELOPERS = "read.1on1.developers"
+        READ1_ON1_MANAGER = "read.1on1.manager"
+        READ1_ON1_TENANT = "read.1on1.tenant"
+        READ_GROUP_ALLOWLISTED = "read.group.allowlisted"
+        READ_GROUP_DEVELOPERS = "read.group.developers"
+        READ_GROUP_MANAGER_INVITED = "read.group.manager-invited"
+        READ_GROUP_MANAGER_PRESENT = "read.group.manager-present"
+        READ_GROUP_TENANT = "read.group.tenant"
+        WRITE1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
+        WRITE1_ON1_DEVELOPERS = "write.1on1.developers"
+        WRITE1_ON1_MANAGER = "write.1on1.manager"
+        WRITE1_ON1_TENANT = "write.1on1.tenant"
+        WRITE_GROUP_ALLOWLISTED = "write.group.allowlisted"
+        WRITE_GROUP_DEVELOPERS = "write.group.developers"
+        WRITE_GROUP_MANAGER_INVITED = "write.group.manager-invited"
+        WRITE_GROUP_MANAGER_PRESENT = "write.group.manager-present"
+        WRITE_GROUP_TENANT = "write.group.tenant"
+
+
     class azure.ai.projects.models.ActivityProtocolConfiguration(_Model):
+        access_boundaries: Optional[list[Union[str, ActivityProtocolAccessBoundary]]]
         enable_m365_public_endpoint: Optional[bool]
 
         @overload
@@ -2611,6 +2742,7 @@ namespace azure.ai.projects.models
         agent_endpoint: Optional[AgentEndpointConfig]
         blueprint: Optional[AgentIdentity]
         blueprint_reference: Optional[AgentBlueprintReference]
+        digital_worker_type: Optional[Union[str, DigitalWorkerType]]
         id: str
         instance_identity: Optional[AgentIdentity]
         name: str
@@ -2625,6 +2757,7 @@ namespace azure.ai.projects.models
                 *, 
                 agent_card: Optional[AgentCard] = ..., 
                 agent_endpoint: Optional[AgentEndpointConfig] = ..., 
+                digital_worker_type: Optional[Union[str, DigitalWorkerType]] = ..., 
                 id: str, 
                 name: str, 
                 object: Literal[AgentObjectType.AGENT], 
@@ -2659,6 +2792,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.AgentEndpointConfig(_Model):
         authorization_schemes: Optional[list[AgentEndpointAuthorizationScheme]]
         protocol_configuration: Optional[ProtocolConfiguration]
+        publish_approval_status: Optional[Union[str, PublishApprovalStatus]]
         version_selector: Optional[VersionSelector]
 
         @overload
@@ -2681,6 +2815,7 @@ namespace azure.ai.projects.models
         INVOCATIONS_WS = "invocations_ws"
         MCP = "mcp"
         RESPONSES = "responses"
+        VOICE = "voice"
 
 
     class azure.ai.projects.models.AgentEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator='agent'):
@@ -2725,10 +2860,394 @@ namespace azure.ai.projects.models
         DISABLED = "disabled"
 
 
+    class azure.ai.projects.models.AgentInsight(_Model):
+        agent_name: str
+        agent_version: str
+        category: str
+        created_at: datetime
+        description: str
+        details: Optional[AgentInsightDetails]
+        id: str
+        monitor_id: str
+        severity: Union[str, AgentInsightSeverity]
+        status: Union[str, AgentInsightStatus]
+        title: str
+        trace_count: int
+        updated_at: datetime
+
+
+    class azure.ai.projects.models.AgentInsightDetails(_Model):
+        highlighted_traces: list[AgentInsightHighlightedTrace]
+        linked_traces: list[AgentInsightLinkedTrace]
+        recommended_actions: AgentInsightRecommendedAction
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                highlighted_traces: list[AgentInsightHighlightedTrace], 
+                linked_traces: list[AgentInsightLinkedTrace], 
+                recommended_actions: AgentInsightRecommendedAction
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightEstimatedCost(_Model):
+        amount: float
+        currency: Literal["USD"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                amount: float
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightHighlightedTrace(_Model):
+        duration_ms: timedelta
+        summary: str
+        timestamp: datetime
+        total_tokens: Optional[int]
+        trace_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                duration_ms: timedelta, 
+                summary: str, 
+                timestamp: datetime, 
+                total_tokens: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightLinkedTrace(_Model):
+        timestamp: datetime
+        trace_id: str
+
+
+    class azure.ai.projects.models.AgentInsightMonitor(_Model):
+        agent_name: str
+        enabled: bool
+        estimated_cost: Optional[AgentInsightEstimatedCost]
+        id: str
+        model_deployment_name: str
+        next_scheduled_run_at: Optional[datetime]
+        overview: AgentInsightsOverview
+        run_interval_hours: float
+        suspension: AgentInsightSuspension
+        updated_at: datetime
+
+
+    class azure.ai.projects.models.AgentInsightMonitorCreate(_Model):
+        agent_name: str
+        enabled: Optional[bool]
+        model_deployment_name: str
+        run_interval_hours: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                enabled: Optional[bool] = ..., 
+                model_deployment_name: str, 
+                run_interval_hours: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightMonitorListItem(_Model):
+        agent_name: str
+        enabled: bool
+        estimated_cost: Optional[AgentInsightEstimatedCost]
+        id: str
+        model_deployment_name: str
+        next_scheduled_run_at: Optional[datetime]
+        run_interval_hours: float
+        suspension: AgentInsightSuspension
+        updated_at: datetime
+
+
+    class azure.ai.projects.models.AgentInsightMonitorUpdate(_Model):
+        enabled: Optional[bool]
+        model_deployment_name: Optional[str]
+        overview_override: Optional[AgentInsightsOverviewOverride]
+        run_interval_hours: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enabled: Optional[bool] = ..., 
+                model_deployment_name: Optional[str] = ..., 
+                overview_override: Optional[AgentInsightsOverviewOverride] = ..., 
+                run_interval_hours: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightOverviewSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        GENERATED = "generated"
+        USER_OVERRIDE = "user_override"
+
+
+    class azure.ai.projects.models.AgentInsightPromptSurface(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INSTRUCTIONS = "instructions"
+        TOOL = "tool"
+
+
+    class azure.ai.projects.models.AgentInsightProposedFix(_Model):
+        changes: Optional[list[AgentInsightProposedFixChange]]
+        kind: Union[str, AgentInsightProposedFixKind]
+        text: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                changes: Optional[list[AgentInsightProposedFixChange]] = ..., 
+                kind: Union[str, AgentInsightProposedFixKind], 
+                text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightProposedFixChange(_Model):
+        diff: Optional[str]
+        language: Optional[str]
+        new_value: Optional[Any]
+        old_value: Optional[Any]
+        path: Optional[str]
+        surface: Optional[Union[str, AgentInsightPromptSurface]]
+        target: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                diff: Optional[str] = ..., 
+                language: Optional[str] = ..., 
+                new_value: Optional[Any] = ..., 
+                old_value: Optional[Any] = ..., 
+                path: Optional[str] = ..., 
+                surface: Optional[Union[str, AgentInsightPromptSurface]] = ..., 
+                target: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightProposedFixKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CODE_CHANGE = "code_change"
+        PROMPT_CHANGE = "prompt_change"
+        PROSE = "prose"
+
+
+    class azure.ai.projects.models.AgentInsightRecommendedAction(_Model):
+        proposed_fix: AgentInsightProposedFix
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                proposed_fix: AgentInsightProposedFix
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightRun(_Model):
+        agent_name: str
+        completed_at: Optional[datetime]
+        created_at: datetime
+        error: Optional[ApiError]
+        id: str
+        inputs: Optional[AgentInsightRunCreate]
+        model_deployment_name: str
+        monitor_id: str
+        result: Optional[AgentInsightRunResult]
+        started_at: Optional[datetime]
+        status: Union[str, JobStatus]
+        trigger: Union[str, AgentInsightRunTrigger]
+        updated_at: datetime
+        window_end: datetime
+        window_start: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                inputs: Optional[AgentInsightRunCreate] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightRunCreate(_Model):
+        lookback_hours: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                lookback_hours: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightRunResult(_Model):
+        insights_created: int
+        insights_reopened: int
+        insights_updated: int
+        token_usage: AgentInsightTokenUsage
+        traces_analyzed: int
+        traces_in_window: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                insights_created: int, 
+                insights_reopened: int, 
+                insights_updated: int, 
+                token_usage: AgentInsightTokenUsage, 
+                traces_analyzed: int, 
+                traces_in_window: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightRunTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ON_DEMAND = "on_demand"
+        SCHEDULED = "scheduled"
+
+
+    class azure.ai.projects.models.AgentInsightSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HIGH = "high"
+        LOW = "low"
+        MEDIUM = "medium"
+
+
+    class azure.ai.projects.models.AgentInsightStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE = "active"
+        IGNORED = "ignored"
+        RESOLVED = "resolved"
+
+
+    class azure.ai.projects.models.AgentInsightSuspension(_Model):
+        code: str
+        details: Optional[dict[str, Any]]
+        message: str
+        occurred_at: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: str, 
+                details: Optional[dict[str, Any]] = ..., 
+                message: str, 
+                occurred_at: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightTokenUsage(_Model):
+        cached_tokens: Optional[int]
+        input_tokens: int
+        output_tokens: int
+        total_tokens: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cached_tokens: Optional[int] = ..., 
+                input_tokens: int, 
+                output_tokens: int, 
+                total_tokens: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightUpdate(_Model):
+        status: Optional[Union[str, AgentInsightStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                status: Optional[Union[str, AgentInsightStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightsOverview(_Model):
+        content: str
+        source: Union[str, AgentInsightOverviewSource]
+        updated_at: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: str, 
+                source: Union[str, AgentInsightOverviewSource], 
+                updated_at: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightsOverviewOverride(_Model):
+        content: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EXTERNAL = "external"
         HOSTED = "hosted"
         PROMPT = "prompt"
+        VOICE = "voice"
         WORKFLOW = "workflow"
 
 
@@ -4363,6 +4882,25 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.CreateTranscriptionResponseJsonUsage(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CreateTranscriptionResponseJsonUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DURATION = "duration"
+        TOKENS = "tokens"
+
+
     class azure.ai.projects.models.CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AGENTIC_IDENTITY_PREVIEW = "AgenticIdentityToken_Preview"
         API_KEY = "ApiKey"
@@ -4934,6 +5472,10 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         MODEL_DEPLOYMENT = "ModelDeployment"
+
+
+    class azure.ai.projects.models.DigitalWorkerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        M365 = "m365"
 
 
     class azure.ai.projects.models.Dimension(_Model):
@@ -6038,6 +6580,36 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.GenerateVoiceAgentRequest(_Model):
+        description: Optional[str]
+        draft: Optional[bool]
+        goal: Optional[str]
+        kind: Literal[AgentKind.VOICE]
+        model: Optional[str]
+        model_type: Optional[Union[str, VoiceModelType]]
+        name: str
+        tools: Optional[list[VoiceAgentTool]]
+        use_case: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                draft: Optional[bool] = ..., 
+                goal: Optional[str] = ..., 
+                kind: Literal[AgentKind.VOICE], 
+                model: Optional[str] = ..., 
+                model_type: Optional[Union[str, VoiceModelType]] = ..., 
+                name: str, 
+                tools: Optional[list[VoiceAgentTool]] = ..., 
+                use_case: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.GenerationWarningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         INPUT_QUALITY = "input_quality"
 
@@ -6101,6 +6673,7 @@ namespace azure.ai.projects.models
         memory: str
         protocol_versions: Optional[list[ProtocolVersionRecord]]
         rai_config: RaiConfig
+        session_configuration: Optional[SessionConfiguration]
         telemetry_config: Optional[TelemetryConfig]
 
         @overload
@@ -6114,6 +6687,7 @@ namespace azure.ai.projects.models
                 memory: str, 
                 protocol_versions: Optional[list[ProtocolVersionRecord]] = ..., 
                 rai_config: Optional[RaiConfig] = ..., 
+                session_configuration: Optional[SessionConfiguration] = ..., 
                 telemetry_config: Optional[TelemetryConfig] = ...
             ) -> None: ...
 
@@ -6586,6 +7160,24 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.LogProbProperties(_Model):
+        bytes: list[int]
+        logprob: float
+        token: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bytes: list[int], 
+                logprob: float, 
+                token: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.LoraConfig(_Model):
         alpha: Optional[int]
         dropout: Optional[float]
@@ -6604,6 +7196,32 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.MCPListToolsTool(_Model):
+        annotations: Optional[MCPListToolsToolAnnotations]
+        description: Optional[str]
+        input_schema: MCPListToolsToolInputSchema
+        name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                annotations: Optional[MCPListToolsToolAnnotations] = ..., 
+                description: Optional[str] = ..., 
+                input_schema: MCPListToolsToolInputSchema, 
+                name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.MCPListToolsToolAnnotations(_Model):
+
+
+    class azure.ai.projects.models.MCPListToolsToolInputSchema(_Model):
 
 
     class azure.ai.projects.models.MCPTool(Tool, discriminator='mcp'):
@@ -7061,6 +7679,89 @@ namespace azure.ai.projects.models
         SUPERSEDED = "superseded"
 
 
+    class azure.ai.projects.models.Metadata(_Model):
+
+
+    class azure.ai.projects.models.Microsoft365PermissionScopes(_Model):
+        resource_app_id: str
+        scopes: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource_app_id: str, 
+                scopes: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.Microsoft365PublishDefaults(_Model):
+        agent_display_name: Optional[str]
+        agent_name: Optional[str]
+        app_publish_scope: Optional[Union[str, Microsoft365PublishScope]]
+        app_registration_client_id: Optional[str]
+        app_version: Optional[str]
+        bot_service_arm_id: Optional[str]
+        developer_name: Optional[str]
+        developer_website_url: Optional[str]
+        full_description: Optional[str]
+        privacy_url: Optional[str]
+        recommended_next_app_version: Optional[str]
+        short_description: Optional[str]
+        teams_app_id: Optional[str]
+        terms_of_use_url: Optional[str]
+        title_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_display_name: Optional[str] = ..., 
+                agent_name: Optional[str] = ..., 
+                app_publish_scope: Optional[Union[str, Microsoft365PublishScope]] = ..., 
+                app_registration_client_id: Optional[str] = ..., 
+                app_version: Optional[str] = ..., 
+                bot_service_arm_id: Optional[str] = ..., 
+                developer_name: Optional[str] = ..., 
+                developer_website_url: Optional[str] = ..., 
+                full_description: Optional[str] = ..., 
+                privacy_url: Optional[str] = ..., 
+                recommended_next_app_version: Optional[str] = ..., 
+                short_description: Optional[str] = ..., 
+                teams_app_id: Optional[str] = ..., 
+                terms_of_use_url: Optional[str] = ..., 
+                title_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.Microsoft365PublishResult(_Model):
+        teams_app_id: Optional[str]
+        title_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                teams_app_id: Optional[str] = ..., 
+                title_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.Microsoft365PublishScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PERSONAL = "Personal"
+        SHARED = "Shared"
+        TENANT = "Tenant"
+
+
     class azure.ai.projects.models.MicrosoftFabricPreviewTool(Tool, discriminator='fabric_dataagent_preview'):
         fabric_dataagent_preview: FabricDataAgentToolParameters
         type: Literal[ToolType.FABRIC_DATAAGENT_PREVIEW]
@@ -7280,6 +7981,64 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.OmitPropertiesRealtimeResponse(_Model):
+        conversation_id: Optional[str]
+        id: Optional[str]
+        max_output_tokens: Optional[Union[int, Literal["inf"]]]
+        object: Optional[Literal["response"]]
+        output_modalities: Optional[list[Literal["text", "audio"]]]
+        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
+        status_details: Optional[RealtimeResponseStatusDetails]
+        usage: Optional[RealtimeResponseUsage]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                conversation_id: Optional[str] = ..., 
+                id: Optional[str] = ..., 
+                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
+                object: Optional[Literal[response]] = ..., 
+                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
+                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
+                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
+                usage: Optional[RealtimeResponseUsage] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.OmitPropertiesRealtimeResponse1(_Model):
+        conversation_id: Optional[str]
+        id: Optional[str]
+        max_output_tokens: Optional[Union[int, Literal["inf"]]]
+        metadata: Optional[Metadata]
+        object: Optional[Literal["response"]]
+        output_modalities: Optional[list[Literal["text", "audio"]]]
+        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
+        status_details: Optional[RealtimeResponseStatusDetails]
+        usage: Optional[RealtimeResponseUsage]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                conversation_id: Optional[str] = ..., 
+                id: Optional[str] = ..., 
+                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
+                metadata: Optional[Metadata] = ..., 
+                object: Optional[Literal[response]] = ..., 
+                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
+                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
+                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
+                usage: Optional[RealtimeResponseUsage] = ...
+            ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -7563,6 +8322,20 @@ namespace azure.ai.projects.models
         TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
 
 
+    class azure.ai.projects.models.PickPropertiesVoiceAgentAudioConfig(_Model):
+        output: Optional[VoiceAgentAudioOutputConfig]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                output: Optional[VoiceAgentAudioOutputConfig] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ProceduralMemoryItem(MemoryItem, discriminator='procedural'):
         content: str
         kind: Literal[MemoryItemKind.PROCEDURAL]
@@ -7754,6 +8527,14 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.PublishApprovalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPROVED = "approved"
+        NOT_PUBLISHED = "not_published"
+        NO_APPROVAL_NEEDED = "no_approval_needed"
+        PENDING = "pending"
+        REJECTED = "rejected"
+
+
     class azure.ai.projects.models.RaiConfig(_Model):
         rai_policy_name: str
 
@@ -7789,6 +8570,1713 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeAudioFormats(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeAudioFormatsAudioPcm(RealtimeAudioFormats, discriminator='audio/pcm'):
+        rate: Optional[Literal[24000]]
+        type: Literal[RealtimeAudioFormatsType.AUDIO_PCM]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                rate: Optional[Literal[24000]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeAudioFormatsAudioPcma(RealtimeAudioFormats, discriminator='audio/pcma'):
+        type: Literal[RealtimeAudioFormatsType.AUDIO_PCMA]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeAudioFormatsAudioPcmu(RealtimeAudioFormats, discriminator='audio/pcmu'):
+        type: Literal[RealtimeAudioFormatsType.AUDIO_PCMU]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeAudioFormatsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUDIO_PCM = "audio/pcm"
+        AUDIO_PCMA = "audio/pcma"
+        AUDIO_PCMU = "audio/pcmu"
+
+
+    class azure.ai.projects.models.RealtimeClientEvent(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeClientEventConversationItemCreate(RealtimeClientEvent, discriminator='conversation.item.create'):
+        event_id: Optional[str]
+        item: RealtimeConversationItem
+        previous_item_id: Optional[str]
+        type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_CREATE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ..., 
+                item: RealtimeConversationItem, 
+                previous_item_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeClientEventConversationItemDelete(RealtimeClientEvent, discriminator='conversation.item.delete'):
+        event_id: Optional[str]
+        item_id: str
+        type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_DELETE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ..., 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeClientEventConversationItemRetrieve(RealtimeClientEvent, discriminator='conversation.item.retrieve'):
+        event_id: Optional[str]
+        item_id: str
+        type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_RETRIEVE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ..., 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeClientEventConversationItemTruncate(RealtimeClientEvent, discriminator='conversation.item.truncate'):
+        audio_end_ms: int
+        content_index: int
+        event_id: Optional[str]
+        item_id: str
+        type: Literal[RealtimeClientEventType.CONVERSATION_ITEM_TRUNCATE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio_end_ms: int, 
+                content_index: int, 
+                event_id: Optional[str] = ..., 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeClientEventInputAudioBufferAppend(RealtimeClientEvent, discriminator='input_audio_buffer.append'):
+        audio: str
+        event_id: Optional[str]
+        type: Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_APPEND]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: str, 
+                event_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeClientEventInputAudioBufferClear(RealtimeClientEvent, discriminator='input_audio_buffer.clear'):
+        event_id: Optional[str]
+        type: Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_CLEAR]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeClientEventInputAudioBufferCommit(RealtimeClientEvent, discriminator='input_audio_buffer.commit'):
+        event_id: Optional[str]
+        type: Literal[RealtimeClientEventType.INPUT_AUDIO_BUFFER_COMMIT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeClientEventOutputAudioBufferClear(RealtimeClientEvent, discriminator='output_audio_buffer.clear'):
+        event_id: Optional[str]
+        type: Literal[RealtimeClientEventType.OUTPUT_AUDIO_BUFFER_CLEAR]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeClientEventResponseCancel(RealtimeClientEvent, discriminator='response.cancel'):
+        event_id: Optional[str]
+        response_id: Optional[str]
+        type: Literal[RealtimeClientEventType.RESPONSE_CANCEL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ..., 
+                response_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeClientEventResponseCreate(RealtimeClientEvent, discriminator='response.create'):
+        event_id: Optional[str]
+        response: Optional[VoiceAgentResponseCreateParams]
+        type: Literal[RealtimeClientEventType.RESPONSE_CREATE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ..., 
+                response: Optional[VoiceAgentResponseCreateParams] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CONVERSATION_ITEM_CREATE = "conversation.item.create"
+        CONVERSATION_ITEM_DELETE = "conversation.item.delete"
+        CONVERSATION_ITEM_RETRIEVE = "conversation.item.retrieve"
+        CONVERSATION_ITEM_TRUNCATE = "conversation.item.truncate"
+        INPUT_AUDIO_BUFFER_APPEND = "input_audio_buffer.append"
+        INPUT_AUDIO_BUFFER_CLEAR = "input_audio_buffer.clear"
+        INPUT_AUDIO_BUFFER_COMMIT = "input_audio_buffer.commit"
+        OUTPUT_AUDIO_BUFFER_CLEAR = "output_audio_buffer.clear"
+        RESPONSE_CANCEL = "response.cancel"
+        RESPONSE_CREATE = "response.create"
+        SESSION_AVATAR_CONNECT = "session.avatar.connect"
+        SESSION_UPDATE = "session.update"
+
+
+    class azure.ai.projects.models.RealtimeConversationItem(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeConversationItemFunctionCall(RealtimeConversationItem, discriminator='function_call'):
+        arguments: str
+        call_id: Optional[str]
+        created_at: Optional[datetime]
+        id: Optional[str]
+        name: str
+        object: Optional[Literal["item"]]
+        response_id: Optional[str]
+        status: Optional[Literal["completed", "incomplete", "in_progress"]]
+        type: Literal[RealtimeConversationItemType.FUNCTION_CALL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                arguments: str, 
+                call_id: Optional[str] = ..., 
+                id: Optional[str] = ..., 
+                name: str, 
+                object: Optional[Literal[item]] = ..., 
+                status: Optional[Literal[completed, incomplete, in_progress]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeConversationItemFunctionCallOutput(RealtimeConversationItem, discriminator='function_call_output'):
+        call_id: str
+        created_at: Optional[datetime]
+        id: Optional[str]
+        name: Optional[str]
+        object: Optional[Literal["item"]]
+        output: str
+        response_id: Optional[str]
+        status: Optional[Literal["completed", "incomplete", "in_progress"]]
+        type: Literal[RealtimeConversationItemType.FUNCTION_CALL_OUTPUT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                call_id: str, 
+                id: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                object: Optional[Literal[item]] = ..., 
+                output: str, 
+                status: Optional[Literal[completed, incomplete, in_progress]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FUNCTION_CALL = "function_call"
+        FUNCTION_CALL_OUTPUT = "function_call_output"
+        MCP_APPROVAL_REQUEST = "mcp_approval_request"
+        MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+        MCP_CALL = "mcp_call"
+        MCP_LIST_TOOLS = "mcp_list_tools"
+
+
+    class azure.ai.projects.models.RealtimeFunctionTool(_Model):
+        description: Optional[str]
+        name: Optional[str]
+        parameters: Optional[RealtimeFunctionToolParameters]
+        type: Optional[Literal["function"]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                parameters: Optional[RealtimeFunctionToolParameters] = ..., 
+                type: Optional[Literal[function]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeFunctionToolParameters(_Model):
+
+
+    class azure.ai.projects.models.RealtimeMCPApprovalRequest(RealtimeConversationItem, discriminator='mcp_approval_request'):
+        arguments: str
+        created_at: Optional[datetime]
+        id: str
+        name: str
+        response_id: Optional[str]
+        server_label: str
+        type: Literal[RealtimeConversationItemType.MCP_APPROVAL_REQUEST]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                arguments: str, 
+                id: str, 
+                name: str, 
+                server_label: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeMCPApprovalResponse(RealtimeConversationItem, discriminator='mcp_approval_response'):
+        approval_request_id: str
+        approve: bool
+        created_at: Optional[datetime]
+        id: str
+        reason: Optional[str]
+        response_id: Optional[str]
+        type: Literal[RealtimeConversationItemType.MCP_APPROVAL_RESPONSE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                approval_request_id: str, 
+                approve: bool, 
+                id: str, 
+                reason: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeMCPError(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeMCPHTTPError(RealtimeMCPError, discriminator='http_error'):
+        code: int
+        message: str
+        type: Literal[RealtimeMcpErrorType.HTTP_ERROR]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: int, 
+                message: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeMCPListTools(RealtimeConversationItem, discriminator='mcp_list_tools'):
+        created_at: Optional[datetime]
+        id: Optional[str]
+        response_id: Optional[str]
+        server_label: str
+        tools: list[MCPListToolsTool]
+        type: Literal[RealtimeConversationItemType.MCP_LIST_TOOLS]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ..., 
+                server_label: str, 
+                tools: list[MCPListToolsTool]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeMCPProtocolError(RealtimeMCPError, discriminator='protocol_error'):
+        code: int
+        message: str
+        type: Literal[RealtimeMcpErrorType.PROTOCOL_ERROR]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: int, 
+                message: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeMCPToolCall(RealtimeConversationItem, discriminator='mcp_call'):
+        approval_request_id: Optional[str]
+        arguments: str
+        created_at: Optional[datetime]
+        error: Optional[RealtimeMCPError]
+        id: str
+        name: str
+        output: Optional[str]
+        response_id: Optional[str]
+        server_label: str
+        type: Literal[RealtimeConversationItemType.MCP_CALL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                approval_request_id: Optional[str] = ..., 
+                arguments: str, 
+                error: Optional[RealtimeMCPError] = ..., 
+                id: str, 
+                name: str, 
+                output: Optional[str] = ..., 
+                server_label: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeMCPToolExecutionError(RealtimeMCPError, discriminator='tool_execution_error'):
+        message: str
+        type: Literal[RealtimeMcpErrorType.TOOL_EXECUTION_ERROR]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                message: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeMcpErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HTTP_ERROR = "http_error"
+        PROTOCOL_ERROR = "protocol_error"
+        TOOL_EXECUTION_ERROR = "tool_execution_error"
+
+
+    class azure.ai.projects.models.RealtimeReasoning(_Model):
+        effort: Optional[Union[str, RealtimeReasoningEffort]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                effort: Optional[Union[str, RealtimeReasoningEffort]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HIGH = "high"
+        LOW = "low"
+        MEDIUM = "medium"
+        MINIMAL = "minimal"
+        XHIGH = "xhigh"
+
+
+    class azure.ai.projects.models.RealtimeResponseStatusDetails(_Model):
+        error: Optional[RealtimeResponseStatusDetailsError]
+        reason: Optional[Literal["turn_detected", "client_cancelled", "max_output_tokens", "content_filter"]]
+        type: Optional[Literal["completed", "cancelled", "failed", "incomplete"]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                error: Optional[RealtimeResponseStatusDetailsError] = ..., 
+                reason: Optional[Literal[turn_detected, client_cancelled, max_output_tokens, content_filter]] = ..., 
+                type: Optional[Literal[completed, cancelled, failed, incomplete]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseStatusDetailsError(_Model):
+        code: Optional[str]
+        type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: Optional[str] = ..., 
+                type: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseUsage(_Model):
+        input_token_details: Optional[RealtimeResponseUsageInputTokenDetails]
+        input_tokens: Optional[int]
+        output_token_details: Optional[RealtimeResponseUsageOutputTokenDetails]
+        output_tokens: Optional[int]
+        total_tokens: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                input_token_details: Optional[RealtimeResponseUsageInputTokenDetails] = ..., 
+                input_tokens: Optional[int] = ..., 
+                output_token_details: Optional[RealtimeResponseUsageOutputTokenDetails] = ..., 
+                output_tokens: Optional[int] = ..., 
+                total_tokens: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseUsageInputTokenDetails(_Model):
+        audio_tokens: Optional[int]
+        cached_tokens: Optional[int]
+        cached_tokens_details: Optional[RealtimeResponseUsageInputTokenDetailsCachedTokensDetails]
+        image_tokens: Optional[int]
+        text_tokens: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio_tokens: Optional[int] = ..., 
+                cached_tokens: Optional[int] = ..., 
+                cached_tokens_details: Optional[RealtimeResponseUsageInputTokenDetailsCachedTokensDetails] = ..., 
+                image_tokens: Optional[int] = ..., 
+                text_tokens: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseUsageInputTokenDetailsCachedTokensDetails(_Model):
+        audio_tokens: Optional[int]
+        image_tokens: Optional[int]
+        text_tokens: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio_tokens: Optional[int] = ..., 
+                image_tokens: Optional[int] = ..., 
+                text_tokens: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseUsageOutputTokenDetails(_Model):
+        audio_tokens: Optional[int]
+        text_tokens: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio_tokens: Optional[int] = ..., 
+                text_tokens: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEvent(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventConversationItemAdded(RealtimeServerEvent, discriminator='conversation.item.added'):
+        event_id: str
+        item: RealtimeConversationItem
+        previous_item_id: Optional[str]
+        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_ADDED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item: RealtimeConversationItem, 
+                previous_item_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventConversationItemCreated(RealtimeServerEvent, discriminator='conversation.item.created'):
+        event_id: str
+        item: RealtimeConversationItem
+        previous_item_id: Optional[str]
+        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_CREATED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item: RealtimeConversationItem, 
+                previous_item_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventConversationItemDeleted(RealtimeServerEvent, discriminator='conversation.item.deleted'):
+        event_id: str
+        item_id: str
+        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_DELETED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventConversationItemDone(RealtimeServerEvent, discriminator='conversation.item.done'):
+        event_id: str
+        item: RealtimeConversationItem
+        previous_item_id: Optional[str]
+        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item: RealtimeConversationItem, 
+                previous_item_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventConversationItemInputAudioTranscriptionCompleted(RealtimeServerEvent, discriminator='conversation.item.input_audio_transcription.completed'):
+        content_index: int
+        event_id: str
+        item_id: str
+        logprobs: Optional[list[LogProbProperties]]
+        phrases: Optional[list[VoiceAgentTranscriptionPhrase]]
+        transcript: str
+        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED]
+        usage: Union[TranscriptTextUsageTokens, TranscriptTextUsageDuration]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                event_id: str, 
+                item_id: str, 
+                logprobs: Optional[list[LogProbProperties]] = ..., 
+                phrases: Optional[list[VoiceAgentTranscriptionPhrase]] = ..., 
+                transcript: str, 
+                usage: Union[TranscriptTextUsageTokens, TranscriptTextUsageDuration]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventConversationItemInputAudioTranscriptionDelta(RealtimeServerEvent, discriminator='conversation.item.input_audio_transcription.delta'):
+        content_index: Optional[int]
+        delta: Optional[str]
+        event_id: str
+        item_id: str
+        logprobs: Optional[list[LogProbProperties]]
+        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: Optional[int] = ..., 
+                delta: Optional[str] = ..., 
+                event_id: str, 
+                item_id: str, 
+                logprobs: Optional[list[LogProbProperties]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventConversationItemInputAudioTranscriptionFailed(RealtimeServerEvent, discriminator='conversation.item.input_audio_transcription.failed'):
+        content_index: int
+        error: RealtimeServerEventConversationItemInputAudioTranscriptionFailedError
+        event_id: str
+        item_id: str
+        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                error: RealtimeServerEventConversationItemInputAudioTranscriptionFailedError, 
+                event_id: str, 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventConversationItemInputAudioTranscriptionFailedError(_Model):
+        code: Optional[str]
+        message: Optional[str]
+        param: Optional[str]
+        type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: Optional[str] = ..., 
+                message: Optional[str] = ..., 
+                param: Optional[str] = ..., 
+                type: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventConversationItemInputAudioTranscriptionSegment(RealtimeServerEvent, discriminator='conversation.item.input_audio_transcription.segment'):
+        content_index: int
+        end: float
+        event_id: str
+        id: str
+        item_id: str
+        speaker: str
+        start: float
+        text: str
+        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                end: float, 
+                event_id: str, 
+                id: str, 
+                item_id: str, 
+                speaker: str, 
+                start: float, 
+                text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventConversationItemRetrieved(RealtimeServerEvent, discriminator='conversation.item.retrieved'):
+        event_id: str
+        item: RealtimeConversationItem
+        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_RETRIEVED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item: RealtimeConversationItem
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventConversationItemTruncated(RealtimeServerEvent, discriminator='conversation.item.truncated'):
+        audio_end_ms: int
+        content_index: int
+        event_id: str
+        item: Optional[RealtimeConversationItem]
+        item_id: str
+        type: Literal[RealtimeServerEventType.CONVERSATION_ITEM_TRUNCATED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio_end_ms: int, 
+                content_index: int, 
+                event_id: str, 
+                item: Optional[RealtimeConversationItem] = ..., 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventError(_Model):
+        error: RealtimeServerEventErrorError
+        event_id: str
+        type: Literal["error"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                error: RealtimeServerEventErrorError, 
+                event_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventErrorError(_Model):
+        code: Optional[str]
+        event_id: Optional[str]
+        message: str
+        param: Optional[str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: Optional[str] = ..., 
+                event_id: Optional[str] = ..., 
+                message: str, 
+                param: Optional[str] = ..., 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventInputAudioBufferCleared(RealtimeServerEvent, discriminator='input_audio_buffer.cleared'):
+        event_id: str
+        type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_CLEARED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventInputAudioBufferCommitted(RealtimeServerEvent, discriminator='input_audio_buffer.committed'):
+        event_id: str
+        item_id: str
+        previous_item_id: Optional[str]
+        type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_COMMITTED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item_id: str, 
+                previous_item_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventInputAudioBufferSpeechStarted(RealtimeServerEvent, discriminator='input_audio_buffer.speech_started'):
+        audio_start_ms: int
+        event_id: str
+        item_id: str
+        type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio_start_ms: int, 
+                event_id: str, 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventInputAudioBufferSpeechStopped(RealtimeServerEvent, discriminator='input_audio_buffer.speech_stopped'):
+        audio_end_ms: int
+        event_id: str
+        item_id: str
+        type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio_end_ms: int, 
+                event_id: str, 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventInputAudioBufferTimeoutTriggered(RealtimeServerEvent, discriminator='input_audio_buffer.timeout_triggered'):
+        audio_end_ms: int
+        audio_start_ms: int
+        event_id: str
+        item_id: str
+        type: Literal[RealtimeServerEventType.INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio_end_ms: int, 
+                audio_start_ms: int, 
+                event_id: str, 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventMCPListToolsCompleted(RealtimeServerEvent, discriminator='mcp_list_tools.completed'):
+        event_id: str
+        item_id: str
+        type: Literal[RealtimeServerEventType.MCP_LIST_TOOLS_COMPLETED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventMCPListToolsFailed(RealtimeServerEvent, discriminator='mcp_list_tools.failed'):
+        event_id: str
+        item_id: str
+        type: Literal[RealtimeServerEventType.MCP_LIST_TOOLS_FAILED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventMCPListToolsInProgress(RealtimeServerEvent, discriminator='mcp_list_tools.in_progress'):
+        event_id: str
+        item_id: str
+        type: Literal[RealtimeServerEventType.MCP_LIST_TOOLS_IN_PROGRESS]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventOutputAudioBufferCleared(RealtimeServerEvent, discriminator='output_audio_buffer.cleared'):
+        event_id: str
+        response_id: str
+        type: Literal[RealtimeServerEventType.OUTPUT_AUDIO_BUFFER_CLEARED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventRateLimitsUpdated(RealtimeServerEvent, discriminator='rate_limits.updated'):
+        event_id: str
+        rate_limits: list[RealtimeServerEventRateLimitsUpdatedRateLimits]
+        type: Literal[RealtimeServerEventType.RATE_LIMITS_UPDATED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                rate_limits: list[RealtimeServerEventRateLimitsUpdatedRateLimits]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventRateLimitsUpdatedRateLimits(_Model):
+        limit: Optional[int]
+        name: Optional[Literal["requests", "tokens"]]
+        remaining: Optional[int]
+        reset_seconds: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                limit: Optional[int] = ..., 
+                name: Optional[Literal[requests, tokens]] = ..., 
+                remaining: Optional[int] = ..., 
+                reset_seconds: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseAudioDelta(RealtimeServerEvent, discriminator='response.output_audio.delta'):
+        content_index: int
+        delta: bytes
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DELTA]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                delta: bytes, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseAudioDone(RealtimeServerEvent, discriminator='response.output_audio.done'):
+        content_index: int
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseAudioTranscriptDelta(RealtimeServerEvent, discriminator='response.output_audio_transcript.delta'):
+        content_index: int
+        delta: str
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                delta: str, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseAudioTranscriptDone(RealtimeServerEvent, discriminator='response.output_audio_transcript.done'):
+        content_index: int
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        transcript: str
+        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str, 
+                transcript: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseContentPartAdded(RealtimeServerEvent, discriminator='response.content_part.added'):
+        content_index: int
+        event_id: str
+        item_id: str
+        output_index: int
+        part: RealtimeServerEventResponseContentPartAddedPart
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_ADDED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                part: RealtimeServerEventResponseContentPartAddedPart, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseContentPartAddedPart(_Model):
+        audio: Optional[str]
+        text: Optional[str]
+        transcript: Optional[str]
+        type: Optional[Literal["audio", "text"]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: Optional[str] = ..., 
+                text: Optional[str] = ..., 
+                transcript: Optional[str] = ..., 
+                type: Optional[Literal[audio, text]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseContentPartDone(RealtimeServerEvent, discriminator='response.content_part.done'):
+        content_index: int
+        event_id: str
+        item_id: str
+        output_index: int
+        part: RealtimeServerEventResponseContentPartDonePart
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_CONTENT_PART_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                part: RealtimeServerEventResponseContentPartDonePart, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseContentPartDonePart(_Model):
+        audio: Optional[str]
+        format: Optional[RealtimeAudioFormats]
+        text: Optional[str]
+        transcript: Optional[str]
+        type: Optional[Literal["audio", "text"]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: Optional[str] = ..., 
+                format: Optional[RealtimeAudioFormats] = ..., 
+                text: Optional[str] = ..., 
+                transcript: Optional[str] = ..., 
+                type: Optional[Literal[audio, text]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseCreated(RealtimeServerEvent, discriminator='response.created'):
+        event_id: str
+        response: VoiceAgentRealtimeResponse
+        type: Literal[RealtimeServerEventType.RESPONSE_CREATED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                response: VoiceAgentRealtimeResponse
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseDone(RealtimeServerEvent, discriminator='response.done'):
+        event_id: str
+        response: VoiceAgentRealtimeResponse
+        type: Literal[RealtimeServerEventType.RESPONSE_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                response: VoiceAgentRealtimeResponse
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseFunctionCallArgumentsDelta(RealtimeServerEvent, discriminator='response.function_call_arguments.delta'):
+        call_id: str
+        delta: str
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                call_id: str, 
+                delta: str, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseFunctionCallArgumentsDone(RealtimeServerEvent, discriminator='response.function_call_arguments.done'):
+        arguments: str
+        call_id: str
+        event_id: str
+        item_id: str
+        name: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                arguments: str, 
+                call_id: str, 
+                event_id: str, 
+                item_id: str, 
+                name: str, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseMCPCallArgumentsDelta(RealtimeServerEvent, discriminator='response.mcp_call_arguments.delta'):
+        delta: str
+        event_id: str
+        item_id: str
+        obfuscation: Optional[str]
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                delta: str, 
+                event_id: str, 
+                item_id: str, 
+                obfuscation: Optional[str] = ..., 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseMCPCallArgumentsDone(RealtimeServerEvent, discriminator='response.mcp_call_arguments.done'):
+        arguments: str
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                arguments: str, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseMCPCallCompleted(RealtimeServerEvent, discriminator='response.mcp_call.completed'):
+        event_id: str
+        item_id: str
+        output_index: int
+        type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_COMPLETED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseMCPCallFailed(RealtimeServerEvent, discriminator='response.mcp_call.failed'):
+        event_id: str
+        item_id: str
+        output_index: int
+        type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_FAILED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseMCPCallInProgress(RealtimeServerEvent, discriminator='response.mcp_call.in_progress'):
+        event_id: str
+        item_id: str
+        output_index: int
+        type: Literal[RealtimeServerEventType.RESPONSE_MCP_CALL_IN_PROGRESS]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseOutputItemAdded(RealtimeServerEvent, discriminator='response.output_item.added'):
+        event_id: str
+        item: RealtimeConversationItem
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_ADDED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item: RealtimeConversationItem, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseOutputItemDone(RealtimeServerEvent, discriminator='response.output_item.done'):
+        event_id: str
+        item: RealtimeConversationItem
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_ITEM_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item: RealtimeConversationItem, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseTextDelta(RealtimeServerEvent, discriminator='response.output_text.delta'):
+        content_index: int
+        delta: str
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DELTA]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                delta: str, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventResponseTextDone(RealtimeServerEvent, discriminator='response.output_text.done'):
+        content_index: int
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        text: str
+        type: Literal[RealtimeServerEventType.RESPONSE_OUTPUT_TEXT_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str, 
+                text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventSessionCreated(RealtimeServerEvent, discriminator='session.created'):
+        conversation_id: Optional[str]
+        event_id: str
+        session: VoiceAgentSessionResponse
+        type: Literal[RealtimeServerEventType.SESSION_CREATED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                conversation_id: Optional[str] = ..., 
+                event_id: str, 
+                session: VoiceAgentSessionResponse
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventSessionUpdated(RealtimeServerEvent, discriminator='session.updated'):
+        event_id: str
+        session: VoiceAgentSessionResponse
+        type: Literal[RealtimeServerEventType.SESSION_UPDATED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                session: VoiceAgentSessionResponse
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CONVERSATION_CREATED = "conversation.created"
+        CONVERSATION_ITEM_ADDED = "conversation.item.added"
+        CONVERSATION_ITEM_CREATED = "conversation.item.created"
+        CONVERSATION_ITEM_DELETED = "conversation.item.deleted"
+        CONVERSATION_ITEM_DONE = "conversation.item.done"
+        CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED = "conversation.item.input_audio_transcription.completed"
+        CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA = "conversation.item.input_audio_transcription.delta"
+        CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED = "conversation.item.input_audio_transcription.failed"
+        CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT = "conversation.item.input_audio_transcription.segment"
+        CONVERSATION_ITEM_RETRIEVED = "conversation.item.retrieved"
+        CONVERSATION_ITEM_TRUNCATED = "conversation.item.truncated"
+        ERROR = "error"
+        INPUT_AUDIO_BUFFER_CLEARED = "input_audio_buffer.cleared"
+        INPUT_AUDIO_BUFFER_COMMITTED = "input_audio_buffer.committed"
+        INPUT_AUDIO_BUFFER_DTMF_EVENT_RECEIVED = "input_audio_buffer.dtmf_event_received"
+        INPUT_AUDIO_BUFFER_SPEECH_STARTED = "input_audio_buffer.speech_started"
+        INPUT_AUDIO_BUFFER_SPEECH_STOPPED = "input_audio_buffer.speech_stopped"
+        INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED = "input_audio_buffer.timeout_triggered"
+        MCP_LIST_TOOLS_COMPLETED = "mcp_list_tools.completed"
+        MCP_LIST_TOOLS_FAILED = "mcp_list_tools.failed"
+        MCP_LIST_TOOLS_IN_PROGRESS = "mcp_list_tools.in_progress"
+        OUTPUT_AUDIO_BUFFER_CLEARED = "output_audio_buffer.cleared"
+        OUTPUT_AUDIO_BUFFER_STARTED = "output_audio_buffer.started"
+        OUTPUT_AUDIO_BUFFER_STOPPED = "output_audio_buffer.stopped"
+        RATE_LIMITS_UPDATED = "rate_limits.updated"
+        RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
+        RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
+        RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
+        RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
+        RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
+        RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
+        RESPONSE_CONTENT_PART_ADDED = "response.content_part.added"
+        RESPONSE_CONTENT_PART_DONE = "response.content_part.done"
+        RESPONSE_CREATED = "response.created"
+        RESPONSE_DONE = "response.done"
+        RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
+        RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
+        RESPONSE_MCP_CALL_ARGUMENTS_DELTA = "response.mcp_call_arguments.delta"
+        RESPONSE_MCP_CALL_ARGUMENTS_DONE = "response.mcp_call_arguments.done"
+        RESPONSE_MCP_CALL_COMPLETED = "response.mcp_call.completed"
+        RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
+        RESPONSE_MCP_CALL_IN_PROGRESS = "response.mcp_call.in_progress"
+        RESPONSE_OUTPUT_AUDIO_DELTA = "response.output_audio.delta"
+        RESPONSE_OUTPUT_AUDIO_DONE = "response.output_audio.done"
+        RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA = "response.output_audio_transcript.delta"
+        RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE = "response.output_audio_transcript.done"
+        RESPONSE_OUTPUT_ITEM_ADDED = "response.output_item.added"
+        RESPONSE_OUTPUT_ITEM_DONE = "response.output_item.done"
+        RESPONSE_OUTPUT_TEXT_DELTA = "response.output_text.delta"
+        RESPONSE_OUTPUT_TEXT_DONE = "response.output_text.done"
+        RESPONSE_VIDEO_DELTA = "response.video.delta"
+        SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
+        SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
+        SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
+        SESSION_CREATED = "session.created"
+        SESSION_UPDATED = "session.updated"
+        WARNING = "warning"
 
 
     class azure.ai.projects.models.Reasoning(_Model):
@@ -8047,6 +10535,25 @@ namespace azure.ai.projects.models
         QUEUED_DISPATCH = "queued_dispatch"
         SCHEDULE_DELIVERY = "schedule_delivery"
         TIMER_DELIVERY = "timer_delivery"
+
+
+    class azure.ai.projects.models.RoutineAuthorization(_Model):
+        identity: Optional[Union[str, RoutineDispatchIdentity]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[Union[str, RoutineDispatchIdentity]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RoutineDispatchIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENT = "agent"
+        CREATOR = "creator"
 
 
     class azure.ai.projects.models.RoutineDispatchPayload(_Model):
@@ -8341,6 +10848,20 @@ namespace azure.ai.projects.models
         MEDIUM = "medium"
 
 
+    class azure.ai.projects.models.SessionConfiguration(_Model):
+        idle_timeout_seconds: Optional[timedelta]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                idle_timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.SessionDirectoryEntry(_Model):
         is_directory: bool
         modified_time: datetime
@@ -8420,6 +10941,29 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 sharepoint_grounding_preview: SharepointGroundingToolParameters
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ShellToolboxTool(ToolboxTool, discriminator='shell'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        description: str
+        environment: ToolboxShellEnvironment
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.SHELL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                description: Optional[str] = ..., 
+                environment: ToolboxShellEnvironment, 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -8971,6 +11515,12 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUTO = "auto"
+        NONE = "none"
+        REQUIRED = "required"
+
+
     class azure.ai.projects.models.ToolChoiceParam(_Model):
         type: str
 
@@ -9146,6 +11696,7 @@ namespace azure.ai.projects.models
         SHELL = "shell"
         TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
         TOOL_SEARCH = "tool_search"
+        WEB_IQ_PREVIEW = "web_iq_preview"
         WEB_SEARCH = "web_search"
         WEB_SEARCH_PREVIEW = "web_search_preview"
         WORK_IQ_PREVIEW = "work_iq_preview"
@@ -9221,6 +11772,80 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ToolboxShellContainerAutoEnvironment(ToolboxShellEnvironment, discriminator='container_auto'):
+        file_ids: Optional[list[str]]
+        memory_limit: Optional[Union[str, ContainerMemoryLimit]]
+        network_policy: Optional[ToolboxShellNetworkPolicy]
+        skills: Optional[list[ContainerSkill]]
+        type: Literal["container_auto"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                file_ids: Optional[list[str]] = ..., 
+                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ..., 
+                network_policy: Optional[ToolboxShellNetworkPolicy] = ..., 
+                skills: Optional[list[ContainerSkill]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellContainerReferenceEnvironment(ToolboxShellEnvironment, discriminator='container_reference'):
+        container_id: str
+        type: Literal["container_reference"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                container_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellEnvironment(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellNetworkPolicy(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellNetworkPolicyDisabled(ToolboxShellNetworkPolicy, discriminator='disabled'):
+        type: Literal["disabled"]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ToolboxSkill(_Model):
         type: str
 
@@ -9283,8 +11908,10 @@ namespace azure.ai.projects.models
         MCP = "mcp"
         OPENAPI = "openapi"
         REMINDER_PREVIEW = "reminder_preview"
+        SHELL = "shell"
         TOOLBOX_SEARCH = "toolbox_search"
         TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+        WEB_IQ_PREVIEW = "web_iq_preview"
         WEB_SEARCH = "web_search"
         WORK_IQ_PREVIEW = "work_iq_preview"
 
@@ -9399,6 +12026,58 @@ namespace azure.ai.projects.models
         key "max_traces": int
         key "trace_ids": List[str]
         key "type": Required[Literal["azure_ai_traces_preview"]]
+
+
+    class azure.ai.projects.models.TranscriptTextUsageDuration(CreateTranscriptionResponseJsonUsage, discriminator='duration'):
+        seconds: timedelta
+        type: Literal[CreateTranscriptionResponseJsonUsageType.DURATION]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                seconds: timedelta
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TranscriptTextUsageTokens(CreateTranscriptionResponseJsonUsage, discriminator='tokens'):
+        input_token_details: Optional[TranscriptTextUsageTokensInputTokenDetails]
+        input_tokens: int
+        output_tokens: int
+        total_tokens: int
+        type: Literal[CreateTranscriptionResponseJsonUsageType.TOKENS]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                input_token_details: Optional[TranscriptTextUsageTokensInputTokenDetails] = ..., 
+                input_tokens: int, 
+                output_tokens: int, 
+                total_tokens: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TranscriptTextUsageTokensInputTokenDetails(_Model):
+        audio_tokens: Optional[int]
+        text_tokens: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio_tokens: Optional[int] = ..., 
+                text_tokens: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -9558,6 +12237,1626 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FIXED_RATIO = "FixedRatio"
+
+
+    class azure.ai.projects.models.VoiceAgentAnimationConfig(_Model):
+        model_name: Optional[str]
+        outputs: Optional[list[Union[str, VoiceAgentAnimationOutputType]]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                model_name: Optional[str] = ..., 
+                outputs: Optional[list[Union[str, VoiceAgentAnimationOutputType]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BLENDSHAPES = "blendshapes"
+        VISEME_ID = "viseme_id"
+
+
+    class azure.ai.projects.models.VoiceAgentAudioConfig(_Model):
+        input: Optional[VoiceAgentAudioInputConfig]
+        output: Optional[VoiceAgentAudioOutputConfig]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                input: Optional[VoiceAgentAudioInputConfig] = ..., 
+                output: Optional[VoiceAgentAudioOutputConfig] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAudioInputConfig(_Model):
+        echo_cancellation: Optional[VoiceAgentEchoCancellation]
+        format: Optional[RealtimeAudioFormats]
+        noise_reduction: Optional[VoiceAgentNoiseReduction]
+        transcription: Optional[VoiceAgentInputTranscription]
+        turn_detection: Optional[VoiceAgentTurnDetectionConfig]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                echo_cancellation: Optional[VoiceAgentEchoCancellation] = ..., 
+                format: Optional[RealtimeAudioFormats] = ..., 
+                noise_reduction: Optional[VoiceAgentNoiseReduction] = ..., 
+                transcription: Optional[VoiceAgentInputTranscription] = ..., 
+                turn_detection: Optional[VoiceAgentTurnDetectionConfig] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAudioOutputConfig(_Model):
+        custom_lexicon_url: Optional[str]
+        custom_text_normalization_url: Optional[str]
+        custom_voice_endpoint_id: Optional[str]
+        format: Optional[RealtimeAudioFormats]
+        output_audio_timestamp_types: Optional[list[Union[str, VoiceAgentAudioTimestampType]]]
+        personal_voice_model: Optional[str]
+        pitch: Optional[str]
+        prefer_locales: Optional[list[str]]
+        speed: Optional[float]
+        style: Optional[str]
+        voice: Optional[str]
+        voice_locale: Optional[str]
+        voice_temperature: Optional[float]
+        voice_type: Optional[Union[str, VoiceType]]
+        volume: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                custom_lexicon_url: Optional[str] = ..., 
+                custom_text_normalization_url: Optional[str] = ..., 
+                custom_voice_endpoint_id: Optional[str] = ..., 
+                format: Optional[RealtimeAudioFormats] = ..., 
+                output_audio_timestamp_types: Optional[list[Union[str, VoiceAgentAudioTimestampType]]] = ..., 
+                personal_voice_model: Optional[str] = ..., 
+                pitch: Optional[str] = ..., 
+                prefer_locales: Optional[list[str]] = ..., 
+                speed: Optional[float] = ..., 
+                style: Optional[str] = ..., 
+                voice: Optional[str] = ..., 
+                voice_locale: Optional[str] = ..., 
+                voice_temperature: Optional[float] = ..., 
+                voice_type: Optional[Union[str, VoiceType]] = ..., 
+                volume: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        WORD = "word"
+
+
+    class azure.ai.projects.models.VoiceAgentAvatarConfig(_Model):
+        character: str
+        customized: Optional[bool]
+        model: Optional[str]
+        output_audit_audio: Optional[bool]
+        output_protocol: Optional[Union[str, VoiceAgentAvatarOutputProtocol]]
+        scene: Optional[VoiceAgentAvatarScene]
+        style: Optional[str]
+        type: Union[str, VoiceAgentAvatarType]
+        video: Optional[VoiceAgentAvatarVideoParams]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                character: str, 
+                customized: Optional[bool] = ..., 
+                model: Optional[str] = ..., 
+                output_audit_audio: Optional[bool] = ..., 
+                output_protocol: Optional[Union[str, VoiceAgentAvatarOutputProtocol]] = ..., 
+                scene: Optional[VoiceAgentAvatarScene] = ..., 
+                style: Optional[str] = ..., 
+                type: Union[str, VoiceAgentAvatarType], 
+                video: Optional[VoiceAgentAvatarVideoParams] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAvatarIceServer(_Model):
+        credential: Optional[str]
+        urls: list[str]
+        username: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                credential: Optional[str] = ..., 
+                urls: list[str], 
+                username: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        WEBRTC = "webrtc"
+        WEBSOCKET = "websocket"
+        WEBSOCKET_BINARY = "websocket-binary"
+
+
+    class azure.ai.projects.models.VoiceAgentAvatarScene(_Model):
+        amplitude: Optional[float]
+        position_x: Optional[float]
+        position_y: Optional[float]
+        rotation_x: Optional[float]
+        rotation_y: Optional[float]
+        rotation_z: Optional[float]
+        zoom: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                amplitude: Optional[float] = ..., 
+                position_x: Optional[float] = ..., 
+                position_y: Optional[float] = ..., 
+                rotation_x: Optional[float] = ..., 
+                rotation_y: Optional[float] = ..., 
+                rotation_z: Optional[float] = ..., 
+                zoom: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAvatarType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PHOTO_AVATAR = "photo_avatar"
+        VIDEO_AVATAR = "video_avatar"
+
+
+    class azure.ai.projects.models.VoiceAgentAvatarVideoBackground(_Model):
+        color: Optional[str]
+        image_url: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                color: Optional[str] = ..., 
+                image_url: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAvatarVideoCrop(_Model):
+        bottom_right: list[int]
+        top_left: list[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bottom_right: list[int], 
+                top_left: list[int]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAvatarVideoParams(_Model):
+        background: Optional[VoiceAgentAvatarVideoBackground]
+        bitrate: Optional[int]
+        crop: Optional[VoiceAgentAvatarVideoCrop]
+        gop_size: Optional[int]
+        resolution: Optional[VoiceAgentAvatarVideoResolution]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                background: Optional[VoiceAgentAvatarVideoBackground] = ..., 
+                bitrate: Optional[int] = ..., 
+                crop: Optional[VoiceAgentAvatarVideoCrop] = ..., 
+                gop_size: Optional[int] = ..., 
+                resolution: Optional[VoiceAgentAvatarVideoResolution] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAvatarVideoResolution(_Model):
+        height: int
+        width: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                height: int, 
+                width: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAzureSemanticVadEnTurnDetection(VoiceAgentTurnDetectionConfig, discriminator='azure_semantic_vad_en'):
+        auto_truncate: bool
+        create_response: Optional[bool]
+        end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection]
+        idle_timeout_ms: Optional[timedelta]
+        interrupt_response: Optional[bool]
+        prefix_padding_ms: Optional[timedelta]
+        remove_filler_words: Optional[bool]
+        silence_duration_ms: Optional[timedelta]
+        speech_duration_ms: Optional[timedelta]
+        threshold: Optional[float]
+        type: Literal[VoiceAgentTurnDetectionType.AZURE_SEMANTIC_VAD_EN]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auto_truncate: Optional[bool] = ..., 
+                create_response: Optional[bool] = ..., 
+                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ..., 
+                idle_timeout_ms: Optional[timedelta] = ..., 
+                interrupt_response: Optional[bool] = ..., 
+                prefix_padding_ms: Optional[timedelta] = ..., 
+                remove_filler_words: Optional[bool] = ..., 
+                silence_duration_ms: Optional[timedelta] = ..., 
+                speech_duration_ms: Optional[timedelta] = ..., 
+                threshold: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAzureSemanticVadMultilingualTurnDetection(VoiceAgentTurnDetectionConfig, discriminator='azure_semantic_vad_multilingual'):
+        auto_truncate: bool
+        create_response: Optional[bool]
+        end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection]
+        idle_timeout_ms: Optional[timedelta]
+        interrupt_response: Optional[bool]
+        languages: Optional[list[str]]
+        prefix_padding_ms: Optional[timedelta]
+        remove_filler_words: Optional[bool]
+        silence_duration_ms: Optional[timedelta]
+        speech_duration_ms: Optional[timedelta]
+        threshold: Optional[float]
+        type: Literal[VoiceAgentTurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auto_truncate: Optional[bool] = ..., 
+                create_response: Optional[bool] = ..., 
+                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ..., 
+                idle_timeout_ms: Optional[timedelta] = ..., 
+                interrupt_response: Optional[bool] = ..., 
+                languages: Optional[list[str]] = ..., 
+                prefix_padding_ms: Optional[timedelta] = ..., 
+                remove_filler_words: Optional[bool] = ..., 
+                silence_duration_ms: Optional[timedelta] = ..., 
+                speech_duration_ms: Optional[timedelta] = ..., 
+                threshold: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentAzureSemanticVadTurnDetection(VoiceAgentTurnDetectionConfig, discriminator='azure_semantic_vad'):
+        auto_truncate: bool
+        create_response: Optional[bool]
+        end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection]
+        idle_timeout_ms: Optional[timedelta]
+        interrupt_response: Optional[bool]
+        languages: Optional[list[str]]
+        prefix_padding_ms: Optional[timedelta]
+        remove_filler_words: Optional[bool]
+        silence_duration_ms: Optional[timedelta]
+        speech_duration_ms: Optional[timedelta]
+        threshold: Optional[float]
+        type: Literal[VoiceAgentTurnDetectionType.AZURE_SEMANTIC_VAD]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auto_truncate: Optional[bool] = ..., 
+                create_response: Optional[bool] = ..., 
+                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ..., 
+                idle_timeout_ms: Optional[timedelta] = ..., 
+                interrupt_response: Optional[bool] = ..., 
+                languages: Optional[list[str]] = ..., 
+                prefix_padding_ms: Optional[timedelta] = ..., 
+                remove_filler_words: Optional[bool] = ..., 
+                silence_duration_ms: Optional[timedelta] = ..., 
+                speech_duration_ms: Optional[timedelta] = ..., 
+                threshold: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentClientEventSessionAvatarConnect(RealtimeClientEvent, discriminator='session.avatar.connect'):
+        client_sdp: str
+        event_id: Optional[str]
+        type: Literal[RealtimeClientEventType.SESSION_AVATAR_CONNECT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                client_sdp: str, 
+                event_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentClientEventSessionUpdate(_Model):
+        event_id: Optional[str]
+        session: VoiceAgentSessionUpdate
+        type: Literal[RealtimeClientEventType.SESSION_UPDATE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ..., 
+                session: VoiceAgentSessionUpdate, 
+                type: Literal[RealtimeClientEventType.SESSION_UPDATE]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentDefinition(AgentDefinition, discriminator='voice'):
+        audio: Optional[VoiceAgentAudioConfig]
+        avatar: Optional[VoiceAgentAvatarConfig]
+        greeting: Optional[VoiceAgentGreetingConfig]
+        include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]]
+        instructions: Optional[str]
+        interim_response: Optional[VoiceAgentInterimResponseConfig]
+        kind: Literal[AgentKind.VOICE]
+        max_output_tokens: Optional[VoiceAgentMaxOutputTokens]
+        model: str
+        model_type: Union[str, VoiceModelType]
+        output_modalities: Optional[list[Union[str, VoiceOutputModality]]]
+        parallel_tool_calls: Optional[bool]
+        rai_config: RaiConfig
+        store: Optional[bool]
+        structured_inputs: Optional[dict[str, StructuredInputDefinition]]
+        tool_choice: Optional[VoiceAgentToolChoice]
+        tools: Optional[list[VoiceAgentTool]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: Optional[VoiceAgentAudioConfig] = ..., 
+                avatar: Optional[VoiceAgentAvatarConfig] = ..., 
+                greeting: Optional[VoiceAgentGreetingConfig] = ..., 
+                include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]] = ..., 
+                instructions: Optional[str] = ..., 
+                interim_response: Optional[VoiceAgentInterimResponseConfig] = ..., 
+                max_output_tokens: Optional[VoiceAgentMaxOutputTokens] = ..., 
+                model: str, 
+                model_type: Union[str, VoiceModelType], 
+                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
+                parallel_tool_calls: Optional[bool] = ..., 
+                rai_config: Optional[RaiConfig] = ..., 
+                store: Optional[bool] = ..., 
+                structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ..., 
+                tool_choice: Optional[VoiceAgentToolChoice] = ..., 
+                tools: Optional[list[VoiceAgentTool]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentEchoCancellation(_Model):
+        channels: Optional[int]
+        reference_source: Optional[Union[str, VoiceAgentEchoCancellationReferenceSource]]
+        type: Literal["server_echo_cancellation"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                channels: Optional[int] = ..., 
+                reference_source: Optional[Union[str, VoiceAgentEchoCancellationReferenceSource]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentEchoCancellationReferenceSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CLIENT = "client"
+        SERVER = "server"
+
+
+    class azure.ai.projects.models.VoiceAgentEndOfUtteranceDetection(_Model):
+        model: Union[str, VoiceAgentEndOfUtteranceDetectionModel]
+        threshold_level: Optional[Union[str, VoiceAgentEndOfUtteranceThresholdLevel]]
+        timeout_ms: Optional[timedelta]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                model: Union[str, VoiceAgentEndOfUtteranceDetectionModel], 
+                threshold_level: Optional[Union[str, VoiceAgentEndOfUtteranceThresholdLevel]] = ..., 
+                timeout_ms: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentEndOfUtteranceDetectionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SEMANTIC_DETECTION_V1 = "semantic_detection_v1"
+        SEMANTIC_DETECTION_V1_EN = "semantic_detection_v1_en"
+        SEMANTIC_DETECTION_V1_MULTILINGUAL = "semantic_detection_v1_multilingual"
+        SMART_END_OF_TURN_DETECTION = "smart_end_of_turn_detection"
+
+
+    class azure.ai.projects.models.VoiceAgentEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEFAULT = "default"
+        HIGH = "high"
+        LOW = "low"
+        MEDIUM = "medium"
+
+
+    class azure.ai.projects.models.VoiceAgentFunctionTool(VoiceAgentTool, discriminator='function'):
+        description: Optional[str]
+        name: str
+        parameters: Optional[RealtimeFunctionToolParameters]
+        type: Literal["function"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: str, 
+                parameters: Optional[RealtimeFunctionToolParameters] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentGreetingConfig(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentInputTranscription(_Model):
+        custom_speech: Optional[dict[str, str]]
+        delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]]
+        language: Optional[str]
+        model: Union[str, VoiceAgentInputTranscriptionModel]
+        phrase_list: Optional[list[str]]
+        prompt: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                custom_speech: Optional[dict[str, str]] = ..., 
+                delay: Optional[Literal[minimal, low, medium, high, xhigh]] = ..., 
+                language: Optional[str] = ..., 
+                model: Union[str, VoiceAgentInputTranscriptionModel], 
+                phrase_list: Optional[list[str]] = ..., 
+                prompt: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_SPEECH = "azure-speech"
+        GPT4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
+        GPT4_O_TRANSCRIBE = "gpt-4o-transcribe"
+        GPT4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
+        GPT_LIVE_TRANSCRIBE = "gpt-live-transcribe"
+        GPT_REALTIME_WHISPER = "gpt-realtime-whisper"
+        GPT_TRANSCRIBE = "gpt-transcribe"
+        MAI_TRANSCRIBE = "mai-transcribe"
+        WHISPER1 = "whisper-1"
+
+
+    class azure.ai.projects.models.VoiceAgentInterimResponseConfig(_Model):
+        latency_threshold_ms: Optional[timedelta]
+        triggers: Optional[list[Union[str, VoiceAgentInterimResponseTrigger]]]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                latency_threshold_ms: Optional[timedelta] = ..., 
+                triggers: Optional[list[Union[str, VoiceAgentInterimResponseTrigger]]] = ..., 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LATENCY = "latency"
+        TOOL = "tool"
+
+
+    class azure.ai.projects.models.VoiceAgentLlmGeneratedGreetingConfig(VoiceAgentGreetingConfig, discriminator='llm_generated'):
+        prompt: str
+        tool_choice: Optional[VoiceAgentToolChoice]
+        type: Literal["llm_generated"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                prompt: str, 
+                tool_choice: Optional[VoiceAgentToolChoice] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentLlmInterimResponseConfig(VoiceAgentInterimResponseConfig, discriminator='llm_interim_response'):
+        instructions: Optional[str]
+        latency_threshold_ms: timedelta
+        max_completion_tokens: Optional[int]
+        model: Optional[str]
+        triggers: Union[list[str, VoiceAgentInterimResponseTrigger]]
+        type: Literal["llm_interim_response"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                instructions: Optional[str] = ..., 
+                latency_threshold_ms: Optional[timedelta] = ..., 
+                max_completion_tokens: Optional[int] = ..., 
+                model: Optional[str] = ..., 
+                triggers: Optional[list[Union[str, VoiceAgentInterimResponseTrigger]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentMcpTool(VoiceAgentTool, discriminator='mcp'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        allowed_tools: Optional[Union[list[str], MCPToolFilter]]
+        authorization: Optional[str]
+        defer_loading: Optional[bool]
+        headers: Optional[dict[str, str]]
+        project_connection_id: Optional[str]
+        require_approval: Optional[Union[MCPToolRequireApproval, Literal["always"], Literal["never"]]]
+        response_scheduling: Optional[Union[str, VoiceAgentToolResponseScheduling]]
+        server_description: Optional[str]
+        server_label: str
+        server_url: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal["mcp"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ..., 
+                authorization: Optional[str] = ..., 
+                defer_loading: Optional[bool] = ..., 
+                headers: Optional[dict[str, str]] = ..., 
+                project_connection_id: Optional[str] = ..., 
+                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ..., 
+                response_scheduling: Optional[Union[str, VoiceAgentToolResponseScheduling]] = ..., 
+                server_description: Optional[str] = ..., 
+                server_label: str, 
+                server_url: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentNoiseReduction(_Model):
+        type: Union[str, VoiceAgentNoiseReductionType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: Union[str, VoiceAgentNoiseReductionType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
+        FAR_FIELD = "far_field"
+        NEAR_FIELD = "near_field"
+
+
+    class azure.ai.projects.models.VoiceAgentRealtimeResponse(OmitPropertiesRealtimeResponse1):
+        audio: Optional[VoiceResponseAudio]
+        conversation_id: str
+        id: str
+        max_output_tokens: Union[int, str]
+        metadata: Metadata
+        object: str
+        output: Optional[list[RealtimeConversationItem]]
+        output_modalities: Union[list[str, str]]
+        status: Union[str, str, str, str, str]
+        status_details: RealtimeResponseStatusDetails
+        usage: RealtimeResponseUsage
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: Optional[VoiceResponseAudio] = ..., 
+                conversation_id: Optional[str] = ..., 
+                id: Optional[str] = ..., 
+                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
+                metadata: Optional[Metadata] = ..., 
+                object: Optional[Literal[response]] = ..., 
+                output: Optional[list[RealtimeConversationItem]] = ..., 
+                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
+                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
+                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
+                usage: Optional[RealtimeResponseUsage] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentResponseCreateParams(_Model):
+        audio: Optional[PickPropertiesVoiceAgentAudioConfig]
+        conversation: Optional[Union[Literal["auto"], Literal["none"], str]]
+        input: Optional[list[RealtimeConversationItem]]
+        instructions: Optional[str]
+        interim_response: Optional[VoiceAgentInterimResponseConfig]
+        max_output_tokens: Optional[Union[int, Literal["inf"]]]
+        metadata: Optional[Metadata]
+        output_modalities: Optional[list[Union[str, VoiceOutputModality]]]
+        parallel_tool_calls: Optional[bool]
+        pre_generated_assistant_message: Optional[RealtimeConversationItem]
+        reasoning: Optional[RealtimeReasoning]
+        tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceFunction, ToolChoiceMCP]]
+        tools: Optional[list[Union[RealtimeFunctionTool, MCPTool]]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: Optional[PickPropertiesVoiceAgentAudioConfig] = ..., 
+                conversation: Optional[Union[Literal[auto], Literal[none], str]] = ..., 
+                input: Optional[list[RealtimeConversationItem]] = ..., 
+                instructions: Optional[str] = ..., 
+                interim_response: Optional[VoiceAgentInterimResponseConfig] = ..., 
+                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
+                metadata: Optional[Metadata] = ..., 
+                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
+                parallel_tool_calls: Optional[bool] = ..., 
+                pre_generated_assistant_message: Optional[RealtimeConversationItem] = ..., 
+                reasoning: Optional[RealtimeReasoning] = ..., 
+                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceFunction, ToolChoiceMCP]] = ..., 
+                tools: Optional[list[Union[RealtimeFunctionTool, MCPTool]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSemanticVadTurnDetection(VoiceAgentTurnDetectionConfig, discriminator='semantic_vad'):
+        auto_truncate: bool
+        create_response: Optional[bool]
+        eagerness: Optional[Literal["low", "medium", "high", "auto"]]
+        interrupt_response: Optional[bool]
+        type: Literal[VoiceAgentTurnDetectionType.SEMANTIC_VAD]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auto_truncate: Optional[bool] = ..., 
+                create_response: Optional[bool] = ..., 
+                eagerness: Optional[Literal[low, medium, high, auto]] = ..., 
+                interrupt_response: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventResponseAnimationBlendshapesDelta(RealtimeServerEvent, discriminator='response.animation_blendshapes.delta'):
+        content_index: int
+        event_id: str
+        frame_index: int
+        frames: list[list[float]]
+        item_id: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_ANIMATION_BLENDSHAPES_DELTA]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                event_id: str, 
+                frame_index: int, 
+                frames: list[list[float]], 
+                item_id: str, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventResponseAnimationBlendshapesDone(RealtimeServerEvent, discriminator='response.animation_blendshapes.done'):
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_ANIMATION_BLENDSHAPES_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventResponseAnimationVisemeDelta(RealtimeServerEvent, discriminator='response.animation_viseme.delta'):
+        audio_offset_ms: timedelta
+        content_index: int
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_ANIMATION_VISEME_DELTA]
+        viseme_id: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio_offset_ms: timedelta, 
+                content_index: int, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str, 
+                viseme_id: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventResponseAnimationVisemeDone(RealtimeServerEvent, discriminator='response.animation_viseme.done'):
+        content_index: int
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_ANIMATION_VISEME_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventResponseAudioTimestampDelta(RealtimeServerEvent, discriminator='response.audio_timestamp.delta'):
+        audio_duration_ms: timedelta
+        audio_offset_ms: timedelta
+        content_index: int
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        text: str
+        timestamp_type: Literal["word"]
+        type: Literal[RealtimeServerEventType.RESPONSE_AUDIO_TIMESTAMP_DELTA]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio_duration_ms: timedelta, 
+                audio_offset_ms: timedelta, 
+                content_index: int, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str, 
+                text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventResponseAudioTimestampDone(RealtimeServerEvent, discriminator='response.audio_timestamp.done'):
+        content_index: int
+        event_id: str
+        item_id: str
+        output_index: int
+        response_id: str
+        type: Literal[RealtimeServerEventType.RESPONSE_AUDIO_TIMESTAMP_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content_index: int, 
+                event_id: str, 
+                item_id: str, 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventResponseVideoDelta(RealtimeServerEvent, discriminator='response.video.delta'):
+        codec: str
+        delta: str
+        event_id: str
+        output_index: int
+        type: Literal[RealtimeServerEventType.RESPONSE_VIDEO_DELTA]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                codec: str, 
+                delta: str, 
+                event_id: str, 
+                output_index: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSessionAvatarConnecting(RealtimeServerEvent, discriminator='session.avatar.connecting'):
+        event_id: str
+        server_sdp: str
+        type: Literal[RealtimeServerEventType.SESSION_AVATAR_CONNECTING]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                server_sdp: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSessionAvatarSwitchToIdle(RealtimeServerEvent, discriminator='session.avatar.switch_to_idle'):
+        event_id: str
+        turn_id: Optional[str]
+        type: Literal[RealtimeServerEventType.SESSION_AVATAR_SWITCH_TO_IDLE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                turn_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSessionAvatarSwitchToSpeaking(RealtimeServerEvent, discriminator='session.avatar.switch_to_speaking'):
+        event_id: str
+        turn_id: Optional[str]
+        type: Literal[RealtimeServerEventType.SESSION_AVATAR_SWITCH_TO_SPEAKING]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                turn_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventWarning(RealtimeServerEvent, discriminator='warning'):
+        event_id: str
+        type: Literal[RealtimeServerEventType.WARNING]
+        warning: VoiceAgentServerEventWarningDetails
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                warning: VoiceAgentServerEventWarningDetails
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventWarningDetails(_Model):
+        code: Optional[str]
+        message: str
+        param: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: Optional[str] = ..., 
+                message: str, 
+                param: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerVadTurnDetection(VoiceAgentTurnDetectionConfig, discriminator='server_vad'):
+        auto_truncate: bool
+        create_response: Optional[bool]
+        end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection]
+        idle_timeout_ms: Optional[int]
+        interrupt_response: Optional[bool]
+        prefix_padding_ms: Optional[int]
+        silence_duration_ms: Optional[int]
+        speech_duration_ms: Optional[timedelta]
+        threshold: Optional[float]
+        type: Literal[VoiceAgentTurnDetectionType.SERVER_VAD]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auto_truncate: Optional[bool] = ..., 
+                create_response: Optional[bool] = ..., 
+                end_of_utterance_detection: Optional[VoiceAgentEndOfUtteranceDetection] = ..., 
+                idle_timeout_ms: Optional[int] = ..., 
+                interrupt_response: Optional[bool] = ..., 
+                prefix_padding_ms: Optional[int] = ..., 
+                silence_duration_ms: Optional[int] = ..., 
+                speech_duration_ms: Optional[timedelta] = ..., 
+                threshold: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSessionAvatarConfig(VoiceAgentAvatarConfig):
+        character: str
+        customized: bool
+        ice_servers: Optional[list[VoiceAgentAvatarIceServer]]
+        model: str
+        output_audit_audio: bool
+        output_protocol: Union[str, VoiceAgentAvatarOutputProtocol]
+        scene: VoiceAgentAvatarScene
+        style: str
+        type: Union[str, VoiceAgentAvatarType]
+        video: VoiceAgentAvatarVideoParams
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                character: str, 
+                customized: Optional[bool] = ..., 
+                ice_servers: Optional[list[VoiceAgentAvatarIceServer]] = ..., 
+                model: Optional[str] = ..., 
+                output_audit_audio: Optional[bool] = ..., 
+                output_protocol: Optional[Union[str, VoiceAgentAvatarOutputProtocol]] = ..., 
+                scene: Optional[VoiceAgentAvatarScene] = ..., 
+                style: Optional[str] = ..., 
+                type: Union[str, VoiceAgentAvatarType], 
+                video: Optional[VoiceAgentAvatarVideoParams] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FILE_SEARCH_CALL_RESULTS = "file_search_call.results"
+        INPUT_AUDIO_TRANSCRIPTION_LOGPROBS = "item.input_audio_transcription.logprobs"
+        INPUT_AUDIO_TRANSCRIPTION_PHRASES = "item.input_audio_transcription.phrases"
+
+
+    class azure.ai.projects.models.VoiceAgentSessionResponseConfig(_Model):
+        animation: Optional[VoiceAgentAnimationConfig]
+        audio: Optional[VoiceAgentAudioConfig]
+        avatar: Optional[VoiceAgentSessionAvatarConfig]
+        expires_at: Optional[datetime]
+        greeting: Optional[VoiceAgentGreetingConfig]
+        id: str
+        include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]]
+        instructions: Optional[str]
+        interim_response: Optional[VoiceAgentInterimResponseConfig]
+        max_output_tokens: Optional[VoiceAgentMaxOutputTokens]
+        metadata: Optional[dict[str, str]]
+        model: str
+        object: Literal["session"]
+        output_modalities: Optional[list[Union[str, VoiceOutputModality]]]
+        parallel_tool_calls: Optional[bool]
+        reasoning: Optional[RealtimeReasoning]
+        temperature: Optional[float]
+        tool_choice: Optional[VoiceAgentToolChoice]
+        tools: Optional[list[VoiceAgentTool]]
+        type: Literal["realtime"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                animation: Optional[VoiceAgentAnimationConfig] = ..., 
+                audio: Optional[VoiceAgentAudioConfig] = ..., 
+                avatar: Optional[VoiceAgentSessionAvatarConfig] = ..., 
+                expires_at: Optional[datetime] = ..., 
+                greeting: Optional[VoiceAgentGreetingConfig] = ..., 
+                id: str, 
+                include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]] = ..., 
+                instructions: Optional[str] = ..., 
+                interim_response: Optional[VoiceAgentInterimResponseConfig] = ..., 
+                max_output_tokens: Optional[VoiceAgentMaxOutputTokens] = ..., 
+                metadata: Optional[dict[str, str]] = ..., 
+                model: str, 
+                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
+                parallel_tool_calls: Optional[bool] = ..., 
+                reasoning: Optional[RealtimeReasoning] = ..., 
+                temperature: Optional[float] = ..., 
+                tool_choice: Optional[VoiceAgentToolChoice] = ..., 
+                tools: Optional[list[VoiceAgentTool]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSessionUpdateConfig(_Model):
+        animation: Optional[VoiceAgentAnimationConfig]
+        audio: Optional[VoiceAgentAudioConfig]
+        avatar: Optional[VoiceAgentSessionAvatarConfig]
+        greeting: Optional[VoiceAgentGreetingConfig]
+        include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]]
+        instructions: Optional[str]
+        interim_response: Optional[VoiceAgentInterimResponseConfig]
+        max_output_tokens: Optional[VoiceAgentMaxOutputTokens]
+        metadata: Optional[dict[str, str]]
+        output_modalities: Optional[list[Union[str, VoiceOutputModality]]]
+        parallel_tool_calls: Optional[bool]
+        reasoning: Optional[RealtimeReasoning]
+        temperature: Optional[float]
+        tool_choice: Optional[VoiceAgentToolChoice]
+        tools: Optional[list[VoiceAgentTool]]
+        type: Literal["realtime"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                animation: Optional[VoiceAgentAnimationConfig] = ..., 
+                audio: Optional[VoiceAgentAudioConfig] = ..., 
+                avatar: Optional[VoiceAgentSessionAvatarConfig] = ..., 
+                greeting: Optional[VoiceAgentGreetingConfig] = ..., 
+                include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]] = ..., 
+                instructions: Optional[str] = ..., 
+                interim_response: Optional[VoiceAgentInterimResponseConfig] = ..., 
+                max_output_tokens: Optional[VoiceAgentMaxOutputTokens] = ..., 
+                metadata: Optional[dict[str, str]] = ..., 
+                output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
+                parallel_tool_calls: Optional[bool] = ..., 
+                reasoning: Optional[RealtimeReasoning] = ..., 
+                temperature: Optional[float] = ..., 
+                tool_choice: Optional[VoiceAgentToolChoice] = ..., 
+                tools: Optional[list[VoiceAgentTool]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentStaticInterimResponseConfig(VoiceAgentInterimResponseConfig, discriminator='static_interim_response'):
+        latency_threshold_ms: timedelta
+        texts: Optional[list[str]]
+        triggers: Union[list[str, VoiceAgentInterimResponseTrigger]]
+        type: Literal["static_interim_response"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                latency_threshold_ms: Optional[timedelta] = ..., 
+                texts: Optional[list[str]] = ..., 
+                triggers: Optional[list[Union[str, VoiceAgentInterimResponseTrigger]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSystemTool(VoiceAgentTool, discriminator='system'):
+        description: Optional[str]
+        name: Union[str, VoiceAgentSystemToolName]
+        type: Literal["system"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Union[str, VoiceAgentSystemToolName]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSystemToolName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        END_CONVERSATION = "end_conversation"
+
+
+    class azure.ai.projects.models.VoiceAgentTemplateGreetingConfig(VoiceAgentGreetingConfig, discriminator='template'):
+        text: str
+        type: Literal["template"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTool(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INTERRUPT = "interrupt"
+        SILENT = "silent"
+        SKIP_IF_BUSY = "skip_if_busy"
+        WHEN_IDLE = "when_idle"
+
+
+    class azure.ai.projects.models.VoiceAgentToolboxTool(VoiceAgentTool, discriminator='toolbox'):
+        response_scheduling: Optional[Union[str, VoiceAgentToolResponseScheduling]]
+        toolbox_name: str
+        toolbox_version: str
+        type: Literal["toolbox"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                response_scheduling: Optional[Union[str, VoiceAgentToolResponseScheduling]] = ..., 
+                toolbox_name: str, 
+                toolbox_version: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTranscriptionPhrase(_Model):
+        confidence: Optional[float]
+        duration_milliseconds: timedelta
+        locale: Optional[str]
+        offset_milliseconds: timedelta
+        text: str
+        words: Optional[list[VoiceAgentTranscriptionWord]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                confidence: Optional[float] = ..., 
+                duration_milliseconds: timedelta, 
+                locale: Optional[str] = ..., 
+                offset_milliseconds: timedelta, 
+                text: str, 
+                words: Optional[list[VoiceAgentTranscriptionWord]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTranscriptionWord(_Model):
+        duration_milliseconds: timedelta
+        offset_milliseconds: timedelta
+        text: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                duration_milliseconds: timedelta, 
+                offset_milliseconds: timedelta, 
+                text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTurnDetectionConfig(_Model):
+        auto_truncate: Optional[bool]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                auto_truncate: Optional[bool] = ..., 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_SEMANTIC_VAD = "azure_semantic_vad"
+        AZURE_SEMANTIC_VAD_EN = "azure_semantic_vad_en"
+        AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"
+        SEMANTIC_VAD = "semantic_vad"
+        SERVER_VAD = "server_vad"
+
+
+    class azure.ai.projects.models.VoiceAgentWebSocketSubprotocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        REALTIME = "realtime"
+
+
+    class azure.ai.projects.models.VoiceAudioCodec(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PCM16 = "pcm16"
+        PCMA = "pcma"
+        PCMU = "pcmu"
+
+
+    class azure.ai.projects.models.VoiceAudioContainerFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        WAV = "wav"
+
+
+    class azure.ai.projects.models.VoiceAudioRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENT = "agent"
+        USER = "user"
+
+
+    class azure.ai.projects.models.VoiceConversation(_Model):
+        completed_at: Optional[datetime]
+        created_at: datetime
+        id: str
+        last_error: Optional[ApiError]
+        metadata: Optional[dict[str, str]]
+        object: Literal["conversation"]
+        status: Union[str, VoiceConversationStatus]
+        usage: Optional[RealtimeResponseUsage]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                completed_at: Optional[datetime] = ..., 
+                created_at: datetime, 
+                id: str, 
+                last_error: Optional[ApiError] = ..., 
+                metadata: Optional[dict[str, str]] = ..., 
+                status: Union[str, VoiceConversationStatus], 
+                usage: Optional[RealtimeResponseUsage] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        COMPLETED = "completed"
+        FAILED = "failed"
+        IN_PROGRESS = "in_progress"
+
+
+    class azure.ai.projects.models.VoiceItemAudioResponse(_Model):
+        blob_uri: Optional[str]
+        channels: Optional[int]
+        codec: Optional[Union[str, VoiceAudioCodec]]
+        conversation_id: str
+        duration_ms: Optional[timedelta]
+        format: Optional[Union[str, VoiceAudioContainerFormat]]
+        item_id: str
+        role: Optional[Union[str, VoiceAudioRole]]
+        sample_rate: Optional[int]
+        start_offset_ms: Optional[timedelta]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                blob_uri: Optional[str] = ..., 
+                channels: Optional[int] = ..., 
+                codec: Optional[Union[str, VoiceAudioCodec]] = ..., 
+                conversation_id: str, 
+                duration_ms: Optional[timedelta] = ..., 
+                format: Optional[Union[str, VoiceAudioContainerFormat]] = ..., 
+                item_id: str, 
+                role: Optional[Union[str, VoiceAudioRole]] = ..., 
+                sample_rate: Optional[int] = ..., 
+                start_offset_ms: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MANAGED = "managed"
+        SELF_DEPLOYED = "self_deployed"
+
+
+    class azure.ai.projects.models.VoiceOutputModality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ANIMATION = "animation"
+        AUDIO = "audio"
+        AVATAR = "avatar"
+        TEXT = "text"
+
+
+    class azure.ai.projects.models.VoiceRecordingChannelLayout(_Model):
+        left: Literal["user"]
+        right: Literal["agent"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceRecordingResponse(_Model):
+        blob_uri: Optional[str]
+        channel_layout: VoiceRecordingChannelLayout
+        channels: int
+        conversation_id: str
+        duration_ms: timedelta
+        format: Union[str, VoiceAudioContainerFormat]
+        sample_rate: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                blob_uri: Optional[str] = ..., 
+                channel_layout: VoiceRecordingChannelLayout, 
+                channels: int, 
+                conversation_id: str, 
+                duration_ms: timedelta, 
+                format: Union[str, VoiceAudioContainerFormat], 
+                sample_rate: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceResponse(OmitPropertiesRealtimeResponse):
+        audio: Optional[VoiceResponseAudio]
+        completed_at: Optional[datetime]
+        conversation_id: str
+        created_at: Optional[datetime]
+        id: str
+        max_output_tokens: Union[int, str]
+        metadata: Optional[dict[str, str]]
+        object: str
+        output: Optional[list[RealtimeConversationItem]]
+        output_modalities: Union[list[str, str]]
+        status: Union[str, str, str, str, str]
+        status_details: RealtimeResponseStatusDetails
+        temperature: Optional[float]
+        usage: RealtimeResponseUsage
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: Optional[VoiceResponseAudio] = ..., 
+                completed_at: Optional[datetime] = ..., 
+                conversation_id: str, 
+                created_at: Optional[datetime] = ..., 
+                id: str, 
+                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
+                metadata: Optional[dict[str, str]] = ..., 
+                object: Optional[Literal[response]] = ..., 
+                output: Optional[list[RealtimeConversationItem]] = ..., 
+                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
+                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
+                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
+                temperature: Optional[float] = ..., 
+                usage: Optional[RealtimeResponseUsage] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceResponseAudio(_Model):
+        output: Optional[VoiceResponseAudioOutput]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                output: Optional[VoiceResponseAudioOutput] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceResponseAudioOutput(_Model):
+        format: Optional[RealtimeAudioFormats]
+        voice: Optional[str]
+        voice_locale: Optional[str]
+        voice_type: Optional[Union[str, VoiceType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                format: Optional[RealtimeAudioFormats] = ..., 
+                voice: Optional[str] = ..., 
+                voice_locale: Optional[str] = ..., 
+                voice_type: Optional[Union[str, VoiceType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AVATAR_VOICE_SYNC = "avatar-voice-sync"
+        AZURE_CUSTOM = "azure-custom"
+        AZURE_PERSONAL = "azure-personal"
+        AZURE_REALTIME_NATIVE = "azure-realtime-native"
+        AZURE_STANDARD = "azure-standard"
+        OPENAI = "openai"
+
+
+    class azure.ai.projects.models.WebIQPreviewTool(Tool, discriminator='web_iq_preview'):
+        project_connection_id: str
+        require_approval: Optional[Union[MCPToolRequireApproval, str]]
+        server_label: Optional[str]
+        type: Literal[ToolType.WEB_IQ_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                project_connection_id: str, 
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
+                server_label: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.WebIQPreviewToolboxTool(ToolboxTool, discriminator='web_iq_preview'):
+        description: str
+        name: str
+        project_connection_id: str
+        require_approval: Optional[Union[MCPToolRequireApproval, str]]
+        server_label: Optional[str]
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.WEB_IQ_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                project_connection_id: str, 
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
+                server_label: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.WebSearchApproximateLocation(_Model):
@@ -9944,12 +14243,75 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> None: ...
 
+        @overload
+        def generate_agent(
+                self, 
+                body: GenerateVoiceAgentRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentDetails: ...
+
         @distributed_trace
         def get(
                 self, 
                 agent_name: str, 
                 **kwargs: Any
             ) -> AgentDetails: ...
+
+        @overload
+        def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                *, 
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
+                agent_display_name: Optional[str] = ..., 
+                app_version: Optional[str] = ..., 
+                bot_service_arm_id: Optional[str] = ..., 
+                can_respond_without_mention: Optional[bool] = ..., 
+                color_icon_base64: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                developer_name: Optional[str] = ..., 
+                developer_website_url: Optional[str] = ..., 
+                full_description: Optional[str] = ..., 
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
+                outline_icon_base64: Optional[str] = ..., 
+                privacy_url: Optional[str] = ..., 
+                publish_as_autopilot: Optional[bool] = ..., 
+                publish_scope: Union[str, Microsoft365PublishScope], 
+                short_description: Optional[str] = ..., 
+                terms_of_use_url: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @overload
+        def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @overload
+        def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get_microsoft365_publish_defaults(
+                self, 
+                agent_name: str, 
+                *, 
+                publish_as_digital_worker: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> Microsoft365PublishDefaults: ...
 
         @distributed_trace
         def get_session(
@@ -10022,6 +14384,51 @@ namespace azure.ai.projects.operations
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[AgentVersionDetails]: ...
+
+        @overload
+        def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                *, 
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
+                agent_display_name: Optional[str] = ..., 
+                app_version: Optional[str] = ..., 
+                bot_service_arm_id: Optional[str] = ..., 
+                can_respond_without_mention: Optional[bool] = ..., 
+                color_icon_base64: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                developer_name: Optional[str] = ..., 
+                developer_website_url: Optional[str] = ..., 
+                full_description: Optional[str] = ..., 
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
+                outline_icon_base64: Optional[str] = ..., 
+                privacy_url: Optional[str] = ..., 
+                publish_as_autopilot: Optional[bool] = ..., 
+                publish_scope: Union[str, Microsoft365PublishScope], 
+                short_description: Optional[str] = ..., 
+                terms_of_use_url: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
+
+        @overload
+        def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
+
+        @overload
+        def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
 
         @distributed_trace
         def stop_session(
@@ -11208,6 +15615,7 @@ namespace azure.ai.projects.operations
                 routine_name: str, 
                 *, 
                 action: Optional[RoutineAction] = ..., 
+                authorization: Optional[RoutineAuthorization] = ..., 
                 content_type: str = "application/json", 
                 description: Optional[str] = ..., 
                 enabled: Optional[bool] = ..., 
