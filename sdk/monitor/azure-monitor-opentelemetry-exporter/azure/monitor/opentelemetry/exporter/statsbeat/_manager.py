@@ -151,6 +151,13 @@ class StatsbeatConfig:
         # Hash based on connection string and offline storage setting.
         return hash((str(self.connection_string), self.disable_offline_storage))
 
+    def _update_endpoint(self, endpoint: str, connection_string: str) -> None:
+        self.endpoint = endpoint
+        self.connection_string = connection_string
+        region = _get_region_from_endpoint(endpoint)
+        if region:
+            self.region = region
+
 
 class StatsbeatManager(metaclass=Singleton):
     """Thread-safe singleton manager for Statsbeat metrics collection with dynamic reconfiguration support."""
@@ -412,40 +419,20 @@ class StatsbeatManager(metaclass=Singleton):
                 connection_string = _get_stats_connection_string(endpoint)
                 # Only swap the statsbeat destination when the data boundary actually changes.
                 if connection_string != self._config.connection_string:
-                    if not self._apply_exporter_route(connection_string):
+                    if self._exporter is None or not self._exporter._update_connection_string(  # pylint: disable=protected-access
+                        connection_string
+                    ):
                         return False
 
                 if self._metrics is not None:
-                    self._metrics.update_endpoint(endpoint)
-                self._config.endpoint = endpoint
-                self._config.connection_string = connection_string
-                region = _get_region_from_endpoint(endpoint)
-                if region:
-                    self._config.region = region
+                    self._metrics.update_endpoint_host(endpoint)
+                self._config._update_endpoint(endpoint, connection_string)
                 return True
             except Exception as e:  # pylint: disable=broad-except
                 logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                     "Failed to update statsbeat endpoint: %s", e
                 )
                 return False
-
-    def _apply_exporter_route(self, connection_string: str) -> bool:
-        # Repoint the live statsbeat exporter at a new connection string, in place.
-
-        exporter = self._exporter
-        if exporter is None:
-            return False
-        parsed = ConnectionStringParser(connection_string)
-        if not parsed.instrumentation_key or not parsed.endpoint:
-            return False
-        # pylint: disable=protected-access
-        exporter._connection_string = parsed._connection_string
-        exporter._instrumentation_key = parsed.instrumentation_key
-        exporter._endpoint = parsed.endpoint
-        exporter._region = parsed.region
-        exporter._aad_audience = parsed.aad_audience
-        exporter.client._config.host = parsed.endpoint
-        return True
 
     def get_current_config(self) -> Optional[StatsbeatConfig]:
         """Get a copy of the current statsbeat configuration.
