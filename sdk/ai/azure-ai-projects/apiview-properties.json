@@ -328,6 +328,13 @@
         "azure.ai.projects.models.RealtimeConversationItem": "OpenAI.RealtimeConversationItem",
         "azure.ai.projects.models.RealtimeConversationItemFunctionCall": "OpenAI.RealtimeConversationItemFunctionCall",
         "azure.ai.projects.models.RealtimeConversationItemFunctionCallOutput": "OpenAI.RealtimeConversationItemFunctionCallOutput",
+        "azure.ai.projects.models.RealtimeConversationItemMessage": "OpenAI.RealtimeConversationItemMessage",
+        "azure.ai.projects.models.RealtimeConversationItemMessageAssistant": "OpenAI.RealtimeConversationItemMessageAssistant",
+        "azure.ai.projects.models.RealtimeConversationItemMessageAssistantContent": "OpenAI.RealtimeConversationItemMessageAssistantContent",
+        "azure.ai.projects.models.RealtimeConversationItemMessageSystem": "OpenAI.RealtimeConversationItemMessageSystem",
+        "azure.ai.projects.models.RealtimeConversationItemMessageSystemContent": "OpenAI.RealtimeConversationItemMessageSystemContent",
+        "azure.ai.projects.models.RealtimeConversationItemMessageUser": "OpenAI.RealtimeConversationItemMessageUser",
+        "azure.ai.projects.models.RealtimeConversationItemMessageUserContent": "OpenAI.RealtimeConversationItemMessageUserContent",
         "azure.ai.projects.models.RealtimeFunctionTool": "OpenAI.RealtimeFunctionTool",
         "azure.ai.projects.models.RealtimeFunctionToolParameters": "OpenAI.RealtimeFunctionToolParameters",
         "azure.ai.projects.models.RealtimeMCPApprovalRequest": "OpenAI.RealtimeMCPApprovalRequest",
@@ -468,6 +475,7 @@
         "azure.ai.projects.models.TracesDataGenerationJobOptions": "Azure.AI.Projects.TracesDataGenerationJobOptions",
         "azure.ai.projects.models.TracesDataGenerationJobSource": "Azure.AI.Projects.TracesDataGenerationJobSource",
         "azure.ai.projects.models.TracesEvaluatorGenerationJobSource": "Azure.AI.Projects.TracesEvaluatorGenerationJobSource",
+        "azure.ai.projects.models.TranscriptionLanguage": "OpenAI.TranscriptionLanguage",
         "azure.ai.projects.models.TranscriptTextUsageDuration": "OpenAI.TranscriptTextUsageDuration",
         "azure.ai.projects.models.TranscriptTextUsageTokens": "OpenAI.TranscriptTextUsageTokens",
         "azure.ai.projects.models.TranscriptTextUsageTokensInputTokenDetails": "OpenAI.TranscriptTextUsageTokensInputTokenDetails",
@@ -558,6 +566,7 @@
         "azure.ai.projects.models.PageOrder": "Azure.AI.Projects.PageOrder",
         "azure.ai.projects.models.RealtimeConversationItemType": "OpenAI.RealtimeConversationItemType",
         "azure.ai.projects.models.RealtimeMcpErrorType": "OpenAI.RealtimeMcpErrorType",
+        "azure.ai.projects.models.RealtimeConversationItemMessageType": "OpenAI.RealtimeConversationItemMessageType",
         "azure.ai.projects.models.VoiceType": "Azure.AI.Projects.VoiceType",
         "azure.ai.projects.models.RealtimeAudioFormatsType": "OpenAI.RealtimeAudioFormatsType",
         "azure.ai.projects.models.VoiceAudioRole": "Azure.AI.Projects.VoiceAudioRole",
@@ -797,5 +806,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "7e0039cfc367"
+    "CrossLanguageVersion": "39f992f697cf"
 }

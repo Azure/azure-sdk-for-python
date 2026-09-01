@@ -8972,6 +8972,162 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.RealtimeConversationItemMessage(RealtimeConversationItem, discriminator='message'):
+        role: str
+        type: Literal[RealtimeConversationItemType.MESSAGE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                role: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeConversationItemMessageAssistant(RealtimeConversationItemMessage, discriminator='assistant'):
+        content: list[RealtimeConversationItemMessageAssistantContent]
+        created_at: Optional[datetime]
+        id: Optional[str]
+        object: Optional[Literal["item"]]
+        response_id: Optional[str]
+        role: Literal[RealtimeConversationItemMessageType.ASSISTANT]
+        status: Optional[Literal["completed", "incomplete", "in_progress"]]
+        type: Union[str, azure.ai.projects.models.MESSAGE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: list[RealtimeConversationItemMessageAssistantContent], 
+                id: Optional[str] = ..., 
+                object: Optional[Literal[item]] = ..., 
+                status: Optional[Literal[completed, incomplete, in_progress]] = ..., 
+                type: Literal[RealtimeConversationItemType.MESSAGE]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeConversationItemMessageAssistantContent(_Model):
+        audio: Optional[str]
+        text: Optional[str]
+        transcript: Optional[str]
+        type: Optional[Literal["output_text", "output_audio"]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: Optional[str] = ..., 
+                text: Optional[str] = ..., 
+                transcript: Optional[str] = ..., 
+                type: Optional[Literal[output_text, output_audio]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeConversationItemMessageSystem(RealtimeConversationItemMessage, discriminator='system'):
+        content: list[RealtimeConversationItemMessageSystemContent]
+        created_at: Optional[datetime]
+        id: Optional[str]
+        object: Optional[Literal["item"]]
+        response_id: Optional[str]
+        role: Literal[RealtimeConversationItemMessageType.SYSTEM]
+        status: Optional[Literal["completed", "incomplete", "in_progress"]]
+        type: Union[str, azure.ai.projects.models.MESSAGE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: list[RealtimeConversationItemMessageSystemContent], 
+                id: Optional[str] = ..., 
+                object: Optional[Literal[item]] = ..., 
+                status: Optional[Literal[completed, incomplete, in_progress]] = ..., 
+                type: Literal[RealtimeConversationItemType.MESSAGE]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeConversationItemMessageSystemContent(_Model):
+        text: Optional[str]
+        type: Optional[Literal["input_text"]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                text: Optional[str] = ..., 
+                type: Optional[Literal[input_text]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeConversationItemMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ASSISTANT = "assistant"
+        SYSTEM = "system"
+        USER = "user"
+
+
+    class azure.ai.projects.models.RealtimeConversationItemMessageUser(RealtimeConversationItemMessage, discriminator='user'):
+        content: list[RealtimeConversationItemMessageUserContent]
+        created_at: Optional[datetime]
+        id: Optional[str]
+        object: Optional[Literal["item"]]
+        response_id: Optional[str]
+        role: Literal[RealtimeConversationItemMessageType.USER]
+        status: Optional[Literal["completed", "incomplete", "in_progress"]]
+        type: Union[str, azure.ai.projects.models.MESSAGE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: list[RealtimeConversationItemMessageUserContent], 
+                id: Optional[str] = ..., 
+                object: Optional[Literal[item]] = ..., 
+                status: Optional[Literal[completed, incomplete, in_progress]] = ..., 
+                type: Literal[RealtimeConversationItemType.MESSAGE]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeConversationItemMessageUserContent(_Model):
+        audio: Optional[str]
+        detail: Optional[Literal["auto", "low", "high"]]
+        image_url: Optional[str]
+        text: Optional[str]
+        transcript: Optional[str]
+        type: Optional[Literal["input_text", "input_audio", "input_image"]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: Optional[str] = ..., 
+                detail: Optional[Literal[auto, low, high]] = ..., 
+                image_url: Optional[str] = ..., 
+                text: Optional[str] = ..., 
+                transcript: Optional[str] = ..., 
+                type: Optional[Literal[input_text, input_audio, input_image]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FUNCTION_CALL = "function_call"
         FUNCTION_CALL_OUTPUT = "function_call_output"
@@ -8979,6 +9135,7 @@ namespace azure.ai.projects.models
         MCP_APPROVAL_RESPONSE = "mcp_approval_response"
         MCP_CALL = "mcp_call"
         MCP_LIST_TOOLS = "mcp_list_tools"
+        MESSAGE = "message"
 
 
     class azure.ai.projects.models.RealtimeFunctionTool(_Model):
@@ -9395,6 +9552,7 @@ namespace azure.ai.projects.models
         content_index: int
         event_id: str
         item_id: str
+        languages: Optional[list[TranscriptionLanguage]]
         logprobs: Optional[list[LogProbProperties]]
         phrases: Optional[list[VoiceAgentTranscriptionPhrase]]
         transcript: str
@@ -9408,6 +9566,7 @@ namespace azure.ai.projects.models
                 content_index: int, 
                 event_id: str, 
                 item_id: str, 
+                languages: Optional[list[TranscriptionLanguage]] = ..., 
                 logprobs: Optional[list[LogProbProperties]] = ..., 
                 phrases: Optional[list[VoiceAgentTranscriptionPhrase]] = ..., 
                 transcript: str, 
@@ -12158,6 +12317,20 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.TranscriptionLanguage(_Model):
+        code: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CHANGED = "Changed"
         DEGRADED = "Degraded"
@@ -12850,7 +13023,9 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentInputTranscription(_Model):
         custom_speech: Optional[dict[str, str]]
         delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]]
+        keywords: Optional[list[str]]
         language: Optional[str]
+        languages: Optional[list[str]]
         model: Union[str, VoiceAgentInputTranscriptionModel]
         phrase_list: Optional[list[str]]
         prompt: Optional[str]
@@ -12861,7 +13036,9 @@ namespace azure.ai.projects.models
                 *, 
                 custom_speech: Optional[dict[str, str]] = ..., 
                 delay: Optional[Literal[minimal, low, medium, high, xhigh]] = ..., 
+                keywords: Optional[list[str]] = ..., 
                 language: Optional[str] = ..., 
+                languages: Optional[list[str]] = ..., 
                 model: Union[str, VoiceAgentInputTranscriptionModel], 
                 phrase_list: Optional[list[str]] = ..., 
                 prompt: Optional[str] = ...
@@ -14054,6 +14231,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.WebSearchTool(Tool, discriminator='web_search'):
         custom_search_configuration: Optional[WebSearchConfiguration]
         description: Optional[str]
+        external_web_access: Optional[bool]
         filters: Optional[WebSearchToolFilters]
         name: Optional[str]
         search_context_size: Optional[Literal["low", "medium", "high"]]
@@ -14067,6 +14245,7 @@ namespace azure.ai.projects.models
                 *, 
                 custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
                 description: Optional[str] = ..., 
+                external_web_access: Optional[bool] = ..., 
                 filters: Optional[WebSearchToolFilters] = ..., 
                 name: Optional[str] = ..., 
                 search_context_size: Optional[Literal[low, medium, high]] = ..., 
@@ -14095,6 +14274,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.WebSearchToolboxTool(ToolboxTool, discriminator='web_search'):
         custom_search_configuration: Optional[WebSearchConfiguration]
         description: str
+        external_web_access: Optional[bool]
         filters: Optional[WebSearchToolFilters]
         name: str
         search_context_size: Optional[Literal["low", "medium", "high"]]
@@ -14108,6 +14288,7 @@ namespace azure.ai.projects.models
                 *, 
                 custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
                 description: Optional[str] = ..., 
+                external_web_access: Optional[bool] = ..., 
                 filters: Optional[WebSearchToolFilters] = ..., 
                 name: Optional[str] = ..., 
                 search_context_size: Optional[Literal[low, medium, high]] = ..., 

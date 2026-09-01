@@ -120,7 +120,7 @@ class TestVoiceAgentCrudAsync(TestBase):
     # To run only this test:
     # pytest tests\agents\test_voice_agent_crud_async.py::TestVoiceAgentCrudAsync::test_voice_agent_disable_enable_async -s
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_voice_agent_disable_enable_async(self, **kwargs):
         """
         Test disable and enable operations for a voice Agent.

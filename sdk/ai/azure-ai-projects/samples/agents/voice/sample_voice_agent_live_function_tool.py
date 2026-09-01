@@ -38,6 +38,9 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     RealtimeConversationItemFunctionCallOutput,
+    RealtimeConversationItemMessageUser,
+    RealtimeConversationItemMessageUserContent,
+    RealtimeConversationItemType,
     RealtimeFunctionTool,
     RealtimeServerEventError,
     VoiceAgentDefinition,
@@ -76,10 +79,11 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
     :type prompt: str
     """
     with client.realtime.connect(agent_name=agent_name) as conn:
-        # Message-type conversation items (system/user/assistant) don't have dedicated generated
-        # models in this API version, so they're sent as a raw mapping matching the wire schema.
         conn.conversation.item.create(
-            item={"type": "message", "role": "user", "content": [{"type": "input_text", "text": prompt}]}
+            item=RealtimeConversationItemMessageUser(
+                type=RealtimeConversationItemType.MESSAGE,
+                content=[RealtimeConversationItemMessageUserContent(type="input_text", text=prompt)],
+            )
         )
         conn.response.create()
 

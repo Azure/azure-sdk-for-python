@@ -77,10 +77,11 @@ ClientEvent = Union[
     Mapping[str, Any],
 ]
 
-# The conversation item variants accepted by ``conversation.item.create``. Message-type items
-# (system/user/assistant) no longer have dedicated generated models in this API version and
-# must be passed as a raw mapping.
+# The conversation item variants accepted by ``conversation.item.create``.
 ConversationItem = Union[
+    _models.RealtimeConversationItemMessageSystem,
+    _models.RealtimeConversationItemMessageUser,
+    _models.RealtimeConversationItemMessageAssistant,
     _models.RealtimeConversationItemFunctionCall,
     _models.RealtimeConversationItemFunctionCallOutput,
     _models.RealtimeMCPApprovalResponse,
@@ -366,7 +367,10 @@ class ConversationItemResource(_BaseResource):
         """Insert an item into the conversation.
 
         :keyword item: The conversation item to create.
-        :paramtype item: ~azure.ai.projects.models.RealtimeConversationItemFunctionCall or
+        :paramtype item: ~azure.ai.projects.models.RealtimeConversationItemMessageSystem or
+         ~azure.ai.projects.models.RealtimeConversationItemMessageUser or
+         ~azure.ai.projects.models.RealtimeConversationItemMessageAssistant or
+         ~azure.ai.projects.models.RealtimeConversationItemFunctionCall or
          ~azure.ai.projects.models.RealtimeConversationItemFunctionCallOutput or
          ~azure.ai.projects.models.RealtimeMCPApprovalResponse or Mapping[str, Any]
         :keyword previous_item_id: The ID of the preceding item after which the new item will be

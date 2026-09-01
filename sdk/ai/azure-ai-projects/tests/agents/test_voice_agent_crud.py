@@ -116,7 +116,7 @@ class TestVoiceAgentCrud(TestBase):
     # To run only this test:
     # pytest tests\agents\test_voice_agent_crud.py::TestVoiceAgentCrud::test_voice_agent_disable_enable -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_voice_agent_disable_enable(self, **kwargs):
         """
         Test disable and enable operations for a voice Agent.

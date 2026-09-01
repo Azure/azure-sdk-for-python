@@ -1063,6 +1063,17 @@ class RealtimeClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SESSION_AVATAR_CONNECT."""
 
 
+class RealtimeConversationItemMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeConversationItemMessageType."""
+
+    SYSTEM = "system"
+    """SYSTEM."""
+    USER = "user"
+    """USER."""
+    ASSISTANT = "assistant"
+    """ASSISTANT."""
+
+
 class RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of RealtimeConversationItemType."""
 
@@ -1078,6 +1089,8 @@ class RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """MCP_CALL."""
     MCP_APPROVAL_REQUEST = "mcp_approval_request"
     """MCP_APPROVAL_REQUEST."""
+    MESSAGE = "message"
+    """MESSAGE."""
 
 
 class RealtimeMcpErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
