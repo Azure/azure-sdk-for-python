@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2023-01-01-preview",
+  "apiVersions": {
+    "Microsoft.Marketplace": "2023-01-01-preview"
+  },
+  "commit": "58e7433e805bc45421ef928d466812aaa2329ad9",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/marketplacecatalog/resource-manager/Microsoft.Marketplace/Reviews",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
+}

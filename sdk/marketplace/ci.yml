@@ -32,3 +32,5 @@ extends:
     Artifacts:
     - name: azure-mgmt-marketplace
       safeName: azuremgmtmarketplace
+    - name: azure-mgmt-marketplacereviews
+      safeName: azuremgmtmarketplacereviews

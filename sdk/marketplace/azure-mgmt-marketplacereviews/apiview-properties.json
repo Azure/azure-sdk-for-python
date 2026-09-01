@@ -1,0 +1,23 @@
+{
+    "CrossLanguagePackageId": "Microsoft.Marketplace",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.marketplacereviews.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.mgmt.marketplacereviews.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.marketplacereviews.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.mgmt.marketplacereviews.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
+        "azure.mgmt.marketplacereviews.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.marketplacereviews.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.mgmt.marketplacereviews.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
+        "azure.mgmt.marketplacereviews.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.marketplacereviews.models.UserHasReview": "Microsoft.Marketplace.UserHasReview",
+        "azure.mgmt.marketplacereviews.models.UserHasReviewProperties": "Microsoft.Marketplace.UserHasReviewProperties",
+        "azure.mgmt.marketplacereviews.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
+        "azure.mgmt.marketplacereviews.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
+        "azure.mgmt.marketplacereviews.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.marketplacereviews.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.marketplacereviews.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.marketplacereviews.operations.RatingAndReviewsOperationsOperations.check_user_has_review": "Microsoft.Marketplace.RatingAndReviewsOperations.checkUserHasReview",
+        "azure.mgmt.marketplacereviews.aio.operations.RatingAndReviewsOperationsOperations.check_user_has_review": "Microsoft.Marketplace.RatingAndReviewsOperations.checkUserHasReview"
+    },
+    "CrossLanguageVersion": "e7f8377c6550"
+}
