@@ -20,10 +20,24 @@ The RLE surface models two service concepts:
 
 from __future__ import annotations
 
+import logging
 import math
 import threading
 import time
-from typing import Any, Dict, Mapping, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    TYPE_CHECKING,
+    Union,
+)
+from urllib.parse import parse_qsl, quote, urlencode, urlsplit, urlunsplit
+
+from websockets.sync.client import ClientConnection, connect as websocket_connect
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.paging import ItemPaged
@@ -53,15 +67,76 @@ from ._operations import (
     RLEInstanceRuntimeOperations,
 )
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
 _DEFAULT_INSTANCE_ACQUIRE_TIMEOUT_S = 900.0
 _MAX_INSTANCE_ACQUIRE_TIMEOUT_S = 3600.0
 _DEFAULT_POLL_INTERVAL_S = 5.0
 _MAX_PAGINATION_LIMIT = 100
 _QUOTA_EXCEEDED_CODE = "QuotaExceeded"
 _INSTANCE_GROUP_AT_CAPACITY_CODE = "InstanceGroupAtCapacity"
+_LOGGER = logging.getLogger(__name__)
 _TRANSIENT_HEALTH_STATUS_CODES = frozenset(
     (404, 408, 409, 425, 429, 500, 502, 503, 504)
 )
+
+
+class _OpenEnvWebSocketConfig:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Any,
+        credential_scopes: Sequence[str],
+        api_version: str,
+    ) -> None:
+        self.endpoint = endpoint
+        self.credential = credential
+        self.credential_scopes = tuple(credential_scopes)
+        self.api_version = api_version
+
+
+def _websocket_config_from_client_config(
+    config: Any,
+) -> Optional[_OpenEnvWebSocketConfig]:
+    endpoint = getattr(config, "endpoint", None)
+    credential = getattr(config, "credential", None)
+    credential_scopes = getattr(config, "credential_scopes", None)
+    api_version = getattr(config, "api_version", None)
+    if not endpoint or credential is None or not credential_scopes or not api_version:
+        return None
+    return _OpenEnvWebSocketConfig(endpoint, credential, credential_scopes, api_version)
+
+
+def _build_openenv_websocket_url(
+    config: _OpenEnvWebSocketConfig,
+    environment_name: str,
+    environment_version: str,
+    instance_group_id: str,
+    instance_id: str,
+) -> str:
+    endpoint = urlsplit(config.endpoint)
+    if endpoint.scheme.lower() != "https":
+        raise ValueError("project endpoint must use https for authenticated WebSockets")
+
+    path_segments = (
+        "rl_environments",
+        environment_name,
+        "versions",
+        environment_version,
+        "instance_groups",
+        instance_group_id,
+        "instances",
+        instance_id,
+        "openenv",
+        "ws",
+    )
+    encoded_path = "/".join(quote(segment, safe="") for segment in path_segments)
+    path = f"{endpoint.path.rstrip('/')}/{encoded_path}"
+    query = parse_qsl(endpoint.query, keep_blank_values=True)
+    if not any(name.lower() == "api-version" for name, _ in query):
+        query.append(("api-version", config.api_version))
+    return urlunsplit(("wss", endpoint.netloc, path, urlencode(query), ""))
 
 
 class RLEError(RuntimeError):
@@ -96,6 +171,108 @@ class RLEInstanceAcquireTimeoutError(RLEError):
         self.timeout = timeout
         self.last_status = last_status
         self.details = details
+
+
+class OpenEnvWebSocket:
+    """A text-only WebSocket connection to a leased OpenEnv instance.
+
+    Create this connection with :meth:`OpenEnvInstance.open_websocket` and use it as a context
+    manager. The Slice 2 service contract supports complete text messages only; binary messages,
+    subprotocol negotiation, and automatic reconnect are not supported.
+
+    :param url: Public RLE WebSocket URL. Required.
+    :type url: str
+    :keyword credential: Credential used to authenticate the WebSocket handshake. Required.
+    :paramtype credential: ~azure.core.credentials.TokenCredential
+    :keyword credential_scopes: OAuth scopes used to request the handshake token. Required.
+    :paramtype credential_scopes: tuple[str, ...]
+    :keyword open_timeout: Maximum time in seconds to wait for the opening handshake. Defaults to 10.
+    :paramtype open_timeout: float or None
+    """
+
+    def __init__(
+        self,
+        url: str,
+        *,
+        credential: "TokenCredential",
+        credential_scopes: Sequence[str],
+        open_timeout: Optional[float] = 10,
+        _on_close: Optional[Callable[["OpenEnvWebSocket"], None]] = None,
+    ) -> None:
+        self._url = url
+        self._credential = credential
+        self._credential_scopes = tuple(credential_scopes)
+        self._open_timeout = open_timeout
+        self._on_close = _on_close
+        self._connection: Optional[ClientConnection] = None
+        self._closed = False
+
+    def __enter__(self) -> "OpenEnvWebSocket":
+        if self._closed:
+            raise RLEError("OpenEnv WebSocket is closed")
+        if self._connection is not None:
+            raise RLEError("OpenEnv WebSocket context is already entered")
+        try:
+            token = self._credential.get_token(*self._credential_scopes)
+            self._connection = websocket_connect(
+                self._url,
+                additional_headers={"Authorization": f"Bearer {token.token}"},
+                open_timeout=self._open_timeout,
+            )
+        except BaseException:
+            self.close()
+            raise
+        return self
+
+    def __exit__(self, *exc: Any) -> None:
+        self.close()
+
+    def send(self, message: str) -> None:
+        """Send one complete text message.
+
+        :param message: Text to send. Required.
+        :type message: str
+        :raises TypeError: If ``message`` is not a string.
+        :raises ~azure.ai.projects.RLEError: If the connection is not open.
+        """
+        if not isinstance(message, str):
+            raise TypeError("OpenEnv Slice 2 WebSocket messages must be strings")
+        self._require_connection().send(message)
+
+    def recv(self) -> str:
+        """Receive one complete text message.
+
+        :return: The received text.
+        :rtype: str
+        :raises ~azure.ai.projects.RLEError: If the connection is not open or receives binary data.
+        """
+        message = self._require_connection().recv()
+        if not isinstance(message, str):
+            raise RLEError(
+                "OpenEnv Slice 2 WebSocket received an unsupported binary message"
+            )
+        return message
+
+    def close(self) -> None:
+        """Close the connection. This method is idempotent."""
+        self._closed = True
+        connection = self._connection
+        self._connection = None
+        try:
+            if connection is not None:
+                connection.close()
+        finally:
+            on_close = self._on_close
+            self._on_close = None
+            if on_close is not None:
+                on_close(self)
+
+    def _require_connection(self) -> ClientConnection:
+        if self._connection is None:
+            raise RLEError(
+                "enter the OpenEnvWebSocket context before sending or receiving"
+            )
+        return self._connection
 
 
 def _error_code(model: Any) -> Optional[str]:
@@ -154,9 +331,7 @@ def _validate_instance_acquire_timeout(instance_acquire_timeout: float) -> float
 
 def _validate_pagination_limit(limit: Optional[int]) -> None:
     if limit is not None and not 1 <= limit <= _MAX_PAGINATION_LIMIT:
-        raise ValueError(
-            f"limit must be in the range [1, {_MAX_PAGINATION_LIMIT}]"
-        )
+        raise ValueError(f"limit must be in the range [1, {_MAX_PAGINATION_LIMIT}]")
 
 
 def _validate_poll_interval(poll_interval_s: float) -> float:
@@ -165,7 +340,9 @@ def _validate_poll_interval(poll_interval_s: float) -> float:
     except (TypeError, ValueError) as exc:
         raise ValueError("poll_interval_s must be a finite number") from exc
     if not math.isfinite(value) or value < 0:
-        raise ValueError("poll_interval_s must be a finite number greater than or equal to 0")
+        raise ValueError(
+            "poll_interval_s must be a finite number greater than or equal to 0"
+        )
     return value
 
 
@@ -296,7 +473,9 @@ def _acquire_instance(
 
     # The initial (possibly 202) response may carry a Retry-After hint for the first poll.
     initial_retry_after = _parse_retry_after(captured.get("response"))
-    next_wait = initial_retry_after if initial_retry_after is not None else poll_interval_s
+    next_wait = (
+        initial_retry_after if initial_retry_after is not None else poll_interval_s
+    )
     try:
         while not _status_matches(instance.status, RLEInstanceStatus.RUNNING):
             if any(
@@ -408,6 +587,7 @@ class OpenEnvInstance:
         instance: RLEInstance,
         instances: RLEInstancesOperations,
         runtime: RLEInstanceRuntimeOperations,
+        websocket_config: Optional[_OpenEnvWebSocketConfig] = None,
     ) -> None:
         if not environment_name:
             raise ValueError("environment_name is required")
@@ -424,6 +604,9 @@ class OpenEnvInstance:
         self._instance_id: Optional[str] = instance.instance_id
         self._instances = instances
         self._runtime = runtime
+        self._websocket_config = websocket_config
+        self._websockets: set[OpenEnvWebSocket] = set()
+        self._websocket_lock = threading.Lock()
 
     @property
     def id(self) -> str:
@@ -483,6 +666,38 @@ class OpenEnvInstance:
         the group's reservation so another instance can be leased.
         """
         self._release()
+
+    def open_websocket(self, *, open_timeout: Optional[float] = 10) -> OpenEnvWebSocket:
+        """Create a text-only WebSocket context manager for this leased instance.
+
+        The connection authenticates through the Foundry project endpoint. It performs no automatic
+        reconnect or message replay.
+
+        :keyword open_timeout: Maximum time in seconds to wait for the opening handshake. Defaults
+         to 10. Pass ``None`` to disable the timeout.
+        :paramtype open_timeout: float or None
+        :return: A WebSocket context manager for complete text messages.
+        :rtype: ~azure.ai.projects.operations.OpenEnvWebSocket
+        """
+        config = self._websocket_config
+        if config is None:
+            raise RLEError("OpenEnv WebSocket configuration is unavailable")
+        websocket = OpenEnvWebSocket(
+            _build_openenv_websocket_url(
+                config,
+                self._environment_name,
+                self._environment_version,
+                self._instance_group_id,
+                self.id,
+            ),
+            credential=config.credential,
+            credential_scopes=config.credential_scopes,
+            open_timeout=open_timeout,
+            _on_close=self._remove_websocket,
+        )
+        with self._websocket_lock:
+            self._websockets.add(websocket)
+        return websocket
 
     @distributed_trace
     def reset(
@@ -595,6 +810,17 @@ class OpenEnvInstance:
         instance_id = self._instance_id
         if instance_id is None:
             return
+        with self._websocket_lock:
+            websockets = tuple(self._websockets)
+        for websocket in websockets:
+            try:
+                websocket.close()
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                _LOGGER.warning(
+                    "Failed to close OpenEnv WebSocket before releasing instance %s: %s",
+                    instance_id,
+                    type(exc).__name__,
+                )
         self._instance = None
         self._instance_id = None
         try:
@@ -606,6 +832,10 @@ class OpenEnvInstance:
             )
         except AzureError:
             pass
+
+    def _remove_websocket(self, websocket: OpenEnvWebSocket) -> None:
+        with self._websocket_lock:
+            self._websockets.discard(websocket)
 
 
 class OpenEnvClient:  # pylint: disable=too-many-instance-attributes,client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
@@ -653,6 +883,7 @@ class OpenEnvClient:  # pylint: disable=too-many-instance-attributes,client-acce
         instance_groups: RLEInstanceGroupsOperations,
         instances: RLEInstancesOperations,
         runtime: RLEInstanceRuntimeOperations,
+        websocket_config: Optional[_OpenEnvWebSocketConfig] = None,
         name: str,
         version: Optional[str] = None,
         max_active_instances: int = 1,
@@ -667,6 +898,7 @@ class OpenEnvClient:  # pylint: disable=too-many-instance-attributes,client-acce
         self._instance_groups = instance_groups
         self._instances = instances
         self._runtime = runtime
+        self._websocket_config = websocket_config
         self._name = name
         self._version = version
         self._max_active_instances = max_active_instances
@@ -728,7 +960,9 @@ class OpenEnvClient:  # pylint: disable=too-many-instance-attributes,client-acce
             if self._version is None:
                 environment = self._environments.get_environment(self._name)
                 if not environment.version:
-                    raise RLEError("service did not return the environment's latest version")
+                    raise RLEError(
+                        "service did not return the environment's latest version"
+                    )
                 self._version = environment.version
             try:
                 group = self._instance_groups.create_instance_group(
@@ -809,6 +1043,7 @@ class OpenEnvClient:  # pylint: disable=too-many-instance-attributes,client-acce
             instance=instance,
             instances=self._instances,
             runtime=self._runtime,
+            websocket_config=self._websocket_config,
         )
         with self._lock:
             if self._closed:
@@ -834,7 +1069,9 @@ class OpenEnvClient:  # pylint: disable=too-many-instance-attributes,client-acce
             return
         environment_version = self._version
         if environment_version is None:
-            raise RLEError("service did not resolve the instance group's environment version")
+            raise RLEError(
+                "service did not resolve the instance group's environment version"
+            )
         self._instance_group_id = None
         try:
             self._instance_groups.delete_instance_group(
@@ -858,6 +1095,8 @@ class RLEOperations:
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        config = args[1] if len(args) > 1 else kwargs.get("config")
+        self._websocket_config = _websocket_config_from_client_config(config)
         self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
         self._instance_groups = RLEInstanceGroupsOperations(*args, **kwargs)
         self._instances = RLEInstancesOperations(*args, **kwargs)
@@ -1122,6 +1361,7 @@ class RLEOperations:
             instance_groups=self._instance_groups,
             instances=self._instances,
             runtime=self._runtime,
+            websocket_config=self._websocket_config,
             name=name,
             version=version,
             max_active_instances=max_active_instances,
@@ -1132,6 +1372,7 @@ class RLEOperations:
 
 __all__ = [
     "OpenEnvClient",
+    "OpenEnvWebSocket",
     "RLEError",
     "RLEQuotaExceededError",
     "RLEInstanceAcquireTimeoutError",

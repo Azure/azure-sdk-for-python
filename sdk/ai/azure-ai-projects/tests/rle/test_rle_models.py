@@ -13,6 +13,7 @@ from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.ai.projects.aio.operations._patch_rle_async import (
     AsyncOpenEnvClient,
     AsyncOpenEnvInstance,
+    AsyncOpenEnvWebSocket,
     RLEOperations as AsyncRLEOperations,
 )
 from azure.ai.projects.aio.operations import _patch_rle_async as async_rle_patch
@@ -31,9 +32,12 @@ from azure.ai.projects.operations import RLEOperations
 from azure.ai.projects.operations import _operations as generated_operations
 from azure.ai.projects.aio.operations import _operations as generated_async_operations
 from azure.ai.projects.operations._patch_rle import (
+    _OpenEnvWebSocketConfig,
+    _build_openenv_websocket_url,
     coerce_action,
     OpenEnvClient,
     OpenEnvInstance,
+    OpenEnvWebSocket,
     RLEError,
     RLEQuotaExceededError,
     RLEInstanceAcquireTimeoutError,
@@ -60,6 +64,11 @@ class _FakeInstance:
 class _StaticTokenCredential:
     def get_token(self, *scopes, **kwargs):
         return AccessToken("token", 2**31)
+
+
+class _AsyncStaticTokenCredential:
+    async def get_token(self, *scopes, **kwargs):
+        return AccessToken("async-token", 2**31)
 
 
 def _pipeline_response(status_code=201, headers=None):
@@ -170,6 +179,8 @@ def test_rle_public_symbols_are_available():
     assert AsyncOpenEnvClient
     assert OpenEnvInstance
     assert AsyncOpenEnvInstance
+    assert OpenEnvWebSocket
+    assert AsyncOpenEnvWebSocket
     assert RLEError
     assert RLEQuotaExceededError
     assert RLEInstanceAcquireTimeoutError
@@ -198,9 +209,11 @@ def test_rle_symbols_exported_from_public_namespace():
     assert getattr(operations, "RLEOperations")
     assert getattr(operations, "OpenEnvClient")
     assert getattr(operations, "OpenEnvInstance")
+    assert getattr(operations, "OpenEnvWebSocket")
     assert getattr(operations, "RLEInstanceAcquireTimeoutError")
     assert getattr(aio_operations, "AsyncOpenEnvClient")
     assert getattr(aio_operations, "AsyncOpenEnvInstance")
+    assert getattr(aio_operations, "AsyncOpenEnvWebSocket")
     assert getattr(aio_operations, "RLEOperations")
     for generated_operation_name in (
         "RLEnvironmentsOperations",
@@ -311,12 +324,16 @@ class _FakeInstanceGroups:
             environment_version=environment_version,
         )
 
-    def delete_instance_group(self, environment_name, environment_version, instance_group_id):
+    def delete_instance_group(
+        self, environment_name, environment_version, instance_group_id
+    ):
         self.routes.append((environment_name, environment_version))
         self.deleted.append(instance_group_id)
 
     def list_instance_groups(self, environment_name, environment_version, **kwargs):
-        self.calls.append(("list_instance_groups", environment_name, environment_version, kwargs))
+        self.calls.append(
+            ("list_instance_groups", environment_name, environment_version, kwargs)
+        )
         return SimpleNamespace(data=[], next_continuation_token=None)
 
 
@@ -548,6 +565,7 @@ def _make_openenv_client(
     instances=None,
     environments=None,
     instance_acquire_timeout=900,
+    websocket_config=None,
 ):
     groups = groups or _FakeInstanceGroups()
     instances = instances or _FakeInstances(fail_on=fail_on)
@@ -556,6 +574,7 @@ def _make_openenv_client(
         instance_groups=groups,
         instances=instances,
         runtime=instances,
+        websocket_config=websocket_config,
         name="env-1",
         max_active_instances=max_active_instances,
         instance_acquire_timeout=instance_acquire_timeout,
@@ -800,9 +819,7 @@ def test_openenv_close_ignores_transport_failures():
         ):
             raise ServiceRequestError("connection lost")
 
-    client, _groups, _instances = _make_openenv_client(
-        groups=_TransportFailingGroups()
-    )
+    client, _groups, _instances = _make_openenv_client(groups=_TransportFailingGroups())
     with client:
         pass
 
@@ -1000,16 +1017,22 @@ def test_environment_list_helpers_forward_continuation_token_pagination():
     environments = _FakeEnvironments()
     ops._environments = environments
 
-    assert list(
-        ops.list_environments(
-            name="wordle", limit=10, continuation_token="first", order="asc"
+    assert (
+        list(
+            ops.list_environments(
+                name="wordle", limit=10, continuation_token="first", order="asc"
+            )
         )
-    ) == []
-    assert list(
-        ops.list_environment_versions(
-            "wordle", limit=5, continuation_token="last", order="desc"
+        == []
+    )
+    assert (
+        list(
+            ops.list_environment_versions(
+                "wordle", limit=5, continuation_token="last", order="desc"
+            )
         )
-    ) == []
+        == []
+    )
 
     assert environments.calls == [
         (
@@ -1034,11 +1057,14 @@ def test_instance_group_list_helper_forwards_continuation_token_pagination():
     instance_groups = _FakeInstanceGroups()
     ops._instance_groups = instance_groups
 
-    assert list(
-        ops.list_instance_groups(
-            "wordle", "42", limit=5, continuation_token="groups-first", order="desc"
+    assert (
+        list(
+            ops.list_instance_groups(
+                "wordle", "42", limit=5, continuation_token="groups-first", order="desc"
+            )
         )
-    ) == []
+        == []
+    )
     assert instance_groups.calls == [
         (
             "list_instance_groups",
@@ -1305,8 +1331,12 @@ class _AsyncFakeInstanceGroups:
         self.routes.append((environment_name, environment_version))
         self.deleted.append(instance_group_id)
 
-    async def list_instance_groups(self, environment_name, environment_version, **kwargs):
-        self.calls.append(("list_instance_groups", environment_name, environment_version, kwargs))
+    async def list_instance_groups(
+        self, environment_name, environment_version, **kwargs
+    ):
+        self.calls.append(
+            ("list_instance_groups", environment_name, environment_version, kwargs)
+        )
         return SimpleNamespace(data=[], next_continuation_token=None)
 
 
@@ -1528,6 +1558,7 @@ def _make_async_openenv_client(
     instances=None,
     environments=None,
     instance_acquire_timeout=900,
+    websocket_config=None,
 ):
     groups = groups or _AsyncFakeInstanceGroups()
     instances = instances or _AsyncFakeInstances(fail_on=fail_on)
@@ -1536,6 +1567,7 @@ def _make_async_openenv_client(
         instance_groups=groups,
         instances=instances,
         runtime=instances,
+        websocket_config=websocket_config,
         name="env-1",
         max_active_instances=max_active_instances,
         instance_acquire_timeout=instance_acquire_timeout,
@@ -1606,10 +1638,245 @@ def test_async_openenv_instance_entry_is_atomic():
                 instance_context.__aenter__(),
                 return_exceptions=True,
             )
-            assert sum(isinstance(result, AsyncOpenEnvInstance) for result in results) == 1
+            assert (
+                sum(isinstance(result, AsyncOpenEnvInstance) for result in results) == 1
+            )
             assert sum(isinstance(result, RLEError) for result in results) == 1
             assert instances._next == 1
             await instance_context.release()
+
+    asyncio.run(run())
+
+
+def test_openenv_websocket_authenticates_and_relays_text(monkeypatch):
+    calls = []
+
+    class Connection:
+        def __init__(self):
+            self.sent = []
+            self.closed = False
+
+        def send(self, message):
+            self.sent.append(message)
+
+        def recv(self):
+            return "sandbox-response"
+
+        def close(self):
+            self.closed = True
+
+    connection = Connection()
+
+    def connect(url, **kwargs):
+        calls.append((url, kwargs))
+        return connection
+
+    monkeypatch.setattr(
+        "azure.ai.projects.operations._patch_rle.websocket_connect", connect
+    )
+    config = _OpenEnvWebSocketConfig(
+        "https://account.services.ai.azure.com/api/projects/project",
+        _StaticTokenCredential(),
+        ("https://ai.azure.com/.default",),
+        "v1",
+    )
+    client, _groups, _instances = _make_openenv_client(websocket_config=config)
+
+    with client:
+        with client.get_instance() as instance:
+            with instance.open_websocket(open_timeout=23) as websocket:
+                websocket.send("client-message")
+                assert websocket.recv() == "sandbox-response"
+                with pytest.raises(TypeError, match="must be strings"):
+                    websocket.send(b"binary")
+
+    assert calls == [
+        (
+            "wss://account.services.ai.azure.com/api/projects/project/"
+            "rl_environments/env-1/versions/resolved-latest/instance_groups/grp-1/"
+            "instances/inst-0/openenv/ws?api-version=v1",
+            {
+                "additional_headers": {"Authorization": "Bearer token"},
+                "open_timeout": 23,
+            },
+        )
+    ]
+    assert connection.sent == ["client-message"]
+    assert connection.closed
+
+
+def test_openenv_websocket_rejects_insecure_project_endpoint():
+    config = _OpenEnvWebSocketConfig(
+        "http://account.services.ai.azure.com/api/projects/project",
+        _StaticTokenCredential(),
+        ("https://ai.azure.com/.default",),
+        "v1",
+    )
+
+    with pytest.raises(ValueError, match="must use https"):
+        _build_openenv_websocket_url(
+            config,
+            "env-1",
+            "1.0.0",
+            "group-1",
+            "instance-1",
+        )
+
+
+def test_openenv_instance_release_closes_active_websocket_first(monkeypatch):
+    events = []
+
+    class Connection:
+        def send(self, message):
+            pass
+
+        def recv(self):
+            return "response"
+
+        def close(self):
+            events.append("websocket-close")
+
+    class Instances(_FakeInstances):
+        def delete_instance(self, *args):
+            events.append("instance-delete")
+            return super().delete_instance(*args)
+
+    monkeypatch.setattr(
+        "azure.ai.projects.operations._patch_rle.websocket_connect",
+        lambda *args, **kwargs: Connection(),
+    )
+    config = _OpenEnvWebSocketConfig(
+        "https://account.services.ai.azure.com/api/projects/project",
+        _StaticTokenCredential(),
+        ("https://ai.azure.com/.default",),
+        "v1",
+    )
+    instances = Instances()
+    client, _groups, _instances = _make_openenv_client(
+        instances=instances, websocket_config=config
+    )
+
+    with client:
+        instance = client.get_instance()
+        instance.open_websocket().__enter__()
+        instance.release()
+
+    assert events == ["websocket-close", "instance-delete"]
+
+
+def test_openenv_websocket_requires_project_configuration():
+    client, _groups, _instances = _make_openenv_client()
+    with client:
+        with client.get_instance() as instance:
+            with pytest.raises(RLEError, match="configuration is unavailable"):
+                instance.open_websocket()
+
+
+def test_async_openenv_websocket_authenticates_and_relays_text(monkeypatch):
+    async def run():
+        calls = []
+
+        class Connection:
+            def __init__(self):
+                self.sent = []
+                self.closed = False
+
+            async def send(self, message):
+                self.sent.append(message)
+
+            async def recv(self):
+                return "sandbox-response"
+
+            async def close(self):
+                self.closed = True
+
+        connection = Connection()
+
+        async def connect(url, **kwargs):
+            calls.append((url, kwargs))
+            return connection
+
+        monkeypatch.setattr(
+            "azure.ai.projects.aio.operations._patch_rle_async.websocket_connect",
+            connect,
+        )
+        config = _OpenEnvWebSocketConfig(
+            "https://account.services.ai.azure.com/api/projects/project",
+            _AsyncStaticTokenCredential(),
+            ("https://ai.azure.com/.default",),
+            "v1",
+        )
+        client, _groups, _instances = _make_async_openenv_client(
+            websocket_config=config
+        )
+
+        async with client:
+            async with client.get_instance() as instance:
+                async with instance.open_websocket(open_timeout=17) as websocket:
+                    await websocket.send("client-message")
+                    assert await websocket.recv() == "sandbox-response"
+                    with pytest.raises(TypeError, match="must be strings"):
+                        await websocket.send(b"binary")
+
+        assert calls == [
+            (
+                "wss://account.services.ai.azure.com/api/projects/project/"
+                "rl_environments/env-1/versions/resolved-latest/instance_groups/grp-1/"
+                "instances/inst-0/openenv/ws?api-version=v1",
+                {
+                    "additional_headers": {"Authorization": "Bearer async-token"},
+                    "open_timeout": 17,
+                },
+            )
+        ]
+        assert connection.sent == ["client-message"]
+        assert connection.closed
+
+    asyncio.run(run())
+
+
+def test_async_openenv_instance_release_continues_after_websocket_close_failure(
+    monkeypatch,
+):
+    async def run():
+        events = []
+
+        class Connection:
+            async def close(self):
+                events.append("websocket-close")
+                raise RuntimeError("close failed")
+
+        class Instances(_AsyncFakeInstances):
+            async def delete_instance(self, *args):
+                events.append("instance-delete")
+                return await super().delete_instance(*args)
+
+        async def connect(*args, **kwargs):
+            return Connection()
+
+        monkeypatch.setattr(
+            "azure.ai.projects.aio.operations._patch_rle_async.websocket_connect",
+            connect,
+        )
+        config = _OpenEnvWebSocketConfig(
+            "https://account.services.ai.azure.com/api/projects/project",
+            _AsyncStaticTokenCredential(),
+            ("https://ai.azure.com/.default",),
+            "v1",
+        )
+        instances = Instances()
+        client, _groups, _instances = _make_async_openenv_client(
+            instances=instances,
+            websocket_config=config,
+        )
+
+        async with client:
+            instance = client.get_instance()
+            await instance.__aenter__()
+            await instance.open_websocket().__aenter__()
+            await instance.release()
+
+        assert events == ["websocket-close", "instance-delete"]
 
     asyncio.run(run())
 
@@ -2100,7 +2367,9 @@ def test_async_openenv_ensure_group_preserves_non_quota_403(error_code):
 
 def test_async_openenv_ensure_group_deletes_incomplete_group():
     class _IncompleteGroupResponse(_AsyncFakeInstanceGroups):
-        async def create_instance_group(self, environment_name, environment_version, body):
+        async def create_instance_group(
+            self, environment_name, environment_version, body
+        ):
             group = await super().create_instance_group(
                 environment_name, environment_version, body
             )

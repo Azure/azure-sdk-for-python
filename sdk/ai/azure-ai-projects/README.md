@@ -39,7 +39,7 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 * **Manage memory stores (preview)** for Agent conversations, using `.beta.memory_stores` operations.
 * **Register and manage local AI model weights (preview)** using `.beta.models` operations.
 * **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
-* **Use Reinforcement Learning Environments (RLE) (preview)** through `.rle` with `allow_preview=True` to create, manage, and run hosted environments.
+* **Use Reinforcement Learning Environments (RLE) (preview)** through `.rle` with `allow_preview=True` to create, manage, and run hosted environments, including text-based OpenEnv WebSocket interactions.
 * **Create and manage routines (preview)** that execute triggered actions based on configured conditions, using `.beta.routines` operations.
 * **Manage skills (preview)** as reusable capabilities that can be included in toolboxes and agents, using `.beta.skills` operations.
 
