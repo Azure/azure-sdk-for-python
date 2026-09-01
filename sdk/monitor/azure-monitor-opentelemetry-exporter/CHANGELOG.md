@@ -9,11 +9,12 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed global-to-regional ingestion redirects so they are followed across trusted Azure Monitor host suffixes within the same cloud, and updated internal statsbeat routing to follow the customer's effective ingestion route after an accepted redirect so EU SDK statistics are reported to the EU statsbeat destination
+  ([#48817](https://github.com/Azure/azure-sdk-for-python/pull/48817))
 
 ### Other Changes
-- Extend OneSettings configuration evaluation to parse JSON-encoded feature settings and support explicit string
-  override values, list-valued matching conditions, and caller-specified value conversion while preserving existing
-  boolean feature-flag behavior.
+- Extend OneSettings configuration evaluation to parse JSON-encoded feature settings and support explicit string override values, list-valued matching conditions, and caller-specified value conversion while preserving existing boolean feature-flag behavior.
+  ([#48595](https://github.com/Azure/azure-sdk-for-python/pull/48595))
 
 ## 1.0.0b56 (2026-08-06)
 

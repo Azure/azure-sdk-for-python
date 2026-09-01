@@ -28,7 +28,7 @@ from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
-    _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
+    _ALLOWED_REDIRECT_DOMAIN_SUFFIX_GROUPS,
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
     _APPLICATIONINSIGHTS_AUTHENTICATION_STRING,
     _INVALID_STATUS_CODES,
@@ -546,6 +546,7 @@ class BaseExporter:
                                 self.client._config.host = "{}://{}".format(
                                     url.scheme, url.netloc
                                 )  # pylint: disable=W0212
+                                self._update_statsbeat_endpoint(self.client._config.host)
                                 # Attempt to export again
                                 result = self._transmit(envelopes, _skip_rate_limit=True)
                         else:
@@ -765,6 +766,35 @@ class BaseExporter:
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, "_is_customer_sdkstats", False)
 
+    def _update_connection_string(self, connection_string: str) -> bool:
+        # Update the statsbeat exporter route after an accepted ingestion redirect.
+        parsed = ConnectionStringParser(connection_string)
+        if not parsed.instrumentation_key or not parsed.endpoint:
+            return False
+        self._connection_string = parsed._connection_string
+        self._instrumentation_key = parsed.instrumentation_key
+        self._endpoint = parsed.endpoint
+        self._region = parsed.region
+        self._aad_audience = parsed.aad_audience
+        self.client._config.host = parsed.endpoint  # pylint: disable=protected-access
+        return True
+
+    def _update_statsbeat_endpoint(self, endpoint: str) -> None:
+        # Point internal statsbeat at the customer's effective ingestion route.
+        # Called after a 307/308 redirect has been validated and accepted, so that internal SDK
+        # statistics follow the same data boundary as the customer's telemetry.
+
+        if self._is_stats_exporter() or self._is_customer_sdkstats_exporter():
+            return
+        try:
+            from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (  # pylint: disable=import-outside-toplevel
+                update_statsbeat_endpoint,
+            )
+
+            update_statsbeat_endpoint(endpoint)
+        except Exception:  # pylint: disable=broad-except
+            logger.debug("Failed to update statsbeat endpoint after redirect.", exc_info=True)
+
     def _is_same_registered_domain(self, current_netloc: str, redirect_netloc: str) -> bool:
         """Return True if the redirect target is safe to follow.
 
@@ -774,11 +804,14 @@ class BaseExporter:
 
         A redirect is permitted only when the target equals the currently
         configured host exactly, or when both the current host and the
-        redirect target are under one of the known Azure Monitor ingestion
-        host suffixes (see ``_ALLOWED_REDIRECT_DOMAIN_SUFFIXES``). Customers
-        with a custom (non-Azure) ingestion host will therefore not have
-        server-issued cross-host redirects followed; such deployments should
-        configure their proxy to terminate redirects locally.
+        redirect target are under known Azure Monitor ingestion host suffixes
+        belonging to the same cloud (see
+        ``_ALLOWED_REDIRECT_DOMAIN_SUFFIX_GROUPS``). Grouping by cloud is what
+        allows the global endpoint to be redirected to a regional ingestion
+        stamp, while a redirect that crosses into a different sovereign cloud
+        is refused. Customers with a custom (non-Azure) ingestion host will
+        therefore not have server-issued cross-host redirects followed; such
+        deployments should configure their proxy to terminate redirects locally.
 
         :param str current_netloc: The netloc of the currently-configured ingestion endpoint.
         :param str redirect_netloc: The netloc of the redirect target from the server's location header.
@@ -798,10 +831,12 @@ class BaseExporter:
         # Exact host match is always safe.
         if current_host == redirect_host:
             return True
-        # Otherwise both hosts must live under the same trusted Azure Monitor
-        # ingestion suffix.
-        for suffix in _ALLOWED_REDIRECT_DOMAIN_SUFFIXES:
-            if current_host.endswith(suffix) and redirect_host.endswith(suffix):
+        # Otherwise both hosts must live under trusted Azure Monitor ingestion
+        # suffixes belonging to the same cloud.
+        for suffix_group in _ALLOWED_REDIRECT_DOMAIN_SUFFIX_GROUPS:
+            current_is_trusted = any(current_host.endswith(suffix) for suffix in suffix_group)
+            redirect_is_trusted = any(redirect_host.endswith(suffix) for suffix in suffix_group)
+            if current_is_trusted and redirect_is_trusted:
                 return True
         return False
 

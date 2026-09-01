@@ -5,6 +5,7 @@ import logging
 import json
 from collections.abc import Iterable  # pylint: disable=import-error
 from typing import Optional, Dict, List
+from urllib.parse import urlparse
 from opentelemetry.metrics import CallbackOptions, Observation
 
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -29,14 +30,43 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 
 
 def _get_stats_connection_string(endpoint: str) -> str:
+    """Return the statsbeat connection string for the data boundary of the given ingestion endpoint.
+
+    The region is derived from the ingestion stamp name (the first label of the hostname), with any
+    stamp index suffix stripped, e.g. ``https://westeurope-5.in.applicationinsights.azure.com/``
+    resolves to ``westeurope``. Matching is exact so an unrelated host cannot be misclassified by a
+    substring collision.
+
+    :param str endpoint: The ingestion endpoint URL.
+    :return: The statsbeat connection string to use for this endpoint.
+    :rtype: str
+    """
     cs_env = os.environ.get(_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME)
     if cs_env:
         return cs_env
-    for endpoint_location in _EU_ENDPOINTS:
-        if endpoint_location in endpoint:
-            # Use statsbeat EU endpoint if user is in EU region
-            return _DEFAULT_EU_STATS_CONNECTION_STRING
+    region = _get_region_from_endpoint(endpoint)
+    if region in _EU_ENDPOINTS:
+        # Use statsbeat EU endpoint if user is in EU region
+        return _DEFAULT_EU_STATS_CONNECTION_STRING
     return _DEFAULT_NON_EU_STATS_CONNECTION_STRING
+
+
+def _get_region_from_endpoint(endpoint: str) -> str:
+    """Extract the region name from an ingestion endpoint URL.
+
+    Takes the first label of the hostname (the ingestion stamp name) and strips the stamp index
+    suffix, e.g. ``https://westeurope-5.in.applicationinsights.azure.com/`` -> ``westeurope``.
+
+    :param str endpoint: The ingestion endpoint URL.
+    :return: The lowercased region name, or an empty string if it could not be determined.
+    :rtype: str
+    """
+    try:
+        hostname = urlparse(endpoint).hostname or ""
+    except ValueError:
+        return ""
+    stamp_name = hostname.lower().split(".")[0]
+    return stamp_name.split("-")[0]
 
 
 # seconds

@@ -197,6 +197,10 @@ class _StatsbeatMetrics:
             description="Statsbeat metric tracking tracking enabled features",
         )
 
+    def update_endpoint_host(self, endpoint: str) -> None:
+        # Refresh the network ``host`` dimension after an accepted ingestion redirect.
+        _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
+
     # pylint: disable=unused-argument
     # pylint: disable=protected-access
     def _get_attach_metric(self, options: CallbackOptions) -> Iterable[Observation]:
