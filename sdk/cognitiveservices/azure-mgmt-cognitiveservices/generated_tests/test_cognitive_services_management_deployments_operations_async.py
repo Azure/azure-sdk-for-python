@@ -127,6 +127,31 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
                         },
                         "scaleSettings": {"activeCapacity": 0, "capacity": 0, "scaleType": "str"},
                         "serviceTier": "str",
+                        "speculativeDecoding": {
+                            "draftModel": {
+                                "callRateLimit": {
+                                    "count": 0.0,
+                                    "renewalPeriod": 0.0,
+                                    "rules": [
+                                        {
+                                            "count": 0.0,
+                                            "dynamicThrottlingEnabled": bool,
+                                            "key": "str",
+                                            "matchPatterns": [{"method": "str", "path": "str"}],
+                                            "minCount": 0.0,
+                                            "renewalPeriod": 0.0,
+                                        }
+                                    ],
+                                },
+                                "format": "str",
+                                "name": "str",
+                                "publisher": "str",
+                                "source": "str",
+                                "sourceAccount": "str",
+                                "version": "str",
+                            },
+                            "draftTokenCount": 0,
+                        },
                         "spilloverDeploymentName": "str",
                         "versionUpgradeOption": "str",
                     },

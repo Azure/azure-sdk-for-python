@@ -1,10 +1,22 @@
 # Release History
 
-## 1.8.9 (Unreleased)
+## 1.8.10 (Unreleased)
 
 ### Features Added
+- Add httpx instrumentation support
+  ([#47953](https://github.com/Azure/azure-sdk-for-python/pull/47953))
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Contribute distro profile information (`component="dst"` and distro version) to the OneSettings control plane during `configure_azure_monitor`
+  ([#48475](https://github.com/Azure/azure-sdk-for-python/pull/48475))
+- Update `azure-monitor-opentelemetry-exporter` minimum dependency to `1.0.0b56`
+  ([#48475](https://github.com/Azure/azure-sdk-for-python/pull/48475))
+
+## 1.8.9 (2026-07-01)
 
 ### Bugs Fixed
 - Enforce size limits on browser SDK snippet injection to guard against decompression bombs and oversized HTML response bodies (1 MiB compressed / 5 MiB decompressed caps).

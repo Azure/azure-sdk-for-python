@@ -65,7 +65,7 @@ if TYPE_CHECKING:
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync as pyamqp_JWTTokenAuthAsync
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-    from .._common.auto_lock_renewer import AutoLockRenewer
+    from ._async_auto_lock_renewer import AutoLockRenewer
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -123,13 +123,14 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An ~azure.servicebus.aio.AutoLockRenewer
      can be provided such that messages are automatically registered on receipt. If the receiver is a session receiver,
      it will apply to the session instead.
-    :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
+    :keyword int prefetch_count: The number of messages the receiver requests ahead of a
+     receive call, so that receive calls can be served from the buffer instead of waiting on a
+     service request. This is separate from the `max_message_count` argument to
+     `receive_messages`, which bounds a single call rather than the buffer.
      This setting is only for advanced performance tuning. Increasing this value will improve message throughput
-     performance but increase the chance that messages will expire while they are cached if they're not
+     performance but increase the chance that messages will expire while they are buffered if they're not
      processed fast enough.
-     The default value is 0, meaning messages will be received from the service and processed one at a time.
-     In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
-     `max_message_count` (if provided) within its request to the service.
+     The default value is 0, meaning prefetch is turned off.
      WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
      the in-memory prefetch buffer until they're received into the application. If the application ends before
      the messages are received into the application, those messages will be lost and unable to be recovered.
@@ -279,13 +280,14 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
+        :keyword int prefetch_count: The number of messages the receiver requests ahead of a
+         receive call, so that receive calls can be served from the buffer instead of waiting on a
+         service request. This is separate from the `max_message_count` argument to
+         `receive_messages`, which bounds a single call rather than the buffer.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
-         performance but increase the chance that messages will expire while they are cached if they're not
+         performance but increase the chance that messages will expire while they are buffered if they're not
          processed fast enough.
-         The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
-         `max_message_count` (if provided) within its request to the service.
+         The default value is 0, meaning prefetch is turned off.
          WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
@@ -434,9 +436,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
         # The following condition check is a hot fix for settling a message received for non-session queue after
         # lock expiration.
-        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
-        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
-        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
+        # Settlement success cannot be verified where the outcome is not awaited -- uamqp never can
+        # (https://github.com/Azure/azure-uamqp-c/issues/274).
         if not self._session and message._lock_expired:
             raise MessageLockLostError(
                 message="The lock on the message lock has expired.",
@@ -472,6 +473,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                         settle_operation,
                         dead_letter_reason=dead_letter_reason,
                         dead_letter_error_description=dead_letter_error_description,
+                        await_outcome=self._await_settlement_outcome,
+                        outcome_timeout=self._config.timeout,
                     )
                     return
                 except RuntimeError as exception:
@@ -527,6 +530,17 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
     async def _close_handler(self):
         self._message_iter = None
+        if (
+            self._handler
+            and self._receive_mode == ServiceBusReceiveMode.PEEK_LOCK
+            and not self._session
+        ):
+            # Drain the link and release buffered/in-flight messages so they are not
+            # left locked at the broker until lock expiry (delaying redelivery,
+            # inflating delivery count). Non-session gate matches .NET; the PEEK_LOCK
+            # gate is Python-specific (a pre-settled RECEIVE_AND_DELETE delivery
+            # cannot be released-settled).
+            await self._amqp_transport.drain_and_release_messages_async(self._handler)
         await super(ServiceBusReceiver, self)._close_handler()
 
     @property
@@ -588,20 +602,26 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         This approach is optimal if you wish to process multiple messages simultaneously, or
         perform an ad-hoc receive as a single call.
 
-        Note that the number of messages retrieved in a single batch will be dependent on
-        whether `prefetch_count` was set for the receiver. If `prefetch_count` is not set for the receiver,
-        the receiver would try to cache max_message_count (if provided) messages within the request to the service.
+        `max_message_count` bounds what this call returns, while `prefetch_count` governs what the
+        receiver holds ahead of the call. When `prefetch_count` is 0, the receiver requests
+        `max_message_count` (unless it is None) messages from the service on this call. When
+        `prefetch_count` is greater than 0, the call is served first from what the receiver already
+        holds, and if that is fewer than `max_message_count` it keeps receiving until the count is
+        met or the wait time elapses.
 
         This call will prioritize returning quickly over meeting a specified batch size, and so will
         return as soon as at least one message is received and there is a gap in incoming messages regardless
         of the specified batch size.
 
-        :param Optional[int] max_message_count: Maximum number of messages in the batch. Actual number
-         returned will depend on prefetch_count size and incoming stream rate.
-         Setting to None will fully depend on the prefetch config. The default value is 1.
+        :param Optional[int] max_message_count: Maximum number of messages in the batch. This is an upper
+         bound: the call returns fewer messages when fewer are available, when the wait time elapses, or
+         when a gap in incoming messages ends the batch early. Setting to None uses `prefetch_count`
+         as the bound instead, so at the default `prefetch_count` of 0 the call requests no messages
+         and returns an empty list without waiting, even when `max_wait_time` is set. The default
+         value is 1.
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
-         If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. If specified, and no messages arrive within the
+         If messages are requested, no messages arrive, and no timeout is specified, this call will not
+         return until the connection is closed. If specified, and no messages arrive within the
          timeout period, an empty list will be returned. NOTE: Setting max_wait_time on receive_messages
          when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session.
          Please use max_wait_time on the constructor to set the timeout for connecting to a session.

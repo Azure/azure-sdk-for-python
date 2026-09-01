@@ -15,6 +15,7 @@ Use these sidecars for guidance that is required for release-ready changes but d
 
 - Release tracks, branch-dependent API surface, and CHANGELOG rules: `references/release.md`
 - Test commands, live recording workflow, and test authoring rules: `references/testing.md`
+- Sample authoring workflow, `.http` contract parity, and live-run setup: `references/samples.md`
 
 ## Environment setup
 
@@ -32,6 +33,10 @@ cd sdk/search/azure-search-documents
 # Update tsp-location.yaml with the new spec commit SHA, then:
 tsp-client update
 # or: azsdk_package_generate_code
+
+# Reapply temporary Python emitter workarounds, then verify they are present:
+python .github/skills/azure-search-documents/scripts/apply_generator_workarounds.py
+python .github/skills/azure-search-documents/scripts/apply_generator_workarounds.py --check
 
 # If the API version changed, _metadata.json updates automatically;
 # reconcile the hand-maintained ApiVersion enum in Step 3.

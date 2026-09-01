@@ -11,9 +11,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 import re
 import logging
-from typing import List, Any, Optional
-import httpx  # pylint: disable=networking-import-outside-azure-core-transport
-from openai import OpenAI
+from typing import List, Any, Optional, cast
+import httpx2  # pylint: disable=networking-import-outside-azure-core-transport
+from openai import OpenAI, DefaultHttpxClient
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
@@ -21,7 +21,9 @@ from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
+_OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
 logger = logging.getLogger(__name__)
+_openai_transport_logger = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
 
 
 # ---------------------------------------------------------------------------
@@ -42,18 +44,11 @@ def _resolve_openai_base_url(config: Any, agent_name: Optional[str], kwargs: dic
     :type kwargs: dict
     :return: The base URL to use for the (Async)OpenAI client.
     :rtype: str
-    :raises ValueError: If ``agent_name`` is provided but ``allow_preview=True`` was not set.
     """
     if "base_url" in kwargs:
         return kwargs.pop("base_url")
     if agent_name is not None:
-        if config.allow_preview:
-            return config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/openai"
-        raise ValueError(
-            "Calling `get_openai_client` method with an `agent_name` requires you to set `allow_preview=True`"
-            "\nwhen constructing the AIProjectClient. Note that preview features are under development and "
-            "\nsubject to change. They should not be used in production environments."
-        )
+        return config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/openai"
     return config.endpoint.rstrip("/") + "/openai/v1"
 
 
@@ -104,6 +99,61 @@ def _build_openai_user_agent(custom_user_agent: Optional[str], openai_default_us
     return "-".join(ua for ua in [custom_user_agent, "AIProjectClient"] if ua) + " " + openai_default_user_agent
 
 
+def _log_streaming_response_notice(logging_enabled: bool) -> bool:
+    if logging_enabled:
+        _openai_transport_logger.debug("Body: [Streaming response will be logged as consumed]")
+        return True
+
+    _openai_transport_logger.debug("Body: [Streaming content exists]")
+    return False
+
+
+def _log_streaming_response_chunk(chunk: bytes) -> None:
+    if not chunk:
+        return
+
+    try:
+        _openai_transport_logger.debug("Body chunk:\n %s", chunk.decode("utf-8"))
+    except Exception:  # pylint: disable=broad-exception-caught
+        _openai_transport_logger.debug("Body chunk (raw):\n  %r", chunk)
+
+
+class _LoggingSyncByteStream(httpx2.SyncByteStream):
+    def __init__(self, stream: httpx2.SyncByteStream) -> None:
+        self._stream = stream
+
+    def __iter__(self):
+        try:
+            for chunk in self._stream:
+                _log_streaming_response_chunk(chunk)
+                yield chunk
+        finally:
+            _openai_transport_logger.debug("Body: [Streaming response completed]")
+
+    def close(self) -> None:
+        close = getattr(self._stream, "close", None)
+        if close:
+            close()
+
+
+class _LoggingAsyncByteStream(httpx2.AsyncByteStream):
+    def __init__(self, stream: httpx2.AsyncByteStream) -> None:
+        self._stream = stream
+
+    async def __aiter__(self):
+        try:
+            async for chunk in self._stream:
+                _log_streaming_response_chunk(chunk)
+                yield chunk
+        finally:
+            _openai_transport_logger.debug("Body: [Streaming response completed]")
+
+    async def aclose(self) -> None:
+        aclose = getattr(self._stream, "aclose", None)
+        if aclose:
+            await aclose()
+
+
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
@@ -121,6 +171,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.operations.IndexesOperations
+    :ivar toolboxes: ToolboxesOperations operations
+    :vartype toolboxes: azure.ai.projects.operations.ToolboxesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
@@ -130,17 +182,19 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param allow_preview: Whether to enable preview features. Optional, default is False.
-     Set this to True to create a Hosted Agent (using :class:`~azure.ai.projects.models.HostedAgentDefinition`)
-     or a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
+     Set this to True to create a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
      Set this to True to use human evaluation rule action (class :class:`~azure.ai.projects.models.HumanEvaluationPreviewRuleAction`).
      Methods on the `.beta` sub-client (class :class:`~azure.ai.projects.operations.BetaOperations`)
      are all in preview, but do not require setting `allow_preview=True` since it's implied by the sub-client name.
      When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
-     with the appropriate value in all relevant calls to the service.
+     with the appropriate value in all relevant calls to the service. Do not use preview features in production code,
+     as they are subject to change or removal without notice.
     :type allow_preview: bool
     :keyword api_version: The API version to use for this operation. Known values are "v1". Default
      value is "v1". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -164,6 +218,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             azure_logger.setLevel(logging.DEBUG)
             console_handler = logging.StreamHandler(stream=sys.stdout)
             console_handler.addFilter(_AuthSecretsFilter())
+            console_handler.addFilter(_OpenAIAuthSecretsFilter())
             azure_logger.addHandler(console_handler)
             # Exclude detailed logs for network calls associated with getting Entra ID token.
             logging.getLogger("azure.identity").setLevel(logging.ERROR)
@@ -172,6 +227,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             # (which are implemented as a separate logging policy)
             logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 
+            openai_transport_logger = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
+            openai_transport_logger.setLevel(logging.DEBUG)
+            openai_transport_logger.propagate = False
+            openai_transport_logger.addHandler(console_handler)
             kwargs.setdefault("logging_enable", self._console_logging_enabled)
 
         self._kwargs = kwargs.copy()
@@ -201,14 +260,15 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         :param kwargs: Caller keyword arguments; ``http_client`` is popped when present.
         :type kwargs: dict
-        :return: An httpx.Client instance configured with logging transport, or ``None``.
-        :rtype: httpx.Client or None
+        :return: An httpx2.Client instance configured with logging transport, or ``None``.
+        :rtype: httpx2.Client or None
         """
         if "http_client" in kwargs:
             return kwargs.pop("http_client")
-        if self._console_logging_enabled:
-            return httpx.Client(transport=_OpenAILoggingTransport())
-        return None
+
+        logging_kwargs = getattr(self, "_kwargs", {})
+        logging_enabled = bool(logging_kwargs.get("logging_enable", False))
+        return DefaultHttpxClient(transport=_OpenAILoggingTransport(logging_enabled=logging_enabled))
 
     @distributed_trace
     def get_openai_client(
@@ -245,7 +305,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         base_url = _resolve_openai_base_url(self._config, agent_name, kwargs)
         default_query = _resolve_openai_query_params(self._config, agent_name, kwargs)
 
-        logger.debug(  # pylint: disable=specify-parameter-names-in-call
+        _openai_transport_logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
             base_url,
         )
@@ -303,11 +363,25 @@ class _AuthSecretsFilter(logging.Filter):
         return True
 
 
-class _OpenAILoggingTransport(httpx.HTTPTransport):
-    """Custom HTTP transport that logs OpenAI API requests and responses to the console.
+class _OpenAIAuthSecretsFilter(logging.Filter):
+    """Redact bearer tokens in OpenAI transport log messages before console emission."""
 
-    This transport wraps httpx.HTTPTransport to intercept all HTTP traffic and print
-    detailed request/response information for debugging purposes. It automatically
+    _AUTH_HEADER_LINE_PATTERN = re.compile(r"(?im)^(\s*authorization:\s*bearer\s+).+$")
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        rendered = record.getMessage()
+        redacted = self._AUTH_HEADER_LINE_PATTERN.sub(r"\1<REDACTED>", rendered)
+        if redacted != rendered:
+            record.msg = redacted
+            record.args = ()
+        return True
+
+
+class _OpenAILoggingTransport(httpx2.HTTPTransport):
+    """Custom HTTP transport that logs OpenAI API requests and responses.
+
+    This transport wraps httpx2.HTTPTransport to intercept all HTTP traffic and emit
+    detailed request/response information through a dedicated logger. It automatically
     redacts sensitive authorization headers and handles various content types including
     multipart form data (file uploads).
 
@@ -315,12 +389,18 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
     AZURE_AI_PROJECTS_CONSOLE_LOGGING environment variable.
     """
 
+    def __init__(self, *, logging_enabled: bool) -> None:
+        super().__init__()
+        self._logging_enabled = logging_enabled
+
     def _sanitize_auth_header(self, headers) -> None:
         """Sanitize authorization and api-key headers by redacting sensitive information.
 
         :param headers: Dictionary of HTTP headers to sanitize
         :type headers: dict
         """
+        if self._logging_enabled:
+            return
 
         if "authorization" in headers:
             auth_value = headers["authorization"]
@@ -329,79 +409,94 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
             else:
                 headers["authorization"] = "<ERROR>"
 
-    def handle_request(self, request: httpx.Request) -> httpx.Response:
+    @staticmethod
+    def _is_streaming_response(response: httpx2.Response) -> bool:
+        content_type = response.headers.get("content-type", "").lower()
+        return "text/event-stream" in content_type
+
+    def handle_request(self, request: httpx2.Request) -> httpx2.Response:
         """
-        Log HTTP request and response details to console, in a nicely formatted way,
+        Log HTTP request and response details using the dedicated transport logger,
         for OpenAI / Azure OpenAI clients.
 
         :param request: The HTTP request to handle and log
-        :type request: httpx.Request
+        :type request: httpx2.Request
 
         :return: The HTTP response received
-        :rtype: httpx.Response
+        :rtype: httpx2.Response
         """
 
-        print(f"\n==> Request:\n{request.method} {request.url}")
+        _openai_transport_logger.debug("\n==> Request:\n%s %s", request.method, request.url)
         headers = dict(request.headers)
         self._sanitize_auth_header(headers)
-        print("Headers:")
+        _openai_transport_logger.debug("Headers:")
         for key, value in sorted(headers.items()):
-            print(f"  {key}: {value}")
+            _openai_transport_logger.debug("  %s: %s", key, value)
 
         self._log_request_body(request)
 
         response = super().handle_request(request)
 
-        print(f"\n<== Response:\n{response.status_code} {response.reason_phrase}")
-        print("Headers:")
+        _openai_transport_logger.debug("\n<== Response:\n%s %s", response.status_code, response.reason_phrase)
+        _openai_transport_logger.debug("Headers:")
         for key, value in sorted(dict(response.headers).items()):
-            print(f"  {key}: {value}")
+            _openai_transport_logger.debug("  %s: %s", key, value)
 
-        content = response.read()
-        if content is None or content == b"":
-            print("Body: [No content]")
+        if self._is_streaming_response(response):
+            if _log_streaming_response_notice(self._logging_enabled):
+                response.stream = _LoggingSyncByteStream(cast(httpx2.SyncByteStream, response.stream))
         else:
-            try:
-                print(f"Body:\n {content.decode('utf-8')}")
-            except Exception:  # pylint: disable=broad-exception-caught
-                print(f"Body (raw):\n  {content!r}")
-        print("\n")
+            content = response.read()
+            if content is None or content == b"":
+                _openai_transport_logger.debug("Body: [No content]")
+            else:
+                if self._logging_enabled:
+                    try:
+                        _openai_transport_logger.debug("Body:\n %s", content.decode("utf-8"))
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        _openai_transport_logger.debug("Body (raw):\n  %r", content)
+                else:
+                    _openai_transport_logger.debug("Body: [Content exists]")
+        _openai_transport_logger.debug("\n")
 
         return response
 
-    def _log_request_body(self, request: httpx.Request) -> None:
+    def _log_request_body(self, request: httpx2.Request) -> None:
         """Log request body content safely, handling binary data and streaming content.
 
         :param request: The HTTP request object containing the body to log
-        :type request: httpx.Request
+        :type request: httpx2.Request
         """
 
         # Check content-type header to identify file uploads
         content_type = request.headers.get("content-type", "").lower()
         if "multipart/form-data" in content_type:
-            print("Body: [Multipart form data - file upload, not logged]")
+            _openai_transport_logger.debug("Body: [Multipart form data - file upload, not logged]")
             return
 
         # Safely check if content exists without accessing it
         if not hasattr(request, "content"):
-            print("Body: [No content attribute]")
+            _openai_transport_logger.debug("Body: [No content attribute]")
             return
 
         # Very careful content access - wrap in try-catch immediately
         try:
             content = request.content
         except Exception as access_error:  # pylint: disable=broad-exception-caught
-            print(f"Body: [Cannot access content: {access_error}]")
+            _openai_transport_logger.debug("Body: [Cannot access content: %s]", access_error)
             return
 
         if content is None or content == b"":
-            print("Body: [No content]")
+            _openai_transport_logger.debug("Body: [No content]")
             return
 
-        try:
-            print(f"Body:\n  {content.decode('utf-8')}")
-        except Exception:  # pylint: disable=broad-exception-caught
-            print(f"Body (raw):\n  {content!r}")
+        if self._logging_enabled:
+            try:
+                _openai_transport_logger.debug("Body:\n  %s", content.decode("utf-8"))
+            except Exception:  # pylint: disable=broad-exception-caught
+                _openai_transport_logger.debug("Body (raw):\n  %r", content)
+        else:
+            _openai_transport_logger.debug("Body: [Content exists]")
 
 
 __all__: List[str] = [

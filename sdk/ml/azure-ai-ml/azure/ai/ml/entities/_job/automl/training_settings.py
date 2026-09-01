@@ -6,19 +6,19 @@
 
 from typing import Any, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationModels
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import ClassificationModels
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ClassificationTrainingSettings as RestClassificationTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingModels
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import ForecastingModels
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ForecastingTrainingSettings as RestForecastingTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import RegressionModels
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import RegressionModels
+from azure.ai.ml._restclient.arm_ml_service.models import (
     RegressionTrainingSettings as RestRegressionTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TrainingSettings as RestTrainingSettings
+from azure.ai.ml._restclient.arm_ml_service.models import TrainingSettings as RestTrainingSettings
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
@@ -45,25 +45,25 @@ class TrainingSettings(RestTranslatableMixin):
     ):
         """TrainingSettings class for Azure Machine Learning.
 
-        :param enable_onnx_compatible_models: If set to True, the model will be trained to be compatible with ONNX
-        :type enable_onnx_compatible_models: typing.Optional[bool]
-        :param enable_dnn_training: If set to True,the model will use DNN training
-        :type enable_dnn_training: typing.Optional[bool]
-        :param enable_model_explainability: If set to True, the model will be trained to be explainable
-        :type enable_model_explainability: typing.Optional[bool]
-        :param enable_stack_ensemble: If set to True, a final ensemble model will be created using a stack of models
-        :type enable_stack_ensemble: typing.Optional[bool]
-        :param enable_vote_ensemble: If set to True, a final ensemble model will be created using a voting ensemble
-        :type enable_vote_ensemble: typing.Optional[bool]
-        :param stack_ensemble_settings: Settings for stack ensemble
-        :type stack_ensemble_settings: typing.Optional[azure.ai.ml.automl.StackEnsembleSettings]
-        :param ensemble_model_download_timeout: Timeout for downloading ensemble models
-        :type ensemble_model_download_timeout: typing.Optional[typing.List[int]]
-        :param allowed_training_algorithms: Models to train
-        :type allowed_training_algorithms: typing.Optional[typing.List[str]]
-        :param blocked_training_algorithms: Models that will not be considered for training
-        :type blocked_training_algorithms: typing.Optional[typing.List[str]]
-        :param training_mode: [Experimental] The training mode to use.
+        :keyword enable_onnx_compatible_models: If set to True, the model will be trained to be compatible with ONNX
+        :paramtype enable_onnx_compatible_models: typing.Optional[bool]
+        :keyword enable_dnn_training: If set to True,the model will use DNN training
+        :paramtype enable_dnn_training: typing.Optional[bool]
+        :keyword enable_model_explainability: If set to True, the model will be trained to be explainable
+        :paramtype enable_model_explainability: typing.Optional[bool]
+        :keyword enable_stack_ensemble: If set to True, a final ensemble model will be created using a stack of models
+        :paramtype enable_stack_ensemble: typing.Optional[bool]
+        :keyword enable_vote_ensemble: If set to True, a final ensemble model will be created using a voting ensemble
+        :paramtype enable_vote_ensemble: typing.Optional[bool]
+        :keyword stack_ensemble_settings: Settings for stack ensemble
+        :paramtype stack_ensemble_settings: typing.Optional[azure.ai.ml.automl.StackEnsembleSettings]
+        :keyword ensemble_model_download_timeout: Timeout for downloading ensemble models
+        :paramtype ensemble_model_download_timeout: typing.Optional[typing.List[int]]
+        :keyword allowed_training_algorithms: Models to train
+        :paramtype allowed_training_algorithms: typing.Optional[typing.List[str]]
+        :keyword blocked_training_algorithms: Models that will not be considered for training
+        :paramtype blocked_training_algorithms: typing.Optional[typing.List[str]]
+        :keyword training_mode: [Experimental] The training mode to use.
             The possible values are-
 
             * distributed- enables distributed training for supported algorithms.
@@ -73,7 +73,7 @@ class TrainingSettings(RestTranslatableMixin):
             * auto- Currently, it is same as non_distributed. In future, this might change.
 
             Note: This parameter is in public preview and may change in future.
-        :type training_mode: typing.Optional[typing.Union[str, azure.ai.ml.constants.TabularTrainingMode]]
+        :paramtype training_mode: typing.Optional[typing.Union[str, azure.ai.ml.constants.TabularTrainingMode]]
         """
         self.enable_onnx_compatible_models = enable_onnx_compatible_models
         self.enable_dnn_training = enable_dnn_training
@@ -126,7 +126,7 @@ class TrainingSettings(RestTranslatableMixin):
         self._blocked_training_algorithms = value
 
     def _to_rest_object(self) -> RestTrainingSettings:
-        return RestTrainingSettings(
+        rest_obj = RestTrainingSettings(
             enable_dnn_training=self.enable_dnn_training,
             enable_onnx_compatible_models=self.enable_onnx_compatible_models,
             enable_model_explainability=self.enable_model_explainability,
@@ -136,8 +136,12 @@ class TrainingSettings(RestTranslatableMixin):
                 self.stack_ensemble_settings._to_rest_object() if self.stack_ensemble_settings else None
             ),
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
-            training_mode=self.training_mode,
         )
+        # ``trainingMode`` exists on the 2023-04 wire contract but was dropped from the
+        # arm_ml_service (2025-12) model; preserve it via wire-key assignment.
+        if self.training_mode is not None:
+            rest_obj["trainingMode"] = self.training_mode
+        return rest_obj
 
     @classmethod
     def _from_rest_object(cls, obj: RestTrainingSettings) -> "TrainingSettings":
@@ -153,7 +157,7 @@ class TrainingSettings(RestTranslatableMixin):
                 if obj.stack_ensemble_settings
                 else None
             ),
-            training_mode=obj.training_mode,
+            training_mode=obj.get("trainingMode"),
         )
 
     def __eq__(self, other: object) -> bool:
@@ -214,7 +218,7 @@ class ClassificationTrainingSettings(TrainingSettings):
         )
 
     def _to_rest_object(self) -> RestClassificationTrainingSettings:
-        return RestClassificationTrainingSettings(
+        rest_obj = RestClassificationTrainingSettings(
             enable_dnn_training=self.enable_dnn_training,
             enable_onnx_compatible_models=self.enable_onnx_compatible_models,
             enable_model_explainability=self.enable_model_explainability,
@@ -224,8 +228,10 @@ class ClassificationTrainingSettings(TrainingSettings):
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
             allowed_training_algorithms=self.allowed_training_algorithms,
             blocked_training_algorithms=self.blocked_training_algorithms,
-            training_mode=self.training_mode,
         )
+        if self.training_mode is not None:
+            rest_obj["trainingMode"] = self.training_mode
+        return rest_obj
 
     @classmethod
     def _from_rest_object(cls, obj: RestClassificationTrainingSettings) -> "ClassificationTrainingSettings":
@@ -239,7 +245,7 @@ class ClassificationTrainingSettings(TrainingSettings):
             stack_ensemble_settings=obj.stack_ensemble_settings,
             allowed_training_algorithms=obj.allowed_training_algorithms,
             blocked_training_algorithms=obj.blocked_training_algorithms,
-            training_mode=obj.training_mode,
+            training_mode=obj.get("trainingMode"),
         )
 
 
@@ -277,7 +283,7 @@ class ForecastingTrainingSettings(TrainingSettings):
         )
 
     def _to_rest_object(self) -> RestForecastingTrainingSettings:
-        return RestForecastingTrainingSettings(
+        rest_obj = RestForecastingTrainingSettings(
             enable_dnn_training=self.enable_dnn_training,
             enable_onnx_compatible_models=self.enable_onnx_compatible_models,
             enable_model_explainability=self.enable_model_explainability,
@@ -287,8 +293,10 @@ class ForecastingTrainingSettings(TrainingSettings):
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
             allowed_training_algorithms=self.allowed_training_algorithms,
             blocked_training_algorithms=self.blocked_training_algorithms,
-            training_mode=self.training_mode,
         )
+        if self.training_mode is not None:
+            rest_obj["trainingMode"] = self.training_mode
+        return rest_obj
 
     @classmethod
     def _from_rest_object(cls, obj: RestForecastingTrainingSettings) -> "ForecastingTrainingSettings":
@@ -302,7 +310,7 @@ class ForecastingTrainingSettings(TrainingSettings):
             stack_ensemble_settings=obj.stack_ensemble_settings,
             allowed_training_algorithms=obj.allowed_training_algorithms,
             blocked_training_algorithms=obj.blocked_training_algorithms,
-            training_mode=obj.training_mode,
+            training_mode=obj.get("trainingMode"),
         )
 
 
@@ -340,7 +348,7 @@ class RegressionTrainingSettings(TrainingSettings):
         )
 
     def _to_rest_object(self) -> RestRegressionTrainingSettings:
-        return RestRegressionTrainingSettings(
+        rest_obj = RestRegressionTrainingSettings(
             enable_dnn_training=self.enable_dnn_training,
             enable_onnx_compatible_models=self.enable_onnx_compatible_models,
             enable_model_explainability=self.enable_model_explainability,
@@ -350,8 +358,10 @@ class RegressionTrainingSettings(TrainingSettings):
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
             allowed_training_algorithms=self.allowed_training_algorithms,
             blocked_training_algorithms=self.blocked_training_algorithms,
-            training_mode=self.training_mode,
         )
+        if self.training_mode is not None:
+            rest_obj["trainingMode"] = self.training_mode
+        return rest_obj
 
     @classmethod
     def _from_rest_object(cls, obj: RestRegressionTrainingSettings) -> "RegressionTrainingSettings":
@@ -365,5 +375,5 @@ class RegressionTrainingSettings(TrainingSettings):
             stack_ensemble_settings=obj.stack_ensemble_settings,
             allowed_training_algorithms=obj.allowed_training_algorithms,
             blocked_training_algorithms=obj.blocked_training_algorithms,
-            training_mode=obj.training_mode,
+            training_mode=obj.get("trainingMode"),
         )

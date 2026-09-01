@@ -1,0 +1,103 @@
+# Generate one Python API review artifact bundle for one ref. This template
+# supplies Python-specific generation and delegates shared artifact validation
+# and metadata writing to the base API Review Hub artifact template.
+parameters:
+  - name: requestMode
+    type: string
+  - name: operationId
+    type: string
+  - name: packageName
+    type: string
+  - name: ref
+    type: string
+  - name: kind
+    type: string
+  - name: outputDir
+    type: string
+  - name: workingDir
+    type: string
+steps:
+  - template: /eng/common/pipelines/templates/steps/create-apireview-hub-artifacts-base.yml
+    parameters:
+      requestMode: ${{ parameters.requestMode }}
+      operationId: ${{ parameters.operationId }}
+      packageName: ${{ parameters.packageName }}
+      ref: ${{ parameters.ref }}
+      kind: ${{ parameters.kind }}
+      outputDir: ${{ parameters.outputDir }}
+      workingDir: ${{ parameters.workingDir }}
+      sourceDir: $(ApiReviewSourceDir)
+      language: python
+      repositoryFullName: $(ApiReviewRepositoryFullName)
+      generationSteps:
+        - bash: |
+            set -Eeuo pipefail
+
+            source_repo="$SOURCE_REPO"
+            tooling_dir="$TOOLING_DIR"
+            output_dir="$OUTPUT_DIR"
+            state_dir="$WORKING_DIR/state"
+
+            mkdir -p "$source_repo" "$output_dir" "$state_dir"
+
+            find_package_dir() {
+              local repo="$1"
+              local package_name="$2"
+              local matches
+
+              matches=$(find "$repo/sdk" -mindepth 2 -maxdepth 2 -type d -name "$package_name" | sort)
+              if [ -z "$matches" ]; then
+                echo "Package '$package_name' was not found under sdk/*/." >&2
+                return 1
+              fi
+
+              if [ "$(printf '%s\n' "$matches" | wc -l)" -ne 1 ]; then
+                echo "Package '$package_name' matched multiple directories:" >&2
+                printf '%s\n' "$matches" >&2
+                return 1
+              fi
+
+              printf '%s' "$matches"
+            }
+
+            package_dir=$(find_package_dir "$source_repo" "$PACKAGE_NAME")
+            package_relative_path=$(realpath --relative-to="$source_repo" "$package_dir")
+
+            echo "Generating $KIND API review artifact from $REF"
+            common_tasks_dir="$source_repo/scripts/devops_tasks"
+            if [ ! -f "$common_tasks_dir/common_tasks.py" ]; then
+              echo "Expected Python SDK common_tasks.py was not found at $common_tasks_dir/common_tasks.py" >&2
+              exit 1
+            fi
+            install -D "$tooling_dir/eng/common/scripts/Export-APIViewMarkdown.ps1" "$source_repo/eng/common/scripts/Export-APIViewMarkdown.ps1"
+            install -D "$tooling_dir/eng/scripts/extract_apiview_metadata.py" "$source_repo/eng/scripts/extract_apiview_metadata.py"
+            (cd "$source_repo" && PYTHONPATH="$common_tasks_dir${PYTHONPATH:+:$PYTHONPATH}" python -m azpysdk.main apistub --dest-dir "$package_dir" "$PACKAGE_NAME")
+
+            if [ ! -f "$package_dir/api.md" ]; then
+              echo "Expected api.md was not generated at $package_dir/api.md" >&2
+              exit 1
+            fi
+            if [ ! -f "$package_dir/api.metadata.yml" ]; then
+              echo "Expected api.metadata.yml was not generated at $package_dir/api.metadata.yml" >&2
+              exit 1
+            fi
+
+            cp "$package_dir/api.md" "$output_dir/api.md"
+            cp "$package_dir/api.metadata.yml" "$output_dir/api.metadata.yml"
+
+            version=$(sed -n 's/^packageVersion:[[:space:]]*//p' "$package_dir/api.metadata.yml")
+            if [ -z "$version" ]; then
+              echo "Expected packageVersion was not found in $package_dir/api.metadata.yml" >&2
+              exit 1
+            fi
+            printf '%s' "$package_relative_path" > "$state_dir/package-relative-path.txt"
+            printf '%s' "$version" > "$state_dir/version.txt"
+          displayName: 'Generate ${{ parameters.kind }} Python API review bundle'
+          env:
+            SOURCE_REPO: $(ApiReviewSourceDir)
+            TOOLING_DIR: $(ApiReviewToolingDir)
+            OUTPUT_DIR: ${{ parameters.outputDir }}
+            WORKING_DIR: ${{ parameters.workingDir }}
+            PACKAGE_NAME: ${{ parameters.packageName }}
+            KIND: ${{ parameters.kind }}
+            REF: ${{ parameters.ref }}

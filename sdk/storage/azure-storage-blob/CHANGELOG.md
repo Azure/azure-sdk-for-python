@@ -1,8 +1,48 @@
 # Release History
 
-## 12.31.0b1 (Unreleased)
+## 12.32.0b1 (Unreleased)
 
 ### Features Added
+- Added `list` support to `BlobSasPermissions` for use with directory-scoped SAS tokens.
+
+### Bugs Fixed
+- Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
+- Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning
+  an empty list.
+
+### Other Changes
+- Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
+  and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
+  models instead of generated internal types.
+
+## 12.30.1 (2026-08-27)
+
+### Bugs Fixed
+- Fixed a bug where client-side encryption 2.0 could not detect a rearrangement of otherwise-untampered authenticated regions in blob content. This is now detected and exceptions are thrown. For data recovery purposes, this behavior can be reverted by setting the "AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS" environment variable.
+- Fixed a bug in client-side encryption where version downgrades, and other metadata tampering, was only detected at the start of a download.
+
+## 12.31.0b1 (2026-08-10)
+
+### Features Added
+- Added support for service version 2026-10-06.
+- Added support for parsing List Blobs responses in Apache Arrow format by passing
+`response_format="arrow"` keyword to `ContainerClient`'s `list_blobs`, `walk_blobs`, and `list_blob_names` APIs
+(`response_format` defaults to `"auto"`, and `"auto"` currently means `"xml"`).
+The use of `"response_format=arrow"` requires `nanoarrow` to be installed.
+This change also enables the new `end_before` keyword for range-based listing.
+- Added access tier information to the response of `BlobClient`'s `download_blob` API.
+The `blob_tier`, `blob_tier_inferred`, `blob_tier_change_time`, and `smart_access_tier`
+properties are now populated on the downloaded blob's `properties`.
+- The service-calculated CRC64 is now surfaced as `content_crc64` on the response of
+`BlobClient` upload operations (`stage_block`, `stage_block_from_url`, `upload_page`,
+`upload_pages_from_url`, `append_block`, `append_block_from_url`, `upload_blob`, and
+`upload_blob_from_url`) in addition to `content_md5` when a content MD5 is
+provided with the request.
+
+### Other Changes
+- Partitioned upload via `upload_blob` with Block Blobs will now generate random,
+unique block ids for each block rather than using a sequential count.
+The length of the new block ids will be the same as previous versions to ensure backwards compatibility.
 
 ## 12.30.0 (2026-06-08)
 

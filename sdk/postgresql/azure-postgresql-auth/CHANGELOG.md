@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0 (2026-08-26)
+
+### Features Added
+
+- Added `create_asyncpg_engine` for SQLAlchemy async engines using `asyncpg` and asynchronous Microsoft Entra credentials.
+
+### Bugs Fixed
+
+- Fixed SQLAlchemy connection pools failing to create subsequent connections when using Entra authentication.
+
 ## 1.0.2 (2026-04-28)
 
 ### Bugs Fixed

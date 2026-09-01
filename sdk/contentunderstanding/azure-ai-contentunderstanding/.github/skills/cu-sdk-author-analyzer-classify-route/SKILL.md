@@ -1,9 +1,14 @@
 ---
 name: cu-sdk-author-analyzer-classify-route
-description: Create and test a classify-and-route Azure AI Content Understanding pipeline for packets that contain multiple document types (e.g. invoice + bank statement + loan application in one PDF). Walks per-type schema authoring → outer classifier wiring → batch test → category-aware stdout summary using the typed ContentUnderstandingClient. Use when the user has mixed-document packets.
+description: EXPERIMENTAL. Create and test a classify-and-route Azure AI Content Understanding pipeline for packets that contain multiple document types (e.g. invoice + bank statement + loan application in one PDF). Walks per-type schema authoring → outer classifier wiring → batch test → category-aware stdout summary using the typed ContentUnderstandingClient. Use when the user has mixed-document packets.
 ---
 
 # Author a Classify-and-Route Analyzer (mixed document packets)
+
+> **[EXPERIMENTAL - REQUIRED FIRST MESSAGE]:** Before asking questions, probing the
+> environment, or running commands, tell the user: "This analyzer-authoring skill
+> is experimental and may change. Review generated schemas and test results before
+> relying on them."
 
 Build a classify-and-route pipeline: one **outer classifier analyzer** that
 segments and labels a multi-document packet, plus one **inner extractor
@@ -24,13 +29,11 @@ you're happy with both classification accuracy and extraction quality.
 > **[ASK USER] Modality check (first thing to confirm):**
 >
 > "Are you working with **document** files — PDFs or images of pages? This
-> skill currently supports document modalities only. Audio, video, and
-> image classifiers are planned for a future update."
+> skill supports document modalities only."
 >
 > - If the user says **document** → continue with this skill.
 > - If the user says **audio**, **video**, or **image** → stop this skill.
->   Audio/video classify-and-route is on the roadmap; for now point them at
->   the [REST tutorial](https://learn.microsoft.com/azure/ai-services/content-understanding/tutorial/create-custom-analyzer).
+>   Point them at the [REST tutorial](https://learn.microsoft.com/azure/ai-services/content-understanding/tutorial/create-custom-analyzer).
 
 > **[COPILOT INTERACTION MODEL]:** At each step marked with **[ASK USER]**,
 > pause execution and prompt the user before proceeding.
@@ -215,7 +218,7 @@ example for guidance on writing your own):
     }
   },
   "models": {
-    "completion": "gpt-4.1",
+    "completion": "gpt-5.2",
     "embedding": "text-embedding-3-large"
   }
 }

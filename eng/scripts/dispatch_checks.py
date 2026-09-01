@@ -16,7 +16,7 @@ from ci_tools.variables import in_ci
 from ci_tools.scenario.generation import build_whl_for_req, replace_dev_reqs
 from ci_tools.logging import configure_logging, logger
 from ci_tools.environment_exclusions import is_check_enabled, CHECK_DEFAULTS
-from ci_tools.parsing import get_config_setting
+from ci_tools.parsing import ParsedSetup, get_config_setting
 from devtools_testutils.proxy_startup import prepare_local_tool
 from packaging.requirements import Requirement
 
@@ -77,6 +77,37 @@ def _normalize_newlines(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
+def get_check_dest_dir(
+    package: str, check: str, dest_dir: Optional[str]
+) -> Optional[str]:
+    if dest_dir and check == "apistub":
+        package_name = ParsedSetup.from_path(package).name
+        return os.path.join(dest_dir, package_name)
+    return dest_dir
+
+
+async def _discard_oversized_line(stream: asyncio.StreamReader) -> None:
+    """Discard bytes up to and including the next newline (or EOF) without
+    capturing them.
+
+    When a single line exceeds the reader's line-length limit, ``readuntil()``
+    raises and leaves the buffered bytes in place -- so it would raise again on
+    the same bytes forever. Draining past the newline lets streaming resume with
+    the next line while never reading the oversized content into memory.
+    """
+    while True:
+        try:
+            await stream.readuntil()
+            return
+        except asyncio.LimitOverrunError as ex:
+            # Still no newline within the limit; drop the buffered bytes and
+            # keep scanning for the newline that ends the oversized line.
+            await stream.readexactly(ex.consumed)
+        except asyncio.IncompleteReadError:
+            # Reached EOF before a newline; nothing left to drain.
+            return
+
+
 async def _tee_stream(
     proc: "asyncio.subprocess.Process", package: str, check: str
 ) -> tuple:
@@ -101,7 +132,21 @@ async def _tee_stream(
             return ""
         chunks: List[str] = []
         while True:
-            line_b = await stream.readline()
+            try:
+                line_b = await stream.readuntil()
+            except asyncio.LimitOverrunError:
+                # The line is larger than the stream limit. Don't read it --
+                # log that it was too long, discard it, and keep going. The
+                # notice is emitted before draining so it appears promptly even
+                # if the oversized line takes a while to terminate.
+                notice = "streaming log line exceeded buffer limit, the line is dropped (see dispatch_checks.py)\n"
+                chunks.append(notice)
+                sink.write(prefix + notice)
+                sink.flush()
+                await _discard_oversized_line(stream)
+                continue
+            except asyncio.IncompleteReadError as ex:
+                line_b = ex.partial
             if not line_b:
                 break
             line = line_b.decode(errors="replace")
@@ -222,8 +267,10 @@ async def run_check(
             cmd += ["--service", service]
         if mark_arg:
             cmd += ["--mark_arg", mark_arg]
-        if dest_dir and check == "apistub":
-            cmd += ["--dest-dir", dest_dir]
+        if check == "apistub":
+            check_dest_dir = get_check_dest_dir(package, check, dest_dir)
+            if check_dest_dir:
+                cmd += ["--dest-dir", check_dest_dir]
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         env = os.environ.copy()
         env["PROXY_URL"] = f"http://localhost:{proxy_port}"

@@ -4,6 +4,7 @@
 import errno
 import os
 import shutil
+import tempfile
 import unittest
 from unittest import mock
 
@@ -39,7 +40,7 @@ def throw(exc_type, *args, **kwargs):
 
 
 def clean_folder(folder):
-    if os.path.isfile(folder):
+    if os.path.isdir(folder):
         for filename in os.listdir(folder):
             file_path = os.path.join(folder, filename)
             try:
@@ -53,16 +54,12 @@ def clean_folder(folder):
 
 # pylint: disable=unused-variable
 class TestLocalFileBlob(unittest.TestCase):
-    @classmethod
-    def setup_class(cls):
-        os.makedirs(TEST_FOLDER, exist_ok=True)
-
-    @classmethod
-    def tearDownClass(cls):
-        shutil.rmtree(TEST_FOLDER, True)
+    def setUp(self):
+        global TEST_FOLDER
+        TEST_FOLDER = tempfile.mkdtemp()
 
     def tearDown(self):
-        clean_folder(TEST_FOLDER)
+        shutil.rmtree(TEST_FOLDER, ignore_errors=True)
 
     def test_delete(self):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "foobar"))
@@ -231,12 +228,101 @@ class TestLocalFileBlob(unittest.TestCase):
         blob.delete()
         self.assertEqual(blob.lease(0.01), None)
 
+    def test_lease_with_retry_after_delay(self):
+        """Test lease with a retry-after delay period (120 seconds)"""
+        blob_path = os.path.join(TEST_FOLDER, "lease_retry_after_blob")
+        blob = LocalFileBlob(blob_path)
+
+        # Create the blob first
+        test_input = [{"data": "test"}]
+        blob.put(test_input)
+
+        # Lease with 120 second delay (typical retry-after)
+        retry_after_delay = 120
+        leased_blob = blob.lease(retry_after_delay)
+
+        # Should return a blob object on success
+        self.assertIsNotNone(leased_blob)
+
+        # Filename should have .lock extension
+        self.assertTrue(leased_blob.fullpath.endswith(".lock"))
+
+        # Extract and verify timestamp is in the future
+        filename = os.path.basename(leased_blob.fullpath)
+        self.assertIn("@", filename)
+        self.assertIn(".lock", filename)
+
+    def test_lease_with_default_period(self):
+        """Test lease with default storage period (60 seconds)"""
+        blob_path = os.path.join(TEST_FOLDER, "lease_default_blob")
+        blob = LocalFileBlob(blob_path)
+
+        # Create the blob
+        test_input = [{"data": "test"}]
+        blob.put(test_input)
+
+        # Lease with default 60 second period
+        default_period = 60
+        leased_blob = blob.lease(default_period)
+
+        self.assertIsNotNone(leased_blob)
+        self.assertTrue(leased_blob.fullpath.endswith(".lock"))
+
+    def test_lease_returns_self(self):
+        """Test that lease returns self (the blob object) on success"""
+        blob_path = os.path.join(TEST_FOLDER, "lease_self_blob")
+        blob = LocalFileBlob(blob_path)
+
+        # Create the blob
+        test_input = [{"data": "test"}]
+        blob.put(test_input)
+
+        # Lease should return a blob object
+        leased = blob.lease(60)
+        self.assertIsInstance(leased, LocalFileBlob)
+
+        # Path should be updated with timestamp
+        self.assertNotEqual(blob.fullpath, blob_path)
+        self.assertIn("@", blob.fullpath)
+
+    def test_lease_failure_returns_none(self):
+        """Test that lease returns None when it fails"""
+        blob_path = os.path.join(TEST_FOLDER, "lease_nonexistent")
+        blob = LocalFileBlob(blob_path)
+
+        # Try to lease a blob that doesn't exist (no put before lease)
+        leased = blob.lease(60)
+
+        # Should return None since os.rename will fail
+        self.assertIsNone(leased)
+
+    def test_lease_with_existing_lock(self):
+        """Test lease on a blob that already has a lock"""
+        blob_path = os.path.join(TEST_FOLDER, "lease_relock_blob")
+        blob = LocalFileBlob(blob_path)
+
+        # Create and first lease
+        test_input = [{"data": "test"}]
+        blob.put(test_input)
+        first_lease = blob.lease(60)
+        self.assertIsNotNone(first_lease)
+
+        # Second lease on the already-leased blob
+        second_lease = first_lease.lease(120)
+        self.assertIsNotNone(second_lease)
+
+        # Should still have .lock extension
+        self.assertTrue(second_lease.fullpath.endswith(".lock"))
+
 
 # pylint: disable=protected-access, too-many-public-methods
 class TestLocalFileStorage(unittest.TestCase):
-    @classmethod
-    def tearDownClass(cls):
-        shutil.rmtree(TEST_FOLDER, True)
+    def setUp(self):
+        global TEST_FOLDER
+        TEST_FOLDER = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(TEST_FOLDER, ignore_errors=True)
 
     def test_get_nothing(self):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "test", "a")) as stor:
@@ -260,6 +346,27 @@ class TestLocalFileStorage(unittest.TestCase):
                 with mock.patch("os.rename", side_effect=throw(Exception)):
                     self.assertIsNone(stor.get())
             self.assertIsNone(stor.get())
+
+    def test_toggle_disable_makes_put_and_gets_noop(self):
+        """disable() turns put()/gets() into no-ops without tearing down the instance."""
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "toggle")) as stor:
+            self.assertTrue(stor._active)
+            stor.disable()
+            self.assertFalse(stor._active)
+            result = stor.put((1, 2, 3))
+            self.assertEqual(result, StorageExportResult.CLIENT_STORAGE_DISABLED)
+            self.assertIsNone(stor.get())
+            self.assertEqual(list(stor.gets()), [])
+
+    def test_toggle_reenable_resumes_put_and_gets(self):
+        """enable() after disable() resumes persistence on the same instance and drains prior blobs."""
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "toggle2")) as stor:
+            stor.disable()
+            self.assertEqual(stor.put((1, 2, 3)), StorageExportResult.CLIENT_STORAGE_DISABLED)
+            stor.enable()
+            self.assertTrue(stor._active)
+            self.assertEqual(stor.put((1, 2, 3), 0), StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
+            self.assertEqual(stor.get().get(), (1, 2, 3))
 
     def test_put(self):
         test_input = (1, 2, 3)
@@ -288,7 +395,7 @@ class TestLocalFileStorage(unittest.TestCase):
         os.makedirs(test_path, exist_ok=True)
         with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
             with LocalFileStorage(test_path, 1) as stor:
-                stor.put(test_input)
+                stor.put(test_input, lease_period=0)
                 self.assertFalse(stor._check_storage_size())
 
     def test_check_storage_size_not_full(self):

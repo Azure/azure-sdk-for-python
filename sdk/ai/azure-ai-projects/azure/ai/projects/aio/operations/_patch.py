@@ -9,26 +9,23 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, List
-from ._patch_agents_async import AgentsOperations
-from ._patch_datasets_async import DatasetsOperations
+from ._patch_agents_async import AgentsOperations, BetaAgentsOperations
+from ._patch_datasets_async import BetaDatasetsOperations, DatasetsOperations
+from ._patch_evaluators_async import BetaEvaluatorsOperations
 from ._patch_evaluation_rules_async import EvaluationRulesOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
-from ._patch_sessions_async import BetaAgentsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (
-    BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
-    BetaEvaluatorsOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
     BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
-    BetaToolboxesOperations,
 )
 
 
@@ -60,8 +57,6 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaRoutinesOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSchedulesOperations` operations"""
-    toolboxes: BetaToolboxesOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaToolboxesOperations` operations"""
     skills: BetaSkillsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
     datasets: BetaDatasetsOperations
@@ -69,14 +64,16 @@ class BetaOperations(GeneratedBetaOperations):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Replace with patched class that includes upload()
+        # Replace with patched class that returns AsyncEvaluatorGenerationLROPoller
         self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        # Replace with patched class that adds file-path overload to upload_session_file
+        # Replace with patched class that returns AsyncAgentOptimizationLROPoller
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes create (3-step upload helper)
         self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that returns AsyncDatasetGenerationLROPoller
+        self.datasets = BetaDatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(
@@ -100,7 +97,6 @@ __all__: List[str] = [
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
-    "BetaToolboxesOperations",
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",

@@ -152,6 +152,15 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
             request.http_request.url = urljoin(request.http_request.url, message_id)
 
 
+class RangeHeaderPolicy(SansIOHTTPPolicy):
+    """Policy that converts the Range header to x-ms-range."""
+
+    def on_request(self, request):
+        range_value = request.http_request.headers.pop("Range", None)
+        if range_value is not None:
+            request.http_request.headers["x-ms-range"] = range_value
+
+
 class StorageHeadersPolicy(HeadersPolicy):
     request_id_header_name = "x-ms-client-request-id"
 
@@ -450,7 +459,7 @@ def _validate_content_response(
                 response=response.http_response,
             )
 
-    elif is_crc64_validation(validate_content):
+    elif is_crc64_validation(validate_content) and response.http_response.status_code < 300:
         # For upload and download verify structured message header present in response if provided in request.
         sm_request = request.http_request.headers.get(SM_HEADER)
         sm_response = response.http_response.headers.get(SM_HEADER)
@@ -867,6 +876,10 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
         "x-ms-copy-source",
         "x-ms-copy-source-authorization",
         "x-ms-rename-source",
+        "x-ms-encryption-key",
+        "x-ms-encryption-key-sha256",
+        "x-ms-source-encryption-key",
+        "x-ms-source-encryption-key-sha256",
     }
 
     DEFAULT_SENSITIVE_QUERY_PARAMS = {"sig"}

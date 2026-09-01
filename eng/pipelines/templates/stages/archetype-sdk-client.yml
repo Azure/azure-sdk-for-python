@@ -81,6 +81,9 @@ parameters:
   - name: oneESTemplateTag
     type: string
     default: release
+  - name: EnableCompiledCodeql
+    type: boolean
+    default: false
   - name: EnvVars
     type: object
     default: {}
@@ -89,6 +92,7 @@ extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     oneESTemplateTag: ${{ parameters.oneESTemplateTag }}
+    EnableCompiledCodeql: ${{ parameters.EnableCompiledCodeql }}
     stages:
       - ${{ if and(eq(parameters.SkipPrValidation, true), eq(variables['Build.Reason'], 'Manual')) }}:
         - stage: NoOp
@@ -139,9 +143,51 @@ extends:
               TestProxy: ${{ parameters.TestProxy }}
               GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
+          - ${{ if and(eq(variables['System.TeamProject'], 'internal'), or(in(variables['Build.Reason'], 'Manual', ''), and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))) }}:
+              - job: CheckPackageApproval
+                displayName: Check Package Approval Status
+                dependsOn:
+                  - Build_Extended
+                  - Analyze
+                condition: >-
+                  and(
+                    in(dependencies.Build_Extended.result, 'Succeeded', 'SucceededWithIssues'),
+                    or(
+                      in(dependencies.Analyze.result, 'Succeeded', 'SucceededWithIssues'),
+                      and(
+                        eq(dependencies.Analyze.result, 'Skipped'),
+                        eq(variables['Skip.Analyze'], 'true')
+                      )
+                    )
+                  )
+                pool:
+                  name: $(LINUXPOOL)
+                  image: $(LINUXVMIMAGE)
+                  os: linux
+                steps:
+                  - checkout: self
+                    fetchDepth: 1
+                    fetchTags: false
+                    sparseCheckoutDirectories: |
+                      eng/common
+                      eng/scripts
+
+                  - download: current
+                    artifact: packages_extended
+
+                  - template: /eng/common/pipelines/templates/steps/install-azsdk-cli.yml
+
+                  - template: /eng/common/pipelines/templates/steps/get-package-approval-status.yml
+                    parameters:
+                      PackageInfoFiles:
+                        - ${{ each artifact in parameters.Artifacts }}:
+                            - $(Pipeline.Workspace)/packages_extended/PackageInfo/${{ artifact.name }}.json
+                      RepoOwner: Azure
+
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml
           - template: /eng/pipelines/templates/variables/image.yml
+          - template: /eng/common/pipelines/templates/variables/api-review-break-glass.yml
 
       - template: archetype-python-release.yml
         parameters:

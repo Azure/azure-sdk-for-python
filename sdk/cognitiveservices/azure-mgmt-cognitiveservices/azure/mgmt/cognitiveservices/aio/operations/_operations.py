@@ -1790,7 +1790,7 @@ class AccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def evaluate_deployment_policies(
         self,
@@ -14208,7 +14208,7 @@ class ManagedComputeDeploymentsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
@@ -14299,7 +14299,7 @@ class ManagedComputeDeploymentsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -14493,7 +14493,7 @@ class ManagedComputeDeploymentsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -14589,7 +14589,7 @@ class ManagedComputeDeploymentsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _update_initial(
         self,
@@ -14787,7 +14787,7 @@ class ManagedComputeDeploymentsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_update(
         self,
@@ -14881,7 +14881,7 @@ class ManagedComputeDeploymentsOperations:
                 "deployment_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
@@ -14960,7 +14960,7 @@ class ManagedComputeDeploymentsOperations:
                 "deployment_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
@@ -15031,7 +15031,7 @@ class ManagedComputeDeploymentsOperations:
         params_added_on={
             "2026-03-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -15161,7 +15161,7 @@ class ComputeOperationsOperations:
         params_added_on={
             "2026-01-15-preview": ["api_version", "subscription_id", "location", "operation_id", "accept"]
         },
-        api_versions_list=["2026-01-15-preview", "2026-03-15-preview"],
+        api_versions_list=["2026-01-15-preview", "2026-03-15-preview", "2026-05-15-preview"],
     )
     async def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.ComputeOperationStatus:
         """Gets the status of a compute operation.
@@ -15255,7 +15255,7 @@ class ManagedComputeUsagesOperationGroupOperations:  # pylint: disable=name-too-
     @api_version_validation(
         method_added_on="2026-03-15-preview",
         params_added_on={"2026-03-15-preview": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.ManagedComputeUsage"]:
         """List managed compute quota usages for a subscription and location.
@@ -15386,7 +15386,7 @@ class ComputesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -15476,7 +15476,7 @@ class ComputesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -15667,7 +15667,7 @@ class ComputesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -15761,7 +15761,7 @@ class ComputesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _update_initial(
         self,
@@ -15950,7 +15950,7 @@ class ComputesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_update(
         self,
@@ -16042,7 +16042,7 @@ class ComputesOperations:
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -16118,7 +16118,7 @@ class ComputesOperations:
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -16188,7 +16188,7 @@ class ComputesOperations:
         params_added_on={
             "2026-03-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     def list(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Compute"]:
         """Gets the computes associated with the Cognitive Services account.
@@ -16300,7 +16300,7 @@ class ComputesOperations:
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _start_initial(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -16376,7 +16376,7 @@ class ComputesOperations:
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_start(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -16452,7 +16452,7 @@ class ComputesOperations:
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _stop_initial(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -16528,7 +16528,7 @@ class ComputesOperations:
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_stop(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -16604,7 +16604,7 @@ class ComputesOperations:
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _restart_initial(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -16680,7 +16680,7 @@ class ComputesOperations:
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_restart(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -16779,7 +16779,7 @@ class WorkbenchesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -16872,7 +16872,7 @@ class WorkbenchesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -17072,7 +17072,7 @@ class WorkbenchesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -17170,7 +17170,7 @@ class WorkbenchesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _update_initial(
         self,
@@ -17368,7 +17368,7 @@ class WorkbenchesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_update(
         self,
@@ -17464,7 +17464,7 @@ class WorkbenchesOperations:
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -17542,7 +17542,7 @@ class WorkbenchesOperations:
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -17621,7 +17621,7 @@ class WorkbenchesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     def list(
         self, resource_group_name: str, account_name: str, project_name: str, **kwargs: Any
@@ -17739,7 +17739,7 @@ class WorkbenchesOperations:
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _start_initial(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -17817,7 +17817,7 @@ class WorkbenchesOperations:
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_start(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -17896,7 +17896,7 @@ class WorkbenchesOperations:
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _stop_initial(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -17974,7 +17974,7 @@ class WorkbenchesOperations:
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_stop(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -18053,7 +18053,7 @@ class WorkbenchesOperations:
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def _restart_initial(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -18131,7 +18131,7 @@ class WorkbenchesOperations:
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     async def begin_restart(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -18231,7 +18231,7 @@ class ManagedComputeCapacitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview"],
     )
     def list(
         self, *, offer: str, accelerator_type: Optional[str] = None, deployment_id: Optional[str] = None, **kwargs: Any
@@ -21696,7 +21696,13 @@ class ManagedNetworkSettingsOperations:
                 "managed_network_name",
             ]
         },
-        api_versions_list=["2026-01-15-preview", "2026-03-01", "2026-03-15-preview"],
+        api_versions_list=[
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+        ],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, managed_network_name: str, **kwargs: Any
@@ -21772,7 +21778,13 @@ class ManagedNetworkSettingsOperations:
                 "managed_network_name",
             ]
         },
-        api_versions_list=["2026-01-15-preview", "2026-03-01", "2026-03-15-preview"],
+        api_versions_list=[
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-05-01",
+            "2026-05-15-preview",
+        ],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, managed_network_name: str, **kwargs: Any

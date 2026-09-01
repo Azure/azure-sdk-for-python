@@ -9,11 +9,13 @@ from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator,
 import time
 import math
 import random
+import logging
+import queue
 
 from ..._pyamqp import constants
 from ..._pyamqp.message import BatchMessage
 from ..._pyamqp.utils import amqp_string_value, amqp_uint_value
-from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync
+from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync, AMQPClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
 from ..._pyamqp.error import (
@@ -21,6 +23,7 @@ from ..._pyamqp.error import (
     AMQPError,
     AMQPException,
     MessageException,
+    MessageSettlementUnconfirmed,
     ErrorCondition,
 )
 
@@ -42,7 +45,7 @@ from ..._common.constants import (
     OPERATION_TIMEOUT,
     NEXT_AVAILABLE_SESSION,
 )
-from ..._transport._pyamqp_transport import PyamqpTransport
+from ..._transport._pyamqp_transport import PyamqpTransport, RECEIVE_LINK_DRAIN_TIMEOUT
 from ...exceptions import (
     OperationTimeoutError,
     ServiceBusConnectionError,
@@ -56,7 +59,9 @@ if TYPE_CHECKING:
     from .._servicebus_sender_async import ServiceBusSender
     from ..._pyamqp.performatives import AttachFrame
     from ..._pyamqp.message import Message
-    from ..._pyamqp.aio._client_async import AMQPClientAsync
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
@@ -85,6 +90,36 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param ~pyamqp.aio.ConnectionAsync connection: pyamqp Connection.
         """
         await connection.close()
+
+    @staticmethod
+    def create_mgmt_client_async(config: "Configuration", **kwargs: Any) -> "AMQPClientAsync": # pylint: disable=docstring-keyword-should-match-keyword-only
+        """Creates and returns an async pyamqp AMQPClient for management-only operations.
+
+        Unlike SendClient/ReceiveClient, this client does not create a sender or
+        receiver link. It only opens a connection and authenticates, suitable for
+        management requests that don't need an associated link.
+
+        :param ~azure.servicebus._common._configuration.Configuration config: The configuration. Required.
+        :keyword ~pyamqp.aio.authentication.JWTTokenAuthAsync auth: Required.
+        :keyword retry_policy: Required.
+        :keyword str client_name: Required.
+        :keyword dict properties: Required.
+        :return: AMQPClientAsync
+        :rtype: ~pyamqp.aio.AMQPClientAsync
+        """
+        return AMQPClientAsync(
+            config.hostname,
+            network_trace=config.logging_enable,
+            keep_alive_interval=config.keep_alive,
+            custom_endpoint_address=config.custom_endpoint_address,
+            connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
+            transport_type=config.transport_type,
+            http_proxy=config.http_proxy,
+            socket_timeout=config.socket_timeout,
+            use_tls=config.use_tls,
+            **kwargs,
+        )
 
     @staticmethod
     def create_send_client_async(config: "Configuration", **kwargs: Any) -> "SendClientAsync": # pylint:disable=docstring-keyword-should-match-keyword-only
@@ -231,10 +266,14 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         while True:
             # pylint: disable=protected-access
             try:
+                start_time = time.time_ns()
                 message = await receiver._inner_anext(wait_time=max_wait_time)
                 links = get_receive_links(message)
-                with receive_trace_context_manager(receiver, links=links):
-                    yield message
+                # Close the receive span before yielding so its HTTP instrumentation
+                # suppression does not leak into the caller's message processing.
+                with receive_trace_context_manager(receiver, links=links, start_time=start_time):
+                    pass
+                yield message
             except StopAsyncIteration:
                 break
 
@@ -302,17 +341,83 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         await handler._link.flow(link_credit=link_credit)  # pylint: disable=protected-access
 
     @staticmethod
+    async def drain_and_release_messages_async(handler: "ReceiveClientAsync") -> None:
+        """
+        Drain the receive link and release buffered/in-flight messages on close, so
+        they are not left locked at the broker until lock expiry. Intended for
+        non-session PEEK_LOCK receivers only (gated by the caller).
+        :param ReceiveClientAsync handler: Client whose receive link to drain.
+        :rtype: None
+        """
+        # pylint: disable=protected-access
+        link = handler._link
+        if link is None or link._is_closed:
+            return  # cannot drain or settle through a closed/absent link
+        if link.current_link_credit > 0:
+            # Drain in-flight transfers into the buffer. Own try so a drain
+            # failure still falls through to the release below.
+            try:
+                outstanding = link.current_link_credit
+                await link.flow(link_credit=0, drain=True)
+                deadline = time.time() + RECEIVE_LINK_DRAIN_TIMEOUT
+                idle_cycles = 0
+                while True:
+                    remaining = deadline - time.time()
+                    if remaining <= 0:
+                        break
+                    before = handler._received_messages.qsize()
+                    # listen() directly, not do_work_async() (which re-issues credit at
+                    # 0 and undoes the drain). batch=outstanding assembles multi-frame
+                    # transfers in one cycle; cap each read by the remaining budget so
+                    # close stays bounded. pyamqp drops the drain echo, so stop after 2
+                    # idle cycles.
+                    wait = remaining if handler._socket_timeout is None else min(handler._socket_timeout, remaining)
+                    await handler._connection.listen(wait=wait, batch=outstanding)
+                    if handler._received_messages.qsize() == before:
+                        idle_cycles += 1
+                        if idle_cycles >= 2:
+                            break
+                    else:
+                        idle_cycles = 0
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.debug("Draining the receive link on close failed.", exc_info=True)
+        # Release buffered deliveries (incl. credit==0 prefetch) so they are not
+        # left locked until lock expiry. Per-message try so one bad tag doesn't
+        # strand the rest; get_nowait handles the empty()/get race.
+        while True:
+            try:
+                frame, _ = handler._received_messages.get_nowait()
+            except queue.Empty:
+                break
+            try:
+                await handler.settle_messages_async(frame[1], frame[2], "released")
+                handler._received_messages.task_done()
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.debug("Releasing a buffered message on close failed.", exc_info=True)
+
+    @staticmethod
     async def settle_message_via_receiver_link_async(
         handler: "ReceiveClientAsync",
         message: "ServiceBusReceivedMessage",
         settle_operation: str,
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
+        *,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None,
     ) -> None:
         # pylint: disable=protected-access
+        if handler is None:
+            raise RuntimeError("handler is not initialized and cannot complete the message")
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                return await handler.settle_messages_async(message._delivery_id, message._delivery_tag, "accepted")
+                return await handler.settle_messages_async(
+                    message._delivery_id,
+                    message._delivery_tag,
+                    "accepted",
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
+                )
             if settle_operation == MESSAGE_ABANDON:
                 return await handler.settle_messages_async(
                     message._delivery_id,
@@ -320,6 +425,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     "modified",
                     delivery_failed=True,
                     undeliverable_here=False,
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
                 )
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return await handler.settle_messages_async(
@@ -334,6 +441,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                             RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
                         },
                     ),
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
                 )
             if settle_operation == MESSAGE_DEFER:
                 return await handler.settle_messages_async(
@@ -342,9 +451,20 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     "modified",
                     delivery_failed=True,
                     undeliverable_here=True,
+                    await_outcome=await_outcome,
+                    outcome_timeout=outcome_timeout,
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
+
+        except MessageSettlementUnconfirmed as mse:
+            # Result unknown: signal the caller to re-settle over the authoritative mgmt link.
+            raise RuntimeError("The service did not confirm the settlement on the receiver link.") from mse
+
+        except MessageException:
+            # Definitive answer: keep its condition (e.g. message-lock-lost) instead of letting the
+            # AMQPException handler below flatten it into ServiceBusConnectionError.
+            raise
 
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e

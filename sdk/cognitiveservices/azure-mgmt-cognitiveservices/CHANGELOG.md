@@ -1,5 +1,53 @@
 # Release History
 
+## 15.0.0b4 (2026-07-21)
+
+### Bugs Fixed
+
+  - `ComputesOperations.begin_create_or_update` now works for asynchronous compute creation that returns
+    HTTP 202 (Accepted) and no longer polls the compute operation-status endpoint. Previously the create
+    failed in two ways: the generated code rejected the 202 response with
+    `Operation returned an invalid status 'Accepted'`, and (when it did poll) the operation-status endpoint
+    (`.../locations/{location}/computeOperations/{operationId}`) required the
+    `Microsoft.CognitiveServices/locations/computeOperations/read` permission, so callers allowed to create a
+    compute but not granted that read permission were shown a misleading `AuthorizationFailed` error even
+    though the create succeeded. The 202 is now accepted and the long-running operation is tracked by reading
+    `provisioningState` from the `list` API, so it only needs the `computes/read` permission that callers
+    already have. The `list` API is used rather than a `get` on the resource because a `GET` on a just-created
+    compute returns `404 "Cluster not found"` for an extended period while it provisions, whereas `list`
+    reflects the compute's state from the moment the create is accepted. The poller still blocks until the
+    operation reaches a terminal state and surfaces the compute's own error detail (e.g. a quota message) on a
+    genuine provisioning failure; non-2xx create failures still propagate, and callers can opt out of blocking
+    with `polling=False`.
+
+## 15.0.0b3 (2026-06-26)
+
+### Features Added
+
+  - Model `DeploymentProperties` added property `speculative_decoding`
+  - Model `ManagedComputeDeploymentProperties` added property `capabilities`
+  - Model `RaiPolicyProperties` added property `egress_policy`
+  - Added model `DeploymentSpeculativeDecoding`
+  - Added enum `RaiEgressDefaultAction`
+  - Added enum `RaiEgressHeaderOperation`
+  - Added model `RaiEgressHeaderTransform`
+  - Added model `RaiEgressHeaderValueRef`
+  - Added model `RaiEgressManagedIdentityRef`
+  - Added enum `RaiEgressMode`
+  - Added model `RaiEgressPolicyConfig`
+  - Added model `RaiEgressRewriteTarget`
+  - Added model `RaiEgressRule`
+  - Added model `RaiEgressRuleAction`
+  - Added enum `RaiEgressRuleActionType`
+  - Added model `RaiEgressRuleMatch`
+  - Added enum `RaiEgressRuleType`
+  - Added enum `RaiEgressScheme`
+  - Added model `RaiEgressSecretRef`
+
+### Breaking Changes
+
+  - Model `ManagedComputeCapacityProperties` deleted or renamed its instance variable `location`
+
 ## 15.0.0b2 (2026-05-22)
 
 ### Features Added

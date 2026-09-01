@@ -13,6 +13,8 @@ from ci_tools.logging import logger
 from ci_tools.parsing import ParsedSetup
 
 REPO_ROOT = discover_repo_root()
+AZURE_SDK_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+PYPI_INDEX_URL = "https://pypi.org/simple/"
 
 
 def get_package_wheel_path(pkg_root: str) -> str:
@@ -70,6 +72,12 @@ class apistub(Check):
             help="Destination directory for generated API stub files.",
         )
         p.add_argument(
+            "--generate-from-pypi",
+            dest="generate_from_pypi",
+            default=None,
+            help="Generate the stub from this released PyPI version instead of local source code.",
+        )
+        p.add_argument(
             "--install-deps",
             dest="install_deps",
             default=False,
@@ -94,6 +102,44 @@ class apistub(Check):
             ],
             package_dir,
         )
+
+    def download_pypi_wheel(self, executable: str, package_name: str, version: str, staging_directory: str) -> str:
+        """Download a released wheel from PyPI into the staging directory and return its path."""
+        for index_url in (AZURE_SDK_INDEX_URL, PYPI_INDEX_URL):
+            logger.info(f"Downloading {package_name}=={version} from {index_url}.")
+            try:
+                self.run_venv_command(
+                    executable,
+                    [
+                        "-m",
+                        "pip",
+                        "download",
+                        f"{package_name}=={version}",
+                        "--no-deps",
+                        "--only-binary=:all:",
+                        f"--index-url={index_url}",
+                        "-d",
+                        staging_directory,
+                    ],
+                    cwd=staging_directory,
+                    check=True,
+                    additional_environment_settings={"PIP_EXTRA_INDEX_URL": ""},
+                )
+                break
+            except CalledProcessError as error:
+                if index_url == PYPI_INDEX_URL:
+                    error_details = error.stderr or error.stdout or str(error)
+                    logger.error(
+                        f"Failed to download {package_name}=={version} from both package indexes: {error_details}"
+                    )
+                    raise
+                logger.warning(f"Failed to download from the Azure SDK feed: {error}. Retrying from public PyPI.")
+        found_whl = find_whl(staging_directory, package_name, version)
+        if not found_whl:
+            raise FileNotFoundError(
+                f"No wheel found for package {package_name} version {version} after downloading from PyPI."
+            )
+        return os.path.join(staging_directory, found_whl)
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the apistub check command."""
@@ -133,23 +179,29 @@ class apistub(Check):
                 logger.error(f"Failed to install APIView dependencies: {e}")
                 return getattr(e, "returncode", 1)
 
-            if not os.getenv("PREBUILT_WHEEL_DIR"):
-                create_package_and_install(
-                    distribution_directory=staging_directory,
-                    target_setup=package_dir,
-                    skip_install=True,
-                    cache_dir=None,
-                    work_dir=staging_directory,
-                    force_create=False,
-                    package_type="wheel",
-                    pre_download_disabled=False,
-                    python_executable=executable,
-                )
+            generate_from_pypi = getattr(args, "generate_from_pypi", None)
+            package_version = generate_from_pypi or parsed.version
+
+            if generate_from_pypi:
+                pkg_path = self.download_pypi_wheel(executable, package_name, generate_from_pypi, staging_directory)
+            else:
+                if not os.getenv("PREBUILT_WHEEL_DIR"):
+                    create_package_and_install(
+                        distribution_directory=staging_directory,
+                        target_setup=package_dir,
+                        skip_install=True,
+                        cache_dir=None,
+                        work_dir=staging_directory,
+                        force_create=False,
+                        package_type="wheel",
+                        pre_download_disabled=False,
+                        python_executable=executable,
+                    )
+                pkg_path = get_package_wheel_path(package_dir)
 
             if install_deps:
                 self.pip_freeze(executable)
 
-            pkg_path = get_package_wheel_path(package_dir)
             pkg_path = os.path.abspath(pkg_path)
 
             out_token_path = os.path.abspath(getattr(args, "dest_dir", None) or package_dir)
@@ -182,7 +234,7 @@ class apistub(Check):
                         results.append(1)
                 else:
                     md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
-                    metadata_script = os.path.join(REPO_ROOT, "eng", "scripts", "Extract-APIViewMetadata-Python.ps1")
+                    metadata_script = os.path.join(REPO_ROOT, "eng", "scripts", "extract_apiview_metadata.py")
                     logger.info(f"Generating api.md for {package_name}")
                     try:
                         result = run(
@@ -197,7 +249,14 @@ class apistub(Check):
 
                         logger.info(f"Extracting API metadata for {package_name}")
                         metadata_result = run(
-                            ["pwsh", metadata_script, "-OutputPath", out_token_path],
+                            [
+                                executable,
+                                metadata_script,
+                                "--output-path",
+                                out_token_path,
+                                "--package-version",
+                                package_version,
+                            ],
                             check=True,
                             capture_output=True,
                             text=True,

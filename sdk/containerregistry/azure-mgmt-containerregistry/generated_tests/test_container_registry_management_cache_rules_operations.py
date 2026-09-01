@@ -47,6 +47,7 @@ class TestContainerRegistryManagementCacheRulesOperations(AzureMgmtRecordedTestC
                 },
                 "name": "str",
                 "properties": {
+                    "additionalAuthenticationProperties": "additional_authentication_properties",
                     "creationDate": "2020-02-20 00:00:00",
                     "credentialSetResourceId": "str",
                     "provisioningState": "str",
@@ -82,7 +83,10 @@ class TestContainerRegistryManagementCacheRulesOperations(AzureMgmtRecordedTestC
                     "type": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-                "properties": {"credentialSetResourceId": "str"},
+                "properties": {
+                    "additionalAuthenticationProperties": "additional_authentication_properties",
+                    "credentialSetResourceId": "str",
+                },
             },
         ).result()  # call '.result()' to poll until service return final result
 
