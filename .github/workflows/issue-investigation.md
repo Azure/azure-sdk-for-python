@@ -36,10 +36,10 @@ safe-outputs:
   report-failure-as-issue: false
   add-comment:
     max: 1
-    target: "*"
+    target: "${{ github.event.inputs.issue_number }}"
   close-issue:
     max: 1
-    target: "*"
+    target: "${{ github.event.inputs.issue_number }}"
     state-reason: not_planned
   # Direct Copilot assignment is best effort only and will usually skip on this
   # repository. GitHub accepts only a user to server identity (a PAT, an OAuth app
@@ -58,7 +58,7 @@ safe-outputs:
     name: copilot
     allowed: [copilot]
     max: 1
-    target: "*"
+    target: "${{ github.event.inputs.issue_number }}"
     ignore-if-error: true
   noop:
     report-as-issue: false
@@ -90,7 +90,7 @@ Use only repository context, GitHub issue data, PyPI metadata, package documenta
 
 ## Required Handoff Validation
 
-Retrieve the issue with `get_issue`. Inspect labels and label colors.
+Retrieve the issue with `issue_read` (method `get`). Inspect labels and label colors.
 
 Continue only if all of these are true:
 - The target is an issue.
@@ -221,7 +221,7 @@ Assign Copilot only when ALL of the following are true:
 - The issue is not a duplicate.
 - The package/version context does not require first asking the customer to reproduce on latest.
 
-Do not assign Copilot, even if the above are met, when the issue requires any of the following. Use `noop` or a targeted Insufficient Context request instead:
+Do not assign Copilot, even if the above are met, when the issue requires any of the following. Instead, follow the routing below.
 - Public API design or compatibility decisions (new members, signature changes, breaking changes).
 - Security- or privacy-sensitive changes.
 - Changes with data-loss or reliability risk.
@@ -230,7 +230,7 @@ Do not assign Copilot, even if the above are met, when the issue requires any of
 - Unclear code or documentation ownership.
 - Investigation that depends on live-service behavior that cannot be verified from repository context alone.
 
-If any exclusion applies, or the fix area cannot be stated specifically, do not assign Copilot -- call `noop` or request the missing information instead.
+If any exclusion applies and there is enough evidence to describe the issue, the suspected area, and why it is excluded, use the `Requires a human. Analysis provided below` outcome instead of assigning Copilot. Only fall back to `noop` or a targeted Insufficient Context request when the exclusion itself cannot be evidenced, or the fix area cannot be stated specifically enough to write a useful analysis.
 
 Before assigning Copilot, add one comment that follows the Comment Format section, uses the `Recommended for Copilot automated fix` outcome line, and names the concrete package/API, the specific suspected fix area (file or documentation location when known), and the expected test or documentation change, summarizing:
 - Why the issue appears SDK-side.
