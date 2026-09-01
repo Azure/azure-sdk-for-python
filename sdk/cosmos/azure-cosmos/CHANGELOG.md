@@ -2,11 +2,14 @@
 > [!IMPORTANT]
 > We strongly recommend that customers use at least version 4.16.3 of `azure-cosmos`.
 
-### 4.16.4 (2026-09-01)
+### 4.16.4 (2026-09-02)
 
 #### Bugs Fixed
 * Fixed regression with handling of v1 legacy containers when passing `{}` as a partition key. `{}` and `NonePartitionKeyValue` now both resolve to the `Undefined` effective partition key. See [PR 48422](https://github.com/Azure/azure-sdk-for-python/pull/48422)
 * Fixed the same `TypeError` on system key (migrated) containers, where a missing partition key value resolves to `_Empty` instead of `Undefined`. It now maps to the minimum effective partition key. See [PR 48422](https://github.com/Azure/azure-sdk-for-python/pull/48422)
+
+#### Other Changes
+* Marked the Throughput Buckets feature as GA. See [48838](https://github.com/Azure/azure-sdk-for-python/pull/48838).
 
 ### 4.16.3 (2026-07-29)
 
