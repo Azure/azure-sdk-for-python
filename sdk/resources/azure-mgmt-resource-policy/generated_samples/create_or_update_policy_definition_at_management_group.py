@@ -61,6 +61,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/createOrUpdatePolicyDefinitionAtManagementGroup.json
+# x-ms-original-file: 2026-07-01/createOrUpdatePolicyDefinitionAtManagementGroup.json
 if __name__ == "__main__":
     main()

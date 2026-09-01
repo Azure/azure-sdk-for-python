@@ -31,7 +31,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -73,22 +73,6 @@ from ...operations._operations import (
     build_policy_definitions_list_built_in_request,
     build_policy_definitions_list_by_management_group_request,
     build_policy_definitions_list_request,
-    build_policy_enrollments_create_or_update_request,
-    build_policy_enrollments_delete_request,
-    build_policy_enrollments_get_request,
-    build_policy_enrollments_list_for_management_group_request,
-    build_policy_enrollments_list_for_resource_group_request,
-    build_policy_enrollments_list_for_resource_request,
-    build_policy_enrollments_list_request,
-    build_policy_enrollments_update_request,
-    build_policy_exemptions_create_or_update_request,
-    build_policy_exemptions_delete_request,
-    build_policy_exemptions_get_request,
-    build_policy_exemptions_list_for_management_group_request,
-    build_policy_exemptions_list_for_resource_group_request,
-    build_policy_exemptions_list_for_resource_request,
-    build_policy_exemptions_list_request,
-    build_policy_exemptions_update_request,
     build_policy_set_definition_versions_create_or_update_at_management_group_request,
     build_policy_set_definition_versions_create_or_update_request,
     build_policy_set_definition_versions_delete_at_management_group_request,
@@ -113,33 +97,17 @@ from ...operations._operations import (
     build_policy_set_definitions_list_by_management_group_request,
     build_policy_set_definitions_list_request,
     build_policy_tokens_acquire_at_management_group_request,
+    build_policy_tokens_acquire_at_resource_group_request,
     build_policy_tokens_acquire_request,
-    build_variable_values_create_or_update_at_management_group_request,
-    build_variable_values_create_or_update_request,
-    build_variable_values_delete_at_management_group_request,
-    build_variable_values_delete_request,
-    build_variable_values_get_at_management_group_request,
-    build_variable_values_get_request,
-    build_variable_values_list_for_management_group_request,
-    build_variable_values_list_request,
-    build_variables_create_or_update_at_management_group_request,
-    build_variables_create_or_update_request,
-    build_variables_delete_at_management_group_request,
-    build_variables_delete_request,
-    build_variables_get_at_management_group_request,
-    build_variables_get_request,
-    build_variables_list_for_management_group_request,
-    build_variables_list_request,
 )
 from .._configuration import PolicyClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
 
 
-class PolicyAssignmentsOperations:
+class PolicyAssignmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -268,7 +236,12 @@ class PolicyAssignmentsOperations:
 
     @overload
     async def create_by_id(
-        self, policy_assignment_id: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        policy_assignment_id: str,
+        parameters: _types.PolicyAssignment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PolicyAssignment:
         """Creates or updates a policy assignment.
 
@@ -287,7 +260,7 @@ class PolicyAssignmentsOperations:
          '{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'. Required.
         :type policy_assignment_id: str
         :param parameters: Parameters for policy assignment. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -328,7 +301,10 @@ class PolicyAssignmentsOperations:
 
     @distributed_trace_async
     async def create_by_id(
-        self, policy_assignment_id: str, parameters: Union[_models.PolicyAssignment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        policy_assignment_id: str,
+        parameters: Union[_models.PolicyAssignment, _types.PolicyAssignment, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PolicyAssignment:
         """Creates or updates a policy assignment.
 
@@ -346,9 +322,10 @@ class PolicyAssignmentsOperations:
         :param policy_assignment_id: The ID of the policy assignment to get. Use the format
          '{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'. Required.
         :type policy_assignment_id: str
-        :param parameters: Parameters for policy assignment. Is one of the following types:
-         PolicyAssignment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignment or JSON or IO[bytes]
+        :param parameters: Parameters for policy assignment. Is either a PolicyAssignment type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignment or
+         ~azure.mgmt.resource.policy.types.PolicyAssignment or IO[bytes]
         :return: PolicyAssignment. The PolicyAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -455,7 +432,12 @@ class PolicyAssignmentsOperations:
 
     @overload
     async def update_by_id(
-        self, policy_assignment_id: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        policy_assignment_id: str,
+        parameters: _types.PolicyAssignmentUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PolicyAssignment:
         """Updates a policy assignment.
 
@@ -474,7 +456,7 @@ class PolicyAssignmentsOperations:
          '{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'. Required.
         :type policy_assignment_id: str
         :param parameters: Parameters for policy assignment patch request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyAssignmentUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -517,7 +499,7 @@ class PolicyAssignmentsOperations:
     async def update_by_id(
         self,
         policy_assignment_id: str,
-        parameters: Union[_models.PolicyAssignmentUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyAssignmentUpdate, _types.PolicyAssignmentUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyAssignment:
         """Updates a policy assignment.
@@ -536,10 +518,10 @@ class PolicyAssignmentsOperations:
         :param policy_assignment_id: The ID of the policy assignment to get. Use the format
          '{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'. Required.
         :type policy_assignment_id: str
-        :param parameters: Parameters for policy assignment patch request. Is one of the following
-         types: PolicyAssignmentUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignmentUpdate or JSON or
-         IO[bytes]
+        :param parameters: Parameters for policy assignment patch request. Is either a
+         PolicyAssignmentUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignmentUpdate or
+         ~azure.mgmt.resource.policy.types.PolicyAssignmentUpdate or IO[bytes]
         :return: PolicyAssignment. The PolicyAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -794,7 +776,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        parameters: JSON,
+        parameters: _types.PolicyAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -808,7 +790,7 @@ class PolicyAssignmentsOperations:
         :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for the policy assignment. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -850,7 +832,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        parameters: Union[_models.PolicyAssignment, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyAssignment, _types.PolicyAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyAssignment:
         """This operation creates or updates a policy assignment with the given scope and name. Policy
@@ -861,9 +843,10 @@ class PolicyAssignmentsOperations:
         :type scope: str
         :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
-        :param parameters: Parameters for the policy assignment. Is one of the following types:
-         PolicyAssignment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignment or JSON or IO[bytes]
+        :param parameters: Parameters for the policy assignment. Is either a PolicyAssignment type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignment or
+         ~azure.mgmt.resource.policy.types.PolicyAssignment or IO[bytes]
         :return: PolicyAssignment. The PolicyAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -967,7 +950,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        parameters: JSON,
+        parameters: _types.PolicyAssignmentUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -981,7 +964,7 @@ class PolicyAssignmentsOperations:
         :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for policy assignment patch request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyAssignmentUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1023,7 +1006,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        parameters: Union[_models.PolicyAssignmentUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyAssignmentUpdate, _types.PolicyAssignmentUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyAssignment:
         """This operation updates a policy assignment with the given scope and name. Policy assignments
@@ -1034,10 +1017,10 @@ class PolicyAssignmentsOperations:
         :type scope: str
         :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
-        :param parameters: Parameters for policy assignment patch request. Is one of the following
-         types: PolicyAssignmentUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignmentUpdate or JSON or
-         IO[bytes]
+        :param parameters: Parameters for policy assignment patch request. Is either a
+         PolicyAssignmentUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignmentUpdate or
+         ~azure.mgmt.resource.policy.types.PolicyAssignmentUpdate or IO[bytes]
         :return: PolicyAssignment. The PolicyAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1747,7 +1730,7 @@ class PolicyAssignmentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DataPolicyManifestsOperations:
+class DataPolicyManifestsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1768,7 +1751,7 @@ class DataPolicyManifestsOperations:
     @api_version_validation(
         method_added_on="2025-11-01",
         params_added_on={"2025-11-01": ["api_version", "policy_mode", "accept"]},
-        api_versions_list=["2025-11-01", "2025-12-01-preview", "2026-01-01-preview"],
+        api_versions_list=["2025-11-01", "2025-12-01-preview", "2026-01-01-preview", "2026-06-01", "2026-07-01"],
     )
     async def get_by_policy_mode(self, policy_mode: str, **kwargs: Any) -> _models.DataPolicyManifest:
         """Retrieves a data policy manifest.
@@ -1840,7 +1823,7 @@ class DataPolicyManifestsOperations:
     @api_version_validation(
         method_added_on="2025-11-01",
         params_added_on={"2025-11-01": ["api_version", "filter", "accept"]},
-        api_versions_list=["2025-11-01", "2025-12-01-preview", "2026-01-01-preview"],
+        api_versions_list=["2025-11-01", "2025-12-01-preview", "2026-01-01-preview", "2026-06-01", "2026-07-01"],
     )
     def list(self, *, filter: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged["_models.DataPolicyManifest"]:
         """Retrieves data policy manifests.
@@ -1947,7 +1930,7 @@ class DataPolicyManifestsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PolicyDefinitionsOperations:
+class PolicyDefinitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2056,7 +2039,12 @@ class PolicyDefinitionsOperations:
 
     @overload
     async def create_or_update(
-        self, policy_definition_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        policy_definition_name: str,
+        parameters: _types.PolicyDefinition,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PolicyDefinition:
         """This operation creates or updates a policy definition in the given subscription with the given
         name.
@@ -2064,7 +2052,7 @@ class PolicyDefinitionsOperations:
         :param policy_definition_name: The name of the policy definition to get. Required.
         :type policy_definition_name: str
         :param parameters: The policy definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2099,16 +2087,20 @@ class PolicyDefinitionsOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, policy_definition_name: str, parameters: Union[_models.PolicyDefinition, JSON, IO[bytes]], **kwargs: Any
+        self,
+        policy_definition_name: str,
+        parameters: Union[_models.PolicyDefinition, _types.PolicyDefinition, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PolicyDefinition:
         """This operation creates or updates a policy definition in the given subscription with the given
         name.
 
         :param policy_definition_name: The name of the policy definition to get. Required.
         :type policy_definition_name: str
-        :param parameters: The policy definition properties. Is one of the following types:
-         PolicyDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or JSON or IO[bytes]
+        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or
+         ~azure.mgmt.resource.policy.types.PolicyDefinition or IO[bytes]
         :return: PolicyDefinition. The PolicyDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2632,7 +2624,7 @@ class PolicyDefinitionsOperations:
         self,
         management_group_id: str,
         policy_definition_name: str,
-        parameters: JSON,
+        parameters: _types.PolicyDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2645,7 +2637,7 @@ class PolicyDefinitionsOperations:
         :param policy_definition_name: The name of the policy definition to get. Required.
         :type policy_definition_name: str
         :param parameters: The policy definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2686,7 +2678,7 @@ class PolicyDefinitionsOperations:
         self,
         management_group_id: str,
         policy_definition_name: str,
-        parameters: Union[_models.PolicyDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyDefinition, _types.PolicyDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyDefinition:
         """This operation creates or updates a policy definition in the given management group with the
@@ -2696,9 +2688,10 @@ class PolicyDefinitionsOperations:
         :type management_group_id: str
         :param policy_definition_name: The name of the policy definition to get. Required.
         :type policy_definition_name: str
-        :param parameters: The policy definition properties. Is one of the following types:
-         PolicyDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or JSON or IO[bytes]
+        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or
+         ~azure.mgmt.resource.policy.types.PolicyDefinition or IO[bytes]
         :return: PolicyDefinition. The PolicyDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2949,7 +2942,7 @@ class PolicyDefinitionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PolicyDefinitionVersionsOperations:
+class PolicyDefinitionVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3074,7 +3067,7 @@ class PolicyDefinitionVersionsOperations:
         self,
         policy_definition_name: str,
         policy_definition_version: str,
-        parameters: JSON,
+        parameters: _types.PolicyDefinitionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3089,7 +3082,7 @@ class PolicyDefinitionVersionsOperations:
          Required.
         :type policy_definition_version: str
         :param parameters: The policy definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyDefinitionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3132,7 +3125,7 @@ class PolicyDefinitionVersionsOperations:
         self,
         policy_definition_name: str,
         policy_definition_version: str,
-        parameters: Union[_models.PolicyDefinitionVersion, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyDefinitionVersion, _types.PolicyDefinitionVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyDefinitionVersion:
         """This operation creates or updates a policy definition in the given subscription with the given
@@ -3144,10 +3137,10 @@ class PolicyDefinitionVersionsOperations:
          is the major version number, y is the minor version number, and z is the patch number.
          Required.
         :type policy_definition_version: str
-        :param parameters: The policy definition properties. Is one of the following types:
-         PolicyDefinitionVersion, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or JSON or
-         IO[bytes]
+        :param parameters: The policy definition properties. Is either a PolicyDefinitionVersion type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or
+         ~azure.mgmt.resource.policy.types.PolicyDefinitionVersion or IO[bytes]
         :return: PolicyDefinitionVersion. The PolicyDefinitionVersion is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3673,7 +3666,7 @@ class PolicyDefinitionVersionsOperations:
         management_group_name: str,
         policy_definition_name: str,
         policy_definition_version: str,
-        parameters: JSON,
+        parameters: _types.PolicyDefinitionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3691,7 +3684,7 @@ class PolicyDefinitionVersionsOperations:
          Required.
         :type policy_definition_version: str
         :param parameters: The policy definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyDefinitionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3739,7 +3732,7 @@ class PolicyDefinitionVersionsOperations:
         management_group_name: str,
         policy_definition_name: str,
         policy_definition_version: str,
-        parameters: Union[_models.PolicyDefinitionVersion, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyDefinitionVersion, _types.PolicyDefinitionVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyDefinitionVersion:
         """This operation creates or updates a policy definition version in the given management group
@@ -3754,10 +3747,10 @@ class PolicyDefinitionVersionsOperations:
          is the major version number, y is the minor version number, and z is the patch number.
          Required.
         :type policy_definition_version: str
-        :param parameters: The policy definition properties. Is one of the following types:
-         PolicyDefinitionVersion, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or JSON or
-         IO[bytes]
+        :param parameters: The policy definition properties. Is either a PolicyDefinitionVersion type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or
+         ~azure.mgmt.resource.policy.types.PolicyDefinitionVersion or IO[bytes]
         :return: PolicyDefinitionVersion. The PolicyDefinitionVersion is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4205,2140 +4198,7 @@ class PolicyDefinitionVersionsOperations:
         return deserialized  # type: ignore
 
 
-class PolicyEnrollmentsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`policy_enrollments` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={"2026-01-01-preview": ["api_version", "scope", "policy_enrollment_name", "accept"]},
-        api_versions_list=["2026-01-01-preview"],
-    )
-    async def get(self, scope: str, policy_enrollment_name: str, **kwargs: Any) -> _models.PolicyEnrollment:
-        """Retrieves a policy enrollment.
-
-        This operation retrieves a single policy enrollment, given its name and the scope it was
-        created at.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_enrollment_name: The name of the policy enrollment. Required.
-        :type policy_enrollment_name: str
-        :return: PolicyEnrollment. The PolicyEnrollment is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyEnrollment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PolicyEnrollment] = kwargs.pop("cls", None)
-
-        _request = build_policy_enrollments_get_request(
-            scope=scope,
-            policy_enrollment_name=policy_enrollment_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PolicyEnrollment, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_update(
-        self,
-        scope: str,
-        policy_enrollment_name: str,
-        parameters: _models.PolicyEnrollment,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyEnrollment:
-        """Creates or updates a policy enrollment.
-
-        This operation creates or updates a policy enrollment with the given scope and name. Policy
-        enrollments apply to all resources contained within their scope. For example, when you create a
-        policy enrollment at resource group scope for a policy assignment at the same or above level,
-        the enrollment applies to all applicable resources in the resource group.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_enrollment_name: The name of the policy enrollment. Required.
-        :type policy_enrollment_name: str
-        :param parameters: The policy enrollment resource to create or replace. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyEnrollment
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyEnrollment. The PolicyEnrollment is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyEnrollment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        scope: str,
-        policy_enrollment_name: str,
-        parameters: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyEnrollment:
-        """Creates or updates a policy enrollment.
-
-        This operation creates or updates a policy enrollment with the given scope and name. Policy
-        enrollments apply to all resources contained within their scope. For example, when you create a
-        policy enrollment at resource group scope for a policy assignment at the same or above level,
-        the enrollment applies to all applicable resources in the resource group.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_enrollment_name: The name of the policy enrollment. Required.
-        :type policy_enrollment_name: str
-        :param parameters: The policy enrollment resource to create or replace. Required.
-        :type parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyEnrollment. The PolicyEnrollment is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyEnrollment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        scope: str,
-        policy_enrollment_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyEnrollment:
-        """Creates or updates a policy enrollment.
-
-        This operation creates or updates a policy enrollment with the given scope and name. Policy
-        enrollments apply to all resources contained within their scope. For example, when you create a
-        policy enrollment at resource group scope for a policy assignment at the same or above level,
-        the enrollment applies to all applicable resources in the resource group.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_enrollment_name: The name of the policy enrollment. Required.
-        :type policy_enrollment_name: str
-        :param parameters: The policy enrollment resource to create or replace. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyEnrollment. The PolicyEnrollment is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyEnrollment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": ["api_version", "scope", "policy_enrollment_name", "content_type", "accept"]
-        },
-        api_versions_list=["2026-01-01-preview"],
-    )
-    async def create_or_update(
-        self,
-        scope: str,
-        policy_enrollment_name: str,
-        parameters: Union[_models.PolicyEnrollment, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicyEnrollment:
-        """Creates or updates a policy enrollment.
-
-        This operation creates or updates a policy enrollment with the given scope and name. Policy
-        enrollments apply to all resources contained within their scope. For example, when you create a
-        policy enrollment at resource group scope for a policy assignment at the same or above level,
-        the enrollment applies to all applicable resources in the resource group.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_enrollment_name: The name of the policy enrollment. Required.
-        :type policy_enrollment_name: str
-        :param parameters: The policy enrollment resource to create or replace. Is one of the following
-         types: PolicyEnrollment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyEnrollment or JSON or IO[bytes]
-        :return: PolicyEnrollment. The PolicyEnrollment is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyEnrollment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicyEnrollment] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_policy_enrollments_create_or_update_request(
-            scope=scope,
-            policy_enrollment_name=policy_enrollment_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PolicyEnrollment, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def update(
-        self,
-        scope: str,
-        policy_enrollment_name: str,
-        parameters: _models.PolicyEnrollmentUpdate,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyEnrollment:
-        """Updates a policy enrollment.
-
-        This operation updates a policy enrollment with the given scope and name.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_enrollment_name: The name of the policy enrollment. Required.
-        :type policy_enrollment_name: str
-        :param parameters: The properties to update in the policy enrollment. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyEnrollmentUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyEnrollment. The PolicyEnrollment is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyEnrollment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self,
-        scope: str,
-        policy_enrollment_name: str,
-        parameters: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyEnrollment:
-        """Updates a policy enrollment.
-
-        This operation updates a policy enrollment with the given scope and name.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_enrollment_name: The name of the policy enrollment. Required.
-        :type policy_enrollment_name: str
-        :param parameters: The properties to update in the policy enrollment. Required.
-        :type parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyEnrollment. The PolicyEnrollment is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyEnrollment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self,
-        scope: str,
-        policy_enrollment_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyEnrollment:
-        """Updates a policy enrollment.
-
-        This operation updates a policy enrollment with the given scope and name.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_enrollment_name: The name of the policy enrollment. Required.
-        :type policy_enrollment_name: str
-        :param parameters: The properties to update in the policy enrollment. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyEnrollment. The PolicyEnrollment is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyEnrollment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": ["api_version", "scope", "policy_enrollment_name", "content_type", "accept"]
-        },
-        api_versions_list=["2026-01-01-preview"],
-    )
-    async def update(
-        self,
-        scope: str,
-        policy_enrollment_name: str,
-        parameters: Union[_models.PolicyEnrollmentUpdate, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicyEnrollment:
-        """Updates a policy enrollment.
-
-        This operation updates a policy enrollment with the given scope and name.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_enrollment_name: The name of the policy enrollment. Required.
-        :type policy_enrollment_name: str
-        :param parameters: The properties to update in the policy enrollment. Is one of the following
-         types: PolicyEnrollmentUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyEnrollmentUpdate or JSON or
-         IO[bytes]
-        :return: PolicyEnrollment. The PolicyEnrollment is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyEnrollment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicyEnrollment] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_policy_enrollments_update_request(
-            scope=scope,
-            policy_enrollment_name=policy_enrollment_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PolicyEnrollment, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={"2026-01-01-preview": ["api_version", "scope", "policy_enrollment_name"]},
-        api_versions_list=["2026-01-01-preview"],
-    )
-    async def delete(self, scope: str, policy_enrollment_name: str, **kwargs: Any) -> None:
-        """Deletes a policy enrollment.
-
-        This operation deletes a policy enrollment, given its name and the scope it was created in. The
-        scope of a policy enrollment is the part of its ID preceding
-        '/providers/Microsoft.Authorization/policyEnrollments/{policyEnrollmentName}'.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_enrollment_name: The name of the policy enrollment. Required.
-        :type policy_enrollment_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_policy_enrollments_delete_request(
-            scope=scope,
-            policy_enrollment_name=policy_enrollment_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": ["api_version", "subscription_id", "resource_group_name", "filter", "accept"]
-        },
-        api_versions_list=["2026-01-01-preview"],
-    )
-    def list_for_resource_group(
-        self, resource_group_name: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyEnrollment"]:
-        """Retrieves all policy enrollments that apply to a resource group.
-
-        This operation retrieves the list of all policy enrollments associated with the given resource
-        group in the given subscription that match the optional given $filter. Valid values for $filter
-        are: 'atScope()' or 'atExactScope()'. If $filter is not provided, the unfiltered list includes
-        all policy enrollments associated with the resource group, including those that apply directly
-        or apply from containing scopes, as well as any applied to resources contained within the
-        resource group.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :keyword filter: The filter to apply on the operation. Valid values for $filter are:
-         'atScope()' or 'atExactScope()'. If $filter is not provided, no filtering is performed. If
-         $filter is not provided, the unfiltered list includes all policy enrollments associated with
-         the scope, including those that apply directly or from containing scopes. If $filter=atScope()
-         is provided, the returned list includes all policy enrollments that apply to the scope, which
-         is everything in the unfiltered list except those applied to sub-scopes contained within the
-         given scope. If $filter=atExactScope() is provided, the returned list only includes all policy
-         enrollments that apply at the given scope. Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of PolicyEnrollment
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyEnrollment]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PolicyEnrollment]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_enrollments_list_for_resource_group_request(
-                    resource_group_name=resource_group_name,
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PolicyEnrollment],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={"2026-01-01-preview": ["api_version", "management_group_id", "filter", "accept"]},
-        api_versions_list=["2026-01-01-preview"],
-    )
-    def list_for_management_group(
-        self, management_group_id: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyEnrollment"]:
-        """Retrieves all policy enrollments that apply to a management group.
-
-        This operation retrieves the list of all policy enrollments applicable to the management group
-        that match the given $filter. Valid values for $filter are: 'atScope()' or 'atExactScope()'. If
-        $filter=atScope() is provided, the returned list includes all policy enrollments that are
-        assigned to the management group or the management group's ancestors.
-
-        :param management_group_id: The management group ID. Required.
-        :type management_group_id: str
-        :keyword filter: The filter to apply on the operation. Valid values for $filter are:
-         'atScope()' or 'atExactScope()'. If $filter is not provided, no filtering is performed. If
-         $filter is not provided, the unfiltered list includes all policy enrollments associated with
-         the scope, including those that apply directly or from containing scopes. If $filter=atScope()
-         is provided, the returned list includes all policy enrollments that apply to the scope, which
-         is everything in the unfiltered list except those applied to sub-scopes contained within the
-         given scope. If $filter=atExactScope() is provided, the returned list only includes all policy
-         enrollments that apply at the given scope. Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of PolicyEnrollment
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyEnrollment]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PolicyEnrollment]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_enrollments_list_for_management_group_request(
-                    management_group_id=management_group_id,
-                    filter=filter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PolicyEnrollment],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={"2026-01-01-preview": ["api_version", "subscription_id", "filter", "accept"]},
-        api_versions_list=["2026-01-01-preview"],
-    )
-    def list(self, *, filter: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged["_models.PolicyEnrollment"]:
-        """Retrieves all policy enrollments that apply to a subscription.
-
-        This operation retrieves the list of all policy enrollments associated with the given
-        subscription that match the optional given $filter. Valid values for $filter are: 'atScope()'
-        or 'atExactScope()'. If $filter is not provided, the unfiltered list includes all policy
-        enrollments associated with the subscription, including those that apply directly or from
-        management groups that contain the given subscription, as well as any applied to objects
-        contained within the subscription.
-
-        :keyword filter: The filter to apply on the operation. Valid values for $filter are:
-         'atScope()' or 'atExactScope()'. If $filter is not provided, no filtering is performed. If
-         $filter is not provided, the unfiltered list includes all policy enrollments associated with
-         the scope, including those that apply directly or from containing scopes. If $filter=atScope()
-         is provided, the returned list includes all policy enrollments that apply to the scope, which
-         is everything in the unfiltered list except those applied to sub-scopes contained within the
-         given scope. If $filter=atExactScope() is provided, the returned list only includes all policy
-         enrollments that apply at the given scope. Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of PolicyEnrollment
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyEnrollment]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PolicyEnrollment]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_enrollments_list_request(
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PolicyEnrollment],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "subscription_id",
-                "resource_group_name",
-                "resource_provider_namespace",
-                "parent_resource_path",
-                "resource_type",
-                "resource_name",
-                "api_version",
-                "filter",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview"],
-    )
-    def list_for_resource(
-        self,
-        resource_group_name: str,
-        resource_provider_namespace: str,
-        parent_resource_path: str,
-        resource_type: str,
-        resource_name: str,
-        *,
-        filter: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyEnrollment"]:
-        """Retrieves all policy enrollments that apply to a resource.
-
-        This operation retrieves the list of all policy enrollments associated with the specified
-        resource in the given resource group and subscription that match the optional given $filter.
-        Valid values for $filter are: 'atScope()' or 'atExactScope()'. If $filter is not provided, the
-        unfiltered list includes all policy enrollments associated with the resource, including those
-        that apply directly or from all containing scopes, as well as any applied to resources
-        contained within the resource. Three parameters plus the resource name are used to identify a
-        specific resource. If the resource is not part of a parent resource (the more common case), the
-        parent resource path should not be provided (or provided as ''). For example a web app could be
-        specified as ({resourceProviderNamespace} == 'Microsoft.Web', {parentResourcePath} == '',
-        {resourceType} == 'sites', {resourceName} == 'MyWebApp'). If the resource is part of a parent
-        resource, then all parameters should be provided. For example a virtual machine DNS name could
-        be specified as ({resourceProviderNamespace} == 'Microsoft.Compute', {parentResourcePath} ==
-        'virtualMachines/MyVirtualMachine', {resourceType} == 'domainNames', {resourceName} ==
-        'MyComputerName'). A convenient alternative to providing the namespace and type name separately
-        is to provide both in the {resourceType} parameter, format: ({resourceProviderNamespace} == '',
-        {parentResourcePath} == '', {resourceType} == 'Microsoft.Web/sites', {resourceName} ==
-        'MyWebApp').
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource provider. For example, the
-         namespace of a virtual machine is Microsoft.Compute (from Microsoft.Compute/virtualMachines).
-         Required.
-        :type resource_provider_namespace: str
-        :param parent_resource_path: The parent resource path. Use empty string if there is none.
-         Required.
-        :type parent_resource_path: str
-        :param resource_type: The resource type name. For example the type name of a web app is 'sites'
-         (from Microsoft.Web/sites). Required.
-        :type resource_type: str
-        :param resource_name: The name of the resource. Required.
-        :type resource_name: str
-        :keyword filter: The filter to apply on the operation. Valid values for $filter are:
-         'atScope()' or 'atExactScope()'. If $filter is not provided, no filtering is performed. If
-         $filter is not provided, the unfiltered list includes all policy enrollments associated with
-         the scope, including those that apply directly or from containing scopes. If $filter=atScope()
-         is provided, the returned list includes all policy enrollments that apply to the scope, which
-         is everything in the unfiltered list except those applied to sub-scopes contained within the
-         given scope. If $filter=atExactScope() is provided, the returned list only includes all policy
-         enrollments that apply at the given scope. Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of PolicyEnrollment
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyEnrollment]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PolicyEnrollment]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_enrollments_list_for_resource_request(
-                    resource_group_name=resource_group_name,
-                    resource_provider_namespace=resource_provider_namespace,
-                    parent_resource_path=parent_resource_path,
-                    resource_type=resource_type,
-                    resource_name=resource_name,
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PolicyEnrollment],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class PolicyExemptionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`policy_exemptions` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "scope", "policy_exemption_name", "accept"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def get(self, scope: str, policy_exemption_name: str, **kwargs: Any) -> _models.PolicyExemption:
-        """Retrieves a policy exemption.
-
-        This operation retrieves a single policy exemption, given its name and the scope it was created
-        at.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to get. Required.
-        :type policy_exemption_name: str
-        :return: PolicyExemption. The PolicyExemption is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PolicyExemption] = kwargs.pop("cls", None)
-
-        _request = build_policy_exemptions_get_request(
-            scope=scope,
-            policy_exemption_name=policy_exemption_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PolicyExemption, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: _models.PolicyExemption,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Creates or updates a policy exemption.
-
-        This operation creates or updates a policy exemption with the given scope and name. Policy
-        exemptions apply to all resources contained within their scope. For example, when you create a
-        policy exemption at resource group scope for a policy assignment at the same or above level,
-        the exemption exempts to all applicable resources in the resource group.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to get. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for the policy exemption. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyExemption. The PolicyExemption is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Creates or updates a policy exemption.
-
-        This operation creates or updates a policy exemption with the given scope and name. Policy
-        exemptions apply to all resources contained within their scope. For example, when you create a
-        policy exemption at resource group scope for a policy assignment at the same or above level,
-        the exemption exempts to all applicable resources in the resource group.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to get. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for the policy exemption. Required.
-        :type parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyExemption. The PolicyExemption is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Creates or updates a policy exemption.
-
-        This operation creates or updates a policy exemption with the given scope and name. Policy
-        exemptions apply to all resources contained within their scope. For example, when you create a
-        policy exemption at resource group scope for a policy assignment at the same or above level,
-        the exemption exempts to all applicable resources in the resource group.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to get. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for the policy exemption. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyExemption. The PolicyExemption is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": ["api_version", "scope", "policy_exemption_name", "content_type", "accept"]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def create_or_update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: Union[_models.PolicyExemption, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Creates or updates a policy exemption.
-
-        This operation creates or updates a policy exemption with the given scope and name. Policy
-        exemptions apply to all resources contained within their scope. For example, when you create a
-        policy exemption at resource group scope for a policy assignment at the same or above level,
-        the exemption exempts to all applicable resources in the resource group.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to get. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for the policy exemption. Is one of the following types:
-         PolicyExemption, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemption or JSON or IO[bytes]
-        :return: PolicyExemption. The PolicyExemption is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicyExemption] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_policy_exemptions_create_or_update_request(
-            scope=scope,
-            policy_exemption_name=policy_exemption_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PolicyExemption, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: _models.PolicyExemptionUpdate,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Updates a policy exemption.
-
-        This operation updates a policy exemption with the given scope and name.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to get. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for policy exemption patch request. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemptionUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyExemption. The PolicyExemption is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Updates a policy exemption.
-
-        This operation updates a policy exemption with the given scope and name.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to get. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for policy exemption patch request. Required.
-        :type parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyExemption. The PolicyExemption is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Updates a policy exemption.
-
-        This operation updates a policy exemption with the given scope and name.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to get. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for policy exemption patch request. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyExemption. The PolicyExemption is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": ["api_version", "scope", "policy_exemption_name", "content_type", "accept"]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: Union[_models.PolicyExemptionUpdate, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Updates a policy exemption.
-
-        This operation updates a policy exemption with the given scope and name.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to get. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for policy exemption patch request. Is one of the following
-         types: PolicyExemptionUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemptionUpdate or JSON or IO[bytes]
-        :return: PolicyExemption. The PolicyExemption is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicyExemption] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_policy_exemptions_update_request(
-            scope=scope,
-            policy_exemption_name=policy_exemption_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PolicyExemption, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "scope", "policy_exemption_name"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def delete(self, scope: str, policy_exemption_name: str, **kwargs: Any) -> None:
-        """Deletes a policy exemption.
-
-        This operation deletes a policy exemption, given its name and the scope it was created in. The
-        scope of a policy exemption is the part of its ID preceding
-        '/providers/Microsoft.Authorization/policyExemptions/{policyExemptionName}'.
-
-        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to get. Required.
-        :type policy_exemption_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_policy_exemptions_delete_request(
-            scope=scope,
-            policy_exemption_name=policy_exemption_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": ["api_version", "subscription_id", "resource_group_name", "filter", "accept"]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    def list_for_resource_group(
-        self, resource_group_name: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a resource group.
-
-        This operation retrieves the list of all policy exemptions associated with the given resource
-        group in the given subscription that match the optional given $filter. Valid values for $filter
-        are: 'atScope()', 'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If
-        $filter is not provided, the unfiltered list includes all policy exemptions associated with the
-        resource group, including those that apply directly or apply from containing scopes, as well as
-        any applied to resources contained within the resource group.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :keyword filter: The filter to apply on the operation. Valid values for $filter are:
-         'atScope()', 'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If
-         $filter is not provided, no filtering is performed. If $filter is not provided, the unfiltered
-         list includes all policy exemptions associated with the scope, including those that apply
-         directly or apply from containing scopes. If $filter=atScope() is provided, the returned list
-         only includes all policy exemptions that apply to the scope, which is everything in the
-         unfiltered list except those applied to sub scopes contained within the given scope. If
-         $filter=atExactScope() is provided, the returned list only includes all policy exemptions that
-         at the given scope. If $filter=excludeExpired() is provided, the returned list only includes
-         all policy exemptions that either haven't expired or didn't set expiration date. If
-         $filter=policyAssignmentId eq '{value}' is provided. the returned list only includes all policy
-         exemptions that are associated with the give policyAssignmentId. Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of PolicyExemption
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyExemption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PolicyExemption]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_exemptions_list_for_resource_group_request(
-                    resource_group_name=resource_group_name,
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PolicyExemption],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "management_group_id", "filter", "accept"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    def list_for_management_group(
-        self, management_group_id: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a management group.
-
-        This operation retrieves the list of all policy exemptions applicable to the management group
-        that match the given $filter. Valid values for $filter are: 'atScope()', 'atExactScope()',
-        'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter=atScope() is provided, the
-        returned list includes all policy exemptions that are assigned to the management group or the
-        management group's ancestors.
-
-        :param management_group_id: The management group ID. Required.
-        :type management_group_id: str
-        :keyword filter: The filter to apply on the operation. Valid values for $filter are:
-         'atScope()', 'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If
-         $filter is not provided, no filtering is performed. If $filter is not provided, the unfiltered
-         list includes all policy exemptions associated with the scope, including those that apply
-         directly or apply from containing scopes. If $filter=atScope() is provided, the returned list
-         only includes all policy exemptions that apply to the scope, which is everything in the
-         unfiltered list except those applied to sub scopes contained within the given scope. If
-         $filter=atExactScope() is provided, the returned list only includes all policy exemptions that
-         at the given scope. If $filter=excludeExpired() is provided, the returned list only includes
-         all policy exemptions that either haven't expired or didn't set expiration date. If
-         $filter=policyAssignmentId eq '{value}' is provided. the returned list only includes all policy
-         exemptions that are associated with the give policyAssignmentId. Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of PolicyExemption
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyExemption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PolicyExemption]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_exemptions_list_for_management_group_request(
-                    management_group_id=management_group_id,
-                    filter=filter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PolicyExemption],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "subscription_id", "filter", "accept"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    def list(self, *, filter: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a subscription.
-
-        This operation retrieves the list of all policy exemptions associated with the given
-        subscription that match the optional given $filter. Valid values for $filter are: 'atScope()',
-        'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter is not
-        provided, the unfiltered list includes all policy exemptions associated with the subscription,
-        including those that apply directly or from management groups that contain the given
-        subscription, as well as any applied to objects contained within the subscription.
-
-        :keyword filter: The filter to apply on the operation. Valid values for $filter are:
-         'atScope()', 'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If
-         $filter is not provided, no filtering is performed. If $filter is not provided, the unfiltered
-         list includes all policy exemptions associated with the scope, including those that apply
-         directly or apply from containing scopes. If $filter=atScope() is provided, the returned list
-         only includes all policy exemptions that apply to the scope, which is everything in the
-         unfiltered list except those applied to sub scopes contained within the given scope. If
-         $filter=atExactScope() is provided, the returned list only includes all policy exemptions that
-         at the given scope. If $filter=excludeExpired() is provided, the returned list only includes
-         all policy exemptions that either haven't expired or didn't set expiration date. If
-         $filter=policyAssignmentId eq '{value}' is provided. the returned list only includes all policy
-         exemptions that are associated with the give policyAssignmentId. Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of PolicyExemption
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyExemption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PolicyExemption]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_exemptions_list_request(
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PolicyExemption],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": [
-                "subscription_id",
-                "resource_group_name",
-                "resource_provider_namespace",
-                "parent_resource_path",
-                "resource_type",
-                "resource_name",
-                "api_version",
-                "filter",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    def list_for_resource(
-        self,
-        resource_group_name: str,
-        resource_provider_namespace: str,
-        parent_resource_path: str,
-        resource_type: str,
-        resource_name: str,
-        *,
-        filter: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a resource.
-
-        This operation retrieves the list of all policy exemptions associated with the specified
-        resource in the given resource group and subscription that match the optional given $filter.
-        Valid values for $filter are: 'atScope()', 'atExactScope()', 'excludeExpired()' or
-        'policyAssignmentId eq '{value}''. If $filter is not provided, the unfiltered list includes all
-        policy exemptions associated with the resource, including those that apply directly or from all
-        containing scopes, as well as any applied to resources contained within the resource. Three
-        parameters plus the resource name are used to identify a specific resource. If the resource is
-        not part of a parent resource (the more common case), the parent resource path should not be
-        provided (or provided as ''). For example a web app could be specified as
-        ({resourceProviderNamespace} == 'Microsoft.Web', {parentResourcePath} == '', {resourceType} ==
-        'sites', {resourceName} == 'MyWebApp'). If the resource is part of a parent resource, then all
-        parameters should be provided. For example a virtual machine DNS name could be specified as
-        ({resourceProviderNamespace} == 'Microsoft.Compute', {parentResourcePath} ==
-        'virtualMachines/MyVirtualMachine', {resourceType} == 'domainNames', {resourceName} ==
-        'MyComputerName'). A convenient alternative to providing the namespace and type name separately
-        is to provide both in the {resourceType} parameter, format: ({resourceProviderNamespace} == '',
-        {parentResourcePath} == '', {resourceType} == 'Microsoft.Web/sites', {resourceName} ==
-        'MyWebApp').
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource provider. For example, the
-         namespace of a virtual machine is Microsoft.Compute (from Microsoft.Compute/virtualMachines).
-         Required.
-        :type resource_provider_namespace: str
-        :param parent_resource_path: The parent resource path. Use empty string if there is none.
-         Required.
-        :type parent_resource_path: str
-        :param resource_type: The resource type name. For example the type name of a web app is 'sites'
-         (from Microsoft.Web/sites). Required.
-        :type resource_type: str
-        :param resource_name: The name of the resource. Required.
-        :type resource_name: str
-        :keyword filter: The filter to apply on the operation. Valid values for $filter are:
-         'atScope()', 'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If
-         $filter is not provided, no filtering is performed. If $filter is not provided, the unfiltered
-         list includes all policy exemptions associated with the scope, including those that apply
-         directly or apply from containing scopes. If $filter=atScope() is provided, the returned list
-         only includes all policy exemptions that apply to the scope, which is everything in the
-         unfiltered list except those applied to sub scopes contained within the given scope. If
-         $filter=atExactScope() is provided, the returned list only includes all policy exemptions that
-         at the given scope. If $filter=excludeExpired() is provided, the returned list only includes
-         all policy exemptions that either haven't expired or didn't set expiration date. If
-         $filter=policyAssignmentId eq '{value}' is provided. the returned list only includes all policy
-         exemptions that are associated with the give policyAssignmentId. Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of PolicyExemption
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyExemption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PolicyExemption]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_exemptions_list_for_resource_request(
-                    resource_group_name=resource_group_name,
-                    resource_provider_namespace=resource_provider_namespace,
-                    parent_resource_path=parent_resource_path,
-                    resource_type=resource_type,
-                    resource_name=resource_name,
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PolicyExemption],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class PolicySetDefinitionsOperations:
+class PolicySetDefinitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6457,7 +4317,7 @@ class PolicySetDefinitionsOperations:
     async def create_or_update(
         self,
         policy_set_definition_name: str,
-        parameters: JSON,
+        parameters: _types.PolicySetDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6468,7 +4328,7 @@ class PolicySetDefinitionsOperations:
         :param policy_set_definition_name: The name of the policy set definition to get. Required.
         :type policy_set_definition_name: str
         :param parameters: The policy set definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicySetDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6505,7 +4365,7 @@ class PolicySetDefinitionsOperations:
     async def create_or_update(
         self,
         policy_set_definition_name: str,
-        parameters: Union[_models.PolicySetDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.PolicySetDefinition, _types.PolicySetDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicySetDefinition:
         """This operation creates or updates a policy set definition in the given subscription with the
@@ -6513,9 +4373,10 @@ class PolicySetDefinitionsOperations:
 
         :param policy_set_definition_name: The name of the policy set definition to get. Required.
         :type policy_set_definition_name: str
-        :param parameters: The policy set definition properties. Is one of the following types:
-         PolicySetDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or JSON or IO[bytes]
+        :param parameters: The policy set definition properties. Is either a PolicySetDefinition type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or
+         ~azure.mgmt.resource.policy.types.PolicySetDefinition or IO[bytes]
         :return: PolicySetDefinition. The PolicySetDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7059,7 +4920,7 @@ class PolicySetDefinitionsOperations:
         self,
         management_group_id: str,
         policy_set_definition_name: str,
-        parameters: JSON,
+        parameters: _types.PolicySetDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7072,7 +4933,7 @@ class PolicySetDefinitionsOperations:
         :param policy_set_definition_name: The name of the policy set definition to get. Required.
         :type policy_set_definition_name: str
         :param parameters: The policy set definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicySetDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7113,7 +4974,7 @@ class PolicySetDefinitionsOperations:
         self,
         management_group_id: str,
         policy_set_definition_name: str,
-        parameters: Union[_models.PolicySetDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.PolicySetDefinition, _types.PolicySetDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicySetDefinition:
         """This operation creates or updates a policy set definition in the given management group with
@@ -7123,9 +4984,10 @@ class PolicySetDefinitionsOperations:
         :type management_group_id: str
         :param policy_set_definition_name: The name of the policy set definition to get. Required.
         :type policy_set_definition_name: str
-        :param parameters: The policy set definition properties. Is one of the following types:
-         PolicySetDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or JSON or IO[bytes]
+        :param parameters: The policy set definition properties. Is either a PolicySetDefinition type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or
+         ~azure.mgmt.resource.policy.types.PolicySetDefinition or IO[bytes]
         :return: PolicySetDefinition. The PolicySetDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7388,7 +5250,7 @@ class PolicySetDefinitionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PolicySetDefinitionVersionsOperations:
+class PolicySetDefinitionVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7525,7 +5387,7 @@ class PolicySetDefinitionVersionsOperations:
         self,
         policy_set_definition_name: str,
         policy_definition_version: str,
-        parameters: JSON,
+        parameters: _types.PolicySetDefinitionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7540,7 +5402,7 @@ class PolicySetDefinitionVersionsOperations:
          Required.
         :type policy_definition_version: str
         :param parameters: The policy set definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicySetDefinitionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7585,7 +5447,7 @@ class PolicySetDefinitionVersionsOperations:
         self,
         policy_set_definition_name: str,
         policy_definition_version: str,
-        parameters: Union[_models.PolicySetDefinitionVersion, JSON, IO[bytes]],
+        parameters: Union[_models.PolicySetDefinitionVersion, _types.PolicySetDefinitionVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicySetDefinitionVersion:
         """This operation creates or updates a policy set definition version in the given subscription
@@ -7597,10 +5459,10 @@ class PolicySetDefinitionVersionsOperations:
          x is the major version number, y is the minor version number, and z is the patch number.
          Required.
         :type policy_definition_version: str
-        :param parameters: The policy set definition properties. Is one of the following types:
-         PolicySetDefinitionVersion, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or JSON or
-         IO[bytes]
+        :param parameters: The policy set definition properties. Is either a PolicySetDefinitionVersion
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or
+         ~azure.mgmt.resource.policy.types.PolicySetDefinitionVersion or IO[bytes]
         :return: PolicySetDefinitionVersion. The PolicySetDefinitionVersion is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
@@ -8162,7 +6024,7 @@ class PolicySetDefinitionVersionsOperations:
         management_group_name: str,
         policy_set_definition_name: str,
         policy_definition_version: str,
-        parameters: JSON,
+        parameters: _types.PolicySetDefinitionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8180,7 +6042,7 @@ class PolicySetDefinitionVersionsOperations:
          Required.
         :type policy_definition_version: str
         :param parameters: The policy set definition version properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicySetDefinitionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8230,7 +6092,7 @@ class PolicySetDefinitionVersionsOperations:
         management_group_name: str,
         policy_set_definition_name: str,
         policy_definition_version: str,
-        parameters: Union[_models.PolicySetDefinitionVersion, JSON, IO[bytes]],
+        parameters: Union[_models.PolicySetDefinitionVersion, _types.PolicySetDefinitionVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicySetDefinitionVersion:
         """This operation creates or updates a policy set definition version in the given management group
@@ -8245,10 +6107,10 @@ class PolicySetDefinitionVersionsOperations:
          x is the major version number, y is the minor version number, and z is the patch number.
          Required.
         :type policy_definition_version: str
-        :param parameters: The policy set definition version properties. Is one of the following types:
-         PolicySetDefinitionVersion, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or JSON or
-         IO[bytes]
+        :param parameters: The policy set definition version properties. Is either a
+         PolicySetDefinitionVersion type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or
+         ~azure.mgmt.resource.policy.types.PolicySetDefinitionVersion or IO[bytes]
         :return: PolicySetDefinitionVersion. The PolicySetDefinitionVersion is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
@@ -8709,1777 +6571,7 @@ class PolicySetDefinitionVersionsOperations:
         return deserialized  # type: ignore
 
 
-class VariablesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`variables` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "subscription_id", "variable_name", "accept"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def get(self, variable_name: str, **kwargs: Any) -> _models.Variable:
-        """Retrieves a variable.
-
-        This operation retrieves a single variable, given its name and the subscription it was created
-        at.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: Variable. The Variable is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
-
-        _request = build_variables_get_request(
-            variable_name=variable_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.Variable, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_update(
-        self, variable_name: str, parameters: _models.Variable, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given subscription and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.Variable
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Variable. The Variable is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self, variable_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given subscription and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Required.
-        :type parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Variable. The Variable is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self, variable_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given subscription and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Variable. The Variable is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": ["api_version", "subscription_id", "variable_name", "content_type", "accept"]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def create_or_update(
-        self, variable_name: str, parameters: Union[_models.Variable, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given subscription and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Is one of the following types: Variable, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.Variable or JSON or IO[bytes]
-        :return: Variable. The Variable is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_variables_create_or_update_request(
-            variable_name=variable_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.Variable, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "subscription_id", "variable_name"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def delete(self, variable_name: str, **kwargs: Any) -> None:
-        """Deletes a variable.
-
-        This operation deletes a variable, given its name and the subscription it was created in. The
-        scope of a variable is the part of its ID preceding
-        '/providers/Microsoft.Authorization/variables/{variableName}'.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_variables_delete_request(
-            variable_name=variable_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Variable"]:
-        """Retrieves all variables that are at this subscription level.
-
-        This operation retrieves the list of all variables associated with the given subscription.
-
-        :return: An iterator like instance of Variable
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.Variable]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.Variable]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_variables_list_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Variable],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "management_group_id", "variable_name", "accept"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def get_at_management_group(
-        self, management_group_id: str, variable_name: str, **kwargs: Any
-    ) -> _models.Variable:
-        """Retrieves a variable.
-
-        This operation retrieves a single variable, given its name and the  management group it was
-        created at.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: Variable. The Variable is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
-
-        _request = build_variables_get_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.Variable, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        variable_name: str,
-        parameters: _models.Variable,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given  management group and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.Variable
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Variable. The Variable is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        variable_name: str,
-        parameters: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given  management group and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Required.
-        :type parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Variable. The Variable is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        variable_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given  management group and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Variable. The Variable is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": ["api_version", "management_group_id", "variable_name", "content_type", "accept"]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        variable_name: str,
-        parameters: Union[_models.Variable, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given  management group and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Is one of the following types: Variable, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.Variable or JSON or IO[bytes]
-        :return: Variable. The Variable is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_variables_create_or_update_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.Variable, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "management_group_id", "variable_name"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def delete_at_management_group(self, management_group_id: str, variable_name: str, **kwargs: Any) -> None:
-        """Deletes a variable.
-
-        This operation deletes a variable, given its name and the management group it was created in.
-        The scope of a variable is the part of its ID preceding
-        '/providers/Microsoft.Authorization/variables/{variableName}'.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_variables_delete_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "management_group_id", "accept"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    def list_for_management_group(self, management_group_id: str, **kwargs: Any) -> AsyncItemPaged["_models.Variable"]:
-        """Retrieves all variables that are at this management group level.
-
-        This operation retrieves the list of all variables applicable to the management group.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :return: An iterator like instance of Variable
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.Variable]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.Variable]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_variables_list_for_management_group_request(
-                    management_group_id=management_group_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Variable],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class VariableValuesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`variable_values` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": ["api_version", "subscription_id", "variable_name", "variable_value_name", "accept"]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def get(self, variable_name: str, variable_value_name: str, **kwargs: Any) -> _models.VariableValue:
-        """Retrieves a variable value.
-
-        This operation retrieves a single variable value; given its name, subscription it was created
-        at and the variable it's created for.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :return: VariableValue. The VariableValue is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
-
-        _request = build_variable_values_get_request(
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.VariableValue, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_update(
-        self,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: _models.VariableValue,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
-
-        This operation creates or updates a variable value with the given subscription and name for a
-        given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VariableValue. The VariableValue is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
-
-        This operation creates or updates a variable value with the given subscription and name for a
-        given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Required.
-        :type parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VariableValue. The VariableValue is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
-
-        This operation creates or updates a variable value with the given subscription and name for a
-        given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VariableValue. The VariableValue is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "variable_name",
-                "variable_value_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def create_or_update(
-        self,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: Union[_models.VariableValue, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
-
-        This operation creates or updates a variable value with the given subscription and name for a
-        given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Is one of the following types:
-         VariableValue, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue or JSON or IO[bytes]
-        :return: VariableValue. The VariableValue is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_variable_values_create_or_update_request(
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.VariableValue, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": ["api_version", "subscription_id", "variable_name", "variable_value_name"]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def delete(self, variable_name: str, variable_value_name: str, **kwargs: Any) -> None:
-        """Deletes a variable value.
-
-        This operation deletes a variable value, given its name, the subscription it was created in,
-        and the variable it belongs to. The scope of a variable value is the part of its ID preceding
-        '/providers/Microsoft.Authorization/variables/{variableName}'.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_variable_values_delete_request(
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "subscription_id", "variable_name", "accept"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    def list(self, variable_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VariableValue"]:
-        """List variable values for a variable.
-
-        This operation retrieves the list of all variable values associated with the given variable
-        that is at a subscription level.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: An iterator like instance of VariableValue
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.VariableValue]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.VariableValue]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_variable_values_list_request(
-                    variable_name=variable_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.VariableValue],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": [
-                "api_version",
-                "management_group_id",
-                "variable_name",
-                "variable_value_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def get_at_management_group(
-        self, management_group_id: str, variable_name: str, variable_value_name: str, **kwargs: Any
-    ) -> _models.VariableValue:
-        """Retrieves a variable value.
-
-        This operation retrieves a single variable value; given its name,  management group it was
-        created at and the variable it's created for.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :return: VariableValue. The VariableValue is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
-
-        _request = build_variable_values_get_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.VariableValue, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: _models.VariableValue,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
-
-        This operation creates or updates a variable value with the given management group and name for
-        a given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VariableValue. The VariableValue is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
-
-        This operation creates or updates a variable value with the given management group and name for
-        a given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Required.
-        :type parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VariableValue. The VariableValue is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
-
-        This operation creates or updates a variable value with the given management group and name for
-        a given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VariableValue. The VariableValue is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": [
-                "api_version",
-                "management_group_id",
-                "variable_name",
-                "variable_value_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: Union[_models.VariableValue, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
-
-        This operation creates or updates a variable value with the given management group and name for
-        a given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Is one of the following types:
-         VariableValue, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue or JSON or IO[bytes]
-        :return: VariableValue. The VariableValue is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_variable_values_create_or_update_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.VariableValue, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={
-            "2025-12-01-preview": ["api_version", "management_group_id", "variable_name", "variable_value_name"]
-        },
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    async def delete_at_management_group(
-        self, management_group_id: str, variable_name: str, variable_value_name: str, **kwargs: Any
-    ) -> None:
-        """Deletes a variable value.
-
-        This operation deletes a variable value, given its name, the management group it was created
-        in, and the variable it belongs to. The scope of a variable value is the part of its ID
-        preceding '/providers/Microsoft.Authorization/variables/{variableName}'.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_variable_values_delete_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-12-01-preview",
-        params_added_on={"2025-12-01-preview": ["api_version", "management_group_id", "variable_name", "accept"]},
-        api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
-    )
-    def list_for_management_group(
-        self, management_group_id: str, variable_name: str, **kwargs: Any
-    ) -> AsyncItemPaged["_models.VariableValue"]:
-        """List variable values at management group level.
-
-        This operation retrieves the list of all variable values applicable the variable indicated at
-        the management group scope.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: An iterator like instance of VariableValue
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.VariableValue]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.VariableValue]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_variable_values_list_for_management_group_request(
-                    management_group_id=management_group_id,
-                    variable_name=variable_name,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.VariableValue],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class PolicyTokensOperations:
+class PolicyTokensOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10516,14 +6608,14 @@ class PolicyTokensOperations:
 
     @overload
     async def acquire(
-        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, parameters: _types.PolicyTokenRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PolicyTokenResponse:
         """Acquires a policy token.
 
         This operation acquires a policy token in the given subscription for the given request body.
 
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyTokenRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10552,15 +6644,16 @@ class PolicyTokensOperations:
 
     @distributed_trace_async
     async def acquire(
-        self, parameters: Union[_models.PolicyTokenRequest, JSON, IO[bytes]], **kwargs: Any
+        self, parameters: Union[_models.PolicyTokenRequest, _types.PolicyTokenRequest, IO[bytes]], **kwargs: Any
     ) -> _models.PolicyTokenResponse:
         """Acquires a policy token.
 
         This operation acquires a policy token in the given subscription for the given request body.
 
-        :param parameters: The request body. Is one of the following types: PolicyTokenRequest, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest or JSON or IO[bytes]
+        :param parameters: The request body. Is either a PolicyTokenRequest type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest or
+         ~azure.mgmt.resource.policy.types.PolicyTokenRequest or IO[bytes]
         :return: PolicyTokenResponse. The PolicyTokenResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10659,7 +6752,12 @@ class PolicyTokensOperations:
 
     @overload
     async def acquire_at_management_group(
-        self, management_group_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        management_group_name: str,
+        parameters: _types.PolicyTokenRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PolicyTokenResponse:
         """Acquires a policy token at management group level.
 
@@ -10670,7 +6768,7 @@ class PolicyTokensOperations:
          Required.
         :type management_group_name: str
         :param parameters: The policy token properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyTokenRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10708,7 +6806,10 @@ class PolicyTokensOperations:
 
     @distributed_trace_async
     async def acquire_at_management_group(
-        self, management_group_name: str, parameters: Union[_models.PolicyTokenRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        management_group_name: str,
+        parameters: Union[_models.PolicyTokenRequest, _types.PolicyTokenRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PolicyTokenResponse:
         """Acquires a policy token at management group level.
 
@@ -10718,9 +6819,10 @@ class PolicyTokensOperations:
         :param management_group_name: The name of the management group. The name is case insensitive.
          Required.
         :type management_group_name: str
-        :param parameters: The policy token properties. Is one of the following types:
-         PolicyTokenRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest or JSON or IO[bytes]
+        :param parameters: The policy token properties. Is either a PolicyTokenRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest or
+         ~azure.mgmt.resource.policy.types.PolicyTokenRequest or IO[bytes]
         :return: PolicyTokenResponse. The PolicyTokenResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10748,6 +6850,174 @@ class PolicyTokensOperations:
 
         _request = build_policy_tokens_acquire_at_management_group_request(
             management_group_name=management_group_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PolicyTokenResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def acquire_at_resource_group(
+        self,
+        resource_group_name: str,
+        parameters: _models.PolicyTokenRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicyTokenResponse:
+        """Acquires a policy token at resource group level.
+
+        This operation acquires a policy token in the given resource group for the given request body.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param parameters: The policy token properties. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicyTokenResponse. The PolicyTokenResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def acquire_at_resource_group(
+        self,
+        resource_group_name: str,
+        parameters: _types.PolicyTokenRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicyTokenResponse:
+        """Acquires a policy token at resource group level.
+
+        This operation acquires a policy token in the given resource group for the given request body.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param parameters: The policy token properties. Required.
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyTokenRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicyTokenResponse. The PolicyTokenResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def acquire_at_resource_group(
+        self, resource_group_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.PolicyTokenResponse:
+        """Acquires a policy token at resource group level.
+
+        This operation acquires a policy token in the given resource group for the given request body.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param parameters: The policy token properties. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicyTokenResponse. The PolicyTokenResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": ["api_version", "subscription_id", "resource_group_name", "content_type", "accept"]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def acquire_at_resource_group(
+        self,
+        resource_group_name: str,
+        parameters: Union[_models.PolicyTokenRequest, _types.PolicyTokenRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.PolicyTokenResponse:
+        """Acquires a policy token at resource group level.
+
+        This operation acquires a policy token in the given resource group for the given request body.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param parameters: The policy token properties. Is either a PolicyTokenRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest or
+         ~azure.mgmt.resource.policy.types.PolicyTokenRequest or IO[bytes]
+        :return: PolicyTokenResponse. The PolicyTokenResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PolicyTokenResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_policy_tokens_acquire_at_resource_group_request(
+            resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
