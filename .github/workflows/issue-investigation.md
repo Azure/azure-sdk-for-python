@@ -295,26 +295,26 @@ Recommended for Copilot automated fix
 
 ### Summary
 
-`list_blobs` raises `StopIteration` instead of ending the paged iterator cleanly because `_get_next_cb` returns a response whose `continuation_token` is `None` on the final page, and the iterator does not check for that before requesting another page.
+`set_configuration_setting` silently ignores an explicitly-passed `etag` keyword argument whenever the `ConfigurationSetting` object already has its own `.etag` set, because the fallback expression checks the object's etag before the keyword argument instead of after.
 
 ### 🩹 Mitigation
 
-Until the fix ships, wrap the iteration in a loop that catches `StopIteration` explicitly, or materialize results with `list(container_client.list_blobs())` instead of iterating the `ItemPaged` object directly, which avoids surfacing the raw exception.
+Until the fix ships, construct the `ConfigurationSetting` object without setting its `.etag` attribute, and rely solely on the explicit `etag` keyword argument to `set_configuration_setting`.
 
 ### 🧭 Root Cause
 
-In `sdk/storage/azure-storage-blob/azure/storage/blob/_list_blobs_helper.py`, `BlobPropertiesPaged._get_next_cb` returns a response whose `continuation_token` is `None` on the final page, but `PageIterator.__next__` does not check for `None` before calling `_get_next` again, so the underlying transport raises `StopIteration` directly instead of the iterator's own clean termination path. The bug is present in current code on the latest stable release.
+In `sdk/appconfiguration/azure-appconfiguration/azure/appconfiguration/_azure_appconfiguration_client.py`, `set_configuration_setting` builds the request with `etag=configuration_setting.etag or etag` instead of `etag=etag or configuration_setting.etag`. This means the object's own etag always wins whenever it is set, contradicting the documented behavior ("Will use the value from param configuration_setting if not set"). The bug is present in current code on the latest stable release.
 
 ### 🛠️ Suggested Fix
 
-Add an explicit `continuation_token is None` check in `PageIterator.__next__` before issuing the next page request, raising the standard `StopIteration` from the iterator itself rather than letting it propagate from the transport call. A regression test that exhausts a multi-page `list_blobs` result set verifies the fix.
+Swap the operand order to `etag=etag or configuration_setting.etag`, restoring the documented priority. A regression test that passes both an explicit `etag` kwarg and a `ConfigurationSetting` with a different `.etag` set, then asserts the request used the explicit kwarg, verifies the fix.
 
 ### ✅ Decision Basis
 
 - Version currency. Reported version equals latest stable, so the support policy check passes.
 - Duplicate. No specific matching issue found.
 - Ownership. SDK side, confirmed by the source path above.
-- Scope. Bounded, testable, single check added with a small regression test.
+- Scope. Bounded, testable, single-line operand swap with a small regression test.
 
 A maintainer can assign Copilot to proceed. Automated assignment is best effort on this repository and may not complete.
 ```
