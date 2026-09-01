@@ -5,6 +5,8 @@
 ### Features Added
 - Populate `measurements` on telemetry from the `microsoft.custom_measurements` attribute
   ([#48750](https://github.com/Azure/azure-sdk-for-python/pull/48750))
+- Add support for availability telemetry from `microsoft.availability.*` log attributes
+  ([#48812](https://github.com/Azure/azure-sdk-for-python/pull/48812))
 
 ### Breaking Changes
 
