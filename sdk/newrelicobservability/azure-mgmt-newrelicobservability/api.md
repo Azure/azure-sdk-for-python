@@ -2720,103 +2720,22 @@ namespace azure.mgmt.newrelicobservability.types
         key "accountId": str
         key "ingestionKey": str
         key "region": str
-        account_id: str
-        ingestion_key: str
+        accountId: str
+        ingestionKey: str
         region: str
-
-
-    class azure.mgmt.newrelicobservability.types.AccountProperties(TypedDict, total=False):
-        key "accountId": str
-        key "accountName": str
-        key "organizationId": str
-        key "region": str
-        account_id: str
-        account_name: str
-        organization_id: str
-        region: str
-
-
-    class azure.mgmt.newrelicobservability.types.AccountResource(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('AccountProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: AccountProperties
-        system_data: SystemData
-        type: str
 
 
     class azure.mgmt.newrelicobservability.types.ActivateSaaSParameterRequest(TypedDict, total=False):
         key "publisherId": Required[str]
         key "saasGuid": Required[str]
-        publisher_id: str
-        saas_guid: str
-
-
-    class azure.mgmt.newrelicobservability.types.AppServiceInfo(TypedDict, total=False):
-        key "agentStatus": str
-        key "agentVersion": str
-        key "azureResourceId": str
-        agent_status: str
-        agent_version: str
-        azure_resource_id: str
+        publisherId: str
+        saasGuid: str
 
 
     class azure.mgmt.newrelicobservability.types.AppServicesGetRequest(TypedDict, total=False):
         key "userEmail": Required[str]
         azureResourceIds: list[str]
-        azure_resource_ids: list[str]
-        user_email: str
-
-
-    class azure.mgmt.newrelicobservability.types.BillingInfoResponse(TypedDict, total=False):
-        key "marketplaceSaasInfo": ForwardRef('MarketplaceSaaSInfo', module='types')
-        key "partnerBillingEntity": ForwardRef('PartnerBillingEntity', module='types')
-        marketplace_saas_info: MarketplaceSaaSInfo
-        partner_billing_entity: PartnerBillingEntity
-
-
-    class azure.mgmt.newrelicobservability.types.ConnectedPartnerResourceProperties(TypedDict, total=False):
-        key "accountId": str
-        key "accountName": str
-        key "azureResourceId": str
-        key "location": str
-        account_id: str
-        account_name: str
-        azure_resource_id: str
-        location: str
-
-
-    class azure.mgmt.newrelicobservability.types.ConnectedPartnerResourcesListFormat(TypedDict, total=False):
-        key "properties": ForwardRef('ConnectedPartnerResourceProperties', module='types')
-        properties: ConnectedPartnerResourceProperties
-
-
-    class azure.mgmt.newrelicobservability.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.newrelicobservability.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.newrelicobservability.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
+        userEmail: str
 
 
     class azure.mgmt.newrelicobservability.types.FilteringTag(TypedDict, total=False):
@@ -2830,21 +2749,8 @@ namespace azure.mgmt.newrelicobservability.types
 
     class azure.mgmt.newrelicobservability.types.HostsGetRequest(TypedDict, total=False):
         key "userEmail": Required[str]
-        user_email: str
+        userEmail: str
         vmIds: list[str]
-        vm_ids: list[str]
-
-
-    class azure.mgmt.newrelicobservability.types.LatestLinkedSaaSResponse(TypedDict, total=False):
-        key "isHiddenSaaS": bool
-        key "saaSResourceId": str
-        is_hidden_saa_s: bool
-        saa_s_resource_id: str
-
-
-    class azure.mgmt.newrelicobservability.types.LinkedResource(TypedDict, total=False):
-        key "id": str
-        id: str
 
 
     class azure.mgmt.newrelicobservability.types.LogRules(TypedDict, total=False):
@@ -2852,64 +2758,38 @@ namespace azure.mgmt.newrelicobservability.types
         key "sendActivityLogs": Union[str, SendActivityLogsStatus]
         key "sendSubscriptionLogs": Union[str, SendSubscriptionLogsStatus]
         filteringTags: list[FilteringTag]
-        filtering_tags: list[FilteringTag]
-        send_aad_logs: Union[str, SendAadLogsStatus]
-        send_activity_logs: Union[str, SendActivityLogsStatus]
-        send_subscription_logs: Union[str, SendSubscriptionLogsStatus]
+        sendAadLogs: Union[str, SendAadLogsStatus]
+        sendActivityLogs: Union[str, SendActivityLogsStatus]
+        sendSubscriptionLogs: Union[str, SendSubscriptionLogsStatus]
 
 
     class azure.mgmt.newrelicobservability.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
-
-
-    class azure.mgmt.newrelicobservability.types.MarketplaceSaaSInfo(TypedDict, total=False):
-        key "billedAzureSubscriptionId": str
-        key "marketplaceResourceId": str
-        key "marketplaceStatus": str
-        key "marketplaceSubscriptionId": str
-        key "marketplaceSubscriptionName": str
-        key "offerId": str
-        key "publisherId": str
-        billed_azure_subscription_id: str
-        marketplace_resource_id: str
-        marketplace_status: str
-        marketplace_subscription_id: str
-        marketplace_subscription_name: str
-        offer_id: str
-        publisher_id: str
 
 
     class azure.mgmt.newrelicobservability.types.MetricRules(TypedDict, total=False):
         key "sendMetrics": Union[str, SendMetricsStatus]
         key "userEmail": str
         filteringTags: list[FilteringTag]
-        filtering_tags: list[FilteringTag]
-        send_metrics: Union[str, SendMetricsStatus]
-        user_email: str
+        sendMetrics: Union[str, SendMetricsStatus]
+        userEmail: str
 
 
     class azure.mgmt.newrelicobservability.types.MetricsRequest(TypedDict, total=False):
         key "userEmail": Required[str]
-        user_email: str
+        userEmail: str
 
 
     class azure.mgmt.newrelicobservability.types.MetricsStatusRequest(TypedDict, total=False):
         key "userEmail": Required[str]
         azureResourceIds: list[str]
-        azure_resource_ids: list[str]
-        user_email: str
-
-
-    class azure.mgmt.newrelicobservability.types.MetricsStatusResponse(TypedDict, total=False):
-        azureResourceIds: list[str]
-        azure_resource_ids: list[str]
+        userEmail: str
 
 
     class azure.mgmt.newrelicobservability.types.MonitorProperties(TypedDict, total=False):
@@ -2927,33 +2807,20 @@ namespace azure.mgmt.newrelicobservability.types
         key "saaSData": ForwardRef('SaaSData', module='types')
         key "subscriptionState": str
         key "userInfo": ForwardRef('UserInfo', module='types')
-        account_creation_source: Union[str, AccountCreationSource]
-        liftr_resource_category: Union[str, LiftrResourceCategories]
-        liftr_resource_preference: int
-        marketplace_subscription_id: str
-        marketplace_subscription_status: Union[str, MarketplaceSubscriptionStatus]
-        monitoring_status: Union[str, MonitoringStatus]
-        new_relic_account_properties: NewRelicAccountProperties
-        org_creation_source: Union[str, OrgCreationSource]
-        plan_data: PlanData
-        provisioning_state: Union[str, ProvisioningState]
-        saa_s_azure_subscription_status: str
-        saa_s_data: SaaSData
-        subscription_state: str
-        user_info: UserInfo
-
-
-    class azure.mgmt.newrelicobservability.types.MonitoredResource(TypedDict, total=False):
-        key "id": str
-        key "reasonForLogsStatus": str
-        key "reasonForMetricsStatus": str
-        key "sendingLogs": Union[str, SendingLogsStatus]
-        key "sendingMetrics": Union[str, SendingMetricsStatus]
-        id: str
-        reason_for_logs_status: str
-        reason_for_metrics_status: str
-        sending_logs: Union[str, SendingLogsStatus]
-        sending_metrics: Union[str, SendingMetricsStatus]
+        accountCreationSource: Union[str, AccountCreationSource]
+        liftrResourceCategory: Union[str, LiftrResourceCategories]
+        liftrResourcePreference: int
+        marketplaceSubscriptionId: str
+        marketplaceSubscriptionStatus: Union[str, MarketplaceSubscriptionStatus]
+        monitoringStatus: Union[str, MonitoringStatus]
+        newRelicAccountProperties: NewRelicAccountProperties
+        orgCreationSource: Union[str, OrgCreationSource]
+        planData: PlanData
+        provisioningState: Union[str, ProvisioningState]
+        saaSAzureSubscriptionStatus: str
+        saaSData: SaaSData
+        subscriptionState: str
+        userInfo: UserInfo
 
 
     class azure.mgmt.newrelicobservability.types.MonitoredSubscription(TypedDict, total=False):
@@ -2963,8 +2830,8 @@ namespace azure.mgmt.newrelicobservability.types
         key "tagRules": ForwardRef('MonitoringTagRulesProperties', module='types')
         error: str
         status: Union[str, Status]
-        subscription_id: str
-        tag_rules: MonitoringTagRulesProperties
+        subscriptionId: str
+        tagRules: MonitoringTagRulesProperties
 
 
     class azure.mgmt.newrelicobservability.types.MonitoredSubscriptionProperties(ProxyResource):
@@ -2976,7 +2843,7 @@ namespace azure.mgmt.newrelicobservability.types
         id: str
         name: str
         properties: SubscriptionList
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2984,9 +2851,9 @@ namespace azure.mgmt.newrelicobservability.types
         key "logRules": ForwardRef('LogRules', module='types')
         key "metricRules": ForwardRef('MetricRules', module='types')
         key "provisioningState": Union[str, ProvisioningState]
-        log_rules: LogRules
-        metric_rules: MetricRules
-        provisioning_state: Union[str, ProvisioningState]
+        logRules: LogRules
+        metricRules: MetricRules
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.newrelicobservability.types.NewRelicAccountProperties(TypedDict, total=False):
@@ -2994,10 +2861,10 @@ namespace azure.mgmt.newrelicobservability.types
         key "organizationInfo": ForwardRef('OrganizationInfo', module='types')
         key "singleSignOnProperties": ForwardRef('NewRelicSingleSignOnProperties', module='types')
         key "userId": str
-        account_info: AccountInfo
-        organization_info: OrganizationInfo
-        single_sign_on_properties: NewRelicSingleSignOnProperties
-        user_id: str
+        accountInfo: AccountInfo
+        organizationInfo: OrganizationInfo
+        singleSignOnProperties: NewRelicSingleSignOnProperties
+        userId: str
 
 
     class azure.mgmt.newrelicobservability.types.NewRelicMonitorResource(TrackedResource):
@@ -3013,7 +2880,7 @@ namespace azure.mgmt.newrelicobservability.types
         location: str
         name: str
         properties: MonitorProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -3033,12 +2900,12 @@ namespace azure.mgmt.newrelicobservability.types
         key "planData": ForwardRef('PlanData', module='types')
         key "saaSData": ForwardRef('SaaSData', module='types')
         key "userInfo": ForwardRef('UserInfo', module='types')
-        account_creation_source: Union[str, AccountCreationSource]
-        new_relic_account_properties: NewRelicAccountProperties
-        org_creation_source: Union[str, OrgCreationSource]
-        plan_data: PlanData
-        saa_s_data: SaaSData
-        user_info: UserInfo
+        accountCreationSource: Union[str, AccountCreationSource]
+        newRelicAccountProperties: NewRelicAccountProperties
+        orgCreationSource: Union[str, OrgCreationSource]
+        planData: PlanData
+        saaSData: SaaSData
+        userInfo: UserInfo
 
 
     class azure.mgmt.newrelicobservability.types.NewRelicSingleSignOnProperties(TypedDict, total=False):
@@ -3046,68 +2913,15 @@ namespace azure.mgmt.newrelicobservability.types
         key "provisioningState": Union[str, ProvisioningState]
         key "singleSignOnState": Union[str, SingleSignOnStates]
         key "singleSignOnUrl": str
-        enterprise_app_id: str
-        provisioning_state: Union[str, ProvisioningState]
-        single_sign_on_state: Union[str, SingleSignOnStates]
-        single_sign_on_url: str
-
-
-    class azure.mgmt.newrelicobservability.types.Operation(TypedDict, total=False):
-        key "actionType": Union[str, ActionType]
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": Union[str, Origin]
-        action_type: Union[str, ActionType]
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: Union[str, Origin]
-
-
-    class azure.mgmt.newrelicobservability.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
+        enterpriseAppId: str
+        provisioningState: Union[str, ProvisioningState]
+        singleSignOnState: Union[str, SingleSignOnStates]
+        singleSignOnUrl: str
 
 
     class azure.mgmt.newrelicobservability.types.OrganizationInfo(TypedDict, total=False):
         key "organizationId": str
-        organization_id: str
-
-
-    class azure.mgmt.newrelicobservability.types.OrganizationProperties(TypedDict, total=False):
-        key "billingSource": Union[str, BillingSource]
-        key "organizationId": str
-        key "organizationName": str
-        billing_source: Union[str, BillingSource]
-        organization_id: str
-        organization_name: str
-
-
-    class azure.mgmt.newrelicobservability.types.OrganizationResource(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('OrganizationProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: OrganizationProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.newrelicobservability.types.PartnerBillingEntity(TypedDict, total=False):
-        key "organizationId": str
-        key "organizationName": str
-        organization_id: str
-        organization_name: str
+        organizationId: str
 
 
     class azure.mgmt.newrelicobservability.types.PlanData(TypedDict, total=False):
@@ -3115,32 +2929,10 @@ namespace azure.mgmt.newrelicobservability.types
         key "effectiveDate": str
         key "planDetails": str
         key "usageType": Union[str, UsageType]
-        billing_cycle: str
-        effective_date: str
-        plan_details: str
-        usage_type: Union[str, UsageType]
-
-
-    class azure.mgmt.newrelicobservability.types.PlanDataProperties(TypedDict, total=False):
-        key "accountCreationSource": Union[str, AccountCreationSource]
-        key "orgCreationSource": Union[str, OrgCreationSource]
-        key "planData": ForwardRef('PlanData', module='types')
-        account_creation_source: Union[str, AccountCreationSource]
-        org_creation_source: Union[str, OrgCreationSource]
-        plan_data: PlanData
-
-
-    class azure.mgmt.newrelicobservability.types.PlanDataResource(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PlanDataProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PlanDataProperties
-        system_data: SystemData
-        type: str
+        billingCycle: str
+        effectiveDate: str
+        planDetails: str
+        usageType: Union[str, UsageType]
 
 
     class azure.mgmt.newrelicobservability.types.ProxyResource(Resource):
@@ -3150,7 +2942,7 @@ namespace azure.mgmt.newrelicobservability.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3161,7 +2953,7 @@ namespace azure.mgmt.newrelicobservability.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3173,40 +2965,26 @@ namespace azure.mgmt.newrelicobservability.types
         key "resourceGroup": str
         key "subscriptionId": str
         key "termId": str
-        offer_id: str
-        organization_id: str
-        plan_id: str
-        publisher_id: str
-        resource_group: str
-        subscription_id: str
-        term_id: str
+        offerId: str
+        organizationId: str
+        planId: str
+        publisherId: str
+        resourceGroup: str
+        subscriptionId: str
+        termId: str
 
 
     class azure.mgmt.newrelicobservability.types.SaaSData(TypedDict, total=False):
         key "saaSResourceId": str
-        saa_s_resource_id: str
-
-
-    class azure.mgmt.newrelicobservability.types.SaaSResourceDetailsResponse(ProxyResource):
-        key "id": str
-        key "name": str
-        key "saasId": str
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        saas_id: str
-        system_data: SystemData
-        type: str
+        saaSResourceId: str
 
 
     class azure.mgmt.newrelicobservability.types.SubscriptionList(TypedDict, total=False):
         key "patchOperation": Union[str, PatchOperation]
         key "provisioningState": Union[str, ProvisioningState]
         monitoredSubscriptionList: list[MonitoredSubscription]
-        monitored_subscription_list: list[MonitoredSubscription]
-        patch_operation: Union[str, PatchOperation]
-        provisioning_state: Union[str, ProvisioningState]
+        patchOperation: Union[str, PatchOperation]
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.newrelicobservability.types.SwitchBillingRequest(TypedDict, total=False):
@@ -3214,10 +2992,10 @@ namespace azure.mgmt.newrelicobservability.types
         key "organizationId": str
         key "planData": ForwardRef('PlanData', module='types')
         key "userEmail": Required[str]
-        azure_resource_id: str
-        organization_id: str
-        plan_data: PlanData
-        user_email: str
+        azureResourceId: str
+        organizationId: str
+        planData: PlanData
+        userEmail: str
 
 
     class azure.mgmt.newrelicobservability.types.SystemData(TypedDict, total=False):
@@ -3227,12 +3005,12 @@ namespace azure.mgmt.newrelicobservability.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.newrelicobservability.types.TagRule(ProxyResource):
@@ -3244,7 +3022,7 @@ namespace azure.mgmt.newrelicobservability.types
         id: str
         name: str
         properties: MonitoringTagRulesProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3256,8 +3034,8 @@ namespace azure.mgmt.newrelicobservability.types
     class azure.mgmt.newrelicobservability.types.TagRuleUpdateProperties(TypedDict, total=False):
         key "logRules": ForwardRef('LogRules', module='types')
         key "metricRules": ForwardRef('MetricRules', module='types')
-        log_rules: LogRules
-        metric_rules: MetricRules
+        logRules: LogRules
+        metricRules: MetricRules
 
 
     class azure.mgmt.newrelicobservability.types.TrackedResource(Resource):
@@ -3269,7 +3047,7 @@ namespace azure.mgmt.newrelicobservability.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -3277,8 +3055,8 @@ namespace azure.mgmt.newrelicobservability.types
     class azure.mgmt.newrelicobservability.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.newrelicobservability.types.UserInfo(TypedDict, total=False):
@@ -3288,24 +3066,10 @@ namespace azure.mgmt.newrelicobservability.types
         key "lastName": str
         key "phoneNumber": str
         country: str
-        email_address: str
-        first_name: str
-        last_name: str
-        phone_number: str
-
-
-    class azure.mgmt.newrelicobservability.types.VMExtensionPayload(TypedDict, total=False):
-        key "ingestionKey": str
-        ingestion_key: str
-
-
-    class azure.mgmt.newrelicobservability.types.VMInfo(TypedDict, total=False):
-        key "agentStatus": str
-        key "agentVersion": str
-        key "vmId": str
-        agent_status: str
-        agent_version: str
-        vm_id: str
+        emailAddress: str
+        firstName: str
+        lastName: str
+        phoneNumber: str
 
 
 ```

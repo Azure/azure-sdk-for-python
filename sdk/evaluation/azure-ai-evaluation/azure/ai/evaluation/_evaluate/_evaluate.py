@@ -1463,22 +1463,19 @@ def emit_eval_result_events_to_app_insights(
         # Force flush to ensure events are sent, with a timeout to prevent hanging
         flush_timeout_millis = 60000  # 60 seconds
         flush_success = logger_provider.force_flush(timeout_millis=flush_timeout_millis)
-        if export_result_tracker is not None and export_result_tracker.export_failed:
-            raise RuntimeError("Failed to export evaluation results to App Insights.")
+        export_failed = export_result_tracker is not None and export_result_tracker.export_failed
+        if export_failed:
+            LOGGER.error("Failed to export evaluation results to App Insights.")
         if not flush_success:
             timeout_message = (
                 f"App Insights force_flush timed out after {flush_timeout_millis}ms. "
                 "Some evaluation events may not have been sent."
             )
-            if use_entra_authentication:
-                raise TimeoutError(timeout_message)
             LOGGER.warning(timeout_message)
-        else:
+        elif not export_failed:
             LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
 
     except Exception as ex:
-        if use_entra_authentication:
-            raise
         LOGGER.error("Failed to emit evaluation results to App Insights: %s", ex)
     finally:
         # Shut down the logger provider to stop background threads (e.g. OneSettings
