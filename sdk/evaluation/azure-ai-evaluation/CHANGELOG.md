@@ -1,5 +1,23 @@
 # Release History
 
+## 1.18.5 (Unreleased)
+
+### Bugs Fixed
+
+- Made Application Insights export failures best-effort for evaluations using project managed identity authentication.
+
+## 1.18.4 (2026-08-27)
+
+### Bugs Fixed
+
+- Fixed keyword argument routing so bare `messages=[...]` input, with optional top-level `context`, `ground_truth`,
+  and `tool_definitions`, is normalized into the already-supported conversation path for `RelevanceEvaluator`,
+  `SimilarityEvaluator`, `FluencyEvaluator`, `RetrievalEvaluator`, `ResponseCompletenessEvaluator`,
+  `ViolenceEvaluator`, `HateUnfairnessEvaluator`, `SelfHarmEvaluator`, `SexualEvaluator`,
+  `ProtectedMaterialEvaluator`, `IndirectAttackEvaluator`, `CodeVulnerabilityEvaluator`, and `ECIEvaluator`.
+  Existing scalar and `conversation={...}` input semantics are unchanged.
+  [#48629](https://github.com/Azure/azure-sdk-for-python/pull/48629)
+
 ## 1.18.3 (2026-07-28)
 
 ### Features Added

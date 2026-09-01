@@ -4,4 +4,4 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-VERSION = "2.1.0b1"
+VERSION = "2.2.0b2"

@@ -180,6 +180,7 @@ class apistub(Check):
                 return getattr(e, "returncode", 1)
 
             generate_from_pypi = getattr(args, "generate_from_pypi", None)
+            package_version = generate_from_pypi or parsed.version
 
             if generate_from_pypi:
                 pkg_path = self.download_pypi_wheel(executable, package_name, generate_from_pypi, staging_directory)
@@ -233,7 +234,7 @@ class apistub(Check):
                         results.append(1)
                 else:
                     md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
-                    metadata_script = os.path.join(REPO_ROOT, "eng", "scripts", "Extract-APIViewMetadata-Python.ps1")
+                    metadata_script = os.path.join(REPO_ROOT, "eng", "scripts", "extract_apiview_metadata.py")
                     logger.info(f"Generating api.md for {package_name}")
                     try:
                         result = run(
@@ -248,7 +249,14 @@ class apistub(Check):
 
                         logger.info(f"Extracting API metadata for {package_name}")
                         metadata_result = run(
-                            ["pwsh", metadata_script, "-OutputPath", out_token_path],
+                            [
+                                executable,
+                                metadata_script,
+                                "--output-path",
+                                out_token_path,
+                                "--package-version",
+                                package_version,
+                            ],
                             check=True,
                             capture_output=True,
                             text=True,

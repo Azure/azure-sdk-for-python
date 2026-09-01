@@ -20,10 +20,11 @@ on:
     issues: read
     pull-requests: read
   steps:
-    - name: Find analysis comment
-      id: analysis_comment
+    - name: Validate fix request
+      id: fix_request
       uses: actions/github-script@v9.0.0
       env:
+        CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
         PARENT_RUN_ID: ${{ github.event.inputs.parent_run_id }}
         PR_NUMBER: ${{ github.event.inputs.pr_number }}
       with:
@@ -37,44 +38,38 @@ on:
             return;
           }
 
+          const { data: pull } = await github.rest.pulls.get({
+            ...context.repo,
+            pull_number: Number(process.env.PR_NUMBER),
+          });
+          if (
+            pull.state !== "open" ||
+            pull.head.sha !== process.env.CI_HEAD_SHA ||
+            pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`
+          ) {
+            core.setFailed("The pull request is closed, fork-owned, or no longer points to the failed commit.");
+            return;
+          }
+
           const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.PARENT_RUN_ID}`;
           const comments = await github.paginate(github.rest.issues.listComments, {
             ...context.repo,
             issue_number: Number(process.env.PR_NUMBER),
             per_page: 100,
           });
+          const requestedStatus = "**Automated fix:** Requested";
           const matches = comments.filter(comment =>
             comment.user?.login === "github-actions[bot]" &&
             comment.body?.includes(runUrl) &&
             comment.body.includes("[Pilot] PR Pipeline Failure Analysis") &&
-            comment.body.includes("<!-- pipeline-auto-fix-authorized -->")
+            comment.body.includes(requestedStatus)
           );
           if (matches.length !== 1) {
             core.setFailed(`Expected one authorized analysis comment, found ${matches.length}.`);
             return;
           }
           core.setOutput("body", matches[0].body);
-          core.setOutput("comment_id", String(matches[0].id));
-    - name: Validate pull request head
-      id: pr_head
-      uses: actions/github-script@v9.0.0
-      env:
-        CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
-        PR_NUMBER: ${{ github.event.inputs.pr_number }}
-      with:
-        script: |
-          const { data: pull } = await github.rest.pulls.get({
-            ...context.repo,
-            pull_number: Number(process.env.PR_NUMBER),
-          });
-          if (pull.state !== "open" || pull.head.sha !== process.env.CI_HEAD_SHA) {
-            core.setFailed("The pull request is closed or no longer points to the failed commit.");
-            return;
-          }
-          if (pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`) {
-            core.setFailed("Automated fixing is not supported for fork-owned pull request branches.");
-          }
-if: needs.pre_activation.outputs.analysis_comment_result == 'success' && needs.pre_activation.outputs.pr_head_result == 'success'
+if: needs.pre_activation.outputs.fix_request_result == 'success'
 engine: copilot
 
 concurrency:
@@ -84,26 +79,7 @@ concurrency:
 jobs:
   pre-activation:
     outputs:
-      analysis_comment: ${{ steps.analysis_comment.outputs.body }}
-      analysis_comment_id: ${{ steps.analysis_comment.outputs.comment_id }}
-  safe_outputs:
-    permissions:
-      pull-requests: read
-    pre-steps:
-      - name: Revalidate pull request head
-        uses: actions/github-script@v9.0.0
-        env:
-          CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
-          PR_NUMBER: ${{ github.event.inputs.pr_number }}
-        with:
-          script: |
-            const { data: pull } = await github.rest.pulls.get({
-              ...context.repo,
-              pull_number: Number(process.env.PR_NUMBER),
-            });
-            if (pull.state !== "open" || pull.head.sha !== process.env.CI_HEAD_SHA) {
-              core.setFailed("The pull request is closed or no longer points to the failed commit.");
-            }
+      analysis_comment: ${{ steps.fix_request.outputs.body }}
 
 permissions:
   contents: read
@@ -114,9 +90,14 @@ checkout:
   ref: ${{ github.event.inputs.ci_head_sha }}
   fetch-depth: 0
 
+post-steps:
+  - name: Package fix
+    shell: bash
+    run: |
+      git add -N .
+      git diff --binary --full-index HEAD > /tmp/gh-aw/aw-fix.patch
+
 tools:
-  github:
-    toolsets: [pull_requests]
   edit:
   bash:
     - "cat"
@@ -126,119 +107,193 @@ tools:
     - "tail"
     - "wc"
     - "git diff:*"
+    - "git rm:*"
     - "git status:*"
 
 safe-outputs:
   noop:
     report-as-issue: false
-  create-pull-request:
-    title-prefix: "[pipeline-fix] "
-    draft: true
-    max: 1
-    signed-commits: false
-    branch-prefix: "pipeline-fix/pr-${{ github.event.inputs.pr_number }}-${{ github.event.inputs.ci_head_sha }}/run-${{ github.run_id }}/"
-    base-branch: ${{ github.event.repository.default_branch }}
-    protected-files: fallback-to-issue
-    expires: 7
-    if-no-changes: ignore
   jobs:
-    retarget-fix-pr:
-      description: Retarget the created fix pull request to the original pull request branch
+    create-branch:
+      description: Create and push the fix branch, then link it from the analysis comment
       runs-on: ubuntu-latest
       needs: safe_outputs
       permissions:
-        pull-requests: write
-      inputs:
-        requested:
-          description: Confirm that retargeting was requested
-          required: true
-          type: boolean
+        contents: write
+        issues: write
+        pull-requests: read
       steps:
-        - name: Retarget fix pull request
+        - name: Checkout failed commit
+          uses: actions/checkout@v7.0.1
+          with:
+            ref: ${{ github.event.inputs.ci_head_sha }}
+            fetch-depth: 0
+        - name: Prepare fix branch
+          shell: bash
+          env:
+            CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
+            FIX_BRANCH: pipeline-fix/pr-${{ github.event.inputs.pr_number }}-${{ github.event.inputs.ci_head_sha }}/run-${{ github.run_id }}
+            GIT_AUTHOR_EMAIL: ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
+            GIT_AUTHOR_NAME: ${{ github.actor }}
+            GIT_COMMITTER_EMAIL: ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
+            GIT_COMMITTER_NAME: ${{ github.actor }}
+            PR_NUMBER: ${{ github.event.inputs.pr_number }}
+          run: |
+            mapfile -d '' patches < <(find "$RUNNER_TEMP/gh-aw/safe-jobs" -maxdepth 1 -type f -name 'aw-*.patch' -print0)
+            if [[ ${#patches[@]} -ne 1 ]]; then
+              echo "Expected exactly one staged fix patch, found ${#patches[@]}." >&2
+              exit 1
+            fi
+            patch_size=$(wc -c < "${patches[0]}")
+            if (( patch_size > 4096 * 1024 )); then
+              echo "The fix patch exceeds the 4096 KiB size limit." >&2
+              exit 1
+            fi
+
+            git checkout -b "$FIX_BRANCH" "$CI_HEAD_SHA"
+            git apply --3way --index "${patches[0]}"
+            mapfile -d '' changed_files < <(git diff --cached --name-only --no-renames -z)
+            if [[ ${#changed_files[@]} -eq 0 ]]; then
+              echo "The fix patch did not change any files." >&2
+              exit 1
+            fi
+            if (( ${#changed_files[@]} > 100 )); then
+              echo "The fix patch exceeds the 100-file limit." >&2
+              exit 1
+            fi
+            declare -A protected_files=(
+              [AGENTS.md]=1
+              [bunfig.toml]=1
+              [bun.lockb]=1
+              [build.gradle]=1
+              [build.gradle.kts]=1
+              [CHANGELOG.md]=1
+              [CLAUDE.md]=1
+              [CODE_OF_CONDUCT.md]=1
+              [CODEOWNERS]=1
+              [CONTRIBUTING.md]=1
+              [deno.json]=1
+              [deno.jsonc]=1
+              [deno.lock]=1
+              [DESIGN.md]=1
+              [Directory.Packages.props]=1
+              [Gemfile]=1
+              [Gemfile.lock]=1
+              [GEMINI.md]=1
+              [global.json]=1
+              [go.mod]=1
+              [go.sum]=1
+              [gradle.properties]=1
+              [mix.exs]=1
+              [mix.lock]=1
+              [npm-shrinkwrap.json]=1
+              [NuGet.Config]=1
+              [package.json]=1
+              [package-lock.json]=1
+              [Pipfile]=1
+              [Pipfile.lock]=1
+              [pnpm-lock.yaml]=1
+              [pom.xml]=1
+              [pyproject.toml]=1
+              [README.md]=1
+              [requirements.txt]=1
+              [SECURITY.md]=1
+              [settings.gradle]=1
+              [settings.gradle.kts]=1
+              [setup.cfg]=1
+              [setup.py]=1
+              [stack.yaml]=1
+              [stack.yaml.lock]=1
+              [uv.lock]=1
+              [yarn.lock]=1
+            )
+            for changed_file in "${changed_files[@]}"; do
+              file_name=${changed_file##*/}
+              if [[ "$changed_file" == .*/* ||
+                    "$changed_file" == .github/* ||
+                    "$changed_file" == eng/* ||
+                    "$changed_file" == scripts/* ||
+                    "$changed_file" == *.lock ||
+                    "$changed_file" == *requirements*.txt ||
+                    "$changed_file" == */pyproject.toml ||
+                    -n "${protected_files[$file_name]+x}" ]]; then
+                echo "The fix changes a protected automation or dependency file: $changed_file" >&2
+                exit 1
+              fi
+            done
+            git commit -m "Fix pipeline failure for #$PR_NUMBER"
+        - name: Revalidate pull request
           uses: actions/github-script@v9.0.0
           env:
             CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
-            FIX_PR_NUMBER: ${{ needs.safe_outputs.outputs.created_pr_number }}
-            SOURCE_PR_NUMBER: ${{ github.event.inputs.pr_number }}
+            PR_NUMBER: ${{ github.event.inputs.pr_number }}
           with:
             script: |
-              if (!process.env.FIX_PR_NUMBER) {
-                core.setFailed("No fix pull request was created.");
-                return;
-              }
-              const { data: sourcePull } = await github.rest.pulls.get({
+              const { data: pull } = await github.rest.pulls.get({
                 ...context.repo,
-                pull_number: Number(process.env.SOURCE_PR_NUMBER),
+                pull_number: Number(process.env.PR_NUMBER),
               });
-              if (sourcePull.state !== "open" || sourcePull.head.sha !== process.env.CI_HEAD_SHA) {
-                core.setFailed("The source pull request is closed or no longer points to the failed commit.");
-                return;
+              if (
+                pull.state !== "open" ||
+                pull.head.sha !== process.env.CI_HEAD_SHA ||
+                pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`
+              ) {
+                core.setFailed("The pull request is closed, fork-owned, or no longer points to the failed commit.");
               }
-              if (sourcePull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`) {
-                core.setFailed("The source pull request branch is not in this repository and cannot be used as a base.");
-                return;
-              }
-              await github.rest.pulls.update({
-                ...context.repo,
-                pull_number: Number(process.env.FIX_PR_NUMBER),
-                base: sourcePull.head.ref,
-              });
-    update-analysis-comment:
-      description: Link the created fix pull request from the verified analysis comment
-      runs-on: ubuntu-latest
-      needs: [safe_outputs, retarget-fix-pr]
-      permissions:
-        issues: write
-      inputs:
-        requested:
-          description: Confirm that the analysis comment update was requested
-          required: true
-          type: boolean
-      steps:
+        - name: Publish fix branch
+          shell: bash
+          env:
+            FIX_BRANCH: pipeline-fix/pr-${{ github.event.inputs.pr_number }}-${{ github.event.inputs.ci_head_sha }}/run-${{ github.run_id }}
+          run: |
+            git push origin "HEAD:refs/heads/$FIX_BRANCH"
         - name: Update analysis comment
           uses: actions/github-script@v9.0.0
           env:
-            FIX_PR_NUMBER: ${{ needs.safe_outputs.outputs.created_pr_number }}
+            CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
+            FIX_BRANCH: pipeline-fix/pr-${{ github.event.inputs.pr_number }}-${{ github.event.inputs.ci_head_sha }}/run-${{ github.run_id }}
             PARENT_RUN_ID: ${{ github.event.inputs.parent_run_id }}
-            SOURCE_PR_NUMBER: ${{ github.event.inputs.pr_number }}
+            PR_NUMBER: ${{ github.event.inputs.pr_number }}
           with:
             script: |
-              if (!process.env.FIX_PR_NUMBER) {
-                core.setFailed("No fix pull request was created.");
+              const { data: pull } = await github.rest.pulls.get({
+                ...context.repo,
+                pull_number: Number(process.env.PR_NUMBER),
+              });
+              if (
+                pull.head.sha !== process.env.CI_HEAD_SHA ||
+                pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`
+              ) {
+                core.setFailed("The source pull request no longer points to the failed repository commit.");
                 return;
               }
-              const fixPrUrl = `${process.env.GITHUB_SERVER_URL}/${context.repo.owner}/${context.repo.repo}/pull/${process.env.FIX_PR_NUMBER}`;
-              const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.PARENT_RUN_ID}`;
+              const runUrl = `${process.env.GITHUB_SERVER_URL}/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.PARENT_RUN_ID}`;
+              const requestedStatus = "**Automated fix:** Requested";
               const comments = await github.paginate(github.rest.issues.listComments, {
                 ...context.repo,
-                issue_number: Number(process.env.SOURCE_PR_NUMBER),
+                issue_number: Number(process.env.PR_NUMBER),
                 per_page: 100,
               });
               const matches = comments.filter(comment =>
                 comment.user?.login === "github-actions[bot]" &&
                 comment.body?.includes(runUrl) &&
                 comment.body.includes("[Pilot] PR Pipeline Failure Analysis") &&
-                comment.body.includes("<!-- pipeline-auto-fix-authorized -->")
+                comment.body.includes(requestedStatus)
               );
               if (matches.length !== 1) {
                 core.setFailed(`Expected one authorized analysis comment, found ${matches.length}.`);
                 return;
               }
-              const requestedStatus =
-                `**Automated fix:** [requested from this analysis run](${runUrl})\n\n` +
-                "<!-- pipeline-auto-fix-authorized -->";
-              if (!matches[0].body.includes(requestedStatus)) {
-                core.setFailed("The authorized analysis comment has an unexpected automated-fix status.");
-                return;
-              }
-              const body = matches[0].body.replace(
+              const comment = matches[0];
+              const encodedSourceBranch = pull.head.ref.split("/").map(encodeURIComponent).join("/");
+              const encodedBranch = process.env.FIX_BRANCH.split("/").map(encodeURIComponent).join("/");
+              const compareUrl = `${process.env.GITHUB_SERVER_URL}/${context.repo.owner}/${context.repo.repo}/compare/${encodedSourceBranch}...${encodedBranch}`;
+              const body = comment.body.replace(
                 requestedStatus,
-                `Copilot opened a [draft fix](${fixPrUrl}) and triggered its checks. ` +
-                  "Review the changes and check results, then merge it if it resolves the failure."
+                `**Automated fix:** [Fix found, view and apply fix](${compareUrl})`
               );
               await github.rest.issues.updateComment({
                 ...context.repo,
-                comment_id: matches[0].id,
+                comment_id: comment.id,
                 body,
               });
 ---
@@ -259,13 +314,7 @@ ${{ needs.pre_activation.outputs.analysis_comment }}
   tool for file-content changes. If the fix requires deleting a tracked file, run
   `git rm <path>` as one standalone shell command; do not combine it with other commands. Leave the
   resulting workspace changes uncommitted: do not create or switch branches, configure Git, commit,
-  or push. The `create_pull_request` safe output creates the branch and commit from the workspace
-  diff. Do not modify workflow, pipeline, repository automation, or dependency files.
-3. If changes were made, call `create_pull_request` exactly once. Use the title
-  `Fix pipeline failure for #${{ github.event.inputs.pr_number }}`. In the body, identify the source pull request and failed commit, then summarize the diagnosis, change, and validation.
-4. Do not poll pull request checks or claim that the fix passed validation. State that validation is pending the automated checks triggered by the draft pull request.
-5. Call `retarget_fix_pr` exactly once with `requested: true`. It retargets the created draft
-  pull request to the original pull request branch.
-6. Call `update_analysis_comment` exactly once with `requested: true`. It waits for retargeting
-  to succeed, then links the draft pull request from the verified analysis comment and tells the
-  author to review its changes and check results.
+  or push. Do not modify workflow, pipeline, repository automation, or dependency files.
+3. If changes were made, call `create_branch` exactly once. A deterministic post-step packages the
+  workspace changes, and the trusted job validates and applies the patch, pushes the branch,
+  and links its comparison from the verified analysis comment.

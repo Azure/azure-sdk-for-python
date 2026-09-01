@@ -3632,7 +3632,7 @@ class TestAppInsightsAuthentication:
     ]
 
     @patch("opentelemetry.sdk._logs.LoggerProvider")
-    def test_project_managed_identity_credential_and_scope_are_passed_to_exporter(self, mock_lp_cls):
+    def test_project_managed_identity_credential_and_scope_are_passed_to_exporter(self, mock_lp_cls, caplog):
         mock_lp_cls.return_value.force_flush.return_value = True
         credential = MagicMock(spec=TokenCredential)
         exporter_module = MagicMock()
@@ -3642,7 +3642,9 @@ class TestAppInsightsAuthentication:
             "credential": credential,
         }
 
-        with patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}):
+        with caplog.at_level(logging.INFO), patch.dict(
+            "sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}
+        ):
             emit_eval_result_events_to_app_insights(config, self._RESULTS)
 
         exporter_options = exporter_module.AzureMonitorLogExporter.call_args.kwargs
@@ -3650,6 +3652,7 @@ class TestAppInsightsAuthentication:
         assert exporter_options["credential_scopes"] == ["https://monitor.azure.com/.default"]
         assert exporter_options["credential"] is not credential
         assert "token" not in config
+        assert "Successfully logged 1 evaluation results to App Insights" in caplog.text
 
     def test_exporter_credential_refresh_uses_monitor_scope(self):
         credential = MagicMock(spec=TokenCredential)
@@ -3682,26 +3685,28 @@ class TestAppInsightsAuthentication:
         ]
 
     @patch("opentelemetry.sdk._logs.LoggerProvider")
-    def test_project_managed_identity_exporter_failure_is_surfaced(self, mock_lp_cls):
+    def test_project_managed_identity_exporter_failure_is_logged(self, mock_lp_cls, caplog):
         credential = MagicMock(spec=TokenCredential)
         exporter_module = MagicMock()
         exporter_module.AzureMonitorLogExporter.side_effect = RuntimeError("authentication failed")
 
-        with patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}):
-            with pytest.raises(RuntimeError, match="authentication failed"):
-                emit_eval_result_events_to_app_insights(
-                    {
-                        "connection_string": "InstrumentationKey=fake-key",
-                        "credential_type": "ProjectManagedIdentity",
-                        "credential": credential,
-                    },
-                    self._RESULTS,
-                )
+        with caplog.at_level(logging.ERROR), patch.dict(
+            "sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}
+        ):
+            emit_eval_result_events_to_app_insights(
+                {
+                    "connection_string": "InstrumentationKey=fake-key",
+                    "credential_type": "ProjectManagedIdentity",
+                    "credential": credential,
+                },
+                self._RESULTS,
+            )
 
+        assert "Failed to emit evaluation results to App Insights: authentication failed" in caplog.text
         mock_lp_cls.return_value.shutdown.assert_called_once()
 
     @patch("opentelemetry.sdk._logs.LoggerProvider")
-    def test_project_managed_identity_batch_export_failure_is_surfaced(self, mock_lp_cls):
+    def test_project_managed_identity_batch_export_failure_is_logged(self, mock_lp_cls, caplog):
         from opentelemetry.sdk._logs.export import LogExportResult
 
         mock_lp_cls.return_value.force_flush.return_value = True
@@ -3718,38 +3723,41 @@ class TestAppInsightsAuthentication:
         with patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}), patch(
             "opentelemetry.sdk._logs.export.BatchLogRecordProcessor",
             side_effect=create_processor,
-        ):
-            with pytest.raises(RuntimeError, match="Failed to export evaluation results"):
-                emit_eval_result_events_to_app_insights(
-                    {
-                        "connection_string": "InstrumentationKey=fake-key",
-                        "credential_type": "ProjectManagedIdentity",
-                        "credential": credential,
-                    },
-                    self._RESULTS,
-                )
+        ), caplog.at_level(logging.ERROR):
+            emit_eval_result_events_to_app_insights(
+                {
+                    "connection_string": "InstrumentationKey=fake-key",
+                    "credential_type": "ProjectManagedIdentity",
+                    "credential": credential,
+                },
+                self._RESULTS,
+            )
 
+        assert "Failed to export evaluation results to App Insights." in caplog.text
+        assert "Successfully logged" not in caplog.text
         exporter.export.assert_called_once_with([])
         mock_lp_cls.return_value.force_flush.assert_called_once()
         mock_lp_cls.return_value.shutdown.assert_called_once()
 
     @patch("opentelemetry.sdk._logs.LoggerProvider")
-    def test_project_managed_identity_flush_timeout_is_surfaced(self, mock_lp_cls):
+    def test_project_managed_identity_flush_timeout_is_logged(self, mock_lp_cls, caplog):
         mock_lp_cls.return_value.force_flush.return_value = False
         credential = MagicMock(spec=TokenCredential)
         exporter_module = MagicMock()
 
-        with patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}):
-            with pytest.raises(TimeoutError, match="force_flush timed out"):
-                emit_eval_result_events_to_app_insights(
-                    {
-                        "connection_string": "InstrumentationKey=fake-key",
-                        "credential_type": "ProjectManagedIdentity",
-                        "credential": credential,
-                    },
-                    self._RESULTS,
-                )
+        with caplog.at_level(logging.WARNING), patch.dict(
+            "sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}
+        ):
+            emit_eval_result_events_to_app_insights(
+                {
+                    "connection_string": "InstrumentationKey=fake-key",
+                    "credential_type": "ProjectManagedIdentity",
+                    "credential": credential,
+                },
+                self._RESULTS,
+            )
 
+        assert "App Insights force_flush timed out after 60000ms" in caplog.text
         mock_lp_cls.return_value.shutdown.assert_called_once()
 
     @patch("azure.identity.DefaultAzureCredential")

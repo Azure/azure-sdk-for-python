@@ -1,5 +1,7 @@
 import argparse
 import os
+import pathlib
+import subprocess
 import sys
 import pytest
 
@@ -24,6 +26,31 @@ class TestApistubRegistration:
 
         assert args.command == "apistub"
         assert args.generate_from_pypi == "1.0.0"
+
+
+class TestApiViewMetadata:
+    def test_package_version_is_written(self, tmp_path):
+        api_markdown = tmp_path / "api.md"
+        api_markdown.write_text(
+            "# Package is parsed using apiview-stub-generator(version:0.3.31), Python version: 3.12.9\n" "API body\n",
+            encoding="utf-8",
+        )
+        metadata_script = pathlib.Path(__file__).parents[3] / "scripts" / "extract_apiview_metadata.py"
+
+        subprocess.run(
+            [
+                sys.executable,
+                str(metadata_script),
+                "--api-markdown-path",
+                str(api_markdown),
+                "--package-version",
+                "1.35.0",
+            ],
+            check=True,
+        )
+
+        metadata = (tmp_path / "api.metadata.yml").read_text(encoding="utf-8")
+        assert "packageVersion: 1.35.0\n" in metadata
 
 
 # ── get_package_wheel_path() ─────────────────────────────────────────────
@@ -256,8 +283,10 @@ class TestRunOutputDirectory:
         fake_parsed = MagicMock()
         fake_parsed.folder = str(tmp_path)
         fake_parsed.name = "azure-core"
+        fake_parsed.version = "1.35.0"
 
         captured_cmds = []
+        metadata_cmd = None
 
         def fake_apistub_run(exe, cmds, **kwargs):
             captured_cmds.append(cmds)
@@ -266,9 +295,12 @@ class TestRunOutputDirectory:
             open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
 
         def fake_pwsh(cmd, **kwargs):
-            out_idx = cmd.index("-OutputPath")
+            nonlocal metadata_cmd
+            output_arg = "--output-path" if "extract_apiview_metadata.py" in cmd[1] else "-OutputPath"
+            out_idx = cmd.index(output_arg)
             out_dir = cmd[out_idx + 1]
-            if "Extract-APIViewMetadata-Python.ps1" in cmd[1]:
+            if "extract_apiview_metadata.py" in cmd[1]:
+                metadata_cmd = cmd
                 open(os.path.join(out_dir, "api.metadata.yml"), "w").close()
             else:
                 open(os.path.join(out_dir, "api.md"), "w").close()
@@ -294,6 +326,9 @@ class TestRunOutputDirectory:
         assert os.path.exists(os.path.join(str(tmp_path), "api.md"))
         assert os.path.exists(os.path.join(str(tmp_path), "api.metadata.yml"))
         assert os.path.exists(os.path.join(str(tmp_path), "azure-core_python.json"))
+        assert metadata_cmd is not None
+        version_idx = metadata_cmd.index("--package-version")
+        assert metadata_cmd[version_idx + 1] == "1.35.0"
 
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
@@ -325,9 +360,11 @@ class TestRunOutputDirectory:
             open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
 
         def fake_pwsh(cmd, **kwargs):
-            out_idx = cmd.index("-OutputPath")
+            output_arg = "--output-path" if "extract_apiview_metadata.py" in cmd[1] else "-OutputPath"
+            out_idx = cmd.index(output_arg)
             out_dir = cmd[out_idx + 1]
-            open(os.path.join(out_dir, "api.md"), "w").close()
+            output_file = "api.metadata.yml" if "extract_apiview_metadata.py" in cmd[1] else "api.md"
+            open(os.path.join(out_dir, output_file), "w").close()
             return MagicMock(returncode=0)
 
         with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
