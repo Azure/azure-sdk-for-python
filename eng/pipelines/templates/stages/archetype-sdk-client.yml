@@ -144,8 +144,8 @@ extends:
               GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
           - ${{ if and(eq(variables['System.TeamProject'], 'internal'), or(in(variables['Build.Reason'], 'Manual', ''), and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))) }}:
-              - job: CheckPackageApproval
-                displayName: Check Package Approval Status
+              - job: FilterPackageInfo
+                displayName: Filter PackageInfo files for API review
                 dependsOn:
                   - Build_Extended
                   - Analyze
@@ -160,6 +160,43 @@ extends:
                       )
                     )
                   )
+                pool:
+                  name: $(LINUXPOOL)
+                  image: $(LINUXVMIMAGE)
+                  os: linux
+                steps:
+                  - checkout: none
+
+                  - download: current
+                    artifact: packages_extended
+
+                  - pwsh: |
+                      $packageInfoFiles = Get-ChildItem -Path '$(Pipeline.Workspace)/packages_extended/PackageInfo' -Filter '*.json' -File |
+                        Where-Object {
+                          $packageInfo = Get-Content -Raw -Path $_.FullName | ConvertFrom-Json
+                          if ($packageInfo.SdkType -eq 'mgmt') {
+                            Write-Host "API Review is not required for management plane SDKs: $($packageInfo.Name)"
+                            return $false
+                          }
+                          return $true
+                        } |
+                        ForEach-Object { "packages_extended/PackageInfo/$($_.Name)" }
+                      $hasApiReviewPackages = $packageInfoFiles.Count -gt 0
+                      Write-Host "##vso[task.setvariable variable=ApiReviewPackageInfoFiles;isOutput=true]$($packageInfoFiles -join "','")"
+                      Write-Host "##vso[task.setvariable variable=HasApiReviewPackages;isOutput=true]$hasApiReviewPackages"
+                    name: filterPackageInfo
+                    displayName: Filter management plane packages
+
+              - job: CheckPackageApproval
+                displayName: Check Package Approval Status
+                dependsOn: FilterPackageInfo
+                condition: >-
+                  and(
+                    in(dependencies.FilterPackageInfo.result, 'Succeeded', 'SucceededWithIssues'),
+                    eq(dependencies.FilterPackageInfo.outputs['filterPackageInfo.HasApiReviewPackages'], 'True')
+                  )
+                variables:
+                  ApiReviewPackageInfoFiles: $[ dependencies.FilterPackageInfo.outputs['filterPackageInfo.ApiReviewPackageInfoFiles'] ]
                 pool:
                   name: $(LINUXPOOL)
                   image: $(LINUXVMIMAGE)
@@ -180,8 +217,7 @@ extends:
                   - template: /eng/common/pipelines/templates/steps/get-package-approval-status.yml
                     parameters:
                       PackageInfoFiles:
-                        - ${{ each artifact in parameters.Artifacts }}:
-                            - $(Pipeline.Workspace)/packages_extended/PackageInfo/${{ artifact.name }}.json
+                        - $(ApiReviewPackageInfoFiles)
                       RepoOwner: Azure
 
         variables:
