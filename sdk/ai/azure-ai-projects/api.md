@@ -276,9 +276,27 @@ namespace azure.ai.projects.aio.operations
             ) -> None: ...
 
         @overload
-        async def generate_agent(
+        async def generate(
                 self, 
                 body: GenerateVoiceAgentRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentDetails: ...
+
+        @overload
+        async def generate(
+                self, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentDetails: ...
+
+        @overload
+        async def generate(
+                self, 
+                body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8390,64 +8408,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.OmitPropertiesRealtimeResponse(_Model):
-        conversation_id: Optional[str]
-        id: Optional[str]
-        max_output_tokens: Optional[Union[int, Literal["inf"]]]
-        object: Optional[Literal["response"]]
-        output_modalities: Optional[list[Literal["text", "audio"]]]
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
-        status_details: Optional[RealtimeResponseStatusDetails]
-        usage: Optional[RealtimeResponseUsage]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                conversation_id: Optional[str] = ..., 
-                id: Optional[str] = ..., 
-                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
-                object: Optional[Literal[response]] = ..., 
-                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
-                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
-                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
-                usage: Optional[RealtimeResponseUsage] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.OmitPropertiesRealtimeResponse1(_Model):
-        conversation_id: Optional[str]
-        id: Optional[str]
-        max_output_tokens: Optional[Union[int, Literal["inf"]]]
-        metadata: Optional[Metadata]
-        object: Optional[Literal["response"]]
-        output_modalities: Optional[list[Literal["text", "audio"]]]
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
-        status_details: Optional[RealtimeResponseStatusDetails]
-        usage: Optional[RealtimeResponseUsage]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                conversation_id: Optional[str] = ..., 
-                id: Optional[str] = ..., 
-                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
-                metadata: Optional[Metadata] = ..., 
-                object: Optional[Literal[response]] = ..., 
-                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
-                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
-                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
-                usage: Optional[RealtimeResponseUsage] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.OneTimeTrigger(Trigger, discriminator='OneTime'):
         time_zone: Optional[str]
         trigger_at: datetime
@@ -10590,7 +10550,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.RealtimeServerEventSessionCreated(RealtimeServerEvent, discriminator='session.created'):
         conversation_id: Optional[str]
         event_id: str
-        session: VoiceAgentSessionResponse
+        session: VoiceAgentSessionResponseConfig
         type: Literal[RealtimeServerEventType.SESSION_CREATED]
 
         @overload
@@ -10599,7 +10559,7 @@ namespace azure.ai.projects.models
                 *, 
                 conversation_id: Optional[str] = ..., 
                 event_id: str, 
-                session: VoiceAgentSessionResponse
+                session: VoiceAgentSessionResponseConfig
             ) -> None: ...
 
         @overload
@@ -10608,7 +10568,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.RealtimeServerEventSessionUpdated(RealtimeServerEvent, discriminator='session.updated'):
         event_id: str
-        session: VoiceAgentSessionResponse
+        session: VoiceAgentSessionResponseConfig
         type: Literal[RealtimeServerEventType.SESSION_UPDATED]
 
         @overload
@@ -10616,7 +10576,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 event_id: str, 
-                session: VoiceAgentSessionResponse
+                session: VoiceAgentSessionResponseConfig
             ) -> None: ...
 
         @overload
@@ -13025,7 +12985,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceAgentClientEventSessionUpdate(_Model):
         event_id: Optional[str]
-        session: VoiceAgentSessionUpdate
+        session: VoiceAgentSessionUpdateConfig
         type: Literal[RealtimeClientEventType.SESSION_UPDATE]
 
         @overload
@@ -13033,7 +12993,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 event_id: Optional[str] = ..., 
-                session: VoiceAgentSessionUpdate, 
+                session: VoiceAgentSessionUpdateConfig, 
                 type: Literal[RealtimeClientEventType.SESSION_UPDATE]
             ) -> None: ...
 
@@ -13329,7 +13289,7 @@ namespace azure.ai.projects.models
         NEAR_FIELD = "near_field"
 
 
-    class azure.ai.projects.models.VoiceAgentRealtimeResponse(OmitPropertiesRealtimeResponse1):
+    class azure.ai.projects.models.VoiceAgentRealtimeResponse(VoiceAgentRealtimeResponseBase):
         audio: Optional[VoiceResponseAudio]
         conversation_id: str
         id: str
@@ -13353,6 +13313,36 @@ namespace azure.ai.projects.models
                 metadata: Optional[Metadata] = ..., 
                 object: Optional[Literal[response]] = ..., 
                 output: Optional[list[RealtimeConversationItem]] = ..., 
+                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
+                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
+                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
+                usage: Optional[RealtimeResponseUsage] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentRealtimeResponseBase(_Model):
+        conversation_id: Optional[str]
+        id: Optional[str]
+        max_output_tokens: Optional[Union[int, Literal["inf"]]]
+        metadata: Optional[Metadata]
+        object: Optional[Literal["response"]]
+        output_modalities: Optional[list[Literal["text", "audio"]]]
+        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
+        status_details: Optional[RealtimeResponseStatusDetails]
+        usage: Optional[RealtimeResponseUsage]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                conversation_id: Optional[str] = ..., 
+                id: Optional[str] = ..., 
+                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
+                metadata: Optional[Metadata] = ..., 
+                object: Optional[Literal[response]] = ..., 
                 output_modalities: Optional[list[Literal[text, audio]]] = ..., 
                 status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
                 status_details: Optional[RealtimeResponseStatusDetails] = ..., 
@@ -14136,7 +14126,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.VoiceResponse(OmitPropertiesRealtimeResponse):
+    class azure.ai.projects.models.VoiceResponse(VoiceResponseBase):
         audio: Optional[VoiceResponseAudio]
         completed_at: Optional[datetime]
         conversation_id: str
@@ -14204,6 +14194,30 @@ namespace azure.ai.projects.models
                 voice: Optional[str] = ..., 
                 voice_locale: Optional[str] = ..., 
                 voice_type: Optional[Union[str, VoiceType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceResponseBase(_Model):
+        max_output_tokens: Optional[Union[int, Literal["inf"]]]
+        object: Optional[Literal["response"]]
+        output_modalities: Optional[list[Literal["text", "audio"]]]
+        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
+        status_details: Optional[RealtimeResponseStatusDetails]
+        usage: Optional[RealtimeResponseUsage]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
+                object: Optional[Literal[response]] = ..., 
+                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
+                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
+                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
+                usage: Optional[RealtimeResponseUsage] = ...
             ) -> None: ...
 
         @overload
@@ -14648,9 +14662,27 @@ namespace azure.ai.projects.operations
             ) -> None: ...
 
         @overload
-        def generate_agent(
+        def generate(
                 self, 
                 body: GenerateVoiceAgentRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentDetails: ...
+
+        @overload
+        def generate(
+                self, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentDetails: ...
+
+        @overload
+        def generate(
+                self, 
+                body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any

@@ -281,8 +281,6 @@
         "azure.ai.projects.models.MonthlyRecurrenceSchedule": "Azure.AI.Projects.MonthlyRecurrenceSchedule",
         "azure.ai.projects.models.NamespaceToolParam": "OpenAI.NamespaceToolParam",
         "azure.ai.projects.models.NoAuthenticationCredentials": "Azure.AI.Projects.NoAuthenticationCredentials",
-        "azure.ai.projects.models.OmitPropertiesRealtimeResponse": "TypeSpec.OmitProperties",
-        "azure.ai.projects.models.OmitPropertiesRealtimeResponse1": "TypeSpec.OmitProperties",
         "azure.ai.projects.models.OneTimeTrigger": "Azure.AI.Projects.OneTimeTrigger",
         "azure.ai.projects.models.OpenApiAuthDetails": "Azure.AI.Projects.OpenApiAuthDetails",
         "azure.ai.projects.models.OpenApiAnonymousAuthDetails": "Azure.AI.Projects.OpenApiAnonymousAuthDetails",
@@ -508,6 +506,7 @@
         "azure.ai.projects.models.VoiceAgentLlmInterimResponseConfig": "Azure.AI.Projects.VoiceAgentLlmInterimResponseConfig",
         "azure.ai.projects.models.VoiceAgentMcpTool": "Azure.AI.Projects.VoiceAgentMcpTool",
         "azure.ai.projects.models.VoiceAgentNoiseReduction": "Azure.AI.Projects.VoiceAgentNoiseReduction",
+        "azure.ai.projects.models.VoiceAgentRealtimeResponseBase": "Azure.AI.Projects.VoiceAgentRealtimeResponseBase",
         "azure.ai.projects.models.VoiceAgentRealtimeResponse": "Azure.AI.Projects.VoiceAgentRealtimeResponse",
         "azure.ai.projects.models.VoiceAgentResponseCreateParams": "Azure.AI.Projects.VoiceAgentResponseCreateParams",
         "azure.ai.projects.models.VoiceAgentSemanticVadTurnDetection": "Azure.AI.Projects.VoiceAgentSemanticVadTurnDetection",
@@ -537,6 +536,7 @@
         "azure.ai.projects.models.VoiceItemAudioResponse": "Azure.AI.Projects.VoiceItemAudioResponse",
         "azure.ai.projects.models.VoiceRecordingChannelLayout": "Azure.AI.Projects.VoiceRecordingChannelLayout",
         "azure.ai.projects.models.VoiceRecordingResponse": "Azure.AI.Projects.VoiceRecordingResponse",
+        "azure.ai.projects.models.VoiceResponseBase": "Azure.AI.Projects.VoiceResponseBase",
         "azure.ai.projects.models.VoiceResponse": "Azure.AI.Projects.VoiceResponse",
         "azure.ai.projects.models.VoiceResponseAudio": "Azure.AI.Projects.VoiceResponseAudio",
         "azure.ai.projects.models.VoiceResponseAudioOutput": "Azure.AI.Projects.VoiceResponseAudioOutput",
@@ -692,8 +692,8 @@
         "azure.ai.projects.models.CreateTranscriptionResponseJsonUsageType": "OpenAI.CreateTranscriptionResponseJsonUsageType",
         "azure.ai.projects.operations.AgentsOperations.get": "Azure.AI.Projects.Agents.getAgent",
         "azure.ai.projects.aio.operations.AgentsOperations.get": "Azure.AI.Projects.Agents.getAgent",
-        "azure.ai.projects.operations.AgentsOperations.generate_agent": "Azure.AI.Projects.Agents.generateAgent",
-        "azure.ai.projects.aio.operations.AgentsOperations.generate_agent": "Azure.AI.Projects.Agents.generateAgent",
+        "azure.ai.projects.operations.AgentsOperations.generate": "Azure.AI.Projects.Agents.generateAgent",
+        "azure.ai.projects.aio.operations.AgentsOperations.generate": "Azure.AI.Projects.Agents.generateAgent",
         "azure.ai.projects.operations.AgentsOperations.delete": "Azure.AI.Projects.Agents.deleteAgent",
         "azure.ai.projects.aio.operations.AgentsOperations.delete": "Azure.AI.Projects.Agents.deleteAgent",
         "azure.ai.projects.operations.AgentsOperations.list": "Azure.AI.Projects.Agents.listAgents",
@@ -797,5 +797,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "4101fb5aba41"
+    "CrossLanguageVersion": "f72349a54a44"
 }

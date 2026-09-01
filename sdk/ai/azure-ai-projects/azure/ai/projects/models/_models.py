@@ -13106,212 +13106,6 @@ class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
         self.type = CredentialType.NONE  # type: ignore
 
 
-class OmitPropertiesRealtimeResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The template for omitting properties.
-
-    :ivar id: The unique ID of the response, will look like ``resp_1234``.
-    :vartype id: str
-    :ivar object: The object type, must be ``realtime.response``. Default value is
-     "realtime.response".
-    :vartype object: str
-    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
-     ``incomplete``, ``in_progress``). Is one of the following types: Literal["completed"],
-     Literal["cancelled"], Literal["failed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: str or str or str or str or str
-    :ivar status_details: Additional details about the status.
-    :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
-    :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
-     session will maintain a conversation context and append new Items to the Conversation, thus
-     output from previous turns (text and audio tokens) will become the input for later turns.
-    :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
-    :ivar conversation_id: Which conversation the response is added to, determined by the
-     ``conversation`` field in the ``response.create`` event. If ``auto``, the response will be
-     added to the default conversation and the value of ``conversation_id`` will be an id like
-     ``conv_1234``. If ``none``, the response will not be added to any conversation and the value of
-     ``conversation_id`` will be ``null``. If responses are being triggered automatically by VAD the
-     response will be added to the default conversation.
-    :vartype conversation_id: str
-    :ivar output_modalities: The set of modalities the model used to respond, currently the only
-     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
-     transcript. Setting the output to mode ``text`` will disable audio output from the model.
-    :vartype output_modalities: list[str or str]
-    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls, that was used in this response. Is either a int type or a
-     Literal["inf"] type.
-    :vartype max_output_tokens: int or str
-    """
-
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unique ID of the response, will look like ``resp_1234``."""
-    object: Optional[Literal["realtime.response"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The object type, must be ``realtime.response``. Default value is \"realtime.response\"."""
-    status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The final status of the response (``completed``, ``cancelled``, ``failed``, or ``incomplete``,
-     ``in_progress``). Is one of the following types: Literal[\"completed\"],
-     Literal[\"cancelled\"], Literal[\"failed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    status_details: Optional["_models.RealtimeResponseStatusDetails"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Additional details about the status."""
-    usage: Optional["_models.RealtimeResponseUsage"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Usage statistics for the Response, this will correspond to billing. A Realtime API session will
-     maintain a conversation context and append new Items to the Conversation, thus output from
-     previous turns (text and audio tokens) will become the input for later turns."""
-    conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Which conversation the response is added to, determined by the ``conversation`` field in the
-     ``response.create`` event. If ``auto``, the response will be added to the default conversation
-     and the value of ``conversation_id`` will be an id like ``conv_1234``. If ``none``, the
-     response will not be added to any conversation and the value of ``conversation_id`` will be
-     ``null``. If responses are being triggered automatically by VAD the response will be added to
-     the default conversation."""
-    output_modalities: Optional[list[Literal["text", "audio"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The set of modalities the model used to respond, currently the only possible values are
-     ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text transcript. Setting the
-     output to mode ``text`` will disable audio output from the model."""
-    max_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Maximum number of output tokens for a single assistant response, inclusive of tool calls, that
-     was used in this response. Is either a int type or a Literal[\"inf\"] type."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        object: Optional[Literal["realtime.response"]] = None,
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
-        status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
-        usage: Optional["_models.RealtimeResponseUsage"] = None,
-        conversation_id: Optional[str] = None,
-        output_modalities: Optional[list[Literal["text", "audio"]]] = None,
-        max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class OmitPropertiesRealtimeResponse1(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The template for omitting properties.
-
-    :ivar id: The unique ID of the response, will look like ``resp_1234``.
-    :vartype id: str
-    :ivar object: The object type, must be ``realtime.response``. Default value is
-     "realtime.response".
-    :vartype object: str
-    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
-     ``incomplete``, ``in_progress``). Is one of the following types: Literal["completed"],
-     Literal["cancelled"], Literal["failed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: str or str or str or str or str
-    :ivar status_details: Additional details about the status.
-    :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
-    :ivar metadata:
-    :vartype metadata: ~azure.ai.projects.models.Metadata
-    :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
-     session will maintain a conversation context and append new Items to the Conversation, thus
-     output from previous turns (text and audio tokens) will become the input for later turns.
-    :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
-    :ivar conversation_id: Which conversation the response is added to, determined by the
-     ``conversation`` field in the ``response.create`` event. If ``auto``, the response will be
-     added to the default conversation and the value of ``conversation_id`` will be an id like
-     ``conv_1234``. If ``none``, the response will not be added to any conversation and the value of
-     ``conversation_id`` will be ``null``. If responses are being triggered automatically by VAD the
-     response will be added to the default conversation.
-    :vartype conversation_id: str
-    :ivar output_modalities: The set of modalities the model used to respond, currently the only
-     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
-     transcript. Setting the output to mode ``text`` will disable audio output from the model.
-    :vartype output_modalities: list[str or str]
-    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls, that was used in this response. Is either a int type or a
-     Literal["inf"] type.
-    :vartype max_output_tokens: int or str
-    """
-
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unique ID of the response, will look like ``resp_1234``."""
-    object: Optional[Literal["realtime.response"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The object type, must be ``realtime.response``. Default value is \"realtime.response\"."""
-    status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The final status of the response (``completed``, ``cancelled``, ``failed``, or ``incomplete``,
-     ``in_progress``). Is one of the following types: Literal[\"completed\"],
-     Literal[\"cancelled\"], Literal[\"failed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
-    status_details: Optional["_models.RealtimeResponseStatusDetails"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Additional details about the status."""
-    metadata: Optional["_models.Metadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    usage: Optional["_models.RealtimeResponseUsage"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Usage statistics for the Response, this will correspond to billing. A Realtime API session will
-     maintain a conversation context and append new Items to the Conversation, thus output from
-     previous turns (text and audio tokens) will become the input for later turns."""
-    conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Which conversation the response is added to, determined by the ``conversation`` field in the
-     ``response.create`` event. If ``auto``, the response will be added to the default conversation
-     and the value of ``conversation_id`` will be an id like ``conv_1234``. If ``none``, the
-     response will not be added to any conversation and the value of ``conversation_id`` will be
-     ``null``. If responses are being triggered automatically by VAD the response will be added to
-     the default conversation."""
-    output_modalities: Optional[list[Literal["text", "audio"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The set of modalities the model used to respond, currently the only possible values are
-     ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text transcript. Setting the
-     output to mode ``text`` will disable audio output from the model."""
-    max_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Maximum number of output tokens for a single assistant response, inclusive of tool calls, that
-     was used in this response. Is either a int type or a Literal[\"inf\"] type."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        object: Optional[Literal["realtime.response"]] = None,
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
-        status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
-        metadata: Optional["_models.Metadata"] = None,
-        usage: Optional["_models.RealtimeResponseUsage"] = None,
-        conversation_id: Optional[str] = None,
-        output_modalities: Optional[list[Literal["text", "audio"]]] = None,
-        max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class OneTimeTrigger(Trigger, discriminator="OneTime"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """One-time trigger.
 
@@ -18613,8 +18407,7 @@ class RealtimeServerEventSessionCreated(
     :vartype event_id: str
     :ivar type: The event type, must be ``session.created``. Required. SESSION_CREATED.
     :vartype type: str or ~azure.ai.projects.models.SESSION_CREATED
-    :ivar session: The session configuration. Required. Is one of the following types:
-     VoiceAgentSessionResponseConfig
+    :ivar session: The session configuration. Required.
     :vartype session: ~azure.ai.projects.models.VoiceAgentSessionResponseConfig
     :ivar conversation_id: The id of the persisted conversation. Only present when conversation
      persistence is enabled for the session.
@@ -18625,11 +18418,10 @@ class RealtimeServerEventSessionCreated(
     """The unique ID of the server event. Required."""
     type: Literal[RealtimeServerEventType.SESSION_CREATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The event type, must be ``session.created``. Required. SESSION_CREATED."""
-    session: "_unions.VoiceAgentSessionResponse" = rest_field(
+    session: "_models.VoiceAgentSessionResponseConfig" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The session configuration. Required. Is one of the following types:
-     VoiceAgentSessionResponseConfig"""
+    """The session configuration. Required."""
     conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The id of the persisted conversation. Only present when conversation persistence is enabled for
      the session."""
@@ -18639,7 +18431,7 @@ class RealtimeServerEventSessionCreated(
         self,
         *,
         event_id: str,
-        session: "_unions.VoiceAgentSessionResponse",
+        session: "_models.VoiceAgentSessionResponseConfig",
         conversation_id: Optional[str] = None,
     ) -> None: ...
 
@@ -18664,8 +18456,7 @@ class RealtimeServerEventSessionUpdated(
     :vartype event_id: str
     :ivar type: The event type, must be ``session.updated``. Required. SESSION_UPDATED.
     :vartype type: str or ~azure.ai.projects.models.SESSION_UPDATED
-    :ivar session: The session configuration. Required. Is one of the following types:
-     VoiceAgentSessionResponseConfig
+    :ivar session: The session configuration. Required.
     :vartype session: ~azure.ai.projects.models.VoiceAgentSessionResponseConfig
     """
 
@@ -18673,18 +18464,17 @@ class RealtimeServerEventSessionUpdated(
     """The unique ID of the server event. Required."""
     type: Literal[RealtimeServerEventType.SESSION_UPDATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The event type, must be ``session.updated``. Required. SESSION_UPDATED."""
-    session: "_unions.VoiceAgentSessionResponse" = rest_field(
+    session: "_models.VoiceAgentSessionResponseConfig" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The session configuration. Required. Is one of the following types:
-     VoiceAgentSessionResponseConfig"""
+    """The session configuration. Required."""
 
     @overload
     def __init__(
         self,
         *,
         event_id: str,
-        session: "_unions.VoiceAgentSessionResponse",
+        session: "_models.VoiceAgentSessionResponseConfig",
     ) -> None: ...
 
     @overload
@@ -23361,8 +23151,7 @@ class VoiceAgentClientEventSessionUpdate(_Model):  # pylint: disable=docstring-k
     :vartype event_id: str
     :ivar type: The event type, must be ``session.update``. Required. SESSION_UPDATE.
     :vartype type: str or ~azure.ai.projects.models.SESSION_UPDATE
-    :ivar session: The voice-agent session settings to update. Required. Is one of the following
-     types: VoiceAgentSessionUpdateConfig
+    :ivar session: The voice-agent session settings to update. Required.
     :vartype session: ~azure.ai.projects.models.VoiceAgentSessionUpdateConfig
     """
 
@@ -23374,16 +23163,17 @@ class VoiceAgentClientEventSessionUpdate(_Model):  # pylint: disable=docstring-k
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The event type, must be ``session.update``. Required. SESSION_UPDATE."""
-    session: "_unions.VoiceAgentSessionUpdate" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The voice-agent session settings to update. Required. Is one of the following types:
-     VoiceAgentSessionUpdateConfig"""
+    session: "_models.VoiceAgentSessionUpdateConfig" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The voice-agent session settings to update. Required."""
 
     @overload
     def __init__(
         self,
         *,
         type: Literal[RealtimeClientEventType.SESSION_UPDATE],
-        session: "_unions.VoiceAgentSessionUpdate",
+        session: "_models.VoiceAgentSessionUpdateConfig",
         event_id: Optional[str] = None,
     ) -> None: ...
 
@@ -24167,8 +23957,113 @@ class VoiceAgentNoiseReduction(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
+class VoiceAgentRealtimeResponseBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties shared by realtime responses returned by the voice-agent service.
+
+    :ivar id: The unique ID of the response, will look like ``resp_1234``.
+    :vartype id: str
+    :ivar object: The object type, must be ``realtime.response``. Default value is
+     "realtime.response".
+    :vartype object: str
+    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
+     ``incomplete``, ``in_progress``). Is one of the following types: Literal["completed"],
+     Literal["cancelled"], Literal["failed"], Literal["incomplete"], Literal["in_progress"]
+    :vartype status: str or str or str or str or str
+    :ivar status_details: Additional details about the status.
+    :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
+    :ivar metadata:
+    :vartype metadata: ~azure.ai.projects.models.Metadata
+    :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
+     session will maintain a conversation context and append new Items to the Conversation, thus
+     output from previous turns (text and audio tokens) will become the input for later turns.
+    :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
+    :ivar conversation_id: Which conversation the response is added to, determined by the
+     ``conversation`` field in the ``response.create`` event. If ``auto``, the response will be
+     added to the default conversation and the value of ``conversation_id`` will be an id like
+     ``conv_1234``. If ``none``, the response will not be added to any conversation and the value of
+     ``conversation_id`` will be ``null``. If responses are being triggered automatically by VAD the
+     response will be added to the default conversation.
+    :vartype conversation_id: str
+    :ivar output_modalities: The set of modalities the model used to respond, currently the only
+     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
+     transcript. Setting the output to mode ``text`` will disable audio output from the model.
+    :vartype output_modalities: list[str or str]
+    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
+     inclusive of tool calls, that was used in this response. Is either a int type or a
+     Literal["inf"] type.
+    :vartype max_output_tokens: int or str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the response, will look like ``resp_1234``."""
+    object: Optional[Literal["realtime.response"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The object type, must be ``realtime.response``. Default value is \"realtime.response\"."""
+    status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The final status of the response (``completed``, ``cancelled``, ``failed``, or ``incomplete``,
+     ``in_progress``). Is one of the following types: Literal[\"completed\"],
+     Literal[\"cancelled\"], Literal[\"failed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
+    status_details: Optional["_models.RealtimeResponseStatusDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional details about the status."""
+    metadata: Optional["_models.Metadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    usage: Optional["_models.RealtimeResponseUsage"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Usage statistics for the Response, this will correspond to billing. A Realtime API session will
+     maintain a conversation context and append new Items to the Conversation, thus output from
+     previous turns (text and audio tokens) will become the input for later turns."""
+    conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Which conversation the response is added to, determined by the ``conversation`` field in the
+     ``response.create`` event. If ``auto``, the response will be added to the default conversation
+     and the value of ``conversation_id`` will be an id like ``conv_1234``. If ``none``, the
+     response will not be added to any conversation and the value of ``conversation_id`` will be
+     ``null``. If responses are being triggered automatically by VAD the response will be added to
+     the default conversation."""
+    output_modalities: Optional[list[Literal["text", "audio"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The set of modalities the model used to respond, currently the only possible values are
+     ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text transcript. Setting the
+     output to mode ``text`` will disable audio output from the model."""
+    max_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum number of output tokens for a single assistant response, inclusive of tool calls, that
+     was used in this response. Is either a int type or a Literal[\"inf\"] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.response"]] = None,
+        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
+        status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
+        metadata: Optional["_models.Metadata"] = None,
+        usage: Optional["_models.RealtimeResponseUsage"] = None,
+        conversation_id: Optional[str] = None,
+        output_modalities: Optional[list[Literal["text", "audio"]]] = None,
+        max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VoiceAgentRealtimeResponse(
-    OmitPropertiesRealtimeResponse1
+    VoiceAgentRealtimeResponseBase
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A live realtime response returned by the voice-agent service in both ``response.created`` and
     ``response.done`` events.
@@ -26035,7 +25930,88 @@ class VoiceRecordingResponse(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class VoiceResponse(OmitPropertiesRealtimeResponse):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VoiceResponseBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties shared by persisted voice responses.
+
+    :ivar object: The object type, must be ``realtime.response``. Default value is
+     "realtime.response".
+    :vartype object: str
+    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
+     ``incomplete``, ``in_progress``). Is one of the following types: Literal["completed"],
+     Literal["cancelled"], Literal["failed"], Literal["incomplete"], Literal["in_progress"]
+    :vartype status: str or str or str or str or str
+    :ivar status_details: Additional details about the status.
+    :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
+    :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
+     session will maintain a conversation context and append new Items to the Conversation, thus
+     output from previous turns (text and audio tokens) will become the input for later turns.
+    :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
+    :ivar output_modalities: The set of modalities the model used to respond, currently the only
+     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
+     transcript. Setting the output to mode ``text`` will disable audio output from the model.
+    :vartype output_modalities: list[str or str]
+    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
+     inclusive of tool calls, that was used in this response. Is either a int type or a
+     Literal["inf"] type.
+    :vartype max_output_tokens: int or str
+    """
+
+    object: Optional[Literal["realtime.response"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The object type, must be ``realtime.response``. Default value is \"realtime.response\"."""
+    status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The final status of the response (``completed``, ``cancelled``, ``failed``, or ``incomplete``,
+     ``in_progress``). Is one of the following types: Literal[\"completed\"],
+     Literal[\"cancelled\"], Literal[\"failed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
+    status_details: Optional["_models.RealtimeResponseStatusDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional details about the status."""
+    usage: Optional["_models.RealtimeResponseUsage"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Usage statistics for the Response, this will correspond to billing. A Realtime API session will
+     maintain a conversation context and append new Items to the Conversation, thus output from
+     previous turns (text and audio tokens) will become the input for later turns."""
+    output_modalities: Optional[list[Literal["text", "audio"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The set of modalities the model used to respond, currently the only possible values are
+     ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text transcript. Setting the
+     output to mode ``text`` will disable audio output from the model."""
+    max_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum number of output tokens for a single assistant response, inclusive of tool calls, that
+     was used in this response. Is either a int type or a Literal[\"inf\"] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        object: Optional[Literal["realtime.response"]] = None,
+        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
+        status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
+        usage: Optional["_models.RealtimeResponseUsage"] = None,
+        output_modalities: Optional[list[Literal["text", "audio"]]] = None,
+        max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A persisted voice response representing one model inference turn within a conversation. In list
     results the ``output`` projection may be omitted; retrieve the full response (``GET
     .../responses/{response_id}``) or the paged response-items route (``GET

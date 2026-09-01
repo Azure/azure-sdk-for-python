@@ -10,7 +10,7 @@ from collections.abc import MutableMapping
 import datetime
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Iterator, Literal, Optional, TYPE_CHECKING, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 import uuid
 
@@ -40,8 +40,6 @@ from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prepare_multipart_form_data
 from ..models._enums import _AgentDefinitionOptInKeys
 
-if TYPE_CHECKING:
-    from .. import _unions
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 T = TypeVar("T")
@@ -76,7 +74,7 @@ def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_generate_agent_request(**kwargs: Any) -> HttpRequest:
+def build_agents_generate_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -4650,7 +4648,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         return deserialized  # type: ignore
 
     @overload
-    def generate_agent(
+    def generate(
         self, body: _models.GenerateVoiceAgentRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Generate an agent.
@@ -4668,16 +4666,54 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    @overload
+    def generate(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.AgentDetails:
+        """Generate an agent.
+
+        Generates and creates an agent from kind-specific high-level inputs. The generated definition
+        remains fully editable through the standard agent versioning operations.
+
+        :param body: The kind-specific inputs for generating and creating an agent. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def generate(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Generate an agent.
+
+        Generates and creates an agent from kind-specific high-level inputs. The generated definition
+        remains fully editable through the standard agent versioning operations.
+
+        :param body: The kind-specific inputs for generating and creating an agent. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
-    def generate_agent(self, body: "_unions.GenerateAgentRequest", **kwargs: Any) -> _models.AgentDetails:
+    def generate(
+        self, body: Union[_models.GenerateVoiceAgentRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.AgentDetails:
         """Generate an agent.
 
         Generates and creates an agent from kind-specific high-level inputs. The generated definition
         remains fully editable through the standard agent versioning operations.
 
         :param body: The kind-specific inputs for generating and creating an agent. Is one of the
-         following types: GenerateVoiceAgentRequest Required.
-        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
+         following types: GenerateVoiceAgentRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest or JSON or IO[bytes]
         :return: AgentDetails. The AgentDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4697,9 +4733,13 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
-        _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_generate_agent_request(
+        _request = build_agents_generate_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
