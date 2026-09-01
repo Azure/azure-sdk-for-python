@@ -21,6 +21,8 @@ from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
 from ._operations import (
+    BetaAgentEndpointConversationsOperations,
+    BetaAgentInsightMonitorsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
@@ -96,6 +98,10 @@ class BetaOperations(GeneratedBetaOperations):
 
     agents: BetaAgentsOperations
     """:class:`~azure.ai.projects.operations.BetaAgentsOperations` operations"""
+    agent_endpoint_conversations: BetaAgentEndpointConversationsOperations
+    """:class:`~azure.ai.projects.operations.BetaAgentEndpointConversationsOperations` operations"""
+    agent_insight_monitors: BetaAgentInsightMonitorsOperations
+    """:class:`~azure.ai.projects.operations.BetaAgentInsightMonitorsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.operations.BetaEvaluationTaxonomiesOperations` operations"""
     evaluators: BetaEvaluatorsOperations

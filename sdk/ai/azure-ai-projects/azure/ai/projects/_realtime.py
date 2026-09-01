@@ -61,30 +61,29 @@ __all__ = [
 # Union of the client event models sendable over the connection, plus a raw mapping escape
 # hatch for forward compatibility with event types not yet represented in the generated models.
 ClientEvent = Union[
-    _models.VoiceAgentClientEventConversationItemCreate,
-    _models.VoiceAgentClientEventConversationItemDelete,
-    _models.VoiceAgentClientEventConversationItemRetrieve,
-    _models.VoiceAgentClientEventConversationItemTruncate,
-    _models.VoiceAgentClientEventInputAudioBufferAppend,
-    _models.VoiceAgentClientEventInputAudioBufferClear,
-    _models.VoiceAgentClientEventInputAudioBufferCommit,
-    _models.VoiceAgentClientEventOutputAudioBufferClear,
-    _models.VoiceAgentClientEventResponseCancel,
-    _models.VoiceAgentClientEventResponseCreate,
+    _models.RealtimeClientEventConversationItemCreate,
+    _models.RealtimeClientEventConversationItemDelete,
+    _models.RealtimeClientEventConversationItemRetrieve,
+    _models.RealtimeClientEventConversationItemTruncate,
+    _models.RealtimeClientEventInputAudioBufferAppend,
+    _models.RealtimeClientEventInputAudioBufferClear,
+    _models.RealtimeClientEventInputAudioBufferCommit,
+    _models.RealtimeClientEventOutputAudioBufferClear,
+    _models.RealtimeClientEventResponseCancel,
+    _models.RealtimeClientEventResponseCreate,
     _models.VoiceAgentClientEventSessionAvatarConnect,
     _models.VoiceAgentClientEventSessionUpdate,
     str,
     Mapping[str, Any],
 ]
 
-# The conversation item variants accepted by ``conversation.item.create``.
+# The conversation item variants accepted by ``conversation.item.create``. Message-type items
+# (system/user/assistant) no longer have dedicated generated models in this API version and
+# must be passed as a raw mapping.
 ConversationItem = Union[
-    _models.VoiceSystemMessageItem,
-    _models.VoiceUserMessageItem,
-    _models.VoiceAssistantMessageItem,
-    _models.VoiceFunctionCallItem,
-    _models.VoiceFunctionCallOutputItem,
-    _models.VoiceMcpApprovalResponseItem,
+    _models.RealtimeConversationItemFunctionCall,
+    _models.RealtimeConversationItemFunctionCallOutput,
+    _models.RealtimeMCPApprovalResponse,
     Mapping[str, Any],
 ]
 
@@ -93,36 +92,36 @@ ConversationItem = Union[
 # generated model in this package (for example ``conversation.created``) are intentionally
 # left out here and fall back to a plain ``dict``, as do any newly-added service events.
 _SERVER_EVENT_TYPES: Dict[str, Type[_Model]] = {
-    "conversation.item.added": _models.VoiceAgentServerEventConversationItemAdded,
-    "conversation.item.created": _models.VoiceAgentServerEventConversationItemCreated,
-    "conversation.item.deleted": _models.VoiceAgentServerEventConversationItemDeleted,
-    "conversation.item.done": _models.VoiceAgentServerEventConversationItemDone,
+    "conversation.item.added": _models.RealtimeServerEventConversationItemAdded,
+    "conversation.item.created": _models.RealtimeServerEventConversationItemCreated,
+    "conversation.item.deleted": _models.RealtimeServerEventConversationItemDeleted,
+    "conversation.item.done": _models.RealtimeServerEventConversationItemDone,
     "conversation.item.input_audio_transcription.completed": (
-        _models.VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted
+        _models.RealtimeServerEventConversationItemInputAudioTranscriptionCompleted
     ),
     "conversation.item.input_audio_transcription.delta": (
-        _models.VoiceAgentServerEventConversationItemInputAudioTranscriptionDelta
+        _models.RealtimeServerEventConversationItemInputAudioTranscriptionDelta
     ),
     "conversation.item.input_audio_transcription.failed": (
-        _models.VoiceAgentServerEventConversationItemInputAudioTranscriptionFailed
+        _models.RealtimeServerEventConversationItemInputAudioTranscriptionFailed
     ),
     "conversation.item.input_audio_transcription.segment": (
-        _models.VoiceAgentServerEventConversationItemInputAudioTranscriptionSegment
+        _models.RealtimeServerEventConversationItemInputAudioTranscriptionSegment
     ),
-    "conversation.item.retrieved": _models.VoiceAgentServerEventConversationItemRetrieved,
-    "conversation.item.truncated": _models.VoiceAgentServerEventConversationItemTruncated,
+    "conversation.item.retrieved": _models.RealtimeServerEventConversationItemRetrieved,
+    "conversation.item.truncated": _models.RealtimeServerEventConversationItemTruncated,
     # Shared OpenAI-style Realtime error event (not voice-agent specific in this package).
     "error": _models.RealtimeServerEventError,
-    "input_audio_buffer.cleared": _models.VoiceAgentServerEventInputAudioBufferCleared,
-    "input_audio_buffer.committed": _models.VoiceAgentServerEventInputAudioBufferCommitted,
-    "input_audio_buffer.speech_started": _models.VoiceAgentServerEventInputAudioBufferSpeechStarted,
-    "input_audio_buffer.speech_stopped": _models.VoiceAgentServerEventInputAudioBufferSpeechStopped,
-    "input_audio_buffer.timeout_triggered": (_models.VoiceAgentServerEventInputAudioBufferTimeoutTriggered),
-    "mcp_list_tools.completed": _models.VoiceAgentServerEventMcpListToolsCompleted,
-    "mcp_list_tools.failed": _models.VoiceAgentServerEventMcpListToolsFailed,
-    "mcp_list_tools.in_progress": _models.VoiceAgentServerEventMcpListToolsInProgress,
-    "output_audio_buffer.cleared": _models.VoiceAgentServerEventOutputAudioBufferCleared,
-    "rate_limits.updated": _models.VoiceAgentServerEventRateLimitsUpdated,
+    "input_audio_buffer.cleared": _models.RealtimeServerEventInputAudioBufferCleared,
+    "input_audio_buffer.committed": _models.RealtimeServerEventInputAudioBufferCommitted,
+    "input_audio_buffer.speech_started": _models.RealtimeServerEventInputAudioBufferSpeechStarted,
+    "input_audio_buffer.speech_stopped": _models.RealtimeServerEventInputAudioBufferSpeechStopped,
+    "input_audio_buffer.timeout_triggered": (_models.RealtimeServerEventInputAudioBufferTimeoutTriggered),
+    "mcp_list_tools.completed": _models.RealtimeServerEventMCPListToolsCompleted,
+    "mcp_list_tools.failed": _models.RealtimeServerEventMCPListToolsFailed,
+    "mcp_list_tools.in_progress": _models.RealtimeServerEventMCPListToolsInProgress,
+    "output_audio_buffer.cleared": _models.RealtimeServerEventOutputAudioBufferCleared,
+    "rate_limits.updated": _models.RealtimeServerEventRateLimitsUpdated,
     "response.animation_blendshapes.delta": (_models.VoiceAgentServerEventResponseAnimationBlendshapesDelta),
     "response.animation_blendshapes.done": (_models.VoiceAgentServerEventResponseAnimationBlendshapesDone),
     "response.animation_viseme.delta": _models.VoiceAgentServerEventResponseAnimationVisemeDelta,
@@ -130,30 +129,30 @@ _SERVER_EVENT_TYPES: Dict[str, Type[_Model]] = {
     "response.audio_timestamp.delta": _models.VoiceAgentServerEventResponseAudioTimestampDelta,
     "response.audio_timestamp.done": _models.VoiceAgentServerEventResponseAudioTimestampDone,
     "response.content_part.added": _models.RealtimeServerEventResponseContentPartAdded,
-    "response.content_part.done": _models.VoiceAgentServerEventResponseContentPartDone,
-    "response.created": _models.VoiceAgentServerEventResponseCreated,
-    "response.done": _models.VoiceAgentServerEventResponseDone,
-    "response.function_call_arguments.delta": (_models.VoiceAgentServerEventResponseFunctionCallArgumentsDelta),
-    "response.function_call_arguments.done": (_models.VoiceAgentServerEventResponseFunctionCallArgumentsDone),
-    "response.mcp_call.completed": _models.VoiceAgentServerEventResponseMcpCallCompleted,
-    "response.mcp_call.failed": _models.VoiceAgentServerEventResponseMcpCallFailed,
-    "response.mcp_call.in_progress": _models.VoiceAgentServerEventResponseMcpCallInProgress,
-    "response.mcp_call_arguments.delta": _models.VoiceAgentServerEventResponseMcpCallArgumentsDelta,
-    "response.mcp_call_arguments.done": _models.VoiceAgentServerEventResponseMcpCallArgumentsDone,
-    "response.output_audio.delta": _models.VoiceAgentServerEventResponseAudioDelta,
-    "response.output_audio.done": _models.VoiceAgentServerEventResponseAudioDone,
-    "response.output_audio_transcript.delta": (_models.VoiceAgentServerEventResponseAudioTranscriptDelta),
-    "response.output_audio_transcript.done": (_models.VoiceAgentServerEventResponseAudioTranscriptDone),
-    "response.output_item.added": _models.VoiceAgentServerEventResponseOutputItemAdded,
-    "response.output_item.done": _models.VoiceAgentServerEventResponseOutputItemDone,
-    "response.output_text.delta": _models.VoiceAgentServerEventResponseTextDelta,
-    "response.output_text.done": _models.VoiceAgentServerEventResponseTextDone,
+    "response.content_part.done": _models.RealtimeServerEventResponseContentPartDone,
+    "response.created": _models.RealtimeServerEventResponseCreated,
+    "response.done": _models.RealtimeServerEventResponseDone,
+    "response.function_call_arguments.delta": (_models.RealtimeServerEventResponseFunctionCallArgumentsDelta),
+    "response.function_call_arguments.done": (_models.RealtimeServerEventResponseFunctionCallArgumentsDone),
+    "response.mcp_call.completed": _models.RealtimeServerEventResponseMCPCallCompleted,
+    "response.mcp_call.failed": _models.RealtimeServerEventResponseMCPCallFailed,
+    "response.mcp_call.in_progress": _models.RealtimeServerEventResponseMCPCallInProgress,
+    "response.mcp_call_arguments.delta": _models.RealtimeServerEventResponseMCPCallArgumentsDelta,
+    "response.mcp_call_arguments.done": _models.RealtimeServerEventResponseMCPCallArgumentsDone,
+    "response.output_audio.delta": _models.RealtimeServerEventResponseAudioDelta,
+    "response.output_audio.done": _models.RealtimeServerEventResponseAudioDone,
+    "response.output_audio_transcript.delta": (_models.RealtimeServerEventResponseAudioTranscriptDelta),
+    "response.output_audio_transcript.done": (_models.RealtimeServerEventResponseAudioTranscriptDone),
+    "response.output_item.added": _models.RealtimeServerEventResponseOutputItemAdded,
+    "response.output_item.done": _models.RealtimeServerEventResponseOutputItemDone,
+    "response.output_text.delta": _models.RealtimeServerEventResponseTextDelta,
+    "response.output_text.done": _models.RealtimeServerEventResponseTextDone,
     "response.video.delta": _models.VoiceAgentServerEventResponseVideoDelta,
     "session.avatar.connecting": _models.VoiceAgentServerEventSessionAvatarConnecting,
     "session.avatar.switch_to_idle": _models.VoiceAgentServerEventSessionAvatarSwitchToIdle,
     "session.avatar.switch_to_speaking": _models.VoiceAgentServerEventSessionAvatarSwitchToSpeaking,
-    "session.created": _models.VoiceAgentServerEventSessionCreated,
-    "session.updated": _models.VoiceAgentServerEventSessionUpdated,
+    "session.created": _models.RealtimeServerEventSessionCreated,
+    "session.updated": _models.RealtimeServerEventSessionUpdated,
     "warning": _models.VoiceAgentServerEventWarning,
 }
 
@@ -161,56 +160,56 @@ _SERVER_EVENT_TYPES: Dict[str, Type[_Model]] = {
 ServerEvent = Union[
     _models.RealtimeServerEventError,
     _models.RealtimeServerEventResponseContentPartAdded,
-    _models.VoiceAgentServerEventConversationItemAdded,
-    _models.VoiceAgentServerEventConversationItemCreated,
-    _models.VoiceAgentServerEventConversationItemDeleted,
-    _models.VoiceAgentServerEventConversationItemDone,
-    _models.VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted,
-    _models.VoiceAgentServerEventConversationItemInputAudioTranscriptionDelta,
-    _models.VoiceAgentServerEventConversationItemInputAudioTranscriptionFailed,
-    _models.VoiceAgentServerEventConversationItemInputAudioTranscriptionSegment,
-    _models.VoiceAgentServerEventConversationItemRetrieved,
-    _models.VoiceAgentServerEventConversationItemTruncated,
-    _models.VoiceAgentServerEventInputAudioBufferCleared,
-    _models.VoiceAgentServerEventInputAudioBufferCommitted,
-    _models.VoiceAgentServerEventInputAudioBufferSpeechStarted,
-    _models.VoiceAgentServerEventInputAudioBufferSpeechStopped,
-    _models.VoiceAgentServerEventInputAudioBufferTimeoutTriggered,
-    _models.VoiceAgentServerEventMcpListToolsCompleted,
-    _models.VoiceAgentServerEventMcpListToolsFailed,
-    _models.VoiceAgentServerEventMcpListToolsInProgress,
-    _models.VoiceAgentServerEventOutputAudioBufferCleared,
-    _models.VoiceAgentServerEventRateLimitsUpdated,
+    _models.RealtimeServerEventConversationItemAdded,
+    _models.RealtimeServerEventConversationItemCreated,
+    _models.RealtimeServerEventConversationItemDeleted,
+    _models.RealtimeServerEventConversationItemDone,
+    _models.RealtimeServerEventConversationItemInputAudioTranscriptionCompleted,
+    _models.RealtimeServerEventConversationItemInputAudioTranscriptionDelta,
+    _models.RealtimeServerEventConversationItemInputAudioTranscriptionFailed,
+    _models.RealtimeServerEventConversationItemInputAudioTranscriptionSegment,
+    _models.RealtimeServerEventConversationItemRetrieved,
+    _models.RealtimeServerEventConversationItemTruncated,
+    _models.RealtimeServerEventInputAudioBufferCleared,
+    _models.RealtimeServerEventInputAudioBufferCommitted,
+    _models.RealtimeServerEventInputAudioBufferSpeechStarted,
+    _models.RealtimeServerEventInputAudioBufferSpeechStopped,
+    _models.RealtimeServerEventInputAudioBufferTimeoutTriggered,
+    _models.RealtimeServerEventMCPListToolsCompleted,
+    _models.RealtimeServerEventMCPListToolsFailed,
+    _models.RealtimeServerEventMCPListToolsInProgress,
+    _models.RealtimeServerEventOutputAudioBufferCleared,
+    _models.RealtimeServerEventRateLimitsUpdated,
     _models.VoiceAgentServerEventResponseAnimationBlendshapesDelta,
     _models.VoiceAgentServerEventResponseAnimationBlendshapesDone,
     _models.VoiceAgentServerEventResponseAnimationVisemeDelta,
     _models.VoiceAgentServerEventResponseAnimationVisemeDone,
-    _models.VoiceAgentServerEventResponseAudioDelta,
-    _models.VoiceAgentServerEventResponseAudioDone,
+    _models.RealtimeServerEventResponseAudioDelta,
+    _models.RealtimeServerEventResponseAudioDone,
     _models.VoiceAgentServerEventResponseAudioTimestampDelta,
     _models.VoiceAgentServerEventResponseAudioTimestampDone,
-    _models.VoiceAgentServerEventResponseAudioTranscriptDelta,
-    _models.VoiceAgentServerEventResponseAudioTranscriptDone,
-    _models.VoiceAgentServerEventResponseContentPartDone,
-    _models.VoiceAgentServerEventResponseCreated,
-    _models.VoiceAgentServerEventResponseDone,
-    _models.VoiceAgentServerEventResponseFunctionCallArgumentsDelta,
-    _models.VoiceAgentServerEventResponseFunctionCallArgumentsDone,
-    _models.VoiceAgentServerEventResponseMcpCallArgumentsDelta,
-    _models.VoiceAgentServerEventResponseMcpCallArgumentsDone,
-    _models.VoiceAgentServerEventResponseMcpCallCompleted,
-    _models.VoiceAgentServerEventResponseMcpCallFailed,
-    _models.VoiceAgentServerEventResponseMcpCallInProgress,
-    _models.VoiceAgentServerEventResponseOutputItemAdded,
-    _models.VoiceAgentServerEventResponseOutputItemDone,
-    _models.VoiceAgentServerEventResponseTextDelta,
-    _models.VoiceAgentServerEventResponseTextDone,
+    _models.RealtimeServerEventResponseAudioTranscriptDelta,
+    _models.RealtimeServerEventResponseAudioTranscriptDone,
+    _models.RealtimeServerEventResponseContentPartDone,
+    _models.RealtimeServerEventResponseCreated,
+    _models.RealtimeServerEventResponseDone,
+    _models.RealtimeServerEventResponseFunctionCallArgumentsDelta,
+    _models.RealtimeServerEventResponseFunctionCallArgumentsDone,
+    _models.RealtimeServerEventResponseMCPCallArgumentsDelta,
+    _models.RealtimeServerEventResponseMCPCallArgumentsDone,
+    _models.RealtimeServerEventResponseMCPCallCompleted,
+    _models.RealtimeServerEventResponseMCPCallFailed,
+    _models.RealtimeServerEventResponseMCPCallInProgress,
+    _models.RealtimeServerEventResponseOutputItemAdded,
+    _models.RealtimeServerEventResponseOutputItemDone,
+    _models.RealtimeServerEventResponseTextDelta,
+    _models.RealtimeServerEventResponseTextDone,
     _models.VoiceAgentServerEventResponseVideoDelta,
     _models.VoiceAgentServerEventSessionAvatarConnecting,
     _models.VoiceAgentServerEventSessionAvatarSwitchToIdle,
     _models.VoiceAgentServerEventSessionAvatarSwitchToSpeaking,
-    _models.VoiceAgentServerEventSessionCreated,
-    _models.VoiceAgentServerEventSessionUpdated,
+    _models.RealtimeServerEventSessionCreated,
+    _models.RealtimeServerEventSessionUpdated,
     _models.VoiceAgentServerEventWarning,
     Mapping[str, Any],
 ]
@@ -319,8 +318,7 @@ class InputAudioBufferResource(_BaseResource):
         if isinstance(audio, (bytes, bytearray)):
             audio = base64.b64encode(bytes(audio)).decode("ascii")
         self._send(
-            _models.VoiceAgentClientEventInputAudioBufferAppend(
-                type=_models.RealtimeClientEventType.INPUT_AUDIO_BUFFER_APPEND,
+            _models.RealtimeClientEventInputAudioBufferAppend(
                 audio=audio,
                 event_id=event_id,
             )
@@ -332,11 +330,7 @@ class InputAudioBufferResource(_BaseResource):
         :keyword event_id: Optional client-generated ID used to identify this event.
         :paramtype event_id: str or None
         """
-        self._send(
-            _models.VoiceAgentClientEventInputAudioBufferCommit(
-                type=_models.RealtimeClientEventType.INPUT_AUDIO_BUFFER_COMMIT, event_id=event_id
-            )
-        )
+        self._send(_models.RealtimeClientEventInputAudioBufferCommit(event_id=event_id))
 
     def clear(self, *, event_id: Optional[str] = None) -> None:
         """Discard any buffered input audio.
@@ -344,11 +338,7 @@ class InputAudioBufferResource(_BaseResource):
         :keyword event_id: Optional client-generated ID used to identify this event.
         :paramtype event_id: str or None
         """
-        self._send(
-            _models.VoiceAgentClientEventInputAudioBufferClear(
-                type=_models.RealtimeClientEventType.INPUT_AUDIO_BUFFER_CLEAR, event_id=event_id
-            )
-        )
+        self._send(_models.RealtimeClientEventInputAudioBufferClear(event_id=event_id))
 
 
 class OutputAudioBufferResource(_BaseResource):  # pylint: disable=too-few-public-methods
@@ -360,11 +350,7 @@ class OutputAudioBufferResource(_BaseResource):  # pylint: disable=too-few-publi
         :keyword event_id: Optional client-generated ID used to identify this event.
         :paramtype event_id: str or None
         """
-        self._send(
-            _models.VoiceAgentClientEventOutputAudioBufferClear(
-                type=_models.RealtimeClientEventType.OUTPUT_AUDIO_BUFFER_CLEAR, event_id=event_id
-            )
-        )
+        self._send(_models.RealtimeClientEventOutputAudioBufferClear(event_id=event_id))
 
 
 class ConversationItemResource(_BaseResource):
@@ -380,12 +366,9 @@ class ConversationItemResource(_BaseResource):
         """Insert an item into the conversation.
 
         :keyword item: The conversation item to create.
-        :paramtype item: ~azure.ai.projects.models.VoiceSystemMessageItem or
-         ~azure.ai.projects.models.VoiceUserMessageItem or
-         ~azure.ai.projects.models.VoiceAssistantMessageItem or
-         ~azure.ai.projects.models.VoiceFunctionCallItem or
-         ~azure.ai.projects.models.VoiceFunctionCallOutputItem or
-         ~azure.ai.projects.models.VoiceMcpApprovalResponseItem or Mapping[str, Any]
+        :paramtype item: ~azure.ai.projects.models.RealtimeConversationItemFunctionCall or
+         ~azure.ai.projects.models.RealtimeConversationItemFunctionCallOutput or
+         ~azure.ai.projects.models.RealtimeMCPApprovalResponse or Mapping[str, Any]
         :keyword previous_item_id: The ID of the preceding item after which the new item will be
          inserted. Default value is None.
         :paramtype previous_item_id: str or None
@@ -393,8 +376,7 @@ class ConversationItemResource(_BaseResource):
         :paramtype event_id: str or None
         """
         self._send(
-            cast(Any, _models.VoiceAgentClientEventConversationItemCreate)(
-                type=_models.RealtimeClientEventType.CONVERSATION_ITEM_CREATE,
+            cast(Any, _models.RealtimeClientEventConversationItemCreate)(
                 item=item,
                 previous_item_id=previous_item_id,
                 event_id=event_id,
@@ -409,8 +391,7 @@ class ConversationItemResource(_BaseResource):
         :paramtype event_id: str or None
         """
         self._send(
-            _models.VoiceAgentClientEventConversationItemDelete(
-                type=_models.RealtimeClientEventType.CONVERSATION_ITEM_DELETE,
+            _models.RealtimeClientEventConversationItemDelete(
                 item_id=item_id,
                 event_id=event_id,
             )
@@ -424,8 +405,7 @@ class ConversationItemResource(_BaseResource):
         :paramtype event_id: str or None
         """
         self._send(
-            _models.VoiceAgentClientEventConversationItemRetrieve(
-                type=_models.RealtimeClientEventType.CONVERSATION_ITEM_RETRIEVE,
+            _models.RealtimeClientEventConversationItemRetrieve(
                 item_id=item_id,
                 event_id=event_id,
             )
@@ -441,8 +421,7 @@ class ConversationItemResource(_BaseResource):
         :paramtype event_id: str or None
         """
         self._send(
-            _models.VoiceAgentClientEventConversationItemTruncate(
-                type=_models.RealtimeClientEventType.CONVERSATION_ITEM_TRUNCATE,
+            _models.RealtimeClientEventConversationItemTruncate(
                 item_id=item_id,
                 content_index=content_index,
                 audio_end_ms=audio_end_ms,
@@ -477,8 +456,7 @@ class ResponseResource(_BaseResource):
         :paramtype event_id: str or None
         """
         self._send(
-            cast(Any, _models.VoiceAgentClientEventResponseCreate)(
-                type=_models.RealtimeClientEventType.RESPONSE_CREATE,
+            cast(Any, _models.RealtimeClientEventResponseCreate)(
                 response=response,
                 event_id=event_id,
             )
@@ -494,8 +472,7 @@ class ResponseResource(_BaseResource):
         :paramtype event_id: str or None
         """
         self._send(
-            _models.VoiceAgentClientEventResponseCancel(
-                type=_models.RealtimeClientEventType.RESPONSE_CANCEL,
+            _models.RealtimeClientEventResponseCancel(
                 response_id=response_id,
                 event_id=event_id,
             )

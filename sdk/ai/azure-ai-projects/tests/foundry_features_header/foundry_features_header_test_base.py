@@ -38,6 +38,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "evaluation_taxonomies": "Evaluations=V1Preview",
     "evaluators": "Evaluations=V1Preview",
     "insights": "Insights=V1Preview",
+    "agent_insight_monitors": "AgentInsights=V1Preview",
     "memory_stores": "MemoryStores=V1Preview",
     "models": "Models=V1Preview",
     "red_teams": "RedTeams=V1Preview",
@@ -46,6 +47,10 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "skills": "Skills=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
     "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    # agent_endpoint_conversations moved from a top-level client attribute to a nested `.beta`
+    # sub-client upstream; it always requires the VoiceAgents=V1Preview opt-in (voice-agent
+    # conversation reads), regardless of `allow_preview` -- same as every other entry here.
+    "agent_endpoint_conversations": "VoiceAgents=V1Preview",
 }
 
 # Methods on .beta sub-clients that are NOT simple one-HTTP-call wrappers and
@@ -95,24 +100,13 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     ),
 ]
 
-# Methods on `agent_endpoint_conversations` that always send the Foundry-Features header,
-# unconditionally, regardless of `allow_preview`. Unlike _NON_BETA_OPTIONAL_TEST_CASES above,
-# this sub-client is wrapped with `_OperationMethodHeaderProxy` directly in `_patch.py` (not
-# gated behind `allow_preview`), because voice-agent conversation reads require the
-# VoiceAgents=V1Preview opt-in header even when the caller hasn't requested other preview
-# features. Used by test_foundry_features_header_on_agent_endpoint_conversations.py (sync) and
-# its async counterpart.
-_AGENT_ENDPOINT_CONVERSATIONS_TEST_CASES = [
-    # Each pytest.param entry has the following positional argument:
-    #   1. method_name (str) – "agent_endpoint_conversations.<method>" on AIProjectClient.
-    #   The expected header value is always "VoiceAgents=V1Preview" for all of these.
-    pytest.param("agent_endpoint_conversations.list_agent_conversations"),
-    pytest.param("agent_endpoint_conversations.get_agent_conversation"),
-    pytest.param("agent_endpoint_conversations.delete_agent_conversation"),
-    pytest.param("agent_endpoint_conversations.list_agent_conversation_responses"),
-]
-
-_AGENT_ENDPOINT_CONVERSATIONS_EXPECTED_HEADER_VALUE = "VoiceAgents=V1Preview"
+# NOTE: `agent_endpoint_conversations` used to need its own dedicated test cases here (it was
+# wrapped with `_OperationMethodHeaderProxy` directly in `_patch.py`, unconditionally regardless
+# of `allow_preview`, since it lived as a top-level client attribute rather than a `.beta`
+# sub-client). It has since moved under `.beta` upstream and is now a normal entry in
+# EXPECTED_FOUNDRY_FEATURES above, using the exact same unconditional generic mechanism as every
+# other `.beta` sub-client -- so it's now covered automatically (and more thoroughly: all of its
+# methods, not just 4) by the dynamic discovery in test_foundry_features_header_on_beta_operations.py.
 
 # Both sentinel values – used by _make_fake_call to detect required parameters
 # whose defaults are the internal _Unset object (rather than inspect.Parameter.empty).

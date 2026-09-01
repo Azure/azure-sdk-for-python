@@ -12,8 +12,8 @@ from azure.core.polling.base_polling import LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ._operations import BetaEvaluatorsOperations as BetaEvaluatorsOperationsGenerated
-from .. import models as _models, types as _types
+from ._operations import BetaEvaluatorsOperations as BetaEvaluatorsOperationsGenerated, JSON
+from .. import models as _models
 from .._utils.model_base import _deserialize
 from ..models import EvaluatorGenerationLROPoller
 
@@ -34,7 +34,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     @overload
     def begin_create_generation_job(
         self,
-        job: _types.EvaluatorGenerationJob,
+        job: JSON,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -54,7 +54,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     @distributed_trace
     def begin_create_generation_job(  # type: ignore[reportIncompatibleMethodOverride, override]
         self,
-        job: Union[_models.EvaluatorGenerationJob, _types.EvaluatorGenerationJob, IO[bytes]],
+        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
@@ -62,7 +62,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         """Create an evaluator generation job.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or ~azure.ai.projects.types.EvaluatorGenerationJob or IO[bytes]
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str

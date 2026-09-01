@@ -20,7 +20,7 @@ from ._operations import (
     JSON,
     _Unset,
 )
-from ... import models as _models, types as _types
+from ... import models as _models
 from ..._utils.model_base import _deserialize
 from ...models import AsyncAgentOptimizationLROPoller
 from ...operations._patch_agents import _compute_sha256_from_stream
@@ -387,7 +387,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     @overload
     async def begin_create_optimization_job(
         self,
-        job: _types.AgentOptimizationJob,
+        job: JSON,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -407,7 +407,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     @distributed_trace_async
     async def begin_create_optimization_job(  # type: ignore[reportIncompatibleMethodOverride, override]
         self,
-        job: Union[_models.AgentOptimizationJob, _types.AgentOptimizationJob, IO[bytes]],
+        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
@@ -415,7 +415,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
         """Create an agent optimization job.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.AgentOptimizationJob or ~azure.ai.projects.types.AgentOptimizationJob or IO[bytes]
+        :type job: ~azure.ai.projects.models.AgentOptimizationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str

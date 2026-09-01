@@ -37,17 +37,15 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    RealtimeConversationItemMessageUserContent,
+    RealtimeConversationItemFunctionCallOutput,
     RealtimeFunctionTool,
     RealtimeServerEventError,
     VoiceAgentDefinition,
-    VoiceAgentServerEventResponseDone,
-    VoiceAgentServerEventResponseFunctionCallArgumentsDone,
-    VoiceAgentServerEventResponseTextDone,
-    VoiceFunctionCallOutputItem,
+    RealtimeServerEventResponseDone,
+    RealtimeServerEventResponseFunctionCallArgumentsDone,
+    RealtimeServerEventResponseTextDone,
     VoiceModelType,
     VoiceOutputModality,
-    VoiceUserMessageItem,
 )
 
 load_dotenv()
@@ -78,15 +76,15 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
     :type prompt: str
     """
     with client.realtime.connect(agent_name=agent_name) as conn:
+        # Message-type conversation items (system/user/assistant) don't have dedicated generated
+        # models in this API version, so they're sent as a raw mapping matching the wire schema.
         conn.conversation.item.create(
-            item=VoiceUserMessageItem(
-                content=[RealtimeConversationItemMessageUserContent(type="input_text", text=prompt)]
-            )
+            item={"type": "message", "role": "user", "content": [{"type": "input_text", "text": prompt}]}
         )
         conn.response.create()
 
         for event in conn:
-            if isinstance(event, VoiceAgentServerEventResponseFunctionCallArgumentsDone):
+            if isinstance(event, RealtimeServerEventResponseFunctionCallArgumentsDone):
                 # The service forwards the call to us; execute it locally and
                 # send the result back so the agent can use it in its reply.
                 args = json.loads(event.arguments)
@@ -96,13 +94,15 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
                 else:
                     result = json.dumps({"error": f"Unknown tool: {event.name}"})
 
-                conn.conversation.item.create(item=VoiceFunctionCallOutputItem(call_id=event.call_id, output=result))
+                conn.conversation.item.create(
+                    item=RealtimeConversationItemFunctionCallOutput(call_id=event.call_id, output=result)
+                )
                 conn.response.create()
-            elif isinstance(event, VoiceAgentServerEventResponseTextDone):
+            elif isinstance(event, RealtimeServerEventResponseTextDone):
                 # The sample agent uses a text-only output modality, so the
                 # reply arrives as output text rather than an audio transcript.
                 print(f"Agent: {event.text}")
-            elif isinstance(event, VoiceAgentServerEventResponseDone):
+            elif isinstance(event, RealtimeServerEventResponseDone):
                 # A response.done that isn't a function call is the final answer for this turn.
                 # Output items surface as plain mappings (open union), so use dict-style access.
                 if not any(

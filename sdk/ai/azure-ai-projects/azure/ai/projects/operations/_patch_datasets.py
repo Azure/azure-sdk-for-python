@@ -22,8 +22,9 @@ from azure.core.utils import case_insensitive_dict
 from ._operations import (
     BetaDatasetsOperations as BetaDatasetsOperationsGenerated,
     DatasetsOperations as DatasetsOperationsGenerated,
+    JSON,
 )
-from .. import models as _models, types as _types
+from .. import models as _models
 from .._utils.model_base import _deserialize
 from ..models import DatasetGenerationLROPoller
 from ..models._models import (
@@ -53,7 +54,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
     @overload
     def begin_create_generation_job(
         self,
-        job: _types.DataGenerationJob,
+        job: JSON,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -73,7 +74,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
     @distributed_trace
     def begin_create_generation_job(  # type: ignore[reportIncompatibleMethodOverride, override]
         self,
-        job: Union[_models.DataGenerationJob, _types.DataGenerationJob, IO[bytes]],
+        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
@@ -81,7 +82,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
         """Create a data generation job.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob or ~azure.ai.projects.types.DataGenerationJob or IO[bytes]
+        :type job: ~azure.ai.projects.models.DataGenerationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str

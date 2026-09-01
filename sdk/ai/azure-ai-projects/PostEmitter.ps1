@@ -26,11 +26,29 @@ git restore pyproject.toml
 #   recursive-include samples *.py *.md
 git restore MANIFEST.in
 
-# Remove the generated `voice_agent_web_socket` operation group from the client's public surface
-# entirely (import, docstring, and __init__ assignment). The generated operation only performs a
-# plain HTTP GET (no WebSocket upgrade handshake) and discards the connection - it's not a usable
-# client and was never meant to be public (the real voice-agent WebSocket client is `.realtime`).
-$files = 'azure\ai\projects\_client.py', 'azure\ai\projects\aio\_client.py'
+# `types.py` is a dead artifact of the `generate-typeddict: false` tspconfig setting: the emitter
+# still rewrites this file's mtime on every run, but its TypedDict content has been byte-for-byte
+# frozen/stale since the very first regeneration of this package, regardless of how much the spec's
+# models have changed since (confirmed via `git diff --quiet` across multiple TypeSpec commits with
+# substantial, unrelated model renames). Delete it outright rather than let it silently ship stale,
+# misleading type shapes. The small number of hand-written call sites that referenced it
+# (`_patch_agents.py`, `_patch_datasets.py`, `_patch_evaluators.py`, and their aio counterparts)
+# now use the emitter's own `JSON` (= MutableMapping[str, Any]) alias instead, matching the same
+# "raw JSON body" overload pattern the generated `_operations.py` already uses for these same jobs.
+$typesFile = 'azure\ai\projects\types.py'
+if (Test-Path $typesFile) {
+    Remove-Item $typesFile -Force
+}
+
+# Remove the generated `voice_agent_web_socket` operation group from the public surface entirely.
+# The generated operation only performs a plain HTTP GET (no WebSocket upgrade handshake) and
+# discards the connection - it's not a usable client and was never meant to be public (the real
+# voice-agent WebSocket client is `.realtime`). This operation group has moved around in the
+# generated output across regenerations (previously wired directly on the top-level client as
+# `VoiceAgentWebSocketOperations`; now nested as `BetaVoiceAgentWebSocketOperations` under
+# `BetaOperations.__init__` in `_operations.py`) - this fixup targets wherever it currently lives,
+# matching either class name, so it keeps working if the spec relocates it again.
+$files = 'azure\ai\projects\_client.py', 'azure\ai\projects\aio\_client.py', 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
     $lines = Get-Content $f
     $out = New-Object System.Collections.Generic.List[string]
@@ -43,7 +61,7 @@ foreach ($f in $files) {
         if ($line -match '^\s*VoiceAgentWebSocketOperations,\s*$') { continue }
         if ($line -match '^\s*:ivar voice_agent_web_socket:') { continue }
         if ($line -match '^\s*:vartype voice_agent_web_socket:') { continue }
-        if ($line -match '^\s*self\.voice_agent_web_socket = VoiceAgentWebSocketOperations\(\s*$') {
+        if ($line -match '^\s*self\.voice_agent_web_socket = (Beta)?VoiceAgentWebSocketOperations\(\s*$') {
             $skipUntilCloseParen = $true
             continue
         }
@@ -152,7 +170,10 @@ $newVoiceAudioOutputConfig = @'
 
     `format` and `output_audio_timestamp_types` apply to every voice type.
 '@
-$files = 'azure\ai\projects\types.py', 'azure\ai\projects\models\_models.py'
+# NOTE: `types.py` used to be listed here too, but it is now deleted outright (see the fixup
+# above) before this point would matter, since its TypedDict mirror of this same class no
+# longer exists as a file at all.
+$files = 'azure\ai\projects\models\_models.py'
 foreach ($f in $files) {
     $c = Get-Content $f -Raw
     $c = $c.Replace($oldVoiceAudioOutputConfig, $newVoiceAudioOutputConfig)
@@ -332,12 +353,14 @@ $c = Get-Content $f -Raw
 $c = $c.Replace($oldPatternAsync, $newPatternAsync)
 Set-Content $f $c -NoNewline
 
-# VoiceResponse narrows OmitPropertiesRealtimeResponse's optional `id`/`conversation_id`
-# (Optional[str]) to required `str`, per the TypeSpec spec's explicit "Required." docstrings --
-# an intentional Azure-specific tightening of OpenAI's generic realtime response template (a
-# persisted voice response always has both set). Pyright's reportIncompatibleVariableOverride
-# flags this because narrowing a *mutable* attribute's type in a subclass isn't sound in general,
-# but it's safe here by construction (the service never omits these for a persisted response).
+# VoiceResponse (formerly OmitPropertiesRealtimeResponse before an upstream TypeSpec rename) narrows
+# its base class VoiceResponseBase's optional `id`/`conversation_id` (Optional[str]) to required
+# `str`, per the TypeSpec spec's explicit "Required." docstrings -- an intentional Azure-specific
+# tightening of OpenAI's generic realtime response template (a persisted voice response always has
+# both set). Pyright's reportIncompatibleVariableOverride flags this because narrowing a *mutable*
+# attribute's type in a subclass isn't sound in general, but it's safe here by construction (the
+# service never omits these for a persisted response). This substitution matches on the field
+# pattern itself (not the class name), so it keeps working across upstream class renames.
 # NOTE: uses -replace with a \r?\n-tolerant regex (not .Replace() with a literal `n), since `n
 # always resolves to a bare LF and can never match this file's real CRLF line endings -- the
 # $1/$2 replacement backreferences preserve whatever newline the regex actually matched.
@@ -345,6 +368,23 @@ $f = 'azure\ai\projects\models\_models.py'
 $c = Get-Content $f -Raw
 $c = $c -replace '(id: str = rest_field\(visibility=\["read", "create", "update", "delete", "query"\]\))(\r?\n    """The unique id of the response\. Required\.""")', '$1  # type: ignore[reportIncompatibleVariableOverride]$2'
 $c = $c -replace '(conversation_id: str = rest_field\(visibility=\["read", "create", "update", "delete", "query"\]\))(\r?\n    """The id of the conversation this response belongs to\. Required\.""")', '$1  # type: ignore[reportIncompatibleVariableOverride]$2'
+Set-Content $f $c -NoNewline
+
+# VoiceAgentSessionResponse/VoiceAgentSessionUpdate are single-member unions in TypeSpec (only
+# VoiceAgentSessionResponseConfig / VoiceAgentSessionUpdateConfig respectively so far), hitting the
+# exact same emitter bug as the GenerateAgentRequest case just above: a single-member union is
+# recorded in `_unions.py` as a bare forward-reference *string* (e.g.
+# `VoiceAgentSessionResponse = "_models.VoiceAgentSessionResponseConfig"`) rather than a real type
+# alias, since `Union[X]` collapses to `X` and the emitter's union-alias codegen path isn't taken.
+# Every place in `_models.py` that types a field/parameter as `"_unions.VoiceAgentSessionResponse"`
+# or `"_unions.VoiceAgentSessionUpdate"` is therefore an invalid forward reference for mypy/pyright
+# (`_unions.py`'s `VoiceAgentSessionResponse`/`VoiceAgentSessionUpdate` are plain `str` values at
+# runtime, not resolvable types) -- a `[valid-type]` error every round. Fix by pointing the forward
+# reference directly at the concrete model instead of routing through `_unions.py`.
+$f = 'azure\ai\projects\models\_models.py'
+$c = Get-Content $f -Raw
+$c = $c.Replace('"_unions.VoiceAgentSessionResponse"', '"_models.VoiceAgentSessionResponseConfig"')
+$c = $c.Replace('"_unions.VoiceAgentSessionUpdate"', '"_models.VoiceAgentSessionUpdateConfig"')
 Set-Content $f $c -NoNewline
 
 # Finishing by running 'black' tool to format code. 

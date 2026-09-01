@@ -60,12 +60,12 @@ from azure.ai.projects.models import (
     AgentKind,
     GenerateVoiceAgentRequest,
     VoiceAgentDefinition,
-    VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted,
-    VoiceAgentServerEventInputAudioBufferSpeechStarted,
-    VoiceAgentServerEventResponseAudioDelta,
-    VoiceAgentServerEventResponseAudioTranscriptDone,
-    VoiceAgentServerEventResponseDone,
-    VoiceAgentServerEventSessionCreated,
+    RealtimeServerEventConversationItemInputAudioTranscriptionCompleted,
+    RealtimeServerEventInputAudioBufferSpeechStarted,
+    RealtimeServerEventResponseAudioDelta,
+    RealtimeServerEventResponseAudioTranscriptDone,
+    RealtimeServerEventResponseDone,
+    RealtimeServerEventSessionCreated,
     RealtimeServerEventError,
 )
 
@@ -241,28 +241,28 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
 
         try:
             async for event in conn:
-                if isinstance(event, VoiceAgentServerEventSessionCreated):
+                if isinstance(event, RealtimeServerEventSessionCreated):
                     # The persisted conversation id (only present when conversation
                     # persistence is enabled) is set here, not on response.done.
                     conversation_id = event.conversation_id or conversation_id
-                elif isinstance(event, VoiceAgentServerEventInputAudioBufferSpeechStarted):
+                elif isinstance(event, RealtimeServerEventInputAudioBufferSpeechStarted):
                     # Barge-in: stop the active response and drop whatever reply
                     # audio is still queued locally. The service only supports
                     # output_audio_buffer.clear in avatar mode.
                     await conn.response.cancel()
                     ap.skip_pending_audio()
                     print("(listening...)")
-                elif isinstance(event, VoiceAgentServerEventConversationItemInputAudioTranscriptionCompleted):
+                elif isinstance(event, RealtimeServerEventConversationItemInputAudioTranscriptionCompleted):
                     print(f"You:  {event.transcript.strip()}")
                 elif isinstance(event, RealtimeServerEventError):
                     # Non-fatal errors are reported; a fatal one closes the socket.
                     print(f"Session error: {event.error.message}")
-                elif isinstance(event, VoiceAgentServerEventResponseAudioDelta):
+                elif isinstance(event, RealtimeServerEventResponseAudioDelta):
                     # Each delta is a decoded PCM16 chunk; queue it.
                     ap.queue_audio(event.delta)
-                elif isinstance(event, VoiceAgentServerEventResponseAudioTranscriptDone):
+                elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDone):
                     print(f"Agent: {event.transcript}")
-                elif isinstance(event, VoiceAgentServerEventResponseDone):
+                elif isinstance(event, RealtimeServerEventResponseDone):
                     pass
         except (KeyboardInterrupt, asyncio.CancelledError):
             # Ctrl-C ends the session; read back whatever was persisted so far.
@@ -284,7 +284,7 @@ async def _read_conversation(client: AIProjectClient, agent_name: str, conversat
     :type agent_name: str
     :type conversation_id: str
     """
-    conversations = client.agent_endpoint_conversations
+    conversations = client.beta.agent_endpoint_conversations
 
     conversation = await conversations.get_agent_conversation(agent_name, conversation_id)
     print(f"Conversation {conversation.id}: status={conversation.status}, created_at={conversation.created_at}")
@@ -339,7 +339,7 @@ async def audio_conversation() -> None:
                 except HttpResponseError as e:
                     print(f"Could not read conversation: {e.status_code} {e.reason}")
                 # To fetch this session's audio afterward, use
-                # `project_client.agent_endpoint_conversations`:
+                # `project_client.beta.agent_endpoint_conversations`:
                 #   - get_agent_conversation_audio(agent_name, conversation_id) for the merged
                 #     whole-call stereo recording's metadata, then
                 #     get_agent_conversation_audio_content(agent_name, conversation_id) to stream

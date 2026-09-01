@@ -17,7 +17,6 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AIProjectClientConfiguration
 from .operations import (
-    AgentEndpointConversationsOperations,
     AgentsOperations,
     BetaOperations,
     ConnectionsOperations,
@@ -44,9 +43,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
     :vartype beta: azure.ai.projects.aio.operations.BetaOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.aio.operations.AgentsOperations
-    :ivar agent_endpoint_conversations: AgentEndpointConversationsOperations operations
-    :vartype agent_endpoint_conversations:
-     azure.ai.projects.aio.operations.AgentEndpointConversationsOperations
     :ivar evaluation_rules: EvaluationRulesOperations operations
     :vartype evaluation_rules: azure.ai.projects.aio.operations.EvaluationRulesOperations
     :ivar connections: ConnectionsOperations operations
@@ -110,9 +106,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
         self._serialize.client_side_validation = False
         self.beta = BetaOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.agent_endpoint_conversations = AgentEndpointConversationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.evaluation_rules = EvaluationRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

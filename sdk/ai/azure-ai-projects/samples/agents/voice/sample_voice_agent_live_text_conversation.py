@@ -14,9 +14,10 @@ DESCRIPTION:
          then publish a version with `store=True` so the conversation can be
          read back afterward.
       2. Hold a typed, multi-turn conversation: each prompt is sent as a
-         ``VoiceUserMessageItem`` and the reply streams back as
-         typed audio and transcript events. Blank line (or ``exit`` / ``quit``)
-         ends it.
+         raw ``conversation.item.create`` message item (message-type items no
+         longer have a dedicated generated model in this API version) and the
+         reply streams back as typed audio and transcript events. Blank line
+         (or ``exit`` / ``quit``) ends it.
       3. Fetch the persisted conversation back by id.
       4. Delete the agent created for this sample.
 
@@ -51,14 +52,12 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentKind,
     GenerateVoiceAgentRequest,
-    RealtimeConversationItemMessageUserContent,
     VoiceAgentDefinition,
-    VoiceAgentServerEventResponseAudioDelta,
-    VoiceAgentServerEventResponseAudioTranscriptDone,
-    VoiceAgentServerEventResponseDone,
-    VoiceAgentServerEventSessionCreated,
+    RealtimeServerEventResponseAudioDelta,
+    RealtimeServerEventResponseAudioTranscriptDone,
+    RealtimeServerEventResponseDone,
+    RealtimeServerEventSessionCreated,
     RealtimeServerEventError,
-    VoiceUserMessageItem,
 )
 
 load_dotenv()
@@ -151,20 +150,20 @@ def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Optional
             def pump() -> None:
                 nonlocal conversation_id, audio_delta_count
                 for event in conn:
-                    if isinstance(event, VoiceAgentServerEventSessionCreated):
+                    if isinstance(event, RealtimeServerEventSessionCreated):
                         # The persisted conversation id (only present when conversation
                         # persistence is enabled) is set here, not on response.done.
                         conversation_id = event.conversation_id or conversation_id
-                    if isinstance(event, VoiceAgentServerEventResponseDone):
+                    if isinstance(event, RealtimeServerEventResponseDone):
                         return
                     if isinstance(event, RealtimeServerEventError):
                         print(f"Session error: {event.error.message}")
                         return
-                    if isinstance(event, VoiceAgentServerEventResponseAudioDelta):
+                    if isinstance(event, RealtimeServerEventResponseAudioDelta):
                         # Each delta is a decoded PCM16 chunk; play it.
                         audio_delta_count += 1
                         player.play(event.delta)
-                    elif isinstance(event, VoiceAgentServerEventResponseAudioTranscriptDone):
+                    elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDone):
                         print(f"Agent: {event.transcript}")
 
             while True:
@@ -172,11 +171,11 @@ def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Optional
                 if not prompt or prompt.lower() in ("exit", "quit"):
                     break
 
-                # Send the turn and ask the agent to respond.
+                # Send the turn and ask the agent to respond. Message-type conversation items
+                # (system/user/assistant) don't have dedicated generated models in this API
+                # version, so they're sent as a raw mapping matching the wire schema.
                 conn.conversation.item.create(
-                    item=VoiceUserMessageItem(
-                        content=[RealtimeConversationItemMessageUserContent(type="input_text", text=prompt)]
-                    )
+                    item={"type": "message", "role": "user", "content": [{"type": "input_text", "text": prompt}]}
                 )
                 conn.response.create()
                 pump()
@@ -203,7 +202,7 @@ def _read_conversation(client: AIProjectClient, agent_name: str, conversation_id
     :type agent_name: str
     :type conversation_id: str
     """
-    conversations = client.agent_endpoint_conversations
+    conversations = client.beta.agent_endpoint_conversations
 
     conversation = conversations.get_agent_conversation(agent_name, conversation_id)
     print(f"Conversation {conversation.id}: status={conversation.status}, created_at={conversation.created_at}")
@@ -258,7 +257,7 @@ def text_conversation() -> None:
                 except HttpResponseError as e:
                     print(f"Could not read conversation: {e.status_code} {e.reason}")
                 # To fetch this session's audio afterward, use
-                # `project_client.agent_endpoint_conversations`:
+                # `project_client.beta.agent_endpoint_conversations`:
                 #   - get_agent_conversation_audio(agent_name, conversation_id) for the merged
                 #     whole-call stereo recording's metadata, then
                 #     get_agent_conversation_audio_content(agent_name, conversation_id) to stream

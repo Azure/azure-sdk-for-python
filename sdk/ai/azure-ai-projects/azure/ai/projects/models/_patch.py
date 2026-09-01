@@ -65,6 +65,7 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
+    "agent_insight_monitors": _FoundryFeaturesOptInKeys.AGENT_INSIGHTS_V1_PREVIEW.value,
     "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
     "models": _FoundryFeaturesOptInKeys.MODELS_V1_PREVIEW.value,
     "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
@@ -73,6 +74,10 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
     "datasets": _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value,
     "agents": _AGENT_OPERATION_FEATURE_HEADERS,
+    # agent_endpoint_conversations moved from a top-level client attribute to a nested `.beta`
+    # sub-client upstream; it always requires the VoiceAgents=V1Preview opt-in (voice-agent
+    # conversation reads), matching the same requirement voice-agent definition operations have.
+    "agent_endpoint_conversations": _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
 
