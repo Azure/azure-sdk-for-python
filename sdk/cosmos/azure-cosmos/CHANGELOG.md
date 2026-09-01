@@ -2,7 +2,7 @@
 > [!IMPORTANT]
 > We strongly recommend that customers use at least version 4.16.3 of `azure-cosmos`.
 
-### 4.16.4 (2026-09-01)
+### 4.16.4 (2026-09-02)
 
 #### Bugs Fixed
 * Fixed regression with handling of v1 legacy containers when passing `{}` as a partition key. `{}` and `NonePartitionKeyValue` now both resolve to the `Undefined` effective partition key. See [PR 48422](https://github.com/Azure/azure-sdk-for-python/pull/48422)
