@@ -30,6 +30,9 @@ jobs:
     imageOverride: ${{ parameters.imageOverride }}
     sourceRepositoryFullName: ${{ format('{0}/azure-sdk-for-python', parameters.repositoryOwner) }}
     sourceCheckoutDir: $(Pipeline.Workspace)/apireview/source
+    variables:
+      - name: PIP_NO_INPUT
+        value: '1'
     setupSteps:
       - task: UsePythonVersion@0
         displayName: 'Use Python ${{ parameters.pythonVersion }}'
