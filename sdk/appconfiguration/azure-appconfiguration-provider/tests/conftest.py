@@ -86,8 +86,8 @@ def setup_app_config_keys(wait_for_data_plane_access):
 
     credential = get_credential()
     client = AzureAppConfigurationClient(endpoint, credential)
-    keyvault_secret_url = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE")
-    keyvault_secret_url2 = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE2")
+    keyvault_secret_url = os.environ.get("APPCONFIGURATION_KEYVAULT_SECRET_URL")
+    keyvault_secret_url2 = os.environ.get("APPCONFIGURATION_KEYVAULT_SECRET_URL2")
     snap_name, ff_snap_name = setup_configs(client, keyvault_secret_url, keyvault_secret_url2)
 
     snapshot_names["snapshot"] = snap_name
@@ -103,14 +103,14 @@ def add_sanitizers(test_proxy):
     key_vault_references = (
         (
             os.environ.get(
-                "APPCONFIGURATION_KEY_VAULT_REFERENCE2",
+                "APPCONFIGURATION_KEYVAULT_SECRET_URL2",
                 "https://sanitized.vault.azure.net/secrets/fake-secret2/",
             ),
             "https://sanitized.vault.azure.net/secrets/fake-secret2/",
         ),
         (
             os.environ.get(
-                "APPCONFIGURATION_KEY_VAULT_REFERENCE",
+                "APPCONFIGURATION_KEYVAULT_SECRET_URL",
                 "https://sanitized.vault.azure.net/secrets/fake-secret/",
             ),
             "https://sanitized.vault.azure.net/secrets/fake-secret/",
@@ -146,10 +146,10 @@ def add_sanitizers(test_proxy):
 
 @pytest.fixture(autouse=True)
 def no_startup_backoff(request, monkeypatch):
-    """Skip startup backoff delays in all tests except those testing backoff directly."""
-    if request.fspath.basename == "test_startup_retry.py":  # cspell:ignore fspath
+    """Fail fast on playback mismatches instead of retrying until the startup timeout."""
+    if is_live() or request.fspath.basename == "test_startup_retry.py":  # cspell:ignore fspath
         return
     monkeypatch.setattr(
         "azure.appconfiguration.provider._azureappconfigurationprovider.get_startup_backoff",
-        lambda *args, **kwargs: (0, False),
+        lambda *args, **kwargs: (float("inf"), False),
     )
