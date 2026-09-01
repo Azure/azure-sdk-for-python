@@ -20,6 +20,7 @@ words:
   - azureml
   - azureopenai
   - balapvbyostoragecanary
+  - BYOS
   - BLPHARMA
   - cegr
   - closefd
@@ -35,6 +36,8 @@ words:
   - devtools
   - dotenv
   - dtype
+  - DTMF
+  - dtmf
   - estás
   - evals
   - faiss
@@ -64,6 +67,7 @@ words:
   - LLMRAG
   - logprobs
   - LUMIFOOD
+  - MCPHTTP
   - miniconda
   - Ministral
   - mlflow
@@ -80,6 +84,12 @@ words:
   - openai
   - openmpi
   - oupfoo
+  - PCMA
+  - pcma
+  - Pcma
+  - PCMU
+  - pcmu
+  - Pcmu
   - pipelinerunid
   - PRIFINS
   - prompty
@@ -94,6 +104,7 @@ words:
   - rdel
   - recsmplmdl
   - reraises
+  - retriable
   - roups
   - runid
   - runsvdir
