@@ -62,7 +62,6 @@ from ._shared.uploads_async import AsyncIterStreamer
 from ._shared.validation import CV_TYPE_PARSED, is_crc64_validation, parse_validation_option
 from ._upload_helpers import _any_conditions
 
-
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
     from ._generated import AzureBlobStorage

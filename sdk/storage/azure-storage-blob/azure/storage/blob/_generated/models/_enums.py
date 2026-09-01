@@ -77,6 +77,15 @@ class ArchiveStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The archive status is rehydrating pending to Smart."""
 
 
+class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of authentication required to create the session. The only type currently supported is
+    HMAC.
+    """
+
+    HMAC = "HMAC"
+    """HMAC authentication."""
+
+
 class BlobCopySourceTags(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The blob copy source tags types."""
 
@@ -148,6 +157,13 @@ class DeleteSnapshotsOptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Only delete the snapshots."""
     INCLUDE = "include"
     """Delete the blob and snapshots."""
+
+
+class DownloadHint(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The download hint for a blob."""
+
+    LAYOUT = "layout"
+    """The blob layout can be retrieved with the Get Blob Layout operation."""
 
 
 class EncryptionAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
