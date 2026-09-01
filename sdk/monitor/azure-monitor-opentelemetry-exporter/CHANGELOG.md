@@ -3,6 +3,8 @@
 ## 1.0.0b57 (Unreleased)
 
 ### Features Added
+- Add support to handle the 413 payload too large status code, in alignment with [spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/sdk_behavior_breeze.md).
+  ([#48548](https://github.com/Azure/azure-sdk-for-python/pull/48548))
 - Populate `measurements` on telemetry from the `microsoft.custom_measurements` attribute
   ([#48750](https://github.com/Azure/azure-sdk-for-python/pull/48750))
 

@@ -76,7 +76,8 @@ _THROTTLE_STATUS_CODES = (
     439,  # Quota, too Many Requests over extended time (legacy)
 )
 
-_REACHED_INGESTION_STATUS_CODES = (200, 206, 402, 408, 429, 439, 500)
+_REACHED_INGESTION_STATUS_CODES = (200, 206, 402, 408, 413, 429, 439, 500)
+
 
 # Envelope constants
 

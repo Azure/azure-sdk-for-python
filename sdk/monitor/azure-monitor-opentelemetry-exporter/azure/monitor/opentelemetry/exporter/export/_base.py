@@ -49,7 +49,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 from azure.monitor.opentelemetry.exporter._connection_string_parser import (
     ConnectionStringParser,
 )
-from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage, StorageExportResult
 from azure.monitor.opentelemetry.exporter._configuration._state import (
     get_configuration_manager,
 )
@@ -63,6 +63,8 @@ from azure.monitor.opentelemetry.exporter._utils import (
     _get_os_name,
     _get_rp_name,
     _get_attach_type_name,
+    _is_item_too_large,
+    _split_oversized_batch,
 )
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter.export._rate_limiter import (
@@ -317,6 +319,45 @@ class BaseExporter:
             if self._should_collect_customer_sdkstats():
                 track_dropped_items(envelopes, DropCode.CLIENT_STORAGE_DISABLED)
 
+    def _handle_payload_too_large(
+        self, envelopes: List[TelemetryItem], response_error: HttpResponseError
+    ) -> ExportResult:
+        # Handle a 413 (Payload Too Large) response by splitting and persisting for retry.
+        if not self.storage:
+            if not self._is_stats_exporter():
+                logger.debug(
+                    "Payload too large but offline storage is disabled; dropping %d envelope(s): %s.",
+                    len(envelopes),
+                    response_error.message,
+                )
+            return ExportResult.FAILED_NOT_RETRYABLE
+        if len(envelopes) <= 1:
+            if not self._is_stats_exporter():
+                logger.warning(
+                    "Payload too large and cannot be split further; dropping %d envelope(s): %s.",
+                    len(envelopes),
+                    response_error.message,
+                )
+                if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
+                    track_dropped_items(envelopes, response_error.status_code)
+            return ExportResult.FAILED_NOT_RETRYABLE
+
+        for sub_batch in _split_oversized_batch(envelopes):
+            result_from_storage_put = self.storage.put([x.as_dict() for x in sub_batch])
+            if result_from_storage_put == StorageExportResult.LOCAL_FILE_BLOB_SUCCESS:
+                if not self._is_stats_exporter() and self._should_collect_customer_sdkstats():
+                    track_retry_items(sub_batch, response_error)
+            else:
+                if not self._is_stats_exporter():
+                    logger.debug(
+                        "Failed to persist a split sub-batch of %d envelope(s) after a 413; "
+                        "these envelopes are dropped.",
+                        len(sub_batch),
+                    )
+                    if self._should_collect_customer_sdkstats():
+                        track_dropped_items_from_storage(result_from_storage_put, sub_batch)
+        return ExportResult.FAILED_NOT_RETRYABLE
+
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-statements
@@ -446,11 +487,17 @@ class BaseExporter:
                                         and isinstance(error.status_code, int)
                                     ):
                                         track_dropped_items([envelopes[error.index]], error.status_code)
+                                dropped_envelope = envelopes[error.index] if error.index is not None else None
+                                # When the server rejects an item for exceeding the per-item size limit
+                                # (detected via _is_item_too_large), omit its payload from the log: it is
+                                # too large to dump and may contain PII, which would leak and flood the logs.
+                                if dropped_envelope is None or _is_item_too_large(error.message):
+                                    dropped_envelope = ""  # type: ignore[assignment]
                                 logger.error(
-                                    "Data drop %s: %s %s.",
+                                    "Data drop %s: %s. %s",
                                     error.status_code,
                                     error.message,
-                                    (envelopes[error.index] if error.index is not None else ""),
+                                    dropped_envelope,
                                 )
                     storage = self.storage
                     if storage and resend_envelopes:
@@ -577,6 +624,11 @@ class BaseExporter:
                         if self._should_collect_stats():
                             _update_requests_map(_REQ_EXCEPTION_NAME[1], value="Circular Redirect")
                         result = ExportResult.FAILED_NOT_RETRYABLE
+                elif response_error.status_code == 413:
+                    if self._should_collect_stats():
+                        _update_requests_map(_REQ_FAILURE_NAME[1], value=response_error.status_code)
+                    result = self._handle_payload_too_large(envelopes, response_error)
+
                 else:
                     # Any other status code counts as failure (non-retryable)
                     # 400 - Invalid - The server cannot or will not process the request due to the invalid telemetry (invalid data, iKey, etc.)
