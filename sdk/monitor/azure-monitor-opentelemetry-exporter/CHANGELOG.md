@@ -3,6 +3,12 @@
 ## 1.0.0b57 (Unreleased)
 
 ### Features Added
+- Add the required `force_flush` method to the log exporter to align with upstream OpenTelemetry changes in [LogRecordExporter](https://github.com/open-telemetry/opentelemetry-python/pull/5294)
+  ([#48823](https://github.com/Azure/azure-sdk-for-python/pull/48823))
+- Populate `measurements` on telemetry from the `microsoft.custom_measurements` attribute
+  ([#48750](https://github.com/Azure/azure-sdk-for-python/pull/48750))
+- Add support for availability telemetry from `microsoft.availability.*` log attributes
+  ([#48812](https://github.com/Azure/azure-sdk-for-python/pull/48812))
 
 ### Breaking Changes
 

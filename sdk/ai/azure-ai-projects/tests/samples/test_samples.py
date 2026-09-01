@@ -53,7 +53,7 @@ class TestSamples(AzureRecordedTestCase):
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -69,7 +69,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     # To run this test: pytest tests/samples/test_samples.py::TestSamples::test_memory_samples -s
     def test_memory_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
@@ -90,7 +90,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agents_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -106,7 +106,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_connections_samples(self, sample_path: str, **kwargs) -> None:
         kwargs = kwargs.copy()
         kwargs["connection_name"] = "mcp"
@@ -124,7 +124,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_files_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -140,7 +140,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_deployments_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -162,7 +162,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @modelsServicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_models_samples(self, sample_path: str, **kwargs) -> None:
         import secrets  # local import to avoid module-level dep
 
@@ -209,7 +209,7 @@ class TestSamples(AzureRecordedTestCase):
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     # To run this test: pytest tests/samples/test_samples.py::TestSamples::test_datasets_samples[sample_dataset_generation_job_simpleqna_with_prompt_source] -s
     def test_datasets_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
@@ -226,7 +226,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_chat_completions_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -306,7 +306,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @SamplePathPasser()
     # To run a single sample: pytest tests\samples\test_samples.py::TestSamples::test_hosted_agents_samples[sample_agent_endpoint] -s
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -342,7 +342,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_skills_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -358,7 +358,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_toolboxes_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -377,7 +377,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @fineTuningServicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_finetuning_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_fine_tuning_sample_env_vars(sample_path, kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
