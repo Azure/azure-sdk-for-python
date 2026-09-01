@@ -8,9 +8,7 @@
 import pytest
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
-
-AZURE_LOCATION = "eastus"
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
 
 @pytest.mark.live_test_only
@@ -18,18 +16,8 @@ class TestCognitiveServicesManagementCommitmentPlansOperations(AzureMgmtRecorded
     def setup_method(self, method):
         self.client = self.create_mgmt_client(CognitiveServicesManagementClient)
 
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_plans_by_resource_group(self, resource_group):
-        response = self.client.commitment_plans.list_plans_by_resource_group(
-            resource_group_name=resource_group.name,
-        )
-        result = [r for r in response]
-        assert result == []
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_list_plans_by_subscription(self, resource_group):
+    def test_list_plans_by_subscription(self):
         response = self.client.commitment_plans.list_plans_by_subscription()
         result = [r for r in response]
         assert len(result) == 0
