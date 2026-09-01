@@ -110,6 +110,11 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
             _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
+    def force_flush(self, timeout_millis: float = 10_000) -> bool:
+        # Ensure that export of any received log records completes as soon as possible.
+
+        return True
+
     def shutdown(self) -> None:
         """Shuts down the exporter.
 
