@@ -189,28 +189,28 @@ except NameError:
 class UTC(datetime.tzinfo):
     """Time Zone info for handling UTC"""
 
-    def utcoffset(self, dt):
+    def utcoffset(self, _dt):
         """UTF offset for UTC is 0.
 
-        :param datetime.datetime dt: The datetime
+        :param datetime.datetime _dt: The datetime
         :returns: The offset
         :rtype: datetime.timedelta
         """
         return datetime.timedelta(0)
 
-    def tzname(self, dt):
+    def tzname(self, _dt):
         """Timestamp representation.
 
-        :param datetime.datetime dt: The datetime
+        :param datetime.datetime _dt: The datetime
         :returns: The timestamp representation
         :rtype: str
         """
         return "Z"
 
-    def dst(self, dt):
+    def dst(self, _dt):
         """No daylight saving for UTC.
 
-        :param datetime.datetime dt: The datetime
+        :param datetime.datetime _dt: The datetime
         :returns: The daylight saving time
         :rtype: datetime.timedelta
         """
@@ -230,16 +230,16 @@ except ImportError:  # Python 2.7
         def __init__(self, offset) -> None:
             self.__offset = offset
 
-        def utcoffset(self, dt):
+        def utcoffset(self, _dt):
             return self.__offset
 
-        def tzname(self, dt):
+        def tzname(self, _dt):
             return str(self.__offset.total_seconds() / 3600)
 
         def __repr__(self):
             return "<FixedOffset {}>".format(self.tzname(None))
 
-        def dst(self, dt):
+        def dst(self, _dt):
             return datetime.timedelta(0)
 
         def __getinitargs__(self):

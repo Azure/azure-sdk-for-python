@@ -30,7 +30,7 @@ class ChatThreadClientSamples(object):
     from azure.communication.identity import CommunicationIdentityClient
     from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
-    connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)
+    connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", "")
     if not connection_string:
         raise ValueError("Set COMMUNICATION_SAMPLES_CONNECTION_STRING env before run this sample.")
 
@@ -39,7 +39,7 @@ class ChatThreadClientSamples(object):
     tokenresponse = identity_client.get_token(user, scopes=["chat"])
     token = tokenresponse.token
 
-    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
+    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", "")
     if not endpoint:
         raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
 
@@ -68,7 +68,7 @@ class ChatThreadClientSamples(object):
         # else for existing users set `user` = CommunicationUserIdentifier(some_user_id)
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         topic = "test topic"
-        participants = [ChatParticipant(identifier=user, display_name="name", share_history_time=datetime.utcnow())]
+        participants = [ChatParticipant(identifier=user, display_name="name", share_history_time=datetime.utcnow())]  # type: ignore[arg-type]
         create_chat_thread_result = chat_client.create_chat_thread(topic, thread_participants=participants)
         chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
         # [END create_chat_thread_client]
@@ -325,11 +325,11 @@ class ChatThreadClientSamples(object):
 
         # add user1 and user2 to chat thread
         participant1 = ChatParticipant(
-            identifier=user1, display_name="Fred Flinstone", share_history_time=datetime.utcnow()
+            identifier=user1, display_name="Fred Flinstone", share_history_time=datetime.utcnow()  # type: ignore[arg-type]
         )
 
         participant2 = ChatParticipant(
-            identifier=user2, display_name="Wilma Flinstone", share_history_time=datetime.utcnow()
+            identifier=user2, display_name="Wilma Flinstone", share_history_time=datetime.utcnow()  # type: ignore[arg-type]
         )
 
         thread_participants = [participant1, participant2]

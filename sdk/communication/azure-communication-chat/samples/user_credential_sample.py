@@ -26,7 +26,7 @@ from azure.communication.identity import CommunicationIdentityClient
 
 class CommunicationTokenCredentialSamples(object):
 
-    connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)
+    connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", "")
     if not connection_string:
         raise ValueError("Set COMMUNICATION_SAMPLES_CONNECTION_STRING env before running this sample.")
 
@@ -47,7 +47,7 @@ class CommunicationTokenCredentialSamples(object):
         # Here we assume that we have a function `fetch_token_from_server` that makes a network request to retrieve a token string for a user.
         # It's necessary that the `fetch_token_from_server` function returns a valid token (with an expiration date set in the future) at all times.
         fetch_token_from_server = lambda: None
-        with CommunicationTokenCredential(self.token, token_refresher=fetch_token_from_server) as credential:
+        with CommunicationTokenCredential(self.token, token_refresher=fetch_token_from_server) as credential:  # type: ignore[arg-type]
             token_response = credential.get_token()
             print("Token issued with value: " + token_response.token)
 
@@ -56,7 +56,7 @@ class CommunicationTokenCredentialSamples(object):
         # previous token approaches expiry. Using this method, your requests are less likely to be blocked to acquire a fresh token
         fetch_token_from_server = lambda: None
         with CommunicationTokenCredential(
-            self.token, token_refresher=fetch_token_from_server, proactive_refresh=True
+            self.token, token_refresher=fetch_token_from_server, proactive_refresh=True  # type: ignore[arg-type]
         ) as credential:
             token_response = credential.get_token()
             print("Token issued with value: " + token_response.token)

@@ -28,7 +28,7 @@ import asyncio
 class ChatClientSamplesAsync(object):
     from azure.communication.identity import CommunicationIdentityClient
 
-    connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)
+    connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", "")
     if not connection_string:
         raise ValueError("Set COMMUNICATION_SAMPLES_CONNECTION_STRING env before run this sample.")
 
@@ -37,7 +37,7 @@ class ChatClientSamplesAsync(object):
     tokenresponse = identity_client.get_token(user, scopes=["chat"])
     token = tokenresponse.token
 
-    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
+    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", "")
     if not endpoint:
         raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
 
@@ -72,7 +72,7 @@ class ChatClientSamplesAsync(object):
 
             topic = "test topic"
             participants = [
-                ChatParticipant(identifier=self.user, display_name="name", share_history_time=datetime.utcnow())
+                ChatParticipant(identifier=self.user, display_name="name", share_history_time=datetime.utcnow())  # type: ignore[arg-type]
             ]
             # creates a new chat_thread everytime
             create_chat_thread_result = await chat_client.create_chat_thread(topic, thread_participants=participants)
