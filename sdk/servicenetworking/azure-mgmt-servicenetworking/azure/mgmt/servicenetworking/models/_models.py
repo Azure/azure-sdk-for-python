@@ -9,17 +9,16 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -46,9 +45,8 @@ class Resource(_model_base.Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -67,7 +65,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -77,7 +75,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -91,7 +89,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Association(TrackedResource):
+class Association(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Association Subresource of Traffic Controller.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -123,7 +121,7 @@ class Association(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AssociationProperties"] = None,
     ) -> None: ...
 
@@ -138,7 +136,7 @@ class Association(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class AssociationProperties(_model_base.Model):
+class AssociationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Association Properties.
 
     :ivar association_type: Association Type. Required. "subnets"
@@ -185,7 +183,7 @@ class AssociationProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssociationSubnet(_model_base.Model):
+class AssociationSubnet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Association Subnet.
 
     :ivar id: Association ID. Required.
@@ -213,7 +211,7 @@ class AssociationSubnet(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssociationSubnetUpdate(_model_base.Model):
+class AssociationSubnetUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Association Subnet.
 
     :ivar id: Association ID.
@@ -241,7 +239,7 @@ class AssociationSubnetUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssociationUpdate(_model_base.Model):
+class AssociationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the Association.
 
     :ivar tags: Resource tags.
@@ -250,18 +248,20 @@ class AssociationUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.servicenetworking.models.AssociationUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.AssociationUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
 
+    __flattened_items = ["association_type", "subnet"]
+
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AssociationUpdateProperties"] = None,
     ) -> None: ...
 
@@ -273,10 +273,28 @@ class AssociationUpdate(_model_base.Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
-class AssociationUpdateProperties(_model_base.Model):
+class AssociationUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the Association.
 
     :ivar association_type: Association Type. "subnets"
@@ -313,7 +331,7 @@ class AssociationUpdateProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -328,7 +346,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -349,17 +367,16 @@ class ErrorDetail(_model_base.Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.servicenetworking.models.ErrorDetail
@@ -386,7 +403,7 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Frontend(TrackedResource):
+class Frontend(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Frontend Sub Resource of Traffic Controller.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -418,7 +435,7 @@ class Frontend(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.FrontendProperties"] = None,
     ) -> None: ...
 
@@ -433,12 +450,47 @@ class Frontend(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class FrontendProperties(_model_base.Model):
+class FrontendAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reference to an Association resource.
+
+    :ivar id: Resource ID of the Association. Required.
+    :vartype id: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource ID of the Association. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FrontendProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Frontend Properties.
 
     :ivar fqdn: The Fully Qualified Domain Name of the DNS record associated to a Traffic
      Controller frontend.
     :vartype fqdn: str
+    :ivar public_network_access: Whether public network access is allowed for the frontend. Enabled
+     indicates a public frontend; Disabled indicates a private frontend. Known values are: "Enabled"
+     and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.servicenetworking.models.PublicNetworkAccess
+    :ivar association: Reference to an Association resource that contains the subnet where the
+     private frontend should be deployed.
+    :vartype association: ~azure.mgmt.servicenetworking.models.FrontendAssociation
     :ivar security_policy_configurations: Frontend Security Policy Configuration.
     :vartype security_policy_configurations:
      ~azure.mgmt.servicenetworking.models.SecurityPolicyConfigurations
@@ -450,6 +502,16 @@ class FrontendProperties(_model_base.Model):
 
     fqdn: Optional[str] = rest_field(visibility=["read"])
     """The Fully Qualified Domain Name of the DNS record associated to a Traffic Controller frontend."""
+    public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
+        name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether public network access is allowed for the frontend. Enabled indicates a public frontend;
+     Disabled indicates a private frontend. Known values are: \"Enabled\" and \"Disabled\"."""
+    association: Optional["_models.FrontendAssociation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to an Association resource that contains the subnet where the private frontend should
+     be deployed."""
     security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = rest_field(
         name="securityPolicyConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -464,6 +526,8 @@ class FrontendProperties(_model_base.Model):
     def __init__(
         self,
         *,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        association: Optional["_models.FrontendAssociation"] = None,
         security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = None,
     ) -> None: ...
 
@@ -478,7 +542,7 @@ class FrontendProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class FrontendUpdate(_model_base.Model):
+class FrontendUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the Frontend.
 
     :ivar tags: Resource tags.
@@ -487,7 +551,7 @@ class FrontendUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.servicenetworking.models.FrontendUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.FrontendUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -498,7 +562,7 @@ class FrontendUpdate(_model_base.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.FrontendUpdateProperties"] = None,
     ) -> None: ...
 
@@ -513,14 +577,31 @@ class FrontendUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class FrontendUpdateProperties(_model_base.Model):
+class FrontendUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the Frontend.
 
+    :ivar public_network_access: Whether public network access is allowed for the frontend. Enabled
+     indicates a public frontend; Disabled indicates a private frontend. Known values are: "Enabled"
+     and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.servicenetworking.models.PublicNetworkAccess
+    :ivar association: Reference to an Association resource that contains the subnet where the
+     private frontend should be deployed.
+    :vartype association: ~azure.mgmt.servicenetworking.models.FrontendAssociation
     :ivar security_policy_configurations: Frontend Security Policy Configuration.
     :vartype security_policy_configurations:
      ~azure.mgmt.servicenetworking.models.SecurityPolicyConfigurations
     """
 
+    public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
+        name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether public network access is allowed for the frontend. Enabled indicates a public frontend;
+     Disabled indicates a private frontend. Known values are: \"Enabled\" and \"Disabled\"."""
+    association: Optional["_models.FrontendAssociation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to an Association resource that contains the subnet where the private frontend should
+     be deployed."""
     security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = rest_field(
         name="securityPolicyConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -530,6 +611,8 @@ class FrontendUpdateProperties(_model_base.Model):
     def __init__(
         self,
         *,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        association: Optional["_models.FrontendAssociation"] = None,
         security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = None,
     ) -> None: ...
 
@@ -544,7 +627,7 @@ class FrontendUpdateProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IpAccessRule(_model_base.Model):
+class IpAccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Ip Access Policy Rules.
 
     :ivar name: Name of the Ip Access Rule. Required.
@@ -566,7 +649,7 @@ class IpAccessRule(_model_base.Model):
     """The priority of the rule. The value can be between 1 and 500. The priority number must be
      unique for each rule in the collection. The lower the priority number, the higher the priority
      of the rule. Required."""
-    source_address_prefixes: List[str] = rest_field(
+    source_address_prefixes: list[str] = rest_field(
         name="sourceAddressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Source Address Prefixed Applied by the Rule. Asterisk '*' can also be used to match all source
@@ -582,7 +665,7 @@ class IpAccessRule(_model_base.Model):
         *,
         name: str,
         priority: int,
-        source_address_prefixes: List[str],
+        source_address_prefixes: list[str],
         action: Union[str, "_models.IpAccessRuleAction"],
     ) -> None: ...
 
@@ -597,14 +680,14 @@ class IpAccessRule(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IpAccessRulesPolicy(_model_base.Model):
+class IpAccessRulesPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Ip Access Policy.
 
     :ivar rules: Ip Access Policy Rules List.
     :vartype rules: list[~azure.mgmt.servicenetworking.models.IpAccessRule]
     """
 
-    rules: Optional[List["_models.IpAccessRule"]] = rest_field(
+    rules: Optional[list["_models.IpAccessRule"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ip Access Policy Rules List."""
@@ -613,7 +696,7 @@ class IpAccessRulesPolicy(_model_base.Model):
     def __init__(
         self,
         *,
-        rules: Optional[List["_models.IpAccessRule"]] = None,
+        rules: Optional[list["_models.IpAccessRule"]] = None,
     ) -> None: ...
 
     @overload
@@ -627,7 +710,7 @@ class IpAccessRulesPolicy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IpAccessRulesSecurityPolicy(_model_base.Model):
+class IpAccessRulesSecurityPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IpAccessRules Security Policy.
 
     :ivar id: Resource ID of the Ip Access Rules Security Policy. Required.
@@ -655,8 +738,8 @@ class IpAccessRulesSecurityPolicy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -712,8 +795,8 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
-    """Localized display information for and operation.
+class OperationDisplay(_Model):
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -743,7 +826,235 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class ResourceId(_model_base.Model):
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.servicenetworking.models.SystemData
+    """
+
+
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Private Endpoint Connection resource of Traffic Controller.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.servicenetworking.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.servicenetworking.models.PrivateEndpointConnectionProperties
+    """
+
+    properties: Optional["_models.PrivateEndpointConnectionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PrivateEndpointConnectionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a Private Endpoint Connection.
+
+    :ivar private_endpoint: The private endpoint resource.
+    :vartype private_endpoint: ~azure.mgmt.servicenetworking.models.PrivateEndpointReference
+    :ivar private_link_service_connection_state: The connection state of the private endpoint
+     connection. Required.
+    :vartype private_link_service_connection_state:
+     ~azure.mgmt.servicenetworking.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Known values
+     are: "Provisioning", "Updating", "Deleting", "Accepted", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.servicenetworking.models.ProvisioningState
+    """
+
+    private_endpoint: Optional["_models.PrivateEndpointReference"] = rest_field(
+        name="privateEndpoint", visibility=["read"]
+    )
+    """The private endpoint resource."""
+    private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState" = rest_field(
+        name="privateLinkServiceConnectionState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connection state of the private endpoint connection. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the private endpoint connection. Known values are: \"Provisioning\",
+     \"Updating\", \"Deleting\", \"Accepted\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateEndpointReference(_Model):
+    """Reference to a private endpoint resource.
+
+    :ivar id: Resource ID of the private endpoint.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Resource ID of the private endpoint."""
+
+
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A private link resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.servicenetworking.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.servicenetworking.models.PrivateLinkResourceProperties
+    """
+
+    properties: Optional["_models.PrivateLinkResourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PrivateLinkResourceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateLinkResourceProperties(_Model):
+    """Properties of a private link resource.
+
+    :ivar group_id: The private link resource group ID.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource private DNS zone names.
+    :vartype required_zone_names: list[str]
+    :ivar provisioning_state: The status of the last operation. Known values are: "Provisioning",
+     "Updating", "Deleting", "Accepted", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.servicenetworking.models.ProvisioningState
+    """
+
+    group_id: Optional[str] = rest_field(name="groupId", visibility=["read"])
+    """The private link resource group ID."""
+    required_members: Optional[list[str]] = rest_field(name="requiredMembers", visibility=["read"])
+    """The private link resource required member names."""
+    required_zone_names: Optional[list[str]] = rest_field(name="requiredZoneNames", visibility=["read"])
+    """The private link resource private DNS zone names."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Provisioning\", \"Updating\",
+     \"Deleting\", \"Accepted\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+
+
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The state of a private link service connection.
+
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Known values are: "Pending", "Approved", "Rejected", and "Disconnected".
+    :vartype status: str or ~azure.mgmt.servicenetworking.models.PrivateLinkServiceConnectionStatus
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :vartype actions_required: str
+    """
+
+    status: Optional[Union[str, "_models.PrivateLinkServiceConnectionStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the connection has been Approved/Rejected/Removed by the owner of the
+     service. Known values are: \"Pending\", \"Approved\", \"Rejected\", and \"Disconnected\"."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The reason for approval/rejection of the connection."""
+    actions_required: Optional[str] = rest_field(
+        name="actionsRequired", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A message indicating if changes on the service provider require any updates on the consumer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.PrivateLinkServiceConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        actions_required: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceId(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource ID definition used by parent to reference child resources.
 
     :ivar id: Resource ID of child resource. Required.
@@ -771,7 +1082,7 @@ class ResourceId(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPolicy(TrackedResource):
+class SecurityPolicy(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecurityPolicy Subresource of Traffic Controller.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -803,7 +1114,7 @@ class SecurityPolicy(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SecurityPolicyProperties"] = None,
     ) -> None: ...
 
@@ -818,7 +1129,7 @@ class SecurityPolicy(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPolicyConfigurations(_model_base.Model):
+class SecurityPolicyConfigurations(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecurityPolicyConfigurations Subresource of Traffic Controller.
 
     :ivar waf_security_policy: Contains reference to a WAF-type security policy.
@@ -857,7 +1168,7 @@ class SecurityPolicyConfigurations(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPolicyProperties(_model_base.Model):
+class SecurityPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecurityPolicy Properties.
 
     :ivar policy_type: Type of the Traffic Controller Security Policy. Known values are: "waf" and
@@ -914,7 +1225,7 @@ class SecurityPolicyProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPolicyUpdate(_model_base.Model):
+class SecurityPolicyUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the SecurityPolicy.
 
     :ivar tags: Resource tags.
@@ -923,7 +1234,7 @@ class SecurityPolicyUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.servicenetworking.models.SecurityPolicyUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.SecurityPolicyUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -934,7 +1245,7 @@ class SecurityPolicyUpdate(_model_base.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SecurityPolicyUpdateProperties"] = None,
     ) -> None: ...
 
@@ -949,7 +1260,7 @@ class SecurityPolicyUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPolicyUpdateProperties(_model_base.Model):
+class SecurityPolicyUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the SecurityPolicy.
 
     :ivar waf_policy: Web Application Firewall Policy of the Traffic Controller Security Policy.
@@ -990,7 +1301,7 @@ class SecurityPolicyUpdateProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1057,7 +1368,7 @@ class SystemData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TrafficController(TrackedResource):
+class TrafficController(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -1090,7 +1401,7 @@ class TrafficController(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.TrafficControllerProperties"] = None,
     ) -> None: ...
 
@@ -1105,7 +1416,7 @@ class TrafficController(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class TrafficControllerProperties(_model_base.Model):
+class TrafficControllerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Traffic Controller Properties.
 
     :ivar configuration_endpoints: Configuration Endpoints.
@@ -1116,6 +1427,8 @@ class TrafficControllerProperties(_model_base.Model):
     :vartype associations: list[~azure.mgmt.servicenetworking.models.ResourceId]
     :ivar security_policies: Security Policies References List.
     :vartype security_policies: list[~azure.mgmt.servicenetworking.models.ResourceId]
+    :ivar private_endpoint_connections: Private Endpoint Connections List.
+    :vartype private_endpoint_connections: list[~azure.mgmt.servicenetworking.models.ResourceId]
     :ivar security_policy_configurations: Security Policy Configuration.
     :vartype security_policy_configurations:
      ~azure.mgmt.servicenetworking.models.SecurityPolicyConfigurations
@@ -1124,14 +1437,18 @@ class TrafficControllerProperties(_model_base.Model):
     :vartype provisioning_state: str or ~azure.mgmt.servicenetworking.models.ProvisioningState
     """
 
-    configuration_endpoints: Optional[List[str]] = rest_field(name="configurationEndpoints", visibility=["read"])
+    configuration_endpoints: Optional[list[str]] = rest_field(name="configurationEndpoints", visibility=["read"])
     """Configuration Endpoints."""
-    frontends: Optional[List["_models.ResourceId"]] = rest_field(visibility=["read"])
+    frontends: Optional[list["_models.ResourceId"]] = rest_field(visibility=["read"])
     """Frontends References List."""
-    associations: Optional[List["_models.ResourceId"]] = rest_field(visibility=["read"])
+    associations: Optional[list["_models.ResourceId"]] = rest_field(visibility=["read"])
     """Associations References List."""
-    security_policies: Optional[List["_models.ResourceId"]] = rest_field(name="securityPolicies", visibility=["read"])
+    security_policies: Optional[list["_models.ResourceId"]] = rest_field(name="securityPolicies", visibility=["read"])
     """Security Policies References List."""
+    private_endpoint_connections: Optional[list["_models.ResourceId"]] = rest_field(
+        name="privateEndpointConnections", visibility=["read"]
+    )
+    """Private Endpoint Connections List."""
     security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = rest_field(
         name="securityPolicyConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1160,7 +1477,7 @@ class TrafficControllerProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TrafficControllerUpdate(_model_base.Model):
+class TrafficControllerUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the TrafficController.
 
     :ivar tags: Resource tags.
@@ -1169,7 +1486,7 @@ class TrafficControllerUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.servicenetworking.models.TrafficControllerUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.TrafficControllerUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1180,7 +1497,7 @@ class TrafficControllerUpdate(_model_base.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.TrafficControllerUpdateProperties"] = None,
     ) -> None: ...
 
@@ -1195,7 +1512,7 @@ class TrafficControllerUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TrafficControllerUpdateProperties(_model_base.Model):
+class TrafficControllerUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the TrafficController.
 
     :ivar security_policy_configurations: Security Policy Configuration.
@@ -1226,7 +1543,7 @@ class TrafficControllerUpdateProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class WafPolicy(_model_base.Model):
+class WafPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Web Application Firewall Policy.
 
     :ivar id: Resource ID of the WAF. Required.
@@ -1254,7 +1571,7 @@ class WafPolicy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class WafSecurityPolicy(_model_base.Model):
+class WafSecurityPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Web Application Firewall Security Policy.
 
     :ivar id: Resource ID of the Waf Security Policy. Required.
