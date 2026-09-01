@@ -1,6 +1,6 @@
 # Release History
 
-## 41.7.0b1 (2026-08-27)
+## 41.7.0b1 (2026-09-01)
 
 ### Features Added
 
