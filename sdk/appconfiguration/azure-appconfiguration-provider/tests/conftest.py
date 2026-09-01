@@ -100,6 +100,23 @@ def setup_app_config_keys(wait_for_data_plane_access):
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
+    key_vault_references = (
+        (
+            os.environ.get(
+                "APPCONFIGURATION_KEY_VAULT_REFERENCE2",
+                "https://sanitized.vault.azure.net/secrets/fake-secret2/",
+            ),
+            "https://sanitized.vault.azure.net/secrets/fake-secret2/",
+        ),
+        (
+            os.environ.get(
+                "APPCONFIGURATION_KEY_VAULT_REFERENCE",
+                "https://sanitized.vault.azure.net/secrets/fake-secret/",
+            ),
+            "https://sanitized.vault.azure.net/secrets/fake-secret/",
+        ),
+    )
+
     add_general_regex_sanitizer(
         value="https://sanitized.azconfig.io",
         regex=os.environ.get("APPCONFIGURATION_ENDPOINT_STRING", "https://sanitized.azconfig.io"),
@@ -109,13 +126,11 @@ def add_sanitizers(test_proxy):
         regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "https://sanitized.azconfig.io"),
     )
     add_uri_string_sanitizer()
-    # Register the longer URL2 sanitizer FIRST to prevent URL1's sanitizer from partially matching within URL2
-    add_general_string_sanitizer(
-        value="https://sanitized.vault.azure.net/secrets/fake-secret/",
-        target=os.environ.get(
-            "APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://sanitized.vault.azure.net/secrets/fake-secret/"
-        ),
-    )
+    for target, value in key_vault_references:
+        target = target.rstrip("/") + "/"
+        value = value.rstrip("/") + "/"
+        add_uri_string_sanitizer(target=target, value=value)
+        add_general_string_sanitizer(target=target, value=value)
     add_remove_header_sanitizer(headers="Correlation-Context")
 
     add_general_regex_sanitizer(value="api-version=1970-01-01", regex="api-version=.+")
