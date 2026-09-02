@@ -1,0 +1,59 @@
+parameters:
+  # NuGet feed in this ADO organization whose upstream is
+  # azure-feed://devdiv/DevDiv/Rust.Sdk@Release. Leave empty to fall back to the
+  # DevDiv feed directly, which only works if the build identity has read access
+  # there; System.AccessToken is scoped to this organization, so a local feed is
+  # normally required. See https://aka.ms/rust/cicd.
+  - name: ToolchainFeed
+    type: string
+    default: ''
+  # Directory holding rust-toolchain.toml. The toolchain name is read from that
+  # file, and it lives beside the package rather than at the repository root, so
+  # this has to be set for the correct toolchain to be resolved.
+  - name: WorkingDirectory
+    type: string
+    default: ''
+  # Space separated target triples to acquire in addition to the host triple.
+  - name: AdditionalTargets
+    type: string
+    default: ''
+  # Applied to every step so callers can skip the install on jobs that will not
+  # build a binary wheel.
+  - name: Condition
+    type: string
+    default: succeeded()
+
+steps:
+  # Installs msrustup and the toolchain named by rust-toolchain.toml, and exports
+  # CARGO_HOME, MSRUSTUP_HOME, MSRUSTUP_TOOLCHAIN, RUST_VERSION, RUST_BIN_PATH and
+  # an updated PATH to later steps. This is what Windows and macOS agents compile
+  # with. Linux agents do not compile here, see the note on the next step.
+  - task: RustInstaller@1
+    displayName: 'Install internal Rust toolchain'
+    condition: ${{ parameters.Condition }}
+    inputs:
+      ${{ if ne(parameters.ToolchainFeed, '') }}:
+        toolchainFeed: ${{ parameters.ToolchainFeed }}
+      ${{ if ne(parameters.WorkingDirectory, '') }}:
+        workingDirectory: ${{ parameters.WorkingDirectory }}
+      ${{ if ne(parameters.AdditionalTargets, '') }}:
+        additionalTargets: ${{ parameters.AdditionalTargets }}
+
+  # RustInstaller only defines MSRUSTUP_FEED_URL when it was given a feed. Later
+  # steps reference $(MSRUSTUP_FEED_URL) to forward the feed into the cibuildwheel
+  # containers, and an undefined variable would be forwarded as the literal string
+  # "$(MSRUSTUP_FEED_URL)" and then used as a URL. Define it as empty instead, which
+  # the msrustup bootstrap treats as "use the default feed".
+  - pwsh: |
+      $feed = $env:MSRUSTUP_FEED_URL
+      if (-not $feed) {
+        Write-Host "MSRUSTUP_FEED_URL is not set, defining it as empty so the container falls back to the default feed."
+        $feed = ''
+      }
+      Write-Host "##vso[task.setvariable variable=MSRUSTUP_FEED_URL]$feed"
+
+      Write-Host "Toolchain:  $env:MSRUSTUP_TOOLCHAIN"
+      Write-Host "Version:    $env:RUST_VERSION"
+      Write-Host "Bin path:   $env:RUST_BIN_PATH"
+    displayName: 'Normalize Rust toolchain variables'
+    condition: ${{ parameters.Condition }}

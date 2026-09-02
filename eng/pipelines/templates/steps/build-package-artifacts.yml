@@ -23,6 +23,18 @@ parameters:
   - name: ExcludePaths
     type: object
     default: []
+  # Install the Microsoft internal Rust toolchain before building. Only needed by
+  # packages whose extension is compiled by msrustup.
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  # Passed to RustInstaller as the directory holding rust-toolchain.toml.
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
 
 steps:
   - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
@@ -117,6 +129,13 @@ steps:
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
+  - ${{ if parameters.InstallMsRustToolchain }}:
+    - template: /eng/pipelines/templates/steps/install-msrust-toolchain.yml
+      parameters:
+        ToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        WorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+
   - pwsh: |
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive --service="${{ parameters.ServiceDirectory }}"
@@ -125,6 +144,15 @@ steps:
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
+      ${{ if parameters.InstallMsRustToolchain }}:
+        # Linux wheels are compiled inside a manylinux container that cibuildwheel
+        # starts, so the toolchain installed on the agent above is not visible to the
+        # compiler. The container installs msrustup itself and needs a credential for
+        # the toolchain feed, forwarded by the package's cibuildwheel environment-pass
+        # list. System.AccessToken is secret, so it is not exported to the environment
+        # unless it is mapped here explicitly.
+        MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+        MSRUSTUP_FEED_URL: $(MSRUSTUP_FEED_URL)
 
   - pwsh: |
       which python

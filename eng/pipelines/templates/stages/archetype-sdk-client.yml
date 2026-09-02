@@ -81,6 +81,15 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -106,6 +115,9 @@ extends:
               BuildDocs: ${{ parameters.BuildDocs }}
               DevFeedName: ${{ parameters.DevFeedName }}
               EnvVars: ${{ parameters.EnvVars }}
+              InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+              MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+              MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
               MatrixConfigs:
                 - ${{ each config in parameters.MatrixConfigs }}:
                     - ${{ config }}

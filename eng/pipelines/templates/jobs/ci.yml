@@ -61,6 +61,15 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
 
 jobs:
   - job: 'Build_Linux'
@@ -88,6 +97,9 @@ jobs:
         ArtifactSuffix: linux
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
 
   - job: 'Build_Windows'
     timeoutInMinutes: 90
@@ -107,6 +119,9 @@ jobs:
         ArtifactSuffix: windows
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
 
   - job: 'Build_MacOS'
     timeoutInMinutes: 90
@@ -126,6 +141,9 @@ jobs:
         ArtifactSuffix: mac
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
 
   - job: 'Build_Extended'
     displayName: Build Extended

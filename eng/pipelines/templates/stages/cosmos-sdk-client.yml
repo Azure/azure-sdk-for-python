@@ -15,6 +15,11 @@ parameters:
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
+    # azure-cosmos compiles a Rust extension with the Microsoft internal toolchain,
+    # so the build agents need msrustup and the toolchain named in the package's
+    # rust-toolchain.toml.
+    InstallMsRustToolchain: true
+    MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/cosmos/azure-cosmos
     # Run only emulator tests in Emulator CI
     TestMarkArgument: cosmosEmulator
     ServiceDirectory: cosmos
