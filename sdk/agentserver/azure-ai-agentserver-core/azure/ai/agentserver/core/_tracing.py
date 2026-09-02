@@ -89,6 +89,7 @@ _OTLP_METRICS_ENDPOINT = "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT"
 _OTLP_METRICS_PROTOCOL = "OTEL_EXPORTER_OTLP_METRICS_PROTOCOL"
 _OTLP_LOGS_ENDPOINT = "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT"
 _OTLP_LOGS_PROTOCOL = "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL"
+_OTEL_TRACES_SAMPLER = "OTEL_TRACES_SAMPLER"
 _OTLP_ENV_VARS = (
     _OTLP_ENDPOINT,
     _OTLP_PROTOCOL,
@@ -101,6 +102,7 @@ _OTLP_ENV_VARS = (
 )
 _DISTRO_OTLP_SUPPRESSION_LOCK = threading.RLock()
 _DISTRO_OTLP_SUPPRESSION_STATE = threading.local()
+_DISABLED_INSTRUMENTATIONS = ("azure_sdk", "httpx", "requests", "urllib", "urllib3")
 
 
 # ======================================================================
@@ -123,6 +125,7 @@ def configure_observability(
     connection_string: Optional[str] = None,
     log_level: Optional[str] = None,
     enable_sensitive_data: bool = False,
+    instrumentation_options: Optional[dict[str, dict[str, Any]]] = None,
 ) -> None:
     """Default observability setup: console logging + tracing/OTel export.
 
@@ -143,6 +146,11 @@ def configure_observability(
         (prompts, tool arguments, results) for Agent Framework SDK
         instrumentation. Defaults to False.
     :paramtype enable_sensitive_data: bool
+    :keyword instrumentation_options: Per-library OpenTelemetry instrumentation
+        options. Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation
+        are disabled by default; set a library's ``enabled`` option to ``True``
+        to enable it.
+    :paramtype instrumentation_options: dict[str, dict[str, Any]] or None
     """
     # Console logging on the root logger so user logs are also visible.
     resolved_level = _config.resolve_log_level(log_level)
@@ -175,12 +183,14 @@ def configure_observability(
     _configure_tracing(
         connection_string=connection_string,
         enable_sensitive_data=enable_sensitive_data,
+        instrumentation_options=instrumentation_options,
     )
 
 
 def _configure_tracing(
     connection_string: Optional[str] = None,
     enable_sensitive_data: bool = False,
+    instrumentation_options: Optional[dict[str, dict[str, Any]]] = None,
 ) -> None:
     """Configure OpenTelemetry exporters via the microsoft-opentelemetry distro.
 
@@ -192,6 +202,8 @@ def _configure_tracing(
     :param enable_sensitive_data: Enable sensitive data recording for
         Agent Framework SDK instrumentation.
     :type enable_sensitive_data: bool
+    :param instrumentation_options: Per-library OpenTelemetry instrumentation options.
+    :type instrumentation_options: dict[str, dict[str, Any]] or None
     """
     resource = _create_resource()
     if resource is None:
@@ -208,8 +220,10 @@ def _configure_tracing(
 
     resolved_span_processors = [
         _FoundryEnrichmentSpanProcessor(
-            agent_name=agent_name, agent_version=agent_version,
-            agent_id=agent_id, project_id=project_id,
+            agent_name=agent_name,
+            agent_version=agent_version,
+            agent_id=agent_id,
+            project_id=project_id,
             agent_blueprint_id=agent_blueprint_id,
             agent_tenant_id=agent_tenant_id,
         ),
@@ -238,6 +252,7 @@ def _configure_tracing(
                 log_record_processors=log_record_processors,
                 connection_string=connection_string,
                 enable_sensitive_data=enable_sensitive_data,
+                instrumentation_options=instrumentation_options,
             )
         logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
     except ImportError:
@@ -254,6 +269,7 @@ def _setup_distro_export(
     log_record_processors: list[Any],
     connection_string: Optional[str] = None,
     enable_sensitive_data: bool = False,
+    instrumentation_options: Optional[dict[str, dict[str, Any]]] = None,
 ) -> None:
     """Delegate to microsoft-opentelemetry distro for exporter configuration.
 
@@ -267,6 +283,7 @@ def _setup_distro_export(
     :keyword connection_string: Application Insights connection string.
     :keyword enable_sensitive_data: Enable sensitive data recording for
         Agent Framework SDK instrumentation.
+    :keyword instrumentation_options: Per-library OpenTelemetry instrumentation options.
     """
     from microsoft.opentelemetry import use_microsoft_opentelemetry
 
@@ -276,6 +293,7 @@ def _setup_distro_export(
         "metric_readers": metric_readers,
         "log_record_processors": log_record_processors,
         "enable_sensitive_data": enable_sensitive_data,
+        "instrumentation_options": _resolve_instrumentation_options(instrumentation_options),
     }
 
     # Azure Monitor export is off by default in the distro — enable it
@@ -283,6 +301,9 @@ def _setup_distro_export(
     if connection_string:
         kwargs["enable_azure_monitor"] = True
         kwargs["azure_monitor_connection_string"] = connection_string
+        # Avoid the distro's default rate limit unless the user selected an OTel sampler.
+        if not os.environ.get(_OTEL_TRACES_SAMPLER):
+            kwargs["sampling_ratio"] = 1.0
 
         # When Entra-based auth is requested, export to Azure Monitor using a
         # system-assigned managed identity (no client id) rather than the
@@ -294,16 +315,24 @@ def _setup_distro_export(
             kwargs["azure_monitor_exporter_credential"] = ManagedIdentityCredential()
 
     # A365 tracing export — enabled only in hosted environments.
-    if (
-        os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "")
-        and os.environ.get("FOUNDRY_AGENT365_TRACING_ENABLED", "").lower() in ("true", "1")
-    ):
+    if os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "") and os.environ.get(
+        "FOUNDRY_AGENT365_TRACING_ENABLED", ""
+    ).lower() in ("true", "1"):
         kwargs["enable_a365"] = True
         kwargs["a365_use_s2s_endpoint"] = True
         kwargs["a365_enable_observability_exporter"] = True
         kwargs["a365_observability_scope_override"] = "api://9b975845-388f-4429-889e-eab1ef63949c/.default"
 
     use_microsoft_opentelemetry(**kwargs)
+
+
+def _resolve_instrumentation_options(
+    instrumentation_options: Optional[dict[str, dict[str, Any]]],
+) -> dict[str, dict[str, Any]]:
+    resolved = {name: {"enabled": False} for name in _DISABLED_INSTRUMENTATIONS}
+    for name, options in (instrumentation_options or {}).items():
+        resolved.setdefault(name, {}).update(options)
+    return resolved
 
 
 def _append_managed_otlp_components(
@@ -426,10 +455,7 @@ def _resolve_otlp_protocol(signal_protocol_env: Optional[str] = None) -> str:
     protocol = protocol or os.environ.get(_OTLP_PROTOCOL) or _OTLP_HTTP_PROTOBUF
     normalized = protocol.strip().lower()
     if normalized not in (_OTLP_HTTP_PROTOBUF, _OTLP_GRPC):
-        raise ValueError(
-            f"Unsupported OTLP protocol {protocol!r}. Use "
-            f"{_OTLP_HTTP_PROTOBUF!r} or {_OTLP_GRPC!r}."
-        )
+        raise ValueError(f"Unsupported OTLP protocol {protocol!r}. Use " f"{_OTLP_HTTP_PROTOBUF!r} or {_OTLP_GRPC!r}.")
     return normalized
 
 
@@ -487,20 +513,20 @@ class TraceContextMiddleware:
 
         # Build a simple dict of headers for the propagators
         raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
-        headers = {
-            k.decode("latin-1"): v.decode("latin-1")
-            for k, v in raw_headers
-        }
+        headers = {k.decode("latin-1"): v.decode("latin-1") for k, v in raw_headers}
 
         # Use the global propagator to extract trace context + baggage
         from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+
         ctx = extract(carrier=headers)
 
         # Add x-request-id as baggage for downstream propagation
         x_request_id = headers.get("x-request-id")
         if x_request_id:
             ctx = _otel_baggage.set_baggage(
-                "x_request_id", x_request_id, context=ctx,
+                "x_request_id",
+                x_request_id,
+                context=ctx,
             )
 
         token = _otel_context.attach(ctx)
@@ -616,9 +642,7 @@ def detach_context(token: Any) -> None:
             )
 
 
-async def trace_stream(
-    iterator: AsyncIterable[StreamContent], span: Any
-) -> AsyncIterator[StreamContent]:
+async def trace_stream(iterator: AsyncIterable[StreamContent], span: Any) -> AsyncIterator[StreamContent]:
     """Wrap a streaming body so the span covers the full transmission.
 
     Yields chunks unchanged.  Ends the span when the iterator is

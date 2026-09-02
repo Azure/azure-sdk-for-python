@@ -50,45 +50,6 @@ class TestCognitiveServicesManagementComputesOperationsAsync(AzureMgmtRecordedTe
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
                     "kind": "str",
-                    "location": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_computes_begin_update(self, resource_group):
-        response = await (
-            await self.client.computes.begin_update(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                compute_name="str",
-                properties={
-                    "properties": "compute_properties",
-                    "etag": "str",
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "kind": "str",
-                    "location": "str",
                     "name": "str",
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",

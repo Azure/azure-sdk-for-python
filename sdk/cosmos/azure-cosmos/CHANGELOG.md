@@ -1,16 +1,15 @@
 ## Release History
+> [!IMPORTANT]
+> We strongly recommend that customers use at least version 4.16.3 of `azure-cosmos`.
 
-### 4.16.4 (Unreleased)
-
-#### Features Added
-
-#### Breaking Changes
+### 4.16.4 (2026-09-02)
 
 #### Bugs Fixed
 * Fixed regression with handling of v1 legacy containers when passing `{}` as a partition key. `{}` and `NonePartitionKeyValue` now both resolve to the `Undefined` effective partition key. See [PR 48422](https://github.com/Azure/azure-sdk-for-python/pull/48422)
 * Fixed the same `TypeError` on system key (migrated) containers, where a missing partition key value resolves to `_Empty` instead of `Undefined`. It now maps to the minimum effective partition key. See [PR 48422](https://github.com/Azure/azure-sdk-for-python/pull/48422)
 
 #### Other Changes
+* Marked the Throughput Buckets feature as GA. See [48838](https://github.com/Azure/azure-sdk-for-python/pull/48838).
 
 ### 4.16.3 (2026-07-29)
 
@@ -83,8 +82,6 @@
 * Enhanced error logging by attaching endpoint information to exceptions during database account retrieval. See [PR 44484](https://github.com/Azure/azure-sdk-for-python/pull/44484)
 
 ### 4.15.0 (2026-02-19)
-> [!IMPORTANT]
-> We strongly recommend that customers use at least version 4.15.0 of `azure-cosmos`.
 
 #### Features Added
 * GA support of Per Partition Automatic Failover and AvailabilityStrategy features.
