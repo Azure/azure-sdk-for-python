@@ -187,7 +187,7 @@ steps:
   # toolchain inside the container. cibuildwheel silently skips names that are
   # not set on the host, so listing them is a no-op elsewhere.
   - pwsh: |
-      Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL MSRUSTUP_ACCESS_TOKEN MSRUSTUP_PAT MSRUSTUP_FEED_URL"
+      Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL MSRUSTUP_ACCESS_TOKEN MSRUSTUP_PAT MSRUSTUP_FEED_URL CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_INDEX CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER"
     displayName: 'Forward PIP_INDEX_URL to cibuildwheel'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
@@ -212,6 +212,12 @@ steps:
         # unless it is mapped here explicitly.
         MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
         MSRUSTUP_FEED_URL: $(MSRUSTUP_FEED_URL)
+        # Cargo credentials for the crates.io replacement feed. CargoAuthenticate
+        # sets these, but the token is secret and so is not placed in the
+        # environment unless it is mapped here. The container needs them because
+        # index.crates.io is not reachable from a build agent.
+        CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+        CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
 
   - pwsh: |
       which python

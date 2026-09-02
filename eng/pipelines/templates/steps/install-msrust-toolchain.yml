@@ -114,6 +114,16 @@ steps:
       Write-Host "Wrote cargo config to $configPath"
       Get-Content $configPath
       Write-Host "##vso[task.setvariable variable=CargoConfigPath]$configPath"
+
+      # cibuildwheel builds Linux wheels inside a container that cannot see this
+      # config. Cargo honors registries.<name>.index from the environment, but it
+      # ignores source replacement set that way, so the container writes its own
+      # minimal config naming this registry and picks the index up from here.
+      # The variable name is derived from the registry name, which is therefore a
+      # fixed contract with the environment-pass list in the package's pyproject.
+      $indexVar = 'CARGO_REGISTRIES_' + ('${{ parameters.CratesIoRegistryName }}' -replace '-', '_').ToUpperInvariant() + '_INDEX'
+      Write-Host "Exporting $indexVar"
+      Write-Host "##vso[task.setvariable variable=$indexVar]${{ parameters.CratesIoFeed }}"
     displayName: 'Configure cargo to use the Azure Artifacts feed'
     condition: ${{ parameters.Condition }}
 

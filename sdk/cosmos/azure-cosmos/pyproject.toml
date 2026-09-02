@@ -90,13 +90,23 @@ manylinux-aarch64-image = "manylinux_2_28"
 # the container. The MSRUSTUP_* values are the caller's credentials for the
 # internal Rust toolchain feed; they are forwarded at build time and must never
 # be written into this file.
+#
+# The CARGO_REGISTRIES_* names point cargo at an Azure Artifacts feed that
+# mirrors crates.io, because a build agent cannot reach index.crates.io. Cargo
+# reads registries.<name>.index and its credentials from the environment, but it
+# ignores source replacement set that way, so before-all writes a small config
+# naming the same registry. The registry name embedded in these variables has to
+# match the one the pipeline authenticates against.
 environment-pass = [
     "PIP_INDEX_URL",
     "MSRUSTUP_ACCESS_TOKEN",
     "MSRUSTUP_PAT",
     "MSRUSTUP_FEED_URL",
+    "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_INDEX",
+    "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN",
+    "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER",
 ]
-environment = { MSRUSTUP_HOME = "/msrustup", PATH = "/msrustup/multiplexers/bin:$PATH", CARGO_NET_GIT_FETCH_WITH_CLI = "true" }
+environment = { MSRUSTUP_HOME = "/msrustup", CARGO_HOME = "/cargo", PATH = "/msrustup/multiplexers/bin:$PATH", CARGO_NET_GIT_FETCH_WITH_CLI = "true" }
 # The extension is compiled by the internal Microsoft toolchain named in
 # rust-toolchain.toml, so the container needs msrustup rather than rustup. The
 # manylinux image already provides git, curl, unzip and a C toolchain; only jq
@@ -104,7 +114,10 @@ environment = { MSRUSTUP_HOME = "/msrustup", PATH = "/msrustup/multiplexers/bin:
 # the msrustup binary into the working directory and /project is the mounted
 # source tree, but `toolchain install` runs inside /project so it reads
 # rust-toolchain.toml.
-before-all = "dnf install -y jq && mkdir -p $MSRUSTUP_HOME/bootstrap && cd $MSRUSTUP_HOME/bootstrap && sh /project/scripts/install-msrustup.sh && cd /project && $MSRUSTUP_HOME/bootstrap/msrustup toolchain install"
+#
+# The cargo config is only written when an index was forwarded, so a local build
+# with direct crates.io access keeps working unchanged.
+before-all = "dnf install -y jq && mkdir -p $MSRUSTUP_HOME/bootstrap && cd $MSRUSTUP_HOME/bootstrap && sh /project/scripts/install-msrustup.sh && cd /project && $MSRUSTUP_HOME/bootstrap/msrustup toolchain install && sh /project/scripts/configure-cargo-feed.sh"
 
 # Windows ARM64 has no hosted ARM64 build agent, so the wheel is cross-compiled
 # from x64. maturin reads the target from CARGO_BUILD_TARGET, and the toolchain
