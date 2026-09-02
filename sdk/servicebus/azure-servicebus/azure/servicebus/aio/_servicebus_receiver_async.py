@@ -903,7 +903,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             ),
             timeout=remaining_timeout,
         )
-        return DeleteMessagesResult(deleted_count)
+        return DeleteMessagesResult(cast(int, deleted_count))
 
     async def purge_messages(
         self,

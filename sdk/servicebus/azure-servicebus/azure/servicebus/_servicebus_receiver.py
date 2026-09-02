@@ -908,7 +908,7 @@ class ServiceBusReceiver(
             ),
             timeout=remaining_timeout,
         )
-        return DeleteMessagesResult(deleted_count)
+        return DeleteMessagesResult(cast(int, deleted_count))
 
     def purge_messages(
         self,

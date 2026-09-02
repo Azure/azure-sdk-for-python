@@ -39,6 +39,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     AMQP_LONG_VALUE: Callable
     AMQP_ARRAY_VALUE: Callable
     AMQP_UINT_VALUE: Callable
+    AMQP_INT_VALUE: Callable
+    AMQP_TIMESTAMP_VALUE: Callable
 
     @staticmethod
     @abstractmethod
@@ -306,7 +308,12 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     async def mgmt_client_setup_async(mgmt_client, *, node, timeout):
-        """Open the management link without dispatching a request."""
+        """Open the management link without dispatching a request.
+
+        :param AMQPClient mgmt_client: Client used to open the management link.
+        :keyword bytes node: Management target.
+        :keyword int timeout: Timeout in seconds.
+        """
 
     @staticmethod
     @abstractmethod

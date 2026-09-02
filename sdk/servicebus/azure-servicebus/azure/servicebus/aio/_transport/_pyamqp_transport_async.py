@@ -531,5 +531,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def mgmt_client_setup_async(mgmt_client: "AMQPClientAsync", *, node: str, timeout: int) -> None:
-        """Open the pyamqp management link without dispatching a request."""
+        """Open the pyamqp management link without dispatching a request.
+
+        :param ~pyamqp.aio.AMQPClientAsync mgmt_client: Client used for management requests.
+        :keyword str node: Management target.
+        :keyword int timeout: Timeout in seconds.
+        """
         await mgmt_client.open_mgmt_link_async(node=node, timeout=timeout or 0)

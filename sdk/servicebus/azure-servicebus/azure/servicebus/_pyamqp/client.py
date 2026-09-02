@@ -464,7 +464,13 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         return status, description, response
 
     def open_mgmt_link(self, node: str = "$management", timeout: float = 0, **kwargs):
-        """Open and wait for a management link without dispatching a request."""
+        """Open and wait for a management link without dispatching a request.
+
+        :param str node: Management target.
+        :param float timeout: Timeout in seconds.
+        :returns: The opened management link.
+        :rtype: ~pyamqp.management_link.ManagementOperation
+        """
         start_time = time.monotonic()
         with self._mgmt_link_lock:
             try:
