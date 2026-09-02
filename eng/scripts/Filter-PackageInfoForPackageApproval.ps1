@@ -4,28 +4,27 @@ param (
     [string] $PackageInfoDirectory,
 
     [Parameter(Mandatory = $true)]
-    [string] $ArtifactsJson,
-
-    [Parameter(Mandatory = $true)]
     [string] $PackageInfoPathPrefix
 )
 
-$artifacts = @($ArtifactsJson | ConvertFrom-Json)
 $packageInfoFiles = @()
 
-foreach ($artifact in $artifacts) {
-    $packageInfoPath = Join-Path $PackageInfoDirectory "$($artifact.name).json"
-    if (!(Test-Path -Path $packageInfoPath -PathType Leaf)) {
-        throw "PackageInfo file was not found: $packageInfoPath"
-    }
+$availablePackageInfoFiles = @(Get-ChildItem -Path $PackageInfoDirectory -Filter '*.json' -File -ErrorAction SilentlyContinue)
+if ($availablePackageInfoFiles.Count -eq 0) {
+    Write-Host "No packages require a package approval check."
+    Write-Host "##vso[task.setvariable variable=PackageApprovalInfoFiles;isOutput=true]"
+    Write-Host "##vso[task.setvariable variable=HasPackageApprovalPackages;isOutput=true]False"
+    exit 0
+}
 
-    $packageInfo = Get-Content -Raw -Path $packageInfoPath | ConvertFrom-Json
+foreach ($packageInfoFile in $availablePackageInfoFiles) {
+    $packageInfo = Get-Content -Raw -Path $packageInfoFile.FullName | ConvertFrom-Json
     if ($packageInfo.SdkType -eq 'mgmt') {
         Write-Host "Package approval is not required for management plane SDKs: $($packageInfo.Name)"
         continue
     }
 
-    $packageInfoFiles += "$PackageInfoPathPrefix/$($artifact.name).json"
+    $packageInfoFiles += "$PackageInfoPathPrefix/$($packageInfoFile.Name)"
 }
 
 $hasPackageApprovalPackages = $packageInfoFiles.Count -gt 0
