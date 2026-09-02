@@ -385,6 +385,7 @@ async def run_all_checks(
     wheel_dir,
     mark_arg: Optional[str],
     injected_packages: str,
+    disablecov: bool,
     dest_dir: Optional[str] = None,
     service: Optional[str] = None,
 ):
@@ -403,6 +404,8 @@ async def run_all_checks(
     :rtype: int
     """
     base_args = [sys.executable, "-m", "azpysdk.main"]
+    if disablecov:
+        base_args.append("--disablecov")
     tasks = []
     semaphore = asyncio.Semaphore(max_parallel)
     combos = [(p, c) for p in packages for c in checks]
@@ -739,6 +742,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
                 temp_wheel_dir,
                 args.mark_arg,
                 args.injected_packages,
+                args.disablecov,
                 args.dest_dir,
                 effective_service,
             )

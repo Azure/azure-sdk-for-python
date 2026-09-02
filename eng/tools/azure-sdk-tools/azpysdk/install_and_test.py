@@ -7,6 +7,7 @@ from typing import Dict, List, Optional
 from .Check import Check, DEPENDENCY_TOOLS_REQUIREMENTS, PACKAGING_REQUIREMENTS, TEST_TOOLS_REQUIREMENTS
 
 from ci_tools.functions import is_error_code_5_allowed, install_into_venv
+from ci_tools.parsing import ParsedSetup
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, set_envvar_defaults
 from ci_tools.logging import logger
@@ -74,28 +75,48 @@ class InstallAndTest(Check):
                 results.append(install_result)
                 continue
 
+            coverage_enabled = self.coverage_enabled and not getattr(args, "disablecov", False)
+            coverage_file = self.get_coverage_file(package_dir) if coverage_enabled else None
             pytest_args = self._build_pytest_args(package_dir, args)
-            pytest_result = self.run_pytest(executable, staging_directory, package_dir, package_name, pytest_args)
+            pytest_result = self.run_pytest(
+                executable,
+                staging_directory,
+                package_dir,
+                package_name,
+                pytest_args,
+                coverage_file,
+            )
             if pytest_result != 0:
                 results.append(pytest_result)
                 continue
 
-            if not self.coverage_enabled:
+            if not coverage_enabled:
                 continue
 
-            coverage_result = self.check_coverage(executable, package_dir, package_name)
+            coverage_result = self.check_coverage(executable, package_dir, package_name, coverage_file)
             if coverage_result != 0:
                 results.append(coverage_result)
 
         return max(results) if results else 0
 
-    def check_coverage(self, executable: str, package_dir: str, package_name: str) -> int:
+    def get_coverage_file(self, package_dir: str) -> str:
+        return os.path.join(package_dir, f".coverage.{self.display_name}")
+
+    def check_coverage(
+        self,
+        executable: str,
+        package_dir: str,
+        package_name: str,
+        coverage_file: str,
+    ) -> int:
         coverage_command = [
             os.path.join(REPO_ROOT, "eng/scripts/run_coverage.py"),
             "-t",
             package_dir,
             "-r",
             REPO_ROOT,
+            "--coverage-file",
+            coverage_file,
         ]
         coverage_result = self.run_venv_command(executable, coverage_command, cwd=package_dir)
         if coverage_result.returncode != 0:
@@ -108,12 +129,20 @@ class InstallAndTest(Check):
         return 0
 
     def run_pytest(
-        self, executable: str, staging_directory: str, package_dir: str, package_name: str, pytest_args: List[str]
+        self,
+        executable: str,
+        staging_directory: str,
+        package_dir: str,
+        package_name: str,
+        pytest_args: List[str],
+        coverage_file: Optional[str] = None,
     ) -> int:
         pytest_command = ["pytest", *pytest_args]
 
         environment = os.environ.copy()
         environment.update({"PYTHONPYCACHEPREFIX": staging_directory})
+        if coverage_file:
+            environment["COVERAGE_FILE"] = coverage_file
 
         logger.info(f"Running pytest for {package_name} with command: {pytest_command}")
         logger.debug(f"with environment vars: {environment}")
@@ -188,10 +217,15 @@ class InstallAndTest(Check):
             logger.warning(f"Test tools requirements file not found at {TEST_TOOLS_REQUIREMENTS}.")
 
     def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
+        extra_args = list(self.additional_pytest_args)
+        if self.coverage_enabled and not getattr(args, "disablecov", False):
+            namespace = ParsedSetup.from_path(package_dir).namespace
+            extra_args.append(f"--cov={namespace}")
+
         return self._build_pytest_args_base(
             package_dir,
             args,
             ignore_globs=["**/.venv*", "**/.venv*/**"],
-            extra_args=self.additional_pytest_args,
+            extra_args=extra_args,
             test_target=package_dir,
         )

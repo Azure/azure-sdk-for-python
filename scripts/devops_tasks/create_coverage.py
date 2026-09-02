@@ -26,8 +26,11 @@ coveragerc = os.path.join(root_dir, ".coveragerc")
 def find_coverage_files():
     coverage_files = []
     for root, _, files in os.walk(sdk_dir):
-        if ".coverage" in files:
-            coverage_files.append(os.path.join(root, ".coverage"))
+        coverage_files.extend(
+            os.path.join(root, coverage_file)
+            for coverage_file in files
+            if coverage_file == ".coverage" or coverage_file.startswith(".coverage.")
+        )
     return sorted(coverage_files)
 
 
@@ -61,8 +64,7 @@ def generate_coverage_xml():
     if os.path.exists(coverage_data_file):
         logging.info("Generating coverage XML")
         commands = ["coverage", "xml", "-i", "--rcfile", coveragerc]
-        run_check_call(commands, root_dir, always_exit=False)
-        return True
+        return run_check_call(commands, root_dir, always_exit=False) is None
 
     logging.error(
         "Coverage file is not available at {} to generate coverage XML".format(
@@ -70,6 +72,63 @@ def generate_coverage_xml():
         )
     )
     return False
+
+
+def find_package_directory(package_name):
+    matches = []
+    for service_name in os.listdir(sdk_dir):
+        package_directory = os.path.join(sdk_dir, service_name, package_name)
+        if os.path.isdir(package_directory):
+            matches.append(package_directory)
+
+    if len(matches) == 1:
+        return matches[0]
+
+    logging.warning(
+        "Unable to map coverage paths for %s: expected one package directory, found %d",
+        package_name,
+        len(matches),
+    )
+    return None
+
+
+def normalize_venv_paths(coverage_xml):
+    package_directories = {}
+
+    def get_package_directory(package_name):
+        if package_name not in package_directories:
+            package_directories[package_name] = find_package_directory(package_name)
+        return package_directories[package_name]
+
+    def replace_file_path(match):
+        package_directory = get_package_directory(match.group("package"))
+        if not package_directory:
+            return match.group(0)
+
+        if match.group("root"):
+            return package_directory.replace(os.sep, "/")
+        return os.path.relpath(package_directory, root_dir).replace(os.sep, "/")
+
+    coverage_xml = re.sub(
+        r"(?P<root>(?:[A-Za-z]:)?[^\"'<>\n]*?/)?"
+        r"\.venv/(?P<package>[^/]+)/\.venv_[^/]+/"
+        r"(?:lib/python[^/]+|Lib)/site-packages",
+        replace_file_path,
+        coverage_xml,
+    )
+
+    def replace_import_path(match):
+        package_directory = get_package_directory(match.group("package"))
+        if not package_directory:
+            return match.group(0)
+
+        return os.path.relpath(package_directory, root_dir).replace(os.sep, ".")
+
+    return re.sub(
+        r"\.?\.venv\.(?P<package>[^.]+)\.\.venv_[\w.]+?\.site-packages",
+        replace_import_path,
+        coverage_xml,
+    )
 
 
 def fix_coverage_xml(coverage_file):
@@ -84,6 +143,10 @@ def fix_coverage_xml(coverage_file):
 
         # replace relative paths in python import pattern
         out = re.sub(r"\.?\.tox[\s\S\.\d]*?\.site-packages", "", out)
+
+        # azpysdk uses repo-level virtual environments, so restore the package
+        # directory that tox paths retained when their environment was removed.
+        out = normalize_venv_paths(out)
 
     if out:
         with open(coverage_file, "w") as cov_file:
