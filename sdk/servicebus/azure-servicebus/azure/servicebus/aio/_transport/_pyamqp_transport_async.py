@@ -528,3 +528,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
         )
         return callback(status, response, description, amqp_transport=PyamqpTransportAsync)
+
+    @staticmethod
+    async def mgmt_client_setup_async(mgmt_client: "AMQPClientAsync", *, node: str, timeout: int) -> None:
+        """Open the pyamqp management link without dispatching a request."""
+        await mgmt_client.open_mgmt_link_async(node=node, timeout=timeout or 0)

@@ -17,6 +17,7 @@ from azure.servicebus._common.constants import (
     MGMT_REQUEST_SESSION_ID,
     MGMT_RESPONSE_MESSAGE_ERROR_CONDITION,
     REQUEST_RESPONSE_BATCH_DELETE_MESSAGES_OPERATION,
+    NEXT_AVAILABLE_SESSION,
     ServiceBusReceiveMode,
 )
 from azure.servicebus._common import mgmt_handlers
@@ -106,6 +107,9 @@ def _receiver(receiver_type, session_id=None):
     receiver._open_with_retry = (
         AsyncMock() if receiver_type is AsyncServiceBusReceiver else MagicMock()
     )
+    receiver._open_mgmt_link_with_retry = (
+        AsyncMock() if receiver_type is AsyncServiceBusReceiver else MagicMock()
+    )
     receiver._mgmt_request_response_with_retry = MagicMock(
         side_effect=AssertionError("destructive requests must not be retried")
     )
@@ -113,6 +117,26 @@ def _receiver(receiver_type, session_id=None):
 
 
 class TestDeleteMessages:
+    @pytest.mark.parametrize(
+        "session_id,expects_session_advice",
+        [(None, False), (NEXT_AVAILABLE_SESSION, True)],
+    )
+    def test_setup_timeout_advice_only_applies_to_next_available_session(
+        self, session_id, expects_session_advice
+    ):
+        receiver = _receiver(ServiceBusReceiver, session_id=session_id)
+        receiver._config = MagicMock(retry_total=0)
+        receiver._container_id = "receiver"
+        receiver._handle_exception = lambda error: error
+
+        def time_out():
+            raise OperationTimeoutError()
+
+        with pytest.raises(OperationTimeoutError) as exc_info:
+            receiver._do_retryable_operation(time_out)
+
+        assert ("NEXT_AVAILABLE_SESSION" in str(exc_info.value)) is expects_session_advice
+
     def test_returns_actual_count_and_uses_one_shot_dispatch(self):
         receiver = _receiver(ServiceBusReceiver)
         cutoff = datetime(2026, 1, 2, 3, 4, tzinfo=timezone.utc)
@@ -137,6 +161,7 @@ class TestDeleteMessages:
         )
         assert 0 < calls[0][3]["timeout"] <= 12
         receiver._open_with_retry.assert_called_once_with(timeout=12)
+        receiver._open_mgmt_link_with_retry.assert_called_once()
         receiver._mgmt_request_response_with_retry.assert_not_called()
 
     def test_setup_failure_does_not_dispatch(self):
@@ -145,6 +170,16 @@ class TestDeleteMessages:
         receiver._mgmt_request_response = MagicMock()
 
         with pytest.raises(RuntimeError, match="open failed"):
+            receiver.delete_messages(1)
+
+        receiver._mgmt_request_response.assert_not_called()
+
+    def test_management_setup_failure_does_not_dispatch(self):
+        receiver = _receiver(ServiceBusReceiver)
+        receiver._open_mgmt_link_with_retry.side_effect = RuntimeError("management open failed")
+        receiver._mgmt_request_response = MagicMock()
+
+        with pytest.raises(RuntimeError, match="management open failed"):
             receiver.delete_messages(1)
 
         receiver._mgmt_request_response.assert_not_called()
@@ -168,13 +203,16 @@ class TestDeleteMessages:
 
         with patch(
             "azure.servicebus._servicebus_receiver.time.monotonic",
-            side_effect=[10.0, 11.5],
+            side_effect=[10.0, 11.0, 11.5],
         ):
             receiver.delete_messages(1, timeout=2)
 
         assert receiver._mgmt_request_response.call_args.kwargs[
             "timeout"
         ] == pytest.approx(0.5)
+        assert receiver._open_mgmt_link_with_retry.call_args.kwargs[
+            "timeout"
+        ] == pytest.approx(1.0)
 
         receiver._mgmt_request_response.reset_mock()
         with patch(
@@ -367,6 +405,30 @@ class TestPurgeMessages:
 
 class TestDeleteMessagesAsync:
     @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "session_id,expects_session_advice",
+        [(None, False), (NEXT_AVAILABLE_SESSION, True)],
+    )
+    async def test_setup_timeout_advice_only_applies_to_next_available_session(
+        self, session_id, expects_session_advice
+    ):
+        receiver = _receiver(AsyncServiceBusReceiver, session_id=session_id)
+        receiver._config = MagicMock(retry_total=0)
+        receiver._container_id = "receiver"
+
+        async def handle_exception(error):
+            return error
+
+        async def time_out():
+            raise OperationTimeoutError()
+
+        receiver._handle_exception = handle_exception
+        with pytest.raises(OperationTimeoutError) as exc_info:
+            await receiver._do_retryable_operation(time_out)
+
+        assert ("NEXT_AVAILABLE_SESSION" in str(exc_info.value)) is expects_session_advice
+
+    @pytest.mark.asyncio
     async def test_returns_actual_count_and_uses_one_shot_dispatch(self):
         receiver = _receiver(AsyncServiceBusReceiver)
         cutoff = datetime(2026, 1, 2, 3, 4, tzinfo=timezone.utc)
@@ -393,6 +455,7 @@ class TestDeleteMessagesAsync:
         )
         assert 0 < calls[0][3]["timeout"] <= 12
         receiver._open_with_retry.assert_awaited_once_with(timeout=12)
+        receiver._open_mgmt_link_with_retry.assert_awaited_once()
         receiver._mgmt_request_response_with_retry.assert_not_called()
 
     @pytest.mark.asyncio
@@ -402,6 +465,17 @@ class TestDeleteMessagesAsync:
         receiver._mgmt_request_response = AsyncMock()
 
         with pytest.raises(RuntimeError, match="open failed"):
+            await receiver.delete_messages(1)
+
+        receiver._mgmt_request_response.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_management_setup_failure_does_not_dispatch(self):
+        receiver = _receiver(AsyncServiceBusReceiver)
+        receiver._open_mgmt_link_with_retry.side_effect = RuntimeError("management open failed")
+        receiver._mgmt_request_response = AsyncMock()
+
+        with pytest.raises(RuntimeError, match="management open failed"):
             await receiver.delete_messages(1)
 
         receiver._mgmt_request_response.assert_not_awaited()
@@ -473,13 +547,16 @@ class TestDeleteMessagesAsync:
 
         with patch(
             "azure.servicebus.aio._servicebus_receiver_async.time.monotonic",
-            side_effect=[10.0, 11.5],
+            side_effect=[10.0, 11.0, 11.5],
         ):
             await receiver.delete_messages(1, timeout=2)
 
         assert receiver._mgmt_request_response.call_args.kwargs[
             "timeout"
         ] == pytest.approx(0.5)
+        assert receiver._open_mgmt_link_with_retry.call_args.kwargs[
+            "timeout"
+        ] == pytest.approx(1.0)
 
         receiver._mgmt_request_response.reset_mock()
         with patch(

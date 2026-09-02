@@ -479,5 +479,4 @@ if __name__ == "__main__":
     asyncio.run(example_receive_deadletter_async())
     asyncio.run(example_session_ops_async())
     asyncio.run(example_delete_and_purge_messages_async())
-    asyncio.run(example_purge_messages_advanced_async())
     asyncio.run(example_purge_messages_from_session_async())

@@ -1083,6 +1083,11 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         return callback(status, response, description, amqp_transport=PyamqpTransport)
 
     @staticmethod
+    def mgmt_client_setup(mgmt_client: "AMQPClient", *, node: str, timeout: int) -> None:
+        """Open the pyamqp management link without dispatching a request."""
+        mgmt_client.open_mgmt_link(node=node, timeout=timeout or 0)
+
+    @staticmethod
     def _handle_amqp_exception_with_condition(
         logger: "Logger",
         condition: Optional[Union[bytes, "ErrorCondition"]],

@@ -38,6 +38,7 @@ from ._common.constants import (
     MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
     ASSOCIATEDLINKPROPERTYNAME,
     REQUEST_RESPONSE_TIMEOUT,
+    NEXT_AVAILABLE_SESSION,
 )
 
 if TYPE_CHECKING:
@@ -408,7 +409,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         self._container_id,
                         last_exception,
                     )
-                    if isinstance(last_exception, OperationTimeoutError):
+                    if isinstance(last_exception, OperationTimeoutError) and (
+                        getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION
+                    ):
                         description = (
                             "If trying to receive from NEXT_AVAILABLE_SESSION, "
                             "use max_wait_time on the ServiceBusReceiver to control the"
@@ -454,7 +457,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 entity_name,
                 last_exception,
             )
-            if isinstance(last_exception, OperationTimeoutError):
+            if isinstance(last_exception, OperationTimeoutError) and (
+                getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION
+            ):
                 description = (
                     "If trying to receive from NEXT_AVAILABLE_SESSION, "
                     "use max_wait_time on the ServiceBusReceiver to control the"
@@ -567,6 +572,23 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         return self._do_retryable_operation(
             open_with_timeout,
+            timeout=timeout,
+            operation_requires_timeout=timeout is not None,
+        )
+
+    def _open_mgmt_link_with_retry(self, timeout: Optional[float] = None):
+        def open_mgmt_link(timeout: Optional[float] = None):
+            if timeout is not None and timeout <= 0:
+                raise OperationTimeoutError()
+            self._open()
+            return self._amqp_transport.mgmt_client_setup(
+                self._handler,
+                node=self._mgmt_target.encode(self._config.encoding),
+                timeout=timeout,
+            )
+
+        return self._do_retryable_operation(
+            open_mgmt_link,
             timeout=timeout,
             operation_requires_timeout=timeout is not None,
         )

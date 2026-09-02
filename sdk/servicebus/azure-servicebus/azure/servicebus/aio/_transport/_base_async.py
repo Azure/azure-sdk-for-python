@@ -305,6 +305,11 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
+    async def mgmt_client_setup_async(mgmt_client, *, node, timeout):
+        """Open the management link without dispatching a request."""
+
+    @staticmethod
+    @abstractmethod
     async def mgmt_client_request_async(mgmt_client, mgmt_msg, *, operation, operation_type, node, timeout, callback):
         """
         Send mgmt request.

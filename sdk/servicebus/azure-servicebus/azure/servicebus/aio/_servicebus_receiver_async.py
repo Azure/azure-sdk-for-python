@@ -888,6 +888,12 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         )
         if remaining_timeout is not None and remaining_timeout <= 0:
             raise OperationTimeoutError()
+        await self._open_mgmt_link_with_retry(timeout=remaining_timeout)
+        remaining_timeout = (
+            None if timeout is None else timeout - (time.monotonic() - start_time)
+        )
+        if remaining_timeout is not None and remaining_timeout <= 0:
+            raise OperationTimeoutError()
         self._populate_message_properties(message)
         deleted_count = await self._mgmt_request_response(
             REQUEST_RESPONSE_BATCH_DELETE_MESSAGES_OPERATION,
