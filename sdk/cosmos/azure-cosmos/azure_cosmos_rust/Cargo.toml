@@ -20,15 +20,22 @@ crate-type = ["cdylib"]
 [dependencies]
 # PyO3 makes Rust functions Python-callable.
 #
-# `extension-module` : build a Python extension (no link to libpython).
-# `abi3-py310`       : target the stable ABI from Python 3.10 onward, so
-#                      one wheel per platform works for every Python 3.10+.
-pyo3 = { version = "0.22", features = ["extension-module", "abi3-py310"] }
+# `extension-module`    : build a Python extension (no link to libpython).
+# `abi3-py310`          : target the stable ABI from Python 3.10 onward, so
+#                         one wheel per platform works for every Python 3.10+.
+# `generate-import-lib` : synthesize the Windows import library for the target
+#                         architecture instead of taking it from an installed
+#                         interpreter. Required to cross-compile the ARM64
+#                         Windows wheel, which is built on an x64 agent where
+#                         only an x64 interpreter exists. No effect elsewhere.
+pyo3 = { version = "0.22", features = [
+    "extension-module",
+    "abi3-py310",
+    "generate-import-lib",
+] }
 
-# The driver crate, pulled in as a path dependency from a sibling clone of
-# the azure-sdk-for-rust repo. Both repos are expected to live side-by-side
-# under the same parent directory (e.g. ~/source/repos/). If you keep them
-# elsewhere, edit this path or change it to a `git = ...` dependency.
+# The driver crate, pinned to a revision of the azure-sdk-for-rust repo so the
+# build is reproducible and needs no sibling clone.
 #
 # The `__internal_native_query_plan` feature turns on the driver's local
 # query-plan builder. A query plan is the recipe for how to run a query
