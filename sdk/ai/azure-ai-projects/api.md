@@ -282,6 +282,60 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> AgentDetails: ...
 
+        @overload
+        async def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                *, 
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
+                agent_display_name: Optional[str] = ..., 
+                app_version: Optional[str] = ..., 
+                bot_service_arm_id: Optional[str] = ..., 
+                can_respond_without_mention: Optional[bool] = ..., 
+                color_icon_base64: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                developer_name: Optional[str] = ..., 
+                developer_website_url: Optional[str] = ..., 
+                full_description: Optional[str] = ..., 
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
+                outline_icon_base64: Optional[str] = ..., 
+                privacy_url: Optional[str] = ..., 
+                publish_as_autopilot: Optional[bool] = ..., 
+                publish_scope: Union[str, Microsoft365PublishScope], 
+                short_description: Optional[str] = ..., 
+                terms_of_use_url: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @overload
+        async def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @overload
+        async def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get_microsoft365_publish_defaults(
+                self, 
+                agent_name: str, 
+                *, 
+                publish_as_digital_worker: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> Microsoft365PublishDefaults: ...
+
         @distributed_trace_async
         async def get_session(
                 self, 
@@ -354,6 +408,51 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentVersionDetails]: ...
 
+        @overload
+        async def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                *, 
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
+                agent_display_name: Optional[str] = ..., 
+                app_version: Optional[str] = ..., 
+                bot_service_arm_id: Optional[str] = ..., 
+                can_respond_without_mention: Optional[bool] = ..., 
+                color_icon_base64: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                developer_name: Optional[str] = ..., 
+                developer_website_url: Optional[str] = ..., 
+                full_description: Optional[str] = ..., 
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
+                outline_icon_base64: Optional[str] = ..., 
+                privacy_url: Optional[str] = ..., 
+                publish_as_autopilot: Optional[bool] = ..., 
+                publish_scope: Union[str, Microsoft365PublishScope], 
+                short_description: Optional[str] = ..., 
+                terms_of_use_url: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
+
+        @overload
+        async def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
+
+        @overload
+        async def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
+
         @distributed_trace_async
         async def stop_session(
                 self, 
@@ -416,6 +515,221 @@ namespace azure.ai.projects.aio.operations
                 path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
+
+
+    class azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: AgentInsightRunCreate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncAgentInsightRunLROPoller: ...
+
+        @overload
+        async def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncAgentInsightRunLROPoller: ...
+
+        @overload
+        async def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncAgentInsightRunLROPoller: ...
+
+        @distributed_trace_async
+        async def cancel_run(
+                self, 
+                monitor_id: str, 
+                run_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightRun: ...
+
+        @overload
+        async def create(
+                self, 
+                monitor: AgentInsightMonitorCreate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        async def create(
+                self, 
+                monitor: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        async def create(
+                self, 
+                monitor: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @distributed_trace_async
+        async def delete(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @distributed_trace_async
+        async def get_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                *, 
+                include_details: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @distributed_trace_async
+        async def get_run(
+                self, 
+                monitor_id: str, 
+                run_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightRun: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                *, 
+                agent_name: Optional[str] = ..., 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AgentInsightMonitorListItem]: ...
+
+        @distributed_trace
+        def list_insights(
+                self, 
+                monitor_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                category: Optional[str] = ..., 
+                include_details: Optional[bool] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                severity: Optional[Union[str, AgentInsightSeverity]] = ..., 
+                status: Optional[Union[str, AgentInsightStatus]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AgentInsight]: ...
+
+        @distributed_trace
+        def list_runs(
+                self, 
+                monitor_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                status: Optional[Union[str, JobStatus]] = ..., 
+                trigger: Optional[Union[str, AgentInsightRunTrigger]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AgentInsightRun]: ...
+
+        @distributed_trace_async
+        async def reset(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @overload
+        async def update(
+                self, 
+                monitor_id: str, 
+                monitor: AgentInsightMonitorUpdate, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        async def update(
+                self, 
+                monitor_id: str, 
+                monitor: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        async def update(
+                self, 
+                monitor_id: str, 
+                monitor: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        async def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: AgentInsightUpdate, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @overload
+        async def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @overload
+        async def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
 
 
     class azure.ai.projects.aio.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
@@ -1458,6 +1772,7 @@ namespace azure.ai.projects.aio.operations
 
 
     class azure.ai.projects.aio.operations.BetaOperations(GeneratedBetaOperations):
+        agent_insight_monitors: BetaAgentInsightMonitorsOperations
         agents: BetaAgentsOperations
         datasets: BetaDatasetsOperations
         evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
@@ -1537,6 +1852,7 @@ namespace azure.ai.projects.aio.operations
                 routine_name: str, 
                 *, 
                 action: Optional[RoutineAction] = ..., 
+                authorization: Optional[RoutineAuthorization] = ..., 
                 content_type: str = "application/json", 
                 description: Optional[str] = ..., 
                 enabled: Optional[bool] = ..., 
@@ -2467,7 +2783,29 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
+        READ1_ON1_DEVELOPERS = "read.1on1.developers"
+        READ1_ON1_MANAGER = "read.1on1.manager"
+        READ1_ON1_TENANT = "read.1on1.tenant"
+        READ_GROUP_ALLOWLISTED = "read.group.allowlisted"
+        READ_GROUP_DEVELOPERS = "read.group.developers"
+        READ_GROUP_MANAGER_INVITED = "read.group.manager-invited"
+        READ_GROUP_MANAGER_PRESENT = "read.group.manager-present"
+        READ_GROUP_TENANT = "read.group.tenant"
+        WRITE1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
+        WRITE1_ON1_DEVELOPERS = "write.1on1.developers"
+        WRITE1_ON1_MANAGER = "write.1on1.manager"
+        WRITE1_ON1_TENANT = "write.1on1.tenant"
+        WRITE_GROUP_ALLOWLISTED = "write.group.allowlisted"
+        WRITE_GROUP_DEVELOPERS = "write.group.developers"
+        WRITE_GROUP_MANAGER_INVITED = "write.group.manager-invited"
+        WRITE_GROUP_MANAGER_PRESENT = "write.group.manager-present"
+        WRITE_GROUP_TENANT = "write.group.tenant"
+
+
     class azure.ai.projects.models.ActivityProtocolConfiguration(_Model):
+        access_boundaries: Optional[list[Union[str, ActivityProtocolAccessBoundary]]]
         enable_m365_public_endpoint: Optional[bool]
 
         @overload
@@ -2611,6 +2949,7 @@ namespace azure.ai.projects.models
         agent_endpoint: Optional[AgentEndpointConfig]
         blueprint: Optional[AgentIdentity]
         blueprint_reference: Optional[AgentBlueprintReference]
+        digital_worker_type: Optional[Union[str, DigitalWorkerType]]
         id: str
         instance_identity: Optional[AgentIdentity]
         name: str
@@ -2625,6 +2964,7 @@ namespace azure.ai.projects.models
                 *, 
                 agent_card: Optional[AgentCard] = ..., 
                 agent_endpoint: Optional[AgentEndpointConfig] = ..., 
+                digital_worker_type: Optional[Union[str, DigitalWorkerType]] = ..., 
                 id: str, 
                 name: str, 
                 object: Literal[AgentObjectType.AGENT], 
@@ -2659,6 +2999,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.AgentEndpointConfig(_Model):
         authorization_schemes: Optional[list[AgentEndpointAuthorizationScheme]]
         protocol_configuration: Optional[ProtocolConfiguration]
+        publish_approval_status: Optional[Union[str, PublishApprovalStatus]]
         version_selector: Optional[VersionSelector]
 
         @overload
@@ -2723,6 +3064,409 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.AgentIdentityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ACTIVE = "active"
         DISABLED = "disabled"
+
+
+    class azure.ai.projects.models.AgentInsight(_Model):
+        agent_name: str
+        agent_version: str
+        category: str
+        created_at: datetime
+        description: str
+        details: Optional[AgentInsightDetails]
+        id: str
+        monitor_id: str
+        severity: Union[str, AgentInsightSeverity]
+        status: Union[str, AgentInsightStatus]
+        title: str
+        trace_count: int
+        updated_at: datetime
+
+
+    class azure.ai.projects.models.AgentInsightDetails(_Model):
+        highlighted_traces: list[AgentInsightHighlightedTrace]
+        linked_traces: list[AgentInsightLinkedTrace]
+        recommended_actions: AgentInsightRecommendedAction
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                highlighted_traces: list[AgentInsightHighlightedTrace], 
+                linked_traces: list[AgentInsightLinkedTrace], 
+                recommended_actions: AgentInsightRecommendedAction
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightEstimatedCost(_Model):
+        amount: float
+        currency: Literal["USD"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                amount: float
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightHighlightedTrace(_Model):
+        duration_ms: timedelta
+        summary: str
+        timestamp: datetime
+        total_tokens: Optional[int]
+        trace_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                duration_ms: timedelta, 
+                summary: str, 
+                timestamp: datetime, 
+                total_tokens: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightLinkedTrace(_Model):
+        timestamp: datetime
+        trace_id: str
+
+
+    class azure.ai.projects.models.AgentInsightMonitor(_Model):
+        agent_name: str
+        enabled: bool
+        estimated_cost: Optional[AgentInsightEstimatedCost]
+        id: str
+        model_deployment_name: str
+        next_scheduled_run_at: Optional[datetime]
+        overview: AgentInsightsOverview
+        run_interval_hours: float
+        suspension: AgentInsightSuspension
+        updated_at: datetime
+
+
+    class azure.ai.projects.models.AgentInsightMonitorCreate(_Model):
+        agent_name: str
+        enabled: Optional[bool]
+        model_deployment_name: str
+        run_interval_hours: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                enabled: Optional[bool] = ..., 
+                model_deployment_name: str, 
+                run_interval_hours: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightMonitorListItem(_Model):
+        agent_name: str
+        enabled: bool
+        estimated_cost: Optional[AgentInsightEstimatedCost]
+        id: str
+        model_deployment_name: str
+        next_scheduled_run_at: Optional[datetime]
+        run_interval_hours: float
+        suspension: AgentInsightSuspension
+        updated_at: datetime
+
+
+    class azure.ai.projects.models.AgentInsightMonitorUpdate(_Model):
+        enabled: Optional[bool]
+        model_deployment_name: Optional[str]
+        overview_override: Optional[AgentInsightsOverviewOverride]
+        run_interval_hours: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enabled: Optional[bool] = ..., 
+                model_deployment_name: Optional[str] = ..., 
+                overview_override: Optional[AgentInsightsOverviewOverride] = ..., 
+                run_interval_hours: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightOverviewSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        GENERATED = "generated"
+        USER_OVERRIDE = "user_override"
+
+
+    class azure.ai.projects.models.AgentInsightPromptSurface(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INSTRUCTIONS = "instructions"
+        TOOL = "tool"
+
+
+    class azure.ai.projects.models.AgentInsightProposedFix(_Model):
+        changes: Optional[list[AgentInsightProposedFixChange]]
+        kind: Union[str, AgentInsightProposedFixKind]
+        text: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                changes: Optional[list[AgentInsightProposedFixChange]] = ..., 
+                kind: Union[str, AgentInsightProposedFixKind], 
+                text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightProposedFixChange(_Model):
+        diff: Optional[str]
+        language: Optional[str]
+        new_value: Optional[Any]
+        old_value: Optional[Any]
+        path: Optional[str]
+        surface: Optional[Union[str, AgentInsightPromptSurface]]
+        target: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                diff: Optional[str] = ..., 
+                language: Optional[str] = ..., 
+                new_value: Optional[Any] = ..., 
+                old_value: Optional[Any] = ..., 
+                path: Optional[str] = ..., 
+                surface: Optional[Union[str, AgentInsightPromptSurface]] = ..., 
+                target: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightProposedFixKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CODE_CHANGE = "code_change"
+        PROMPT_CHANGE = "prompt_change"
+        PROSE = "prose"
+
+
+    class azure.ai.projects.models.AgentInsightRecommendedAction(_Model):
+        proposed_fix: AgentInsightProposedFix
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                proposed_fix: AgentInsightProposedFix
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightRun(_Model):
+        agent_name: str
+        completed_at: Optional[datetime]
+        created_at: datetime
+        error: Optional[ApiError]
+        id: str
+        inputs: Optional[AgentInsightRunCreate]
+        model_deployment_name: str
+        monitor_id: str
+        result: Optional[AgentInsightRunResult]
+        started_at: Optional[datetime]
+        status: Union[str, JobStatus]
+        trigger: Union[str, AgentInsightRunTrigger]
+        updated_at: datetime
+        window_end: datetime
+        window_start: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                inputs: Optional[AgentInsightRunCreate] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightRunCreate(_Model):
+        lookback_hours: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                lookback_hours: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightRunLROPoller(LROPoller[AgentInsightRunResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: PollingMethod[AgentInsightRunResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AgentInsightRunLROPoller: ...
+
+
+    class azure.ai.projects.models.AgentInsightRunResult(_Model):
+        insights_created: int
+        insights_reopened: int
+        insights_updated: int
+        token_usage: AgentInsightTokenUsage
+        traces_analyzed: int
+        traces_in_window: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                insights_created: int, 
+                insights_reopened: int, 
+                insights_updated: int, 
+                token_usage: AgentInsightTokenUsage, 
+                traces_analyzed: int, 
+                traces_in_window: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightRunTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ON_DEMAND = "on_demand"
+        SCHEDULED = "scheduled"
+
+
+    class azure.ai.projects.models.AgentInsightSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HIGH = "high"
+        LOW = "low"
+        MEDIUM = "medium"
+
+
+    class azure.ai.projects.models.AgentInsightStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE = "active"
+        IGNORED = "ignored"
+        RESOLVED = "resolved"
+
+
+    class azure.ai.projects.models.AgentInsightSuspension(_Model):
+        code: str
+        details: Optional[dict[str, Any]]
+        message: str
+        occurred_at: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: str, 
+                details: Optional[dict[str, Any]] = ..., 
+                message: str, 
+                occurred_at: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightTokenUsage(_Model):
+        cached_tokens: Optional[int]
+        input_tokens: int
+        output_tokens: int
+        total_tokens: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cached_tokens: Optional[int] = ..., 
+                input_tokens: int, 
+                output_tokens: int, 
+                total_tokens: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightUpdate(_Model):
+        status: Optional[Union[str, AgentInsightStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                status: Optional[Union[str, AgentInsightStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightsOverview(_Model):
+        content: str
+        source: Union[str, AgentInsightOverviewSource]
+        updated_at: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: str, 
+                source: Union[str, AgentInsightOverviewSource], 
+                updated_at: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentInsightsOverviewOverride(_Model):
+        content: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3233,6 +3977,26 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AsyncAgentInsightRunLROPoller(AsyncLROPoller[AgentInsightRunResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: AsyncPollingMethod[AgentInsightRunResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AsyncAgentInsightRunLROPoller: ...
 
 
     class azure.ai.projects.models.AsyncAgentOptimizationLROPoller(AsyncLROPoller[AgentOptimizationJobResult]):
@@ -4936,6 +5700,10 @@ namespace azure.ai.projects.models
         MODEL_DEPLOYMENT = "ModelDeployment"
 
 
+    class azure.ai.projects.models.DigitalWorkerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        M365 = "m365"
+
+
     class azure.ai.projects.models.Dimension(_Model):
         always_applicable: Optional[bool]
         description: str
@@ -6101,6 +6869,7 @@ namespace azure.ai.projects.models
         memory: str
         protocol_versions: Optional[list[ProtocolVersionRecord]]
         rai_config: RaiConfig
+        session_configuration: Optional[SessionConfiguration]
         telemetry_config: Optional[TelemetryConfig]
 
         @overload
@@ -6114,6 +6883,7 @@ namespace azure.ai.projects.models
                 memory: str, 
                 protocol_versions: Optional[list[ProtocolVersionRecord]] = ..., 
                 rai_config: Optional[RaiConfig] = ..., 
+                session_configuration: Optional[SessionConfiguration] = ..., 
                 telemetry_config: Optional[TelemetryConfig] = ...
             ) -> None: ...
 
@@ -7061,6 +7831,86 @@ namespace azure.ai.projects.models
         SUPERSEDED = "superseded"
 
 
+    class azure.ai.projects.models.Microsoft365PermissionScopes(_Model):
+        resource_app_id: str
+        scopes: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource_app_id: str, 
+                scopes: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.Microsoft365PublishDefaults(_Model):
+        agent_display_name: Optional[str]
+        agent_name: Optional[str]
+        app_publish_scope: Optional[Union[str, Microsoft365PublishScope]]
+        app_registration_client_id: Optional[str]
+        app_version: Optional[str]
+        bot_service_arm_id: Optional[str]
+        developer_name: Optional[str]
+        developer_website_url: Optional[str]
+        full_description: Optional[str]
+        privacy_url: Optional[str]
+        recommended_next_app_version: Optional[str]
+        short_description: Optional[str]
+        teams_app_id: Optional[str]
+        terms_of_use_url: Optional[str]
+        title_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_display_name: Optional[str] = ..., 
+                agent_name: Optional[str] = ..., 
+                app_publish_scope: Optional[Union[str, Microsoft365PublishScope]] = ..., 
+                app_registration_client_id: Optional[str] = ..., 
+                app_version: Optional[str] = ..., 
+                bot_service_arm_id: Optional[str] = ..., 
+                developer_name: Optional[str] = ..., 
+                developer_website_url: Optional[str] = ..., 
+                full_description: Optional[str] = ..., 
+                privacy_url: Optional[str] = ..., 
+                recommended_next_app_version: Optional[str] = ..., 
+                short_description: Optional[str] = ..., 
+                teams_app_id: Optional[str] = ..., 
+                terms_of_use_url: Optional[str] = ..., 
+                title_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.Microsoft365PublishResult(_Model):
+        teams_app_id: Optional[str]
+        title_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                teams_app_id: Optional[str] = ..., 
+                title_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.Microsoft365PublishScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PERSONAL = "Personal"
+        SHARED = "Shared"
+        TENANT = "Tenant"
+
+
     class azure.ai.projects.models.MicrosoftFabricPreviewTool(Tool, discriminator='fabric_dataagent_preview'):
         fabric_dataagent_preview: FabricDataAgentToolParameters
         type: Literal[ToolType.FABRIC_DATAAGENT_PREVIEW]
@@ -7754,6 +8604,14 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.PublishApprovalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPROVED = "approved"
+        NOT_PUBLISHED = "not_published"
+        NO_APPROVAL_NEEDED = "no_approval_needed"
+        PENDING = "pending"
+        REJECTED = "rejected"
+
+
     class azure.ai.projects.models.RaiConfig(_Model):
         rai_policy_name: str
 
@@ -8049,6 +8907,25 @@ namespace azure.ai.projects.models
         TIMER_DELIVERY = "timer_delivery"
 
 
+    class azure.ai.projects.models.RoutineAuthorization(_Model):
+        identity: Optional[Union[str, RoutineDispatchIdentity]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[Union[str, RoutineDispatchIdentity]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RoutineDispatchIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENT = "agent"
+        CREATOR = "creator"
+
+
     class azure.ai.projects.models.RoutineDispatchPayload(_Model):
         type: str
 
@@ -8341,6 +9218,20 @@ namespace azure.ai.projects.models
         MEDIUM = "medium"
 
 
+    class azure.ai.projects.models.SessionConfiguration(_Model):
+        idle_timeout_seconds: Optional[timedelta]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                idle_timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.SessionDirectoryEntry(_Model):
         is_directory: bool
         modified_time: datetime
@@ -8420,6 +9311,29 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 sharepoint_grounding_preview: SharepointGroundingToolParameters
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ShellToolboxTool(ToolboxTool, discriminator='shell'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        description: str
+        environment: ToolboxShellEnvironment
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.SHELL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                description: Optional[str] = ..., 
+                environment: ToolboxShellEnvironment, 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -9146,6 +10060,7 @@ namespace azure.ai.projects.models
         SHELL = "shell"
         TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
         TOOL_SEARCH = "tool_search"
+        WEB_IQ_PREVIEW = "web_iq_preview"
         WEB_SEARCH = "web_search"
         WEB_SEARCH_PREVIEW = "web_search_preview"
         WORK_IQ_PREVIEW = "work_iq_preview"
@@ -9221,6 +10136,80 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ToolboxShellContainerAutoEnvironment(ToolboxShellEnvironment, discriminator='container_auto'):
+        file_ids: Optional[list[str]]
+        memory_limit: Optional[Union[str, ContainerMemoryLimit]]
+        network_policy: Optional[ToolboxShellNetworkPolicy]
+        skills: Optional[list[ContainerSkill]]
+        type: Literal["container_auto"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                file_ids: Optional[list[str]] = ..., 
+                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ..., 
+                network_policy: Optional[ToolboxShellNetworkPolicy] = ..., 
+                skills: Optional[list[ContainerSkill]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellContainerReferenceEnvironment(ToolboxShellEnvironment, discriminator='container_reference'):
+        container_id: str
+        type: Literal["container_reference"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                container_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellEnvironment(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellNetworkPolicy(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxShellNetworkPolicyDisabled(ToolboxShellNetworkPolicy, discriminator='disabled'):
+        type: Literal["disabled"]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ToolboxSkill(_Model):
         type: str
 
@@ -9283,8 +10272,10 @@ namespace azure.ai.projects.models
         MCP = "mcp"
         OPENAPI = "openapi"
         REMINDER_PREVIEW = "reminder_preview"
+        SHELL = "shell"
         TOOLBOX_SEARCH = "toolbox_search"
         TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+        WEB_IQ_PREVIEW = "web_iq_preview"
         WEB_SEARCH = "web_search"
         WORK_IQ_PREVIEW = "work_iq_preview"
 
@@ -9558,6 +10549,50 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FIXED_RATIO = "FixedRatio"
+
+
+    class azure.ai.projects.models.WebIQPreviewTool(Tool, discriminator='web_iq_preview'):
+        project_connection_id: str
+        require_approval: Optional[Union[MCPToolRequireApproval, str]]
+        server_label: Optional[str]
+        type: Literal[ToolType.WEB_IQ_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                project_connection_id: str, 
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
+                server_label: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.WebIQPreviewToolboxTool(ToolboxTool, discriminator='web_iq_preview'):
+        description: str
+        name: str
+        project_connection_id: str
+        require_approval: Optional[Union[MCPToolRequireApproval, str]]
+        server_label: Optional[str]
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.WEB_IQ_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                project_connection_id: str, 
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
+                server_label: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.WebSearchApproximateLocation(_Model):
@@ -9951,6 +10986,60 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> AgentDetails: ...
 
+        @overload
+        def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                *, 
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
+                agent_display_name: Optional[str] = ..., 
+                app_version: Optional[str] = ..., 
+                bot_service_arm_id: Optional[str] = ..., 
+                can_respond_without_mention: Optional[bool] = ..., 
+                color_icon_base64: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                developer_name: Optional[str] = ..., 
+                developer_website_url: Optional[str] = ..., 
+                full_description: Optional[str] = ..., 
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
+                outline_icon_base64: Optional[str] = ..., 
+                privacy_url: Optional[str] = ..., 
+                publish_as_autopilot: Optional[bool] = ..., 
+                publish_scope: Union[str, Microsoft365PublishScope], 
+                short_description: Optional[str] = ..., 
+                terms_of_use_url: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @overload
+        def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @overload
+        def get_microsoft365_package(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get_microsoft365_publish_defaults(
+                self, 
+                agent_name: str, 
+                *, 
+                publish_as_digital_worker: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> Microsoft365PublishDefaults: ...
+
         @distributed_trace
         def get_session(
                 self, 
@@ -10023,6 +11112,51 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> ItemPaged[AgentVersionDetails]: ...
 
+        @overload
+        def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                *, 
+                access_boundaries: Optional[List[Union[str, ActivityProtocolAccessBoundary]]] = ..., 
+                agent_display_name: Optional[str] = ..., 
+                app_version: Optional[str] = ..., 
+                bot_service_arm_id: Optional[str] = ..., 
+                can_respond_without_mention: Optional[bool] = ..., 
+                color_icon_base64: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                developer_name: Optional[str] = ..., 
+                developer_website_url: Optional[str] = ..., 
+                full_description: Optional[str] = ..., 
+                optional_permission_scopes: Optional[List[Microsoft365PermissionScopes]] = ..., 
+                outline_icon_base64: Optional[str] = ..., 
+                privacy_url: Optional[str] = ..., 
+                publish_as_autopilot: Optional[bool] = ..., 
+                publish_scope: Union[str, Microsoft365PublishScope], 
+                short_description: Optional[str] = ..., 
+                terms_of_use_url: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
+
+        @overload
+        def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
+
+        @overload
+        def publish_to_microsoft365(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Microsoft365PublishResult: ...
+
         @distributed_trace
         def stop_session(
                 self, 
@@ -10085,6 +11219,221 @@ namespace azure.ai.projects.operations
                 path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
+
+
+    class azure.ai.projects.operations.BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: AgentInsightRunCreate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightRunLROPoller: ...
+
+        @overload
+        def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightRunLROPoller: ...
+
+        @overload
+        def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightRunLROPoller: ...
+
+        @distributed_trace
+        def cancel_run(
+                self, 
+                monitor_id: str, 
+                run_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightRun: ...
+
+        @overload
+        def create(
+                self, 
+                monitor: AgentInsightMonitorCreate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        def create(
+                self, 
+                monitor: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        def create(
+                self, 
+                monitor: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @distributed_trace
+        def delete(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @distributed_trace
+        def get_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                *, 
+                include_details: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @distributed_trace
+        def get_run(
+                self, 
+                monitor_id: str, 
+                run_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightRun: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                *, 
+                agent_name: Optional[str] = ..., 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[AgentInsightMonitorListItem]: ...
+
+        @distributed_trace
+        def list_insights(
+                self, 
+                monitor_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                category: Optional[str] = ..., 
+                include_details: Optional[bool] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                severity: Optional[Union[str, AgentInsightSeverity]] = ..., 
+                status: Optional[Union[str, AgentInsightStatus]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[AgentInsight]: ...
+
+        @distributed_trace
+        def list_runs(
+                self, 
+                monitor_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                status: Optional[Union[str, JobStatus]] = ..., 
+                trigger: Optional[Union[str, AgentInsightRunTrigger]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[AgentInsightRun]: ...
+
+        @distributed_trace
+        def reset(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @overload
+        def update(
+                self, 
+                monitor_id: str, 
+                monitor: AgentInsightMonitorUpdate, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        def update(
+                self, 
+                monitor_id: str, 
+                monitor: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        def update(
+                self, 
+                monitor_id: str, 
+                monitor: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: AgentInsightUpdate, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @overload
+        def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @overload
+        def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
 
 
     class azure.ai.projects.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
@@ -11129,6 +12478,7 @@ namespace azure.ai.projects.operations
 
 
     class azure.ai.projects.operations.BetaOperations(GeneratedBetaOperations):
+        agent_insight_monitors: BetaAgentInsightMonitorsOperations
         agents: BetaAgentsOperations
         datasets: BetaDatasetsOperations
         evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
@@ -11208,6 +12558,7 @@ namespace azure.ai.projects.operations
                 routine_name: str, 
                 *, 
                 action: Optional[RoutineAction] = ..., 
+                authorization: Optional[RoutineAuthorization] = ..., 
                 content_type: str = "application/json", 
                 description: Optional[str] = ..., 
                 enabled: Optional[bool] = ..., 

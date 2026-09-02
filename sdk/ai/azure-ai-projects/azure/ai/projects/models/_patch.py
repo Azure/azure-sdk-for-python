@@ -34,6 +34,7 @@ from ._patch_evaluation_typeddicts import (
 )
 from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import (
+    AgentInsightRunResult,
     AgentOptimizationJobResult,
     DataGenerationJobResult,
     EvaluatorVersion,
@@ -56,11 +57,13 @@ _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
         _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.DRAFT_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
         _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V2_PREVIEW.value,
     ]
 )
 
 _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
+    "agent_insight_monitors": _FoundryFeaturesOptInKeys.AGENT_INSIGHTS_V1_PREVIEW.value,
     "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
@@ -624,8 +627,89 @@ class AsyncAgentOptimizationLROPoller(AsyncLROPoller[AgentOptimizationJobResult]
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
+class AgentInsightRunLROPoller(LROPoller[AgentInsightRunResult]):
+    """Custom LROPoller for Agent Insights run operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        self._run_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the Agent Insights run operation.
+
+        The mapping contains a ``run_id`` key whose value is the created run ID. Use it to call
+        ``get_run`` or ``cancel_run`` while the run is still in progress.
+
+        :return: A mapping containing the ``run_id`` key.
+        :rtype: Mapping[str, Any]
+        """
+        return {"run_id": self._run_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[AgentInsightRunResult], continuation_token: str, **kwargs: Any
+    ) -> "AgentInsightRunLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AgentInsightRunLROPoller.
+        :rtype: AgentInsightRunLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class AsyncAgentInsightRunLROPoller(AsyncLROPoller[AgentInsightRunResult]):
+    """Custom AsyncLROPoller for Agent Insights run operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+        self._run_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the Agent Insights run operation.
+
+        The mapping contains a ``run_id`` key whose value is the created run ID. Use it to call
+        ``get_run`` or ``cancel_run`` while the run is still in progress.
+
+        :return: A mapping containing the ``run_id`` key.
+        :rtype: Mapping[str, Any]
+        """
+        return {"run_id": self._run_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls,
+        polling_method: AsyncPollingMethod[AgentInsightRunResult],
+        continuation_token: str,
+        **kwargs: Any,
+    ) -> "AsyncAgentInsightRunLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.AsyncPollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AsyncAgentInsightRunLROPoller.
+        :rtype: AsyncAgentInsightRunLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
 __all__: List[str] = [
+    "AgentInsightRunLROPoller",
     "AgentOptimizationLROPoller",
+    "AsyncAgentInsightRunLROPoller",
     "AsyncAgentOptimizationLROPoller",
     "AsyncDatasetGenerationLROPoller",
     "AsyncEvaluatorGenerationLROPoller",

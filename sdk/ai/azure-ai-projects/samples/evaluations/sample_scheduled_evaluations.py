@@ -37,6 +37,7 @@ from azure.ai.projects.models._models import PromptAgentDefinition
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.mgmt.authorization import AuthorizationManagementClient
+from azure.mgmt.authorization.models import RoleAssignmentCreateParameters, RoleAssignmentProperties
 from azure.mgmt.resource.resources import ResourceManagementClient
 import uuid
 from azure.ai.projects.models import (
@@ -156,11 +157,13 @@ def assign_rbac():  # pylint: disable=too-many-statements
             role_assignment = auth_client.role_assignments.create(
                 scope=scope,
                 role_assignment_name=role_assignment_name,
-                parameters={
-                    "role_definition_id": f"{scope}/providers/Microsoft.Authorization/roleDefinitions/{azure_ai_user_role_id}",
-                    "principal_id": principal_id,
-                    "principal_type": "ServicePrincipal",
-                },
+                parameters=RoleAssignmentCreateParameters(
+                    RoleAssignmentProperties(
+                        role_definition_id=f"{scope}/providers/Microsoft.Authorization/roleDefinitions/{azure_ai_user_role_id}",
+                        principal_id=principal_id,
+                        principal_type="ServicePrincipal",
+                    ),
+                ),
             )
 
             print("Successfully assigned 'Azure AI User' role to project managed identity")
