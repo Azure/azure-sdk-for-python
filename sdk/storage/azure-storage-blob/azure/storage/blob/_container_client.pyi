@@ -71,6 +71,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_single_get_size: int = 32 * 1024 * 1024,
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
+        use_session: bool = False,
+        session_provider: Optional[Any] = None,
+        session_account_name: Optional[str] = None,
         **kwargs: Any,
     ) -> None: ...
     def __enter__(self) -> Self: ...

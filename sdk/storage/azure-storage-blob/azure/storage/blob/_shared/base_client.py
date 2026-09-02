@@ -32,6 +32,7 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     RedirectPolicy,
     UserAgentPolicy,
+    StorageSessionPolicy,
 )
 
 from .authentication import SharedKeyCredentialPolicy
@@ -63,6 +64,7 @@ from .response_handlers import PartialBatchErrorException, process_storage_error
 from .shared_access_signature import QueryStringConstants
 from .._version import VERSION
 from .._shared_access_signature import _is_credential_sastoken
+from .session import ContainerSessionProvider
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -134,26 +136,30 @@ class StorageAccountHostsMixin(object):
         self._hosts = kwargs.get("_hosts", {})
         self.scheme = parsed_url.scheme
         self._is_localhost = False
+        self.account_name = kwargs.pop("session_account_name", None)
 
         if service not in ["blob", "queue", "file-share", "dfs"]:
             raise ValueError(f"Invalid service: {service}")
         service_name = service.split("-")[0]
         account = parsed_url.netloc.split(f".{service_name}.core.")
 
-        self.account_name = account[0] if len(account) > 1 else None
+        if self.account_name is None:
+            self.account_name = account[0] if len(account) > 1 else None
         if (
             not self.account_name
             and parsed_url.netloc.startswith("localhost")
             or parsed_url.netloc.startswith("127.0.0.1")
         ):
             self._is_localhost = True
-            self.account_name = parsed_url.path.strip("/")
+            if self.account_name is None:
+                self.account_name = parsed_url.path.strip("/")
 
         secondary_hostname = ""
         if len(account) > 1:
-            self.account_name, primary_hostname, secondary_hostname = _construct_endpoints(
+            derived_name, primary_hostname, secondary_hostname = _construct_endpoints(
                 parsed_url.netloc, account[0]
             )
+            self.account_name = self.account_name or derived_name
         else:
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
 
@@ -330,12 +336,36 @@ class StorageAccountHostsMixin(object):
             config.headers_policy,
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            config.logging_policy,
-            StorageResponseHook(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
             StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
+        use_session = bool(kwargs.pop("use_session", False))
+        session_provider = kwargs.pop("session_provider", None)
+        if use_session:
+            if session_provider is None:
+                sub_kwargs = dict(kwargs)
+                sub_kwargs.pop("_configuration", None)
+                sub_kwargs.pop("pipeline", None)
+                sub_kwargs["transport"] = transport
+                session_provider = ContainerSessionProvider(
+                    f"{self.scheme}://{self.primary_hostname}",
+                    cast(TokenCredential, credential),
+                    **sub_kwargs,
+                )
+
+            policies.append(
+                StorageSessionPolicy(
+                    account_name=self.account_name,
+                    session_provider=session_provider,
+                )
+            )
+        policies.extend(
+            [
+                config.logging_policy,
+                StorageResponseHook(**kwargs),
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs),
+            ]
+        )
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         config.transport = transport  # type: ignore
