@@ -1,14 +1,10 @@
 # Release History
 
-## 1.18.5 (Unreleased)
+## 1.18.5 (2026-09-02)
 
 ### Bugs Fixed
 
 - Made Application Insights export failures best-effort for evaluations using project managed identity authentication.
-
-## 1.18.4 (2026-08-27)
-
-### Bugs Fixed
 
 - Fixed keyword argument routing so bare `messages=[...]` input, with optional top-level `context`, `ground_truth`,
   and `tool_definitions`, is normalized into the already-supported conversation path for `RelevanceEvaluator`,
