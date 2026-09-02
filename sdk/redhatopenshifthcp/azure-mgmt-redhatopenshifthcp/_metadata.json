@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.RedHatOpenShift": "2026-09-01-preview"
   },
-  "commit": "0eae3bdec65b0ea39fa12157b344bd71872b64f7",
+  "commit": "53ff0bd4d6411ea066db067b3250c49fb5b727f6",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/hcpopenshiftclusters",
   "emitterVersion": "0.63.5",
