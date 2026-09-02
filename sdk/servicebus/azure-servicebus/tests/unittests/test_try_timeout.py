@@ -1530,3 +1530,62 @@ class TestSessionHintOnlyForNextAvailableSession:
                 receiver.receive_messages(max_wait_time=1)
 
         assert "NEXT_AVAILABLE_SESSION" in str(exc.value)
+
+
+class TestIteratorBoundsLinkAcquisition:
+    """Iterating an unopened receiver acquires the link, so try_timeout must reach that open."""
+
+    def _receiver(self, seen, try_timeout):
+        from azure.servicebus import ServiceBusClient
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock(), try_timeout=try_timeout)
+        receiver = client.get_queue_receiver("q")
+        receiver._check_live = lambda: None
+        receiver._open = lambda timeout=None: seen.append(timeout)
+        receiver._handler = MagicMock()
+        receiver._message_iter = iter([])  # exhausted, so iteration stops right after the open
+        return receiver
+
+    def test_sync_iterator_open_is_bounded(self):
+        from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
+
+        seen = []
+        with pytest.raises(StopIteration):
+            PyamqpTransport.iter_next(self._receiver(seen, try_timeout=7))
+        assert seen == [7]
+
+    def test_sync_iterator_open_is_unbounded_when_try_timeout_is_off(self):
+        from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
+
+        seen = []
+        with pytest.raises(StopIteration):
+            PyamqpTransport.iter_next(self._receiver(seen, try_timeout=None))
+        assert seen == [None]
+
+    def _async_receiver(self, seen, try_timeout):
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock(), try_timeout=try_timeout)
+        receiver = client.get_queue_receiver("q")
+        receiver._check_live = lambda: None
+
+        async def fake_open(timeout=None):
+            seen.append(timeout)
+
+        async def empty():
+            for item in []:
+                yield item
+
+        receiver._open = fake_open
+        receiver._handler = MagicMock()
+        receiver._message_iter = empty()
+        return receiver
+
+    @pytest.mark.asyncio
+    async def test_async_iterator_open_is_bounded(self):
+        from azure.servicebus.aio._transport._pyamqp_transport_async import PyamqpTransportAsync
+
+        seen = []
+        with pytest.raises(StopAsyncIteration):
+            await PyamqpTransportAsync.iter_next_async(self._async_receiver(seen, try_timeout=7))
+        assert seen == [7]
