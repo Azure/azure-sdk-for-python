@@ -173,6 +173,17 @@ steps:
         exit 1
       }
       Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+
+      # Cross-compiled ARM64 wheels need a directory of ARM64 import libraries.
+      # Packages that build Rust extensions point PYO3_CROSS_LIB_DIR at this,
+      # which is what tells maturin it is cross-compiling; see the win_arm64
+      # override in the package's pyproject.toml.
+      $arm64Libs = Join-Path $nugetCpython "pythonarm64.$version\tools\libs"
+      if (-not (Test-Path $arm64Libs)) {
+        Write-Error "Expected ARM64 import libraries at $arm64Libs"
+        exit 1
+      }
+      Write-Host "##vso[task.setvariable variable=PYTHON_ARM64_LIB_DIR]$arm64Libs"
     displayName: 'Pre-provision CPython for cibuildwheel'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
 
@@ -196,7 +207,14 @@ steps:
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive --service="${{ parameters.ServiceDirectory }}"
     displayName: 'Generate Packages'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
-    timeoutInMinutes: 80
+    # Packages that compile a Rust extension build one wheel per architecture,
+    # and the Linux aarch64 wheel is compiled inside an emulated container,
+    # which takes roughly an hour on its own. The default is left alone for
+    # everything else.
+    ${{ if parameters.InstallMsRustToolchain }}:
+      timeoutInMinutes: 210
+    ${{ else }}:
+      timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
       # Set to DEBUG for extension builds so sdk_build streams cibuildwheel output

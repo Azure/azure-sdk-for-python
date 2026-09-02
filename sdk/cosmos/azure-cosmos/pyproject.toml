@@ -131,9 +131,18 @@ before-all = "dnf install -y jq && mkdir -p $MSRUSTUP_HOME/bootstrap && cd $MSRU
 # from x64. maturin reads the target from CARGO_BUILD_TARGET, and the toolchain
 # must have been installed with aarch64-pc-windows-msvc as an additional target
 # (the pipeline passes it to RustInstaller).
+#
+# cibuildwheel drives this build with the x64 interpreter, because an ARM64
+# python cannot be executed on an x64 agent. maturin refuses that interpreter
+# once it sees the mismatched target, and without PYO3_CROSS_LIB_DIR it falls
+# back to searching the host for an ARM64 interpreter that cannot exist. Setting
+# the variable moves maturin onto its abi3 Windows cross-compilation path, where
+# it substitutes a placeholder interpreter instead of probing for a real one.
+# The pipeline points it at the ARM64 CPython it already downloads for
+# cibuildwheel, so the value names a real directory of ARM64 import libraries.
 [[tool.cibuildwheel.overrides]]
 select = "*-win_arm64"
-environment = { CARGO_BUILD_TARGET = "aarch64-pc-windows-msvc" }
+environment = { CARGO_BUILD_TARGET = "aarch64-pc-windows-msvc", PYO3_CROSS_LIB_DIR = "$PYTHON_ARM64_LIB_DIR" }
 
 [tool.maturin]
 # Fail the build when Cargo.lock is missing or no longer matches the Cargo.toml
