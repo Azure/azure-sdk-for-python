@@ -37,7 +37,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _MICROSOFT_AVAILABILITY_NAME,
     _MICROSOFT_AVAILABILITY_RUN_LOCATION,
     _MICROSOFT_AVAILABILITY_SUCCESS,
-    _MICROSOFT_AVAILABILITY_TEST_TIMESTAMP,
     _MICROSOFT_CUSTOM_EVENT_NAME,
     _MICROSOFT_CUSTOM_MEASUREMENTS,
     _DEFAULT_LOG_MESSAGE,
@@ -662,10 +661,10 @@ class TestAzureLogExporter(unittest.TestCase):
 
     def test_log_to_envelope_availability(self):
         exporter = self._exporter
-        test_timestamp = "2025-04-19T12:10:59.9930000+00:00"
+        timestamp = 1646865018558419456
         log_data = _logs.ReadWriteLogRecord(
             LogRecord(
-                timestamp=1646865018558419456,
+                timestamp=timestamp,
                 severity_text="INFO",
                 severity_number=SeverityNumber.INFO,
                 body="availability log",
@@ -677,7 +676,6 @@ class TestAzureLogExporter(unittest.TestCase):
                     _MICROSOFT_AVAILABILITY_SUCCESS: "true",
                     _MICROSOFT_AVAILABILITY_RUN_LOCATION: "test-location",
                     _MICROSOFT_AVAILABILITY_MESSAGE: "test-message",
-                    _MICROSOFT_AVAILABILITY_TEST_TIMESTAMP: test_timestamp,
                     _MICROSOFT_CUSTOM_MEASUREMENTS: '{"itemsProcessed": 42.0}',
                 },
             ),
@@ -688,9 +686,7 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(log_data)
 
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Availability")
-        self.assertEqual(
-            envelope.time, datetime.datetime(2025, 4, 19, 12, 10, 59, 993000, tzinfo=datetime.timezone.utc)
-        )
+        self.assertEqual(envelope.time, ns_to_datetime(timestamp))
         self.assertEqual(envelope.data.base_type, "AvailabilityData")
         self.assertEqual(envelope.data.base_data.id, "test-id")
         self.assertEqual(envelope.data.base_data.name, "test-name")
@@ -751,33 +747,6 @@ class TestAzureLogExporter(unittest.TestCase):
 
                 self.assertEqual(envelope.data.base_type, "MessageData")
                 self.assertEqual(envelope.data.base_data.message, "availability log")
-
-    def test_log_to_envelope_availability_invalid_test_timestamp(self):
-        exporter = self._exporter
-        timestamp = 1646865018558419456
-        log_data = _logs.ReadWriteLogRecord(
-            LogRecord(
-                timestamp=timestamp,
-                severity_text="INFO",
-                severity_number=SeverityNumber.INFO,
-                body="availability log",
-                attributes={
-                    _MICROSOFT_AVAILABILITY_ID: "test-id",
-                    _MICROSOFT_AVAILABILITY_NAME: "test-name",
-                    _MICROSOFT_AVAILABILITY_DURATION: "00:00:05",
-                    _MICROSOFT_AVAILABILITY_SUCCESS: "false",
-                    _MICROSOFT_AVAILABILITY_TEST_TIMESTAMP: "invalid",
-                },
-            ),
-            resource=Resource.create(attributes={"asd": "test_resource"}),
-            instrumentation_scope=InstrumentationScope("test_name"),
-        )
-
-        envelope = exporter._log_to_envelope(log_data)
-
-        self.assertEqual(envelope.data.base_type, "AvailabilityData")
-        self.assertFalse(envelope.data.base_data.success)
-        self.assertEqual(envelope.time, ns_to_datetime(timestamp))
 
     def test_log_to_envelope_custom_event_precedes_availability(self):
         exporter = self._exporter
