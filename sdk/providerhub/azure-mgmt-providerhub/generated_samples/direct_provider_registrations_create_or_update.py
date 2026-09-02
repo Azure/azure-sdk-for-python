@@ -41,20 +41,12 @@ def main():
                     {"effect": "Allow", "quotaId": "CSP_MG_2017-12-01"},
                 ],
                 "customManifestVersion": "2.0",
-                "dstsConfiguration": {"serviceDnsName": "prds.sparta.azure.com", "serviceName": "prds-shim"},
                 "legacyNamespace": "legacyNamespace",
                 "legacyRegistrations": ["legacyRegistration"],
                 "management": {
                     "incidentContactEmail": "helpme@contoso.com",
                     "incidentRoutingService": "Contoso Resource Provider",
                     "incidentRoutingTeam": "Contoso Triage",
-                    "serviceTreeInfos": [
-                        {
-                            "componentId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                            "readiness": "InDevelopment",
-                            "serviceId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                        }
-                    ],
                 },
                 "managementGroupGlobalNotificationEndpoints": [
                     {"endpointUri": "{your_management_group_notification_endpoint}"}
@@ -106,6 +98,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/DirectProviderRegistrations_CreateOrUpdate.json
+# x-ms-original-file: 2025-10-01/DirectProviderRegistrations_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

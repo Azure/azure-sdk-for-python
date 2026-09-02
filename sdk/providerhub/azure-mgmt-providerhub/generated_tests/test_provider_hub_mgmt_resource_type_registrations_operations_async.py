@@ -65,7 +65,6 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                         "defaultApiVersion": "str",
                         "disallowedActionVerbs": ["str"],
                         "disallowedEndUserOperations": ["str"],
-                        "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                         "enableAsyncOperation": bool,
                         "enableThirdPartyS2S": bool,
                         "endpoints": [
@@ -73,7 +72,6 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                                 "apiVersion": "str",
                                 "apiVersions": ["str"],
                                 "dataBoundary": "str",
-                                "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                                 "enabled": bool,
                                 "endpointType": "str",
                                 "endpointUri": "str",
@@ -119,6 +117,7 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                                 "linkedActionVerb": "str",
                                 "linkedProperty": "str",
                                 "linkedType": "str",
+                                "options": "str",
                             }
                         ],
                         "linkedNotificationRules": [
@@ -144,12 +143,19 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                                 },
                             }
                         ],
+                        "managedResourceGroupConfiguration": {
+                            "applicationIds": ["str"],
+                            "denyAssignmentConfiguration": {"enabled": bool, "notActions": ["str"]},
+                            "enabled": bool,
+                            "resourceGroupLocationOverride": "str",
+                        },
                         "management": {
                             "authorizationOwners": ["str"],
                             "canaryManifestOwners": ["str"],
                             "errorResponseMessageOptions": {"serverFailureResponseMessageType": "str"},
                             "expeditedRolloutMetadata": {"enabled": bool, "expeditedRolloutIntent": "str"},
                             "expeditedRolloutSubmitters": ["str"],
+                            "featureManagementOwners": ["str"],
                             "incidentContactEmail": "str",
                             "incidentRoutingService": "str",
                             "incidentRoutingTeam": "str",
@@ -159,7 +165,6 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                             "resourceAccessPolicy": "str",
                             "resourceAccessRoles": [{"actions": ["str"], "allowedGroupClaims": ["str"]}],
                             "schemaOwners": ["str"],
-                            "serviceTreeInfos": [{"componentId": "str", "readiness": "str", "serviceId": "str"}],
                         },
                         "manifestLink": "str",
                         "marketplaceOptions": {"addOnPlanConversionAllowed": bool},
@@ -169,6 +174,17 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                         "onBehalfOfTokens": {"actionName": "str", "lifeTime": "str"},
                         "openApiConfiguration": {"validation": {"allowNoncompliantCollectionResponse": bool}},
                         "policyExecutionType": "str",
+                        "privateEndpointConfiguration": {
+                            "groupConnectivityInformation": [
+                                {
+                                    "groupId": "str",
+                                    "requiredMembers": ["str"],
+                                    "requiredZoneNames": ["str"],
+                                    "redirectMapId": "str",
+                                }
+                            ],
+                            "minApiVersion": "str",
+                        },
                         "provisioningState": "str",
                         "quotaRule": {
                             "locationRules": [{"location": "str", "policy": "str", "quotaId": "str"}],
@@ -180,10 +196,26 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                         "requiredFeatures": ["str"],
                         "resourceCache": {"enableResourceCache": bool, "resourceCacheExpirationTimespan": "str"},
                         "resourceConcurrencyControlOptions": {"str": {"policy": "str"}},
+                        "resourceDeletionPolicies": [
+                            {
+                                "policyName": "str",
+                                "properties": {
+                                    "maximumRetentionTime": "1 day, 0:00:00",
+                                    "minimumRetentionTime": "1 day, 0:00:00",
+                                },
+                            }
+                        ],
                         "resourceDeletionPolicy": "str",
                         "resourceGraphConfiguration": {"apiVersion": "str", "enabled": bool},
                         "resourceManagementOptions": {
-                            "batchProvisioningSupport": {"supportedOperations": "str"},
+                            "batchProvisioningSupport": {
+                                "actionConfigurations": [{"authorizationAction": "str", "maxBatchSize": 0}],
+                                "batchContractVersion": "str",
+                                "maxBatchSize": 0,
+                                "maxNestedBatchSize": 0,
+                                "requiredFeatures": ["str"],
+                                "supportedOperations": "str",
+                            },
                             "deleteDependencies": [
                                 {"linkedProperty": "str", "linkedType": "str", "requiredFeatures": ["str"]}
                             ],
@@ -203,13 +235,13 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                         "resourceValidation": "str",
                         "routingRule": {"hostResourceType": "str"},
                         "routingType": "str",
-                        "serviceTreeInfos": [{"componentId": "str", "readiness": "str", "serviceId": "str"}],
                         "skuLink": "str",
                         "subscriptionLifecycleNotificationSpecifications": {
                             "softDeleteTTL": "1 day, 0:00:00",
                             "subscriptionStateOverrideActions": [{"action": "str", "state": "str"}],
                         },
                         "subscriptionStateRules": [{"allowedActions": ["str"], "state": "str"}],
+                        "superScaleEnabled": bool,
                         "supportsTags": bool,
                         "swaggerSpecifications": [{"apiVersions": ["str"], "swaggerSpecFolderUri": "str"}],
                         "templateDeploymentOptions": {"preflightOptions": ["str"], "preflightSupported": bool},
@@ -221,7 +253,9 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                         "throttlingRules": [
                             {
                                 "action": "str",
-                                "metrics": [{"limit": 0, "type": "str", "interval": "1 day, 0:00:00"}],
+                                "metrics": [
+                                    {"limit": 0, "type": "str", "bucketSize": "str", "interval": "1 day, 0:00:00"}
+                                ],
                                 "applicationId": ["str"],
                                 "requiredFeatures": ["str"],
                             }
@@ -231,6 +265,7 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                             "disableCertificateAuthenticationFallback": bool,
                             "signedRequestScope": "str",
                         },
+                        "writeLock": {"state": "str"},
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",

@@ -17,7 +17,44 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AdditionalAuthorization(_Model):
+class ActionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Batch action configuration.
+
+    :ivar authorization_action: Authorization action.
+    :vartype authorization_action: str
+    :ivar max_batch_size: The maximum batch size.
+    :vartype max_batch_size: int
+    """
+
+    authorization_action: Optional[str] = rest_field(
+        name="authorizationAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authorization action."""
+    max_batch_size: Optional[int] = rest_field(
+        name="maxBatchSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum batch size."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization_action: Optional[str] = None,
+        max_batch_size: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AdditionalAuthorization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AdditionalAuthorization.
 
     :ivar application_id:
@@ -52,7 +89,7 @@ class AdditionalAuthorization(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllowedResourceName(_Model):
+class AllowedResourceName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AllowedResourceName.
 
     :ivar name: Resource name.
@@ -87,7 +124,7 @@ class AllowedResourceName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllowedUnauthorizedActionsExtension(_Model):
+class AllowedUnauthorizedActionsExtension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AllowedUnauthorizedActionsExtension.
 
     :ivar action: The action.
@@ -124,7 +161,7 @@ class AllowedUnauthorizedActionsExtension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiProfile(_Model):
+class ApiProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApiProfile.
 
     :ivar profile_version: Profile version.
@@ -161,7 +198,7 @@ class ApiProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationDataAuthorization(_Model):
+class ApplicationDataAuthorization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApplicationDataAuthorization.
 
     :ivar role: The ownership role the application has on the resource types. The service owner
@@ -173,6 +210,9 @@ class ApplicationDataAuthorization(_Model):
      namespace that the application can access. If no resource types are specified and the role is
      service owner, the default is * which is all resource types.
     :vartype resource_types: list[str]
+    :ivar exclude_application_id_from_manifest: Exclude application id from
+     'providerAuthorizations' section of manifest?.
+    :vartype exclude_application_id_from_manifest: bool
     """
 
     role: Union[str, "_models.Role"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -186,6 +226,10 @@ class ApplicationDataAuthorization(_Model):
     """The resource types from the defined resource types in the provider namespace that the
      application can access. If no resource types are specified and the role is service owner, the
      default is * which is all resource types."""
+    exclude_application_id_from_manifest: Optional[bool] = rest_field(
+        name="excludeApplicationIdFromManifest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Exclude application id from 'providerAuthorizations' section of manifest?."""
 
     @overload
     def __init__(
@@ -193,6 +237,7 @@ class ApplicationDataAuthorization(_Model):
         *,
         role: Union[str, "_models.Role"],
         resource_types: Optional[list[str]] = None,
+        exclude_application_id_from_manifest: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -206,7 +251,7 @@ class ApplicationDataAuthorization(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationProviderAuthorization(_Model):
+class ApplicationProviderAuthorization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApplicationProviderAuthorization.
 
     :ivar role_definition_id: The role definition ID for the application.
@@ -243,7 +288,56 @@ class ApplicationProviderAuthorization(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AsyncOperationPollingRules(_Model):
+class AppliedManifestInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Information about a manifest applied to a region.
+
+    :ivar region: Region to which the manifest was applied.
+    :vartype region: str
+    :ivar manifest_applied_at: Time at which the manifest was applied.
+    :vartype manifest_applied_at: ~datetime.datetime
+    :ivar previous_commit_id: Commit id of previous manifest.
+    :vartype previous_commit_id: str
+    :ivar applied_commit_id: Commit id of manifest being applied.
+    :vartype applied_commit_id: str
+    """
+
+    region: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Region to which the manifest was applied."""
+    manifest_applied_at: Optional[datetime.datetime] = rest_field(
+        name="manifestAppliedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Time at which the manifest was applied."""
+    previous_commit_id: Optional[str] = rest_field(
+        name="previousCommitId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Commit id of previous manifest."""
+    applied_commit_id: Optional[str] = rest_field(
+        name="appliedCommitId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Commit id of manifest being applied."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        region: Optional[str] = None,
+        manifest_applied_at: Optional[datetime.datetime] = None,
+        previous_commit_id: Optional[str] = None,
+        applied_commit_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AsyncOperationPollingRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AsyncOperationPollingRules.
 
     :ivar authorization_actions: The authorization actions.
@@ -283,7 +377,7 @@ class AsyncOperationPollingRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AsyncTimeoutRule(_Model):
+class AsyncTimeoutRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AsyncTimeoutRule.
 
     :ivar action_name:
@@ -317,7 +411,7 @@ class AsyncTimeoutRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationActionMapping(_Model):
+class AuthorizationActionMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AuthorizationActionMapping.
 
     :ivar original: The original action name.
@@ -395,7 +489,7 @@ class ProxyResource(Resource):
     """
 
 
-class AuthorizedApplication(ProxyResource):
+class AuthorizedApplication(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -436,7 +530,7 @@ class AuthorizedApplication(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizedApplicationProperties(_Model):
+class AuthorizedApplicationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AuthorizedApplicationProperties.
 
     :ivar provider_authorization:
@@ -485,7 +579,7 @@ class AuthorizedApplicationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CanaryTrafficRegionRolloutConfiguration(_Model):
+class CanaryTrafficRegionRolloutConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CanaryTrafficRegionRolloutConfiguration.
 
     :ivar skip_regions: The skip regions.
@@ -520,7 +614,7 @@ class CanaryTrafficRegionRolloutConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckinManifestInfo(_Model):
+class CheckinManifestInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CheckinManifestInfo.
 
     :ivar is_checked_in: Whether the manifest is checked in. Required.
@@ -565,7 +659,7 @@ class CheckinManifestInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckinManifestParams(_Model):
+class CheckinManifestParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CheckinManifestParams.
 
     :ivar environment: The environment supplied to the checkin manifest operation. Required.
@@ -601,7 +695,7 @@ class CheckinManifestParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilitySpecifications(_Model):
+class CheckNameAvailabilitySpecifications(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CheckNameAvailabilitySpecifications.
 
     :ivar enable_default_validation: Whether default validation is enabled.
@@ -638,7 +732,7 @@ class CheckNameAvailabilitySpecifications(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomRollout(ProxyResource):
+class CustomRollout(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -680,7 +774,7 @@ class CustomRollout(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class CustomRolloutProperties(_Model):
+class CustomRolloutProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CustomRolloutProperties.
 
     :ivar provisioning_state: The provisioned state of the resource. Known values are:
@@ -728,7 +822,7 @@ class CustomRolloutProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomRolloutSpecification(_Model):
+class CustomRolloutSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CustomRolloutSpecification.
 
     :ivar auto_provision_config: The auto provisioning configuration.
@@ -749,6 +843,11 @@ class CustomRolloutSpecification(_Model):
     :ivar resource_type_registrations: The resource type registrations.
     :vartype resource_type_registrations:
      list[~azure.mgmt.providerhub.models.ResourceTypeRegistration]
+    :ivar rollout_id: The rollout id.
+    :vartype rollout_id: str
+    :ivar manifest_checkin_specification: The manifest checkin specification.
+    :vartype manifest_checkin_specification:
+     ~azure.mgmt.providerhub.models.ManifestCheckinSpecification
     """
 
     auto_provision_config: Optional["_models.CustomRolloutSpecificationAutoProvisionConfig"] = rest_field(
@@ -779,6 +878,12 @@ class CustomRolloutSpecification(_Model):
         name="resourceTypeRegistrations", visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource type registrations."""
+    rollout_id: Optional[str] = rest_field(name="rolloutId", visibility=["read", "create", "update", "delete", "query"])
+    """The rollout id."""
+    manifest_checkin_specification: Optional["_models.ManifestCheckinSpecification"] = rest_field(
+        name="manifestCheckinSpecification", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The manifest checkin specification."""
 
     @overload
     def __init__(
@@ -791,6 +896,8 @@ class CustomRolloutSpecification(_Model):
         skip_release_scope_validation: Optional[bool] = None,
         provider_registration: Optional["_models.CustomRolloutSpecificationProviderRegistration"] = None,
         resource_type_registrations: Optional[list["_models.ResourceTypeRegistration"]] = None,
+        rollout_id: Optional[str] = None,
+        manifest_checkin_specification: Optional["_models.ManifestCheckinSpecification"] = None,
     ) -> None: ...
 
     @overload
@@ -804,7 +911,9 @@ class CustomRolloutSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomRolloutPropertiesSpecification(CustomRolloutSpecification):
+class CustomRolloutPropertiesSpecification(
+    CustomRolloutSpecification
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The specification.
 
     :ivar auto_provision_config: The auto provisioning configuration.
@@ -825,6 +934,11 @@ class CustomRolloutPropertiesSpecification(CustomRolloutSpecification):
     :ivar resource_type_registrations: The resource type registrations.
     :vartype resource_type_registrations:
      list[~azure.mgmt.providerhub.models.ResourceTypeRegistration]
+    :ivar rollout_id: The rollout id.
+    :vartype rollout_id: str
+    :ivar manifest_checkin_specification: The manifest checkin specification.
+    :vartype manifest_checkin_specification:
+     ~azure.mgmt.providerhub.models.ManifestCheckinSpecification
     """
 
     @overload
@@ -838,6 +952,8 @@ class CustomRolloutPropertiesSpecification(CustomRolloutSpecification):
         skip_release_scope_validation: Optional[bool] = None,
         provider_registration: Optional["_models.CustomRolloutSpecificationProviderRegistration"] = None,
         resource_type_registrations: Optional[list["_models.ResourceTypeRegistration"]] = None,
+        rollout_id: Optional[str] = None,
+        manifest_checkin_specification: Optional["_models.ManifestCheckinSpecification"] = None,
     ) -> None: ...
 
     @overload
@@ -851,7 +967,7 @@ class CustomRolloutPropertiesSpecification(CustomRolloutSpecification):
         super().__init__(*args, **kwargs)
 
 
-class CustomRolloutStatus(_Model):
+class CustomRolloutStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CustomRolloutStatus.
 
     :ivar completed_regions: The completed regions.
@@ -861,6 +977,8 @@ class CustomRolloutStatus(_Model):
     :ivar manifest_checkin_status: The manifest checkin status.
     :vartype manifest_checkin_status:
      ~azure.mgmt.providerhub.models.CustomRolloutStatusManifestCheckinStatus
+    :ivar completed_regions_info: Information about the manifests applied to the completed regions.
+    :vartype completed_regions_info: list[~azure.mgmt.providerhub.models.AppliedManifestInfo]
     """
 
     completed_regions: Optional[list[str]] = rest_field(
@@ -875,6 +993,10 @@ class CustomRolloutStatus(_Model):
         name="manifestCheckinStatus", visibility=["read", "create", "update", "delete", "query"]
     )
     """The manifest checkin status."""
+    completed_regions_info: Optional[list["_models.AppliedManifestInfo"]] = rest_field(
+        name="completedRegionsInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information about the manifests applied to the completed regions."""
 
     @overload
     def __init__(
@@ -883,6 +1005,7 @@ class CustomRolloutStatus(_Model):
         completed_regions: Optional[list[str]] = None,
         failed_or_skipped_regions: Optional[dict[str, "_models.ExtendedErrorInfo"]] = None,
         manifest_checkin_status: Optional["_models.CustomRolloutStatusManifestCheckinStatus"] = None,
+        completed_regions_info: Optional[list["_models.AppliedManifestInfo"]] = None,
     ) -> None: ...
 
     @overload
@@ -896,7 +1019,7 @@ class CustomRolloutStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomRolloutPropertiesStatus(CustomRolloutStatus):
+class CustomRolloutPropertiesStatus(CustomRolloutStatus):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status.
 
     :ivar completed_regions: The completed regions.
@@ -906,6 +1029,8 @@ class CustomRolloutPropertiesStatus(CustomRolloutStatus):
     :ivar manifest_checkin_status: The manifest checkin status.
     :vartype manifest_checkin_status:
      ~azure.mgmt.providerhub.models.CustomRolloutStatusManifestCheckinStatus
+    :ivar completed_regions_info: Information about the manifests applied to the completed regions.
+    :vartype completed_regions_info: list[~azure.mgmt.providerhub.models.AppliedManifestInfo]
     """
 
     @overload
@@ -915,6 +1040,7 @@ class CustomRolloutPropertiesStatus(CustomRolloutStatus):
         completed_regions: Optional[list[str]] = None,
         failed_or_skipped_regions: Optional[dict[str, "_models.ExtendedErrorInfo"]] = None,
         manifest_checkin_status: Optional["_models.CustomRolloutStatusManifestCheckinStatus"] = None,
+        completed_regions_info: Optional[list["_models.AppliedManifestInfo"]] = None,
     ) -> None: ...
 
     @overload
@@ -928,7 +1054,9 @@ class CustomRolloutPropertiesStatus(CustomRolloutStatus):
         super().__init__(*args, **kwargs)
 
 
-class CustomRolloutSpecificationAutoProvisionConfig(_Model):  # pylint: disable=name-too-long
+class CustomRolloutSpecificationAutoProvisionConfig(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The auto provisioning configuration.
 
     :ivar storage:
@@ -961,7 +1089,7 @@ class CustomRolloutSpecificationAutoProvisionConfig(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class TrafficRegions(_Model):
+class TrafficRegions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TrafficRegions.
 
     :ivar regions:
@@ -988,7 +1116,7 @@ class TrafficRegions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomRolloutSpecificationCanary(TrafficRegions):
+class CustomRolloutSpecificationCanary(TrafficRegions):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The canary region configuration.
 
     :ivar regions:
@@ -1013,7 +1141,7 @@ class CustomRolloutSpecificationCanary(TrafficRegions):
         super().__init__(*args, **kwargs)
 
 
-class ProviderRegistration(ProxyResource):
+class ProviderRegistration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -1065,7 +1193,9 @@ class ProviderRegistration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class CustomRolloutSpecificationProviderRegistration(ProviderRegistration):  # pylint: disable=name-too-long
+class CustomRolloutSpecificationProviderRegistration(
+    ProviderRegistration
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The provider registration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1106,7 +1236,9 @@ class CustomRolloutSpecificationProviderRegistration(ProviderRegistration):  # p
         super().__init__(*args, **kwargs)
 
 
-class CustomRolloutStatusManifestCheckinStatus(CheckinManifestInfo):
+class CustomRolloutStatusManifestCheckinStatus(
+    CheckinManifestInfo
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The manifest checkin status.
 
     :ivar is_checked_in: Whether the manifest is checked in. Required.
@@ -1140,7 +1272,7 @@ class CustomRolloutStatusManifestCheckinStatus(CheckinManifestInfo):
         super().__init__(*args, **kwargs)
 
 
-class DefaultRollout(ProxyResource):
+class DefaultRollout(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -1182,7 +1314,7 @@ class DefaultRollout(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutProperties(_Model):
+class DefaultRolloutProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DefaultRolloutProperties.
 
     :ivar provisioning_state: The provisioned state of the resource. Known values are:
@@ -1230,7 +1362,7 @@ class DefaultRolloutProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutSpecification(_Model):
+class DefaultRolloutSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DefaultRolloutSpecification.
 
     :ivar expedited_rollout: The expedited rollout definition.
@@ -1260,6 +1392,9 @@ class DefaultRolloutSpecification(_Model):
     :ivar auto_provision_config: The auto provisioning config.
     :vartype auto_provision_config:
      ~azure.mgmt.providerhub.models.DefaultRolloutSpecificationAutoProvisionConfig
+    :ivar manifest_checkin_specification: The manifest checkin specification.
+    :vartype manifest_checkin_specification:
+     ~azure.mgmt.providerhub.models.ManifestCheckinSpecification
     """
 
     expedited_rollout: Optional["_models.DefaultRolloutSpecificationExpeditedRollout"] = rest_field(
@@ -1302,6 +1437,10 @@ class DefaultRolloutSpecification(_Model):
         name="autoProvisionConfig", visibility=["read", "create", "update", "delete", "query"]
     )
     """The auto provisioning config."""
+    manifest_checkin_specification: Optional["_models.ManifestCheckinSpecification"] = rest_field(
+        name="manifestCheckinSpecification", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The manifest checkin specification."""
 
     @overload
     def __init__(
@@ -1317,6 +1456,7 @@ class DefaultRolloutSpecification(_Model):
         provider_registration: Optional["_models.DefaultRolloutSpecificationProviderRegistration"] = None,
         resource_type_registrations: Optional[list["_models.ResourceTypeRegistration"]] = None,
         auto_provision_config: Optional["_models.DefaultRolloutSpecificationAutoProvisionConfig"] = None,
+        manifest_checkin_specification: Optional["_models.ManifestCheckinSpecification"] = None,
     ) -> None: ...
 
     @overload
@@ -1330,7 +1470,9 @@ class DefaultRolloutSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutPropertiesSpecification(DefaultRolloutSpecification):
+class DefaultRolloutPropertiesSpecification(
+    DefaultRolloutSpecification
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The default rollout specification.
 
     :ivar expedited_rollout: The expedited rollout definition.
@@ -1360,6 +1502,9 @@ class DefaultRolloutPropertiesSpecification(DefaultRolloutSpecification):
     :ivar auto_provision_config: The auto provisioning config.
     :vartype auto_provision_config:
      ~azure.mgmt.providerhub.models.DefaultRolloutSpecificationAutoProvisionConfig
+    :ivar manifest_checkin_specification: The manifest checkin specification.
+    :vartype manifest_checkin_specification:
+     ~azure.mgmt.providerhub.models.ManifestCheckinSpecification
     """
 
     @overload
@@ -1376,6 +1521,7 @@ class DefaultRolloutPropertiesSpecification(DefaultRolloutSpecification):
         provider_registration: Optional["_models.DefaultRolloutSpecificationProviderRegistration"] = None,
         resource_type_registrations: Optional[list["_models.ResourceTypeRegistration"]] = None,
         auto_provision_config: Optional["_models.DefaultRolloutSpecificationAutoProvisionConfig"] = None,
+        manifest_checkin_specification: Optional["_models.ManifestCheckinSpecification"] = None,
     ) -> None: ...
 
     @overload
@@ -1389,7 +1535,7 @@ class DefaultRolloutPropertiesSpecification(DefaultRolloutSpecification):
         super().__init__(*args, **kwargs)
 
 
-class RolloutStatusBase(_Model):
+class RolloutStatusBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RolloutStatusBase.
 
     :ivar completed_regions: The completed regions.
@@ -1426,7 +1572,7 @@ class RolloutStatusBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutStatus(RolloutStatusBase):
+class DefaultRolloutStatus(RolloutStatusBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DefaultRolloutStatus.
 
     :ivar completed_regions: The completed regions.
@@ -1493,7 +1639,9 @@ class DefaultRolloutStatus(RolloutStatusBase):
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutPropertiesStatus(DefaultRolloutStatus):
+class DefaultRolloutPropertiesStatus(
+    DefaultRolloutStatus
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The default rollout status.
 
     :ivar completed_regions: The completed regions.
@@ -1538,7 +1686,9 @@ class DefaultRolloutPropertiesStatus(DefaultRolloutStatus):
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutSpecificationAutoProvisionConfig(_Model):  # pylint: disable=name-too-long
+class DefaultRolloutSpecificationAutoProvisionConfig(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The auto provisioning config.
 
     :ivar storage: Whether auto provisioning for storage is enabled.
@@ -1573,7 +1723,9 @@ class DefaultRolloutSpecificationAutoProvisionConfig(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutSpecificationCanary(CanaryTrafficRegionRolloutConfiguration):
+class DefaultRolloutSpecificationCanary(
+    CanaryTrafficRegionRolloutConfiguration
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The canary traffic region configuration.
 
     :ivar skip_regions: The skip regions.
@@ -1601,7 +1753,7 @@ class DefaultRolloutSpecificationCanary(CanaryTrafficRegionRolloutConfiguration)
         super().__init__(*args, **kwargs)
 
 
-class ExpeditedRolloutDefinition(_Model):
+class ExpeditedRolloutDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExpeditedRolloutDefinition.
 
     :ivar enabled: Indicates whether expedited rollout is enabled/disabled.
@@ -1629,7 +1781,9 @@ class ExpeditedRolloutDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutSpecificationExpeditedRollout(ExpeditedRolloutDefinition):  # pylint: disable=name-too-long
+class DefaultRolloutSpecificationExpeditedRollout(
+    ExpeditedRolloutDefinition
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The expedited rollout definition.
 
     :ivar enabled: Indicates whether expedited rollout is enabled/disabled.
@@ -1654,7 +1808,7 @@ class DefaultRolloutSpecificationExpeditedRollout(ExpeditedRolloutDefinition):  
         super().__init__(*args, **kwargs)
 
 
-class TrafficRegionRolloutConfiguration(TrafficRegions):
+class TrafficRegionRolloutConfiguration(TrafficRegions):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TrafficRegionRolloutConfiguration.
 
     :ivar regions:
@@ -1687,7 +1841,9 @@ class TrafficRegionRolloutConfiguration(TrafficRegions):
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutSpecificationHighTraffic(TrafficRegionRolloutConfiguration):
+class DefaultRolloutSpecificationHighTraffic(
+    TrafficRegionRolloutConfiguration
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The high traffic region configuration.
 
     :ivar regions:
@@ -1715,7 +1871,9 @@ class DefaultRolloutSpecificationHighTraffic(TrafficRegionRolloutConfiguration):
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutSpecificationLowTraffic(TrafficRegionRolloutConfiguration):
+class DefaultRolloutSpecificationLowTraffic(
+    TrafficRegionRolloutConfiguration
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The low traffic region configuration.
 
     :ivar regions:
@@ -1743,7 +1901,9 @@ class DefaultRolloutSpecificationLowTraffic(TrafficRegionRolloutConfiguration):
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutSpecificationMediumTraffic(TrafficRegionRolloutConfiguration):
+class DefaultRolloutSpecificationMediumTraffic(
+    TrafficRegionRolloutConfiguration
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The medium traffic region configuration.
 
     :ivar regions:
@@ -1771,7 +1931,9 @@ class DefaultRolloutSpecificationMediumTraffic(TrafficRegionRolloutConfiguration
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutSpecificationProviderRegistration(ProviderRegistration):  # pylint: disable=name-too-long
+class DefaultRolloutSpecificationProviderRegistration(
+    ProviderRegistration
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The provider registration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1814,7 +1976,7 @@ class DefaultRolloutSpecificationProviderRegistration(ProviderRegistration):  # 
 
 class DefaultRolloutSpecificationRestOfTheWorldGroupOne(
     TrafficRegionRolloutConfiguration
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The rest of the world group one region configuration.
 
     :ivar regions:
@@ -1844,7 +2006,7 @@ class DefaultRolloutSpecificationRestOfTheWorldGroupOne(
 
 class DefaultRolloutSpecificationRestOfTheWorldGroupTwo(
     TrafficRegionRolloutConfiguration
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The rest of the world group two region configuration.
 
     :ivar regions:
@@ -1872,7 +2034,9 @@ class DefaultRolloutSpecificationRestOfTheWorldGroupTwo(
         super().__init__(*args, **kwargs)
 
 
-class DefaultRolloutStatusManifestCheckinStatus(CheckinManifestInfo):  # pylint: disable=name-too-long
+class DefaultRolloutStatusManifestCheckinStatus(
+    CheckinManifestInfo
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The manifest checkin status.
 
     :ivar is_checked_in: Whether the manifest is checked in. Required.
@@ -1906,7 +2070,7 @@ class DefaultRolloutStatusManifestCheckinStatus(CheckinManifestInfo):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class DeleteDependency(_Model):
+class DeleteDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DeleteDependency.
 
     :ivar required_features: Required features.
@@ -1950,42 +2114,7 @@ class DeleteDependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DstsConfiguration(_Model):
-    """DstsConfiguration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    service_name: str = rest_field(name="serviceName", visibility=["read", "create", "update", "delete", "query"])
-    """The service name. Required."""
-    service_dns_name: Optional[str] = rest_field(
-        name="serviceDnsName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """This is a URI property."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EndpointInformation(_Model):
+class EndpointInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EndpointInformation.
 
     :ivar endpoint: The endpoint.
@@ -2071,7 +2200,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -2099,7 +2228,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedErrorInfo(_Model):
+class ExtendedErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error information.
 
     :ivar code: The error code.
@@ -2151,7 +2280,7 @@ class ExtendedErrorInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocationOptions(_Model):
+class ExtendedLocationOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExtendedLocationOptions.
 
     :ivar type: The type. Known values are: "NotSpecified", "CustomLocation", "EdgeZone", and
@@ -2191,7 +2320,7 @@ class ExtendedLocationOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtensionOptions(_Model):
+class ExtensionOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExtensionOptions.
 
     :ivar request: The request.
@@ -2228,7 +2357,7 @@ class ExtensionOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FanoutLinkedNotificationRule(_Model):
+class FanoutLinkedNotificationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FanoutLinkedNotificationRule.
 
     :ivar token_auth_configuration: The token auth configuration.
@@ -2237,9 +2366,6 @@ class FanoutLinkedNotificationRule(_Model):
     :vartype actions: list[str]
     :ivar endpoints: The endpoints.
     :vartype endpoints: list[~azure.mgmt.providerhub.models.ResourceProviderEndpoint]
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.FanoutLinkedNotificationRuleDstsConfiguration
     """
 
     token_auth_configuration: Optional["_models.TokenAuthConfiguration"] = rest_field(
@@ -2252,10 +2378,6 @@ class FanoutLinkedNotificationRule(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The endpoints."""
-    dsts_configuration: Optional["_models.FanoutLinkedNotificationRuleDstsConfiguration"] = rest_field(
-        name="dstsConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The dsts configuration."""
 
     @overload
     def __init__(
@@ -2264,7 +2386,6 @@ class FanoutLinkedNotificationRule(_Model):
         token_auth_configuration: Optional["_models.TokenAuthConfiguration"] = None,
         actions: Optional[list[str]] = None,
         endpoints: Optional[list["_models.ResourceProviderEndpoint"]] = None,
-        dsts_configuration: Optional["_models.FanoutLinkedNotificationRuleDstsConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -2278,35 +2399,7 @@ class FanoutLinkedNotificationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FanoutLinkedNotificationRuleDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FeaturesRule(_Model):
+class FeaturesRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FeaturesRule.
 
     :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
@@ -2337,7 +2430,7 @@ class FeaturesRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FilterRule(_Model):
+class FilterRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FilterRule.
 
     :ivar filter_query: The filter query.
@@ -2374,23 +2467,42 @@ class FilterRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FrontloadPayload(_Model):
-    """FrontloadPayload.
+class GroupConnectivityInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """GroupConnectivityInformation.
 
-    :ivar properties: Properties of the frontload payload. Required.
-    :vartype properties: ~azure.mgmt.providerhub.models.FrontloadPayloadProperties
+    :ivar group_id: The group id. Required.
+    :vartype group_id: str
+    :ivar required_members: List of required members for the group id. Required.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: List of required zone names for the group id. Required.
+    :vartype required_zone_names: list[str]
+    :ivar redirect_map_id: The redirect map id.
+    :vartype redirect_map_id: str
     """
 
-    properties: "_models.FrontloadPayloadProperties" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    group_id: str = rest_field(name="groupId", visibility=["read", "create", "update", "delete", "query"])
+    """The group id. Required."""
+    required_members: list[str] = rest_field(
+        name="requiredMembers", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Properties of the frontload payload. Required."""
+    """List of required members for the group id. Required."""
+    required_zone_names: list[str] = rest_field(
+        name="requiredZoneNames", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of required zone names for the group id. Required."""
+    redirect_map_id: Optional[str] = rest_field(
+        name="redirectMapId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The redirect map id."""
 
     @overload
     def __init__(
         self,
         *,
-        properties: "_models.FrontloadPayloadProperties",
+        group_id: str,
+        required_members: list[str],
+        required_zone_names: list[str],
+        redirect_map_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2404,322 +2516,7 @@ class FrontloadPayload(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FrontloadPayloadProperties(_Model):
-    """FrontloadPayloadProperties.
-
-    :ivar operation_type: The operation type. Required.
-    :vartype operation_type: str
-    :ivar provider_namespace: The provider namespace. Required.
-    :vartype provider_namespace: str
-    :ivar frontload_location: The frontload location. Required.
-    :vartype frontload_location: str
-    :ivar copy_from_location: The copy from location. Required.
-    :vartype copy_from_location: str
-    :ivar environment_type: The environment type. Required. Known values are: "NotSpecified",
-     "Canary", "Prod", "All", "Mooncake", and "Fairfax".
-    :vartype environment_type: str or
-     ~azure.mgmt.providerhub.models.AvailableCheckInManifestEnvironment
-    :ivar service_feature_flag: The service feature flag. Required. Known values are: "DoNotCreate"
-     and "Create".
-    :vartype service_feature_flag: str or ~azure.mgmt.providerhub.models.ServiceFeatureFlagAction
-    :ivar include_resource_types: The resource types to include. Required.
-    :vartype include_resource_types: list[str]
-    :ivar exclude_resource_types: The resource types to exclude. Required.
-    :vartype exclude_resource_types: list[str]
-    :ivar override_manifest_level_fields: The manifest level fields to override. Required.
-    :vartype override_manifest_level_fields:
-     ~azure.mgmt.providerhub.models.FrontloadPayloadPropertiesOverrideManifestLevelFields
-    :ivar override_endpoint_level_fields: The endpoint level fields to override. Required.
-    :vartype override_endpoint_level_fields:
-     ~azure.mgmt.providerhub.models.FrontloadPayloadPropertiesOverrideEndpointLevelFields
-    :ivar ignore_fields: The fields to ignore. Required.
-    :vartype ignore_fields: list[str]
-    """
-
-    operation_type: str = rest_field(name="operationType", visibility=["read", "create", "update", "delete", "query"])
-    """The operation type. Required."""
-    provider_namespace: str = rest_field(
-        name="providerNamespace", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The provider namespace. Required."""
-    frontload_location: str = rest_field(
-        name="frontloadLocation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The frontload location. Required."""
-    copy_from_location: str = rest_field(
-        name="copyFromLocation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The copy from location. Required."""
-    environment_type: Union[str, "_models.AvailableCheckInManifestEnvironment"] = rest_field(
-        name="environmentType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The environment type. Required. Known values are: \"NotSpecified\", \"Canary\", \"Prod\",
-     \"All\", \"Mooncake\", and \"Fairfax\"."""
-    service_feature_flag: Union[str, "_models.ServiceFeatureFlagAction"] = rest_field(
-        name="serviceFeatureFlag", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The service feature flag. Required. Known values are: \"DoNotCreate\" and \"Create\"."""
-    include_resource_types: list[str] = rest_field(
-        name="includeResourceTypes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource types to include. Required."""
-    exclude_resource_types: list[str] = rest_field(
-        name="excludeResourceTypes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource types to exclude. Required."""
-    override_manifest_level_fields: "_models.FrontloadPayloadPropertiesOverrideManifestLevelFields" = rest_field(
-        name="overrideManifestLevelFields", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The manifest level fields to override. Required."""
-    override_endpoint_level_fields: "_models.FrontloadPayloadPropertiesOverrideEndpointLevelFields" = rest_field(
-        name="overrideEndpointLevelFields", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The endpoint level fields to override. Required."""
-    ignore_fields: list[str] = rest_field(
-        name="ignoreFields", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The fields to ignore. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        operation_type: str,
-        provider_namespace: str,
-        frontload_location: str,
-        copy_from_location: str,
-        environment_type: Union[str, "_models.AvailableCheckInManifestEnvironment"],
-        service_feature_flag: Union[str, "_models.ServiceFeatureFlagAction"],
-        include_resource_types: list[str],
-        exclude_resource_types: list[str],
-        override_manifest_level_fields: "_models.FrontloadPayloadPropertiesOverrideManifestLevelFields",
-        override_endpoint_level_fields: "_models.FrontloadPayloadPropertiesOverrideEndpointLevelFields",
-        ignore_fields: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceTypeEndpointBase(_Model):
-    """ResourceTypeEndpointBase.
-
-    :ivar enabled: Whether it's enabled. Required.
-    :vartype enabled: bool
-    :ivar api_versions: The api versions. Required.
-    :vartype api_versions: list[str]
-    :ivar endpoint_uri: The endpoint uri. Required.
-    :vartype endpoint_uri: str
-    :ivar locations: The locations. Required.
-    :vartype locations: list[str]
-    :ivar required_features: The required features. Required.
-    :vartype required_features: list[str]
-    :ivar features_rule: The features rule. Required.
-    :vartype features_rule: ~azure.mgmt.providerhub.models.ResourceTypeEndpointBaseFeaturesRule
-    :ivar timeout: This is a TimeSpan property. Required.
-    :vartype timeout: ~datetime.timedelta
-    :ivar endpoint_type: The endpoint type. Required. Known values are: "NotSpecified", "Canary",
-     "Production", and "TestInProduction".
-    :vartype endpoint_type: str or ~azure.mgmt.providerhub.models.EndpointType
-    :ivar dsts_configuration: The dsts configuration. Required.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceTypeEndpointBaseDstsConfiguration
-    :ivar sku_link: The sku link. Required.
-    :vartype sku_link: str
-    :ivar api_version: The api version. Required.
-    :vartype api_version: str
-    :ivar zones: The zones. Required.
-    :vartype zones: list[str]
-    """
-
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether it's enabled. Required."""
-    api_versions: list[str] = rest_field(name="apiVersions", visibility=["read", "create", "update", "delete", "query"])
-    """The api versions. Required."""
-    endpoint_uri: str = rest_field(name="endpointUri", visibility=["read", "create", "update", "delete", "query"])
-    """The endpoint uri. Required."""
-    locations: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The locations. Required."""
-    required_features: list[str] = rest_field(
-        name="requiredFeatures", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The required features. Required."""
-    features_rule: "_models.ResourceTypeEndpointBaseFeaturesRule" = rest_field(
-        name="featuresRule", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The features rule. Required."""
-    timeout: datetime.timedelta = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """This is a TimeSpan property. Required."""
-    endpoint_type: Union[str, "_models.EndpointType"] = rest_field(
-        name="endpointType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The endpoint type. Required. Known values are: \"NotSpecified\", \"Canary\", \"Production\",
-     and \"TestInProduction\"."""
-    dsts_configuration: "_models.ResourceTypeEndpointBaseDstsConfiguration" = rest_field(
-        name="dstsConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The dsts configuration. Required."""
-    sku_link: str = rest_field(name="skuLink", visibility=["read", "create", "update", "delete", "query"])
-    """The sku link. Required."""
-    api_version: str = rest_field(name="apiVersion", visibility=["read", "create", "update", "delete", "query"])
-    """The api version. Required."""
-    zones: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The zones. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        api_versions: list[str],
-        endpoint_uri: str,
-        locations: list[str],
-        required_features: list[str],
-        features_rule: "_models.ResourceTypeEndpointBaseFeaturesRule",
-        timeout: datetime.timedelta,
-        endpoint_type: Union[str, "_models.EndpointType"],
-        dsts_configuration: "_models.ResourceTypeEndpointBaseDstsConfiguration",
-        sku_link: str,
-        api_version: str,
-        zones: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FrontloadPayloadPropertiesOverrideEndpointLevelFields(ResourceTypeEndpointBase):  # pylint: disable=name-too-long
-    """The endpoint level fields to override.
-
-    :ivar enabled: Whether it's enabled. Required.
-    :vartype enabled: bool
-    :ivar api_versions: The api versions. Required.
-    :vartype api_versions: list[str]
-    :ivar endpoint_uri: The endpoint uri. Required.
-    :vartype endpoint_uri: str
-    :ivar locations: The locations. Required.
-    :vartype locations: list[str]
-    :ivar required_features: The required features. Required.
-    :vartype required_features: list[str]
-    :ivar features_rule: The features rule. Required.
-    :vartype features_rule: ~azure.mgmt.providerhub.models.ResourceTypeEndpointBaseFeaturesRule
-    :ivar timeout: This is a TimeSpan property. Required.
-    :vartype timeout: ~datetime.timedelta
-    :ivar endpoint_type: The endpoint type. Required. Known values are: "NotSpecified", "Canary",
-     "Production", and "TestInProduction".
-    :vartype endpoint_type: str or ~azure.mgmt.providerhub.models.EndpointType
-    :ivar dsts_configuration: The dsts configuration. Required.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceTypeEndpointBaseDstsConfiguration
-    :ivar sku_link: The sku link. Required.
-    :vartype sku_link: str
-    :ivar api_version: The api version. Required.
-    :vartype api_version: str
-    :ivar zones: The zones. Required.
-    :vartype zones: list[str]
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        api_versions: list[str],
-        endpoint_uri: str,
-        locations: list[str],
-        required_features: list[str],
-        features_rule: "_models.ResourceTypeEndpointBaseFeaturesRule",
-        timeout: datetime.timedelta,
-        endpoint_type: Union[str, "_models.EndpointType"],
-        dsts_configuration: "_models.ResourceTypeEndpointBaseDstsConfiguration",
-        sku_link: str,
-        api_version: str,
-        zones: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ManifestLevelPropertyBag(_Model):
-    """ManifestLevelPropertyBag.
-
-    :ivar resource_hydration_accounts: The resource hydration accounts.
-    :vartype resource_hydration_accounts:
-     list[~azure.mgmt.providerhub.models.ResourceHydrationAccount]
-    """
-
-    resource_hydration_accounts: Optional[list["_models.ResourceHydrationAccount"]] = rest_field(
-        name="resourceHydrationAccounts", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource hydration accounts."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_hydration_accounts: Optional[list["_models.ResourceHydrationAccount"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FrontloadPayloadPropertiesOverrideManifestLevelFields(ManifestLevelPropertyBag):  # pylint: disable=name-too-long
-    """The manifest level fields to override.
-
-    :ivar resource_hydration_accounts: The resource hydration accounts.
-    :vartype resource_hydration_accounts:
-     list[~azure.mgmt.providerhub.models.ResourceHydrationAccount]
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_hydration_accounts: Optional[list["_models.ResourceHydrationAccount"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class IdentityManagement(_Model):
+class IdentityManagement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IdentityManagement.
 
     :ivar type: The type. Known values are: "NotSpecified", "SystemAssigned", "UserAssigned",
@@ -2751,7 +2548,7 @@ class IdentityManagement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityManagementProperties(_Model):
+class IdentityManagementProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IdentityManagementProperties.
 
     :ivar type: The type. Known values are: "NotSpecified", "SystemAssigned", "UserAssigned",
@@ -2804,7 +2601,7 @@ class IdentityManagementProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LegacyDisallowedCondition(_Model):
+class LegacyDisallowedCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LegacyDisallowedCondition.
 
     :ivar disallowed_legacy_operations: The disallowed legacy operations.
@@ -2840,7 +2637,7 @@ class LegacyDisallowedCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LightHouseAuthorization(_Model):
+class LightHouseAuthorization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LightHouseAuthorization.
 
     :ivar principal_id: The principal id. Required.
@@ -2875,7 +2672,7 @@ class LightHouseAuthorization(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinkedAccessCheck(_Model):
+class LinkedAccessCheck(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LinkedAccessCheck.
 
     :ivar action_name: The action name.
@@ -2888,6 +2685,9 @@ class LinkedAccessCheck(_Model):
     :vartype linked_action_verb: str
     :ivar linked_type: The linked type.
     :vartype linked_type: str
+    :ivar options: The options for the linked access check. Known values are: "NotSpecified" and
+     "IgnoreEmptyStringLinkedType".
+    :vartype options: str or ~azure.mgmt.providerhub.models.LinkedAccessCheckOptions
     """
 
     action_name: Optional[str] = rest_field(
@@ -2910,6 +2710,9 @@ class LinkedAccessCheck(_Model):
         name="linkedType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The linked type."""
+    options: Optional[Union[str, "_models.LinkedAccessCheckOptions"]] = rest_field(visibility=["read"])
+    """The options for the linked access check. Known values are: \"NotSpecified\" and
+     \"IgnoreEmptyStringLinkedType\"."""
 
     @overload
     def __init__(
@@ -2933,7 +2736,7 @@ class LinkedAccessCheck(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinkedNotificationRule(_Model):
+class LinkedNotificationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LinkedNotificationRule.
 
     :ivar actions: The actions.
@@ -2989,7 +2792,7 @@ class LinkedNotificationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinkedOperationRule(_Model):
+class LinkedOperationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LinkedOperationRule.
 
     :ivar linked_operation: The linked operation. Required. Known values are: "None",
@@ -3037,7 +2840,7 @@ class LinkedOperationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDefinition(_Model):
+class LocalizedOperationDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LocalizedOperationDefinition.
 
     :ivar name: Name of the operation. Required.
@@ -3050,6 +2853,8 @@ class LocalizedOperationDefinition(_Model):
     :vartype display: ~azure.mgmt.providerhub.models.LocalizedOperationDefinitionDisplay
     :ivar action_type: The action type. Known values are: "NotSpecified" and "Internal".
     :vartype action_type: str or ~azure.mgmt.providerhub.models.OperationActionType
+    :ivar properties: Anything.
+    :vartype properties: any
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3070,6 +2875,8 @@ class LocalizedOperationDefinition(_Model):
         name="actionType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The action type. Known values are: \"NotSpecified\" and \"Internal\"."""
+    properties: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Anything."""
 
     @overload
     def __init__(
@@ -3080,6 +2887,7 @@ class LocalizedOperationDefinition(_Model):
         is_data_action: Optional[bool] = None,
         origin: Optional[Union[str, "_models.OperationOrigins"]] = None,
         action_type: Optional[Union[str, "_models.OperationActionType"]] = None,
+        properties: Optional[Any] = None,
     ) -> None: ...
 
     @overload
@@ -3093,7 +2901,7 @@ class LocalizedOperationDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinition(_Model):
+class LocalizedOperationDisplayDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LocalizedOperationDisplayDefinition.
 
     :ivar default: Display information of the operation. Required.
@@ -3132,6 +2940,8 @@ class LocalizedOperationDisplayDefinition(_Model):
     :vartype zh_hans: ~azure.mgmt.providerhub.models.LocalizedOperationDisplayDefinitionZhHans
     :ivar zh_hant: Display information of the operation for zh-Hant locale.
     :vartype zh_hant: ~azure.mgmt.providerhub.models.LocalizedOperationDisplayDefinitionZhHant
+    :ivar qps_ploc: Display information of the operation for qps-Ploc pseudo locale.
+    :vartype qps_ploc: ~azure.mgmt.providerhub.models.LocalizedOperationDisplayDefinitionQpsPloc
     """
 
     default: "_models.LocalizedOperationDisplayDefinitionDefault" = rest_field(
@@ -3206,6 +3016,10 @@ class LocalizedOperationDisplayDefinition(_Model):
         name="zhHant", visibility=["read", "create", "update", "delete", "query"]
     )
     """Display information of the operation for zh-Hant locale."""
+    qps_ploc: Optional["_models.LocalizedOperationDisplayDefinitionQpsPloc"] = rest_field(
+        name="qpsPloc", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display information of the operation for qps-Ploc pseudo locale."""
 
     @overload
     def __init__(
@@ -3229,6 +3043,7 @@ class LocalizedOperationDisplayDefinition(_Model):
         sv: Optional["_models.LocalizedOperationDisplayDefinitionSv"] = None,
         zh_hans: Optional["_models.LocalizedOperationDisplayDefinitionZhHans"] = None,
         zh_hant: Optional["_models.LocalizedOperationDisplayDefinitionZhHant"] = None,
+        qps_ploc: Optional["_models.LocalizedOperationDisplayDefinitionQpsPloc"] = None,
     ) -> None: ...
 
     @overload
@@ -3242,7 +3057,9 @@ class LocalizedOperationDisplayDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDefinitionDisplay(LocalizedOperationDisplayDefinition):
+class LocalizedOperationDefinitionDisplay(
+    LocalizedOperationDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation.
 
     :ivar default: Display information of the operation. Required.
@@ -3281,6 +3098,8 @@ class LocalizedOperationDefinitionDisplay(LocalizedOperationDisplayDefinition):
     :vartype zh_hans: ~azure.mgmt.providerhub.models.LocalizedOperationDisplayDefinitionZhHans
     :ivar zh_hant: Display information of the operation for zh-Hant locale.
     :vartype zh_hant: ~azure.mgmt.providerhub.models.LocalizedOperationDisplayDefinitionZhHant
+    :ivar qps_ploc: Display information of the operation for qps-Ploc pseudo locale.
+    :vartype qps_ploc: ~azure.mgmt.providerhub.models.LocalizedOperationDisplayDefinitionQpsPloc
     """
 
     @overload
@@ -3305,6 +3124,7 @@ class LocalizedOperationDefinitionDisplay(LocalizedOperationDisplayDefinition):
         sv: Optional["_models.LocalizedOperationDisplayDefinitionSv"] = None,
         zh_hans: Optional["_models.LocalizedOperationDisplayDefinitionZhHans"] = None,
         zh_hant: Optional["_models.LocalizedOperationDisplayDefinitionZhHant"] = None,
+        qps_ploc: Optional["_models.LocalizedOperationDisplayDefinitionQpsPloc"] = None,
     ) -> None: ...
 
     @overload
@@ -3318,7 +3138,7 @@ class LocalizedOperationDefinitionDisplay(LocalizedOperationDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class OperationsDisplayDefinition(_Model):
+class OperationsDisplayDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OperationsDisplayDefinition.
 
     :ivar provider: The provider. Required.
@@ -3361,7 +3181,9 @@ class OperationsDisplayDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionCs(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionCs(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for cs locale.
 
     :ivar provider: The provider. Required.
@@ -3395,7 +3217,9 @@ class LocalizedOperationDisplayDefinitionCs(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionDe(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionDe(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for de locale.
 
     :ivar provider: The provider. Required.
@@ -3429,7 +3253,9 @@ class LocalizedOperationDisplayDefinitionDe(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionDefault(OperationsDisplayDefinition):  # pylint: disable=name-too-long
+class LocalizedOperationDisplayDefinitionDefault(
+    OperationsDisplayDefinition
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Display information of the operation.
 
     :ivar provider: The provider. Required.
@@ -3463,7 +3289,9 @@ class LocalizedOperationDisplayDefinitionDefault(OperationsDisplayDefinition):  
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionEn(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionEn(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for en locale.
 
     :ivar provider: The provider. Required.
@@ -3497,7 +3325,9 @@ class LocalizedOperationDisplayDefinitionEn(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionEs(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionEs(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for es locale.
 
     :ivar provider: The provider. Required.
@@ -3531,7 +3361,9 @@ class LocalizedOperationDisplayDefinitionEs(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionFr(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionFr(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for fr locale.
 
     :ivar provider: The provider. Required.
@@ -3565,7 +3397,9 @@ class LocalizedOperationDisplayDefinitionFr(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionHu(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionHu(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for hu locale.
 
     :ivar provider: The provider. Required.
@@ -3599,7 +3433,9 @@ class LocalizedOperationDisplayDefinitionHu(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionIt(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionIt(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for it locale.
 
     :ivar provider: The provider. Required.
@@ -3633,7 +3469,9 @@ class LocalizedOperationDisplayDefinitionIt(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionJa(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionJa(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for ja locale.
 
     :ivar provider: The provider. Required.
@@ -3667,7 +3505,9 @@ class LocalizedOperationDisplayDefinitionJa(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionKo(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionKo(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for ko locale.
 
     :ivar provider: The provider. Required.
@@ -3701,7 +3541,9 @@ class LocalizedOperationDisplayDefinitionKo(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionNl(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionNl(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for nl locale.
 
     :ivar provider: The provider. Required.
@@ -3735,7 +3577,9 @@ class LocalizedOperationDisplayDefinitionNl(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionPl(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionPl(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for pl locale.
 
     :ivar provider: The provider. Required.
@@ -3769,7 +3613,9 @@ class LocalizedOperationDisplayDefinitionPl(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionPtBR(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionPtBR(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for pt-BR locale.
 
     :ivar provider: The provider. Required.
@@ -3803,7 +3649,9 @@ class LocalizedOperationDisplayDefinitionPtBR(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionPtPT(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionPtPT(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for pt-PT locale.
 
     :ivar provider: The provider. Required.
@@ -3837,7 +3685,45 @@ class LocalizedOperationDisplayDefinitionPtPT(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionRu(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionQpsPloc(
+    OperationsDisplayDefinition
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Display information of the operation for qps-Ploc pseudo locale.
+
+    :ivar provider: The provider. Required.
+    :vartype provider: str
+    :ivar resource: The resource. Required.
+    :vartype resource: str
+    :ivar operation: The operation. Required.
+    :vartype operation: str
+    :ivar description: The description. Required.
+    :vartype description: str
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provider: str,
+        resource: str,
+        operation: str,
+        description: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LocalizedOperationDisplayDefinitionRu(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for ru locale.
 
     :ivar provider: The provider. Required.
@@ -3871,7 +3757,9 @@ class LocalizedOperationDisplayDefinitionRu(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionSv(OperationsDisplayDefinition):
+class LocalizedOperationDisplayDefinitionSv(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation for sv locale.
 
     :ivar provider: The provider. Required.
@@ -3905,7 +3793,9 @@ class LocalizedOperationDisplayDefinitionSv(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionZhHans(OperationsDisplayDefinition):  # pylint: disable=name-too-long
+class LocalizedOperationDisplayDefinitionZhHans(
+    OperationsDisplayDefinition
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Display information of the operation for zh-Hans locale.
 
     :ivar provider: The provider. Required.
@@ -3939,7 +3829,9 @@ class LocalizedOperationDisplayDefinitionZhHans(OperationsDisplayDefinition):  #
         super().__init__(*args, **kwargs)
 
 
-class LocalizedOperationDisplayDefinitionZhHant(OperationsDisplayDefinition):  # pylint: disable=name-too-long
+class LocalizedOperationDisplayDefinitionZhHant(
+    OperationsDisplayDefinition
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Display information of the operation for zh-Hant locale.
 
     :ivar provider: The provider. Required.
@@ -3973,7 +3865,7 @@ class LocalizedOperationDisplayDefinitionZhHant(OperationsDisplayDefinition):  #
         super().__init__(*args, **kwargs)
 
 
-class LocationQuotaRule(_Model):
+class LocationQuotaRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LocationQuotaRule.
 
     :ivar policy: The policy. Known values are: "Default", "None", and "Restricted".
@@ -4013,7 +3905,7 @@ class LocationQuotaRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoggingHiddenPropertyPath(_Model):
+class LoggingHiddenPropertyPath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LoggingHiddenPropertyPath.
 
     :ivar hidden_paths_on_request: The hidden paths on request.
@@ -4050,7 +3942,7 @@ class LoggingHiddenPropertyPath(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoggingRule(_Model):
+class LoggingRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LoggingRule.
 
     :ivar action: The action. Required.
@@ -4099,7 +3991,9 @@ class LoggingRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoggingRuleHiddenPropertyPaths(LoggingHiddenPropertyPath):
+class LoggingRuleHiddenPropertyPaths(
+    LoggingHiddenPropertyPath
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The hidden property paths.
 
     :ivar hidden_paths_on_request: The hidden paths on request.
@@ -4127,7 +4021,163 @@ class LoggingRuleHiddenPropertyPaths(LoggingHiddenPropertyPath):
         super().__init__(*args, **kwargs)
 
 
-class Notification(_Model):
+class ManagedResourceGroupDenyAssignmentConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The deny assignment configuration for the managed resource group.
+
+    :ivar enabled: Indicates whether the deny assignment configuration is enabled.
+    :vartype enabled: bool
+    :ivar not_actions: The actions excluded from the deny assignment.
+    :vartype not_actions: list[str]
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates whether the deny assignment configuration is enabled."""
+    not_actions: Optional[list[str]] = rest_field(
+        name="notActions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The actions excluded from the deny assignment."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        not_actions: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManifestCheckinSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The manifest checkin specification.
+
+    :ivar manifest_checkin_option: The manifest checkin option. Known values are:
+     "AttemptAutomaticManifestCheckin" and "DoNotAttemptAutomaticManifestCheckin".
+    :vartype manifest_checkin_option: str or ~azure.mgmt.providerhub.models.ManifestCheckinOption
+    :ivar manifest_checkin_params: The manifest checkin params.
+    :vartype manifest_checkin_params: ~azure.mgmt.providerhub.models.CheckinManifestParams
+    """
+
+    manifest_checkin_option: Optional[Union[str, "_models.ManifestCheckinOption"]] = rest_field(
+        name="manifestCheckinOption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The manifest checkin option. Known values are: \"AttemptAutomaticManifestCheckin\" and
+     \"DoNotAttemptAutomaticManifestCheckin\"."""
+    manifest_checkin_params: Optional["_models.CheckinManifestParams"] = rest_field(
+        name="manifestCheckinParams", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The manifest checkin params."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        manifest_checkin_option: Optional[Union[str, "_models.ManifestCheckinOption"]] = None,
+        manifest_checkin_params: Optional["_models.CheckinManifestParams"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManifestInfo(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Concrete proxy resource types can be created by aliasing this type using a specific property
+    type.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.providerhub.models.SystemData
+    :ivar properties: The manifest properties.
+    :vartype properties: ~azure.mgmt.providerhub.models.ManifestInfoProperties
+    """
+
+    properties: Optional["_models.ManifestInfoProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The manifest properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ManifestInfoProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManifestInfoProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The manifest properties.
+
+    :ivar manifest: The manifest.
+    :vartype manifest: str
+    :ivar manifest_uri: The URI the manifest content is read from when the manifest is not supplied
+     inline.
+    :vartype manifest_uri: str
+    :ivar commit_id: The manifest commit identifier.
+    :vartype commit_id: str
+    """
+
+    manifest: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The manifest."""
+    manifest_uri: Optional[str] = rest_field(name="manifestUri", visibility=["create", "update"])
+    """The URI the manifest content is read from when the manifest is not supplied inline."""
+    commit_id: Optional[str] = rest_field(name="commitId", visibility=["read"])
+    """The manifest commit identifier."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        manifest: Optional[str] = None,
+        manifest_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Notification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Notification.
 
     :ivar notification_type: The notification type. Known values are: "Unspecified" and
@@ -4167,7 +4217,7 @@ class Notification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotificationEndpoint(_Model):
+class NotificationEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NotificationEndpoint.
 
     :ivar notification_destination: The notification destination.
@@ -4202,7 +4252,7 @@ class NotificationEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotificationRegistration(ProxyResource):
+class NotificationRegistration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -4243,7 +4293,7 @@ class NotificationRegistration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NotificationRegistrationProperties(_Model):
+class NotificationRegistrationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NotificationRegistrationProperties.
 
     :ivar notification_mode: The notification mode. Known values are: "NotSpecified", "EventHub",
@@ -4307,7 +4357,7 @@ class NotificationRegistrationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenApiConfiguration(_Model):
+class OpenApiConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OpenApiConfiguration.
 
     :ivar validation: The open api validation.
@@ -4337,7 +4387,7 @@ class OpenApiConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenApiValidation(_Model):
+class OpenApiValidation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OpenApiValidation.
 
     :ivar allow_noncompliant_collection_response: Indicates whether a non compliance response is
@@ -4368,7 +4418,7 @@ class OpenApiValidation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationsContentProperties(_Model):
+class OperationsContentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OperationsContentProperties.
 
     :ivar contents: Operations content.
@@ -4398,7 +4448,7 @@ class OperationsContentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationsDefinition(_Model):
+class OperationsDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an Operation.
 
     :ivar name: Name of the operation. Required.
@@ -4459,7 +4509,9 @@ class OperationsDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationsDefinitionDisplay(OperationsDisplayDefinition):
+class OperationsDefinitionDisplay(
+    OperationsDisplayDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display information of the operation.
 
     :ivar provider: The provider. Required.
@@ -4493,7 +4545,7 @@ class OperationsDefinitionDisplay(OperationsDisplayDefinition):
         super().__init__(*args, **kwargs)
 
 
-class OperationsPutContent(ProxyResource):
+class OperationsPutContent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -4534,7 +4586,9 @@ class OperationsPutContent(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class OperationsPutContentProperties(OperationsContentProperties):
+class OperationsPutContentProperties(
+    OperationsContentProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OperationsPutContentProperties.
 
     :ivar contents: Operations content.
@@ -4559,7 +4613,43 @@ class OperationsPutContentProperties(OperationsContentProperties):
         super().__init__(*args, **kwargs)
 
 
-class PrivateResourceProviderConfiguration(_Model):
+class PrivateEndpointConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The private endpoint configuration.
+
+    :ivar min_api_version: The first api version that support private endpoint. Required.
+    :vartype min_api_version: str
+    :ivar group_connectivity_information: The list of group connectivity information. Required.
+    :vartype group_connectivity_information:
+     list[~azure.mgmt.providerhub.models.GroupConnectivityInformation]
+    """
+
+    min_api_version: str = rest_field(name="minApiVersion", visibility=["read", "create", "update", "delete", "query"])
+    """The first api version that support private endpoint. Required."""
+    group_connectivity_information: list["_models.GroupConnectivityInformation"] = rest_field(
+        name="groupConnectivityInformation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of group connectivity information. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        min_api_version: str,
+        group_connectivity_information: list["_models.GroupConnectivityInformation"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateResourceProviderConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateResourceProviderConfiguration.
 
     :ivar allowed_subscriptions: The allowed subscriptions.
@@ -4589,7 +4679,7 @@ class PrivateResourceProviderConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProviderHubMetadata(_Model):
+class ProviderHubMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ProviderHubMetadata.
 
     :ivar provider_authorizations: The provider authorizations.
@@ -4660,7 +4750,7 @@ class ProviderHubMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderAuthentication(_Model):
+class ResourceProviderAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceProviderAuthentication.
 
     :ivar allowed_audiences: The allowed audiences. Required.
@@ -4690,7 +4780,9 @@ class ResourceProviderAuthentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProviderHubMetadataProviderAuthentication(ResourceProviderAuthentication):  # pylint: disable=name-too-long
+class ProviderHubMetadataProviderAuthentication(
+    ResourceProviderAuthentication
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The provider authentication.
 
     :ivar allowed_audiences: The allowed audiences. Required.
@@ -4715,7 +4807,7 @@ class ProviderHubMetadataProviderAuthentication(ResourceProviderAuthentication):
         super().__init__(*args, **kwargs)
 
 
-class ThirdPartyProviderAuthorization(_Model):
+class ThirdPartyProviderAuthorization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ThirdPartyProviderAuthorization.
 
     :ivar authorizations: The authorizations.
@@ -4754,7 +4846,7 @@ class ThirdPartyProviderAuthorization(_Model):
 
 class ProviderHubMetadataThirdPartyProviderAuthorization(
     ThirdPartyProviderAuthorization
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The third party provider authorization.
 
     :ivar authorizations: The authorizations.
@@ -4782,7 +4874,7 @@ class ProviderHubMetadataThirdPartyProviderAuthorization(
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4826,7 +4918,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ProviderMonitorSetting(TrackedResource):
+class ProviderMonitorSetting(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -4890,7 +4982,7 @@ class ProviderMonitorSettingProperties(_Model):
      \"MovingResources\", \"TransientFailure\", and \"RolloutInProgress\"."""
 
 
-class ResourceProviderManifestProperties(_Model):
+class ResourceProviderManifestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceProviderManifestProperties.
 
     :ivar provider_authentication: The provider authentication.
@@ -4908,8 +5000,8 @@ class ResourceProviderManifestProperties(_Model):
     :ivar provider_version: The provider version.
     :vartype provider_version: str
     :ivar provider_type: The provider type. Known values are: "NotSpecified", "Internal",
-     "External", "Hidden", "RegistrationFree", "LegacyRegistrationRequired", "TenantOnly", and
-     "AuthorizationFree".
+     "External", "Hidden", "RegistrationFree", "LegacyRegistrationRequired", "TenantOnly",
+     "AuthorizationFree", and "Decommissioned".
     :vartype provider_type: str or ~azure.mgmt.providerhub.models.ResourceProviderType
     :ivar required_features: The required features.
     :vartype required_features: list[str]
@@ -4946,9 +5038,6 @@ class ResourceProviderManifestProperties(_Model):
     :ivar resource_provider_authorization_rules: The resource provider authorization rules.
     :vartype resource_provider_authorization_rules:
      ~azure.mgmt.providerhub.models.ResourceProviderAuthorizationRules
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceProviderManifestPropertiesDstsConfiguration
     :ivar notification_options: Notification options. Known values are: "NotSpecified", "None", and
      "EmitSpendingLimit".
     :vartype notification_options: str or ~azure.mgmt.providerhub.models.NotificationOptions
@@ -5004,8 +5093,8 @@ class ResourceProviderManifestProperties(_Model):
         name="providerType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The provider type. Known values are: \"NotSpecified\", \"Internal\", \"External\", \"Hidden\",
-     \"RegistrationFree\", \"LegacyRegistrationRequired\", \"TenantOnly\", and
-     \"AuthorizationFree\"."""
+     \"RegistrationFree\", \"LegacyRegistrationRequired\", \"TenantOnly\", \"AuthorizationFree\",
+     and \"Decommissioned\"."""
     required_features: Optional[list[str]] = rest_field(
         name="requiredFeatures", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5057,10 +5146,6 @@ class ResourceProviderManifestProperties(_Model):
         name="resourceProviderAuthorizationRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource provider authorization rules."""
-    dsts_configuration: Optional["_models.ResourceProviderManifestPropertiesDstsConfiguration"] = rest_field(
-        name="dstsConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The dsts configuration."""
     notification_options: Optional[Union[str, "_models.NotificationOptions"]] = rest_field(
         name="notificationOptions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5128,7 +5213,6 @@ class ResourceProviderManifestProperties(_Model):
         notifications: Optional[list["_models.Notification"]] = None,
         linked_notification_rules: Optional[list["_models.FanoutLinkedNotificationRule"]] = None,
         resource_provider_authorization_rules: Optional["_models.ResourceProviderAuthorizationRules"] = None,
-        dsts_configuration: Optional["_models.ResourceProviderManifestPropertiesDstsConfiguration"] = None,
         notification_options: Optional[Union[str, "_models.NotificationOptions"]] = None,
         resource_hydration_accounts: Optional[list["_models.ResourceHydrationAccount"]] = None,
         notification_settings: Optional["_models.ResourceProviderManifestPropertiesNotificationSettings"] = None,
@@ -5154,7 +5238,9 @@ class ResourceProviderManifestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProviderRegistrationProperties(ResourceProviderManifestProperties):
+class ProviderRegistrationProperties(
+    ResourceProviderManifestProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ProviderRegistrationProperties.
 
     :ivar provider_authentication: The provider authentication.
@@ -5172,8 +5258,8 @@ class ProviderRegistrationProperties(ResourceProviderManifestProperties):
     :ivar provider_version: The provider version.
     :vartype provider_version: str
     :ivar provider_type: The provider type. Known values are: "NotSpecified", "Internal",
-     "External", "Hidden", "RegistrationFree", "LegacyRegistrationRequired", "TenantOnly", and
-     "AuthorizationFree".
+     "External", "Hidden", "RegistrationFree", "LegacyRegistrationRequired", "TenantOnly",
+     "AuthorizationFree", and "Decommissioned".
     :vartype provider_type: str or ~azure.mgmt.providerhub.models.ResourceProviderType
     :ivar required_features: The required features.
     :vartype required_features: list[str]
@@ -5210,9 +5296,6 @@ class ProviderRegistrationProperties(ResourceProviderManifestProperties):
     :ivar resource_provider_authorization_rules: The resource provider authorization rules.
     :vartype resource_provider_authorization_rules:
      ~azure.mgmt.providerhub.models.ResourceProviderAuthorizationRules
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceProviderManifestPropertiesDstsConfiguration
     :ivar notification_options: Notification options. Known values are: "NotSpecified", "None", and
      "EmitSpendingLimit".
     :vartype notification_options: str or ~azure.mgmt.providerhub.models.NotificationOptions
@@ -5256,6 +5339,11 @@ class ProviderRegistrationProperties(ResourceProviderManifestProperties):
      ~azure.mgmt.providerhub.models.ProviderRegistrationPropertiesPrivateResourceProviderConfiguration
     :ivar token_auth_configuration: The token auth configuration.
     :vartype token_auth_configuration: ~azure.mgmt.providerhub.models.TokenAuthConfiguration
+    :ivar obo_subscription_id: The on behalf of subscription id for the resource provider.
+    :vartype obo_subscription_id: str
+    :ivar enable_preset_resource_types: Indicates whether automatic registration for the preset
+     resource types is enabled or disabled.
+    :vartype enable_preset_resource_types: bool
     """
 
     provider_hub_metadata: Optional["_models.ProviderRegistrationPropertiesProviderHubMetadata"] = rest_field(
@@ -5285,6 +5373,14 @@ class ProviderRegistrationProperties(ResourceProviderManifestProperties):
         name="tokenAuthConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The token auth configuration."""
+    obo_subscription_id: Optional[str] = rest_field(
+        name="oboSubscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The on behalf of subscription id for the resource provider."""
+    enable_preset_resource_types: Optional[bool] = rest_field(
+        name="enablePresetResourceTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether automatic registration for the preset resource types is enabled or disabled."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -5312,7 +5408,6 @@ class ProviderRegistrationProperties(ResourceProviderManifestProperties):
         notifications: Optional[list["_models.Notification"]] = None,
         linked_notification_rules: Optional[list["_models.FanoutLinkedNotificationRule"]] = None,
         resource_provider_authorization_rules: Optional["_models.ResourceProviderAuthorizationRules"] = None,
-        dsts_configuration: Optional["_models.ResourceProviderManifestPropertiesDstsConfiguration"] = None,
         notification_options: Optional[Union[str, "_models.NotificationOptions"]] = None,
         resource_hydration_accounts: Optional[list["_models.ResourceHydrationAccount"]] = None,
         notification_settings: Optional["_models.ResourceProviderManifestPropertiesNotificationSettings"] = None,
@@ -5333,6 +5428,8 @@ class ProviderRegistrationProperties(ResourceProviderManifestProperties):
             "_models.ProviderRegistrationPropertiesPrivateResourceProviderConfiguration"
         ] = None,
         token_auth_configuration: Optional["_models.TokenAuthConfiguration"] = None,
+        obo_subscription_id: Optional[str] = None,
+        enable_preset_resource_types: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5348,7 +5445,7 @@ class ProviderRegistrationProperties(ResourceProviderManifestProperties):
 
 class ProviderRegistrationPropertiesPrivateResourceProviderConfiguration(
     PrivateResourceProviderConfiguration
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The private resource provider configuration.
 
     :ivar allowed_subscriptions: The allowed subscriptions.
@@ -5373,7 +5470,9 @@ class ProviderRegistrationPropertiesPrivateResourceProviderConfiguration(
         super().__init__(*args, **kwargs)
 
 
-class ProviderRegistrationPropertiesProviderHubMetadata(ProviderHubMetadata):  # pylint: disable=name-too-long
+class ProviderRegistrationPropertiesProviderHubMetadata(
+    ProviderHubMetadata
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The provider hub metadata.
 
     :ivar provider_authorizations: The provider authorizations.
@@ -5419,7 +5518,9 @@ class ProviderRegistrationPropertiesProviderHubMetadata(ProviderHubMetadata):  #
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionLifecycleNotificationSpecifications(_Model):  # pylint: disable=name-too-long
+class SubscriptionLifecycleNotificationSpecifications(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """SubscriptionLifecycleNotificationSpecifications.
 
     :ivar subscription_state_override_actions: The subscription state override actions.
@@ -5459,7 +5560,7 @@ class SubscriptionLifecycleNotificationSpecifications(_Model):  # pylint: disabl
 
 class ProviderRegistrationPropertiesSubscriptionLifecycleNotificationSpecifications(
     SubscriptionLifecycleNotificationSpecifications
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The subscription lifecycle notification specifications.
 
     :ivar subscription_state_override_actions: The subscription state override actions.
@@ -5488,7 +5589,7 @@ class ProviderRegistrationPropertiesSubscriptionLifecycleNotificationSpecificati
         super().__init__(*args, **kwargs)
 
 
-class QuotaRule(_Model):
+class QuotaRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """QuotaRule.
 
     :ivar quota_policy: The quota policy. Known values are: "Default", "None", and "Restricted".
@@ -5532,7 +5633,7 @@ class QuotaRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequestHeaderOptions(_Model):
+class RequestHeaderOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RequestHeaderOptions.
 
     :ivar opt_in_headers: The opt in headers. Known values are: "NotSpecified", "SignedUserToken",
@@ -5579,7 +5680,7 @@ class RequestHeaderOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReRegisterSubscriptionMetadata(_Model):
+class ReRegisterSubscriptionMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ReRegisterSubscriptionMetadata.
 
     :ivar enabled: Whether it's enabled or not. Required.
@@ -5614,7 +5715,7 @@ class ReRegisterSubscriptionMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceAccessRole(_Model):
+class ResourceAccessRole(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceAccessRole.
 
     :ivar allowed_group_claims: The allowed group claims.
@@ -5649,7 +5750,7 @@ class ResourceAccessRole(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceConcurrencyControlOption(_Model):
+class ResourceConcurrencyControlOption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceConcurrencyControlOption.
 
     :ivar policy: The policy. Known values are: "NotSpecified" and "SynchronizeBeginExtension".
@@ -5679,7 +5780,83 @@ class ResourceConcurrencyControlOption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGraphConfiguration(_Model):
+class ResourceDeletionPolicyAndProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The individual resource deletion policy.
+
+    :ivar policy_name: The resource deletion policy name. Known values are: "NotSpecified",
+     "Cascade", "Force", and "SoftDelete".
+    :vartype policy_name: str or ~azure.mgmt.providerhub.models.ResourceDeletionPolicy
+    :ivar properties: The resource deletion policy properties.
+    :vartype properties: ~azure.mgmt.providerhub.models.ResourceDeletionPolicyProperties
+    """
+
+    policy_name: Optional[Union[str, "_models.ResourceDeletionPolicy"]] = rest_field(
+        name="policyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource deletion policy name. Known values are: \"NotSpecified\", \"Cascade\", \"Force\",
+     and \"SoftDelete\"."""
+    properties: Optional["_models.ResourceDeletionPolicyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource deletion policy properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy_name: Optional[Union[str, "_models.ResourceDeletionPolicy"]] = None,
+        properties: Optional["_models.ResourceDeletionPolicyProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceDeletionPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The resource deletion policy properties.
+
+    :ivar minimum_retention_time: The minimum retention time.
+    :vartype minimum_retention_time: ~datetime.timedelta
+    :ivar maximum_retention_time: The maximum retention time.
+    :vartype maximum_retention_time: ~datetime.timedelta
+    """
+
+    minimum_retention_time: Optional[datetime.timedelta] = rest_field(
+        name="minimumRetentionTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum retention time."""
+    maximum_retention_time: Optional[datetime.timedelta] = rest_field(
+        name="maximumRetentionTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum retention time."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        minimum_retention_time: Optional[datetime.timedelta] = None,
+        maximum_retention_time: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceGraphConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceGraphConfiguration.
 
     :ivar enabled: Whether it's enabled.
@@ -5714,7 +5891,7 @@ class ResourceGraphConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceHydrationAccount(_Model):
+class ResourceHydrationAccount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceHydrationAccount.
 
     :ivar max_child_resource_consistency_job_limit: The max child resource consistency job limit.
@@ -5765,7 +5942,7 @@ class ResourceHydrationAccount(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceManagementAction(_Model):
+class ResourceManagementAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceManagementAction.
 
     :ivar resources: resource management action content.
@@ -5795,7 +5972,7 @@ class ResourceManagementAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceManagementEntity(_Model):
+class ResourceManagementEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceManagementEntity.
 
     :ivar resource_id: The resource id. Required.
@@ -5839,7 +6016,7 @@ class ResourceManagementEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceMovePolicy(_Model):
+class ResourceMovePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceMovePolicy.
 
     :ivar validation_required: Whether validation is required.
@@ -5883,7 +6060,7 @@ class ResourceMovePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderAuthorization(_Model):
+class ResourceProviderAuthorization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceProviderAuthorization.
 
     :ivar application_id: The application id.
@@ -5950,7 +6127,9 @@ class ResourceProviderAuthorization(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderAuthorizationManagedByAuthorization(_Model):  # pylint: disable=name-too-long
+class ResourceProviderAuthorizationManagedByAuthorization(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Managed by authorization.
 
     :ivar additional_authorizations:
@@ -5996,7 +6175,7 @@ class ResourceProviderAuthorizationManagedByAuthorization(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderAuthorizationRules(_Model):
+class ResourceProviderAuthorizationRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceProviderAuthorizationRules.
 
     :ivar async_operation_polling_rules: The async operation polling rules.
@@ -6027,7 +6206,7 @@ class ResourceProviderAuthorizationRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderCapabilities(_Model):
+class ResourceProviderCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceProviderCapabilities.
 
     :ivar quota_id: The quota id. Required.
@@ -6069,7 +6248,7 @@ class ResourceProviderCapabilities(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderEndpoint(_Model):
+class ResourceProviderEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceProviderEndpoint.
 
     :ivar enabled: Whether the endpoint is enabled.
@@ -6149,7 +6328,7 @@ class ResourceProviderEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderEndpointFeaturesRule(FeaturesRule):
+class ResourceProviderEndpointFeaturesRule(FeaturesRule):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The feature rules.
 
     :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
@@ -6175,7 +6354,7 @@ class ResourceProviderEndpointFeaturesRule(FeaturesRule):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManagement(_Model):
+class ResourceProviderManagement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceProviderManagement.
 
     :ivar schema_owners: The schema owners.
@@ -6190,10 +6369,7 @@ class ResourceProviderManagement(_Model):
     :vartype incident_routing_team: str
     :ivar incident_contact_email: The incident contact email.
     :vartype incident_contact_email: str
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
-    :ivar resource_access_policy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
+    :ivar resource_access_policy: The resource access policy. "NotSpecified"
     :vartype resource_access_policy: str or ~azure.mgmt.providerhub.models.ResourceAccessPolicy
     :ivar resource_access_roles: The resource access roles.
     :vartype resource_access_roles: list[~azure.mgmt.providerhub.models.ResourceAccessRole]
@@ -6211,6 +6387,8 @@ class ResourceProviderManagement(_Model):
     :vartype pc_code: str
     :ivar profit_center_program_id: The profit center program id for the subscription.
     :vartype profit_center_program_id: str
+    :ivar feature_management_owners: List of feature management owners.
+    :vartype feature_management_owners: list[str]
     """
 
     schema_owners: Optional[list[str]] = rest_field(
@@ -6237,15 +6415,10 @@ class ResourceProviderManagement(_Model):
         name="incidentContactEmail", visibility=["read", "create", "update", "delete", "query"]
     )
     """The incident contact email."""
-    service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = rest_field(
-        name="serviceTreeInfos", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The service tree infos."""
     resource_access_policy: Optional[Union[str, "_models.ResourceAccessPolicy"]] = rest_field(
         name="resourceAccessPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource access policy. Known values are: \"NotSpecified\", \"AcisReadAllowed\", and
-     \"AcisActionAllowed\"."""
+    """The resource access policy. \"NotSpecified\""""
     resource_access_roles: Optional[list["_models.ResourceAccessRole"]] = rest_field(
         name="resourceAccessRoles", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6272,6 +6445,10 @@ class ResourceProviderManagement(_Model):
         name="profitCenterProgramId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The profit center program id for the subscription."""
+    feature_management_owners: Optional[list[str]] = rest_field(
+        name="featureManagementOwners", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of feature management owners."""
 
     @overload
     def __init__(
@@ -6283,7 +6460,6 @@ class ResourceProviderManagement(_Model):
         incident_routing_service: Optional[str] = None,
         incident_routing_team: Optional[str] = None,
         incident_contact_email: Optional[str] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         resource_access_policy: Optional[Union[str, "_models.ResourceAccessPolicy"]] = None,
         resource_access_roles: Optional[list["_models.ResourceAccessRole"]] = None,
         expedited_rollout_submitters: Optional[list[str]] = None,
@@ -6294,6 +6470,7 @@ class ResourceProviderManagement(_Model):
         canary_manifest_owners: Optional[list[str]] = None,
         pc_code: Optional[str] = None,
         profit_center_program_id: Optional[str] = None,
+        feature_management_owners: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -6307,7 +6484,9 @@ class ResourceProviderManagement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManagementErrorResponseMessageOptions(_Model):  # pylint: disable=name-too-long
+class ResourceProviderManagementErrorResponseMessageOptions(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Options for error response messages.
 
     :ivar server_failure_response_message_type: Type of server failure response message. Known
@@ -6340,7 +6519,9 @@ class ResourceProviderManagementErrorResponseMessageOptions(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManagementExpeditedRolloutMetadata(_Model):  # pylint: disable=name-too-long
+class ResourceProviderManagementExpeditedRolloutMetadata(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Metadata for expedited rollout.
 
     :ivar enabled: Expedited rollout enabled?.
@@ -6376,7 +6557,7 @@ class ResourceProviderManagementExpeditedRolloutMetadata(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManifest(_Model):
+class ResourceProviderManifest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceProviderManifest.
 
     :ivar provider_authentication: The provider authentication.
@@ -6394,8 +6575,8 @@ class ResourceProviderManifest(_Model):
     :ivar provider_version: The provider version.
     :vartype provider_version: str
     :ivar provider_type: The provider type. Known values are: "NotSpecified", "Internal",
-     "External", "Hidden", "RegistrationFree", "LegacyRegistrationRequired", "TenantOnly", and
-     "AuthorizationFree".
+     "External", "Hidden", "RegistrationFree", "LegacyRegistrationRequired", "TenantOnly",
+     "AuthorizationFree", and "Decommissioned".
     :vartype provider_type: str or ~azure.mgmt.providerhub.models.ResourceProviderType
     :ivar required_features: The required features.
     :vartype required_features: list[str]
@@ -6432,6 +6613,8 @@ class ResourceProviderManifest(_Model):
     :ivar resource_provider_authorization_rules: The resource provider authorization rules.
     :vartype resource_provider_authorization_rules:
      ~azure.mgmt.providerhub.models.ResourceProviderAuthorizationRules
+    :ivar token_auth_configuration: The token auth configuration.
+    :vartype token_auth_configuration: ~azure.mgmt.providerhub.models.TokenAuthConfiguration
     """
 
     provider_authentication: Optional["_models.ResourceProviderManifestProviderAuthentication"] = rest_field(
@@ -6460,8 +6643,8 @@ class ResourceProviderManifest(_Model):
         name="providerType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The provider type. Known values are: \"NotSpecified\", \"Internal\", \"External\", \"Hidden\",
-     \"RegistrationFree\", \"LegacyRegistrationRequired\", \"TenantOnly\", and
-     \"AuthorizationFree\"."""
+     \"RegistrationFree\", \"LegacyRegistrationRequired\", \"TenantOnly\", \"AuthorizationFree\",
+     and \"Decommissioned\"."""
     required_features: Optional[list[str]] = rest_field(
         name="requiredFeatures", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6517,6 +6700,10 @@ class ResourceProviderManifest(_Model):
         name="resourceProviderAuthorizationRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource provider authorization rules."""
+    token_auth_configuration: Optional["_models.TokenAuthConfiguration"] = rest_field(
+        name="tokenAuthConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The token auth configuration."""
 
     @overload
     def __init__(
@@ -6545,6 +6732,7 @@ class ResourceProviderManifest(_Model):
         notifications: Optional[list["_models.Notification"]] = None,
         linked_notification_rules: Optional[list["_models.FanoutLinkedNotificationRule"]] = None,
         resource_provider_authorization_rules: Optional["_models.ResourceProviderAuthorizationRules"] = None,
+        token_auth_configuration: Optional["_models.TokenAuthConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -6558,7 +6746,7 @@ class ResourceProviderManifest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManifestFeaturesRule(FeaturesRule):
+class ResourceProviderManifestFeaturesRule(FeaturesRule):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The features rule.
 
     :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
@@ -6584,7 +6772,9 @@ class ResourceProviderManifestFeaturesRule(FeaturesRule):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManifestManagement(ResourceProviderManagement):
+class ResourceProviderManifestManagement(
+    ResourceProviderManagement
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource provider management.
 
     :ivar schema_owners: The schema owners.
@@ -6599,10 +6789,7 @@ class ResourceProviderManifestManagement(ResourceProviderManagement):
     :vartype incident_routing_team: str
     :ivar incident_contact_email: The incident contact email.
     :vartype incident_contact_email: str
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
-    :ivar resource_access_policy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
+    :ivar resource_access_policy: The resource access policy. "NotSpecified"
     :vartype resource_access_policy: str or ~azure.mgmt.providerhub.models.ResourceAccessPolicy
     :ivar resource_access_roles: The resource access roles.
     :vartype resource_access_roles: list[~azure.mgmt.providerhub.models.ResourceAccessRole]
@@ -6620,6 +6807,8 @@ class ResourceProviderManifestManagement(ResourceProviderManagement):
     :vartype pc_code: str
     :ivar profit_center_program_id: The profit center program id for the subscription.
     :vartype profit_center_program_id: str
+    :ivar feature_management_owners: List of feature management owners.
+    :vartype feature_management_owners: list[str]
     """
 
     @overload
@@ -6632,7 +6821,6 @@ class ResourceProviderManifestManagement(ResourceProviderManagement):
         incident_routing_service: Optional[str] = None,
         incident_routing_team: Optional[str] = None,
         incident_contact_email: Optional[str] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         resource_access_policy: Optional[Union[str, "_models.ResourceAccessPolicy"]] = None,
         resource_access_roles: Optional[list["_models.ResourceAccessRole"]] = None,
         expedited_rollout_submitters: Optional[list[str]] = None,
@@ -6643,6 +6831,7 @@ class ResourceProviderManifestManagement(ResourceProviderManagement):
         canary_manifest_owners: Optional[list[str]] = None,
         pc_code: Optional[str] = None,
         profit_center_program_id: Optional[str] = None,
+        feature_management_owners: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -6656,35 +6845,9 @@ class ResourceProviderManifestManagement(ResourceProviderManagement):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManifestPropertiesDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceProviderManifestPropertiesFeaturesRule(FeaturesRule):  # pylint: disable=name-too-long
+class ResourceProviderManifestPropertiesFeaturesRule(
+    FeaturesRule
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The features rule.
 
     :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
@@ -6710,7 +6873,9 @@ class ResourceProviderManifestPropertiesFeaturesRule(FeaturesRule):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManifestPropertiesManagement(ResourceProviderManagement):  # pylint: disable=name-too-long
+class ResourceProviderManifestPropertiesManagement(
+    ResourceProviderManagement
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The resource provider management.
 
     :ivar schema_owners: The schema owners.
@@ -6725,10 +6890,7 @@ class ResourceProviderManifestPropertiesManagement(ResourceProviderManagement): 
     :vartype incident_routing_team: str
     :ivar incident_contact_email: The incident contact email.
     :vartype incident_contact_email: str
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
-    :ivar resource_access_policy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
+    :ivar resource_access_policy: The resource access policy. "NotSpecified"
     :vartype resource_access_policy: str or ~azure.mgmt.providerhub.models.ResourceAccessPolicy
     :ivar resource_access_roles: The resource access roles.
     :vartype resource_access_roles: list[~azure.mgmt.providerhub.models.ResourceAccessRole]
@@ -6746,6 +6908,8 @@ class ResourceProviderManifestPropertiesManagement(ResourceProviderManagement): 
     :vartype pc_code: str
     :ivar profit_center_program_id: The profit center program id for the subscription.
     :vartype profit_center_program_id: str
+    :ivar feature_management_owners: List of feature management owners.
+    :vartype feature_management_owners: list[str]
     """
 
     @overload
@@ -6758,7 +6922,6 @@ class ResourceProviderManifestPropertiesManagement(ResourceProviderManagement): 
         incident_routing_service: Optional[str] = None,
         incident_routing_team: Optional[str] = None,
         incident_contact_email: Optional[str] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         resource_access_policy: Optional[Union[str, "_models.ResourceAccessPolicy"]] = None,
         resource_access_roles: Optional[list["_models.ResourceAccessRole"]] = None,
         expedited_rollout_submitters: Optional[list[str]] = None,
@@ -6769,6 +6932,7 @@ class ResourceProviderManifestPropertiesManagement(ResourceProviderManagement): 
         canary_manifest_owners: Optional[list[str]] = None,
         pc_code: Optional[str] = None,
         profit_center_program_id: Optional[str] = None,
+        feature_management_owners: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -6782,7 +6946,9 @@ class ResourceProviderManifestPropertiesManagement(ResourceProviderManagement): 
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManifestPropertiesNotificationSettings(_Model):  # pylint: disable=name-too-long
+class ResourceProviderManifestPropertiesNotificationSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Notification settings.
 
     :ivar subscriber_settings:
@@ -6813,7 +6979,7 @@ class ResourceProviderManifestPropertiesNotificationSettings(_Model):  # pylint:
 
 class ResourceProviderManifestPropertiesProviderAuthentication(
     ResourceProviderAuthentication
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The provider authentication.
 
     :ivar allowed_audiences: The allowed audiences. Required.
@@ -6838,7 +7004,9 @@ class ResourceProviderManifestPropertiesProviderAuthentication(
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManifestPropertiesRequestHeaderOptions(RequestHeaderOptions):  # pylint: disable=name-too-long
+class ResourceProviderManifestPropertiesRequestHeaderOptions(
+    RequestHeaderOptions
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The request header options.
 
     :ivar opt_in_headers: The opt in headers. Known values are: "NotSpecified", "SignedUserToken",
@@ -6871,7 +7039,9 @@ class ResourceProviderManifestPropertiesRequestHeaderOptions(RequestHeaderOption
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManifestPropertiesResourceGroupLockOptionDuringMove(_Model):  # pylint: disable=name-too-long
+class ResourceProviderManifestPropertiesResourceGroupLockOptionDuringMove(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Resource group lock option during move.
 
     :ivar block_action_verb: The action verb that will be blocked when the resource group is locked
@@ -6905,7 +7075,9 @@ class ResourceProviderManifestPropertiesResourceGroupLockOptionDuringMove(_Model
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManifestPropertiesResponseOptions(_Model):  # pylint: disable=name-too-long
+class ResourceProviderManifestPropertiesResponseOptions(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Response options.
 
     :ivar service_client_options_type: Known values are: "NotSpecified" and
@@ -6937,7 +7109,7 @@ class ResourceProviderManifestPropertiesResponseOptions(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class TemplateDeploymentOptions(_Model):
+class TemplateDeploymentOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TemplateDeploymentOptions.
 
     :ivar preflight_supported: Whether preflight is supported.
@@ -6976,7 +7148,7 @@ class TemplateDeploymentOptions(_Model):
 
 class ResourceProviderManifestPropertiesTemplateDeploymentOptions(
     TemplateDeploymentOptions
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The template deployment options.
 
     :ivar preflight_supported: Whether preflight is supported.
@@ -7004,7 +7176,9 @@ class ResourceProviderManifestPropertiesTemplateDeploymentOptions(
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManifestProviderAuthentication(ResourceProviderAuthentication):  # pylint: disable=name-too-long
+class ResourceProviderManifestProviderAuthentication(
+    ResourceProviderAuthentication
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The provider authentication.
 
     :ivar allowed_audiences: The allowed audiences. Required.
@@ -7029,7 +7203,9 @@ class ResourceProviderManifestProviderAuthentication(ResourceProviderAuthenticat
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderManifestRequestHeaderOptions(RequestHeaderOptions):  # pylint: disable=name-too-long
+class ResourceProviderManifestRequestHeaderOptions(
+    RequestHeaderOptions
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The request header options.
 
     :ivar opt_in_headers: The opt in headers. Known values are: "NotSpecified", "SignedUserToken",
@@ -7064,7 +7240,7 @@ class ResourceProviderManifestRequestHeaderOptions(RequestHeaderOptions):  # pyl
 
 class ResourceProviderManifestReRegisterSubscriptionMetadata(
     ReRegisterSubscriptionMetadata
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The re-register subscription metadata.
 
     :ivar enabled: Whether it's enabled or not. Required.
@@ -7092,7 +7268,7 @@ class ResourceProviderManifestReRegisterSubscriptionMetadata(
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderService(_Model):
+class ResourceProviderService(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource provider service.
 
     :ivar service_name: The service name.
@@ -7129,7 +7305,7 @@ class ResourceProviderService(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceType(_Model):
+class ResourceType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceType.
 
     :ivar name: The resource type name.
@@ -7168,7 +7344,7 @@ class ResourceType(_Model):
     :ivar endpoints: The endpoints.
     :vartype endpoints: list[~azure.mgmt.providerhub.models.ResourceProviderEndpoint]
     :ivar marketplace_type: The marketplace type. Known values are: "NotSpecified", "AddOn",
-     "Bypass", and "Store".
+     "Bypass", "Store", and "ProviderHub".
     :vartype marketplace_type: str or ~azure.mgmt.providerhub.models.MarketplaceType
     :ivar identity_management: The identity management.
     :vartype identity_management: ~azure.mgmt.providerhub.models.ResourceTypeIdentityManagement
@@ -7180,8 +7356,6 @@ class ResourceType(_Model):
     :vartype features_rule: ~azure.mgmt.providerhub.models.ResourceTypeFeaturesRule
     :ivar subscription_state_rules: The subscription state rules.
     :vartype subscription_state_rules: list[~azure.mgmt.providerhub.models.SubscriptionStateRule]
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
     :ivar request_header_options: The request header options.
     :vartype request_header_options:
      ~azure.mgmt.providerhub.models.ResourceTypeRequestHeaderOptions
@@ -7197,9 +7371,11 @@ class ResourceType(_Model):
     :ivar linked_operation_rules: The linked operation rules.
     :vartype linked_operation_rules: list[~azure.mgmt.providerhub.models.LinkedOperationRule]
     :ivar resource_deletion_policy: The resource deletion policy. Known values are: "NotSpecified",
-     "Cascade", and "Force".
-    :vartype resource_deletion_policy: str or
-     ~azure.mgmt.providerhub.models.ManifestResourceDeletionPolicy
+     "Cascade", "Force", and "SoftDelete".
+    :vartype resource_deletion_policy: str or ~azure.mgmt.providerhub.models.ResourceDeletionPolicy
+    :ivar resource_deletion_policies: List of resource deletion policies added.
+    :vartype resource_deletion_policies:
+     list[~azure.mgmt.providerhub.models.ResourceDeletionPolicyAndProperties]
     :ivar quota_rule: The quota rule.
     :vartype quota_rule: ~azure.mgmt.providerhub.models.QuotaRule
     :ivar notifications: The notifications.
@@ -7270,7 +7446,8 @@ class ResourceType(_Model):
     marketplace_type: Optional[Union[str, "_models.MarketplaceType"]] = rest_field(
         name="marketplaceType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The marketplace type. Known values are: \"NotSpecified\", \"AddOn\", \"Bypass\", and \"Store\"."""
+    """The marketplace type. Known values are: \"NotSpecified\", \"AddOn\", \"Bypass\", \"Store\", and
+     \"ProviderHub\"."""
     identity_management: Optional["_models.ResourceTypeIdentityManagement"] = rest_field(
         name="identityManagement", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7289,10 +7466,6 @@ class ResourceType(_Model):
         name="subscriptionStateRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """The subscription state rules."""
-    service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = rest_field(
-        name="serviceTreeInfos", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The service tree infos."""
     request_header_options: Optional["_models.ResourceTypeRequestHeaderOptions"] = rest_field(
         name="requestHeaderOptions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7315,10 +7488,15 @@ class ResourceType(_Model):
         name="linkedOperationRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """The linked operation rules."""
-    resource_deletion_policy: Optional[Union[str, "_models.ManifestResourceDeletionPolicy"]] = rest_field(
+    resource_deletion_policy: Optional[Union[str, "_models.ResourceDeletionPolicy"]] = rest_field(
         name="resourceDeletionPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource deletion policy. Known values are: \"NotSpecified\", \"Cascade\", and \"Force\"."""
+    """The resource deletion policy. Known values are: \"NotSpecified\", \"Cascade\", \"Force\", and
+     \"SoftDelete\"."""
+    resource_deletion_policies: Optional[list["_models.ResourceDeletionPolicyAndProperties"]] = rest_field(
+        name="resourceDeletionPolicies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of resource deletion policies added."""
     quota_rule: Optional["_models.QuotaRule"] = rest_field(
         name="quotaRule", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7359,14 +7537,14 @@ class ResourceType(_Model):
         required_features: Optional[list[str]] = None,
         features_rule: Optional["_models.ResourceTypeFeaturesRule"] = None,
         subscription_state_rules: Optional[list["_models.SubscriptionStateRule"]] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         request_header_options: Optional["_models.ResourceTypeRequestHeaderOptions"] = None,
         sku_link: Optional[str] = None,
         disallowed_action_verbs: Optional[list[str]] = None,
         template_deployment_policy: Optional["_models.ResourceTypeTemplateDeploymentPolicy"] = None,
         extended_locations: Optional[list["_models.ExtendedLocationOptions"]] = None,
         linked_operation_rules: Optional[list["_models.LinkedOperationRule"]] = None,
-        resource_deletion_policy: Optional[Union[str, "_models.ManifestResourceDeletionPolicy"]] = None,
+        resource_deletion_policy: Optional[Union[str, "_models.ResourceDeletionPolicy"]] = None,
+        resource_deletion_policies: Optional[list["_models.ResourceDeletionPolicyAndProperties"]] = None,
         quota_rule: Optional["_models.QuotaRule"] = None,
         notifications: Optional[list["_models.Notification"]] = None,
         linked_notification_rules: Optional[list["_models.LinkedNotificationRule"]] = None,
@@ -7384,7 +7562,7 @@ class ResourceType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeEndpoint(_Model):
+class ResourceTypeEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceTypeEndpoint.
 
     :ivar kind: Resource type endpoint kind. This Metadata is also used by portal/tooling/etc to
@@ -7418,9 +7596,6 @@ class ResourceTypeEndpoint(_Model):
     :vartype api_version: str
     :ivar zones: List of zones.
     :vartype zones: list[str]
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceTypeEndpointDstsConfiguration
     :ivar data_boundary: The data boundary. Known values are: "NotDefined", "Global", "EU", and
      "US".
     :vartype data_boundary: str or ~azure.mgmt.providerhub.models.DataBoundary
@@ -7475,10 +7650,6 @@ class ResourceTypeEndpoint(_Model):
     """Api version."""
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of zones."""
-    dsts_configuration: Optional["_models.ResourceTypeEndpointDstsConfiguration"] = rest_field(
-        name="dstsConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The dsts configuration."""
     data_boundary: Optional[Union[str, "_models.DataBoundary"]] = rest_field(
         name="dataBoundary", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7502,7 +7673,6 @@ class ResourceTypeEndpoint(_Model):
         endpoint_uri: Optional[str] = None,
         api_version: Optional[str] = None,
         zones: Optional[list[str]] = None,
-        dsts_configuration: Optional["_models.ResourceTypeEndpointDstsConfiguration"] = None,
         data_boundary: Optional[Union[str, "_models.DataBoundary"]] = None,
     ) -> None: ...
 
@@ -7517,35 +7687,7 @@ class ResourceTypeEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeEndpointBaseDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceTypeEndpointBaseFeaturesRule(FeaturesRule):
+class ResourceTypeEndpointFeaturesRule(FeaturesRule):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The features rule.
 
     :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
@@ -7571,61 +7713,7 @@ class ResourceTypeEndpointBaseFeaturesRule(FeaturesRule):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeEndpointDstsConfiguration(DstsConfiguration):
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceTypeEndpointFeaturesRule(FeaturesRule):
-    """The features rule.
-
-    :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
-     and "All".
-    :vartype required_features_policy: str or ~azure.mgmt.providerhub.models.FeaturesPolicy
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        required_features_policy: Union[str, "_models.FeaturesPolicy"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceTypeExtension(_Model):
+class ResourceTypeExtension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceTypeExtension.
 
     :ivar endpoint_uri: The endpoint uri.
@@ -7667,7 +7755,7 @@ class ResourceTypeExtension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeExtensionOptions(_Model):
+class ResourceTypeExtensionOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceTypeExtensionOptions.
 
     :ivar resource_creation_begin: Resource creation begin.
@@ -7698,7 +7786,9 @@ class ResourceTypeExtensionOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeExtensionOptionsResourceCreationBegin(ExtensionOptions):  # pylint: disable=name-too-long
+class ResourceTypeExtensionOptionsResourceCreationBegin(
+    ExtensionOptions
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Resource creation begin.
 
     :ivar request: The request.
@@ -7726,7 +7816,7 @@ class ResourceTypeExtensionOptionsResourceCreationBegin(ExtensionOptions):  # py
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeFeaturesRule(FeaturesRule):
+class ResourceTypeFeaturesRule(FeaturesRule):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The features rule.
 
     :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
@@ -7752,7 +7842,7 @@ class ResourceTypeFeaturesRule(FeaturesRule):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeIdentityManagement(IdentityManagement):
+class ResourceTypeIdentityManagement(IdentityManagement):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The identity management.
 
     :ivar type: The type. Known values are: "NotSpecified", "SystemAssigned", "UserAssigned",
@@ -7778,7 +7868,59 @@ class ResourceTypeIdentityManagement(IdentityManagement):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeOnBehalfOfToken(_Model):
+class ResourceTypeManagedResourceGroupConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The managed resource group configuration for the resource type.
+
+    :ivar enabled: Indicates whether the managed resource group configuration is enabled.
+    :vartype enabled: bool
+    :ivar resource_group_location_override: The resource group location override.
+    :vartype resource_group_location_override: str
+    :ivar application_ids: The application ids.
+    :vartype application_ids: list[str]
+    :ivar deny_assignment_configuration: The deny assignment configuration.
+    :vartype deny_assignment_configuration:
+     ~azure.mgmt.providerhub.models.ManagedResourceGroupDenyAssignmentConfiguration
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates whether the managed resource group configuration is enabled."""
+    resource_group_location_override: Optional[str] = rest_field(
+        name="resourceGroupLocationOverride", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource group location override."""
+    application_ids: Optional[list[str]] = rest_field(
+        name="applicationIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The application ids."""
+    deny_assignment_configuration: Optional["_models.ManagedResourceGroupDenyAssignmentConfiguration"] = rest_field(
+        name="denyAssignmentConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The deny assignment configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        resource_group_location_override: Optional[str] = None,
+        application_ids: Optional[list[str]] = None,
+        deny_assignment_configuration: Optional["_models.ManagedResourceGroupDenyAssignmentConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceTypeOnBehalfOfToken(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceTypeOnBehalfOfToken.
 
     :ivar action_name: The action name.
@@ -7813,7 +7955,7 @@ class ResourceTypeOnBehalfOfToken(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistration(ProxyResource):
+class ResourceTypeRegistration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -7865,7 +8007,7 @@ class ResourceTypeRegistration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationProperties(_Model):
+class ResourceTypeRegistrationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceTypeRegistrationProperties.
 
     :ivar routing_type: The resource routing type. Known values are: "Default", "ProxyOnly",
@@ -7889,7 +8031,7 @@ class ResourceTypeRegistrationProperties(_Model):
     :vartype extension_options:
      ~azure.mgmt.providerhub.models.ResourceTypeRegistrationPropertiesExtensionOptions
     :ivar marketplace_type: The marketplace type. Known values are: "NotSpecified", "AddOn",
-     "Bypass", and "Store".
+     "Bypass", "Store", and "ProviderHub".
     :vartype marketplace_type: str or ~azure.mgmt.providerhub.models.MarketplaceType
     :ivar swagger_specifications: The swagger specifications.
     :vartype swagger_specifications: list[~azure.mgmt.providerhub.models.SwaggerSpecification]
@@ -7936,8 +8078,6 @@ class ResourceTypeRegistrationProperties(_Model):
      ~azure.mgmt.providerhub.models.ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications
     :ivar disallowed_action_verbs: The disallowed action verbs.
     :vartype disallowed_action_verbs: list[str]
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
     :ivar request_header_options: The request header options.
     :vartype request_header_options:
      ~azure.mgmt.providerhub.models.ResourceTypeRegistrationPropertiesRequestHeaderOptions
@@ -7952,8 +8092,22 @@ class ResourceTypeRegistrationProperties(_Model):
     :vartype resource_move_policy:
      ~azure.mgmt.providerhub.models.ResourceTypeRegistrationPropertiesResourceMovePolicy
     :ivar resource_deletion_policy: The resource deletion policy. Known values are: "NotSpecified",
-     "CascadeDeleteAll", and "CascadeDeleteProxyOnlyChildren".
-    :vartype resource_deletion_policy: str or ~azure.mgmt.providerhub.models.ResourceDeletionPolicy
+     "CascadeDeleteAll", "CascadeDeleteProxyOnlyChildren", "Cascade", and "Force".
+    :vartype resource_deletion_policy: str or
+     ~azure.mgmt.providerhub.models.RPaaSResourceDeletionPolicy
+    :ivar resource_deletion_policies: List of resource deletion policies added.
+    :vartype resource_deletion_policies:
+     list[~azure.mgmt.providerhub.models.ResourceDeletionPolicyAndProperties]
+    :ivar managed_resource_group_configuration: The managed resource group configuration.
+    :vartype managed_resource_group_configuration:
+     ~azure.mgmt.providerhub.models.ResourceTypeManagedResourceGroupConfiguration
+    :ivar private_endpoint_configuration: The private endpoint configuration.
+    :vartype private_endpoint_configuration:
+     ~azure.mgmt.providerhub.models.PrivateEndpointConfiguration
+    :ivar write_lock: The write lock configuration.
+    :vartype write_lock: ~azure.mgmt.providerhub.models.WriteLockConfiguration
+    :ivar super_scale_enabled: Indicates whether super scale is enabled.
+    :vartype super_scale_enabled: bool
     :ivar resource_concurrency_control_options: The resource concurrency control options.
     :vartype resource_concurrency_control_options: dict[str,
      ~azure.mgmt.providerhub.models.ResourceConcurrencyControlOption]
@@ -8001,9 +8155,6 @@ class ResourceTypeRegistrationProperties(_Model):
     :ivar availability_zone_rule: The availability zone rule.
     :vartype availability_zone_rule:
      ~azure.mgmt.providerhub.models.ResourceTypeRegistrationPropertiesAvailabilityZoneRule
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceTypeRegistrationPropertiesDstsConfiguration
     :ivar async_timeout_rules: Async timeout rules.
     :vartype async_timeout_rules: list[~azure.mgmt.providerhub.models.AsyncTimeoutRule]
     :ivar common_api_versions: Common API versions for the resource type.
@@ -8095,7 +8246,8 @@ class ResourceTypeRegistrationProperties(_Model):
     marketplace_type: Optional[Union[str, "_models.MarketplaceType"]] = rest_field(
         name="marketplaceType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The marketplace type. Known values are: \"NotSpecified\", \"AddOn\", \"Bypass\", and \"Store\"."""
+    """The marketplace type. Known values are: \"NotSpecified\", \"AddOn\", \"Bypass\", \"Store\", and
+     \"ProviderHub\"."""
     swagger_specifications: Optional[list["_models.SwaggerSpecification"]] = rest_field(
         name="swaggerSpecifications", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8175,10 +8327,6 @@ class ResourceTypeRegistrationProperties(_Model):
         name="disallowedActionVerbs", visibility=["read", "create", "update", "delete", "query"]
     )
     """The disallowed action verbs."""
-    service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = rest_field(
-        name="serviceTreeInfos", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The service tree infos."""
     request_header_options: Optional["_models.ResourceTypeRegistrationPropertiesRequestHeaderOptions"] = rest_field(
         name="requestHeaderOptions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8199,11 +8347,31 @@ class ResourceTypeRegistrationProperties(_Model):
         name="resourceMovePolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource move policy."""
-    resource_deletion_policy: Optional[Union[str, "_models.ResourceDeletionPolicy"]] = rest_field(
+    resource_deletion_policy: Optional[Union[str, "_models.RPaaSResourceDeletionPolicy"]] = rest_field(
         name="resourceDeletionPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource deletion policy. Known values are: \"NotSpecified\", \"CascadeDeleteAll\", and
-     \"CascadeDeleteProxyOnlyChildren\"."""
+    """The resource deletion policy. Known values are: \"NotSpecified\", \"CascadeDeleteAll\",
+     \"CascadeDeleteProxyOnlyChildren\", \"Cascade\", and \"Force\"."""
+    resource_deletion_policies: Optional[list["_models.ResourceDeletionPolicyAndProperties"]] = rest_field(
+        name="resourceDeletionPolicies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of resource deletion policies added."""
+    managed_resource_group_configuration: Optional["_models.ResourceTypeManagedResourceGroupConfiguration"] = (
+        rest_field(name="managedResourceGroupConfiguration", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """The managed resource group configuration."""
+    private_endpoint_configuration: Optional["_models.PrivateEndpointConfiguration"] = rest_field(
+        name="privateEndpointConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private endpoint configuration."""
+    write_lock: Optional["_models.WriteLockConfiguration"] = rest_field(
+        name="writeLock", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The write lock configuration."""
+    super_scale_enabled: Optional[bool] = rest_field(
+        name="superScaleEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether super scale is enabled."""
     resource_concurrency_control_options: Optional[dict[str, "_models.ResourceConcurrencyControlOption"]] = rest_field(
         name="resourceConcurrencyControlOptions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8278,10 +8446,6 @@ class ResourceTypeRegistrationProperties(_Model):
         name="availabilityZoneRule", visibility=["read", "create", "update", "delete", "query"]
     )
     """The availability zone rule."""
-    dsts_configuration: Optional["_models.ResourceTypeRegistrationPropertiesDstsConfiguration"] = rest_field(
-        name="dstsConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The dsts configuration."""
     async_timeout_rules: Optional[list["_models.AsyncTimeoutRule"]] = rest_field(
         name="asyncTimeoutRules", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8409,7 +8573,6 @@ class ResourceTypeRegistrationProperties(_Model):
             "_models.ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications"
         ] = None,
         disallowed_action_verbs: Optional[list[str]] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         request_header_options: Optional["_models.ResourceTypeRegistrationPropertiesRequestHeaderOptions"] = None,
         subscription_state_rules: Optional[list["_models.SubscriptionStateRule"]] = None,
         template_deployment_options: Optional[
@@ -8417,7 +8580,12 @@ class ResourceTypeRegistrationProperties(_Model):
         ] = None,
         extended_locations: Optional[list["_models.ExtendedLocationOptions"]] = None,
         resource_move_policy: Optional["_models.ResourceTypeRegistrationPropertiesResourceMovePolicy"] = None,
-        resource_deletion_policy: Optional[Union[str, "_models.ResourceDeletionPolicy"]] = None,
+        resource_deletion_policy: Optional[Union[str, "_models.RPaaSResourceDeletionPolicy"]] = None,
+        resource_deletion_policies: Optional[list["_models.ResourceDeletionPolicyAndProperties"]] = None,
+        managed_resource_group_configuration: Optional["_models.ResourceTypeManagedResourceGroupConfiguration"] = None,
+        private_endpoint_configuration: Optional["_models.PrivateEndpointConfiguration"] = None,
+        write_lock: Optional["_models.WriteLockConfiguration"] = None,
+        super_scale_enabled: Optional[bool] = None,
         resource_concurrency_control_options: Optional[dict[str, "_models.ResourceConcurrencyControlOption"]] = None,
         resource_graph_configuration: Optional[
             "_models.ResourceTypeRegistrationPropertiesResourceGraphConfiguration"
@@ -8441,7 +8609,6 @@ class ResourceTypeRegistrationProperties(_Model):
         allow_empty_role_assignments: Optional[bool] = None,
         policy_execution_type: Optional[Union[str, "_models.PolicyExecutionType"]] = None,
         availability_zone_rule: Optional["_models.ResourceTypeRegistrationPropertiesAvailabilityZoneRule"] = None,
-        dsts_configuration: Optional["_models.ResourceTypeRegistrationPropertiesDstsConfiguration"] = None,
         async_timeout_rules: Optional[list["_models.AsyncTimeoutRule"]] = None,
         common_api_versions: Optional[list[str]] = None,
         api_profiles: Optional[list["_models.ApiProfile"]] = None,
@@ -8482,7 +8649,9 @@ class ResourceTypeRegistrationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesAvailabilityZoneRule(_Model):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesAvailabilityZoneRule(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The availability zone rule.
 
     :ivar availability_zone_policy: Known values are: "NotSpecified", "SingleZoned", and
@@ -8513,7 +8682,9 @@ class ResourceTypeRegistrationPropertiesAvailabilityZoneRule(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesCapacityRule(_Model):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesCapacityRule(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Capacity rule.
 
     :ivar capacity_policy: Capacity policy. Known values are: "Default" and "Restricted".
@@ -8550,7 +8721,7 @@ class ResourceTypeRegistrationPropertiesCapacityRule(_Model):  # pylint: disable
 
 class ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications(
     CheckNameAvailabilitySpecifications
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The check name availability specifications.
 
     :ivar enable_default_validation: Whether default validation is enabled.
@@ -8578,35 +8749,9 @@ class ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications(
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceTypeRegistrationPropertiesExtensionOptions(ResourceTypeExtensionOptions):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesExtensionOptions(
+    ResourceTypeExtensionOptions
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The extension options.
 
     :ivar resource_creation_begin: Resource creation begin.
@@ -8632,7 +8777,9 @@ class ResourceTypeRegistrationPropertiesExtensionOptions(ResourceTypeExtensionOp
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesFeaturesRule(FeaturesRule):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesFeaturesRule(
+    FeaturesRule
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The features rule.
 
     :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
@@ -8660,7 +8807,7 @@ class ResourceTypeRegistrationPropertiesFeaturesRule(FeaturesRule):  # pylint: d
 
 class ResourceTypeRegistrationPropertiesIdentityManagement(
     IdentityManagementProperties
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The identity management.
 
     :ivar type: The type. Known values are: "NotSpecified", "SystemAssigned", "UserAssigned",
@@ -8695,7 +8842,9 @@ class ResourceTypeRegistrationPropertiesIdentityManagement(
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesLegacyPolicy(_Model):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesLegacyPolicy(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The legacy policy.
 
     :ivar disallowed_legacy_operations:
@@ -8731,7 +8880,9 @@ class ResourceTypeRegistrationPropertiesLegacyPolicy(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesManagement(ResourceProviderManagement):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesManagement(
+    ResourceProviderManagement
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The resource provider management.
 
     :ivar schema_owners: The schema owners.
@@ -8746,10 +8897,7 @@ class ResourceTypeRegistrationPropertiesManagement(ResourceProviderManagement): 
     :vartype incident_routing_team: str
     :ivar incident_contact_email: The incident contact email.
     :vartype incident_contact_email: str
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
-    :ivar resource_access_policy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
+    :ivar resource_access_policy: The resource access policy. "NotSpecified"
     :vartype resource_access_policy: str or ~azure.mgmt.providerhub.models.ResourceAccessPolicy
     :ivar resource_access_roles: The resource access roles.
     :vartype resource_access_roles: list[~azure.mgmt.providerhub.models.ResourceAccessRole]
@@ -8767,6 +8915,8 @@ class ResourceTypeRegistrationPropertiesManagement(ResourceProviderManagement): 
     :vartype pc_code: str
     :ivar profit_center_program_id: The profit center program id for the subscription.
     :vartype profit_center_program_id: str
+    :ivar feature_management_owners: List of feature management owners.
+    :vartype feature_management_owners: list[str]
     """
 
     @overload
@@ -8779,7 +8929,6 @@ class ResourceTypeRegistrationPropertiesManagement(ResourceProviderManagement): 
         incident_routing_service: Optional[str] = None,
         incident_routing_team: Optional[str] = None,
         incident_contact_email: Optional[str] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         resource_access_policy: Optional[Union[str, "_models.ResourceAccessPolicy"]] = None,
         resource_access_roles: Optional[list["_models.ResourceAccessRole"]] = None,
         expedited_rollout_submitters: Optional[list[str]] = None,
@@ -8790,6 +8939,7 @@ class ResourceTypeRegistrationPropertiesManagement(ResourceProviderManagement): 
         canary_manifest_owners: Optional[list[str]] = None,
         pc_code: Optional[str] = None,
         profit_center_program_id: Optional[str] = None,
+        feature_management_owners: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -8803,7 +8953,9 @@ class ResourceTypeRegistrationPropertiesManagement(ResourceProviderManagement): 
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesMarketplaceOptions(_Model):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesMarketplaceOptions(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Marketplace options.
 
     :ivar add_on_plan_conversion_allowed: Add-on plan conversion allowed.
@@ -8833,7 +8985,9 @@ class ResourceTypeRegistrationPropertiesMarketplaceOptions(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesRequestHeaderOptions(RequestHeaderOptions):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesRequestHeaderOptions(
+    RequestHeaderOptions
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The request header options.
 
     :ivar opt_in_headers: The opt in headers. Known values are: "NotSpecified", "SignedUserToken",
@@ -8866,7 +9020,9 @@ class ResourceTypeRegistrationPropertiesRequestHeaderOptions(RequestHeaderOption
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesResourceCache(_Model):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesResourceCache(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Resource cache options.
 
     :ivar enable_resource_cache: Enable resource cache.
@@ -8906,7 +9062,7 @@ class ResourceTypeRegistrationPropertiesResourceCache(_Model):  # pylint: disabl
 
 class ResourceTypeRegistrationPropertiesResourceGraphConfiguration(
     ResourceGraphConfiguration
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The resource graph configuration.
 
     :ivar enabled: Whether it's enabled.
@@ -8934,7 +9090,9 @@ class ResourceTypeRegistrationPropertiesResourceGraphConfiguration(
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesResourceManagementOptions(_Model):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesResourceManagementOptions(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Resource management options.
 
     :ivar batch_provisioning_support: Batch provisioning support.
@@ -8986,24 +9144,59 @@ class ResourceTypeRegistrationPropertiesResourceManagementOptions(_Model):  # py
 
 class ResourceTypeRegistrationPropertiesResourceManagementOptionsBatchProvisioningSupport(
     _Model
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Batch provisioning support.
 
     :ivar supported_operations: Supported operations. Known values are: "NotSpecified", "Get", and
      "Delete".
     :vartype supported_operations: str or ~azure.mgmt.providerhub.models.SupportedOperations
+    :ivar max_batch_size: The maximum batch size.
+    :vartype max_batch_size: int
+    :ivar batch_contract_version: Batch contract version.
+    :vartype batch_contract_version: str
+    :ivar max_nested_batch_size: The maximum nested batch size.
+    :vartype max_nested_batch_size: int
+    :ivar required_features: The required features.
+    :vartype required_features: list[str]
+    :ivar action_configurations: Action Configurations.
+    :vartype action_configurations: list[~azure.mgmt.providerhub.models.ActionConfiguration]
     """
 
     supported_operations: Optional[Union[str, "_models.SupportedOperations"]] = rest_field(
         name="supportedOperations", visibility=["read", "create", "update", "delete", "query"]
     )
     """Supported operations. Known values are: \"NotSpecified\", \"Get\", and \"Delete\"."""
+    max_batch_size: Optional[int] = rest_field(
+        name="maxBatchSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum batch size."""
+    batch_contract_version: Optional[str] = rest_field(
+        name="batchContractVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Batch contract version."""
+    max_nested_batch_size: Optional[int] = rest_field(
+        name="maxNestedBatchSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum nested batch size."""
+    required_features: Optional[list[str]] = rest_field(
+        name="requiredFeatures", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The required features."""
+    action_configurations: Optional[list["_models.ActionConfiguration"]] = rest_field(
+        name="actionConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Action Configurations."""
 
     @overload
     def __init__(
         self,
         *,
         supported_operations: Optional[Union[str, "_models.SupportedOperations"]] = None,
+        max_batch_size: Optional[int] = None,
+        batch_contract_version: Optional[str] = None,
+        max_nested_batch_size: Optional[int] = None,
+        required_features: Optional[list[str]] = None,
+        action_configurations: Optional[list["_models.ActionConfiguration"]] = None,
     ) -> None: ...
 
     @overload
@@ -9019,7 +9212,7 @@ class ResourceTypeRegistrationPropertiesResourceManagementOptionsBatchProvisioni
 
 class ResourceTypeRegistrationPropertiesResourceManagementOptionsNestedProvisioningSupport(
     _Model
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Nested provisioning support.
 
     :ivar minimum_api_version: Minimum API version.
@@ -9049,7 +9242,9 @@ class ResourceTypeRegistrationPropertiesResourceManagementOptionsNestedProvision
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesResourceMovePolicy(ResourceMovePolicy):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesResourceMovePolicy(
+    ResourceMovePolicy
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The resource move policy.
 
     :ivar validation_required: Whether validation is required.
@@ -9080,7 +9275,9 @@ class ResourceTypeRegistrationPropertiesResourceMovePolicy(ResourceMovePolicy): 
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesResourceQueryManagement(_Model):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesResourceQueryManagement(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Resource query management options.
 
     :ivar filter_option: Filter option. Known values are: "NotSpecified" and
@@ -9111,7 +9308,9 @@ class ResourceTypeRegistrationPropertiesResourceQueryManagement(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesResourceTypeCommonAttributeManagement(_Model):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesResourceTypeCommonAttributeManagement(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Resource type common attribute management.
 
     :ivar common_api_versions_merge_mode: Common api versions merge mode. Known values are: "Merge"
@@ -9143,7 +9342,9 @@ class ResourceTypeRegistrationPropertiesResourceTypeCommonAttributeManagement(_M
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRegistrationPropertiesRoutingRule(_Model):  # pylint: disable=name-too-long
+class ResourceTypeRegistrationPropertiesRoutingRule(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Routing rule.
 
     :ivar host_resource_type: Hosted resource type.
@@ -9175,7 +9376,7 @@ class ResourceTypeRegistrationPropertiesRoutingRule(_Model):  # pylint: disable=
 
 class ResourceTypeRegistrationPropertiesSubscriptionLifecycleNotificationSpecifications(
     SubscriptionLifecycleNotificationSpecifications
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The subscription lifecycle notification specifications.
 
     :ivar subscription_state_override_actions: The subscription state override actions.
@@ -9206,7 +9407,7 @@ class ResourceTypeRegistrationPropertiesSubscriptionLifecycleNotificationSpecifi
 
 class ResourceTypeRegistrationPropertiesTemplateDeploymentOptions(
     TemplateDeploymentOptions
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The template deployment options.
 
     :ivar preflight_supported: Whether preflight is supported.
@@ -9234,7 +9435,7 @@ class ResourceTypeRegistrationPropertiesTemplateDeploymentOptions(
         super().__init__(*args, **kwargs)
 
 
-class TemplateDeploymentPolicy(_Model):
+class TemplateDeploymentPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TemplateDeploymentPolicy.
 
     :ivar capabilities: The capabilities. Required. Known values are: "Default" and "Preflight".
@@ -9285,7 +9486,7 @@ class TemplateDeploymentPolicy(_Model):
 
 class ResourceTypeRegistrationPropertiesTemplateDeploymentPolicy(
     TemplateDeploymentPolicy
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The template deployment policy.
 
     :ivar capabilities: The capabilities. Required. Known values are: "Default" and "Preflight".
@@ -9320,7 +9521,9 @@ class ResourceTypeRegistrationPropertiesTemplateDeploymentPolicy(
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeRequestHeaderOptions(RequestHeaderOptions):
+class ResourceTypeRequestHeaderOptions(
+    RequestHeaderOptions
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request header options.
 
     :ivar opt_in_headers: The opt in headers. Known values are: "NotSpecified", "SignedUserToken",
@@ -9353,7 +9556,7 @@ class ResourceTypeRequestHeaderOptions(RequestHeaderOptions):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeSku(_Model):
+class ResourceTypeSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceTypeSku.
 
     :ivar sku_settings: The sku settings. Required.
@@ -9393,7 +9596,9 @@ class ResourceTypeSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeTemplateDeploymentPolicy(TemplateDeploymentPolicy):
+class ResourceTypeTemplateDeploymentPolicy(
+    TemplateDeploymentPolicy
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The template deployment policy.
 
     :ivar capabilities: The capabilities. Required. Known values are: "Default" and "Preflight".
@@ -9428,52 +9633,7 @@ class ResourceTypeTemplateDeploymentPolicy(TemplateDeploymentPolicy):
         super().__init__(*args, **kwargs)
 
 
-class ServiceTreeInfo(_Model):
-    """ServiceTreeInfo.
-
-    :ivar service_id: The service id.
-    :vartype service_id: str
-    :ivar component_id: The component id.
-    :vartype component_id: str
-    :ivar readiness: The readiness. Known values are: "ClosingDown", "Deprecated", "GA",
-     "InDevelopment", "InternalOnly", "PrivatePreview", "PublicPreview", "RemovedFromARM", and
-     "Retired".
-    :vartype readiness: str or ~azure.mgmt.providerhub.models.Readiness
-    """
-
-    service_id: Optional[str] = rest_field(name="serviceId", visibility=["read", "create", "update", "delete", "query"])
-    """The service id."""
-    component_id: Optional[str] = rest_field(
-        name="componentId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The component id."""
-    readiness: Optional[Union[str, "_models.Readiness"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The readiness. Known values are: \"ClosingDown\", \"Deprecated\", \"GA\", \"InDevelopment\",
-     \"InternalOnly\", \"PrivatePreview\", \"PublicPreview\", \"RemovedFromARM\", and \"Retired\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_id: Optional[str] = None,
-        component_id: Optional[str] = None,
-        readiness: Optional[Union[str, "_models.Readiness"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SkuCapability(_Model):
+class SkuCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SkuCapability.
 
     :ivar name: The name. Required.
@@ -9506,7 +9666,7 @@ class SkuCapability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuCapacity(_Model):
+class SkuCapacity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SkuCapacity.
 
     :ivar minimum: The minimum. Required.
@@ -9551,7 +9711,7 @@ class SkuCapacity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuCost(_Model):
+class SkuCost(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SkuCost.
 
     :ivar meter_id: The meter id. Required.
@@ -9591,7 +9751,7 @@ class SkuCost(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuLocationInfo(_Model):
+class SkuLocationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SkuLocationInfo.
 
     :ivar location: The location. Required.
@@ -9647,7 +9807,7 @@ class SkuLocationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuResource(ProxyResource):
+class SkuResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -9688,7 +9848,7 @@ class SkuResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SkuResourceProperties(ResourceTypeSku):
+class SkuResourceProperties(ResourceTypeSku):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SkuResourceProperties.
 
     :ivar sku_settings: The sku settings. Required.
@@ -9717,7 +9877,7 @@ class SkuResourceProperties(ResourceTypeSku):
         super().__init__(*args, **kwargs)
 
 
-class SkuSetting(_Model):
+class SkuSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SkuSetting.
 
     :ivar name: The name. Required.
@@ -9810,7 +9970,7 @@ class SkuSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuSettingCapacity(SkuCapacity):
+class SkuSettingCapacity(SkuCapacity):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The capacity.
 
     :ivar minimum: The minimum. Required.
@@ -9844,7 +10004,7 @@ class SkuSettingCapacity(SkuCapacity):
         super().__init__(*args, **kwargs)
 
 
-class SkuZoneDetail(_Model):
+class SkuZoneDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SkuZoneDetail.
 
     :ivar name: The name.
@@ -9879,7 +10039,7 @@ class SkuZoneDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriberSetting(_Model):
+class SubscriberSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SubscriberSetting.
 
     :ivar filter_rules: The filter rules.
@@ -9909,7 +10069,7 @@ class SubscriberSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionStateOverrideAction(_Model):
+class SubscriptionStateOverrideAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SubscriptionStateOverrideAction.
 
     :ivar state: The state. Required. Known values are: "Registered", "Unregistered", "Warned",
@@ -9954,7 +10114,7 @@ class SubscriptionStateOverrideAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionStateRule(_Model):
+class SubscriptionStateRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SubscriptionStateRule.
 
     :ivar state: The subscription state. Known values are: "NotDefined", "Enabled", "Warned",
@@ -9993,7 +10153,7 @@ class SubscriptionStateRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SwaggerSpecification(_Model):
+class SwaggerSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SwaggerSpecification.
 
     :ivar api_versions: The api versions.
@@ -10030,7 +10190,7 @@ class SwaggerSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -10097,7 +10257,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThirdPartyExtension(_Model):
+class ThirdPartyExtension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ThirdPartyExtension.
 
     :ivar name: Name of third party extension.
@@ -10125,7 +10285,7 @@ class ThirdPartyExtension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThrottlingMetric(_Model):
+class ThrottlingMetric(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ThrottlingMetric.
 
     :ivar type: The throttling metric type. Required. Known values are: "NotSpecified",
@@ -10135,6 +10295,8 @@ class ThrottlingMetric(_Model):
     :vartype limit: int
     :ivar interval: The interval.
     :vartype interval: ~datetime.timedelta
+    :ivar bucket_size: The bucket size.
+    :vartype bucket_size: str
     """
 
     type: Union[str, "_models.ThrottlingMetricType"] = rest_field(
@@ -10146,6 +10308,10 @@ class ThrottlingMetric(_Model):
     """The limit. Required."""
     interval: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The interval."""
+    bucket_size: Optional[str] = rest_field(
+        name="bucketSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The bucket size."""
 
     @overload
     def __init__(
@@ -10154,6 +10320,7 @@ class ThrottlingMetric(_Model):
         type: Union[str, "_models.ThrottlingMetricType"],
         limit: int,
         interval: Optional[datetime.timedelta] = None,
+        bucket_size: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -10167,7 +10334,7 @@ class ThrottlingMetric(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThrottlingRule(_Model):
+class ThrottlingRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ThrottlingRule.
 
     :ivar action: The action. Required.
@@ -10214,7 +10381,7 @@ class ThrottlingRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TokenAuthConfiguration(_Model):
+class TokenAuthConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TokenAuthConfiguration.
 
     :ivar authentication_scheme: The authentication scheme. Known values are: "PoP" and "Bearer".
@@ -10260,7 +10427,7 @@ class TokenAuthConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TypedErrorInfo(_Model):
+class TypedErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error information.
 
     :ivar type: The type of the error. Required.
@@ -10279,6 +10446,42 @@ class TypedErrorInfo(_Model):
         self,
         *,
         type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WriteLockConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The write lock configuration.
+
+    :ivar state: The state of write lock feature. The feature will ensure a deterministic sequence
+     of write-operation within and across the verbs. Also the feature will ensure that the semantics
+     of synchronous and long-running operations are honored. Known values are: "Disabled" and
+     "Enabled".
+    :vartype state: str or ~azure.mgmt.providerhub.models.WriteLockState
+    """
+
+    state: Optional[Union[str, "_models.WriteLockState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The state of write lock feature. The feature will ensure a deterministic sequence of
+     write-operation within and across the verbs. Also the feature will ensure that the semantics of
+     synchronous and long-running operations are honored. Known values are: \"Disabled\" and
+     \"Enabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.WriteLockState"]] = None,
     ) -> None: ...
 
     @overload

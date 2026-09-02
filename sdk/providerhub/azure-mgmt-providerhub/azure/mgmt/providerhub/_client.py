@@ -23,7 +23,7 @@ from .operations import (
     AuthorizedApplicationsOperations,
     CustomRolloutsOperations,
     DefaultRolloutsOperations,
-    NewRegionFrontloadReleaseOperations,
+    ManifestsOperations,
     NotificationRegistrationsOperations,
     Operations,
     ProviderMonitorSettingsOperations,
@@ -44,16 +44,15 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ProviderHubMgmtClient(_ProviderHubMgmtClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class ProviderHubMgmtClient(
+    _ProviderHubMgmtClientOperationsMixin
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Provider Hub.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.providerhub.operations.Operations
     :ivar custom_rollouts: CustomRolloutsOperations operations
     :vartype custom_rollouts: azure.mgmt.providerhub.operations.CustomRolloutsOperations
-    :ivar new_region_frontload_release: NewRegionFrontloadReleaseOperations operations
-    :vartype new_region_frontload_release:
-     azure.mgmt.providerhub.operations.NewRegionFrontloadReleaseOperations
     :ivar provider_registrations: ProviderRegistrationsOperations operations
     :vartype provider_registrations:
      azure.mgmt.providerhub.operations.ProviderRegistrationsOperations
@@ -73,6 +72,8 @@ class ProviderHubMgmtClient(_ProviderHubMgmtClientOperationsMixin):  # pylint: d
     :ivar provider_monitor_settings: ProviderMonitorSettingsOperations operations
     :vartype provider_monitor_settings:
      azure.mgmt.providerhub.operations.ProviderMonitorSettingsOperations
+    :ivar manifests: ManifestsOperations operations
+    :vartype manifests: azure.mgmt.providerhub.operations.ManifestsOperations
     :ivar resource_actions: ResourceActionsOperations operations
     :vartype resource_actions: azure.mgmt.providerhub.operations.ResourceActionsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -84,7 +85,7 @@ class ProviderHubMgmtClient(_ProviderHubMgmtClientOperationsMixin):  # pylint: d
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2024-09-01"
+    :keyword api_version: The API version to use for this operation. Known values are "2025-10-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -141,9 +142,6 @@ class ProviderHubMgmtClient(_ProviderHubMgmtClientOperationsMixin):  # pylint: d
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.custom_rollouts = CustomRolloutsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.new_region_frontload_release = NewRegionFrontloadReleaseOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.provider_registrations = ProviderRegistrationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -163,6 +161,7 @@ class ProviderHubMgmtClient(_ProviderHubMgmtClientOperationsMixin):  # pylint: d
         self.provider_monitor_settings = ProviderMonitorSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.manifests = ManifestsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.resource_actions = ResourceActionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

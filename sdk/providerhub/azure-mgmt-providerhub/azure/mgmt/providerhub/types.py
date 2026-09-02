@@ -16,7 +16,6 @@ if TYPE_CHECKING:
         AdditionalOptionsResourceTypeRegistration,
         AuthenticationScheme,
         AvailabilityZonePolicy,
-        AvailableCheckInManifestEnvironment,
         BlockActionVerb,
         CapacityPolicy,
         CommonApiVersionsMergeMode,
@@ -35,10 +34,12 @@ if TYPE_CHECKING:
         IdentityManagementTypes,
         Intent,
         LegacyOperation,
+        LinkedAccessCheckOptions,
         LinkedAction,
         LinkedOperation,
         LoggingDetails,
         LoggingDirections,
+        ManifestCheckinOption,
         MarketplaceType,
         MessageScope,
         NotificationEndpointType,
@@ -55,7 +56,7 @@ if TYPE_CHECKING:
         ProviderRegistrationKind,
         ProvisioningState,
         QuotaPolicy,
-        Readiness,
+        RPaaSResourceDeletionPolicy,
         Regionality,
         ResourceAccessPolicy,
         ResourceDeletionPolicy,
@@ -71,7 +72,6 @@ if TYPE_CHECKING:
         RoutingType,
         ServerFailureResponseMessageType,
         ServiceClientOptionsType,
-        ServiceFeatureFlagAction,
         ServiceStatus,
         SignedRequestScope,
         SkipNotifications,
@@ -86,16 +86,32 @@ if TYPE_CHECKING:
         TemplateDeploymentPreflightOptions,
         ThrottlingMetricType,
         TrafficRegionCategory,
+        WriteLockState,
     )
+
+
+class ActionConfiguration(TypedDict, total=False):
+    """Batch action configuration.
+
+    :ivar authorizationAction: Authorization action.
+    :vartype authorizationAction: str
+    :ivar maxBatchSize: The maximum batch size.
+    :vartype maxBatchSize: int
+    """
+
+    authorizationAction: str
+    """Authorization action."""
+    maxBatchSize: int
+    """The maximum batch size."""
 
 
 class AdditionalAuthorization(TypedDict, total=False):
     """AdditionalAuthorization.
 
-    :ivar application_id:
-    :vartype application_id: str
-    :ivar role_definition_id:
-    :vartype role_definition_id: str
+    :ivar applicationId:
+    :vartype applicationId: str
+    :ivar roleDefinitionId:
+    :vartype roleDefinitionId: str
     """
 
     applicationId: str
@@ -107,8 +123,8 @@ class AllowedResourceName(TypedDict, total=False):
 
     :ivar name: Resource name.
     :vartype name: str
-    :ivar get_action_verb: Get action verb.
-    :vartype get_action_verb: str
+    :ivar getActionVerb: Get action verb.
+    :vartype getActionVerb: str
     """
 
     name: str
@@ -137,10 +153,10 @@ class AllowedUnauthorizedActionsExtension(TypedDict, total=False):
 class ApiProfile(TypedDict, total=False):
     """ApiProfile.
 
-    :ivar profile_version: Profile version.
-    :vartype profile_version: str
-    :ivar api_version: Api version.
-    :vartype api_version: str
+    :ivar profileVersion: Profile version.
+    :vartype profileVersion: str
+    :ivar apiVersion: Api version.
+    :vartype apiVersion: str
     """
 
     profileVersion: str
@@ -157,10 +173,13 @@ class ApplicationDataAuthorization(TypedDict, total=False):
      but does not allow all the permissions of a service owner, such as read/write on internal
      metadata. Required. Known values are: "ServiceOwner" and "LimitedOwner".
     :vartype role: Union[str, "Role"]
-    :ivar resource_types: The resource types from the defined resource types in the provider
+    :ivar resourceTypes: The resource types from the defined resource types in the provider
      namespace that the application can access. If no resource types are specified and the role is
      service owner, the default is * which is all resource types.
-    :vartype resource_types: list[str]
+    :vartype resourceTypes: list[str]
+    :ivar excludeApplicationIdFromManifest: Exclude application id from 'providerAuthorizations'
+     section of manifest?.
+    :vartype excludeApplicationIdFromManifest: bool
     """
 
     role: Required[Union[str, "Role"]]
@@ -172,15 +191,17 @@ class ApplicationDataAuthorization(TypedDict, total=False):
     """The resource types from the defined resource types in the provider namespace that the
      application can access. If no resource types are specified and the role is service owner, the
      default is * which is all resource types."""
+    excludeApplicationIdFromManifest: bool
+    """Exclude application id from 'providerAuthorizations' section of manifest?."""
 
 
 class ApplicationProviderAuthorization(TypedDict, total=False):
     """ApplicationProviderAuthorization.
 
-    :ivar role_definition_id: The role definition ID for the application.
-    :vartype role_definition_id: str
-    :ivar managed_by_role_definition_id: The managed by role definition ID for the application.
-    :vartype managed_by_role_definition_id: str
+    :ivar roleDefinitionId: The role definition ID for the application.
+    :vartype roleDefinitionId: str
+    :ivar managedByRoleDefinitionId: The managed by role definition ID for the application.
+    :vartype managedByRoleDefinitionId: str
     """
 
     roleDefinitionId: str
@@ -189,14 +210,37 @@ class ApplicationProviderAuthorization(TypedDict, total=False):
     """The managed by role definition ID for the application."""
 
 
+class AppliedManifestInfo(TypedDict, total=False):
+    """Information about a manifest applied to a region.
+
+    :ivar region: Region to which the manifest was applied.
+    :vartype region: str
+    :ivar manifestAppliedAt: Time at which the manifest was applied.
+    :vartype manifestAppliedAt: str
+    :ivar previousCommitId: Commit id of previous manifest.
+    :vartype previousCommitId: str
+    :ivar appliedCommitId: Commit id of manifest being applied.
+    :vartype appliedCommitId: str
+    """
+
+    region: str
+    """Region to which the manifest was applied."""
+    manifestAppliedAt: str
+    """Time at which the manifest was applied."""
+    previousCommitId: str
+    """Commit id of previous manifest."""
+    appliedCommitId: str
+    """Commit id of manifest being applied."""
+
+
 class AsyncOperationPollingRules(TypedDict, total=False):
     """AsyncOperationPollingRules.
 
-    :ivar authorization_actions: The authorization actions.
-    :vartype authorization_actions: list[str]
-    :ivar additional_options: The additional options. Known values are:
+    :ivar authorizationActions: The authorization actions.
+    :vartype authorizationActions: list[str]
+    :ivar additionalOptions: The additional options. Known values are:
      "ProtectedAsyncOperationPolling" and "ProtectedAsyncOperationPollingAuditOnly".
-    :vartype additional_options: Union[str, "AdditionalOptionsAsyncOperation"]
+    :vartype additionalOptions: Union[str, "AdditionalOptionsAsyncOperation"]
     """
 
     authorizationActions: list[str]
@@ -209,8 +253,8 @@ class AsyncOperationPollingRules(TypedDict, total=False):
 class AsyncTimeoutRule(TypedDict, total=False):
     """AsyncTimeoutRule.
 
-    :ivar action_name:
-    :vartype action_name: str
+    :ivar actionName:
+    :vartype actionName: str
     :ivar timeout: This is a TimeSpan property.
     :vartype timeout: str
     """
@@ -246,9 +290,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -274,9 +318,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -292,9 +336,9 @@ class AuthorizedApplication(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties:
     :vartype properties: "AuthorizedApplicationProperties"
     """
@@ -305,15 +349,15 @@ class AuthorizedApplication(ProxyResource):
 class AuthorizedApplicationProperties(TypedDict, total=False):
     """AuthorizedApplicationProperties.
 
-    :ivar provider_authorization:
-    :vartype provider_authorization: "ApplicationProviderAuthorization"
-    :ivar data_authorizations: The authorizations that determine the level of data access
+    :ivar providerAuthorization:
+    :vartype providerAuthorization: "ApplicationProviderAuthorization"
+    :ivar dataAuthorizations: The authorizations that determine the level of data access
      permissions on the specified resource types.
-    :vartype data_authorizations: list["ApplicationDataAuthorization"]
-    :ivar provisioning_state: The provisioning state. Known values are: "NotSpecified", "Accepted",
+    :vartype dataAuthorizations: list["ApplicationDataAuthorization"]
+    :ivar provisioningState: The provisioning state. Known values are: "NotSpecified", "Accepted",
      "Running", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Failed", "Succeeded",
      "MovingResources", "TransientFailure", and "RolloutInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     providerAuthorization: "ApplicationProviderAuthorization"
@@ -329,8 +373,8 @@ class AuthorizedApplicationProperties(TypedDict, total=False):
 class CanaryTrafficRegionRolloutConfiguration(TypedDict, total=False):
     """CanaryTrafficRegionRolloutConfiguration.
 
-    :ivar skip_regions: The skip regions.
-    :vartype skip_regions: list[str]
+    :ivar skipRegions: The skip regions.
+    :vartype skipRegions: list[str]
     :ivar regions: The regions.
     :vartype regions: list[str]
     """
@@ -344,14 +388,14 @@ class CanaryTrafficRegionRolloutConfiguration(TypedDict, total=False):
 class CheckinManifestInfo(TypedDict, total=False):
     """CheckinManifestInfo.
 
-    :ivar is_checked_in: Whether the manifest is checked in. Required.
-    :vartype is_checked_in: bool
-    :ivar status_message: The status message. Required.
-    :vartype status_message: str
-    :ivar pull_request: The pull request.
-    :vartype pull_request: str
-    :ivar commit_id: The commit id.
-    :vartype commit_id: str
+    :ivar isCheckedIn: Whether the manifest is checked in. Required.
+    :vartype isCheckedIn: bool
+    :ivar statusMessage: The status message. Required.
+    :vartype statusMessage: str
+    :ivar pullRequest: The pull request.
+    :vartype pullRequest: str
+    :ivar commitId: The commit id.
+    :vartype commitId: str
     """
 
     isCheckedIn: Required[bool]
@@ -369,9 +413,9 @@ class CheckinManifestParams(TypedDict, total=False):
 
     :ivar environment: The environment supplied to the checkin manifest operation. Required.
     :vartype environment: str
-    :ivar baseline_arm_manifest_location: The baseline ARM manifest location supplied to the
-     checkin manifest operation. Required.
-    :vartype baseline_arm_manifest_location: str
+    :ivar baselineArmManifestLocation: The baseline ARM manifest location supplied to the checkin
+     manifest operation. Required.
+    :vartype baselineArmManifestLocation: str
     """
 
     environment: Required[str]
@@ -383,10 +427,10 @@ class CheckinManifestParams(TypedDict, total=False):
 class CheckNameAvailabilitySpecifications(TypedDict, total=False):
     """CheckNameAvailabilitySpecifications.
 
-    :ivar enable_default_validation: Whether default validation is enabled.
-    :vartype enable_default_validation: bool
-    :ivar resource_types_with_custom_validation: The resource types with custom validation.
-    :vartype resource_types_with_custom_validation: list[str]
+    :ivar enableDefaultValidation: Whether default validation is enabled.
+    :vartype enableDefaultValidation: bool
+    :ivar resourceTypesWithCustomValidation: The resource types with custom validation.
+    :vartype resourceTypesWithCustomValidation: list[str]
     """
 
     enableDefaultValidation: bool
@@ -407,9 +451,9 @@ class CustomRollout(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the rollout. Required.
     :vartype properties: "CustomRolloutProperties"
     """
@@ -421,11 +465,11 @@ class CustomRollout(ProxyResource):
 class CustomRolloutProperties(TypedDict, total=False):
     """CustomRolloutProperties.
 
-    :ivar provisioning_state: The provisioned state of the resource. Known values are:
+    :ivar provisioningState: The provisioned state of the resource. Known values are:
      "NotSpecified", "Accepted", "Running", "Creating", "Created", "Deleting", "Deleted",
      "Canceled", "Failed", "Succeeded", "MovingResources", "TransientFailure", and
      "RolloutInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar specification: The specification. Required.
     :vartype specification: "CustomRolloutPropertiesSpecification"
     :ivar status: The status.
@@ -445,21 +489,25 @@ class CustomRolloutProperties(TypedDict, total=False):
 class CustomRolloutSpecification(TypedDict, total=False):
     """CustomRolloutSpecification.
 
-    :ivar auto_provision_config: The auto provisioning configuration.
-    :vartype auto_provision_config: "CustomRolloutSpecificationAutoProvisionConfig"
+    :ivar autoProvisionConfig: The auto provisioning configuration.
+    :vartype autoProvisionConfig: "CustomRolloutSpecificationAutoProvisionConfig"
     :ivar canary: The canary region configuration.
     :vartype canary: "CustomRolloutSpecificationCanary"
-    :ivar release_scopes: The list of ARM regions scoped for the release.
-    :vartype release_scopes: list[str]
-    :ivar refresh_subscription_registration: Whether refreshing subscription registration is
-     enabled or disabled.
-    :vartype refresh_subscription_registration: bool
-    :ivar skip_release_scope_validation: Whether release scope validation should be skipped.
-    :vartype skip_release_scope_validation: bool
-    :ivar provider_registration: The provider registration.
-    :vartype provider_registration: "CustomRolloutSpecificationProviderRegistration"
-    :ivar resource_type_registrations: The resource type registrations.
-    :vartype resource_type_registrations: list["ResourceTypeRegistration"]
+    :ivar releaseScopes: The list of ARM regions scoped for the release.
+    :vartype releaseScopes: list[str]
+    :ivar refreshSubscriptionRegistration: Whether refreshing subscription registration is enabled
+     or disabled.
+    :vartype refreshSubscriptionRegistration: bool
+    :ivar skipReleaseScopeValidation: Whether release scope validation should be skipped.
+    :vartype skipReleaseScopeValidation: bool
+    :ivar providerRegistration: The provider registration.
+    :vartype providerRegistration: "CustomRolloutSpecificationProviderRegistration"
+    :ivar resourceTypeRegistrations: The resource type registrations.
+    :vartype resourceTypeRegistrations: list["ResourceTypeRegistration"]
+    :ivar rolloutId: The rollout id.
+    :vartype rolloutId: str
+    :ivar manifestCheckinSpecification: The manifest checkin specification.
+    :vartype manifestCheckinSpecification: "ManifestCheckinSpecification"
     """
 
     autoProvisionConfig: "CustomRolloutSpecificationAutoProvisionConfig"
@@ -476,38 +524,48 @@ class CustomRolloutSpecification(TypedDict, total=False):
     """The provider registration."""
     resourceTypeRegistrations: list["ResourceTypeRegistration"]
     """The resource type registrations."""
+    rolloutId: str
+    """The rollout id."""
+    manifestCheckinSpecification: "ManifestCheckinSpecification"
+    """The manifest checkin specification."""
 
 
 class CustomRolloutPropertiesSpecification(CustomRolloutSpecification):
     """The specification.
 
-    :ivar auto_provision_config: The auto provisioning configuration.
-    :vartype auto_provision_config: "CustomRolloutSpecificationAutoProvisionConfig"
+    :ivar autoProvisionConfig: The auto provisioning configuration.
+    :vartype autoProvisionConfig: "CustomRolloutSpecificationAutoProvisionConfig"
     :ivar canary: The canary region configuration.
     :vartype canary: "CustomRolloutSpecificationCanary"
-    :ivar release_scopes: The list of ARM regions scoped for the release.
-    :vartype release_scopes: list[str]
-    :ivar refresh_subscription_registration: Whether refreshing subscription registration is
-     enabled or disabled.
-    :vartype refresh_subscription_registration: bool
-    :ivar skip_release_scope_validation: Whether release scope validation should be skipped.
-    :vartype skip_release_scope_validation: bool
-    :ivar provider_registration: The provider registration.
-    :vartype provider_registration: "CustomRolloutSpecificationProviderRegistration"
-    :ivar resource_type_registrations: The resource type registrations.
-    :vartype resource_type_registrations: list["ResourceTypeRegistration"]
+    :ivar releaseScopes: The list of ARM regions scoped for the release.
+    :vartype releaseScopes: list[str]
+    :ivar refreshSubscriptionRegistration: Whether refreshing subscription registration is enabled
+     or disabled.
+    :vartype refreshSubscriptionRegistration: bool
+    :ivar skipReleaseScopeValidation: Whether release scope validation should be skipped.
+    :vartype skipReleaseScopeValidation: bool
+    :ivar providerRegistration: The provider registration.
+    :vartype providerRegistration: "CustomRolloutSpecificationProviderRegistration"
+    :ivar resourceTypeRegistrations: The resource type registrations.
+    :vartype resourceTypeRegistrations: list["ResourceTypeRegistration"]
+    :ivar rolloutId: The rollout id.
+    :vartype rolloutId: str
+    :ivar manifestCheckinSpecification: The manifest checkin specification.
+    :vartype manifestCheckinSpecification: "ManifestCheckinSpecification"
     """
 
 
 class CustomRolloutStatus(TypedDict, total=False):
     """CustomRolloutStatus.
 
-    :ivar completed_regions: The completed regions.
-    :vartype completed_regions: list[str]
-    :ivar failed_or_skipped_regions: The failed or skipped regions.
-    :vartype failed_or_skipped_regions: dict[str, "ExtendedErrorInfo"]
-    :ivar manifest_checkin_status: The manifest checkin status.
-    :vartype manifest_checkin_status: "CustomRolloutStatusManifestCheckinStatus"
+    :ivar completedRegions: The completed regions.
+    :vartype completedRegions: list[str]
+    :ivar failedOrSkippedRegions: The failed or skipped regions.
+    :vartype failedOrSkippedRegions: dict[str, "ExtendedErrorInfo"]
+    :ivar manifestCheckinStatus: The manifest checkin status.
+    :vartype manifestCheckinStatus: "CustomRolloutStatusManifestCheckinStatus"
+    :ivar completedRegionsInfo: Information about the manifests applied to the completed regions.
+    :vartype completedRegionsInfo: list["AppliedManifestInfo"]
     """
 
     completedRegions: list[str]
@@ -516,17 +574,21 @@ class CustomRolloutStatus(TypedDict, total=False):
     """The failed or skipped regions."""
     manifestCheckinStatus: "CustomRolloutStatusManifestCheckinStatus"
     """The manifest checkin status."""
+    completedRegionsInfo: list["AppliedManifestInfo"]
+    """Information about the manifests applied to the completed regions."""
 
 
 class CustomRolloutPropertiesStatus(CustomRolloutStatus):
     """The status.
 
-    :ivar completed_regions: The completed regions.
-    :vartype completed_regions: list[str]
-    :ivar failed_or_skipped_regions: The failed or skipped regions.
-    :vartype failed_or_skipped_regions: dict[str, "ExtendedErrorInfo"]
-    :ivar manifest_checkin_status: The manifest checkin status.
-    :vartype manifest_checkin_status: "CustomRolloutStatusManifestCheckinStatus"
+    :ivar completedRegions: The completed regions.
+    :vartype completedRegions: list[str]
+    :ivar failedOrSkippedRegions: The failed or skipped regions.
+    :vartype failedOrSkippedRegions: dict[str, "ExtendedErrorInfo"]
+    :ivar manifestCheckinStatus: The manifest checkin status.
+    :vartype manifestCheckinStatus: "CustomRolloutStatusManifestCheckinStatus"
+    :ivar completedRegionsInfo: Information about the manifests applied to the completed regions.
+    :vartype completedRegionsInfo: list["AppliedManifestInfo"]
     """
 
 
@@ -535,8 +597,8 @@ class CustomRolloutSpecificationAutoProvisionConfig(TypedDict, total=False):  # 
 
     :ivar storage:
     :vartype storage: bool
-    :ivar resource_graph:
-    :vartype resource_graph: bool
+    :ivar resourceGraph:
+    :vartype resourceGraph: bool
     """
 
     storage: bool
@@ -573,9 +635,9 @@ class ProviderRegistration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties:
     :vartype properties: "ProviderRegistrationProperties"
     :ivar kind: Provider registration kind. This Metadata is also used by portal/tooling/etc to
@@ -602,9 +664,9 @@ class CustomRolloutSpecificationProviderRegistration(ProviderRegistration):  # p
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties:
     :vartype properties: "ProviderRegistrationProperties"
     :ivar kind: Provider registration kind. This Metadata is also used by portal/tooling/etc to
@@ -617,14 +679,14 @@ class CustomRolloutSpecificationProviderRegistration(ProviderRegistration):  # p
 class CustomRolloutStatusManifestCheckinStatus(CheckinManifestInfo):
     """The manifest checkin status.
 
-    :ivar is_checked_in: Whether the manifest is checked in. Required.
-    :vartype is_checked_in: bool
-    :ivar status_message: The status message. Required.
-    :vartype status_message: str
-    :ivar pull_request: The pull request.
-    :vartype pull_request: str
-    :ivar commit_id: The commit id.
-    :vartype commit_id: str
+    :ivar isCheckedIn: Whether the manifest is checked in. Required.
+    :vartype isCheckedIn: bool
+    :ivar statusMessage: The status message. Required.
+    :vartype statusMessage: str
+    :ivar pullRequest: The pull request.
+    :vartype pullRequest: str
+    :ivar commitId: The commit id.
+    :vartype commitId: str
     """
 
 
@@ -640,9 +702,9 @@ class DefaultRollout(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the rollout.
     :vartype properties: "DefaultRolloutProperties"
     """
@@ -654,11 +716,11 @@ class DefaultRollout(ProxyResource):
 class DefaultRolloutProperties(TypedDict, total=False):
     """DefaultRolloutProperties.
 
-    :ivar provisioning_state: The provisioned state of the resource. Known values are:
+    :ivar provisioningState: The provisioned state of the resource. Known values are:
      "NotSpecified", "Accepted", "Running", "Creating", "Created", "Deleting", "Deleted",
      "Canceled", "Failed", "Succeeded", "MovingResources", "TransientFailure", and
      "RolloutInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar specification: The default rollout specification.
     :vartype specification: "DefaultRolloutPropertiesSpecification"
     :ivar status: The default rollout status.
@@ -678,26 +740,28 @@ class DefaultRolloutProperties(TypedDict, total=False):
 class DefaultRolloutSpecification(TypedDict, total=False):
     """DefaultRolloutSpecification.
 
-    :ivar expedited_rollout: The expedited rollout definition.
-    :vartype expedited_rollout: "DefaultRolloutSpecificationExpeditedRollout"
+    :ivar expeditedRollout: The expedited rollout definition.
+    :vartype expeditedRollout: "DefaultRolloutSpecificationExpeditedRollout"
     :ivar canary: The canary traffic region configuration.
     :vartype canary: "DefaultRolloutSpecificationCanary"
-    :ivar low_traffic: The low traffic region configuration.
-    :vartype low_traffic: "DefaultRolloutSpecificationLowTraffic"
-    :ivar medium_traffic: The medium traffic region configuration.
-    :vartype medium_traffic: "DefaultRolloutSpecificationMediumTraffic"
-    :ivar high_traffic: The high traffic region configuration.
-    :vartype high_traffic: "DefaultRolloutSpecificationHighTraffic"
-    :ivar rest_of_the_world_group_one: The rest of the world group one region configuration.
-    :vartype rest_of_the_world_group_one: "DefaultRolloutSpecificationRestOfTheWorldGroupOne"
-    :ivar rest_of_the_world_group_two: The rest of the world group two region configuration.
-    :vartype rest_of_the_world_group_two: "DefaultRolloutSpecificationRestOfTheWorldGroupTwo"
-    :ivar provider_registration: The provider registration.
-    :vartype provider_registration: "DefaultRolloutSpecificationProviderRegistration"
-    :ivar resource_type_registrations: The resource type registrations.
-    :vartype resource_type_registrations: list["ResourceTypeRegistration"]
-    :ivar auto_provision_config: The auto provisioning config.
-    :vartype auto_provision_config: "DefaultRolloutSpecificationAutoProvisionConfig"
+    :ivar lowTraffic: The low traffic region configuration.
+    :vartype lowTraffic: "DefaultRolloutSpecificationLowTraffic"
+    :ivar mediumTraffic: The medium traffic region configuration.
+    :vartype mediumTraffic: "DefaultRolloutSpecificationMediumTraffic"
+    :ivar highTraffic: The high traffic region configuration.
+    :vartype highTraffic: "DefaultRolloutSpecificationHighTraffic"
+    :ivar restOfTheWorldGroupOne: The rest of the world group one region configuration.
+    :vartype restOfTheWorldGroupOne: "DefaultRolloutSpecificationRestOfTheWorldGroupOne"
+    :ivar restOfTheWorldGroupTwo: The rest of the world group two region configuration.
+    :vartype restOfTheWorldGroupTwo: "DefaultRolloutSpecificationRestOfTheWorldGroupTwo"
+    :ivar providerRegistration: The provider registration.
+    :vartype providerRegistration: "DefaultRolloutSpecificationProviderRegistration"
+    :ivar resourceTypeRegistrations: The resource type registrations.
+    :vartype resourceTypeRegistrations: list["ResourceTypeRegistration"]
+    :ivar autoProvisionConfig: The auto provisioning config.
+    :vartype autoProvisionConfig: "DefaultRolloutSpecificationAutoProvisionConfig"
+    :ivar manifestCheckinSpecification: The manifest checkin specification.
+    :vartype manifestCheckinSpecification: "ManifestCheckinSpecification"
     """
 
     expeditedRollout: "DefaultRolloutSpecificationExpeditedRollout"
@@ -720,41 +784,45 @@ class DefaultRolloutSpecification(TypedDict, total=False):
     """The resource type registrations."""
     autoProvisionConfig: "DefaultRolloutSpecificationAutoProvisionConfig"
     """The auto provisioning config."""
+    manifestCheckinSpecification: "ManifestCheckinSpecification"
+    """The manifest checkin specification."""
 
 
 class DefaultRolloutPropertiesSpecification(DefaultRolloutSpecification):
     """The default rollout specification.
 
-    :ivar expedited_rollout: The expedited rollout definition.
-    :vartype expedited_rollout: "DefaultRolloutSpecificationExpeditedRollout"
+    :ivar expeditedRollout: The expedited rollout definition.
+    :vartype expeditedRollout: "DefaultRolloutSpecificationExpeditedRollout"
     :ivar canary: The canary traffic region configuration.
     :vartype canary: "DefaultRolloutSpecificationCanary"
-    :ivar low_traffic: The low traffic region configuration.
-    :vartype low_traffic: "DefaultRolloutSpecificationLowTraffic"
-    :ivar medium_traffic: The medium traffic region configuration.
-    :vartype medium_traffic: "DefaultRolloutSpecificationMediumTraffic"
-    :ivar high_traffic: The high traffic region configuration.
-    :vartype high_traffic: "DefaultRolloutSpecificationHighTraffic"
-    :ivar rest_of_the_world_group_one: The rest of the world group one region configuration.
-    :vartype rest_of_the_world_group_one: "DefaultRolloutSpecificationRestOfTheWorldGroupOne"
-    :ivar rest_of_the_world_group_two: The rest of the world group two region configuration.
-    :vartype rest_of_the_world_group_two: "DefaultRolloutSpecificationRestOfTheWorldGroupTwo"
-    :ivar provider_registration: The provider registration.
-    :vartype provider_registration: "DefaultRolloutSpecificationProviderRegistration"
-    :ivar resource_type_registrations: The resource type registrations.
-    :vartype resource_type_registrations: list["ResourceTypeRegistration"]
-    :ivar auto_provision_config: The auto provisioning config.
-    :vartype auto_provision_config: "DefaultRolloutSpecificationAutoProvisionConfig"
+    :ivar lowTraffic: The low traffic region configuration.
+    :vartype lowTraffic: "DefaultRolloutSpecificationLowTraffic"
+    :ivar mediumTraffic: The medium traffic region configuration.
+    :vartype mediumTraffic: "DefaultRolloutSpecificationMediumTraffic"
+    :ivar highTraffic: The high traffic region configuration.
+    :vartype highTraffic: "DefaultRolloutSpecificationHighTraffic"
+    :ivar restOfTheWorldGroupOne: The rest of the world group one region configuration.
+    :vartype restOfTheWorldGroupOne: "DefaultRolloutSpecificationRestOfTheWorldGroupOne"
+    :ivar restOfTheWorldGroupTwo: The rest of the world group two region configuration.
+    :vartype restOfTheWorldGroupTwo: "DefaultRolloutSpecificationRestOfTheWorldGroupTwo"
+    :ivar providerRegistration: The provider registration.
+    :vartype providerRegistration: "DefaultRolloutSpecificationProviderRegistration"
+    :ivar resourceTypeRegistrations: The resource type registrations.
+    :vartype resourceTypeRegistrations: list["ResourceTypeRegistration"]
+    :ivar autoProvisionConfig: The auto provisioning config.
+    :vartype autoProvisionConfig: "DefaultRolloutSpecificationAutoProvisionConfig"
+    :ivar manifestCheckinSpecification: The manifest checkin specification.
+    :vartype manifestCheckinSpecification: "ManifestCheckinSpecification"
     """
 
 
 class RolloutStatusBase(TypedDict, total=False):
     """RolloutStatusBase.
 
-    :ivar completed_regions: The completed regions.
-    :vartype completed_regions: list[str]
-    :ivar failed_or_skipped_regions: The failed or skipped regions.
-    :vartype failed_or_skipped_regions: dict[str, "ExtendedErrorInfo"]
+    :ivar completedRegions: The completed regions.
+    :vartype completedRegions: list[str]
+    :ivar failedOrSkippedRegions: The failed or skipped regions.
+    :vartype failedOrSkippedRegions: dict[str, "ExtendedErrorInfo"]
     """
 
     completedRegions: list[str]
@@ -766,21 +834,21 @@ class RolloutStatusBase(TypedDict, total=False):
 class DefaultRolloutStatus(RolloutStatusBase):
     """DefaultRolloutStatus.
 
-    :ivar completed_regions: The completed regions.
-    :vartype completed_regions: list[str]
-    :ivar failed_or_skipped_regions: The failed or skipped regions.
-    :vartype failed_or_skipped_regions: dict[str, "ExtendedErrorInfo"]
-    :ivar next_traffic_region: The next traffic region. Known values are: "NotSpecified", "Canary",
+    :ivar completedRegions: The completed regions.
+    :vartype completedRegions: list[str]
+    :ivar failedOrSkippedRegions: The failed or skipped regions.
+    :vartype failedOrSkippedRegions: dict[str, "ExtendedErrorInfo"]
+    :ivar nextTrafficRegion: The next traffic region. Known values are: "NotSpecified", "Canary",
      "LowTraffic", "MediumTraffic", "HighTraffic", "None", "RestOfTheWorldGroupOne", and
      "RestOfTheWorldGroupTwo".
-    :vartype next_traffic_region: Union[str, "TrafficRegionCategory"]
-    :ivar next_traffic_region_scheduled_time: The next traffic region scheduled time.
-    :vartype next_traffic_region_scheduled_time: str
-    :ivar subscription_reregistration_result: The subscription reregistration result. Known values
+    :vartype nextTrafficRegion: Union[str, "TrafficRegionCategory"]
+    :ivar nextTrafficRegionScheduledTime: The next traffic region scheduled time.
+    :vartype nextTrafficRegionScheduledTime: str
+    :ivar subscriptionReregistrationResult: The subscription reregistration result. Known values
      are: "NotApplicable", "ConditionalUpdate", "ForcedUpdate", and "Failed".
-    :vartype subscription_reregistration_result: Union[str, "SubscriptionReregistrationResult"]
-    :ivar manifest_checkin_status: The manifest checkin status.
-    :vartype manifest_checkin_status: "DefaultRolloutStatusManifestCheckinStatus"
+    :vartype subscriptionReregistrationResult: Union[str, "SubscriptionReregistrationResult"]
+    :ivar manifestCheckinStatus: The manifest checkin status.
+    :vartype manifestCheckinStatus: "DefaultRolloutStatusManifestCheckinStatus"
     """
 
     nextTrafficRegion: Union[str, "TrafficRegionCategory"]
@@ -799,21 +867,21 @@ class DefaultRolloutStatus(RolloutStatusBase):
 class DefaultRolloutPropertiesStatus(DefaultRolloutStatus):
     """The default rollout status.
 
-    :ivar completed_regions: The completed regions.
-    :vartype completed_regions: list[str]
-    :ivar failed_or_skipped_regions: The failed or skipped regions.
-    :vartype failed_or_skipped_regions: dict[str, "ExtendedErrorInfo"]
-    :ivar next_traffic_region: The next traffic region. Known values are: "NotSpecified", "Canary",
+    :ivar completedRegions: The completed regions.
+    :vartype completedRegions: list[str]
+    :ivar failedOrSkippedRegions: The failed or skipped regions.
+    :vartype failedOrSkippedRegions: dict[str, "ExtendedErrorInfo"]
+    :ivar nextTrafficRegion: The next traffic region. Known values are: "NotSpecified", "Canary",
      "LowTraffic", "MediumTraffic", "HighTraffic", "None", "RestOfTheWorldGroupOne", and
      "RestOfTheWorldGroupTwo".
-    :vartype next_traffic_region: Union[str, "TrafficRegionCategory"]
-    :ivar next_traffic_region_scheduled_time: The next traffic region scheduled time.
-    :vartype next_traffic_region_scheduled_time: str
-    :ivar subscription_reregistration_result: The subscription reregistration result. Known values
+    :vartype nextTrafficRegion: Union[str, "TrafficRegionCategory"]
+    :ivar nextTrafficRegionScheduledTime: The next traffic region scheduled time.
+    :vartype nextTrafficRegionScheduledTime: str
+    :ivar subscriptionReregistrationResult: The subscription reregistration result. Known values
      are: "NotApplicable", "ConditionalUpdate", "ForcedUpdate", and "Failed".
-    :vartype subscription_reregistration_result: Union[str, "SubscriptionReregistrationResult"]
-    :ivar manifest_checkin_status: The manifest checkin status.
-    :vartype manifest_checkin_status: "DefaultRolloutStatusManifestCheckinStatus"
+    :vartype subscriptionReregistrationResult: Union[str, "SubscriptionReregistrationResult"]
+    :ivar manifestCheckinStatus: The manifest checkin status.
+    :vartype manifestCheckinStatus: "DefaultRolloutStatusManifestCheckinStatus"
     """
 
 
@@ -822,8 +890,8 @@ class DefaultRolloutSpecificationAutoProvisionConfig(TypedDict, total=False):  #
 
     :ivar storage: Whether auto provisioning for storage is enabled.
     :vartype storage: bool
-    :ivar resource_graph: Whether auto provisioning for resource graph is enabled.
-    :vartype resource_graph: bool
+    :ivar resourceGraph: Whether auto provisioning for resource graph is enabled.
+    :vartype resourceGraph: bool
     """
 
     storage: bool
@@ -835,8 +903,8 @@ class DefaultRolloutSpecificationAutoProvisionConfig(TypedDict, total=False):  #
 class DefaultRolloutSpecificationCanary(CanaryTrafficRegionRolloutConfiguration):
     """The canary traffic region configuration.
 
-    :ivar skip_regions: The skip regions.
-    :vartype skip_regions: list[str]
+    :ivar skipRegions: The skip regions.
+    :vartype skipRegions: list[str]
     :ivar regions: The regions.
     :vartype regions: list[str]
     """
@@ -866,8 +934,8 @@ class TrafficRegionRolloutConfiguration(TrafficRegions):
 
     :ivar regions:
     :vartype regions: list[str]
-    :ivar wait_duration: The wait duration.
-    :vartype wait_duration: str
+    :ivar waitDuration: The wait duration.
+    :vartype waitDuration: str
     """
 
     waitDuration: str
@@ -879,8 +947,8 @@ class DefaultRolloutSpecificationHighTraffic(TrafficRegionRolloutConfiguration):
 
     :ivar regions:
     :vartype regions: list[str]
-    :ivar wait_duration: The wait duration.
-    :vartype wait_duration: str
+    :ivar waitDuration: The wait duration.
+    :vartype waitDuration: str
     """
 
 
@@ -889,8 +957,8 @@ class DefaultRolloutSpecificationLowTraffic(TrafficRegionRolloutConfiguration):
 
     :ivar regions:
     :vartype regions: list[str]
-    :ivar wait_duration: The wait duration.
-    :vartype wait_duration: str
+    :ivar waitDuration: The wait duration.
+    :vartype waitDuration: str
     """
 
 
@@ -899,8 +967,8 @@ class DefaultRolloutSpecificationMediumTraffic(TrafficRegionRolloutConfiguration
 
     :ivar regions:
     :vartype regions: list[str]
-    :ivar wait_duration: The wait duration.
-    :vartype wait_duration: str
+    :ivar waitDuration: The wait duration.
+    :vartype waitDuration: str
     """
 
 
@@ -915,9 +983,9 @@ class DefaultRolloutSpecificationProviderRegistration(ProviderRegistration):  # 
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties:
     :vartype properties: "ProviderRegistrationProperties"
     :ivar kind: Provider registration kind. This Metadata is also used by portal/tooling/etc to
@@ -934,8 +1002,8 @@ class DefaultRolloutSpecificationRestOfTheWorldGroupOne(
 
     :ivar regions:
     :vartype regions: list[str]
-    :ivar wait_duration: The wait duration.
-    :vartype wait_duration: str
+    :ivar waitDuration: The wait duration.
+    :vartype waitDuration: str
     """
 
 
@@ -946,34 +1014,34 @@ class DefaultRolloutSpecificationRestOfTheWorldGroupTwo(
 
     :ivar regions:
     :vartype regions: list[str]
-    :ivar wait_duration: The wait duration.
-    :vartype wait_duration: str
+    :ivar waitDuration: The wait duration.
+    :vartype waitDuration: str
     """
 
 
 class DefaultRolloutStatusManifestCheckinStatus(CheckinManifestInfo):  # pylint: disable=name-too-long
     """The manifest checkin status.
 
-    :ivar is_checked_in: Whether the manifest is checked in. Required.
-    :vartype is_checked_in: bool
-    :ivar status_message: The status message. Required.
-    :vartype status_message: str
-    :ivar pull_request: The pull request.
-    :vartype pull_request: str
-    :ivar commit_id: The commit id.
-    :vartype commit_id: str
+    :ivar isCheckedIn: Whether the manifest is checked in. Required.
+    :vartype isCheckedIn: bool
+    :ivar statusMessage: The status message. Required.
+    :vartype statusMessage: str
+    :ivar pullRequest: The pull request.
+    :vartype pullRequest: str
+    :ivar commitId: The commit id.
+    :vartype commitId: str
     """
 
 
 class DeleteDependency(TypedDict, total=False):
     """DeleteDependency.
 
-    :ivar required_features: Required features.
-    :vartype required_features: list[str]
-    :ivar linked_property: Linked property.
-    :vartype linked_property: str
-    :ivar linked_type: Linked type.
-    :vartype linked_type: str
+    :ivar requiredFeatures: Required features.
+    :vartype requiredFeatures: list[str]
+    :ivar linkedProperty: Linked property.
+    :vartype linkedProperty: str
+    :ivar linkedType: Linked type.
+    :vartype linkedType: str
     """
 
     requiredFeatures: list[str]
@@ -984,30 +1052,15 @@ class DeleteDependency(TypedDict, total=False):
     """Linked type."""
 
 
-class DstsConfiguration(TypedDict, total=False):
-    """DstsConfiguration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    serviceName: Required[str]
-    """The service name. Required."""
-    serviceDnsName: str
-    """This is a URI property."""
-
-
 class EndpointInformation(TypedDict, total=False):
     """EndpointInformation.
 
     :ivar endpoint: The endpoint.
     :vartype endpoint: str
-    :ivar endpoint_type: The endpoint type. Known values are: "Webhook" and "Eventhub".
-    :vartype endpoint_type: Union[str, "NotificationEndpointType"]
-    :ivar schema_version: The schema version.
-    :vartype schema_version: str
+    :ivar endpointType: The endpoint type. Known values are: "Webhook" and "Eventhub".
+    :vartype endpointType: Union[str, "NotificationEndpointType"]
+    :ivar schemaVersion: The schema version.
+    :vartype schemaVersion: str
     """
 
     endpoint: str
@@ -1029,8 +1082,8 @@ class ExtendedErrorInfo(TypedDict, total=False):
     :vartype message: str
     :ivar details: The error details.
     :vartype details: list["ExtendedErrorInfo"]
-    :ivar additional_info: The additional error information.
-    :vartype additional_info: list["TypedErrorInfo"]
+    :ivar additionalInfo: The additional error information.
+    :vartype additionalInfo: list["TypedErrorInfo"]
     """
 
     code: str
@@ -1051,8 +1104,8 @@ class ExtendedLocationOptions(TypedDict, total=False):
     :ivar type: The type. Known values are: "NotSpecified", "CustomLocation", "EdgeZone", and
      "ArcZone".
     :vartype type: Union[str, "ExtendedLocationType"]
-    :ivar supported_policy: Known values are: "NotSpecified" and "All".
-    :vartype supported_policy: Union[str, "ResourceTypeExtendedLocationPolicy"]
+    :ivar supportedPolicy: Known values are: "NotSpecified" and "All".
+    :vartype supportedPolicy: Union[str, "ResourceTypeExtendedLocationPolicy"]
     """
 
     type: Union[str, "ExtendedLocationType"]
@@ -1080,14 +1133,12 @@ class ExtensionOptions(TypedDict, total=False):
 class FanoutLinkedNotificationRule(TypedDict, total=False):
     """FanoutLinkedNotificationRule.
 
-    :ivar token_auth_configuration: The token auth configuration.
-    :vartype token_auth_configuration: "TokenAuthConfiguration"
+    :ivar tokenAuthConfiguration: The token auth configuration.
+    :vartype tokenAuthConfiguration: "TokenAuthConfiguration"
     :ivar actions: The actions.
     :vartype actions: list[str]
     :ivar endpoints: The endpoints.
     :vartype endpoints: list["ResourceProviderEndpoint"]
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration: "FanoutLinkedNotificationRuleDstsConfiguration"
     """
 
     tokenAuthConfiguration: "TokenAuthConfiguration"
@@ -1096,26 +1147,14 @@ class FanoutLinkedNotificationRule(TypedDict, total=False):
     """The actions."""
     endpoints: list["ResourceProviderEndpoint"]
     """The endpoints."""
-    dstsConfiguration: "FanoutLinkedNotificationRuleDstsConfiguration"
-    """The dsts configuration."""
-
-
-class FanoutLinkedNotificationRuleDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
 
 
 class FeaturesRule(TypedDict, total=False):
     """FeaturesRule.
 
-    :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
+    :ivar requiredFeaturesPolicy: The required feature policy. Required. Known values are: "Any"
      and "All".
-    :vartype required_features_policy: Union[str, "FeaturesPolicy"]
+    :vartype requiredFeaturesPolicy: Union[str, "FeaturesPolicy"]
     """
 
     requiredFeaturesPolicy: Required[Union[str, "FeaturesPolicy"]]
@@ -1125,10 +1164,10 @@ class FeaturesRule(TypedDict, total=False):
 class FilterRule(TypedDict, total=False):
     """FilterRule.
 
-    :ivar filter_query: The filter query.
-    :vartype filter_query: str
-    :ivar endpoint_information: The endpoint information.
-    :vartype endpoint_information: list["EndpointInformation"]
+    :ivar filterQuery: The filter query.
+    :vartype filterQuery: str
+    :ivar endpointInformation: The endpoint information.
+    :vartype endpointInformation: list["EndpointInformation"]
     """
 
     filterQuery: str
@@ -1137,178 +1176,27 @@ class FilterRule(TypedDict, total=False):
     """The endpoint information."""
 
 
-class FrontloadPayload(TypedDict, total=False):
-    """FrontloadPayload.
+class GroupConnectivityInformation(TypedDict, total=False):
+    """GroupConnectivityInformation.
 
-    :ivar properties: Properties of the frontload payload. Required.
-    :vartype properties: "FrontloadPayloadProperties"
+    :ivar groupId: The group id. Required.
+    :vartype groupId: str
+    :ivar requiredMembers: List of required members for the group id. Required.
+    :vartype requiredMembers: list[str]
+    :ivar requiredZoneNames: List of required zone names for the group id. Required.
+    :vartype requiredZoneNames: list[str]
+    :ivar redirectMapId: The redirect map id.
+    :vartype redirectMapId: str
     """
 
-    properties: Required["FrontloadPayloadProperties"]
-    """Properties of the frontload payload. Required."""
-
-
-class FrontloadPayloadProperties(TypedDict, total=False):
-    """FrontloadPayloadProperties.
-
-    :ivar operation_type: The operation type. Required.
-    :vartype operation_type: str
-    :ivar provider_namespace: The provider namespace. Required.
-    :vartype provider_namespace: str
-    :ivar frontload_location: The frontload location. Required.
-    :vartype frontload_location: str
-    :ivar copy_from_location: The copy from location. Required.
-    :vartype copy_from_location: str
-    :ivar environment_type: The environment type. Required. Known values are: "NotSpecified",
-     "Canary", "Prod", "All", "Mooncake", and "Fairfax".
-    :vartype environment_type: Union[str, "AvailableCheckInManifestEnvironment"]
-    :ivar service_feature_flag: The service feature flag. Required. Known values are: "DoNotCreate"
-     and "Create".
-    :vartype service_feature_flag: Union[str, "ServiceFeatureFlagAction"]
-    :ivar include_resource_types: The resource types to include. Required.
-    :vartype include_resource_types: list[str]
-    :ivar exclude_resource_types: The resource types to exclude. Required.
-    :vartype exclude_resource_types: list[str]
-    :ivar override_manifest_level_fields: The manifest level fields to override. Required.
-    :vartype override_manifest_level_fields:
-     "FrontloadPayloadPropertiesOverrideManifestLevelFields"
-    :ivar override_endpoint_level_fields: The endpoint level fields to override. Required.
-    :vartype override_endpoint_level_fields:
-     "FrontloadPayloadPropertiesOverrideEndpointLevelFields"
-    :ivar ignore_fields: The fields to ignore. Required.
-    :vartype ignore_fields: list[str]
-    """
-
-    operationType: Required[str]
-    """The operation type. Required."""
-    providerNamespace: Required[str]
-    """The provider namespace. Required."""
-    frontloadLocation: Required[str]
-    """The frontload location. Required."""
-    copyFromLocation: Required[str]
-    """The copy from location. Required."""
-    environmentType: Required[Union[str, "AvailableCheckInManifestEnvironment"]]
-    """The environment type. Required. Known values are: \"NotSpecified\", \"Canary\", \"Prod\",
-     \"All\", \"Mooncake\", and \"Fairfax\"."""
-    serviceFeatureFlag: Required[Union[str, "ServiceFeatureFlagAction"]]
-    """The service feature flag. Required. Known values are: \"DoNotCreate\" and \"Create\"."""
-    includeResourceTypes: Required[list[str]]
-    """The resource types to include. Required."""
-    excludeResourceTypes: Required[list[str]]
-    """The resource types to exclude. Required."""
-    overrideManifestLevelFields: Required["FrontloadPayloadPropertiesOverrideManifestLevelFields"]
-    """The manifest level fields to override. Required."""
-    overrideEndpointLevelFields: Required["FrontloadPayloadPropertiesOverrideEndpointLevelFields"]
-    """The endpoint level fields to override. Required."""
-    ignoreFields: Required[list[str]]
-    """The fields to ignore. Required."""
-
-
-class ResourceTypeEndpointBase(TypedDict, total=False):
-    """ResourceTypeEndpointBase.
-
-    :ivar enabled: Whether it's enabled. Required.
-    :vartype enabled: bool
-    :ivar api_versions: The api versions. Required.
-    :vartype api_versions: list[str]
-    :ivar endpoint_uri: The endpoint uri. Required.
-    :vartype endpoint_uri: str
-    :ivar locations: The locations. Required.
-    :vartype locations: list[str]
-    :ivar required_features: The required features. Required.
-    :vartype required_features: list[str]
-    :ivar features_rule: The features rule. Required.
-    :vartype features_rule: "ResourceTypeEndpointBaseFeaturesRule"
-    :ivar timeout: This is a TimeSpan property. Required.
-    :vartype timeout: str
-    :ivar endpoint_type: The endpoint type. Required. Known values are: "NotSpecified", "Canary",
-     "Production", and "TestInProduction".
-    :vartype endpoint_type: Union[str, "EndpointType"]
-    :ivar dsts_configuration: The dsts configuration. Required.
-    :vartype dsts_configuration: "ResourceTypeEndpointBaseDstsConfiguration"
-    :ivar sku_link: The sku link. Required.
-    :vartype sku_link: str
-    :ivar api_version: The api version. Required.
-    :vartype api_version: str
-    :ivar zones: The zones. Required.
-    :vartype zones: list[str]
-    """
-
-    enabled: Required[bool]
-    """Whether it's enabled. Required."""
-    apiVersions: Required[list[str]]
-    """The api versions. Required."""
-    endpointUri: Required[str]
-    """The endpoint uri. Required."""
-    locations: Required[list[str]]
-    """The locations. Required."""
-    requiredFeatures: Required[list[str]]
-    """The required features. Required."""
-    featuresRule: Required["ResourceTypeEndpointBaseFeaturesRule"]
-    """The features rule. Required."""
-    timeout: Required[str]
-    """This is a TimeSpan property. Required."""
-    endpointType: Required[Union[str, "EndpointType"]]
-    """The endpoint type. Required. Known values are: \"NotSpecified\", \"Canary\", \"Production\",
-     and \"TestInProduction\"."""
-    dstsConfiguration: Required["ResourceTypeEndpointBaseDstsConfiguration"]
-    """The dsts configuration. Required."""
-    skuLink: Required[str]
-    """The sku link. Required."""
-    apiVersion: Required[str]
-    """The api version. Required."""
-    zones: Required[list[str]]
-    """The zones. Required."""
-
-
-class FrontloadPayloadPropertiesOverrideEndpointLevelFields(ResourceTypeEndpointBase):  # pylint: disable=name-too-long
-    """The endpoint level fields to override.
-
-    :ivar enabled: Whether it's enabled. Required.
-    :vartype enabled: bool
-    :ivar api_versions: The api versions. Required.
-    :vartype api_versions: list[str]
-    :ivar endpoint_uri: The endpoint uri. Required.
-    :vartype endpoint_uri: str
-    :ivar locations: The locations. Required.
-    :vartype locations: list[str]
-    :ivar required_features: The required features. Required.
-    :vartype required_features: list[str]
-    :ivar features_rule: The features rule. Required.
-    :vartype features_rule: "ResourceTypeEndpointBaseFeaturesRule"
-    :ivar timeout: This is a TimeSpan property. Required.
-    :vartype timeout: str
-    :ivar endpoint_type: The endpoint type. Required. Known values are: "NotSpecified", "Canary",
-     "Production", and "TestInProduction".
-    :vartype endpoint_type: Union[str, "EndpointType"]
-    :ivar dsts_configuration: The dsts configuration. Required.
-    :vartype dsts_configuration: "ResourceTypeEndpointBaseDstsConfiguration"
-    :ivar sku_link: The sku link. Required.
-    :vartype sku_link: str
-    :ivar api_version: The api version. Required.
-    :vartype api_version: str
-    :ivar zones: The zones. Required.
-    :vartype zones: list[str]
-    """
-
-
-class ManifestLevelPropertyBag(TypedDict, total=False):
-    """ManifestLevelPropertyBag.
-
-    :ivar resource_hydration_accounts: The resource hydration accounts.
-    :vartype resource_hydration_accounts: list["ResourceHydrationAccount"]
-    """
-
-    resourceHydrationAccounts: list["ResourceHydrationAccount"]
-    """The resource hydration accounts."""
-
-
-class FrontloadPayloadPropertiesOverrideManifestLevelFields(ManifestLevelPropertyBag):  # pylint: disable=name-too-long
-    """The manifest level fields to override.
-
-    :ivar resource_hydration_accounts: The resource hydration accounts.
-    :vartype resource_hydration_accounts: list["ResourceHydrationAccount"]
-    """
+    groupId: Required[str]
+    """The group id. Required."""
+    requiredMembers: Required[list[str]]
+    """List of required members for the group id. Required."""
+    requiredZoneNames: Required[list[str]]
+    """List of required zone names for the group id. Required."""
+    redirectMapId: str
+    """The redirect map id."""
 
 
 class IdentityManagementProperties(TypedDict, total=False):
@@ -1317,12 +1205,12 @@ class IdentityManagementProperties(TypedDict, total=False):
     :ivar type: The type. Known values are: "NotSpecified", "SystemAssigned", "UserAssigned",
      "Actor", and "DelegatedResourceIdentity".
     :vartype type: Union[str, "IdentityManagementTypes"]
-    :ivar application_id: The application id.
-    :vartype application_id: str
-    :ivar application_ids: The application ids.
-    :vartype application_ids: list[str]
-    :ivar delegation_app_ids: The delegation app ids.
-    :vartype delegation_app_ids: list[str]
+    :ivar applicationId: The application id.
+    :vartype applicationId: str
+    :ivar applicationIds: The application ids.
+    :vartype applicationIds: list[str]
+    :ivar delegationAppIds: The delegation app ids.
+    :vartype delegationAppIds: list[str]
     """
 
     type: Union[str, "IdentityManagementTypes"]
@@ -1339,8 +1227,8 @@ class IdentityManagementProperties(TypedDict, total=False):
 class LegacyDisallowedCondition(TypedDict, total=False):
     """LegacyDisallowedCondition.
 
-    :ivar disallowed_legacy_operations: The disallowed legacy operations.
-    :vartype disallowed_legacy_operations: list[Union[str, "LegacyOperation"]]
+    :ivar disallowedLegacyOperations: The disallowed legacy operations.
+    :vartype disallowedLegacyOperations: list[Union[str, "LegacyOperation"]]
     :ivar feature: Feature string.
     :vartype feature: str
     """
@@ -1354,10 +1242,10 @@ class LegacyDisallowedCondition(TypedDict, total=False):
 class LightHouseAuthorization(TypedDict, total=False):
     """LightHouseAuthorization.
 
-    :ivar principal_id: The principal id. Required.
-    :vartype principal_id: str
-    :ivar role_definition_id: The role definition id. Required.
-    :vartype role_definition_id: str
+    :ivar principalId: The principal id. Required.
+    :vartype principalId: str
+    :ivar roleDefinitionId: The role definition id. Required.
+    :vartype roleDefinitionId: str
     """
 
     principalId: Required[str]
@@ -1369,16 +1257,19 @@ class LightHouseAuthorization(TypedDict, total=False):
 class LinkedAccessCheck(TypedDict, total=False):
     """LinkedAccessCheck.
 
-    :ivar action_name: The action name.
-    :vartype action_name: str
-    :ivar linked_property: The linked property.
-    :vartype linked_property: str
-    :ivar linked_action: The linked action.
-    :vartype linked_action: str
-    :ivar linked_action_verb: The linked action verb.
-    :vartype linked_action_verb: str
-    :ivar linked_type: The linked type.
-    :vartype linked_type: str
+    :ivar actionName: The action name.
+    :vartype actionName: str
+    :ivar linkedProperty: The linked property.
+    :vartype linkedProperty: str
+    :ivar linkedAction: The linked action.
+    :vartype linkedAction: str
+    :ivar linkedActionVerb: The linked action verb.
+    :vartype linkedActionVerb: str
+    :ivar linkedType: The linked type.
+    :vartype linkedType: str
+    :ivar options: The options for the linked access check. Known values are: "NotSpecified" and
+     "IgnoreEmptyStringLinkedType".
+    :vartype options: Union[str, "LinkedAccessCheckOptions"]
     """
 
     actionName: str
@@ -1391,6 +1282,9 @@ class LinkedAccessCheck(TypedDict, total=False):
     """The linked action verb."""
     linkedType: str
     """The linked type."""
+    options: Union[str, "LinkedAccessCheckOptions"]
+    """The options for the linked access check. Known values are: \"NotSpecified\" and
+     \"IgnoreEmptyStringLinkedType\"."""
 
 
 class LinkedNotificationRule(TypedDict, total=False):
@@ -1398,14 +1292,14 @@ class LinkedNotificationRule(TypedDict, total=False):
 
     :ivar actions: The actions.
     :vartype actions: list[str]
-    :ivar actions_on_failed_operation: The actions on failed operation.
-    :vartype actions_on_failed_operation: list[str]
-    :ivar fast_path_actions: The fast path actions.
-    :vartype fast_path_actions: list[str]
-    :ivar fast_path_actions_on_failed_operation: The fast path action on failed operation.
-    :vartype fast_path_actions_on_failed_operation: list[str]
-    :ivar linked_notification_timeout: This is a TimeSpan property.
-    :vartype linked_notification_timeout: str
+    :ivar actionsOnFailedOperation: The actions on failed operation.
+    :vartype actionsOnFailedOperation: list[str]
+    :ivar fastPathActions: The fast path actions.
+    :vartype fastPathActions: list[str]
+    :ivar fastPathActionsOnFailedOperation: The fast path action on failed operation.
+    :vartype fastPathActionsOnFailedOperation: list[str]
+    :ivar linkedNotificationTimeout: This is a TimeSpan property.
+    :vartype linkedNotificationTimeout: str
     """
 
     actions: list[str]
@@ -1423,14 +1317,14 @@ class LinkedNotificationRule(TypedDict, total=False):
 class LinkedOperationRule(TypedDict, total=False):
     """LinkedOperationRule.
 
-    :ivar linked_operation: The linked operation. Required. Known values are: "None",
+    :ivar linkedOperation: The linked operation. Required. Known values are: "None",
      "CrossResourceGroupResourceMove", and "CrossSubscriptionResourceMove".
-    :vartype linked_operation: Union[str, "LinkedOperation"]
-    :ivar linked_action: The linked action. Required. Known values are: "NotSpecified", "Blocked",
+    :vartype linkedOperation: Union[str, "LinkedOperation"]
+    :ivar linkedAction: The linked action. Required. Known values are: "NotSpecified", "Blocked",
      "Validate", and "Enabled".
-    :vartype linked_action: Union[str, "LinkedAction"]
-    :ivar depends_on_types: Depends on types.
-    :vartype depends_on_types: list[str]
+    :vartype linkedAction: Union[str, "LinkedAction"]
+    :ivar dependsOnTypes: Depends on types.
+    :vartype dependsOnTypes: list[str]
     """
 
     linkedOperation: Required[Union[str, "LinkedOperation"]]
@@ -1448,14 +1342,16 @@ class LocalizedOperationDefinition(TypedDict, total=False):
 
     :ivar name: Name of the operation. Required.
     :vartype name: str
-    :ivar is_data_action: Indicates whether the operation applies to data-plane.
-    :vartype is_data_action: bool
+    :ivar isDataAction: Indicates whether the operation applies to data-plane.
+    :vartype isDataAction: bool
     :ivar origin: The origin. Known values are: "NotSpecified", "User", and "System".
     :vartype origin: Union[str, "OperationOrigins"]
     :ivar display: Display information of the operation. Required.
     :vartype display: "LocalizedOperationDefinitionDisplay"
-    :ivar action_type: The action type. Known values are: "NotSpecified" and "Internal".
-    :vartype action_type: Union[str, "OperationActionType"]
+    :ivar actionType: The action type. Known values are: "NotSpecified" and "Internal".
+    :vartype actionType: Union[str, "OperationActionType"]
+    :ivar properties: Anything.
+    :vartype properties: Any
     """
 
     name: Required[str]
@@ -1468,6 +1364,8 @@ class LocalizedOperationDefinition(TypedDict, total=False):
     """Display information of the operation. Required."""
     actionType: Union[str, "OperationActionType"]
     """The action type. Known values are: \"NotSpecified\" and \"Internal\"."""
+    properties: Any
+    """Anything."""
 
 
 class LocalizedOperationDisplayDefinition(TypedDict, total=False):
@@ -1497,18 +1395,20 @@ class LocalizedOperationDisplayDefinition(TypedDict, total=False):
     :vartype nl: "LocalizedOperationDisplayDefinitionNl"
     :ivar pl: Display information of the operation for pl locale.
     :vartype pl: "LocalizedOperationDisplayDefinitionPl"
-    :ivar pt_br: Display information of the operation for pt-BR locale.
-    :vartype pt_br: "LocalizedOperationDisplayDefinitionPtBR"
-    :ivar pt_pt: Display information of the operation for pt-PT locale.
-    :vartype pt_pt: "LocalizedOperationDisplayDefinitionPtPT"
+    :ivar ptBR: Display information of the operation for pt-BR locale.
+    :vartype ptBR: "LocalizedOperationDisplayDefinitionPtBR"
+    :ivar ptPT: Display information of the operation for pt-PT locale.
+    :vartype ptPT: "LocalizedOperationDisplayDefinitionPtPT"
     :ivar ru: Display information of the operation for ru locale.
     :vartype ru: "LocalizedOperationDisplayDefinitionRu"
     :ivar sv: Display information of the operation for sv locale.
     :vartype sv: "LocalizedOperationDisplayDefinitionSv"
-    :ivar zh_hans: Display information of the operation for zh-Hans locale.
-    :vartype zh_hans: "LocalizedOperationDisplayDefinitionZhHans"
-    :ivar zh_hant: Display information of the operation for zh-Hant locale.
-    :vartype zh_hant: "LocalizedOperationDisplayDefinitionZhHant"
+    :ivar zhHans: Display information of the operation for zh-Hans locale.
+    :vartype zhHans: "LocalizedOperationDisplayDefinitionZhHans"
+    :ivar zhHant: Display information of the operation for zh-Hant locale.
+    :vartype zhHant: "LocalizedOperationDisplayDefinitionZhHant"
+    :ivar qpsPloc: Display information of the operation for qps-Ploc pseudo locale.
+    :vartype qpsPloc: "LocalizedOperationDisplayDefinitionQpsPloc"
     """
 
     default: Required["LocalizedOperationDisplayDefinitionDefault"]
@@ -1547,6 +1447,8 @@ class LocalizedOperationDisplayDefinition(TypedDict, total=False):
     """Display information of the operation for zh-Hans locale."""
     zhHant: "LocalizedOperationDisplayDefinitionZhHant"
     """Display information of the operation for zh-Hant locale."""
+    qpsPloc: "LocalizedOperationDisplayDefinitionQpsPloc"
+    """Display information of the operation for qps-Ploc pseudo locale."""
 
 
 class LocalizedOperationDefinitionDisplay(LocalizedOperationDisplayDefinition):
@@ -1576,18 +1478,20 @@ class LocalizedOperationDefinitionDisplay(LocalizedOperationDisplayDefinition):
     :vartype nl: "LocalizedOperationDisplayDefinitionNl"
     :ivar pl: Display information of the operation for pl locale.
     :vartype pl: "LocalizedOperationDisplayDefinitionPl"
-    :ivar pt_br: Display information of the operation for pt-BR locale.
-    :vartype pt_br: "LocalizedOperationDisplayDefinitionPtBR"
-    :ivar pt_pt: Display information of the operation for pt-PT locale.
-    :vartype pt_pt: "LocalizedOperationDisplayDefinitionPtPT"
+    :ivar ptBR: Display information of the operation for pt-BR locale.
+    :vartype ptBR: "LocalizedOperationDisplayDefinitionPtBR"
+    :ivar ptPT: Display information of the operation for pt-PT locale.
+    :vartype ptPT: "LocalizedOperationDisplayDefinitionPtPT"
     :ivar ru: Display information of the operation for ru locale.
     :vartype ru: "LocalizedOperationDisplayDefinitionRu"
     :ivar sv: Display information of the operation for sv locale.
     :vartype sv: "LocalizedOperationDisplayDefinitionSv"
-    :ivar zh_hans: Display information of the operation for zh-Hans locale.
-    :vartype zh_hans: "LocalizedOperationDisplayDefinitionZhHans"
-    :ivar zh_hant: Display information of the operation for zh-Hant locale.
-    :vartype zh_hant: "LocalizedOperationDisplayDefinitionZhHant"
+    :ivar zhHans: Display information of the operation for zh-Hans locale.
+    :vartype zhHans: "LocalizedOperationDisplayDefinitionZhHans"
+    :ivar zhHant: Display information of the operation for zh-Hant locale.
+    :vartype zhHant: "LocalizedOperationDisplayDefinitionZhHant"
+    :ivar qpsPloc: Display information of the operation for qps-Ploc pseudo locale.
+    :vartype qpsPloc: "LocalizedOperationDisplayDefinitionQpsPloc"
     """
 
 
@@ -1810,6 +1714,20 @@ class LocalizedOperationDisplayDefinitionPtPT(OperationsDisplayDefinition):
     """
 
 
+class LocalizedOperationDisplayDefinitionQpsPloc(OperationsDisplayDefinition):  # pylint: disable=name-too-long
+    """Display information of the operation for qps-Ploc pseudo locale.
+
+    :ivar provider: The provider. Required.
+    :vartype provider: str
+    :ivar resource: The resource. Required.
+    :vartype resource: str
+    :ivar operation: The operation. Required.
+    :vartype operation: str
+    :ivar description: The description. Required.
+    :vartype description: str
+    """
+
+
 class LocalizedOperationDisplayDefinitionRu(OperationsDisplayDefinition):
     """Display information of the operation for ru locale.
 
@@ -1871,8 +1789,8 @@ class LocationQuotaRule(TypedDict, total=False):
 
     :ivar policy: The policy. Known values are: "Default", "None", and "Restricted".
     :vartype policy: Union[str, "QuotaPolicy"]
-    :ivar quota_id: The quota id.
-    :vartype quota_id: str
+    :ivar quotaId: The quota id.
+    :vartype quotaId: str
     :ivar location: The location.
     :vartype location: str
     """
@@ -1888,10 +1806,10 @@ class LocationQuotaRule(TypedDict, total=False):
 class LoggingHiddenPropertyPath(TypedDict, total=False):
     """LoggingHiddenPropertyPath.
 
-    :ivar hidden_paths_on_request: The hidden paths on request.
-    :vartype hidden_paths_on_request: list[str]
-    :ivar hidden_paths_on_response: The hidden paths on response.
-    :vartype hidden_paths_on_response: list[str]
+    :ivar hiddenPathsOnRequest: The hidden paths on request.
+    :vartype hiddenPathsOnRequest: list[str]
+    :ivar hiddenPathsOnResponse: The hidden paths on response.
+    :vartype hiddenPathsOnResponse: list[str]
     """
 
     hiddenPathsOnRequest: list[str]
@@ -1907,10 +1825,10 @@ class LoggingRule(TypedDict, total=False):
     :vartype action: str
     :ivar direction: The direction. Required. Known values are: "None", "Request", and "Response".
     :vartype direction: Union[str, "LoggingDirections"]
-    :ivar detail_level: The detail level. Required. Known values are: "None" and "Body".
-    :vartype detail_level: Union[str, "LoggingDetails"]
-    :ivar hidden_property_paths: The hidden property paths.
-    :vartype hidden_property_paths: "LoggingRuleHiddenPropertyPaths"
+    :ivar detailLevel: The detail level. Required. Known values are: "None" and "Body".
+    :vartype detailLevel: Union[str, "LoggingDetails"]
+    :ivar hiddenPropertyPaths: The hidden property paths.
+    :vartype hiddenPropertyPaths: "LoggingRuleHiddenPropertyPaths"
     """
 
     action: Required[str]
@@ -1926,22 +1844,97 @@ class LoggingRule(TypedDict, total=False):
 class LoggingRuleHiddenPropertyPaths(LoggingHiddenPropertyPath):
     """The hidden property paths.
 
-    :ivar hidden_paths_on_request: The hidden paths on request.
-    :vartype hidden_paths_on_request: list[str]
-    :ivar hidden_paths_on_response: The hidden paths on response.
-    :vartype hidden_paths_on_response: list[str]
+    :ivar hiddenPathsOnRequest: The hidden paths on request.
+    :vartype hiddenPathsOnRequest: list[str]
+    :ivar hiddenPathsOnResponse: The hidden paths on response.
+    :vartype hiddenPathsOnResponse: list[str]
     """
+
+
+class ManagedResourceGroupDenyAssignmentConfiguration(TypedDict, total=False):  # pylint: disable=name-too-long
+    """The deny assignment configuration for the managed resource group.
+
+    :ivar enabled: Indicates whether the deny assignment configuration is enabled.
+    :vartype enabled: bool
+    :ivar notActions: The actions excluded from the deny assignment.
+    :vartype notActions: list[str]
+    """
+
+    enabled: bool
+    """Indicates whether the deny assignment configuration is enabled."""
+    notActions: list[str]
+    """The actions excluded from the deny assignment."""
+
+
+class ManifestCheckinSpecification(TypedDict, total=False):
+    """The manifest checkin specification.
+
+    :ivar manifestCheckinOption: The manifest checkin option. Known values are:
+     "AttemptAutomaticManifestCheckin" and "DoNotAttemptAutomaticManifestCheckin".
+    :vartype manifestCheckinOption: Union[str, "ManifestCheckinOption"]
+    :ivar manifestCheckinParams: The manifest checkin params.
+    :vartype manifestCheckinParams: "CheckinManifestParams"
+    """
+
+    manifestCheckinOption: Union[str, "ManifestCheckinOption"]
+    """The manifest checkin option. Known values are: \"AttemptAutomaticManifestCheckin\" and
+     \"DoNotAttemptAutomaticManifestCheckin\"."""
+    manifestCheckinParams: "CheckinManifestParams"
+    """The manifest checkin params."""
+
+
+class ManifestInfo(ProxyResource):
+    """Concrete proxy resource types can be created by aliasing this type using a specific property
+    type.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The manifest properties.
+    :vartype properties: "ManifestInfoProperties"
+    """
+
+    properties: "ManifestInfoProperties"
+    """The manifest properties."""
+
+
+class ManifestInfoProperties(TypedDict, total=False):
+    """The manifest properties.
+
+    :ivar manifest: The manifest.
+    :vartype manifest: str
+    :ivar manifestUri: The URI the manifest content is read from when the manifest is not supplied
+     inline.
+    :vartype manifestUri: str
+    :ivar commitId: The manifest commit identifier.
+    :vartype commitId: str
+    """
+
+    manifest: str
+    """The manifest."""
+    manifestUri: str
+    """The URI the manifest content is read from when the manifest is not supplied inline."""
+    commitId: str
+    """The manifest commit identifier."""
 
 
 class Notification(TypedDict, total=False):
     """Notification.
 
-    :ivar notification_type: The notification type. Known values are: "Unspecified" and
+    :ivar notificationType: The notification type. Known values are: "Unspecified" and
      "SubscriptionNotification".
-    :vartype notification_type: Union[str, "NotificationType"]
-    :ivar skip_notifications: Whether notifications should be skipped. Known values are:
+    :vartype notificationType: Union[str, "NotificationType"]
+    :ivar skipNotifications: Whether notifications should be skipped. Known values are:
      "Unspecified", "Enabled", and "Disabled".
-    :vartype skip_notifications: Union[str, "SkipNotifications"]
+    :vartype skipNotifications: Union[str, "SkipNotifications"]
     """
 
     notificationType: Union[str, "NotificationType"]
@@ -1954,8 +1947,8 @@ class Notification(TypedDict, total=False):
 class NotificationEndpoint(TypedDict, total=False):
     """NotificationEndpoint.
 
-    :ivar notification_destination: The notification destination.
-    :vartype notification_destination: str
+    :ivar notificationDestination: The notification destination.
+    :vartype notificationDestination: str
     :ivar locations: The locations.
     :vartype locations: list[str]
     """
@@ -1978,9 +1971,9 @@ class NotificationRegistration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties:
     :vartype properties: "NotificationRegistrationProperties"
     """
@@ -1991,21 +1984,21 @@ class NotificationRegistration(ProxyResource):
 class NotificationRegistrationProperties(TypedDict, total=False):
     """NotificationRegistrationProperties.
 
-    :ivar notification_mode: The notification mode. Known values are: "NotSpecified", "EventHub",
+    :ivar notificationMode: The notification mode. Known values are: "NotSpecified", "EventHub",
      and "WebHook".
-    :vartype notification_mode: Union[str, "NotificationMode"]
-    :ivar message_scope: The message scope. Known values are: "NotSpecified" and
+    :vartype notificationMode: Union[str, "NotificationMode"]
+    :ivar messageScope: The message scope. Known values are: "NotSpecified" and
      "RegisteredSubscriptions".
-    :vartype message_scope: Union[str, "MessageScope"]
-    :ivar included_events: The included events.
-    :vartype included_events: list[str]
-    :ivar notification_endpoints: The notification endpoints.
-    :vartype notification_endpoints: list["NotificationEndpoint"]
-    :ivar provisioning_state: The provisioned state of the resource. Known values are:
+    :vartype messageScope: Union[str, "MessageScope"]
+    :ivar includedEvents: The included events.
+    :vartype includedEvents: list[str]
+    :ivar notificationEndpoints: The notification endpoints.
+    :vartype notificationEndpoints: list["NotificationEndpoint"]
+    :ivar provisioningState: The provisioned state of the resource. Known values are:
      "NotSpecified", "Accepted", "Running", "Creating", "Created", "Deleting", "Deleted",
      "Canceled", "Failed", "Succeeded", "MovingResources", "TransientFailure", and
      "RolloutInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     notificationMode: Union[str, "NotificationMode"]
@@ -2036,9 +2029,9 @@ class OpenApiConfiguration(TypedDict, total=False):
 class OpenApiValidation(TypedDict, total=False):
     """OpenApiValidation.
 
-    :ivar allow_noncompliant_collection_response: Indicates whether a non compliance response is
+    :ivar allowNoncompliantCollectionResponse: Indicates whether a non compliance response is
      allowed for a LIST call.
-    :vartype allow_noncompliant_collection_response: bool
+    :vartype allowNoncompliantCollectionResponse: bool
     """
 
     allowNoncompliantCollectionResponse: bool
@@ -2068,9 +2061,9 @@ class OperationsPutContent(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties:
     :vartype properties: "OperationsPutContentProperties"
     """
@@ -2086,11 +2079,26 @@ class OperationsPutContentProperties(OperationsContentProperties):
     """
 
 
+class PrivateEndpointConfiguration(TypedDict, total=False):
+    """The private endpoint configuration.
+
+    :ivar minApiVersion: The first api version that support private endpoint. Required.
+    :vartype minApiVersion: str
+    :ivar groupConnectivityInformation: The list of group connectivity information. Required.
+    :vartype groupConnectivityInformation: list["GroupConnectivityInformation"]
+    """
+
+    minApiVersion: Required[str]
+    """The first api version that support private endpoint. Required."""
+    groupConnectivityInformation: Required[list["GroupConnectivityInformation"]]
+    """The list of group connectivity information. Required."""
+
+
 class PrivateResourceProviderConfiguration(TypedDict, total=False):
     """PrivateResourceProviderConfiguration.
 
-    :ivar allowed_subscriptions: The allowed subscriptions.
-    :vartype allowed_subscriptions: list[str]
+    :ivar allowedSubscriptions: The allowed subscriptions.
+    :vartype allowedSubscriptions: list[str]
     """
 
     allowedSubscriptions: list[str]
@@ -2100,20 +2108,18 @@ class PrivateResourceProviderConfiguration(TypedDict, total=False):
 class ProviderHubMetadata(TypedDict, total=False):
     """ProviderHubMetadata.
 
-    :ivar provider_authorizations: The provider authorizations.
-    :vartype provider_authorizations: list["ResourceProviderAuthorization"]
-    :ivar provider_authentication: The provider authentication.
-    :vartype provider_authentication: "ProviderHubMetadataProviderAuthentication"
-    :ivar third_party_provider_authorization: The third party provider authorization.
-    :vartype third_party_provider_authorization:
-     "ProviderHubMetadataThirdPartyProviderAuthorization"
-    :ivar direct_rp_role_definition_id: The direct RP role definition id.
-    :vartype direct_rp_role_definition_id: str
-    :ivar regional_async_operation_resource_type_name: The regional async operation resource type
-     name.
-    :vartype regional_async_operation_resource_type_name: str
-    :ivar global_async_operation_resource_type_name: The global async operation resource type name.
-    :vartype global_async_operation_resource_type_name: str
+    :ivar providerAuthorizations: The provider authorizations.
+    :vartype providerAuthorizations: list["ResourceProviderAuthorization"]
+    :ivar providerAuthentication: The provider authentication.
+    :vartype providerAuthentication: "ProviderHubMetadataProviderAuthentication"
+    :ivar thirdPartyProviderAuthorization: The third party provider authorization.
+    :vartype thirdPartyProviderAuthorization: "ProviderHubMetadataThirdPartyProviderAuthorization"
+    :ivar directRpRoleDefinitionId: The direct RP role definition id.
+    :vartype directRpRoleDefinitionId: str
+    :ivar regionalAsyncOperationResourceTypeName: The regional async operation resource type name.
+    :vartype regionalAsyncOperationResourceTypeName: str
+    :ivar globalAsyncOperationResourceTypeName: The global async operation resource type name.
+    :vartype globalAsyncOperationResourceTypeName: str
     """
 
     providerAuthorizations: list["ResourceProviderAuthorization"]
@@ -2133,8 +2139,8 @@ class ProviderHubMetadata(TypedDict, total=False):
 class ResourceProviderAuthentication(TypedDict, total=False):
     """ResourceProviderAuthentication.
 
-    :ivar allowed_audiences: The allowed audiences. Required.
-    :vartype allowed_audiences: list[str]
+    :ivar allowedAudiences: The allowed audiences. Required.
+    :vartype allowedAudiences: list[str]
     """
 
     allowedAudiences: Required[list[str]]
@@ -2144,8 +2150,8 @@ class ResourceProviderAuthentication(TypedDict, total=False):
 class ProviderHubMetadataProviderAuthentication(ResourceProviderAuthentication):  # pylint: disable=name-too-long
     """The provider authentication.
 
-    :ivar allowed_audiences: The allowed audiences. Required.
-    :vartype allowed_audiences: list[str]
+    :ivar allowedAudiences: The allowed audiences. Required.
+    :vartype allowedAudiences: list[str]
     """
 
 
@@ -2154,8 +2160,8 @@ class ThirdPartyProviderAuthorization(TypedDict, total=False):
 
     :ivar authorizations: The authorizations.
     :vartype authorizations: list["LightHouseAuthorization"]
-    :ivar managed_by_tenant_id: The managed by tenant id.
-    :vartype managed_by_tenant_id: str
+    :ivar managedByTenantId: The managed by tenant id.
+    :vartype managedByTenantId: str
     """
 
     authorizations: list["LightHouseAuthorization"]
@@ -2171,8 +2177,8 @@ class ProviderHubMetadataThirdPartyProviderAuthorization(
 
     :ivar authorizations: The authorizations.
     :vartype authorizations: list["LightHouseAuthorization"]
-    :ivar managed_by_tenant_id: The managed by tenant id.
-    :vartype managed_by_tenant_id: str
+    :ivar managedByTenantId: The managed by tenant id.
+    :vartype managedByTenantId: str
     """
 
 
@@ -2187,9 +2193,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -2214,9 +2220,9 @@ class ProviderMonitorSetting(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -2231,10 +2237,10 @@ class ProviderMonitorSetting(TrackedResource):
 class ProviderMonitorSettingProperties(TypedDict, total=False):
     """ProviderMonitorSettingProperties.
 
-    :ivar provisioning_state: The provisioning state. Known values are: "NotSpecified", "Accepted",
+    :ivar provisioningState: The provisioning state. Known values are: "NotSpecified", "Accepted",
      "Running", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Failed", "Succeeded",
      "MovingResources", "TransientFailure", and "RolloutInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -2246,75 +2252,73 @@ class ProviderMonitorSettingProperties(TypedDict, total=False):
 class ResourceProviderManifestProperties(TypedDict, total=False):
     """ResourceProviderManifestProperties.
 
-    :ivar provider_authentication: The provider authentication.
-    :vartype provider_authentication: "ResourceProviderManifestPropertiesProviderAuthentication"
-    :ivar provider_authorizations: The provider authorizations.
-    :vartype provider_authorizations: list["ResourceProviderAuthorization"]
+    :ivar providerAuthentication: The provider authentication.
+    :vartype providerAuthentication: "ResourceProviderManifestPropertiesProviderAuthentication"
+    :ivar providerAuthorizations: The provider authorizations.
+    :vartype providerAuthorizations: list["ResourceProviderAuthorization"]
     :ivar namespace: The namespace.
     :vartype namespace: str
     :ivar services: The services.
     :vartype services: list["ResourceProviderService"]
-    :ivar service_name: The service name.
-    :vartype service_name: str
-    :ivar provider_version: The provider version.
-    :vartype provider_version: str
-    :ivar provider_type: The provider type. Known values are: "NotSpecified", "Internal",
-     "External", "Hidden", "RegistrationFree", "LegacyRegistrationRequired", "TenantOnly", and
-     "AuthorizationFree".
-    :vartype provider_type: Union[str, "ResourceProviderType"]
-    :ivar required_features: The required features.
-    :vartype required_features: list[str]
-    :ivar features_rule: The features rule.
-    :vartype features_rule: "ResourceProviderManifestPropertiesFeaturesRule"
-    :ivar request_header_options: The request header options.
-    :vartype request_header_options: "ResourceProviderManifestPropertiesRequestHeaderOptions"
+    :ivar serviceName: The service name.
+    :vartype serviceName: str
+    :ivar providerVersion: The provider version.
+    :vartype providerVersion: str
+    :ivar providerType: The provider type. Known values are: "NotSpecified", "Internal",
+     "External", "Hidden", "RegistrationFree", "LegacyRegistrationRequired", "TenantOnly",
+     "AuthorizationFree", and "Decommissioned".
+    :vartype providerType: Union[str, "ResourceProviderType"]
+    :ivar requiredFeatures: The required features.
+    :vartype requiredFeatures: list[str]
+    :ivar featuresRule: The features rule.
+    :vartype featuresRule: "ResourceProviderManifestPropertiesFeaturesRule"
+    :ivar requestHeaderOptions: The request header options.
+    :vartype requestHeaderOptions: "ResourceProviderManifestPropertiesRequestHeaderOptions"
     :ivar management: The resource provider management.
     :vartype management: "ResourceProviderManifestPropertiesManagement"
     :ivar capabilities: The capabilities.
     :vartype capabilities: list["ResourceProviderCapabilities"]
-    :ivar cross_tenant_token_validation: The cross tenant token validation. Known values are:
+    :ivar crossTenantTokenValidation: The cross tenant token validation. Known values are:
      "EnsureSecureValidation" and "PassthroughInsecureToken".
-    :vartype cross_tenant_token_validation: Union[str, "CrossTenantTokenValidation"]
+    :vartype crossTenantTokenValidation: Union[str, "CrossTenantTokenValidation"]
     :ivar metadata: The metadata.
     :vartype metadata: Any
-    :ivar template_deployment_options: The template deployment options.
-    :vartype template_deployment_options:
+    :ivar templateDeploymentOptions: The template deployment options.
+    :vartype templateDeploymentOptions:
      "ResourceProviderManifestPropertiesTemplateDeploymentOptions"
-    :ivar global_notification_endpoints: The global notification endpoints.
-    :vartype global_notification_endpoints: list["ResourceProviderEndpoint"]
-    :ivar enable_tenant_linked_notification: The enable tenant linked notification.
-    :vartype enable_tenant_linked_notification: bool
+    :ivar globalNotificationEndpoints: The global notification endpoints.
+    :vartype globalNotificationEndpoints: list["ResourceProviderEndpoint"]
+    :ivar enableTenantLinkedNotification: The enable tenant linked notification.
+    :vartype enableTenantLinkedNotification: bool
     :ivar notifications: The notifications.
     :vartype notifications: list["Notification"]
-    :ivar linked_notification_rules: The linked notification rules.
-    :vartype linked_notification_rules: list["FanoutLinkedNotificationRule"]
-    :ivar resource_provider_authorization_rules: The resource provider authorization rules.
-    :vartype resource_provider_authorization_rules: "ResourceProviderAuthorizationRules"
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration: "ResourceProviderManifestPropertiesDstsConfiguration"
-    :ivar notification_options: Notification options. Known values are: "NotSpecified", "None", and
+    :ivar linkedNotificationRules: The linked notification rules.
+    :vartype linkedNotificationRules: list["FanoutLinkedNotificationRule"]
+    :ivar resourceProviderAuthorizationRules: The resource provider authorization rules.
+    :vartype resourceProviderAuthorizationRules: "ResourceProviderAuthorizationRules"
+    :ivar notificationOptions: Notification options. Known values are: "NotSpecified", "None", and
      "EmitSpendingLimit".
-    :vartype notification_options: Union[str, "NotificationOptions"]
-    :ivar resource_hydration_accounts: resource hydration accounts.
-    :vartype resource_hydration_accounts: list["ResourceHydrationAccount"]
-    :ivar notification_settings: Notification settings.
-    :vartype notification_settings: "ResourceProviderManifestPropertiesNotificationSettings"
-    :ivar management_group_global_notification_endpoints: Management groups global notification
+    :vartype notificationOptions: Union[str, "NotificationOptions"]
+    :ivar resourceHydrationAccounts: resource hydration accounts.
+    :vartype resourceHydrationAccounts: list["ResourceHydrationAccount"]
+    :ivar notificationSettings: Notification settings.
+    :vartype notificationSettings: "ResourceProviderManifestPropertiesNotificationSettings"
+    :ivar managementGroupGlobalNotificationEndpoints: Management groups global notification
      endpoints.
-    :vartype management_group_global_notification_endpoints: list["ResourceProviderEndpoint"]
-    :ivar optional_features: Optional features.
-    :vartype optional_features: list[str]
-    :ivar resource_group_lock_option_during_move: Resource group lock option during move.
-    :vartype resource_group_lock_option_during_move:
+    :vartype managementGroupGlobalNotificationEndpoints: list["ResourceProviderEndpoint"]
+    :ivar optionalFeatures: Optional features.
+    :vartype optionalFeatures: list[str]
+    :ivar resourceGroupLockOptionDuringMove: Resource group lock option during move.
+    :vartype resourceGroupLockOptionDuringMove:
      "ResourceProviderManifestPropertiesResourceGroupLockOptionDuringMove"
-    :ivar response_options: Response options.
-    :vartype response_options: "ResourceProviderManifestPropertiesResponseOptions"
-    :ivar legacy_namespace: Legacy namespace.
-    :vartype legacy_namespace: str
-    :ivar legacy_registrations: Legacy registrations.
-    :vartype legacy_registrations: list[str]
-    :ivar custom_manifest_version: Custom manifest version.
-    :vartype custom_manifest_version: str
+    :ivar responseOptions: Response options.
+    :vartype responseOptions: "ResourceProviderManifestPropertiesResponseOptions"
+    :ivar legacyNamespace: Legacy namespace.
+    :vartype legacyNamespace: str
+    :ivar legacyRegistrations: Legacy registrations.
+    :vartype legacyRegistrations: list[str]
+    :ivar customManifestVersion: Custom manifest version.
+    :vartype customManifestVersion: str
     """
 
     providerAuthentication: "ResourceProviderManifestPropertiesProviderAuthentication"
@@ -2331,8 +2335,8 @@ class ResourceProviderManifestProperties(TypedDict, total=False):
     """The provider version."""
     providerType: Union[str, "ResourceProviderType"]
     """The provider type. Known values are: \"NotSpecified\", \"Internal\", \"External\", \"Hidden\",
-     \"RegistrationFree\", \"LegacyRegistrationRequired\", \"TenantOnly\", and
-     \"AuthorizationFree\"."""
+     \"RegistrationFree\", \"LegacyRegistrationRequired\", \"TenantOnly\", \"AuthorizationFree\",
+     and \"Decommissioned\"."""
     requiredFeatures: list[str]
     """The required features."""
     featuresRule: "ResourceProviderManifestPropertiesFeaturesRule"
@@ -2360,8 +2364,6 @@ class ResourceProviderManifestProperties(TypedDict, total=False):
     """The linked notification rules."""
     resourceProviderAuthorizationRules: "ResourceProviderAuthorizationRules"
     """The resource provider authorization rules."""
-    dstsConfiguration: "ResourceProviderManifestPropertiesDstsConfiguration"
-    """The dsts configuration."""
     notificationOptions: Union[str, "NotificationOptions"]
     """Notification options. Known values are: \"NotSpecified\", \"None\", and \"EmitSpendingLimit\"."""
     resourceHydrationAccounts: list["ResourceHydrationAccount"]
@@ -2387,90 +2389,93 @@ class ResourceProviderManifestProperties(TypedDict, total=False):
 class ProviderRegistrationProperties(ResourceProviderManifestProperties):
     """ProviderRegistrationProperties.
 
-    :ivar provider_authentication: The provider authentication.
-    :vartype provider_authentication: "ResourceProviderManifestPropertiesProviderAuthentication"
-    :ivar provider_authorizations: The provider authorizations.
-    :vartype provider_authorizations: list["ResourceProviderAuthorization"]
+    :ivar providerAuthentication: The provider authentication.
+    :vartype providerAuthentication: "ResourceProviderManifestPropertiesProviderAuthentication"
+    :ivar providerAuthorizations: The provider authorizations.
+    :vartype providerAuthorizations: list["ResourceProviderAuthorization"]
     :ivar namespace: The namespace.
     :vartype namespace: str
     :ivar services: The services.
     :vartype services: list["ResourceProviderService"]
-    :ivar service_name: The service name.
-    :vartype service_name: str
-    :ivar provider_version: The provider version.
-    :vartype provider_version: str
-    :ivar provider_type: The provider type. Known values are: "NotSpecified", "Internal",
-     "External", "Hidden", "RegistrationFree", "LegacyRegistrationRequired", "TenantOnly", and
-     "AuthorizationFree".
-    :vartype provider_type: Union[str, "ResourceProviderType"]
-    :ivar required_features: The required features.
-    :vartype required_features: list[str]
-    :ivar features_rule: The features rule.
-    :vartype features_rule: "ResourceProviderManifestPropertiesFeaturesRule"
-    :ivar request_header_options: The request header options.
-    :vartype request_header_options: "ResourceProviderManifestPropertiesRequestHeaderOptions"
+    :ivar serviceName: The service name.
+    :vartype serviceName: str
+    :ivar providerVersion: The provider version.
+    :vartype providerVersion: str
+    :ivar providerType: The provider type. Known values are: "NotSpecified", "Internal",
+     "External", "Hidden", "RegistrationFree", "LegacyRegistrationRequired", "TenantOnly",
+     "AuthorizationFree", and "Decommissioned".
+    :vartype providerType: Union[str, "ResourceProviderType"]
+    :ivar requiredFeatures: The required features.
+    :vartype requiredFeatures: list[str]
+    :ivar featuresRule: The features rule.
+    :vartype featuresRule: "ResourceProviderManifestPropertiesFeaturesRule"
+    :ivar requestHeaderOptions: The request header options.
+    :vartype requestHeaderOptions: "ResourceProviderManifestPropertiesRequestHeaderOptions"
     :ivar management: The resource provider management.
     :vartype management: "ResourceProviderManifestPropertiesManagement"
     :ivar capabilities: The capabilities.
     :vartype capabilities: list["ResourceProviderCapabilities"]
-    :ivar cross_tenant_token_validation: The cross tenant token validation. Known values are:
+    :ivar crossTenantTokenValidation: The cross tenant token validation. Known values are:
      "EnsureSecureValidation" and "PassthroughInsecureToken".
-    :vartype cross_tenant_token_validation: Union[str, "CrossTenantTokenValidation"]
+    :vartype crossTenantTokenValidation: Union[str, "CrossTenantTokenValidation"]
     :ivar metadata: The metadata.
     :vartype metadata: Any
-    :ivar template_deployment_options: The template deployment options.
-    :vartype template_deployment_options:
+    :ivar templateDeploymentOptions: The template deployment options.
+    :vartype templateDeploymentOptions:
      "ResourceProviderManifestPropertiesTemplateDeploymentOptions"
-    :ivar global_notification_endpoints: The global notification endpoints.
-    :vartype global_notification_endpoints: list["ResourceProviderEndpoint"]
-    :ivar enable_tenant_linked_notification: The enable tenant linked notification.
-    :vartype enable_tenant_linked_notification: bool
+    :ivar globalNotificationEndpoints: The global notification endpoints.
+    :vartype globalNotificationEndpoints: list["ResourceProviderEndpoint"]
+    :ivar enableTenantLinkedNotification: The enable tenant linked notification.
+    :vartype enableTenantLinkedNotification: bool
     :ivar notifications: The notifications.
     :vartype notifications: list["Notification"]
-    :ivar linked_notification_rules: The linked notification rules.
-    :vartype linked_notification_rules: list["FanoutLinkedNotificationRule"]
-    :ivar resource_provider_authorization_rules: The resource provider authorization rules.
-    :vartype resource_provider_authorization_rules: "ResourceProviderAuthorizationRules"
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration: "ResourceProviderManifestPropertiesDstsConfiguration"
-    :ivar notification_options: Notification options. Known values are: "NotSpecified", "None", and
+    :ivar linkedNotificationRules: The linked notification rules.
+    :vartype linkedNotificationRules: list["FanoutLinkedNotificationRule"]
+    :ivar resourceProviderAuthorizationRules: The resource provider authorization rules.
+    :vartype resourceProviderAuthorizationRules: "ResourceProviderAuthorizationRules"
+    :ivar notificationOptions: Notification options. Known values are: "NotSpecified", "None", and
      "EmitSpendingLimit".
-    :vartype notification_options: Union[str, "NotificationOptions"]
-    :ivar resource_hydration_accounts: resource hydration accounts.
-    :vartype resource_hydration_accounts: list["ResourceHydrationAccount"]
-    :ivar notification_settings: Notification settings.
-    :vartype notification_settings: "ResourceProviderManifestPropertiesNotificationSettings"
-    :ivar management_group_global_notification_endpoints: Management groups global notification
+    :vartype notificationOptions: Union[str, "NotificationOptions"]
+    :ivar resourceHydrationAccounts: resource hydration accounts.
+    :vartype resourceHydrationAccounts: list["ResourceHydrationAccount"]
+    :ivar notificationSettings: Notification settings.
+    :vartype notificationSettings: "ResourceProviderManifestPropertiesNotificationSettings"
+    :ivar managementGroupGlobalNotificationEndpoints: Management groups global notification
      endpoints.
-    :vartype management_group_global_notification_endpoints: list["ResourceProviderEndpoint"]
-    :ivar optional_features: Optional features.
-    :vartype optional_features: list[str]
-    :ivar resource_group_lock_option_during_move: Resource group lock option during move.
-    :vartype resource_group_lock_option_during_move:
+    :vartype managementGroupGlobalNotificationEndpoints: list["ResourceProviderEndpoint"]
+    :ivar optionalFeatures: Optional features.
+    :vartype optionalFeatures: list[str]
+    :ivar resourceGroupLockOptionDuringMove: Resource group lock option during move.
+    :vartype resourceGroupLockOptionDuringMove:
      "ResourceProviderManifestPropertiesResourceGroupLockOptionDuringMove"
-    :ivar response_options: Response options.
-    :vartype response_options: "ResourceProviderManifestPropertiesResponseOptions"
-    :ivar legacy_namespace: Legacy namespace.
-    :vartype legacy_namespace: str
-    :ivar legacy_registrations: Legacy registrations.
-    :vartype legacy_registrations: list[str]
-    :ivar custom_manifest_version: Custom manifest version.
-    :vartype custom_manifest_version: str
-    :ivar provider_hub_metadata: The provider hub metadata.
-    :vartype provider_hub_metadata: "ProviderRegistrationPropertiesProviderHubMetadata"
-    :ivar provisioning_state: The provisioning state. Known values are: "NotSpecified", "Accepted",
+    :ivar responseOptions: Response options.
+    :vartype responseOptions: "ResourceProviderManifestPropertiesResponseOptions"
+    :ivar legacyNamespace: Legacy namespace.
+    :vartype legacyNamespace: str
+    :ivar legacyRegistrations: Legacy registrations.
+    :vartype legacyRegistrations: list[str]
+    :ivar customManifestVersion: Custom manifest version.
+    :vartype customManifestVersion: str
+    :ivar providerHubMetadata: The provider hub metadata.
+    :vartype providerHubMetadata: "ProviderRegistrationPropertiesProviderHubMetadata"
+    :ivar provisioningState: The provisioning state. Known values are: "NotSpecified", "Accepted",
      "Running", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Failed", "Succeeded",
      "MovingResources", "TransientFailure", and "RolloutInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar subscription_lifecycle_notification_specifications: The subscription lifecycle
-     notification specifications.
-    :vartype subscription_lifecycle_notification_specifications:
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar subscriptionLifecycleNotificationSpecifications: The subscription lifecycle notification
+     specifications.
+    :vartype subscriptionLifecycleNotificationSpecifications:
      "ProviderRegistrationPropertiesSubscriptionLifecycleNotificationSpecifications"
-    :ivar private_resource_provider_configuration: The private resource provider configuration.
-    :vartype private_resource_provider_configuration:
+    :ivar privateResourceProviderConfiguration: The private resource provider configuration.
+    :vartype privateResourceProviderConfiguration:
      "ProviderRegistrationPropertiesPrivateResourceProviderConfiguration"
-    :ivar token_auth_configuration: The token auth configuration.
-    :vartype token_auth_configuration: "TokenAuthConfiguration"
+    :ivar tokenAuthConfiguration: The token auth configuration.
+    :vartype tokenAuthConfiguration: "TokenAuthConfiguration"
+    :ivar oboSubscriptionId: The on behalf of subscription id for the resource provider.
+    :vartype oboSubscriptionId: str
+    :ivar enablePresetResourceTypes: Indicates whether automatic registration for the preset
+     resource types is enabled or disabled.
+    :vartype enablePresetResourceTypes: bool
     """
 
     providerHubMetadata: "ProviderRegistrationPropertiesProviderHubMetadata"
@@ -2487,6 +2492,10 @@ class ProviderRegistrationProperties(ResourceProviderManifestProperties):
     """The private resource provider configuration."""
     tokenAuthConfiguration: "TokenAuthConfiguration"
     """The token auth configuration."""
+    oboSubscriptionId: str
+    """The on behalf of subscription id for the resource provider."""
+    enablePresetResourceTypes: bool
+    """Indicates whether automatic registration for the preset resource types is enabled or disabled."""
 
 
 class ProviderRegistrationPropertiesPrivateResourceProviderConfiguration(
@@ -2494,38 +2503,36 @@ class ProviderRegistrationPropertiesPrivateResourceProviderConfiguration(
 ):  # pylint: disable=name-too-long
     """The private resource provider configuration.
 
-    :ivar allowed_subscriptions: The allowed subscriptions.
-    :vartype allowed_subscriptions: list[str]
+    :ivar allowedSubscriptions: The allowed subscriptions.
+    :vartype allowedSubscriptions: list[str]
     """
 
 
 class ProviderRegistrationPropertiesProviderHubMetadata(ProviderHubMetadata):  # pylint: disable=name-too-long
     """The provider hub metadata.
 
-    :ivar provider_authorizations: The provider authorizations.
-    :vartype provider_authorizations: list["ResourceProviderAuthorization"]
-    :ivar provider_authentication: The provider authentication.
-    :vartype provider_authentication: "ProviderHubMetadataProviderAuthentication"
-    :ivar third_party_provider_authorization: The third party provider authorization.
-    :vartype third_party_provider_authorization:
-     "ProviderHubMetadataThirdPartyProviderAuthorization"
-    :ivar direct_rp_role_definition_id: The direct RP role definition id.
-    :vartype direct_rp_role_definition_id: str
-    :ivar regional_async_operation_resource_type_name: The regional async operation resource type
-     name.
-    :vartype regional_async_operation_resource_type_name: str
-    :ivar global_async_operation_resource_type_name: The global async operation resource type name.
-    :vartype global_async_operation_resource_type_name: str
+    :ivar providerAuthorizations: The provider authorizations.
+    :vartype providerAuthorizations: list["ResourceProviderAuthorization"]
+    :ivar providerAuthentication: The provider authentication.
+    :vartype providerAuthentication: "ProviderHubMetadataProviderAuthentication"
+    :ivar thirdPartyProviderAuthorization: The third party provider authorization.
+    :vartype thirdPartyProviderAuthorization: "ProviderHubMetadataThirdPartyProviderAuthorization"
+    :ivar directRpRoleDefinitionId: The direct RP role definition id.
+    :vartype directRpRoleDefinitionId: str
+    :ivar regionalAsyncOperationResourceTypeName: The regional async operation resource type name.
+    :vartype regionalAsyncOperationResourceTypeName: str
+    :ivar globalAsyncOperationResourceTypeName: The global async operation resource type name.
+    :vartype globalAsyncOperationResourceTypeName: str
     """
 
 
 class SubscriptionLifecycleNotificationSpecifications(TypedDict, total=False):  # pylint: disable=name-too-long
     """SubscriptionLifecycleNotificationSpecifications.
 
-    :ivar subscription_state_override_actions: The subscription state override actions.
-    :vartype subscription_state_override_actions: list["SubscriptionStateOverrideAction"]
-    :ivar soft_delete_ttl: The soft delete TTL.
-    :vartype soft_delete_ttl: str
+    :ivar subscriptionStateOverrideActions: The subscription state override actions.
+    :vartype subscriptionStateOverrideActions: list["SubscriptionStateOverrideAction"]
+    :ivar softDeleteTTL: The soft delete TTL.
+    :vartype softDeleteTTL: str
     """
 
     subscriptionStateOverrideActions: list["SubscriptionStateOverrideAction"]
@@ -2539,22 +2546,22 @@ class ProviderRegistrationPropertiesSubscriptionLifecycleNotificationSpecificati
 ):  # pylint: disable=name-too-long
     """The subscription lifecycle notification specifications.
 
-    :ivar subscription_state_override_actions: The subscription state override actions.
-    :vartype subscription_state_override_actions: list["SubscriptionStateOverrideAction"]
-    :ivar soft_delete_ttl: The soft delete TTL.
-    :vartype soft_delete_ttl: str
+    :ivar subscriptionStateOverrideActions: The subscription state override actions.
+    :vartype subscriptionStateOverrideActions: list["SubscriptionStateOverrideAction"]
+    :ivar softDeleteTTL: The soft delete TTL.
+    :vartype softDeleteTTL: str
     """
 
 
 class QuotaRule(TypedDict, total=False):
     """QuotaRule.
 
-    :ivar quota_policy: The quota policy. Known values are: "Default", "None", and "Restricted".
-    :vartype quota_policy: Union[str, "QuotaPolicy"]
-    :ivar location_rules: The location rules.
-    :vartype location_rules: list["LocationQuotaRule"]
-    :ivar required_features: The required features.
-    :vartype required_features: list[str]
+    :ivar quotaPolicy: The quota policy. Known values are: "Default", "None", and "Restricted".
+    :vartype quotaPolicy: Union[str, "QuotaPolicy"]
+    :ivar locationRules: The location rules.
+    :vartype locationRules: list["LocationQuotaRule"]
+    :ivar requiredFeatures: The required features.
+    :vartype requiredFeatures: list[str]
     """
 
     quotaPolicy: Union[str, "QuotaPolicy"]
@@ -2568,15 +2575,15 @@ class QuotaRule(TypedDict, total=False):
 class RequestHeaderOptions(TypedDict, total=False):
     """RequestHeaderOptions.
 
-    :ivar opt_in_headers: The opt in headers. Known values are: "NotSpecified", "SignedUserToken",
+    :ivar optInHeaders: The opt in headers. Known values are: "NotSpecified", "SignedUserToken",
      "ClientGroupMembership", "SignedAuxiliaryTokens", "UnboundedClientGroupMembership",
      "PrivateLinkId", "PrivateLinkResourceId", "ManagementGroupAncestorsEncoded",
      "PrivateLinkVnetTrafficTag", "ResourceGroupLocation", "ClientPrincipalNameEncoded", and
      "MSIResourceIdEncoded".
-    :vartype opt_in_headers: Union[str, "OptInHeaderType"]
-    :ivar opt_out_headers: The opt out headers. Known values are: "NotSpecified" and
+    :vartype optInHeaders: Union[str, "OptInHeaderType"]
+    :ivar optOutHeaders: The opt out headers. Known values are: "NotSpecified" and
      "SystemDataCreatedByLastModifiedBy".
-    :vartype opt_out_headers: Union[str, "OptOutHeaderType"]
+    :vartype optOutHeaders: Union[str, "OptOutHeaderType"]
     """
 
     optInHeaders: Union[str, "OptInHeaderType"]
@@ -2593,8 +2600,8 @@ class RequestHeaderOptions(TypedDict, total=False):
 class ResourceAccessRole(TypedDict, total=False):
     """ResourceAccessRole.
 
-    :ivar allowed_group_claims: The allowed group claims.
-    :vartype allowed_group_claims: list[str]
+    :ivar allowedGroupClaims: The allowed group claims.
+    :vartype allowedGroupClaims: list[str]
     :ivar actions: The actions.
     :vartype actions: list[str]
     """
@@ -2616,13 +2623,45 @@ class ResourceConcurrencyControlOption(TypedDict, total=False):
     """The policy. Known values are: \"NotSpecified\" and \"SynchronizeBeginExtension\"."""
 
 
+class ResourceDeletionPolicyAndProperties(TypedDict, total=False):
+    """The individual resource deletion policy.
+
+    :ivar policyName: The resource deletion policy name. Known values are: "NotSpecified",
+     "Cascade", "Force", and "SoftDelete".
+    :vartype policyName: Union[str, "ResourceDeletionPolicy"]
+    :ivar properties: The resource deletion policy properties.
+    :vartype properties: "ResourceDeletionPolicyProperties"
+    """
+
+    policyName: Union[str, "ResourceDeletionPolicy"]
+    """The resource deletion policy name. Known values are: \"NotSpecified\", \"Cascade\", \"Force\",
+     and \"SoftDelete\"."""
+    properties: "ResourceDeletionPolicyProperties"
+    """The resource deletion policy properties."""
+
+
+class ResourceDeletionPolicyProperties(TypedDict, total=False):
+    """The resource deletion policy properties.
+
+    :ivar minimumRetentionTime: The minimum retention time.
+    :vartype minimumRetentionTime: str
+    :ivar maximumRetentionTime: The maximum retention time.
+    :vartype maximumRetentionTime: str
+    """
+
+    minimumRetentionTime: str
+    """The minimum retention time."""
+    maximumRetentionTime: str
+    """The maximum retention time."""
+
+
 class ResourceGraphConfiguration(TypedDict, total=False):
     """ResourceGraphConfiguration.
 
     :ivar enabled: Whether it's enabled.
     :vartype enabled: bool
-    :ivar api_version: The api version.
-    :vartype api_version: str
+    :ivar apiVersion: The api version.
+    :vartype apiVersion: str
     """
 
     enabled: bool
@@ -2634,14 +2673,14 @@ class ResourceGraphConfiguration(TypedDict, total=False):
 class ResourceHydrationAccount(TypedDict, total=False):
     """ResourceHydrationAccount.
 
-    :ivar max_child_resource_consistency_job_limit: The max child resource consistency job limit.
-    :vartype max_child_resource_consistency_job_limit: int
-    :ivar encrypted_key: The encrypted key.
-    :vartype encrypted_key: str
-    :ivar account_name: The account name.
-    :vartype account_name: str
-    :ivar subscription_id: The subscription id.
-    :vartype subscription_id: str
+    :ivar maxChildResourceConsistencyJobLimit: The max child resource consistency job limit.
+    :vartype maxChildResourceConsistencyJobLimit: int
+    :ivar encryptedKey: The encrypted key.
+    :vartype encryptedKey: str
+    :ivar accountName: The account name.
+    :vartype accountName: str
+    :ivar subscriptionId: The subscription id.
+    :vartype subscriptionId: str
     """
 
     maxChildResourceConsistencyJobLimit: int
@@ -2668,10 +2707,10 @@ class ResourceManagementAction(TypedDict, total=False):
 class ResourceManagementEntity(TypedDict, total=False):
     """ResourceManagementEntity.
 
-    :ivar resource_id: The resource id. Required.
-    :vartype resource_id: str
-    :ivar home_tenant_id: The home tenant id.
-    :vartype home_tenant_id: str
+    :ivar resourceId: The resource id. Required.
+    :vartype resourceId: str
+    :ivar homeTenantId: The home tenant id.
+    :vartype homeTenantId: str
     :ivar location: The location.
     :vartype location: str
     :ivar status: The operation status.
@@ -2691,12 +2730,12 @@ class ResourceManagementEntity(TypedDict, total=False):
 class ResourceMovePolicy(TypedDict, total=False):
     """ResourceMovePolicy.
 
-    :ivar validation_required: Whether validation is required.
-    :vartype validation_required: bool
-    :ivar cross_resource_group_move_enabled: Whether cross resource group move is enabled.
-    :vartype cross_resource_group_move_enabled: bool
-    :ivar cross_subscription_move_enabled: Whether cross subscription move is enabled.
-    :vartype cross_subscription_move_enabled: bool
+    :ivar validationRequired: Whether validation is required.
+    :vartype validationRequired: bool
+    :ivar crossResourceGroupMoveEnabled: Whether cross resource group move is enabled.
+    :vartype crossResourceGroupMoveEnabled: bool
+    :ivar crossSubscriptionMoveEnabled: Whether cross subscription move is enabled.
+    :vartype crossSubscriptionMoveEnabled: bool
     """
 
     validationRequired: bool
@@ -2710,18 +2749,18 @@ class ResourceMovePolicy(TypedDict, total=False):
 class ResourceProviderAuthorization(TypedDict, total=False):
     """ResourceProviderAuthorization.
 
-    :ivar application_id: The application id.
-    :vartype application_id: str
-    :ivar role_definition_id: The role definition id.
-    :vartype role_definition_id: str
-    :ivar managed_by_role_definition_id: The managed by role definition id.
-    :vartype managed_by_role_definition_id: str
-    :ivar managed_by_authorization: Managed by authorization.
-    :vartype managed_by_authorization: "ResourceProviderAuthorizationManagedByAuthorization"
-    :ivar allowed_third_party_extensions: The allowed third party extensions.
-    :vartype allowed_third_party_extensions: list["ThirdPartyExtension"]
-    :ivar grouping_tag: The grouping tag.
-    :vartype grouping_tag: str
+    :ivar applicationId: The application id.
+    :vartype applicationId: str
+    :ivar roleDefinitionId: The role definition id.
+    :vartype roleDefinitionId: str
+    :ivar managedByRoleDefinitionId: The managed by role definition id.
+    :vartype managedByRoleDefinitionId: str
+    :ivar managedByAuthorization: Managed by authorization.
+    :vartype managedByAuthorization: "ResourceProviderAuthorizationManagedByAuthorization"
+    :ivar allowedThirdPartyExtensions: The allowed third party extensions.
+    :vartype allowedThirdPartyExtensions: list["ThirdPartyExtension"]
+    :ivar groupingTag: The grouping tag.
+    :vartype groupingTag: str
     """
 
     applicationId: str
@@ -2741,14 +2780,14 @@ class ResourceProviderAuthorization(TypedDict, total=False):
 class ResourceProviderAuthorizationManagedByAuthorization(TypedDict, total=False):  # pylint: disable=name-too-long
     """Managed by authorization.
 
-    :ivar additional_authorizations:
-    :vartype additional_authorizations: list["AdditionalAuthorization"]
-    :ivar managed_by_resource_role_definition_id: The managed by resource role definition ID for
-     the application.
-    :vartype managed_by_resource_role_definition_id: str
-    :ivar allow_managed_by_inheritance: Indicates whether the managed by resource role definition
-     ID should be inherited.
-    :vartype allow_managed_by_inheritance: bool
+    :ivar additionalAuthorizations:
+    :vartype additionalAuthorizations: list["AdditionalAuthorization"]
+    :ivar managedByResourceRoleDefinitionId: The managed by resource role definition ID for the
+     application.
+    :vartype managedByResourceRoleDefinitionId: str
+    :ivar allowManagedByInheritance: Indicates whether the managed by resource role definition ID
+     should be inherited.
+    :vartype allowManagedByInheritance: bool
     """
 
     additionalAuthorizations: list["AdditionalAuthorization"]
@@ -2761,8 +2800,8 @@ class ResourceProviderAuthorizationManagedByAuthorization(TypedDict, total=False
 class ResourceProviderAuthorizationRules(TypedDict, total=False):
     """ResourceProviderAuthorizationRules.
 
-    :ivar async_operation_polling_rules: The async operation polling rules.
-    :vartype async_operation_polling_rules: "AsyncOperationPollingRules"
+    :ivar asyncOperationPollingRules: The async operation polling rules.
+    :vartype asyncOperationPollingRules: "AsyncOperationPollingRules"
     """
 
     asyncOperationPollingRules: "AsyncOperationPollingRules"
@@ -2772,12 +2811,12 @@ class ResourceProviderAuthorizationRules(TypedDict, total=False):
 class ResourceProviderCapabilities(TypedDict, total=False):
     """ResourceProviderCapabilities.
 
-    :ivar quota_id: The quota id. Required.
-    :vartype quota_id: str
+    :ivar quotaId: The quota id. Required.
+    :vartype quotaId: str
     :ivar effect: The effect. Required. Known values are: "NotSpecified", "Allow", and "Disallow".
     :vartype effect: Union[str, "ResourceProviderCapabilitiesEffect"]
-    :ivar required_features: The required features.
-    :vartype required_features: list[str]
+    :ivar requiredFeatures: The required features.
+    :vartype requiredFeatures: list[str]
     """
 
     quotaId: Required[str]
@@ -2793,23 +2832,23 @@ class ResourceProviderEndpoint(TypedDict, total=False):
 
     :ivar enabled: Whether the endpoint is enabled.
     :vartype enabled: bool
-    :ivar api_versions: The api versions.
-    :vartype api_versions: list[str]
-    :ivar endpoint_uri: The endpoint uri.
-    :vartype endpoint_uri: str
+    :ivar apiVersions: The api versions.
+    :vartype apiVersions: list[str]
+    :ivar endpointUri: The endpoint uri.
+    :vartype endpointUri: str
     :ivar locations: The locations.
     :vartype locations: list[str]
-    :ivar required_features: The required features.
-    :vartype required_features: list[str]
-    :ivar features_rule: The feature rules.
-    :vartype features_rule: "ResourceProviderEndpointFeaturesRule"
+    :ivar requiredFeatures: The required features.
+    :vartype requiredFeatures: list[str]
+    :ivar featuresRule: The feature rules.
+    :vartype featuresRule: "ResourceProviderEndpointFeaturesRule"
     :ivar timeout: The timeout.
     :vartype timeout: str
-    :ivar endpoint_type: The endpoint type. Known values are: "NotSpecified", "Canary",
+    :ivar endpointType: The endpoint type. Known values are: "NotSpecified", "Canary",
      "Production", and "TestInProduction".
-    :vartype endpoint_type: Union[str, "EndpointType"]
-    :ivar sku_link: The sku link.
-    :vartype sku_link: str
+    :vartype endpointType: Union[str, "EndpointType"]
+    :ivar skuLink: The sku link.
+    :vartype skuLink: str
     """
 
     enabled: bool
@@ -2836,47 +2875,45 @@ class ResourceProviderEndpoint(TypedDict, total=False):
 class ResourceProviderEndpointFeaturesRule(FeaturesRule):
     """The feature rules.
 
-    :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
+    :ivar requiredFeaturesPolicy: The required feature policy. Required. Known values are: "Any"
      and "All".
-    :vartype required_features_policy: Union[str, "FeaturesPolicy"]
+    :vartype requiredFeaturesPolicy: Union[str, "FeaturesPolicy"]
     """
 
 
 class ResourceProviderManagement(TypedDict, total=False):
     """ResourceProviderManagement.
 
-    :ivar schema_owners: The schema owners.
-    :vartype schema_owners: list[str]
-    :ivar manifest_owners: The manifest owners.
-    :vartype manifest_owners: list[str]
-    :ivar authorization_owners: The authorization owners.
-    :vartype authorization_owners: list[str]
-    :ivar incident_routing_service: The incident routing service.
-    :vartype incident_routing_service: str
-    :ivar incident_routing_team: The incident routing team.
-    :vartype incident_routing_team: str
-    :ivar incident_contact_email: The incident contact email.
-    :vartype incident_contact_email: str
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list["ServiceTreeInfo"]
-    :ivar resource_access_policy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
-    :vartype resource_access_policy: Union[str, "ResourceAccessPolicy"]
-    :ivar resource_access_roles: The resource access roles.
-    :vartype resource_access_roles: list["ResourceAccessRole"]
-    :ivar expedited_rollout_submitters: List of expedited rollout submitters.
-    :vartype expedited_rollout_submitters: list[str]
-    :ivar error_response_message_options: Options for error response messages.
-    :vartype error_response_message_options:
-     "ResourceProviderManagementErrorResponseMessageOptions"
-    :ivar expedited_rollout_metadata: Metadata for expedited rollout.
-    :vartype expedited_rollout_metadata: "ResourceProviderManagementExpeditedRolloutMetadata"
-    :ivar canary_manifest_owners: List of manifest owners for canary.
-    :vartype canary_manifest_owners: list[str]
-    :ivar pc_code: The profit center code for the subscription.
-    :vartype pc_code: str
-    :ivar profit_center_program_id: The profit center program id for the subscription.
-    :vartype profit_center_program_id: str
+    :ivar schemaOwners: The schema owners.
+    :vartype schemaOwners: list[str]
+    :ivar manifestOwners: The manifest owners.
+    :vartype manifestOwners: list[str]
+    :ivar authorizationOwners: The authorization owners.
+    :vartype authorizationOwners: list[str]
+    :ivar incidentRoutingService: The incident routing service.
+    :vartype incidentRoutingService: str
+    :ivar incidentRoutingTeam: The incident routing team.
+    :vartype incidentRoutingTeam: str
+    :ivar incidentContactEmail: The incident contact email.
+    :vartype incidentContactEmail: str
+    :ivar resourceAccessPolicy: The resource access policy. "NotSpecified"
+    :vartype resourceAccessPolicy: Union[str, "ResourceAccessPolicy"]
+    :ivar resourceAccessRoles: The resource access roles.
+    :vartype resourceAccessRoles: list["ResourceAccessRole"]
+    :ivar expeditedRolloutSubmitters: List of expedited rollout submitters.
+    :vartype expeditedRolloutSubmitters: list[str]
+    :ivar errorResponseMessageOptions: Options for error response messages.
+    :vartype errorResponseMessageOptions: "ResourceProviderManagementErrorResponseMessageOptions"
+    :ivar expeditedRolloutMetadata: Metadata for expedited rollout.
+    :vartype expeditedRolloutMetadata: "ResourceProviderManagementExpeditedRolloutMetadata"
+    :ivar canaryManifestOwners: List of manifest owners for canary.
+    :vartype canaryManifestOwners: list[str]
+    :ivar pcCode: The profit center code for the subscription.
+    :vartype pcCode: str
+    :ivar profitCenterProgramId: The profit center program id for the subscription.
+    :vartype profitCenterProgramId: str
+    :ivar featureManagementOwners: List of feature management owners.
+    :vartype featureManagementOwners: list[str]
     """
 
     schemaOwners: list[str]
@@ -2891,11 +2928,8 @@ class ResourceProviderManagement(TypedDict, total=False):
     """The incident routing team."""
     incidentContactEmail: str
     """The incident contact email."""
-    serviceTreeInfos: list["ServiceTreeInfo"]
-    """The service tree infos."""
     resourceAccessPolicy: Union[str, "ResourceAccessPolicy"]
-    """The resource access policy. Known values are: \"NotSpecified\", \"AcisReadAllowed\", and
-     \"AcisActionAllowed\"."""
+    """The resource access policy. \"NotSpecified\""""
     resourceAccessRoles: list["ResourceAccessRole"]
     """The resource access roles."""
     expeditedRolloutSubmitters: list[str]
@@ -2910,14 +2944,16 @@ class ResourceProviderManagement(TypedDict, total=False):
     """The profit center code for the subscription."""
     profitCenterProgramId: str
     """The profit center program id for the subscription."""
+    featureManagementOwners: list[str]
+    """List of feature management owners."""
 
 
 class ResourceProviderManagementErrorResponseMessageOptions(TypedDict, total=False):  # pylint: disable=name-too-long
     """Options for error response messages.
 
-    :ivar server_failure_response_message_type: Type of server failure response message. Known
-     values are: "NotSpecified" and "OutageReporting".
-    :vartype server_failure_response_message_type: Union[str, "ServerFailureResponseMessageType"]
+    :ivar serverFailureResponseMessageType: Type of server failure response message. Known values
+     are: "NotSpecified" and "OutageReporting".
+    :vartype serverFailureResponseMessageType: Union[str, "ServerFailureResponseMessageType"]
     """
 
     serverFailureResponseMessageType: Union[str, "ServerFailureResponseMessageType"]
@@ -2930,9 +2966,9 @@ class ResourceProviderManagementExpeditedRolloutMetadata(TypedDict, total=False)
 
     :ivar enabled: Expedited rollout enabled?.
     :vartype enabled: bool
-    :ivar expedited_rollout_intent: Expedited rollout intent. Known values are: "NotSpecified" and
+    :ivar expeditedRolloutIntent: Expedited rollout intent. Known values are: "NotSpecified" and
      "Hotfix".
-    :vartype expedited_rollout_intent: Union[str, "ExpeditedRolloutIntent"]
+    :vartype expeditedRolloutIntent: Union[str, "ExpeditedRolloutIntent"]
     """
 
     enabled: bool
@@ -2941,68 +2977,56 @@ class ResourceProviderManagementExpeditedRolloutMetadata(TypedDict, total=False)
     """Expedited rollout intent. Known values are: \"NotSpecified\" and \"Hotfix\"."""
 
 
-class ResourceProviderManifestPropertiesDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-
 class ResourceProviderManifestPropertiesFeaturesRule(FeaturesRule):  # pylint: disable=name-too-long
     """The features rule.
 
-    :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
+    :ivar requiredFeaturesPolicy: The required feature policy. Required. Known values are: "Any"
      and "All".
-    :vartype required_features_policy: Union[str, "FeaturesPolicy"]
+    :vartype requiredFeaturesPolicy: Union[str, "FeaturesPolicy"]
     """
 
 
 class ResourceProviderManifestPropertiesManagement(ResourceProviderManagement):  # pylint: disable=name-too-long
     """The resource provider management.
 
-    :ivar schema_owners: The schema owners.
-    :vartype schema_owners: list[str]
-    :ivar manifest_owners: The manifest owners.
-    :vartype manifest_owners: list[str]
-    :ivar authorization_owners: The authorization owners.
-    :vartype authorization_owners: list[str]
-    :ivar incident_routing_service: The incident routing service.
-    :vartype incident_routing_service: str
-    :ivar incident_routing_team: The incident routing team.
-    :vartype incident_routing_team: str
-    :ivar incident_contact_email: The incident contact email.
-    :vartype incident_contact_email: str
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list["ServiceTreeInfo"]
-    :ivar resource_access_policy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
-    :vartype resource_access_policy: Union[str, "ResourceAccessPolicy"]
-    :ivar resource_access_roles: The resource access roles.
-    :vartype resource_access_roles: list["ResourceAccessRole"]
-    :ivar expedited_rollout_submitters: List of expedited rollout submitters.
-    :vartype expedited_rollout_submitters: list[str]
-    :ivar error_response_message_options: Options for error response messages.
-    :vartype error_response_message_options:
-     "ResourceProviderManagementErrorResponseMessageOptions"
-    :ivar expedited_rollout_metadata: Metadata for expedited rollout.
-    :vartype expedited_rollout_metadata: "ResourceProviderManagementExpeditedRolloutMetadata"
-    :ivar canary_manifest_owners: List of manifest owners for canary.
-    :vartype canary_manifest_owners: list[str]
-    :ivar pc_code: The profit center code for the subscription.
-    :vartype pc_code: str
-    :ivar profit_center_program_id: The profit center program id for the subscription.
-    :vartype profit_center_program_id: str
+    :ivar schemaOwners: The schema owners.
+    :vartype schemaOwners: list[str]
+    :ivar manifestOwners: The manifest owners.
+    :vartype manifestOwners: list[str]
+    :ivar authorizationOwners: The authorization owners.
+    :vartype authorizationOwners: list[str]
+    :ivar incidentRoutingService: The incident routing service.
+    :vartype incidentRoutingService: str
+    :ivar incidentRoutingTeam: The incident routing team.
+    :vartype incidentRoutingTeam: str
+    :ivar incidentContactEmail: The incident contact email.
+    :vartype incidentContactEmail: str
+    :ivar resourceAccessPolicy: The resource access policy. "NotSpecified"
+    :vartype resourceAccessPolicy: Union[str, "ResourceAccessPolicy"]
+    :ivar resourceAccessRoles: The resource access roles.
+    :vartype resourceAccessRoles: list["ResourceAccessRole"]
+    :ivar expeditedRolloutSubmitters: List of expedited rollout submitters.
+    :vartype expeditedRolloutSubmitters: list[str]
+    :ivar errorResponseMessageOptions: Options for error response messages.
+    :vartype errorResponseMessageOptions: "ResourceProviderManagementErrorResponseMessageOptions"
+    :ivar expeditedRolloutMetadata: Metadata for expedited rollout.
+    :vartype expeditedRolloutMetadata: "ResourceProviderManagementExpeditedRolloutMetadata"
+    :ivar canaryManifestOwners: List of manifest owners for canary.
+    :vartype canaryManifestOwners: list[str]
+    :ivar pcCode: The profit center code for the subscription.
+    :vartype pcCode: str
+    :ivar profitCenterProgramId: The profit center program id for the subscription.
+    :vartype profitCenterProgramId: str
+    :ivar featureManagementOwners: List of feature management owners.
+    :vartype featureManagementOwners: list[str]
     """
 
 
 class ResourceProviderManifestPropertiesNotificationSettings(TypedDict, total=False):  # pylint: disable=name-too-long
     """Notification settings.
 
-    :ivar subscriber_settings:
-    :vartype subscriber_settings: list["SubscriberSetting"]
+    :ivar subscriberSettings:
+    :vartype subscriberSettings: list["SubscriberSetting"]
     """
 
     subscriberSettings: list["SubscriberSetting"]
@@ -3013,23 +3037,23 @@ class ResourceProviderManifestPropertiesProviderAuthentication(
 ):  # pylint: disable=name-too-long
     """The provider authentication.
 
-    :ivar allowed_audiences: The allowed audiences. Required.
-    :vartype allowed_audiences: list[str]
+    :ivar allowedAudiences: The allowed audiences. Required.
+    :vartype allowedAudiences: list[str]
     """
 
 
 class ResourceProviderManifestPropertiesRequestHeaderOptions(RequestHeaderOptions):  # pylint: disable=name-too-long
     """The request header options.
 
-    :ivar opt_in_headers: The opt in headers. Known values are: "NotSpecified", "SignedUserToken",
+    :ivar optInHeaders: The opt in headers. Known values are: "NotSpecified", "SignedUserToken",
      "ClientGroupMembership", "SignedAuxiliaryTokens", "UnboundedClientGroupMembership",
      "PrivateLinkId", "PrivateLinkResourceId", "ManagementGroupAncestorsEncoded",
      "PrivateLinkVnetTrafficTag", "ResourceGroupLocation", "ClientPrincipalNameEncoded", and
      "MSIResourceIdEncoded".
-    :vartype opt_in_headers: Union[str, "OptInHeaderType"]
-    :ivar opt_out_headers: The opt out headers. Known values are: "NotSpecified" and
+    :vartype optInHeaders: Union[str, "OptInHeaderType"]
+    :ivar optOutHeaders: The opt out headers. Known values are: "NotSpecified" and
      "SystemDataCreatedByLastModifiedBy".
-    :vartype opt_out_headers: Union[str, "OptOutHeaderType"]
+    :vartype optOutHeaders: Union[str, "OptOutHeaderType"]
     """
 
 
@@ -3038,10 +3062,10 @@ class ResourceProviderManifestPropertiesResourceGroupLockOptionDuringMove(
 ):  # pylint: disable=name-too-long
     """Resource group lock option during move.
 
-    :ivar block_action_verb: The action verb that will be blocked when the resource group is locked
+    :ivar blockActionVerb: The action verb that will be blocked when the resource group is locked
      during move. Known values are: "NotSpecified", "Read", "Write", "Action", "Delete", and
      "Unrecognized".
-    :vartype block_action_verb: Union[str, "BlockActionVerb"]
+    :vartype blockActionVerb: Union[str, "BlockActionVerb"]
     """
 
     blockActionVerb: Union[str, "BlockActionVerb"]
@@ -3053,9 +3077,9 @@ class ResourceProviderManifestPropertiesResourceGroupLockOptionDuringMove(
 class ResourceProviderManifestPropertiesResponseOptions(TypedDict, total=False):  # pylint: disable=name-too-long
     """Response options.
 
-    :ivar service_client_options_type: Known values are: "NotSpecified" and
+    :ivar serviceClientOptionsType: Known values are: "NotSpecified" and
      "DisableAutomaticDecompression".
-    :vartype service_client_options_type: Union[str, "ServiceClientOptionsType"]
+    :vartype serviceClientOptionsType: Union[str, "ServiceClientOptionsType"]
     """
 
     serviceClientOptionsType: Union[str, "ServiceClientOptionsType"]
@@ -3065,10 +3089,10 @@ class ResourceProviderManifestPropertiesResponseOptions(TypedDict, total=False):
 class TemplateDeploymentOptions(TypedDict, total=False):
     """TemplateDeploymentOptions.
 
-    :ivar preflight_supported: Whether preflight is supported.
-    :vartype preflight_supported: bool
-    :ivar preflight_options: The preflight options.
-    :vartype preflight_options: list[Union[str, "PreflightOption"]]
+    :ivar preflightSupported: Whether preflight is supported.
+    :vartype preflightSupported: bool
+    :ivar preflightOptions: The preflight options.
+    :vartype preflightOptions: list[Union[str, "PreflightOption"]]
     """
 
     preflightSupported: bool
@@ -3082,18 +3106,18 @@ class ResourceProviderManifestPropertiesTemplateDeploymentOptions(
 ):  # pylint: disable=name-too-long
     """The template deployment options.
 
-    :ivar preflight_supported: Whether preflight is supported.
-    :vartype preflight_supported: bool
-    :ivar preflight_options: The preflight options.
-    :vartype preflight_options: list[Union[str, "PreflightOption"]]
+    :ivar preflightSupported: Whether preflight is supported.
+    :vartype preflightSupported: bool
+    :ivar preflightOptions: The preflight options.
+    :vartype preflightOptions: list[Union[str, "PreflightOption"]]
     """
 
 
 class ResourceProviderService(TypedDict, total=False):
     """Resource provider service.
 
-    :ivar service_name: The service name.
-    :vartype service_name: str
+    :ivar serviceName: The service name.
+    :vartype serviceName: str
     :ivar status: The status. Known values are: "Active" and "Inactive".
     :vartype status: Union[str, "ServiceStatus"]
     """
@@ -3113,36 +3137,34 @@ class ResourceTypeEndpoint(TypedDict, total=False):
     :vartype kind: Union[str, "ResourceTypeEndpointKind"]
     :ivar enabled: Whether the endpoint is enabled.
     :vartype enabled: bool
-    :ivar api_versions: The api versions.
-    :vartype api_versions: list[str]
+    :ivar apiVersions: The api versions.
+    :vartype apiVersions: list[str]
     :ivar locations: The locations.
     :vartype locations: list[str]
-    :ivar required_features: The required features.
-    :vartype required_features: list[str]
-    :ivar features_rule: The features rule.
-    :vartype features_rule: "ResourceTypeEndpointFeaturesRule"
+    :ivar requiredFeatures: The required features.
+    :vartype requiredFeatures: list[str]
+    :ivar featuresRule: The features rule.
+    :vartype featuresRule: "ResourceTypeEndpointFeaturesRule"
     :ivar extensions: The extensions.
     :vartype extensions: list["ResourceTypeExtension"]
     :ivar timeout: The timeout.
     :vartype timeout: str
-    :ivar endpoint_type: The endpoint type. Known values are: "NotSpecified", "Canary",
+    :ivar endpointType: The endpoint type. Known values are: "NotSpecified", "Canary",
      "Production", and "TestInProduction".
-    :vartype endpoint_type: Union[str, "EndpointTypeResourceType"]
-    :ivar token_auth_configuration: The token auth configuration.
-    :vartype token_auth_configuration: "TokenAuthConfiguration"
-    :ivar sku_link: The sku link.
-    :vartype sku_link: str
-    :ivar endpoint_uri: The endpoint uri.
-    :vartype endpoint_uri: str
-    :ivar api_version: Api version.
-    :vartype api_version: str
+    :vartype endpointType: Union[str, "EndpointTypeResourceType"]
+    :ivar tokenAuthConfiguration: The token auth configuration.
+    :vartype tokenAuthConfiguration: "TokenAuthConfiguration"
+    :ivar skuLink: The sku link.
+    :vartype skuLink: str
+    :ivar endpointUri: The endpoint uri.
+    :vartype endpointUri: str
+    :ivar apiVersion: Api version.
+    :vartype apiVersion: str
     :ivar zones: List of zones.
     :vartype zones: list[str]
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration: "ResourceTypeEndpointDstsConfiguration"
-    :ivar data_boundary: The data boundary. Known values are: "NotDefined", "Global", "EU", and
+    :ivar dataBoundary: The data boundary. Known values are: "NotDefined", "Global", "EU", and
      "US".
-    :vartype data_boundary: Union[str, "DataBoundary"]
+    :vartype dataBoundary: Union[str, "DataBoundary"]
     """
 
     kind: Union[str, "ResourceTypeEndpointKind"]
@@ -3176,57 +3198,26 @@ class ResourceTypeEndpoint(TypedDict, total=False):
     """Api version."""
     zones: list[str]
     """List of zones."""
-    dstsConfiguration: "ResourceTypeEndpointDstsConfiguration"
-    """The dsts configuration."""
     dataBoundary: Union[str, "DataBoundary"]
     """The data boundary. Known values are: \"NotDefined\", \"Global\", \"EU\", and \"US\"."""
-
-
-class ResourceTypeEndpointBaseDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-
-class ResourceTypeEndpointBaseFeaturesRule(FeaturesRule):
-    """The features rule.
-
-    :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
-     and "All".
-    :vartype required_features_policy: Union[str, "FeaturesPolicy"]
-    """
-
-
-class ResourceTypeEndpointDstsConfiguration(DstsConfiguration):
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
 
 
 class ResourceTypeEndpointFeaturesRule(FeaturesRule):
     """The features rule.
 
-    :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
+    :ivar requiredFeaturesPolicy: The required feature policy. Required. Known values are: "Any"
      and "All".
-    :vartype required_features_policy: Union[str, "FeaturesPolicy"]
+    :vartype requiredFeaturesPolicy: Union[str, "FeaturesPolicy"]
     """
 
 
 class ResourceTypeExtension(TypedDict, total=False):
     """ResourceTypeExtension.
 
-    :ivar endpoint_uri: The endpoint uri.
-    :vartype endpoint_uri: str
-    :ivar extension_categories: The extension categories.
-    :vartype extension_categories: list[Union[str, "ExtensionCategory"]]
+    :ivar endpointUri: The endpoint uri.
+    :vartype endpointUri: str
+    :ivar extensionCategories: The extension categories.
+    :vartype extensionCategories: list[Union[str, "ExtensionCategory"]]
     :ivar timeout: The timeout.
     :vartype timeout: str
     """
@@ -3242,8 +3233,8 @@ class ResourceTypeExtension(TypedDict, total=False):
 class ResourceTypeExtensionOptions(TypedDict, total=False):
     """ResourceTypeExtensionOptions.
 
-    :ivar resource_creation_begin: Resource creation begin.
-    :vartype resource_creation_begin: "ResourceTypeExtensionOptionsResourceCreationBegin"
+    :ivar resourceCreationBegin: Resource creation begin.
+    :vartype resourceCreationBegin: "ResourceTypeExtensionOptionsResourceCreationBegin"
     """
 
     resourceCreationBegin: "ResourceTypeExtensionOptionsResourceCreationBegin"
@@ -3260,13 +3251,36 @@ class ResourceTypeExtensionOptionsResourceCreationBegin(ExtensionOptions):  # py
     """
 
 
+class ResourceTypeManagedResourceGroupConfiguration(TypedDict, total=False):  # pylint: disable=name-too-long
+    """The managed resource group configuration for the resource type.
+
+    :ivar enabled: Indicates whether the managed resource group configuration is enabled.
+    :vartype enabled: bool
+    :ivar resourceGroupLocationOverride: The resource group location override.
+    :vartype resourceGroupLocationOverride: str
+    :ivar applicationIds: The application ids.
+    :vartype applicationIds: list[str]
+    :ivar denyAssignmentConfiguration: The deny assignment configuration.
+    :vartype denyAssignmentConfiguration: "ManagedResourceGroupDenyAssignmentConfiguration"
+    """
+
+    enabled: bool
+    """Indicates whether the managed resource group configuration is enabled."""
+    resourceGroupLocationOverride: str
+    """The resource group location override."""
+    applicationIds: list[str]
+    """The application ids."""
+    denyAssignmentConfiguration: "ManagedResourceGroupDenyAssignmentConfiguration"
+    """The deny assignment configuration."""
+
+
 class ResourceTypeOnBehalfOfToken(TypedDict, total=False):
     """ResourceTypeOnBehalfOfToken.
 
-    :ivar action_name: The action name.
-    :vartype action_name: str
-    :ivar life_time: This is a TimeSpan property.
-    :vartype life_time: str
+    :ivar actionName: The action name.
+    :vartype actionName: str
+    :ivar lifeTime: This is a TimeSpan property.
+    :vartype lifeTime: str
     """
 
     actionName: str
@@ -3287,9 +3301,9 @@ class ResourceTypeRegistration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties:
     :vartype properties: "ResourceTypeRegistrationProperties"
     :ivar kind: Resource type registration kind. This Metadata is also used by portal/tooling/etc
@@ -3308,179 +3322,183 @@ class ResourceTypeRegistration(ProxyResource):
 class ResourceTypeRegistrationProperties(TypedDict, total=False):
     """ResourceTypeRegistrationProperties.
 
-    :ivar routing_type: The resource routing type. Known values are: "Default", "ProxyOnly",
+    :ivar routingType: The resource routing type. Known values are: "Default", "ProxyOnly",
      "HostBased", "Extension", "Tenant", "Fanout", "LocationBased", "Failover", "CascadeExtension",
      "ChildFanout", "CascadeAuthorizedExtension", "BypassEndpointSelectionOptimization",
      "LocationMapping", and "ServiceFanout".
-    :vartype routing_type: Union[str, "RoutingType"]
-    :ivar additional_options: The additional options. Known values are:
+    :vartype routingType: Union[str, "RoutingType"]
+    :ivar additionalOptions: The additional options. Known values are:
      "ProtectedAsyncOperationPolling" and "ProtectedAsyncOperationPollingAuditOnly".
-    :vartype additional_options: Union[str, "AdditionalOptionsResourceTypeRegistration"]
-    :ivar cross_tenant_token_validation: The cross tenant token validation. Known values are:
+    :vartype additionalOptions: Union[str, "AdditionalOptionsResourceTypeRegistration"]
+    :ivar crossTenantTokenValidation: The cross tenant token validation. Known values are:
      "EnsureSecureValidation" and "PassthroughInsecureToken".
-    :vartype cross_tenant_token_validation: Union[str, "CrossTenantTokenValidation"]
+    :vartype crossTenantTokenValidation: Union[str, "CrossTenantTokenValidation"]
     :ivar regionality: The regionality. Known values are: "NotSpecified", "Global", and "Regional".
     :vartype regionality: Union[str, "Regionality"]
     :ivar endpoints: The extensions.
     :vartype endpoints: list["ResourceTypeEndpoint"]
-    :ivar extension_options: The extension options.
-    :vartype extension_options: "ResourceTypeRegistrationPropertiesExtensionOptions"
-    :ivar marketplace_type: The marketplace type. Known values are: "NotSpecified", "AddOn",
-     "Bypass", and "Store".
-    :vartype marketplace_type: Union[str, "MarketplaceType"]
-    :ivar swagger_specifications: The swagger specifications.
-    :vartype swagger_specifications: list["SwaggerSpecification"]
-    :ivar allowed_unauthorized_actions: The allowed unauthorized actions.
-    :vartype allowed_unauthorized_actions: list[str]
-    :ivar allowed_unauthorized_actions_extensions: The allowed unauthorized actions extensions.
-    :vartype allowed_unauthorized_actions_extensions: list["AllowedUnauthorizedActionsExtension"]
-    :ivar authorization_action_mappings: The authorization action mappings.
-    :vartype authorization_action_mappings: list["AuthorizationActionMapping"]
-    :ivar linked_access_checks: The linked access checks.
-    :vartype linked_access_checks: list["LinkedAccessCheck"]
-    :ivar default_api_version: The default api version.
-    :vartype default_api_version: str
-    :ivar logging_rules: The logging rules.
-    :vartype logging_rules: list["LoggingRule"]
-    :ivar throttling_rules: The throttling rules.
-    :vartype throttling_rules: list["ThrottlingRule"]
-    :ivar required_features: The required features.
-    :vartype required_features: list[str]
-    :ivar features_rule: The features rule.
-    :vartype features_rule: "ResourceTypeRegistrationPropertiesFeaturesRule"
-    :ivar enable_async_operation: Whether async operation is enabled.
-    :vartype enable_async_operation: bool
-    :ivar provisioning_state: The provisioning state. Known values are: "NotSpecified", "Accepted",
+    :ivar extensionOptions: The extension options.
+    :vartype extensionOptions: "ResourceTypeRegistrationPropertiesExtensionOptions"
+    :ivar marketplaceType: The marketplace type. Known values are: "NotSpecified", "AddOn",
+     "Bypass", "Store", and "ProviderHub".
+    :vartype marketplaceType: Union[str, "MarketplaceType"]
+    :ivar swaggerSpecifications: The swagger specifications.
+    :vartype swaggerSpecifications: list["SwaggerSpecification"]
+    :ivar allowedUnauthorizedActions: The allowed unauthorized actions.
+    :vartype allowedUnauthorizedActions: list[str]
+    :ivar allowedUnauthorizedActionsExtensions: The allowed unauthorized actions extensions.
+    :vartype allowedUnauthorizedActionsExtensions: list["AllowedUnauthorizedActionsExtension"]
+    :ivar authorizationActionMappings: The authorization action mappings.
+    :vartype authorizationActionMappings: list["AuthorizationActionMapping"]
+    :ivar linkedAccessChecks: The linked access checks.
+    :vartype linkedAccessChecks: list["LinkedAccessCheck"]
+    :ivar defaultApiVersion: The default api version.
+    :vartype defaultApiVersion: str
+    :ivar loggingRules: The logging rules.
+    :vartype loggingRules: list["LoggingRule"]
+    :ivar throttlingRules: The throttling rules.
+    :vartype throttlingRules: list["ThrottlingRule"]
+    :ivar requiredFeatures: The required features.
+    :vartype requiredFeatures: list[str]
+    :ivar featuresRule: The features rule.
+    :vartype featuresRule: "ResourceTypeRegistrationPropertiesFeaturesRule"
+    :ivar enableAsyncOperation: Whether async operation is enabled.
+    :vartype enableAsyncOperation: bool
+    :ivar provisioningState: The provisioning state. Known values are: "NotSpecified", "Accepted",
      "Running", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Failed", "Succeeded",
      "MovingResources", "TransientFailure", and "RolloutInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar enable_third_party_s2_s: Whether third party S2S is enabled.
-    :vartype enable_third_party_s2_s: bool
-    :ivar subscription_lifecycle_notification_specifications: The subscription lifecycle
-     notification specifications.
-    :vartype subscription_lifecycle_notification_specifications:
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar enableThirdPartyS2S: Whether third party S2S is enabled.
+    :vartype enableThirdPartyS2S: bool
+    :ivar subscriptionLifecycleNotificationSpecifications: The subscription lifecycle notification
+     specifications.
+    :vartype subscriptionLifecycleNotificationSpecifications:
      "ResourceTypeRegistrationPropertiesSubscriptionLifecycleNotificationSpecifications"
-    :ivar is_pure_proxy: Whether it is pure proxy.
-    :vartype is_pure_proxy: bool
-    :ivar identity_management: The identity management.
-    :vartype identity_management: "ResourceTypeRegistrationPropertiesIdentityManagement"
-    :ivar check_name_availability_specifications: The check name availability specifications.
-    :vartype check_name_availability_specifications:
+    :ivar isPureProxy: Whether it is pure proxy.
+    :vartype isPureProxy: bool
+    :ivar identityManagement: The identity management.
+    :vartype identityManagement: "ResourceTypeRegistrationPropertiesIdentityManagement"
+    :ivar checkNameAvailabilitySpecifications: The check name availability specifications.
+    :vartype checkNameAvailabilitySpecifications:
      "ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications"
-    :ivar disallowed_action_verbs: The disallowed action verbs.
-    :vartype disallowed_action_verbs: list[str]
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list["ServiceTreeInfo"]
-    :ivar request_header_options: The request header options.
-    :vartype request_header_options: "ResourceTypeRegistrationPropertiesRequestHeaderOptions"
-    :ivar subscription_state_rules: The subscription state rules.
-    :vartype subscription_state_rules: list["SubscriptionStateRule"]
-    :ivar template_deployment_options: The template deployment options.
-    :vartype template_deployment_options:
+    :ivar disallowedActionVerbs: The disallowed action verbs.
+    :vartype disallowedActionVerbs: list[str]
+    :ivar requestHeaderOptions: The request header options.
+    :vartype requestHeaderOptions: "ResourceTypeRegistrationPropertiesRequestHeaderOptions"
+    :ivar subscriptionStateRules: The subscription state rules.
+    :vartype subscriptionStateRules: list["SubscriptionStateRule"]
+    :ivar templateDeploymentOptions: The template deployment options.
+    :vartype templateDeploymentOptions:
      "ResourceTypeRegistrationPropertiesTemplateDeploymentOptions"
-    :ivar extended_locations: The extended locations.
-    :vartype extended_locations: list["ExtendedLocationOptions"]
-    :ivar resource_move_policy: The resource move policy.
-    :vartype resource_move_policy: "ResourceTypeRegistrationPropertiesResourceMovePolicy"
-    :ivar resource_deletion_policy: The resource deletion policy. Known values are: "NotSpecified",
-     "CascadeDeleteAll", and "CascadeDeleteProxyOnlyChildren".
-    :vartype resource_deletion_policy: Union[str, "ResourceDeletionPolicy"]
-    :ivar resource_concurrency_control_options: The resource concurrency control options.
-    :vartype resource_concurrency_control_options: dict[str, "ResourceConcurrencyControlOption"]
-    :ivar resource_graph_configuration: The resource graph configuration.
-    :vartype resource_graph_configuration:
+    :ivar extendedLocations: The extended locations.
+    :vartype extendedLocations: list["ExtendedLocationOptions"]
+    :ivar resourceMovePolicy: The resource move policy.
+    :vartype resourceMovePolicy: "ResourceTypeRegistrationPropertiesResourceMovePolicy"
+    :ivar resourceDeletionPolicy: The resource deletion policy. Known values are: "NotSpecified",
+     "CascadeDeleteAll", "CascadeDeleteProxyOnlyChildren", "Cascade", and "Force".
+    :vartype resourceDeletionPolicy: Union[str, "RPaaSResourceDeletionPolicy"]
+    :ivar resourceDeletionPolicies: List of resource deletion policies added.
+    :vartype resourceDeletionPolicies: list["ResourceDeletionPolicyAndProperties"]
+    :ivar managedResourceGroupConfiguration: The managed resource group configuration.
+    :vartype managedResourceGroupConfiguration: "ResourceTypeManagedResourceGroupConfiguration"
+    :ivar privateEndpointConfiguration: The private endpoint configuration.
+    :vartype privateEndpointConfiguration: "PrivateEndpointConfiguration"
+    :ivar writeLock: The write lock configuration.
+    :vartype writeLock: "WriteLockConfiguration"
+    :ivar superScaleEnabled: Indicates whether super scale is enabled.
+    :vartype superScaleEnabled: bool
+    :ivar resourceConcurrencyControlOptions: The resource concurrency control options.
+    :vartype resourceConcurrencyControlOptions: dict[str, "ResourceConcurrencyControlOption"]
+    :ivar resourceGraphConfiguration: The resource graph configuration.
+    :vartype resourceGraphConfiguration:
      "ResourceTypeRegistrationPropertiesResourceGraphConfiguration"
     :ivar management: The resource provider management.
     :vartype management: "ResourceTypeRegistrationPropertiesManagement"
-    :ivar open_api_configuration: The open api configuration.
-    :vartype open_api_configuration: "OpenApiConfiguration"
-    :ivar on_behalf_of_tokens: The on behalf of tokens.
-    :vartype on_behalf_of_tokens: "ResourceTypeOnBehalfOfToken"
+    :ivar openApiConfiguration: The open api configuration.
+    :vartype openApiConfiguration: "OpenApiConfiguration"
+    :ivar onBehalfOfTokens: The on behalf of tokens.
+    :vartype onBehalfOfTokens: "ResourceTypeOnBehalfOfToken"
     :ivar category: The category. Known values are: "None", "FreeForm", "Internal", and
      "PureProxy".
     :vartype category: Union[str, "ResourceTypeCategory"]
-    :ivar resource_validation: The resource validation. Known values are: "NotSpecified",
+    :ivar resourceValidation: The resource validation. Known values are: "NotSpecified",
      "ReservedWords", and "ProfaneWords".
-    :vartype resource_validation: Union[str, "ResourceValidation"]
-    :ivar disallowed_end_user_operations: The disallowed end user operations.
-    :vartype disallowed_end_user_operations: list[str]
+    :vartype resourceValidation: Union[str, "ResourceValidation"]
+    :ivar disallowedEndUserOperations: The disallowed end user operations.
+    :vartype disallowedEndUserOperations: list[str]
     :ivar metadata: The metadata.
     :vartype metadata: dict[str, Any]
-    :ivar sku_link: The sku link.
-    :vartype sku_link: str
-    :ivar quota_rule: The quota rule.
-    :vartype quota_rule: "QuotaRule"
+    :ivar skuLink: The sku link.
+    :vartype skuLink: str
+    :ivar quotaRule: The quota rule.
+    :vartype quotaRule: "QuotaRule"
     :ivar notifications: The notifications.
     :vartype notifications: list["Notification"]
-    :ivar linked_notification_rules: The linked notification rules.
-    :vartype linked_notification_rules: list["LinkedNotificationRule"]
-    :ivar resource_provider_authorization_rules: The resource provider authorization rules.
-    :vartype resource_provider_authorization_rules: "ResourceProviderAuthorizationRules"
-    :ivar token_auth_configuration: The token auth configuration.
-    :vartype token_auth_configuration: "TokenAuthConfiguration"
-    :ivar template_deployment_policy: The template deployment policy.
-    :vartype template_deployment_policy:
-     "ResourceTypeRegistrationPropertiesTemplateDeploymentPolicy"
-    :ivar allow_empty_role_assignments: The allow empty role assignments.
-    :vartype allow_empty_role_assignments: bool
-    :ivar policy_execution_type: The policy execution type. Known values are: "NotSpecified",
+    :ivar linkedNotificationRules: The linked notification rules.
+    :vartype linkedNotificationRules: list["LinkedNotificationRule"]
+    :ivar resourceProviderAuthorizationRules: The resource provider authorization rules.
+    :vartype resourceProviderAuthorizationRules: "ResourceProviderAuthorizationRules"
+    :ivar tokenAuthConfiguration: The token auth configuration.
+    :vartype tokenAuthConfiguration: "TokenAuthConfiguration"
+    :ivar templateDeploymentPolicy: The template deployment policy.
+    :vartype templateDeploymentPolicy: "ResourceTypeRegistrationPropertiesTemplateDeploymentPolicy"
+    :ivar allowEmptyRoleAssignments: The allow empty role assignments.
+    :vartype allowEmptyRoleAssignments: bool
+    :ivar policyExecutionType: The policy execution type. Known values are: "NotSpecified",
      "ExecutePolicies", "BypassPolicies", and "ExpectPartialPutRequests".
-    :vartype policy_execution_type: Union[str, "PolicyExecutionType"]
-    :ivar availability_zone_rule: The availability zone rule.
-    :vartype availability_zone_rule: "ResourceTypeRegistrationPropertiesAvailabilityZoneRule"
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration: "ResourceTypeRegistrationPropertiesDstsConfiguration"
-    :ivar async_timeout_rules: Async timeout rules.
-    :vartype async_timeout_rules: list["AsyncTimeoutRule"]
-    :ivar common_api_versions: Common API versions for the resource type.
-    :vartype common_api_versions: list[str]
-    :ivar api_profiles: The api profiles.
-    :vartype api_profiles: list["ApiProfile"]
-    :ivar linked_operation_rules: The linked operation rules.
-    :vartype linked_operation_rules: list["LinkedOperationRule"]
-    :ivar legacy_name: The legacy name.
-    :vartype legacy_name: str
-    :ivar legacy_names: The legacy names.
-    :vartype legacy_names: list[str]
-    :ivar allowed_template_deployment_reference_actions: Allowed template deployment reference
-     actions.
-    :vartype allowed_template_deployment_reference_actions: list[str]
-    :ivar legacy_policy: The legacy policy.
-    :vartype legacy_policy: "ResourceTypeRegistrationPropertiesLegacyPolicy"
-    :ivar manifest_link: Manifest link.
-    :vartype manifest_link: str
-    :ivar capacity_rule: Capacity rule.
-    :vartype capacity_rule: "ResourceTypeRegistrationPropertiesCapacityRule"
-    :ivar marketplace_options: Marketplace options.
-    :vartype marketplace_options: "ResourceTypeRegistrationPropertiesMarketplaceOptions"
-    :ivar allowed_resource_names: The allowed resource names.
-    :vartype allowed_resource_names: list["AllowedResourceName"]
-    :ivar resource_cache: Resource cache options.
-    :vartype resource_cache: "ResourceTypeRegistrationPropertiesResourceCache"
-    :ivar resource_query_management: Resource query management options.
-    :vartype resource_query_management: "ResourceTypeRegistrationPropertiesResourceQueryManagement"
-    :ivar supports_tags: Whether tags are supported.
-    :vartype supports_tags: bool
-    :ivar resource_management_options: Resource management options.
-    :vartype resource_management_options:
+    :vartype policyExecutionType: Union[str, "PolicyExecutionType"]
+    :ivar availabilityZoneRule: The availability zone rule.
+    :vartype availabilityZoneRule: "ResourceTypeRegistrationPropertiesAvailabilityZoneRule"
+    :ivar asyncTimeoutRules: Async timeout rules.
+    :vartype asyncTimeoutRules: list["AsyncTimeoutRule"]
+    :ivar commonApiVersions: Common API versions for the resource type.
+    :vartype commonApiVersions: list[str]
+    :ivar apiProfiles: The api profiles.
+    :vartype apiProfiles: list["ApiProfile"]
+    :ivar linkedOperationRules: The linked operation rules.
+    :vartype linkedOperationRules: list["LinkedOperationRule"]
+    :ivar legacyName: The legacy name.
+    :vartype legacyName: str
+    :ivar legacyNames: The legacy names.
+    :vartype legacyNames: list[str]
+    :ivar allowedTemplateDeploymentReferenceActions: Allowed template deployment reference actions.
+    :vartype allowedTemplateDeploymentReferenceActions: list[str]
+    :ivar legacyPolicy: The legacy policy.
+    :vartype legacyPolicy: "ResourceTypeRegistrationPropertiesLegacyPolicy"
+    :ivar manifestLink: Manifest link.
+    :vartype manifestLink: str
+    :ivar capacityRule: Capacity rule.
+    :vartype capacityRule: "ResourceTypeRegistrationPropertiesCapacityRule"
+    :ivar marketplaceOptions: Marketplace options.
+    :vartype marketplaceOptions: "ResourceTypeRegistrationPropertiesMarketplaceOptions"
+    :ivar allowedResourceNames: The allowed resource names.
+    :vartype allowedResourceNames: list["AllowedResourceName"]
+    :ivar resourceCache: Resource cache options.
+    :vartype resourceCache: "ResourceTypeRegistrationPropertiesResourceCache"
+    :ivar resourceQueryManagement: Resource query management options.
+    :vartype resourceQueryManagement: "ResourceTypeRegistrationPropertiesResourceQueryManagement"
+    :ivar supportsTags: Whether tags are supported.
+    :vartype supportsTags: bool
+    :ivar resourceManagementOptions: Resource management options.
+    :vartype resourceManagementOptions:
      "ResourceTypeRegistrationPropertiesResourceManagementOptions"
-    :ivar grouping_tag: Grouping tag.
-    :vartype grouping_tag: str
-    :ivar add_resource_list_target_locations: Add resource list target locations?.
-    :vartype add_resource_list_target_locations: bool
-    :ivar resource_type_common_attribute_management: Resource type common attribute management.
-    :vartype resource_type_common_attribute_management:
+    :ivar groupingTag: Grouping tag.
+    :vartype groupingTag: str
+    :ivar addResourceListTargetLocations: Add resource list target locations?.
+    :vartype addResourceListTargetLocations: bool
+    :ivar resourceTypeCommonAttributeManagement: Resource type common attribute management.
+    :vartype resourceTypeCommonAttributeManagement:
      "ResourceTypeRegistrationPropertiesResourceTypeCommonAttributeManagement"
-    :ivar routing_rule: Routing rule.
-    :vartype routing_rule: "ResourceTypeRegistrationPropertiesRoutingRule"
-    :ivar frontdoor_request_mode: The frontdoor request mode. Known values are: "NotSpecified" and
+    :ivar routingRule: Routing rule.
+    :vartype routingRule: "ResourceTypeRegistrationPropertiesRoutingRule"
+    :ivar frontdoorRequestMode: The frontdoor request mode. Known values are: "NotSpecified" and
      "UseManifest".
-    :vartype frontdoor_request_mode: Union[str, "FrontdoorRequestMode"]
-    :ivar resource_sub_type: The resource sub type. Known values are: "NotSpecified" and
+    :vartype frontdoorRequestMode: Union[str, "FrontdoorRequestMode"]
+    :ivar resourceSubType: The resource sub type. Known values are: "NotSpecified" and
      "AsyncOperation".
-    :vartype resource_sub_type: Union[str, "ResourceSubType"]
-    :ivar async_operation_resource_type_name: The async operation resource type name.
-    :vartype async_operation_resource_type_name: str
+    :vartype resourceSubType: Union[str, "ResourceSubType"]
+    :ivar asyncOperationResourceTypeName: The async operation resource type name.
+    :vartype asyncOperationResourceTypeName: str
     """
 
     routingType: Union[str, "RoutingType"]
@@ -3501,7 +3519,8 @@ class ResourceTypeRegistrationProperties(TypedDict, total=False):
     extensionOptions: "ResourceTypeRegistrationPropertiesExtensionOptions"
     """The extension options."""
     marketplaceType: Union[str, "MarketplaceType"]
-    """The marketplace type. Known values are: \"NotSpecified\", \"AddOn\", \"Bypass\", and \"Store\"."""
+    """The marketplace type. Known values are: \"NotSpecified\", \"AddOn\", \"Bypass\", \"Store\", and
+     \"ProviderHub\"."""
     swaggerSpecifications: list["SwaggerSpecification"]
     """The swagger specifications."""
     allowedUnauthorizedActions: list[str]
@@ -3542,8 +3561,6 @@ class ResourceTypeRegistrationProperties(TypedDict, total=False):
     """The check name availability specifications."""
     disallowedActionVerbs: list[str]
     """The disallowed action verbs."""
-    serviceTreeInfos: list["ServiceTreeInfo"]
-    """The service tree infos."""
     requestHeaderOptions: "ResourceTypeRegistrationPropertiesRequestHeaderOptions"
     """The request header options."""
     subscriptionStateRules: list["SubscriptionStateRule"]
@@ -3554,9 +3571,19 @@ class ResourceTypeRegistrationProperties(TypedDict, total=False):
     """The extended locations."""
     resourceMovePolicy: "ResourceTypeRegistrationPropertiesResourceMovePolicy"
     """The resource move policy."""
-    resourceDeletionPolicy: Union[str, "ResourceDeletionPolicy"]
-    """The resource deletion policy. Known values are: \"NotSpecified\", \"CascadeDeleteAll\", and
-     \"CascadeDeleteProxyOnlyChildren\"."""
+    resourceDeletionPolicy: Union[str, "RPaaSResourceDeletionPolicy"]
+    """The resource deletion policy. Known values are: \"NotSpecified\", \"CascadeDeleteAll\",
+     \"CascadeDeleteProxyOnlyChildren\", \"Cascade\", and \"Force\"."""
+    resourceDeletionPolicies: list["ResourceDeletionPolicyAndProperties"]
+    """List of resource deletion policies added."""
+    managedResourceGroupConfiguration: "ResourceTypeManagedResourceGroupConfiguration"
+    """The managed resource group configuration."""
+    privateEndpointConfiguration: "PrivateEndpointConfiguration"
+    """The private endpoint configuration."""
+    writeLock: "WriteLockConfiguration"
+    """The write lock configuration."""
+    superScaleEnabled: bool
+    """Indicates whether super scale is enabled."""
     resourceConcurrencyControlOptions: dict[str, "ResourceConcurrencyControlOption"]
     """The resource concurrency control options."""
     resourceGraphConfiguration: "ResourceTypeRegistrationPropertiesResourceGraphConfiguration"
@@ -3597,8 +3624,6 @@ class ResourceTypeRegistrationProperties(TypedDict, total=False):
      \"BypassPolicies\", and \"ExpectPartialPutRequests\"."""
     availabilityZoneRule: "ResourceTypeRegistrationPropertiesAvailabilityZoneRule"
     """The availability zone rule."""
-    dstsConfiguration: "ResourceTypeRegistrationPropertiesDstsConfiguration"
-    """The dsts configuration."""
     asyncTimeoutRules: list["AsyncTimeoutRule"]
     """Async timeout rules."""
     commonApiVersions: list[str]
@@ -3650,9 +3675,9 @@ class ResourceTypeRegistrationProperties(TypedDict, total=False):
 class ResourceTypeRegistrationPropertiesAvailabilityZoneRule(TypedDict, total=False):  # pylint: disable=name-too-long
     """The availability zone rule.
 
-    :ivar availability_zone_policy: Known values are: "NotSpecified", "SingleZoned", and
+    :ivar availabilityZonePolicy: Known values are: "NotSpecified", "SingleZoned", and
      "MultiZoned".
-    :vartype availability_zone_policy: Union[str, "AvailabilityZonePolicy"]
+    :vartype availabilityZonePolicy: Union[str, "AvailabilityZonePolicy"]
     """
 
     availabilityZonePolicy: Union[str, "AvailabilityZonePolicy"]
@@ -3662,10 +3687,10 @@ class ResourceTypeRegistrationPropertiesAvailabilityZoneRule(TypedDict, total=Fa
 class ResourceTypeRegistrationPropertiesCapacityRule(TypedDict, total=False):  # pylint: disable=name-too-long
     """Capacity rule.
 
-    :ivar capacity_policy: Capacity policy. Known values are: "Default" and "Restricted".
-    :vartype capacity_policy: Union[str, "CapacityPolicy"]
-    :ivar sku_alias: Sku alias.
-    :vartype sku_alias: str
+    :ivar capacityPolicy: Capacity policy. Known values are: "Default" and "Restricted".
+    :vartype capacityPolicy: Union[str, "CapacityPolicy"]
+    :ivar skuAlias: Sku alias.
+    :vartype skuAlias: str
     """
 
     capacityPolicy: Union[str, "CapacityPolicy"]
@@ -3679,37 +3704,27 @@ class ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications(
 ):  # pylint: disable=name-too-long
     """The check name availability specifications.
 
-    :ivar enable_default_validation: Whether default validation is enabled.
-    :vartype enable_default_validation: bool
-    :ivar resource_types_with_custom_validation: The resource types with custom validation.
-    :vartype resource_types_with_custom_validation: list[str]
-    """
-
-
-class ResourceTypeRegistrationPropertiesDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
+    :ivar enableDefaultValidation: Whether default validation is enabled.
+    :vartype enableDefaultValidation: bool
+    :ivar resourceTypesWithCustomValidation: The resource types with custom validation.
+    :vartype resourceTypesWithCustomValidation: list[str]
     """
 
 
 class ResourceTypeRegistrationPropertiesExtensionOptions(ResourceTypeExtensionOptions):  # pylint: disable=name-too-long
     """The extension options.
 
-    :ivar resource_creation_begin: Resource creation begin.
-    :vartype resource_creation_begin: "ResourceTypeExtensionOptionsResourceCreationBegin"
+    :ivar resourceCreationBegin: Resource creation begin.
+    :vartype resourceCreationBegin: "ResourceTypeExtensionOptionsResourceCreationBegin"
     """
 
 
 class ResourceTypeRegistrationPropertiesFeaturesRule(FeaturesRule):  # pylint: disable=name-too-long
     """The features rule.
 
-    :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
+    :ivar requiredFeaturesPolicy: The required feature policy. Required. Known values are: "Any"
      and "All".
-    :vartype required_features_policy: Union[str, "FeaturesPolicy"]
+    :vartype requiredFeaturesPolicy: Union[str, "FeaturesPolicy"]
     """
 
 
@@ -3721,22 +3736,22 @@ class ResourceTypeRegistrationPropertiesIdentityManagement(
     :ivar type: The type. Known values are: "NotSpecified", "SystemAssigned", "UserAssigned",
      "Actor", and "DelegatedResourceIdentity".
     :vartype type: Union[str, "IdentityManagementTypes"]
-    :ivar application_id: The application id.
-    :vartype application_id: str
-    :ivar application_ids: The application ids.
-    :vartype application_ids: list[str]
-    :ivar delegation_app_ids: The delegation app ids.
-    :vartype delegation_app_ids: list[str]
+    :ivar applicationId: The application id.
+    :vartype applicationId: str
+    :ivar applicationIds: The application ids.
+    :vartype applicationIds: list[str]
+    :ivar delegationAppIds: The delegation app ids.
+    :vartype delegationAppIds: list[str]
     """
 
 
 class ResourceTypeRegistrationPropertiesLegacyPolicy(TypedDict, total=False):  # pylint: disable=name-too-long
     """The legacy policy.
 
-    :ivar disallowed_legacy_operations:
-    :vartype disallowed_legacy_operations: list[Union[str, "LegacyOperation"]]
-    :ivar disallowed_conditions:
-    :vartype disallowed_conditions: list["LegacyDisallowedCondition"]
+    :ivar disallowedLegacyOperations:
+    :vartype disallowedLegacyOperations: list[Union[str, "LegacyOperation"]]
+    :ivar disallowedConditions:
+    :vartype disallowedConditions: list["LegacyDisallowedCondition"]
     """
 
     disallowedLegacyOperations: list[Union[str, "LegacyOperation"]]
@@ -3746,46 +3761,44 @@ class ResourceTypeRegistrationPropertiesLegacyPolicy(TypedDict, total=False):  #
 class ResourceTypeRegistrationPropertiesManagement(ResourceProviderManagement):  # pylint: disable=name-too-long
     """The resource provider management.
 
-    :ivar schema_owners: The schema owners.
-    :vartype schema_owners: list[str]
-    :ivar manifest_owners: The manifest owners.
-    :vartype manifest_owners: list[str]
-    :ivar authorization_owners: The authorization owners.
-    :vartype authorization_owners: list[str]
-    :ivar incident_routing_service: The incident routing service.
-    :vartype incident_routing_service: str
-    :ivar incident_routing_team: The incident routing team.
-    :vartype incident_routing_team: str
-    :ivar incident_contact_email: The incident contact email.
-    :vartype incident_contact_email: str
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list["ServiceTreeInfo"]
-    :ivar resource_access_policy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
-    :vartype resource_access_policy: Union[str, "ResourceAccessPolicy"]
-    :ivar resource_access_roles: The resource access roles.
-    :vartype resource_access_roles: list["ResourceAccessRole"]
-    :ivar expedited_rollout_submitters: List of expedited rollout submitters.
-    :vartype expedited_rollout_submitters: list[str]
-    :ivar error_response_message_options: Options for error response messages.
-    :vartype error_response_message_options:
-     "ResourceProviderManagementErrorResponseMessageOptions"
-    :ivar expedited_rollout_metadata: Metadata for expedited rollout.
-    :vartype expedited_rollout_metadata: "ResourceProviderManagementExpeditedRolloutMetadata"
-    :ivar canary_manifest_owners: List of manifest owners for canary.
-    :vartype canary_manifest_owners: list[str]
-    :ivar pc_code: The profit center code for the subscription.
-    :vartype pc_code: str
-    :ivar profit_center_program_id: The profit center program id for the subscription.
-    :vartype profit_center_program_id: str
+    :ivar schemaOwners: The schema owners.
+    :vartype schemaOwners: list[str]
+    :ivar manifestOwners: The manifest owners.
+    :vartype manifestOwners: list[str]
+    :ivar authorizationOwners: The authorization owners.
+    :vartype authorizationOwners: list[str]
+    :ivar incidentRoutingService: The incident routing service.
+    :vartype incidentRoutingService: str
+    :ivar incidentRoutingTeam: The incident routing team.
+    :vartype incidentRoutingTeam: str
+    :ivar incidentContactEmail: The incident contact email.
+    :vartype incidentContactEmail: str
+    :ivar resourceAccessPolicy: The resource access policy. "NotSpecified"
+    :vartype resourceAccessPolicy: Union[str, "ResourceAccessPolicy"]
+    :ivar resourceAccessRoles: The resource access roles.
+    :vartype resourceAccessRoles: list["ResourceAccessRole"]
+    :ivar expeditedRolloutSubmitters: List of expedited rollout submitters.
+    :vartype expeditedRolloutSubmitters: list[str]
+    :ivar errorResponseMessageOptions: Options for error response messages.
+    :vartype errorResponseMessageOptions: "ResourceProviderManagementErrorResponseMessageOptions"
+    :ivar expeditedRolloutMetadata: Metadata for expedited rollout.
+    :vartype expeditedRolloutMetadata: "ResourceProviderManagementExpeditedRolloutMetadata"
+    :ivar canaryManifestOwners: List of manifest owners for canary.
+    :vartype canaryManifestOwners: list[str]
+    :ivar pcCode: The profit center code for the subscription.
+    :vartype pcCode: str
+    :ivar profitCenterProgramId: The profit center program id for the subscription.
+    :vartype profitCenterProgramId: str
+    :ivar featureManagementOwners: List of feature management owners.
+    :vartype featureManagementOwners: list[str]
     """
 
 
 class ResourceTypeRegistrationPropertiesMarketplaceOptions(TypedDict, total=False):  # pylint: disable=name-too-long
     """Marketplace options.
 
-    :ivar add_on_plan_conversion_allowed: Add-on plan conversion allowed.
-    :vartype add_on_plan_conversion_allowed: bool
+    :ivar addOnPlanConversionAllowed: Add-on plan conversion allowed.
+    :vartype addOnPlanConversionAllowed: bool
     """
 
     addOnPlanConversionAllowed: bool
@@ -3795,26 +3808,26 @@ class ResourceTypeRegistrationPropertiesMarketplaceOptions(TypedDict, total=Fals
 class ResourceTypeRegistrationPropertiesRequestHeaderOptions(RequestHeaderOptions):  # pylint: disable=name-too-long
     """The request header options.
 
-    :ivar opt_in_headers: The opt in headers. Known values are: "NotSpecified", "SignedUserToken",
+    :ivar optInHeaders: The opt in headers. Known values are: "NotSpecified", "SignedUserToken",
      "ClientGroupMembership", "SignedAuxiliaryTokens", "UnboundedClientGroupMembership",
      "PrivateLinkId", "PrivateLinkResourceId", "ManagementGroupAncestorsEncoded",
      "PrivateLinkVnetTrafficTag", "ResourceGroupLocation", "ClientPrincipalNameEncoded", and
      "MSIResourceIdEncoded".
-    :vartype opt_in_headers: Union[str, "OptInHeaderType"]
-    :ivar opt_out_headers: The opt out headers. Known values are: "NotSpecified" and
+    :vartype optInHeaders: Union[str, "OptInHeaderType"]
+    :ivar optOutHeaders: The opt out headers. Known values are: "NotSpecified" and
      "SystemDataCreatedByLastModifiedBy".
-    :vartype opt_out_headers: Union[str, "OptOutHeaderType"]
+    :vartype optOutHeaders: Union[str, "OptOutHeaderType"]
     """
 
 
 class ResourceTypeRegistrationPropertiesResourceCache(TypedDict, total=False):  # pylint: disable=name-too-long
     """Resource cache options.
 
-    :ivar enable_resource_cache: Enable resource cache.
-    :vartype enable_resource_cache: bool
-    :ivar resource_cache_expiration_timespan: Resource cache expiration timespan. This is a
-     TimeSpan property.
-    :vartype resource_cache_expiration_timespan: str
+    :ivar enableResourceCache: Enable resource cache.
+    :vartype enableResourceCache: bool
+    :ivar resourceCacheExpirationTimespan: Resource cache expiration timespan. This is a TimeSpan
+     property.
+    :vartype resourceCacheExpirationTimespan: str
     """
 
     enableResourceCache: bool
@@ -3830,8 +3843,8 @@ class ResourceTypeRegistrationPropertiesResourceGraphConfiguration(
 
     :ivar enabled: Whether it's enabled.
     :vartype enabled: bool
-    :ivar api_version: The api version.
-    :vartype api_version: str
+    :ivar apiVersion: The api version.
+    :vartype apiVersion: str
     """
 
 
@@ -3840,13 +3853,13 @@ class ResourceTypeRegistrationPropertiesResourceManagementOptions(
 ):  # pylint: disable=name-too-long
     """Resource management options.
 
-    :ivar batch_provisioning_support: Batch provisioning support.
-    :vartype batch_provisioning_support:
+    :ivar batchProvisioningSupport: Batch provisioning support.
+    :vartype batchProvisioningSupport:
      "ResourceTypeRegistrationPropertiesResourceManagementOptionsBatchProvisioningSupport"
-    :ivar delete_dependencies: Delete dependencies.
-    :vartype delete_dependencies: list["DeleteDependency"]
-    :ivar nested_provisioning_support: Nested provisioning support.
-    :vartype nested_provisioning_support:
+    :ivar deleteDependencies: Delete dependencies.
+    :vartype deleteDependencies: list["DeleteDependency"]
+    :ivar nestedProvisioningSupport: Nested provisioning support.
+    :vartype nestedProvisioningSupport:
      "ResourceTypeRegistrationPropertiesResourceManagementOptionsNestedProvisioningSupport"
     """
 
@@ -3863,13 +3876,33 @@ class ResourceTypeRegistrationPropertiesResourceManagementOptionsBatchProvisioni
 ):  # pylint: disable=name-too-long
     """Batch provisioning support.
 
-    :ivar supported_operations: Supported operations. Known values are: "NotSpecified", "Get", and
+    :ivar supportedOperations: Supported operations. Known values are: "NotSpecified", "Get", and
      "Delete".
-    :vartype supported_operations: Union[str, "SupportedOperations"]
+    :vartype supportedOperations: Union[str, "SupportedOperations"]
+    :ivar maxBatchSize: The maximum batch size.
+    :vartype maxBatchSize: int
+    :ivar batchContractVersion: Batch contract version.
+    :vartype batchContractVersion: str
+    :ivar maxNestedBatchSize: The maximum nested batch size.
+    :vartype maxNestedBatchSize: int
+    :ivar requiredFeatures: The required features.
+    :vartype requiredFeatures: list[str]
+    :ivar actionConfigurations: Action Configurations.
+    :vartype actionConfigurations: list["ActionConfiguration"]
     """
 
     supportedOperations: Union[str, "SupportedOperations"]
     """Supported operations. Known values are: \"NotSpecified\", \"Get\", and \"Delete\"."""
+    maxBatchSize: int
+    """The maximum batch size."""
+    batchContractVersion: str
+    """Batch contract version."""
+    maxNestedBatchSize: int
+    """The maximum nested batch size."""
+    requiredFeatures: list[str]
+    """The required features."""
+    actionConfigurations: list["ActionConfiguration"]
+    """Action Configurations."""
 
 
 class ResourceTypeRegistrationPropertiesResourceManagementOptionsNestedProvisioningSupport(
@@ -3877,8 +3910,8 @@ class ResourceTypeRegistrationPropertiesResourceManagementOptionsNestedProvision
 ):  # pylint: disable=name-too-long
     """Nested provisioning support.
 
-    :ivar minimum_api_version: Minimum API version.
-    :vartype minimum_api_version: str
+    :ivar minimumApiVersion: Minimum API version.
+    :vartype minimumApiVersion: str
     """
 
     minimumApiVersion: str
@@ -3888,12 +3921,12 @@ class ResourceTypeRegistrationPropertiesResourceManagementOptionsNestedProvision
 class ResourceTypeRegistrationPropertiesResourceMovePolicy(ResourceMovePolicy):  # pylint: disable=name-too-long
     """The resource move policy.
 
-    :ivar validation_required: Whether validation is required.
-    :vartype validation_required: bool
-    :ivar cross_resource_group_move_enabled: Whether cross resource group move is enabled.
-    :vartype cross_resource_group_move_enabled: bool
-    :ivar cross_subscription_move_enabled: Whether cross subscription move is enabled.
-    :vartype cross_subscription_move_enabled: bool
+    :ivar validationRequired: Whether validation is required.
+    :vartype validationRequired: bool
+    :ivar crossResourceGroupMoveEnabled: Whether cross resource group move is enabled.
+    :vartype crossResourceGroupMoveEnabled: bool
+    :ivar crossSubscriptionMoveEnabled: Whether cross subscription move is enabled.
+    :vartype crossSubscriptionMoveEnabled: bool
     """
 
 
@@ -3902,9 +3935,9 @@ class ResourceTypeRegistrationPropertiesResourceQueryManagement(
 ):  # pylint: disable=name-too-long
     """Resource query management options.
 
-    :ivar filter_option: Filter option. Known values are: "NotSpecified" and
+    :ivar filterOption: Filter option. Known values are: "NotSpecified" and
      "EnableSubscriptionFilterOnTenant".
-    :vartype filter_option: Union[str, "FilterOption"]
+    :vartype filterOption: Union[str, "FilterOption"]
     """
 
     filterOption: Union[str, "FilterOption"]
@@ -3916,9 +3949,9 @@ class ResourceTypeRegistrationPropertiesResourceTypeCommonAttributeManagement(
 ):  # pylint: disable=name-too-long
     """Resource type common attribute management.
 
-    :ivar common_api_versions_merge_mode: Common api versions merge mode. Known values are: "Merge"
-     and "Overwrite".
-    :vartype common_api_versions_merge_mode: Union[str, "CommonApiVersionsMergeMode"]
+    :ivar commonApiVersionsMergeMode: Common api versions merge mode. Known values are: "Merge" and
+     "Overwrite".
+    :vartype commonApiVersionsMergeMode: Union[str, "CommonApiVersionsMergeMode"]
     """
 
     commonApiVersionsMergeMode: Union[str, "CommonApiVersionsMergeMode"]
@@ -3928,8 +3961,8 @@ class ResourceTypeRegistrationPropertiesResourceTypeCommonAttributeManagement(
 class ResourceTypeRegistrationPropertiesRoutingRule(TypedDict, total=False):  # pylint: disable=name-too-long
     """Routing rule.
 
-    :ivar host_resource_type: Hosted resource type.
-    :vartype host_resource_type: str
+    :ivar hostResourceType: Hosted resource type.
+    :vartype hostResourceType: str
     """
 
     hostResourceType: str
@@ -3941,10 +3974,10 @@ class ResourceTypeRegistrationPropertiesSubscriptionLifecycleNotificationSpecifi
 ):  # pylint: disable=name-too-long
     """The subscription lifecycle notification specifications.
 
-    :ivar subscription_state_override_actions: The subscription state override actions.
-    :vartype subscription_state_override_actions: list["SubscriptionStateOverrideAction"]
-    :ivar soft_delete_ttl: The soft delete TTL.
-    :vartype soft_delete_ttl: str
+    :ivar subscriptionStateOverrideActions: The subscription state override actions.
+    :vartype subscriptionStateOverrideActions: list["SubscriptionStateOverrideAction"]
+    :ivar softDeleteTTL: The soft delete TTL.
+    :vartype softDeleteTTL: str
     """
 
 
@@ -3953,10 +3986,10 @@ class ResourceTypeRegistrationPropertiesTemplateDeploymentOptions(
 ):  # pylint: disable=name-too-long
     """The template deployment options.
 
-    :ivar preflight_supported: Whether preflight is supported.
-    :vartype preflight_supported: bool
-    :ivar preflight_options: The preflight options.
-    :vartype preflight_options: list[Union[str, "PreflightOption"]]
+    :ivar preflightSupported: Whether preflight is supported.
+    :vartype preflightSupported: bool
+    :ivar preflightOptions: The preflight options.
+    :vartype preflightOptions: list[Union[str, "PreflightOption"]]
     """
 
 
@@ -3965,12 +3998,12 @@ class TemplateDeploymentPolicy(TypedDict, total=False):
 
     :ivar capabilities: The capabilities. Required. Known values are: "Default" and "Preflight".
     :vartype capabilities: Union[str, "TemplateDeploymentCapabilities"]
-    :ivar preflight_options: The preflight options. Required. Known values are: "None",
+    :ivar preflightOptions: The preflight options. Required. Known values are: "None",
      "ValidationRequests", "DeploymentRequests", "TestOnly", and "RegisteredOnly".
-    :vartype preflight_options: Union[str, "TemplateDeploymentPreflightOptions"]
-    :ivar preflight_notifications: The preflight notifications. Known values are: "None" and
+    :vartype preflightOptions: Union[str, "TemplateDeploymentPreflightOptions"]
+    :ivar preflightNotifications: The preflight notifications. Known values are: "None" and
      "UnregisteredSubscriptions".
-    :vartype preflight_notifications: Union[str, "TemplateDeploymentPreflightNotifications"]
+    :vartype preflightNotifications: Union[str, "TemplateDeploymentPreflightNotifications"]
     """
 
     capabilities: Required[Union[str, "TemplateDeploymentCapabilities"]]
@@ -3989,24 +4022,24 @@ class ResourceTypeRegistrationPropertiesTemplateDeploymentPolicy(
 
     :ivar capabilities: The capabilities. Required. Known values are: "Default" and "Preflight".
     :vartype capabilities: Union[str, "TemplateDeploymentCapabilities"]
-    :ivar preflight_options: The preflight options. Required. Known values are: "None",
+    :ivar preflightOptions: The preflight options. Required. Known values are: "None",
      "ValidationRequests", "DeploymentRequests", "TestOnly", and "RegisteredOnly".
-    :vartype preflight_options: Union[str, "TemplateDeploymentPreflightOptions"]
-    :ivar preflight_notifications: The preflight notifications. Known values are: "None" and
+    :vartype preflightOptions: Union[str, "TemplateDeploymentPreflightOptions"]
+    :ivar preflightNotifications: The preflight notifications. Known values are: "None" and
      "UnregisteredSubscriptions".
-    :vartype preflight_notifications: Union[str, "TemplateDeploymentPreflightNotifications"]
+    :vartype preflightNotifications: Union[str, "TemplateDeploymentPreflightNotifications"]
     """
 
 
 class ResourceTypeSku(TypedDict, total=False):
     """ResourceTypeSku.
 
-    :ivar sku_settings: The sku settings. Required.
-    :vartype sku_settings: list["SkuSetting"]
-    :ivar provisioning_state: The provisioning state. Known values are: "NotSpecified", "Accepted",
+    :ivar skuSettings: The sku settings. Required.
+    :vartype skuSettings: list["SkuSetting"]
+    :ivar provisioningState: The provisioning state. Known values are: "NotSpecified", "Accepted",
      "Running", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Failed", "Succeeded",
      "MovingResources", "TransientFailure", and "RolloutInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     skuSettings: Required[list["SkuSetting"]]
@@ -4015,28 +4048,6 @@ class ResourceTypeSku(TypedDict, total=False):
     """The provisioning state. Known values are: \"NotSpecified\", \"Accepted\", \"Running\",
      \"Creating\", \"Created\", \"Deleting\", \"Deleted\", \"Canceled\", \"Failed\", \"Succeeded\",
      \"MovingResources\", \"TransientFailure\", and \"RolloutInProgress\"."""
-
-
-class ServiceTreeInfo(TypedDict, total=False):
-    """ServiceTreeInfo.
-
-    :ivar service_id: The service id.
-    :vartype service_id: str
-    :ivar component_id: The component id.
-    :vartype component_id: str
-    :ivar readiness: The readiness. Known values are: "ClosingDown", "Deprecated", "GA",
-     "InDevelopment", "InternalOnly", "PrivatePreview", "PublicPreview", "RemovedFromARM", and
-     "Retired".
-    :vartype readiness: Union[str, "Readiness"]
-    """
-
-    serviceId: str
-    """The service id."""
-    componentId: str
-    """The component id."""
-    readiness: Union[str, "Readiness"]
-    """The readiness. Known values are: \"ClosingDown\", \"Deprecated\", \"GA\", \"InDevelopment\",
-     \"InternalOnly\", \"PrivatePreview\", \"PublicPreview\", \"RemovedFromARM\", and \"Retired\"."""
 
 
 class SkuCapability(TypedDict, total=False):
@@ -4063,8 +4074,8 @@ class SkuCapacity(TypedDict, total=False):
     :vartype maximum: int
     :ivar default: The default.
     :vartype default: int
-    :ivar scale_type: The scale type. Known values are: "None", "Manual", and "Automatic".
-    :vartype scale_type: Union[str, "SkuScaleType"]
+    :ivar scaleType: The scale type. Known values are: "None", "Manual", and "Automatic".
+    :vartype scaleType: Union[str, "SkuScaleType"]
     """
 
     minimum: Required[int]
@@ -4080,12 +4091,12 @@ class SkuCapacity(TypedDict, total=False):
 class SkuCost(TypedDict, total=False):
     """SkuCost.
 
-    :ivar meter_id: The meter id. Required.
-    :vartype meter_id: str
+    :ivar meterId: The meter id. Required.
+    :vartype meterId: str
     :ivar quantity: The quantity.
     :vartype quantity: int
-    :ivar extended_unit: The extended unit.
-    :vartype extended_unit: str
+    :ivar extendedUnit: The extended unit.
+    :vartype extendedUnit: str
     """
 
     meterId: Required[str]
@@ -4103,10 +4114,10 @@ class SkuLocationInfo(TypedDict, total=False):
     :vartype location: str
     :ivar zones: The zones.
     :vartype zones: list[str]
-    :ivar zone_details: The zone details.
-    :vartype zone_details: list["SkuZoneDetail"]
-    :ivar extended_locations: The extended locations.
-    :vartype extended_locations: list[str]
+    :ivar zoneDetails: The zone details.
+    :vartype zoneDetails: list["SkuZoneDetail"]
+    :ivar extendedLocations: The extended locations.
+    :vartype extendedLocations: list[str]
     :ivar type: The type. Known values are: "NotSpecified", "CustomLocation", "EdgeZone", and
      "ArcZone".
     :vartype type: Union[str, "ExtendedLocationType"]
@@ -4137,9 +4148,9 @@ class SkuResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties:
     :vartype properties: "SkuResourceProperties"
     """
@@ -4150,12 +4161,12 @@ class SkuResource(ProxyResource):
 class SkuResourceProperties(ResourceTypeSku):
     """SkuResourceProperties.
 
-    :ivar sku_settings: The sku settings. Required.
-    :vartype sku_settings: list["SkuSetting"]
-    :ivar provisioning_state: The provisioning state. Known values are: "NotSpecified", "Accepted",
+    :ivar skuSettings: The sku settings. Required.
+    :vartype skuSettings: list["SkuSetting"]
+    :ivar provisioningState: The provisioning state. Known values are: "NotSpecified", "Accepted",
      "Running", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Failed", "Succeeded",
      "MovingResources", "TransientFailure", and "RolloutInProgress".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
 
@@ -4174,12 +4185,12 @@ class SkuSetting(TypedDict, total=False):
     :vartype kind: str
     :ivar locations: The locations.
     :vartype locations: list[str]
-    :ivar location_info: The location info.
-    :vartype location_info: list["SkuLocationInfo"]
-    :ivar required_quota_ids: The required quota ids.
-    :vartype required_quota_ids: list[str]
-    :ivar required_features: The required features.
-    :vartype required_features: list[str]
+    :ivar locationInfo: The location info.
+    :vartype locationInfo: list["SkuLocationInfo"]
+    :ivar requiredQuotaIds: The required quota ids.
+    :vartype requiredQuotaIds: list[str]
+    :ivar requiredFeatures: The required features.
+    :vartype requiredFeatures: list[str]
     :ivar capacity: The capacity.
     :vartype capacity: "SkuSettingCapacity"
     :ivar costs: The costs.
@@ -4223,8 +4234,8 @@ class SkuSettingCapacity(SkuCapacity):
     :vartype maximum: int
     :ivar default: The default.
     :vartype default: int
-    :ivar scale_type: The scale type. Known values are: "None", "Manual", and "Automatic".
-    :vartype scale_type: Union[str, "SkuScaleType"]
+    :ivar scaleType: The scale type. Known values are: "None", "Manual", and "Automatic".
+    :vartype scaleType: Union[str, "SkuScaleType"]
     """
 
 
@@ -4246,8 +4257,8 @@ class SkuZoneDetail(TypedDict, total=False):
 class SubscriberSetting(TypedDict, total=False):
     """SubscriberSetting.
 
-    :ivar filter_rules: The filter rules.
-    :vartype filter_rules: list["FilterRule"]
+    :ivar filterRules: The filter rules.
+    :vartype filterRules: list["FilterRule"]
     """
 
     filterRules: list["FilterRule"]
@@ -4283,8 +4294,8 @@ class SubscriptionStateRule(TypedDict, total=False):
     :ivar state: The subscription state. Known values are: "NotDefined", "Enabled", "Warned",
      "PastDue", "Disabled", and "Deleted".
     :vartype state: Union[str, "SubscriptionState"]
-    :ivar allowed_actions: The allowed actions.
-    :vartype allowed_actions: list[str]
+    :ivar allowedActions: The allowed actions.
+    :vartype allowedActions: list[str]
     """
 
     state: Union[str, "SubscriptionState"]
@@ -4297,10 +4308,10 @@ class SubscriptionStateRule(TypedDict, total=False):
 class SwaggerSpecification(TypedDict, total=False):
     """SwaggerSpecification.
 
-    :ivar api_versions: The api versions.
-    :vartype api_versions: list[str]
-    :ivar swagger_spec_folder_uri: The swagger spec folder uri.
-    :vartype swagger_spec_folder_uri: str
+    :ivar apiVersions: The api versions.
+    :vartype apiVersions: list[str]
+    :ivar swaggerSpecFolderUri: The swagger spec folder uri.
+    :vartype swaggerSpecFolderUri: str
     """
 
     apiVersions: list[str]
@@ -4312,20 +4323,20 @@ class SwaggerSpecification(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -4365,6 +4376,8 @@ class ThrottlingMetric(TypedDict, total=False):
     :vartype limit: int
     :ivar interval: The interval.
     :vartype interval: str
+    :ivar bucketSize: The bucket size.
+    :vartype bucketSize: str
     """
 
     type: Required[Union[str, "ThrottlingMetricType"]]
@@ -4374,6 +4387,8 @@ class ThrottlingMetric(TypedDict, total=False):
     """The limit. Required."""
     interval: str
     """The interval."""
+    bucketSize: str
+    """The bucket size."""
 
 
 class ThrottlingRule(TypedDict, total=False):
@@ -4383,10 +4398,10 @@ class ThrottlingRule(TypedDict, total=False):
     :vartype action: str
     :ivar metrics: The metrics. Required.
     :vartype metrics: list["ThrottlingMetric"]
-    :ivar required_features: The required features.
-    :vartype required_features: list[str]
-    :ivar application_id: The application id.
-    :vartype application_id: list[str]
+    :ivar requiredFeatures: The required features.
+    :vartype requiredFeatures: list[str]
+    :ivar applicationId: The application id.
+    :vartype applicationId: list[str]
     """
 
     action: Required[str]
@@ -4402,14 +4417,14 @@ class ThrottlingRule(TypedDict, total=False):
 class TokenAuthConfiguration(TypedDict, total=False):
     """TokenAuthConfiguration.
 
-    :ivar authentication_scheme: The authentication scheme. Known values are: "PoP" and "Bearer".
-    :vartype authentication_scheme: Union[str, "AuthenticationScheme"]
-    :ivar signed_request_scope: The signed request scope. Known values are: "ResourceUri" and
+    :ivar authenticationScheme: The authentication scheme. Known values are: "PoP" and "Bearer".
+    :vartype authenticationScheme: Union[str, "AuthenticationScheme"]
+    :ivar signedRequestScope: The signed request scope. Known values are: "ResourceUri" and
      "Endpoint".
-    :vartype signed_request_scope: Union[str, "SignedRequestScope"]
-    :ivar disable_certificate_authentication_fallback: Whether certification authentication
-     fallback is disabled.
-    :vartype disable_certificate_authentication_fallback: bool
+    :vartype signedRequestScope: Union[str, "SignedRequestScope"]
+    :ivar disableCertificateAuthenticationFallback: Whether certification authentication fallback
+     is disabled.
+    :vartype disableCertificateAuthenticationFallback: bool
     """
 
     authenticationScheme: Union[str, "AuthenticationScheme"]
@@ -4433,3 +4448,20 @@ class TypedErrorInfo(TypedDict, total=False):
     """The type of the error. Required."""
     info: Any
     """The error information."""
+
+
+class WriteLockConfiguration(TypedDict, total=False):
+    """The write lock configuration.
+
+    :ivar state: The state of write lock feature. The feature will ensure a deterministic sequence
+     of write-operation within and across the verbs. Also the feature will ensure that the semantics
+     of synchronous and long-running operations are honored. Known values are: "Disabled" and
+     "Enabled".
+    :vartype state: Union[str, "WriteLockState"]
+    """
+
+    state: Union[str, "WriteLockState"]
+    """The state of write lock feature. The feature will ensure a deterministic sequence of
+     write-operation within and across the verbs. Also the feature will ensure that the semantics of
+     synchronous and long-running operations are honored. Known values are: \"Disabled\" and
+     \"Enabled\"."""

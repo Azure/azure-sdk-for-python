@@ -15,7 +15,7 @@ from azure.mgmt.providerhub import ProviderHubMgmtClient
     pip install azure-identity
     pip install azure-mgmt-providerhub
 # USAGE
-    python new_region_frontload_release_stop.py
+    python manifests_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.new_region_frontload_release.stop(
+    response = client.manifests.create_or_update(
         provider_namespace="Microsoft.Contoso",
-        release_name="2020week10",
+        environment="prod",
+        properties={"properties": {"manifest": "<<Core RP manifest>>"}},
     )
+    print(response)
 
 
-# x-ms-original-file: 2024-09-01/NewRegionFrontloadRelease_Stop.json
+# x-ms-original-file: 2025-10-01/Manifests_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
