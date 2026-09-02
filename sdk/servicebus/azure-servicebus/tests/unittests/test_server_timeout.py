@@ -102,9 +102,11 @@ class TestManagementRequestSetsServerTimeout:
     def test_remaining_time_less_buffer_sent(self):
         handler, captured = self._make_handler()
         handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=10)
-        # Link acquisition is deducted from the attempt, so this is at most 9000.
+        # Link acquisition is deducted, so this is below the unadjusted 9000. No lower bound:
+        # a descheduled CI worker can spend real time between the clock reads. Exact conversion
+        # is covered by the unit tests for get_server_timeout_ms.
         assert captured[REQUEST_RESPONSE_TIMEOUT]["TYPE"] == "UINT"
-        assert 8900 <= captured[REQUEST_RESPONSE_TIMEOUT]["VALUE"] <= 9000
+        assert 0 < captured[REQUEST_RESPONSE_TIMEOUT]["VALUE"] <= 9000
 
     def test_clamped_below_buffer(self):
         handler, captured = self._make_handler()
@@ -247,6 +249,8 @@ class TestAsyncParity:
         assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 60000}
 
         await handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=10)
-        # Link acquisition is deducted from the attempt, so this is at most 9000.
+        # Link acquisition is deducted, so this is below the unadjusted 9000. No lower bound:
+        # a descheduled CI worker can spend real time between the clock reads. Exact conversion
+        # is covered by the unit tests for get_server_timeout_ms.
         assert captured[REQUEST_RESPONSE_TIMEOUT]["TYPE"] == "UINT"
-        assert 8900 <= captured[REQUEST_RESPONSE_TIMEOUT]["VALUE"] <= 9000
+        assert 0 < captured[REQUEST_RESPONSE_TIMEOUT]["VALUE"] <= 9000

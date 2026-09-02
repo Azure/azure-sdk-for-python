@@ -538,7 +538,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         if dead_letter_details:
             message.update(dead_letter_details)
 
-        return await self._mgmt_request_response_with_retry(
+        return await self._mgmt_request_response(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION, message, mgmt_handlers.default
         )
 

@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-- **Breaking behavior change:** `receive_messages()` now returns an empty list after 60 seconds when no wait time was given on the call or the receiver; it previously had no deadline and blocked until a message arrived or the connection closed. An explicit `max_wait_time` still wins, and receiver iteration is unchanged.
+- `receive_messages()` now returns an empty list after 60 seconds when no wait time was given on the call or the receiver; it previously had no deadline and blocked until a message arrived or the connection closed. An explicit `max_wait_time` still wins, and receiver iteration is unchanged.
 
 ### Bugs Fixed
 

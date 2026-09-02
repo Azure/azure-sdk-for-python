@@ -1012,3 +1012,62 @@ class TestExpiredBudgetStillDrainsPrefetched:
     def test_empty_queue_at_expiry_still_returns_empty(self):
         got = self._drive(queued=[], open_cost=1.2, max_wait_time=1)
         assert got == []
+
+
+class TestAsyncSettlementIsNotBounded:
+    """Async settlement must use the direct request path like sync, not the retry wrapper.
+
+    The wrapper opts into try_timeout, which the docs exclude for settlement, and it nests a
+    retry inside the one _settle_message_with_retry already provides.
+    """
+
+    def _receiver(self):
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock(), try_timeout=5)
+        receiver = client.get_queue_receiver("q")
+        receiver._check_live = lambda: None
+        receiver._populate_message_properties = lambda m: None
+        return receiver
+
+    @pytest.mark.asyncio
+    async def test_settlement_uses_the_direct_request_path(self):
+        receiver = self._receiver()
+        direct, wrapped = [], []
+
+        async def fake_direct(*args, **kwargs):
+            direct.append(kwargs.get("timeout", "unset"))
+            return None
+
+        async def fake_wrapped(*args, **kwargs):
+            wrapped.append(kwargs)
+            return None
+
+        receiver._mgmt_request_response = fake_direct
+        receiver._mgmt_request_response_with_retry = fake_wrapped
+        await receiver._settle_message_via_mgmt_link("completed", ["tok"])
+
+        assert wrapped == []  # the retry wrapper must not be used
+        assert direct == ["unset"]  # and no timeout is applied
+
+    @pytest.mark.asyncio
+    async def test_settle_message_never_receives_a_timeout(self):
+        # Mirrors the sync coverage in TestSettlementIsNotBounded.
+        from azure.servicebus import ServiceBusReceivedMessage
+
+        receiver = self._receiver()
+        seen = []
+
+        async def fake_settle(**kwargs):
+            seen.append(kwargs.get("timeout", "unset"))
+
+        receiver._settle_message = fake_settle
+        receiver._check_message_alive = lambda m, op: None
+
+        message = MagicMock(spec=ServiceBusReceivedMessage)
+        message._settled = False
+        message._lock_expired = False
+        message.auto_renew_error = None
+        await receiver._settle_message_with_retry(message, "completed")
+
+        assert seen == ["unset"]
