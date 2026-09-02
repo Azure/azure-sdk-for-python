@@ -131,5 +131,5 @@
         "azure.mgmt.redhatopenshifthcp.operations.HcpOperatorIdentityRoleSetsOperations.get": "Microsoft.RedHatOpenShift.HcpOperatorIdentityRoleSets.get",
         "azure.mgmt.redhatopenshifthcp.aio.operations.HcpOperatorIdentityRoleSetsOperations.get": "Microsoft.RedHatOpenShift.HcpOperatorIdentityRoleSets.get"
     },
-    "CrossLanguageVersion": "466c1d0d0b9a"
+    "CrossLanguageVersion": "f434185a54e3"
 }
