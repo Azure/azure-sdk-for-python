@@ -30,6 +30,9 @@ jobs:
     imageOverride: ${{ parameters.imageOverride }}
     sourceRepositoryFullName: ${{ format('{0}/azure-sdk-for-python', parameters.repositoryOwner) }}
     sourceCheckoutDir: $(Pipeline.Workspace)/apireview/source
+    variables:
+      - name: PIP_NO_INPUT
+        value: '1'
     setupSteps:
       - task: UsePythonVersion@0
         displayName: 'Use Python ${{ parameters.pythonVersion }}'
@@ -71,6 +74,6 @@ jobs:
 
           echo "Installing setuptools runtime dependency for Python SDK common_tasks.py"
           python -m pip install "setuptools<81"
-          PYTHONPATH="$source_repo/scripts/devops_tasks${PYTHONPATH:+:$PYTHONPATH}" python -c "import common_tasks; import pkg_resources; import azpysdk.main"
+          PYTHONPATH="$source_repo/scripts/devops_tasks${PYTHONPATH:+:$PYTHONPATH}" python -c "import apistub, azpysdk.main, common_tasks, pkg_resources, sys; print(f'Python: {sys.executable}'); print(f'apistub: {apistub.__file__}')"
         displayName: 'Install Python API review tooling'
     steps: ${{ parameters.steps }}

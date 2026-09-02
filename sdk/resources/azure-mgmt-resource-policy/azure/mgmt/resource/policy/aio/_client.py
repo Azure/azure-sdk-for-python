@@ -43,7 +43,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PolicyClient:  # pylint: disable=too-many-instance-attributes
+class PolicyClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """To manage and control access to your resources, you can define customized policies and assign
     them at a scope.
 

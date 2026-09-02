@@ -10,13 +10,13 @@ _METADATA_PATTERN = re.compile(
 )
 
 
-def extract_metadata(api_markdown_path: pathlib.Path) -> Dict[str, str]:
+def extract_metadata(api_markdown_path: pathlib.Path, package_version: str) -> Dict[str, str]:
     with api_markdown_path.open(encoding="utf-8-sig", newline="") as api_markdown_file:
         file_text = api_markdown_file.read()
     line_ending = "\r\n" if "\r\n" in file_text else "\n"
     lines = re.split(r"\r?\n", file_text)
 
-    metadata: Dict[str, str] = {}
+    metadata: Dict[str, str] = {"packageVersion": package_version}
     filtered: List[str] = []
     for line in lines:
         match = _METADATA_PATTERN.match(line)
@@ -51,12 +51,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Extract Python APIView metadata from API markdown")
     parser.add_argument("--api-markdown-path")
     parser.add_argument("--output-path", default=".")
+    parser.add_argument("--package-version", required=True)
     args = parser.parse_args()
 
     api_markdown_path = pathlib.Path(args.api_markdown_path) if args.api_markdown_path else pathlib.Path(args.output_path) / "api.md"
     if not api_markdown_path.is_file():
         parser.error(f"API markdown file not found: {api_markdown_path}")
-    extract_metadata(api_markdown_path)
+    extract_metadata(api_markdown_path, args.package_version)
 
 
 if __name__ == "__main__":
