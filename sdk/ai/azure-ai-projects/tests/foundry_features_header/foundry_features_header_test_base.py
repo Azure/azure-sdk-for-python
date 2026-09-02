@@ -35,6 +35,7 @@ FOUNDRY_FEATURES_HEADER = "Foundry-Features"
 # If a new sub-client is added to .beta and is missing from this mapping, the test will
 # fail at collection time with a message asking you to add it here.
 EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
+    "agent_insight_monitors": "AgentInsights=V1Preview",
     "evaluation_taxonomies": "Evaluations=V1Preview",
     "evaluators": "Evaluations=V1Preview",
     "insights": "Insights=V1Preview",
