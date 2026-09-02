@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-- `receive_messages()` now returns an empty list after 60 seconds when no wait time was given on the call or the receiver; it previously had no deadline and blocked until a message arrived or the connection closed. An explicit `max_wait_time` still wins, and receiver iteration is unchanged.
+- `receive_messages()` now returns an empty list after 60 seconds when no wait time was given on the call or the receiver; it previously had no deadline and blocked until a message arrived or the connection closed. An explicit `max_wait_time` still wins, and receiver iteration is unchanged. On a receiver that has not been opened yet, this wait now also bounds the initial link acquisition, including connecting to a `NEXT_AVAILABLE_SESSION`; open the receiver first (for example with a context manager) to keep that governed solely by the constructor's `max_wait_time`.
 
 ### Bugs Fixed
 

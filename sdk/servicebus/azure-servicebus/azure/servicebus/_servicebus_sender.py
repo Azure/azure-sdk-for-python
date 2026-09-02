@@ -260,11 +260,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     def _open(self, timeout: Optional[float] = None):
         if self._running:
             return
+        deadline = get_link_ready_deadline(timeout)
         if self._handler:
             self._handler.close()
+            check_link_ready_deadline(deadline)
 
-        # The token fetch and handler.open() are link acquisition too, not just the ready poll.
-        deadline = get_link_ready_deadline(timeout)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:

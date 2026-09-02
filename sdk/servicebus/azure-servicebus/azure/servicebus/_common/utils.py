@@ -157,7 +157,7 @@ def get_remaining_timeout(timeout: Optional[float], started: float) -> Optional[
         return None
     remaining = timeout - (time.time() - started)
     if remaining <= 0:
-        raise OperationTimeoutError(message="Timed out acquiring the AMQP link.")
+        raise OperationTimeoutError(message="No time left for the operation after acquiring the AMQP link.")
     return remaining
 
 

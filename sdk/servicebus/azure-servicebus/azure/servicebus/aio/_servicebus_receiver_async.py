@@ -354,10 +354,11 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         # pylint: disable=protected-access
         if self._running:
             return
+        deadline = get_link_ready_deadline(timeout)
         if self._handler and not self._handler._shutdown:
             await self._handler.close_async()
-        # The token fetch and open_async() are link acquisition too, not just the ready poll.
-        deadline = get_link_ready_deadline(timeout)
+            check_link_ready_deadline(deadline)
+
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         try:
@@ -415,12 +416,14 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             if len(batch) >= max_message_count:
                 return [self._build_received_message(message) for message in batch]
 
-            # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
-            if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
+            # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0.
+            # Skip it once the budget is gone: the broker would lock messages this call can no longer return.
+            expired = remaining <= 0
+            if not expired and max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
                 link_credit_needed = max_message_count - len(batch)
                 await self._amqp_transport.reset_link_credit_async(amqp_receive_client, link_credit_needed)
 
-            first_message_received = expired = False
+            first_message_received = False
             receiving = True
             while receiving and not expired and len(batch) < max_message_count:
                 while receiving and received_messages_queue.qsize() < max_message_count:
@@ -646,8 +649,10 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          If messages are requested, no messages arrive, and no timeout is specified, this call will
          return an empty list after 60 seconds. If specified, and no messages arrive within the
          timeout period, an empty list will be returned. NOTE: Setting max_wait_time on receive_messages
-         when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session.
-         Please use max_wait_time on the constructor to set the timeout for connecting to a session.
+         when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session
+         on a receiver that is already open. Please use max_wait_time on the constructor to set the timeout
+         for connecting to a session. On a receiver that has not been opened yet, the first call's wait also
+         bounds that initial link acquisition.
         :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 
