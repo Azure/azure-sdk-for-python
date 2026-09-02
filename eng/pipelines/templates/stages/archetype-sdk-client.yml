@@ -90,6 +90,9 @@ parameters:
   - name: MsRustToolchainFeed
     type: string
     default: ''
+  - name: MsRustAdditionalTargets
+    type: string
+    default: ''
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -118,6 +121,7 @@ extends:
               InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
               MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
               MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+              MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
               MatrixConfigs:
                 - ${{ each config in parameters.MatrixConfigs }}:
                     - ${{ config }}

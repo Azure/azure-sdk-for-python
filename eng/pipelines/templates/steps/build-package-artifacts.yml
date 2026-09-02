@@ -35,6 +35,11 @@ parameters:
   - name: MsRustToolchainFeed
     type: string
     default: ''
+  # Extra Rust target triples, installed only on Windows agents where the ARM64
+  # wheel is cross-compiled from x64.
+  - name: MsRustAdditionalTargets
+    type: string
+    default: ''
 
 steps:
   - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
@@ -134,6 +139,8 @@ steps:
       parameters:
         ToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
         WorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        ${{ if eq(parameters.ArtifactSuffix, 'windows') }}:
+          AdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
         Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - pwsh: |

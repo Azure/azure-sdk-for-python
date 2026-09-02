@@ -70,6 +70,9 @@ parameters:
   - name: MsRustToolchainFeed
     type: string
     default: ''
+  - name: MsRustAdditionalTargets
+    type: string
+    default: ''
 
 jobs:
   - job: 'Build_Linux'
@@ -100,6 +103,7 @@ jobs:
         InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
         MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
         MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_Windows'
     timeoutInMinutes: 90
@@ -122,6 +126,7 @@ jobs:
         InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
         MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
         MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_MacOS'
     timeoutInMinutes: 90
@@ -144,6 +149,7 @@ jobs:
         InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
         MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
         MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_Extended'
     displayName: Build Extended

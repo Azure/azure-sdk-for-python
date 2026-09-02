@@ -58,8 +58,8 @@ aio = ["azure-core[aio]>=1.30.0"]
 Homepage = "https://github.com/Azure/azure-sdk-for-python"
 Repository = "https://github.com/Azure/azure-sdk-for-python"
 
-# Only ARM64 wheels are in scope. `abi3-py310` means one wheel per platform
-# serves every CPython 3.10+, so a single `cp310-*` build covers the range.
+# `abi3-py310` means one wheel per platform serves every CPython 3.10+, so a
+# single `cp310-*` build covers the whole supported range.
 [tool.cibuildwheel]
 build = ["cp310-*"]
 skip = ["*-musllinux*"]
@@ -73,8 +73,18 @@ archs = ["arm64"]
 # name it cannot resolve. Install msrustup first: https://aka.ms/msrustup
 environment = { PATH = "$HOME/.msrustup/multiplexers/bin:$PATH" }
 
+[tool.cibuildwheel.windows]
+# ARM64 is cross-compiled from an x64 agent; see the override below.
+archs = ["AMD64", "ARM64"]
+# PATH is deliberately not set here. cibuildwheel parses `environment` with
+# bashlex, which treats the backslashes in a Windows path as escapes. The
+# RustInstaller pipeline task already puts msrustup's multiplexers ahead of any
+# upstream rustup proxies on the agent, and msrustup updates the shell profile
+# for local builds, so the inherited PATH is already correct in both cases.
+
 [tool.cibuildwheel.linux]
-archs = ["aarch64"]
+archs = ["x86_64", "aarch64"]
+manylinux-x86_64-image = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
 # PIP_INDEX_URL lets a build behind a package proxy reach an index from inside
 # the container. The MSRUSTUP_* values are the caller's credentials for the
@@ -95,6 +105,14 @@ environment = { MSRUSTUP_HOME = "/msrustup", PATH = "/msrustup/multiplexers/bin:
 # source tree, but `toolchain install` runs inside /project so it reads
 # rust-toolchain.toml.
 before-all = "dnf install -y jq && mkdir -p $MSRUSTUP_HOME/bootstrap && cd $MSRUSTUP_HOME/bootstrap && sh /project/scripts/install-msrustup.sh && cd /project && $MSRUSTUP_HOME/bootstrap/msrustup toolchain install"
+
+# Windows ARM64 has no hosted ARM64 build agent, so the wheel is cross-compiled
+# from x64. maturin reads the target from CARGO_BUILD_TARGET, and the toolchain
+# must have been installed with aarch64-pc-windows-msvc as an additional target
+# (the pipeline passes it to RustInstaller).
+[[tool.cibuildwheel.overrides]]
+select = "*-win_arm64"
+environment = { CARGO_BUILD_TARGET = "aarch64-pc-windows-msvc" }
 
 [tool.maturin]
 # Fail the build when Cargo.lock is missing or no longer matches the Cargo.toml
