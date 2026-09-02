@@ -37,6 +37,7 @@ def upload_blob(
     data: "bytes | bytearray | memoryview",
     *,
     token_provider: "Callable[[list], tuple] | None" = None,
+    credential_id: "int | None" = None,
     overwrite: bool = False,
     content_type: "str | None" = None,
     metadata: "dict[str, str] | None" = None,
@@ -62,6 +63,9 @@ def upload_blob(
         refresh), so token expiry during long transfers is handled transparently. Not
         needed if ``url`` contains a SAS token.
     :paramtype token_provider: callable or None
+    :keyword int credential_id: Stable identity for the Python credential behind
+        ``token_provider``. Required when ``token_provider`` is provided. Calls with the same
+        identity share a cached token; calls with different identities use separate token caches.
     :keyword bool overwrite: Whether to overwrite an existing blob. Defaults to False.
     :keyword str content_type: The content type of the blob.
     :keyword dict metadata: Name-value pairs associated with the blob as metadata.
@@ -81,6 +85,7 @@ def upload_blob(
         url,
         data,
         token_provider=token_provider,
+        credential_id=credential_id,
         overwrite=overwrite,
         content_type=content_type,
         metadata=metadata,
@@ -94,6 +99,7 @@ def download_blob(
     url: str,
     *,
     token_provider: "Callable[[list], tuple] | None" = None,
+    credential_id: "int | None" = None,
     offset: "int | None" = None,
     length: "int | None" = None,
     max_concurrency: "int | None" = None,
@@ -117,6 +123,9 @@ def download_blob(
         refresh), so token expiry during long transfers is handled transparently. Not
         needed if ``url`` contains a SAS token.
     :paramtype token_provider: callable or None
+    :keyword int credential_id: Stable identity for the Python credential behind
+        ``token_provider``. Required when ``token_provider`` is provided. Calls with the same
+        identity share a cached token; calls with different identities use separate token caches.
     :keyword int offset: Start of byte range to download.
     :keyword int length: Number of bytes to download from offset.
     :keyword int max_concurrency: Maximum number of parallel connections for chunked downloads.
@@ -135,6 +144,7 @@ def download_blob(
     return _native_download(
         url,
         token_provider=token_provider,
+        credential_id=credential_id,
         offset=offset,
         length=length,
         max_concurrency=max_concurrency,

@@ -96,6 +96,7 @@ def test_direct_extension(credential):
         raise RuntimeError("Native extension not available — build it with `maturin develop`.")
 
     token_provider = _make_token_provider(credential)
+    credential_id = id(credential)
     blob_name = f"direct-{uuid.uuid4().hex}.bin"
 
     # A payload big enough to exercise the chunked / parallel path (16 MiB).
@@ -105,6 +106,7 @@ def test_direct_extension(credential):
         url=f"{ACCOUNT_URL}/{CONTAINER}/{blob_name}",
         data=payload,
         token_provider=token_provider,
+        credential_id=credential_id,
         overwrite=True,
         content_type="application/octet-stream",
         max_concurrency=8,
@@ -116,6 +118,7 @@ def test_direct_extension(credential):
         download_blob(
             url=f"{ACCOUNT_URL}/{CONTAINER}/{blob_name}",
             token_provider=token_provider,
+            credential_id=credential_id,
             max_concurrency=8,
         )
     )
@@ -131,6 +134,7 @@ def test_direct_extension(credential):
             url=f"{ACCOUNT_URL}/{CONTAINER}/{buf_blob}",
             data=buf,
             token_provider=token_provider,
+            credential_id=credential_id,
             overwrite=True,
             max_concurrency=8,
         )
@@ -138,6 +142,7 @@ def test_direct_extension(credential):
             download_blob(
                 url=f"{ACCOUNT_URL}/{CONTAINER}/{buf_blob}",
                 token_provider=token_provider,
+                credential_id=credential_id,
                 max_concurrency=8,
             )
         )
