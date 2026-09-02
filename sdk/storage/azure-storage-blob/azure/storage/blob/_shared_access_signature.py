@@ -351,6 +351,10 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         if path[0] != "/":
             path = "/" + path
 
+        # Normalize backslashes to forward slashes to match Azure Storage service behavior
+        # Go and .NET SDKs already perform this normalization
+        path = path.replace("\\", "/")
+
         canonicalized_resource = "/blob/" + account_name + path + "\n"
 
         # Form the string to sign from shared_access_policy and canonicalized
