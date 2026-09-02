@@ -73,6 +73,18 @@ def _cleanup_isolate_dirs() -> None:
     ISOLATE_DIRS_TO_CLEAN.clear()
 
 
+def _finalize_isolate_dirs(coverage_enabled: bool) -> None:
+    if coverage_enabled:
+        if ISOLATE_DIRS_TO_CLEAN:
+            logger.info(
+                "Preserving isolate directories until the coverage report is generated."
+            )
+        ISOLATE_DIRS_TO_CLEAN.clear()
+        return
+
+    _cleanup_isolate_dirs()
+
+
 def _normalize_newlines(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
@@ -751,5 +763,5 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         logger.error("Aborted by user.")
         exit_code = 130
     finally:
-        _cleanup_isolate_dirs()
+        _finalize_isolate_dirs(coverage_enabled=not args.disablecov)
     sys.exit(exit_code)
