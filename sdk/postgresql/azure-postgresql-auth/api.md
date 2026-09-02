@@ -197,6 +197,13 @@ namespace azure_postgresql_auth.psycopg3.entra_connection
 
 namespace azure_postgresql_auth.sqlalchemy
 
+    def azure_postgresql_auth.sqlalchemy.create_asyncpg_engine(
+            url: str | URL, 
+            credential: AsyncTokenCredential, 
+            **kwargs: Any
+        ) -> AsyncEngine: ...
+
+
     def azure_postgresql_auth.sqlalchemy.enable_entra_authentication(engine: Engine) -> None: ...
 
 
@@ -215,6 +222,24 @@ namespace azure_postgresql_auth.sqlalchemy.async_entra_connection
 
 
     class azure_postgresql_auth.sqlalchemy.async_entra_connection.EntraConnectionValueError(AzurePgEntraError):
+
+
+namespace azure_postgresql_auth.sqlalchemy.asyncpg
+
+    def azure_postgresql_auth.sqlalchemy.asyncpg.create_asyncpg_engine(
+            url: str | URL, 
+            credential: AsyncTokenCredential, 
+            **kwargs: Any
+        ) -> AsyncEngine: ...
+
+
+    async def azure_postgresql_auth.sqlalchemy.asyncpg.get_entra_conninfo_async:async(credential: AsyncTokenCredential) -> dict[str, str]: ...
+
+
+    class azure_postgresql_auth.sqlalchemy.asyncpg.CredentialValueError(AzurePgEntraError):
+
+
+    class azure_postgresql_auth.sqlalchemy.asyncpg.EntraConnectionValueError(AzurePgEntraError):
 
 
 namespace azure_postgresql_auth.sqlalchemy.entra_connection
