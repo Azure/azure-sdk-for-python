@@ -519,7 +519,7 @@ There are various timeouts a user should be aware of within the library.
 be transparent to a user, but if you notice a reconnect occurring after such a duration, this is why.  Performing any operations, including management operations, on the
 link will extend this timeout.
 - max_wait_time: Provided on creation of a receiver or when calling `receive_messages()`, the time after which receiving messages will halt after no traffic.  This applies both to the imperative `receive_messages()` function as well as the length
-a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
+a generator-style receive will run for before exiting if there are no messages.  Passing None (default) to `receive_messages()` bounds that call at 60 seconds; a generator-style receive will wait forever, up until the 10 minute threshold if no other action is taken.
 
 > **NOTE:** If processing of a message or session is sufficiently long as to cause timeouts, as an alternative to calling `receiver.renew_message_lock`/`receiver.session.renew_lock` manually, one can
 > leverage the `AutoLockRenewer` functionality detailed [above](#automatically-renew-message-or-session-locks "Automatically renew Message or Session locks").
