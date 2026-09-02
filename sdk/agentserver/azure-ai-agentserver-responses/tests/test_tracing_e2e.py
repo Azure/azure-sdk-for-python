@@ -58,17 +58,12 @@ def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_P
 
 
 def _empty_events_handler_factory(on_call):
-    """Build a response handler that runs ``on_call()`` synchronously (so any
-    span it opens is created during request handling) then yields no events."""
+    """Build an async response handler that runs ``on_call()`` during request handling."""
 
-    def _handler(request, context, cancellation_signal):
+    async def _handler(request, context, cancellation_signal):
         on_call()
-
-        async def _events():
-            if False:  # pragma: no cover
-                yield None
-
-        return _events()
+        if False:  # pragma: no cover
+            yield None
 
     return _handler
 
@@ -76,6 +71,7 @@ def _empty_events_handler_factory(on_call):
 # ---------------------------------------------------------------------------
 # Warm-up fixture: initialize app and wait for App Insights to be ready
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(scope="module", autouse=True)
 def _warmup_appinsights():
@@ -111,9 +107,11 @@ def _warmup_appinsights():
 
     if os.environ.get("AZURESUBSCRIPTION_TENANT_ID"):
         from azure.identity import AzurePowerShellCredential
+
         credential = AzurePowerShellCredential(tenant_id=os.environ["AZURESUBSCRIPTION_TENANT_ID"])
     else:
         from azure.identity import DefaultAzureCredential
+
         credential = DefaultAzureCredential()
 
     client = LogsQueryClient(credential)
@@ -125,6 +123,7 @@ def _warmup_appinsights():
 # ---------------------------------------------------------------------------
 # E2E test
 # ---------------------------------------------------------------------------
+
 
 class TestResponsesTracingE2E:
     """Verify that user-created spans inside ResponsesAgentServerHost handlers land in App Insights."""

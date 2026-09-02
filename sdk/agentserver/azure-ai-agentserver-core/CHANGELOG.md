@@ -1,14 +1,109 @@
 # Release History
 
-## 2.0.0b9 (Unreleased)
+## 2.2.0b1 (Unreleased)
 
 ### Features Added
 
+- Added `AgentConfig.session_guid`, populated from the platform-owned
+  `FOUNDRY_AGENT_SESSION_GUID` environment variable for hosted session
+  incarnation identity.
+
+### Other Changes
+
+- Changed the default Azure Monitor trace sampling rate to 100%. Explicit OpenTelemetry sampler environment variables continue to take precedence.
+- Disabled Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation by default. Pass `instrumentation_options` to `configure_observability` to enable individual libraries.
+
+## 2.1.0 (2026-08-24)
+
+### Other Changes
+
+- Added compatibility bounds to runtime and development dependencies so installation cannot silently resolve to incompatible releases.
+
+## 2.1.0b2 (2026-08-18)
+
+### Other Changes
+
+- Updated the hosted task provider's `Foundry-Features` opt-in header from `Routines=V1Preview` to `Routines=V2Preview` to align with the `agentserver-persistence` contract. #48617
+
+## 2.1.0b1 (2026-08-11)
+
+### Features Added
+
+- `FoundryStateStore` now uses a file-backed local fallback when AgentServer is not hosted, and item operations accept an explicit `call_id` for forwarding recovered durable work outside the original request context.
+
 ### Breaking Changes
+
+- The resilient task subsystem is now **strictly opt-in**. `AgentServerHost`
+  constructs the `TaskManager` only when resilient tasks are enabled via
+  `set_resilient_tasks_enabled(True)` (or a protocol option that maps to it,
+  e.g. the responses `resilient_background`). Previously the manager was always
+  constructed and a declared `@task` / `@multi_turn_task` implicitly enabled the
+  startup recovery scan. Now, declaring a task does **not** turn the subsystem
+  on: with the switch off, `get_task_manager()` raises `TaskManagerNotInitialized`
+  and `.run()` / `.start()` cannot run a task. Existing apps that rely on `@task`
+  must call `set_resilient_tasks_enabled(True)` (before host startup) to keep
+  durable tasks and crash recovery. Plain servers that use no tasks are
+  unaffected and continue to pay nothing.
+- Removed `TaskMetadata`, `TaskContext.metadata`, and `TaskRun.metadata`.
+  Durable application state now belongs in an explicit `FoundryStateStore`
+  and no longer shares task lifecycle PATCHes or lease renewal. Typed task
+  inputs may carry a top-level `call_id`, which the framework restores in
+  `FoundryAgentRequestContext` for every handler attempt.
+
+## 2.0.0 (2026-08-05)
+
+### Other Changes
+
+- Promoted `azure-ai-agentserver-core` to GA.
+
+## 2.0.0b11 (2026-08-05)
+
+### Features Added
+
+- Added a shared `experimental` decorator for marking Agent Server preview feature surfaces with docstring notes and one-time runtime warnings. The resilient task primitive and Foundry storage public APIs are now marked experimental.
+
+### Breaking Changes
+
+- Removed the unused public `AgentServerHost.sse_keepalive_stream` helper.
+
+### Other Changes
+
+- The per-turn task `timeout` hard ceiling was raised from **1 day** to **7 days**. The default when unset is still **1 day**; a supplied value may now raise the per-turn budget up to 7 days. A value greater than 7 days (or a negative value) is still rejected at registration (`ValueError`, fail-fast, not clamped). This remains a per-turn cap only — multi-turn chains still live indefinitely across turns (the budget resets each turn).
+
+## 2.0.0b10 (2026-07-31)
+
+### Features Added
+
+- Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
+- Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — a process-global switch (default off) that force-enables the resilient `TaskManager`'s startup recovery scan even before any durable task is declared (useful when tasks are registered lazily after startup).
 
 ### Bugs Fixed
 
+- `AgentServerHost` no longer makes a blocking hosted task-store `list()` round-trip (plus credential-token acquisition) at startup unless resilient tasks are actually in use. The `TaskManager` is still constructed so `get_task_manager()` and `.run()` / `.start()` keep working, but its network-backed **startup recovery scan** now runs only when **either** at least one durable task (`@task` / `@multi_turn_task`) has been declared **or** `set_resilient_tasks_enabled(True)` was called. Apps that use tasks keep automatic crash recovery with no code change; plain servers (e.g. invocations-only hosts) no longer pay tens of seconds of startup latency for a scan that has nothing to recover.
+- Cleaned up `AgentServerHost` public signatures so inherited middleware typing does not expose Starlette private type aliases.
+
+## 2.0.0b9 (2026-07-28)
+
+### Features Added
+
+- Added Agent Server-managed OTLP/gRPC export when `OTEL_EXPORTER_OTLP_PROTOCOL=grpc` is configured.
+- Task-record schema cleanup: framework-reserved wire keys in the persisted task record no longer carry a leading `_` (e.g. the `task_name` tag; the `schema_version` / `last_input_id` / `turn_started_at` / `retry_attempt` / `steering` payload keys; the `input` / `steering_input_<seq>` / `output` attachment keys) — only the `__attachment_ref__` discriminator keeps its marker. The `source` stamp now includes `hosting_environment` (from `FOUNDRY_HOSTING_ENVIRONMENT`), and the payload now carries a `schema_version` (currently `"1"`). Tasks persisted before this change (lacking `payload.schema_version`) are deleted rather than recovered by the recovery scan.
+- Added a **resilient task primitive** for building long-running agents that survive container restarts, out-of-memory kills, and redeployments. Decorate an async function with `@task` (one-shot) or `@multi_turn_task` (multi-turn conversations); the framework persists task state to a task store and automatically recovers and re-invokes in-flight work after a crash. Available from `azure.ai.agentserver.core.tasks`, with `TaskContext`, `TaskRun`, configurable retries (`RetryPolicy`), cancellation, steering, and a typed exception set (`TaskFailed`, `TaskCancelled`, `TaskConflictError`, `TaskManagerNotInitialized`, and others). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md).
+- Added an **event streaming** API (`azure.ai.agentserver.core.streaming`) for publishing incremental task output to one or more subscribers, with in-memory and file-backed buffering and live or replay delivery. This makes it straightforward to serve Server-Sent Events (SSE) responses that a client can disconnect from and resume. See the [Streaming Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md).
+- Exposed `resolve_state_subdir(name)` on the public `azure.ai.agentserver.core` surface. It resolves an on-disk state subdirectory (e.g. `"tasks"`, `"streams"`, `"responses"`) under the shared agent-server state root (`AGENTSERVER_STATE_ROOT`, or `~/.agentserver` when unset), so protocol packages persist state under the same operator-controlled root.
+
 ### Other Changes
+
+- `streams.use_file_backed_replay(...)` now has ergonomic defaults so the common case is a single call supplying only `cursor_fn`: `storage_dir` defaults to `resolve_state_subdir("streams")` (a `streams` directory under the agent-server state root, alongside `tasks`), `ttl_seconds` defaults to 600 (10 minutes), and serialization defaults to JSON.
+- File-backed replay streams now sanitize the stream id before using it as an on-disk filename: well-formed ids (`[A-Za-z0-9._-]`, no `.`/`..` segment) are used verbatim, and any id containing a path separator or other unsafe character is SHA-256 hash-encoded to an `h_<hex>` filename so it can never escape the storage directory or collide with another stream. The file-backed terminal sentinel is now written as `{"__terminal__": true}` (the non-durable `emit_time` field was dropped; close-time is best-effort on rehydration).
+- The per-attachment value cap was raised from 2 MiB to **10 MiB** (per-input payloads spill into `task.attachments`). The 1 MB `task.payload` budget, the inline-promotion thresholds (`_input` 200 KiB, steering input 20 KiB), and the 20-attachments-per-task limit are unchanged.
+- `@task` / `@multi_turn_task` now require an explicit `name=` (the stable recovery/identity anchor); the previous `func.__qualname__` fallback is removed because it silently rebound task identity when a handler was renamed or moved, orphaning in-flight tasks. Omitting `name` (or passing whitespace) now raises `ValueError` at decoration.
+- The per-turn task `timeout` now defaults to **1 day** when unset (previously unbounded) and enforces **1 day as a hard ceiling** — a larger or negative value is rejected at registration (`ValueError`). This caps a single handler invocation only; multi-turn chains still live indefinitely across turns (the budget resets each turn).
+- A caller-supplied `input_id` on `Task.start` / `Task.run` (and the multi-turn equivalents) is now validated against the same charset/length pattern as `task_id`; an invalid id raises `ValueError` before any provider call.
+- `RetryPolicy` now enforces hard caps at construction (fail-fast, not clamped): `max_attempts` must be 1–10 and `max_delay` must be 0–1 hour; out-of-range values raise `ValueError`. The zero-argument module-level presets (`exponential_backoff()`, `fixed_delay()`, `linear_backoff()`) now match their `RetryPolicy.<preset>()` classmethod values so retry cadence is identical across the Python and .NET implementations.
+- Added `azure-core` as a dependency, and a `hosted` optional-dependencies extra (pulling in `azure-identity`) for hosted-agent deployments.
+- `resolve_graceful_shutdown_timeout()` now honors the `AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS` environment variable, letting operators shorten shutdown so task checkpoints can flush before long-running requests finish.
+- Added diagnostic logging (logger `azure.ai.agentserver.streaming`) to the event-streaming subsystem covering stream creation/deletion, crash-recovery rehydration of file-backed streams, and corruption/lock-contention failures, to aid debugging in production.
 
 ## 2.0.0b8 (2026-07-22)
 
@@ -38,6 +133,7 @@
 
 - Populated agent metadata when operation IDs are zeroed so agent metadata remains available for telemetry and downstream processing.
 - Suppressed noisy observability/exporter INFO logs by default in tracing setup while preserving DEBUG visibility when explicitly enabled.
+
 ## 2.0.0b5 (2026-05-25)
 
 ### Bugs Fixed

@@ -2,18 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-# pylint: disable=client-method-missing-tracing-decorator
+# pylint: disable=client-method-missing-tracing-decorator,client-method-missing-tracing-decorator-async
 from typing import Any, Union, Optional, TYPE_CHECKING, Type
+from datetime import datetime
 import logging
 import warnings
 from weakref import WeakSet
 from typing_extensions import Literal
 import certifi
 
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 from .._base_handler import _parse_conn_str
+from ._session_browser_async import _SessionBrowserAsync
 from ._base_handler_async import (
     ServiceBusSharedKeyCredential,
     ServiceBusSASTokenCredential,
@@ -38,7 +41,9 @@ NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class ServiceBusClient(
+    object
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The ServiceBusClient class defines a high level interface for
     getting ServiceBusSender and ServiceBusReceiver.
 
@@ -102,7 +107,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: Union[
+            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+        ],
         *,
         retry_total: int = 3,
         retry_backoff_factor: float = 0.8,
@@ -111,7 +118,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         **kwargs: Any,
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)
-        amqp_transport: Union[Type[PyamqpTransportAsync], Type["UamqpTransportAsync"]] = PyamqpTransportAsync
+        amqp_transport: Union[
+            Type[PyamqpTransportAsync], Type["UamqpTransportAsync"]
+        ] = PyamqpTransportAsync
 
         if uamqp_transport:
             # Deprecation of uamqp transport
@@ -121,17 +130,23 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 "to use the pure Python AMQP transport. "
                 "If you rely on this, please comment on [this issue]"
                 "(https://github.com/Azure/azure-sdk-for-python/issues/40347) ",
-                DeprecationWarning, stacklevel=2
+                DeprecationWarning,
+                stacklevel=2,
             )
             try:
                 from ._transport._uamqp_transport_async import UamqpTransportAsync
+
                 amqp_transport = UamqpTransportAsync
             except ImportError:
-                raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.") from None
+                raise ValueError(
+                    "To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`."
+                ) from None
 
         self._amqp_transport = amqp_transport
-        # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace: str = strip_protocol_from_uri(fully_qualified_namespace.strip())
+        # Keep the port for the non-TLS emulator; strip scheme/port/path otherwise.
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(
+            fully_qualified_namespace.strip(), strip_port=kwargs.get("use_tls", True)
+        )
         self._credential = credential
         self._config = Configuration(
             retry_total=retry_total,
@@ -180,7 +195,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @classmethod
-    def from_connection_string( # pylint: disable=docstring-keyword-should-match-keyword-only
+    def from_connection_string(  # pylint: disable=docstring-keyword-should-match-keyword-only
         cls,
         conn_str: str,
         *,
@@ -240,7 +255,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :caption: Create a new instance of the ServiceBusClient from connection string.
 
         """
-        host, policy, key, entity_in_conn_str, token, token_expiry, emulator = _parse_conn_str(conn_str)
+        host, policy, key, entity_in_conn_str, token, token_expiry, emulator = (
+            _parse_conn_str(conn_str)
+        )
         kwargs["use_tls"] = not emulator
         credential: Union[ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential]
         if token and token_expiry:
@@ -280,13 +297,13 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             await self._connection.close()
 
     def get_queue_sender(
-            self,
-            queue_name: str,
-            *,
-            client_identifier: Optional[str] = None,
-            socket_timeout: Optional[float] = None,
-            **kwargs: Any
-        ) -> ServiceBusSender:
+        self,
+        queue_name: str,
+        *,
+        client_identifier: Optional[str] = None,
+        socket_timeout: Optional[float] = None,
+        **kwargs: Any,
+    ) -> ServiceBusSender:
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -350,7 +367,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         socket_timeout: Optional[float] = None,
         session_id: Optional[Union[str, NextAvailableSessionType]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
-        receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+        receive_mode: Union[
+            ServiceBusReceiveMode, str
+        ] = ServiceBusReceiveMode.PEEK_LOCK,
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional["AutoLockRenewer"] = None,
         prefetch_count: int = 0,
@@ -384,13 +403,14 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
-        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
+        :keyword int prefetch_count: The number of messages the receiver requests ahead of a
+         receive call, so that receive calls can be served from the buffer instead of waiting on a
+         service request. This is separate from the `max_message_count` argument to
+         `receive_messages`, which bounds a single call rather than the buffer.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
-         performance but increase the chance that messages will expire while they are cached if they're not
+         performance but increase the chance that messages will expire while they are buffered if they're not
          processed fast enough.
-         The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
-         `max_message_count` (if provided) within its request to the service.
+         The default value is 0, meaning prefetch is turned off.
          WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
@@ -431,10 +451,15 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         try:
             queue_name = generate_dead_letter_entity_name(
                 queue_name=queue_name,
-                transfer_deadletter=(ServiceBusSubQueue(sub_queue) == ServiceBusSubQueue.TRANSFER_DEAD_LETTER),
+                transfer_deadletter=(
+                    ServiceBusSubQueue(sub_queue)
+                    == ServiceBusSubQueue.TRANSFER_DEAD_LETTER
+                ),
             )
         except ValueError:
-            if sub_queue:  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
+            if (
+                sub_queue
+            ):  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
                 raise
         handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
@@ -473,7 +498,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         *,
         client_identifier: Optional[str] = None,
         socket_timeout: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ServiceBusSender:
         """Get ServiceBusSender for the specific topic.
 
@@ -537,7 +562,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         *,
         session_id: Optional[Union[str, NextAvailableSessionType]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
-        receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+        receive_mode: Union[
+            ServiceBusReceiveMode, str
+        ] = ServiceBusReceiveMode.PEEK_LOCK,
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional["AutoLockRenewer"] = None,
         prefetch_count: int = 0,
@@ -575,13 +602,14 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
-        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
+        :keyword int prefetch_count: The number of messages the receiver requests ahead of a
+         receive call, so that receive calls can be served from the buffer instead of waiting on a
+         service request. This is separate from the `max_message_count` argument to
+         `receive_messages`, which bounds a single call rather than the buffer.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
-         performance but increase the chance that messages will expire while they are cached if they're not
+         performance but increase the chance that messages will expire while they are buffered if they're not
          processed fast enough.
-         The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
-         `max_message_count` (if provided) within its request to the service.
+         The default value is 0, meaning prefetch is turned off.
          WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
@@ -624,7 +652,10 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             entity_name = generate_dead_letter_entity_name(
                 topic_name=topic_name,
                 subscription_name=subscription_name,
-                transfer_deadletter=(ServiceBusSubQueue(sub_queue) == ServiceBusSubQueue.TRANSFER_DEAD_LETTER),
+                transfer_deadletter=(
+                    ServiceBusSubQueue(sub_queue)
+                    == ServiceBusSubQueue.TRANSFER_DEAD_LETTER
+                ),
             )
             handler = ServiceBusReceiver(
                 fully_qualified_namespace=self.fully_qualified_namespace,
@@ -655,7 +686,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 **kwargs,
             )
         except ValueError:
-            if sub_queue:  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
+            if (
+                sub_queue
+            ):  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
                 raise
             handler = ServiceBusReceiver(
                 fully_qualified_namespace=self.fully_qualified_namespace,
@@ -688,3 +721,107 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             )
         self._handlers.add(handler)
         return handler
+
+    def _create_session_browser(self, entity_name, subscription_name=None, **kwargs):
+        """Create an internal async _SessionBrowser for management-only operations.
+
+        :param str entity_name: The queue name (or topic name when ``subscription_name`` is set).
+        :param str subscription_name: The subscription name when listing sessions on a topic.
+        :return: A new internal _SessionBrowserAsync bound to this client.
+        :rtype: ~azure.servicebus.aio._session_browser_async._SessionBrowserAsync
+        """
+        browser = _SessionBrowserAsync(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            entity_name=entity_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            user_agent=self._config.user_agent,
+            retry_mode=self._config.retry_mode,
+            retry_total=self._config.retry_total,
+            retry_backoff_factor=self._config.retry_backoff_factor,
+            retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
+            ssl_context=self._ssl_context,
+            amqp_transport=self._amqp_transport,
+            use_tls=self._config.use_tls,
+            subscription_name=subscription_name,
+            **kwargs,
+        )
+        self._handlers.add(browser)
+        return browser
+
+    def list_queue_sessions(
+        self,
+        queue_name: str,
+        *,
+        state_updated_after: Optional[datetime] = None,
+        timeout: Optional[float] = None,
+    ) -> AsyncItemPaged[str]:
+        """List session IDs with active messages or stored session state in a session-enabled queue.
+
+        If ``state_updated_after`` is specified, only sessions whose
+        session state was set or updated after that time are returned. If not specified, returns
+        sessions with active messages or stored session state in the queue. Sessions with neither
+        are excluded.
+
+        :param str queue_name: The name of the session-enabled queue.
+        :keyword ~datetime.datetime state_updated_after: If specified, only sessions whose
+            session state was set or updated after this time are returned.
+        :keyword float timeout: The total operation timeout in seconds, spent across every page.
+        :returns: A paged async iterable of session ID strings.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
+        """
+        if self._entity_name and queue_name != self._entity_name:
+            raise ValueError(
+                "The queue name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+
+        browser = self._create_session_browser(queue_name)
+        return browser.list_sessions(
+            state_updated_after=state_updated_after, timeout=timeout
+        )
+
+    def list_subscription_sessions(
+        self,
+        topic_name: str,
+        subscription_name: str,
+        *,
+        state_updated_after: Optional[datetime] = None,
+        timeout: Optional[float] = None,
+    ) -> AsyncItemPaged[str]:
+        """List session IDs with active messages or stored session state in a session-enabled subscription.
+
+        If ``state_updated_after`` is specified, only sessions whose
+        session state was set or updated after that time are returned. If not specified, returns
+        sessions with active messages or stored session state in the subscription. Sessions with
+        neither are excluded.
+
+        :param str topic_name: The name of the topic.
+        :param str subscription_name: The name of the subscription.
+        :keyword ~datetime.datetime state_updated_after: If specified, only sessions whose
+            session state was set or updated after this time are returned.
+        :keyword float timeout: The total operation timeout in seconds, spent across every page.
+        :returns: A paged async iterable of session ID strings.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
+        """
+        if self._entity_name and topic_name != self._entity_name:
+            raise ValueError(
+                "The topic name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+
+        browser = self._create_session_browser(
+            topic_name, subscription_name=subscription_name
+        )
+        return browser.list_sessions(
+            state_updated_after=state_updated_after, timeout=timeout
+        )

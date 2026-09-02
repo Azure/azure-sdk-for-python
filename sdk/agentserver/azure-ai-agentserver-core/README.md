@@ -176,6 +176,76 @@ export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
 python my_agent.py
 ```
 
+Azure Monitor uses 100% trace sampling by default. Standard OpenTelemetry
+sampling configuration through `OTEL_TRACES_SAMPLER` and
+`OTEL_TRACES_SAMPLER_ARG` takes precedence when explicitly set. This controls
+sampling only; exporter queues, process termination, and transport or ingestion
+failures can still prevent trace delivery.
+
+Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation are disabled by
+default to avoid automatically tracing every outbound HTTP request. To enable
+selected instrumentations, configure the host's observability callback:
+
+```python
+from functools import partial
+
+from azure.ai.agentserver.core import AgentServerHost, configure_observability
+
+app = AgentServerHost(
+    configure_observability=partial(
+        configure_observability,
+        instrumentation_options={
+            "azure_sdk": {"enabled": True},
+            "httpx": {"enabled": True},
+            "requests": {"enabled": True},
+        },
+    )
+)
+```
+
+OTLP export is enabled when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. HTTP/protobuf
+is the default protocol. To use an OTLP/gRPC collector, install the optional
+gRPC extra and set `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`:
+
+```bash
+pip install "azure-ai-agentserver-core[otlp-grpc]"
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
+export OTEL_EXPORTER_OTLP_PROTOCOL="grpc"
+python my_agent.py
+```
+
+### Resilient long-running agents
+
+The `@task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
+
+The resilient task subsystem is **opt-in**: call `set_resilient_tasks_enabled(True)` (before host startup, typically at import time) so the framework constructs the `TaskManager` and runs crash recovery. Without it, `.run()` / `.start()` raise `TaskManagerNotInitialized`.
+
+```python
+from azure.ai.agentserver.core.tasks import (
+    set_resilient_tasks_enabled,
+    task,
+    TaskContext,
+)
+
+# Opt in to the durable task subsystem (required for @task to run).
+set_resilient_tasks_enabled(True)
+
+@task(name="process_document")
+async def process_document(ctx: TaskContext[dict]) -> dict:
+    # ctx.entry_mode is "fresh" | "resumed" | "recovered".
+    # The framework re-invokes the handler from the top after a
+    # crash; ctx.input survives, so the handler picks up.
+    summary = await analyze(ctx.input["document_url"])
+    return {"summary": summary}
+
+result = await process_document.run(
+    task_id="doc-42", input={"document_url": "..."},
+)
+print(result)  # {"summary": "..."}
+```
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
+
 ## Troubleshooting
 
 ### Logging
@@ -193,6 +263,7 @@ To report an issue with the client library, or request additional features, plea
 ## Next steps
 
 - Install [`azure-ai-agentserver-invocations`](https://pypi.org/project/azure-ai-agentserver-invocations/) to add the invocation protocol endpoints.
+- Read the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for crash-resilient long-running agents.
 - See the [container image spec](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver) for the full hosted agent contract.
 
 ## Contributing

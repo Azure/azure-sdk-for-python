@@ -1,26 +1,52 @@
 # Release History
 
-## 1.0.0b56 (Unreleased)
+## 1.0.0b57 (2026-09-02)
+
+### Features Added
+- Remove `microsoft.availability.testTimestamp` and use the LogRecord timestamp instead for availability data
+  ([#48841](https://github.com/Azure/azure-sdk-for-python/pull/48841))
+- Add the required `force_flush` method to the log exporter to align with upstream OpenTelemetry changes in [LogRecordExporter](https://github.com/open-telemetry/opentelemetry-python/pull/5294)
+  ([#48823](https://github.com/Azure/azure-sdk-for-python/pull/48823))
+- Populate `measurements` on telemetry from the `microsoft.custom_measurements` attribute
+  ([#48750](https://github.com/Azure/azure-sdk-for-python/pull/48750))
+- Add support for availability telemetry from `microsoft.availability.*` log attributes
+  ([#48812](https://github.com/Azure/azure-sdk-for-python/pull/48812))
+
+### Other Changes
+- Extend OneSettings configuration evaluation to parse JSON-encoded feature settings and support explicit string
+  override values, list-valued matching conditions, and caller-specified value conversion while preserving existing
+  boolean feature-flag behavior.
+  ([#48595](https://github.com/Azure/azure-sdk-for-python/pull/48595))
+
+## 1.0.0b56 (2026-08-06)
 
 ### Features Added
 - Retry payloads for which request is sent successfully but no response is received, per [SPEC.](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/1018)
   ([#47870](https://github.com/Azure/azure-sdk-for-python/pull/47870))
 
-### Breaking Changes
-
 ### Bugs Fixed
 - Propagate main agent attribute to child spans
   ([#47950](https://github.com/Azure/azure-sdk-for-python/pull/47950))
+- Live Metrics now honors the `APPLICATIONINSIGHTS_AUTHENTICATION_STRING` environment variable for AAD
+  authentication as a fallback when no explicit credential is supplied and local authentication is disabled.
+  ([#48284](https://github.com/Azure/azure-sdk-for-python/pull/48284))
+- Fix a memory leak where exporters registered as OneSettings configuration callbacks were retained for the
+  process lifetime; bound-method callbacks are now held via weak references so discarded exporters can be
+  garbage collected.
+  ([#48379](https://github.com/Azure/azure-sdk-for-python/pull/48379))
 
 ### Other Changes
-
 - Simplify OneSettings change detection to use ETag-based mechanism instead of change version tracking to reflect spec update
 - Change OneSettings log messages from warning to debug level to reduce noise for users with firewalls
   ([#47949](https://github.com/Azure/azure-sdk-for-python/pull/47949))
 - Harden OneSettings configuration manager and worker: handle non-retryable HTTP errors by slow-polling instead of retrying, fix worker holding its lock across network I/O, make shutdown a soft reset that leaves the singleton reusable, and make callback registration thread-safe and initialization-independent
   ([#48027](https://github.com/Azure/azure-sdk-for-python/pull/48027))
-- Align OneSettings feature-flag evaluation with the control-plane schema: use full-name `os`/`rp`/`attach` values, add `ikey` and `region` conditions, require exact single-value matches (removing list and version-range support), and only honor a `ver` condition when a matching `component` is also present <!-- cspell:ignore ikey -->
+- Align OneSettings feature-flag evaluation with the control-plane schema: use full-name `os`/`rp`/`attach` values, add `ikey` and `region` conditions, require exact single-value matches (removing list and version-range support), and only honor a `ver` condition when a matching `component` is also present
   ([#48059](https://github.com/Azure/azure-sdk-for-python/pull/48059))
+- Support remote toggling of local (offline) storage via the OneSettings `FEATURE_LOCAL_STORAGE` feature flag: the control plane can disable or re-enable disk-backed retry storage at runtime, but never overrides an explicit `disable_offline_storage=True` user opt-out. Statsbeat storage is decoupled from the user setting (always off), while customer-sdkstats honors the user setting and follows the remote toggle.
+  ([#48379](https://github.com/Azure/azure-sdk-for-python/pull/48379))
+- Enable the OneSettings control plane in the base exporter: it now starts the configuration worker and registers the process profile (os/rp/attach/component/version/region/ikey) so feature flags can be evaluated. `_ConfigurationManager.initialize` merges profile fields first-wins across calls, letting a dependent component (e.g. the Azure Monitor distro) set `component` before the exporter contributes ikey/region.
+  ([#48429](https://github.com/Azure/azure-sdk-for-python/pull/48429))
 
 ## 1.0.0b55 (2026-07-01)
 

@@ -551,10 +551,16 @@ class TestCallMediaClientAsync(unittest.IsolatedAsyncioTestCase):
     async def test_start_continuous_dtmf_recognition(self):
         mock_start_continuous_dtmf_recognition = AsyncMock()
         self.call_media_operations.start_continuous_dtmf_recognition = mock_start_continuous_dtmf_recognition
-        await self.call_connection_client.start_continuous_dtmf_recognition(target_participant=self.target_user)
+        await self.call_connection_client.start_continuous_dtmf_recognition(
+            target_participant=self.target_user,
+            operation_context=self.operation_context,
+            operation_callback_url=self.operation_callback_url,
+        )
 
         expected_continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
-            target_participant=serialize_identifier(self.target_user)
+            target_participant=serialize_identifier(self.target_user),
+            operation_context=self.operation_context,
+            operation_callback_uri=self.operation_callback_url,
         )
 
         mock_start_continuous_dtmf_recognition.assert_awaited_once()
@@ -569,6 +575,10 @@ class TestCallMediaClientAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(
             expected_continuous_dtmf_recognition_request.operation_context,
             actual_start_continuous_dtmf_recognition.operation_context,
+        )
+        self.assertEqual(
+            expected_continuous_dtmf_recognition_request.operation_callback_uri,
+            actual_start_continuous_dtmf_recognition.operation_callback_uri,
         )
 
     async def test_stop_continuous_dtmf_recognition(self):

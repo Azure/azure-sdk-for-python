@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,redefined-builtin
+# pylint: disable=protected-access,redefined-builtin,reimported
 
 from abc import ABC
 from typing import Any, Dict, List, Optional, Type, Union
@@ -10,7 +10,9 @@ from typing import Any, Dict, List, Optional, Type, Union
 from typing_extensions import TypeAlias
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
-from azure.ai.ml._restclient.arm_ml_service.models import ManagedServiceIdentity as RestIdentityConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    ManagedServiceIdentity as RestIdentityConfiguration,
+)
 from azure.ai.ml._restclient.arm_ml_service.models import (
     WorkspaceConnectionManagedIdentity as RestWorkspaceConnectionManagedIdentity,
 )
@@ -23,36 +25,55 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
 from azure.ai.ml._restclient.arm_ml_service.models import (
     WorkspaceConnectionSharedAccessSignature as RestWorkspaceConnectionSharedAccessSignature,
 )
-from azure.ai.ml._restclient.arm_ml_service.models import UserAssignedIdentity as RestUserAssignedIdentity
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    UserAssignedIdentity as RestUserAssignedIdentity,
+)
 from azure.ai.ml._restclient.arm_ml_service.models import (
     WorkspaceConnectionUsernamePassword as RestWorkspaceConnectionUsernamePassword,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.arm_ml_service.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CertificateDatastoreSecrets, CredentialsType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
-from azure.ai.ml._restclient.v2023_04_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreCredentials as RestSasDatastoreCredentials
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreSecrets as RestSasDatastoreSecrets
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    CertificateDatastoreSecrets,
+    CredentialsType,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    IdentityConfiguration as RestJobIdentityConfiguration,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import IdentityConfigurationType
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    ManagedIdentity as RestJobManagedIdentity,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    ManagedServiceIdentity as RestRegistryManagedIdentity,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    NoneDatastoreCredentials as RestNoneDatastoreCredentials,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    SasDatastoreCredentials as RestSasDatastoreCredentials,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    SasDatastoreSecrets as RestSasDatastoreSecrets,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    UserIdentity as RestUserIdentity,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
     WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
 )
 from azure.ai.ml._restclient.arm_ml_service.models import (
@@ -62,7 +83,7 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
 # Note, this import needs to match the restclient that's imported by the
 # Connection class, otherwise some unit tests will start failing
 # Due to the mismatch between expected and received classes in WC rest conversions.
-from azure.ai.ml._restclient.v2024_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AADAuthTypeWorkspaceConnectionProperties,
     AccessKeyAuthTypeWorkspaceConnectionProperties,
     AccountKeyAuthTypeWorkspaceConnectionProperties,
@@ -78,8 +99,18 @@ from azure.ai.ml._restclient.v2024_04_01_preview.models import (
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
-from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
+from azure.ai.ml.entities._mixins import (
+    DictMixin,
+    RestTranslatableMixin,
+    YamlTranslatableMixin,
+)
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    JobException,
+    ValidationErrorType,
+    ValidationException,
+)
 
 # arm_ml_service unifies these into single models; keep legacy alias names for usage sites. Annotate as
 # ``TypeAlias`` so mypy treats them as valid types in annotations (a bare ``X = Y`` re-alias of an
@@ -145,7 +176,9 @@ class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):
         # rest object as sas token configs
         return cls(account_key=obj.sas if obj is not None and obj.sas else None)
 
-    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionSharedAccessSignature:
+    def _to_workspace_connection_rest_object(
+        self,
+    ) -> RestWorkspaceConnectionSharedAccessSignature:
         return RestWorkspaceConnectionSharedAccessSignature(sas=self.account_key)
 
     def __eq__(self, other: object) -> bool:
@@ -179,7 +212,9 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
     def _from_datastore_rest_object(cls, obj: RestSasDatastoreCredentials) -> "SasTokenConfiguration":
         return cls(sas_token=obj.secrets.sas_token if obj.secrets else None)
 
-    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionSharedAccessSignature:
+    def _to_workspace_connection_rest_object(
+        self,
+    ) -> RestWorkspaceConnectionSharedAccessSignature:
         return RestWorkspaceConnectionSharedAccessSignature(sas=self.sas_token)
 
     @classmethod
@@ -204,8 +239,8 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
 class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
     """Personal access token credentials.
 
-    :param pat: Personal access token.
-    :type pat: str
+    :keyword pat: Personal access token.
+    :paramtype pat: str
 
     .. admonition:: Example:
 
@@ -222,7 +257,9 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
         self.type = camel_to_snake(ConnectionAuthType.PAT)
         self.pat = pat
 
-    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionPersonalAccessToken:
+    def _to_workspace_connection_rest_object(
+        self,
+    ) -> RestWorkspaceConnectionPersonalAccessToken:
         return RestWorkspaceConnectionPersonalAccessToken(pat=self.pat)
 
     @classmethod
@@ -244,10 +281,10 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
 class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
     """Username and password credentials.
 
-    :param username: The username, value should be url-encoded.
-    :type username: str
-    :param password: The password, value should be url-encoded.
-    :type password: str
+    :keyword username: The username, value should be url-encoded.
+    :paramtype username: str
+    :keyword password: The password, value should be url-encoded.
+    :paramtype password: str
     """
 
     def __init__(
@@ -261,7 +298,9 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
         self.username = username
         self.password = password
 
-    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionUsernamePassword:
+    def _to_workspace_connection_rest_object(
+        self,
+    ) -> RestWorkspaceConnectionUsernamePassword:
         return RestWorkspaceConnectionUsernamePassword(username=self.username, password=self.password)
 
     @classmethod
@@ -315,8 +354,8 @@ class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
 class ServicePrincipalConfiguration(BaseTenantCredentials):
     """Service Principal credentials configuration.
 
-    :param client_secret: The client secret.
-    :type client_secret: str
+    :keyword client_secret: The client secret.
+    :paramtype client_secret: str
     """
 
     def __init__(
@@ -351,7 +390,9 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
             client_secret=obj.secrets.client_secret if obj.secrets else None,
         )
 
-    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionServicePrincipal:
+    def _to_workspace_connection_rest_object(
+        self,
+    ) -> RestWorkspaceConnectionServicePrincipal:
         return RestWorkspaceConnectionServicePrincipal(
             client_id=self.client_id,
             client_secret=self.client_secret,
@@ -364,7 +405,7 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
     ) -> "ServicePrincipalConfiguration":
         return cls(
             client_id=obj.client_id if obj is not None and obj.client_id else None,
-            client_secret=obj.client_secret if obj is not None and obj.client_secret else None,
+            client_secret=(obj.client_secret if obj is not None and obj.client_secret else None),
             tenant_id=obj.tenant_id if obj is not None and obj.tenant_id else None,
             authority_url="",
         )
@@ -404,7 +445,7 @@ class CertificateConfiguration(BaseTenantCredentials):
         secrets = CertificateDatastoreSecrets(certificate=self.certificate)
         return RestCertificateDatastoreCredentials(
             authority_url=self.authority_url,
-            resource_uri=self.resource_url,
+            resource_url=self.resource_url,
             tenant_id=self.tenant_id,
             client_id=self.client_id,
             thumbprint=self.thumbprint,
@@ -415,7 +456,7 @@ class CertificateConfiguration(BaseTenantCredentials):
     def _from_datastore_rest_object(cls, obj: RestCertificateDatastoreCredentials) -> "CertificateConfiguration":
         return cls(
             authority_url=obj.authority_url,
-            resource_url=obj.resource_uri,
+            resource_url=obj.resource_url,
             tenant_id=obj.tenant_id,
             client_id=obj.client_id,
             thumbprint=obj.thumbprint,
@@ -454,7 +495,13 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
 
         if isinstance(obj, dict):
             # TODO: support data binding expression
-            obj = RestJobIdentityConfiguration.from_dict(obj)
+            # The shared arm_ml_service ``IdentityConfiguration`` hybrid model has no ``from_dict``.
+            # The node-level rest object is a snake_case attribute dict, so wrap it in a dummy rest
+            # object that supports the attribute access the subclass ``_from_job_rest_object`` methods
+            # (and the ``identity_type`` discriminator lookup below) rely on.
+            from azure.ai.ml.entities._util import from_rest_dict_to_dummy_rest_object
+
+            obj = from_rest_dict_to_dummy_rest_object(obj)
 
         identity_class = mapping.get(obj.identity_type, None)
         if identity_class:
@@ -479,7 +526,11 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
     def _load(
         cls,
         data: Dict,
-    ) -> Union["ManagedIdentityConfiguration", "UserIdentityConfiguration", "AmlTokenConfiguration"]:
+    ) -> Union[
+        "ManagedIdentityConfiguration",
+        "UserIdentityConfiguration",
+        "AmlTokenConfiguration",
+    ]:
         type_str = data.get(CommonYamlFields.TYPE)
         if type_str == IdentityType.MANAGED_IDENTITY:
             return ManagedIdentityConfiguration._load_from_dict(data)
@@ -529,7 +580,9 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
         self.object_id = object_id
         self.principal_id = principal_id
 
-    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionManagedIdentity:
+    def _to_workspace_connection_rest_object(
+        self,
+    ) -> RestWorkspaceConnectionManagedIdentity:
         return RestWorkspaceConnectionManagedIdentity(client_id=self.client_id, resource_id=self.resource_id)
 
     @classmethod
@@ -701,10 +754,10 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
 class IdentityConfiguration(RestTranslatableMixin):
     """Identity configuration used to represent identity property on compute, endpoint, and registry resources.
 
-    :param type: The type of managed identity.
-    :type type: str
-    :param user_assigned_identities: A list of ManagedIdentityConfiguration objects.
-    :type user_assigned_identities: Optional[list[~azure.ai.ml.entities.ManagedIdentityConfiguration]]
+    :keyword type: The type of managed identity.
+    :paramtype type: str
+    :keyword user_assigned_identities: A list of ManagedIdentityConfiguration objects.
+    :paramtype user_assigned_identities: Optional[list[~azure.ai.ml.entities.ManagedIdentityConfiguration]]
     """
 
     def __init__(
@@ -726,7 +779,8 @@ class IdentityConfiguration(RestTranslatableMixin):
             else None
         )
         return RestIdentityConfiguration(
-            type=snake_to_pascal(self.type), user_assigned_identities=rest_user_assigned_identities
+            type=snake_to_pascal(self.type),
+            user_assigned_identities=rest_user_assigned_identities,
         )
 
     @classmethod
@@ -747,7 +801,9 @@ class IdentityConfiguration(RestTranslatableMixin):
         result.tenant_id = obj.tenant_id
         return result
 
-    def _to_online_endpoint_rest_object(self) -> RestManagedServiceIdentityConfiguration:
+    def _to_online_endpoint_rest_object(
+        self,
+    ) -> RestManagedServiceIdentityConfiguration:
         rest_user_assigned_identities = (
             {uai.resource_id: uai._to_online_endpoint_rest_object() for uai in self.user_assigned_identities}
             if self.user_assigned_identities
@@ -804,7 +860,8 @@ class IdentityConfiguration(RestTranslatableMixin):
             else None
         )
         return RestManagedServiceIdentityConfiguration(
-            type=snake_to_pascal(self.type), user_assigned_identities=rest_user_assigned_identities
+            type=snake_to_pascal(self.type),
+            user_assigned_identities=rest_user_assigned_identities,
         )
 
     def _to_rest_object(self) -> RestRegistryManagedIdentity:
@@ -891,10 +948,10 @@ class AadCredentialConfiguration(RestTranslatableMixin):
 class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Access Key Credentials.
 
-    :param access_key_id: The access key ID.
-    :type access_key_id: str
-    :param secret_access_key: The secret access key.
-    :type secret_access_key: str
+    :keyword access_key_id: The access key ID.
+    :paramtype access_key_id: str
+    :keyword secret_access_key: The secret access key.
+    :paramtype secret_access_key: str
     """
 
     def __init__(
@@ -918,8 +975,8 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
         cls, obj: Optional[RestWorkspaceConnectionAccessKey]
     ) -> "AccessKeyConfiguration":
         return cls(
-            access_key_id=obj.access_key_id if obj is not None and obj.access_key_id else None,
-            secret_access_key=obj.secret_access_key if obj is not None and obj.secret_access_key else None,
+            access_key_id=(obj.access_key_id if obj is not None and obj.access_key_id else None),
+            secret_access_key=(obj.secret_access_key if obj is not None and obj.secret_access_key else None),
         )
 
     def __eq__(self, other: object) -> bool:
@@ -935,8 +992,8 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
 class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Api Key Credentials.
 
-    :param key: API key id
-    :type key: str
+    :keyword key: API key id
+    :paramtype key: str
     """
 
     def __init__(

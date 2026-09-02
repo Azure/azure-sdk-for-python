@@ -13,9 +13,11 @@ from ci_tools.logging import logger
 from ci_tools.parsing import ParsedSetup
 
 REPO_ROOT = discover_repo_root()
+AZURE_SDK_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+PYPI_INDEX_URL = "https://pypi.org/simple/"
 
 
-def get_package_wheel_path(pkg_root: str) -> str:
+def get_package_wheel_path(pkg_root: str, staging_dir: Optional[str] = None) -> str:
     # parse setup.py to get package name and version
     pkg_details = ParsedSetup.from_path(pkg_root)
 
@@ -32,7 +34,11 @@ def get_package_wheel_path(pkg_root: str) -> str:
                 )
             )
         return pkg_path
-    # Otherwise, use wheel created in staging directory, or fall back on source directory
+    if staging_dir:
+        found_whl = find_whl(staging_dir, pkg_details.name, pkg_details.version)
+        if found_whl:
+            return os.path.join(staging_dir, found_whl)
+    # Otherwise, use a wheel in the source directory, or fall back on the source directory
     pkg_path = find_whl(pkg_root, pkg_details.name, pkg_details.version) or pkg_root
     return pkg_path
 
@@ -103,22 +109,35 @@ class apistub(Check):
 
     def download_pypi_wheel(self, executable: str, package_name: str, version: str, staging_directory: str) -> str:
         """Download a released wheel from PyPI into the staging directory and return its path."""
-        logger.info(f"Downloading {package_name}=={version} from PyPI.")
-        self.run_venv_command(
-            executable,
-            [
-                "-m",
-                "pip",
-                "download",
-                f"{package_name}=={version}",
-                "--no-deps",
-                "--only-binary=:all:",
-                "-d",
-                staging_directory,
-            ],
-            cwd=staging_directory,
-            check=True,
-        )
+        for index_url in (AZURE_SDK_INDEX_URL, PYPI_INDEX_URL):
+            logger.info(f"Downloading {package_name}=={version} from {index_url}.")
+            try:
+                self.run_venv_command(
+                    executable,
+                    [
+                        "-m",
+                        "pip",
+                        "download",
+                        f"{package_name}=={version}",
+                        "--no-deps",
+                        "--only-binary=:all:",
+                        f"--index-url={index_url}",
+                        "-d",
+                        staging_directory,
+                    ],
+                    cwd=staging_directory,
+                    check=True,
+                    additional_environment_settings={"PIP_EXTRA_INDEX_URL": ""},
+                )
+                break
+            except CalledProcessError as error:
+                if index_url == PYPI_INDEX_URL:
+                    error_details = error.stderr or error.stdout or str(error)
+                    logger.error(
+                        f"Failed to download {package_name}=={version} from both package indexes: {error_details}"
+                    )
+                    raise
+                logger.warning(f"Failed to download from the Azure SDK feed: {error}. Retrying from public PyPI.")
         found_whl = find_whl(staging_directory, package_name, version)
         if not found_whl:
             raise FileNotFoundError(
@@ -165,6 +184,7 @@ class apistub(Check):
                 return getattr(e, "returncode", 1)
 
             generate_from_pypi = getattr(args, "generate_from_pypi", None)
+            package_version = generate_from_pypi or parsed.version
 
             if generate_from_pypi:
                 pkg_path = self.download_pypi_wheel(executable, package_name, generate_from_pypi, staging_directory)
@@ -181,7 +201,7 @@ class apistub(Check):
                         pre_download_disabled=False,
                         python_executable=executable,
                     )
-                pkg_path = get_package_wheel_path(package_dir)
+                pkg_path = get_package_wheel_path(package_dir, staging_directory)
 
             if install_deps:
                 self.pip_freeze(executable)
@@ -218,7 +238,7 @@ class apistub(Check):
                         results.append(1)
                 else:
                     md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
-                    metadata_script = os.path.join(REPO_ROOT, "eng", "scripts", "Extract-APIViewMetadata-Python.ps1")
+                    metadata_script = os.path.join(REPO_ROOT, "eng", "scripts", "extract_apiview_metadata.py")
                     logger.info(f"Generating api.md for {package_name}")
                     try:
                         result = run(
@@ -233,7 +253,14 @@ class apistub(Check):
 
                         logger.info(f"Extracting API metadata for {package_name}")
                         metadata_result = run(
-                            ["pwsh", metadata_script, "-OutputPath", out_token_path],
+                            [
+                                executable,
+                                metadata_script,
+                                "--output-path",
+                                out_token_path,
+                                "--package-version",
+                                package_version,
+                            ],
                             check=True,
                             capture_output=True,
                             text=True,

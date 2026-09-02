@@ -20,7 +20,7 @@ pip install azure-ai-agentserver-activity
 
 `ActivityAgentServerHost` is an `AgentServerHost` subclass for Activity Protocol traffic. It provides:
 
-- `POST /activity/messages` (and the `POST /api/messages` alias) for inbound activities.
+- `POST /activity/messages` for inbound activities.
 
 ### Usage patterns
 
@@ -54,6 +54,10 @@ from azure.ai.agentserver.activity import ActivityAgentServerHost
 # / config are still built for you. Add digital_worker=True for the blueprint model.
 app = ActivityAgentServerHost(storage=MemoryStorage())
 ```
+
+When `storage` is omitted, the host uses durable `FoundryStorage` in a
+Foundry-hosted container and `MemoryStorage` during local development. Passing
+`storage=` always overrides this environment-based default.
 
 **Inject a pre-built `AgentApplication`** — host an M365 `AgentApplication` you built yourself:
 
@@ -133,7 +137,7 @@ The M365 Agents SDK ships as a dependency of this package, so a standard
 packages from your environment, reinstall them:
 
 ```bash
-pip install microsoft-agents-hosting-core microsoft-agents-authentication-msal microsoft-agents-activity azure-identity
+pip install microsoft-agents-hosting-core microsoft-agents-authentication-msal microsoft-agents-activity
 ```
 
 Alternatively, use `ActivityAgentServerHost(request_handler=...)`, which does

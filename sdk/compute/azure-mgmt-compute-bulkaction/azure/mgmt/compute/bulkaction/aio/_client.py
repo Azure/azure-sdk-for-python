@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -19,7 +20,17 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ComputeBulkActionsMgmtClientConfiguration
-from .operations import Operations, VirtualMachineBulkOperationsOperations
+from .operations import (
+    BulkCreateCustomOperations,
+    LaunchBulkInstancesOperationOperations,
+    OccurrenceExtensionOperations,
+    OccurrencesOperations,
+    Operations,
+    ScheduledActionExtensionOperations,
+    ScheduledActionOperationStatusOperations,
+    ScheduledActionsOperations,
+    VirtualMachineBulkOperationsOperations,
+)
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -31,7 +42,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ComputeBulkActionsMgmtClient:
+class ComputeBulkActionsMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """ComputeBulkActionsMgmtClient.
 
     :ivar operations: Operations operations
@@ -39,6 +50,26 @@ class ComputeBulkActionsMgmtClient:
     :ivar virtual_machine_bulk_operations: VirtualMachineBulkOperationsOperations operations
     :vartype virtual_machine_bulk_operations:
      azure.mgmt.compute.bulkaction.aio.operations.VirtualMachineBulkOperationsOperations
+    :ivar launch_bulk_instances_operation: LaunchBulkInstancesOperationOperations operations
+    :vartype launch_bulk_instances_operation:
+     azure.mgmt.compute.bulkaction.aio.operations.LaunchBulkInstancesOperationOperations
+    :ivar bulk_create_custom: BulkCreateCustomOperations operations
+    :vartype bulk_create_custom:
+     azure.mgmt.compute.bulkaction.aio.operations.BulkCreateCustomOperations
+    :ivar scheduled_actions: ScheduledActionsOperations operations
+    :vartype scheduled_actions:
+     azure.mgmt.compute.bulkaction.aio.operations.ScheduledActionsOperations
+    :ivar scheduled_action_extension: ScheduledActionExtensionOperations operations
+    :vartype scheduled_action_extension:
+     azure.mgmt.compute.bulkaction.aio.operations.ScheduledActionExtensionOperations
+    :ivar scheduled_action_operation_status: ScheduledActionOperationStatusOperations operations
+    :vartype scheduled_action_operation_status:
+     azure.mgmt.compute.bulkaction.aio.operations.ScheduledActionOperationStatusOperations
+    :ivar occurrences: OccurrencesOperations operations
+    :vartype occurrences: azure.mgmt.compute.bulkaction.aio.operations.OccurrencesOperations
+    :ivar occurrence_extension: OccurrenceExtensionOperations operations
+    :vartype occurrence_extension:
+     azure.mgmt.compute.bulkaction.aio.operations.OccurrenceExtensionOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -48,10 +79,13 @@ class ComputeBulkActionsMgmtClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-06-06"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-08-06-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -105,6 +139,25 @@ class ComputeBulkActionsMgmtClient:
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machine_bulk_operations = VirtualMachineBulkOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.launch_bulk_instances_operation = LaunchBulkInstancesOperationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.bulk_create_custom = BulkCreateCustomOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.scheduled_actions = ScheduledActionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.scheduled_action_extension = ScheduledActionExtensionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.scheduled_action_operation_status = ScheduledActionOperationStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.occurrences = OccurrencesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.occurrence_extension = OccurrenceExtensionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

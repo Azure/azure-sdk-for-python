@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.virtual_machine_bulk_operations.bulk_get_operations_status(
-        resource_group_name="myResourceGroup",
-        location="eastus2euap",
-        request_body={"operationIds": ["a1b2c3d4-e5f6-7890-abcd-ef0123456789"]},
+        resource_group_name="rgBulkactions",
+        location="useast2euap",
+        request_body={"operationIds": ["406e7856-f94b-48ae-93ee-b062afee54e5"]},
     )
     print(response)
 
 
-# x-ms-original-file: 2026-06-06/VirtualMachineBulkOperations_BulkGetOperationsStatus_MaximumSet_Gen.json
+# x-ms-original-file: 2026-08-06-preview/VirtualMachineBulkOperations_BulkGetOperationsStatus_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

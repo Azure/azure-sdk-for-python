@@ -8,6 +8,7 @@ namespace azure.ai.agentserver.core
             *, 
             connection_string: Optional[str] = ..., 
             enable_sensitive_data: bool = False, 
+            instrumentation_options: Optional[dict[str, dict[str, Any]]] = ..., 
             log_level: Optional[str] = ...
         ) -> None: ...
 
@@ -29,10 +30,21 @@ namespace azure.ai.agentserver.core
     def azure.ai.agentserver.core.end_span(span: Any, exc: Optional[BaseException] = None) -> None: ...
 
 
+    @overload
+    def azure.ai.agentserver.core.experimental(wrapped: type[T]) -> type[T]: ...
+
+
+    @overload
+    def azure.ai.agentserver.core.experimental(wrapped: Callable[P, T]) -> Callable[P, T]: ...
+
+
     def azure.ai.agentserver.core.flush_spans(timeout_millis: int = 5000) -> None: ...
 
 
     def azure.ai.agentserver.core.get_request_context() -> FoundryAgentRequestContext: ...
+
+
+    def azure.ai.agentserver.core.read_request_id(scope: Mapping[str, Any]) -> str | None: ...
 
 
     def azure.ai.agentserver.core.record_error(span: Any, exc: BaseException) -> None: ...
@@ -41,13 +53,16 @@ namespace azure.ai.agentserver.core
     def azure.ai.agentserver.core.reset_request_context(token: Token[FoundryAgentRequestContext]) -> None: ...
 
 
+    def azure.ai.agentserver.core.resolve_state_subdir(name: str) -> Path: ...
+
+
     def azure.ai.agentserver.core.set_current_span(span: Any) -> Any: ...
 
 
     def azure.ai.agentserver.core.set_request_context(context: FoundryAgentRequestContext) -> Token[FoundryAgentRequestContext]: ...
 
 
-    async def azure.ai.agentserver.core.trace_stream:async(iterator: AsyncIterable[_Content], span: Any) -> AsyncIterator[_Content]: ...
+    async def azure.ai.agentserver.core.trace_stream:async(iterator: AsyncIterable[StreamContent], span: Any) -> AsyncIterator[StreamContent]: ...
 
 
     class azure.ai.agentserver.core.AgentConfig:
@@ -65,6 +80,7 @@ namespace azure.ai.agentserver.core
                 port: int, 
                 project_endpoint: str, 
                 project_id: str, 
+                session_guid: str = "", 
                 session_id: str, 
                 sse_keepalive_interval: int, 
                 ws_ping_interval: float = 0.0
@@ -90,6 +106,15 @@ namespace azure.ai.agentserver.core
                 **kwargs: Any
             ) -> None: ...
 
+        def add_middleware(
+                self, 
+                middleware_class: MiddlewareFactory[P], 
+                *args: args, 
+                **kwargs: kwargs
+            ) -> None: ...
+
+        def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None: ...
+
         def register_server_version(self, version_segment: str) -> None: ...
 
         def run(
@@ -105,9 +130,6 @@ namespace azure.ai.agentserver.core
             ) -> None: ...
 
         def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
-
-        @staticmethod
-        async def sse_keepalive_stream(iterator: AsyncIterable[_Content], interval: int) -> AsyncIterator[_Content]: ...
 
 
     class azure.ai.agentserver.core.FoundryAgentRequestContext:
@@ -192,6 +214,7 @@ namespace azure.ai.agentserver.core.storage
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStateStore(FoundryStorageClient): implements AsyncContextManager 
         property name: str    # Read-only
 
@@ -233,6 +256,7 @@ namespace azure.ai.agentserver.core.storage
                 key: str, 
                 value: JSONObject, 
                 *, 
+                call_id: str | None = ..., 
                 tags: Mapping[str, str] | None = ...
             ) -> StateStoreItemRef: ...
 
@@ -242,18 +266,25 @@ namespace azure.ai.agentserver.core.storage
                 self, 
                 key: str, 
                 *, 
+                call_id: str | None = ..., 
                 if_match: str | None = ...
             ) -> DeletedStateStoreItem: ...
 
         async def get(self) -> StateStore: ...
 
-        async def get_item(self, key: str) -> StateStoreItem | None: ...
+        async def get_item(
+                self, 
+                key: str, 
+                *, 
+                call_id: str | None = ...
+            ) -> StateStoreItem | None: ...
 
         async def list_keys(
                 self, 
                 *, 
                 after: str | None = ..., 
                 before: str | None = ..., 
+                call_id: str | None = ..., 
                 limit: int | None = ..., 
                 order: Order = "desc", 
                 tags: Mapping[str, str] | None = ...
@@ -264,6 +295,7 @@ namespace azure.ai.agentserver.core.storage
                 key: str, 
                 value: JSONObject, 
                 *, 
+                call_id: str | None = ..., 
                 if_match: str | None = ..., 
                 require_exists: bool = False, 
                 tags: Mapping[str, str] | None = ...
@@ -277,6 +309,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> StateStore: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageApiError(FoundryStorageError):
 
         def __init__(
@@ -288,6 +321,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageBadRequestError(FoundryStorageError):
 
         def __init__(
@@ -300,6 +334,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageClient: implements AsyncContextManager 
 
         def __init__(
@@ -315,6 +350,7 @@ namespace azure.ai.agentserver.core.storage
         async def aclose(self) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageConflictError(FoundryStorageBadRequestError):
 
         def __init__(
@@ -327,6 +363,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageEndpoint:
 
         def __init__(
@@ -358,6 +395,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> str: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageError(Exception):
 
         def __init__(
@@ -369,6 +407,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStorageNotFoundError(FoundryStorageError):
 
         def __init__(
@@ -380,6 +419,7 @@ namespace azure.ai.agentserver.core.storage
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.core.storage.FoundryStoragePreconditionError(FoundryStorageError):
 
         def __init__(
@@ -517,6 +557,367 @@ namespace azure.ai.agentserver.core.storage
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+namespace azure.ai.agentserver.core.streaming
+
+    @runtime_checkable
+    class azure.ai.agentserver.core.streaming.EventStream(Protocol):
+
+        async def close(self) -> None: ...
+
+        async def emit(
+                self, 
+                payload: Any, 
+                *, 
+                close: bool = False
+            ) -> None: ...
+
+        async def last_cursor(self) -> Optional[int]: ...
+
+        def subscribe(
+                self, 
+                *, 
+                after: Optional[int] = ...
+            ) -> AsyncIterator[Any]: ...
+
+
+    class azure.ai.agentserver.core.streaming.EventStreamClosedError(EventStreamError):
+
+
+    class azure.ai.agentserver.core.streaming.EventStreamError(Exception):
+
+
+    class azure.ai.agentserver.core.streaming.EventStreamNotFoundError(EventStreamError):
+
+
+namespace azure.ai.agentserver.core.tasks
+
+    @overload
+    def azure.ai.agentserver.core.tasks.multi_turn_task(
+            fn: Callable[[TaskContext[Input]], Awaitable[Output]], 
+            *, 
+            name: str, 
+            retry: RetryPolicy | None = Ellipsis, 
+            steerable: bool = Ellipsis, 
+            timeout: timedelta | None = Ellipsis, 
+            title: str | None = Ellipsis
+        ) -> MultiTurnTask[Input, Output]: ...
+
+
+    @overload
+    def azure.ai.agentserver.core.tasks.multi_turn_task(
+            *, 
+            name: str, 
+            retry: RetryPolicy | None = Ellipsis, 
+            steerable: bool = Ellipsis, 
+            timeout: timedelta | None = Ellipsis, 
+            title: str | None = Ellipsis
+        ) -> Callable[[Callable[[TaskContext[Input]], Awaitable[Output]]], MultiTurnTask[Input, Output]]: ...
+
+
+    @experimental
+    def azure.ai.agentserver.core.tasks.resilient_tasks_enabled() -> bool: ...
+
+
+    @experimental
+    def azure.ai.agentserver.core.tasks.set_resilient_tasks_enabled(value: bool = True) -> None: ...
+
+
+    @overload
+    def azure.ai.agentserver.core.tasks.task(
+            fn: Callable[[TaskContext[Input]], Awaitable[Output]], 
+            *, 
+            name: str, 
+            retry: RetryPolicy | None = Ellipsis, 
+            timeout: timedelta | None = Ellipsis, 
+            title: str | None = Ellipsis
+        ) -> Task[Input, Output]: ...
+
+
+    @overload
+    def azure.ai.agentserver.core.tasks.task(
+            *, 
+            name: str, 
+            retry: RetryPolicy | None = Ellipsis, 
+            timeout: timedelta | None = Ellipsis, 
+            title: str | None = Ellipsis
+        ) -> Callable[[Callable[[TaskContext[Input]], Awaitable[Output]]], Task[Input, Output]]: ...
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.InputTooLarge(ValueError):
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.LastInputIdPreconditionFailed(TaskPreconditionFailed):
+
+        def __init__(
+                self, 
+                *args: Any, 
+                *, 
+                actual_last_input_id: str | None = ..., 
+                expected_last_input_id: str | None = ..., 
+                task_id: str | None = ..., 
+            ) -> None: ...
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.MultiTurnTask(Generic[Input, Output]):
+        property name: str    # Read-only
+
+        def __init__(
+                self, 
+                fn: Callable[, Any], 
+                opts: TaskOptions, 
+                input_type: type | None = None, 
+                output_type: type | None = None
+            ) -> None: ...
+
+        async def delete(self, task_id: str) -> None: ...
+
+        async def get_active_run(
+                self, 
+                task_id: str, 
+                input_id: str
+            ) -> TaskRun[Output] | None: ...
+
+        async def run(
+                self, 
+                *, 
+                if_last_input_id: str | None = ..., 
+                input: Any, 
+                input_id: str | None = ..., 
+                task_id: str
+            ) -> Output: ...
+
+        async def start(
+                self, 
+                *, 
+                if_last_input_id: str | None = ..., 
+                input: Any, 
+                input_id: str | None = ..., 
+                task_id: str
+            ) -> TaskRun[Output]: ...
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.RetryPolicy:
+
+        def __eq__(self, other: object) -> bool: ...
+
+        def __init__(
+                self, 
+                *, 
+                _linear: bool = False, 
+                backoff_coefficient: float = 2.0, 
+                initial_delay: timedelta | float = timedelta(seconds=1), 
+                jitter: bool | float = True, 
+                max_attempts: int = 3, 
+                max_delay: timedelta | float = timedelta(seconds=60), 
+                retry_on: type[Exception] | tuple[type[Exception], ] | None = ...
+            ) -> None: ...
+
+        def __repr__(self) -> str: ...
+
+        @classmethod
+        def exponential_backoff(
+                cls, 
+                *, 
+                backoff_coefficient: float = 2.0, 
+                initial_delay: timedelta = timedelta(seconds=1), 
+                jitter: bool = True, 
+                max_attempts: int = 3, 
+                max_delay: timedelta = timedelta(seconds=60)
+            ) -> RetryPolicy: ...
+
+        @classmethod
+        def fixed_delay(
+                cls, 
+                *, 
+                delay: timedelta = timedelta(seconds=5), 
+                max_attempts: int = 3
+            ) -> RetryPolicy: ...
+
+        @classmethod
+        def linear_backoff(
+                cls, 
+                *, 
+                initial_delay: timedelta = timedelta(seconds=1), 
+                max_attempts: int = 5, 
+                max_delay: timedelta = timedelta(seconds=60)
+            ) -> RetryPolicy: ...
+
+        @classmethod
+        def no_retry(cls) -> RetryPolicy: ...
+
+        def compute_delay(self, attempt: int) -> float: ...
+
+        def should_retry(
+                self, 
+                attempt: int, 
+                error: Exception
+            ) -> bool: ...
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.SteeringQueueFull(RuntimeError):
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.Task(Generic[Input, Output]):
+
+        def __init__(
+                self, 
+                fn: Callable[[TaskContext[Input]], Awaitable[Output]], 
+                opts: TaskOptions, 
+                input_type: type[Input], 
+                output_type: type[Output]
+            ) -> None: ...
+
+        async def get_active_run(self, task_id: str) -> TaskRun[Output] | None: ...
+
+        async def run(
+                self, 
+                *, 
+                if_last_input_id: str | None = ..., 
+                input: Input, 
+                input_id: str | None = ..., 
+                task_id: str | None = ...
+            ) -> Output: ...
+
+        async def start(
+                self, 
+                *, 
+                if_last_input_id: str | None = ..., 
+                input: Input, 
+                input_id: str | None = ..., 
+                task_id: str | None = ...
+            ) -> TaskRun[Output]: ...
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.TaskCancelled(Exception):
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+        def __str__(self) -> str: ...
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.TaskConflictError(RuntimeError):
+
+        def __init__(
+                self, 
+                *args: Any, 
+                *, 
+                current_status: str | None = ..., 
+            ) -> None: ...
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.TaskContext(Generic[Input]):
+        property pending_input_count: int    # Read-only
+
+        def __init__(
+                self, 
+                *, 
+                cancel: Event | None = ..., 
+                entry_mode: EntryMode = "fresh", 
+                input: Input, 
+                input_id: str | None = ..., 
+                is_steered_turn: bool = False, 
+                pending_count_provider: Callable[[], int] | None = ..., 
+                recovery_count: int = 0, 
+                retry_attempt: int = 0, 
+                session_id: str, 
+                shutdown: Event | None = ..., 
+                task_id: str
+            ) -> None: ...
+
+        async def exit_for_recovery(self) -> Any: ...
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.TaskDeferred(Exception):
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.agentserver.core.tasks.TaskErrorDict(TypedDict):
+        key "message": str
+        key "traceback": str
+        key "type": str
+
+
+    class azure.ai.agentserver.core.tasks.TaskExhaustedRetriesErrorDict(TypedDict):
+        key "attempts": int
+        key "last_error": str
+        key "last_error_type": str
+        key "traceback": str
+        key "type": Literal["exhausted_retries"]
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.TaskFailed(Exception):
+        error: Union[TaskErrorDict, TaskExhaustedRetriesErrorDict]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                *, 
+                error: dict[str, Any] | None = ..., 
+            ) -> None: ...
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.TaskManagerNotInitialized(RuntimeError):
+
+
+    @experimental
+    class azure.ai.agentserver.core.tasks.TaskRun(Generic[Output]): implements Awaitable 
+        property is_queued: bool    # Read-only
+
+        def __init__(
+                self, 
+                task_id: str, 
+                *, 
+                cancel_ctx_ref: Any = ..., 
+                cancel_event: Event | None = ..., 
+                execution_task: Task[Any] | None = ..., 
+                input_id: str | None = ..., 
+                lease_expiry_count: int = 0, 
+                provider: Any = ..., 
+                queued_cancel_callback: Any = ..., 
+                result_future: Future[Any], 
+                status: Any = ..., 
+                terminate_event: Event | None = ..., 
+                terminate_reason_ref: list[str | None] | None = ...
+            ) -> None: ...
+
+        async def cancel(self) -> None: ...
+
+        async def result(self) -> Output: ...
 
 
 ```
