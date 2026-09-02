@@ -6,9 +6,16 @@
 
 * Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
 
+### Features Added
+
+* Added private-preview Reinforcement Learning Environments (RLE) support through `AIProjectClient.rle` when constructed with `allow_preview=True`, including OpenEnv instance lifecycle management and environment management operations.
+
 ### Sample updates
 
 * Added `sample_synthetic_multiturn_evaluation.py`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+* Added `sample_rle.py`, demonstrating a hosted RLE Wordle rollout.
+* Added `sample_rle_async.py`, demonstrating a hosted RLE Wordle rollout with an asynchronous client.
+* Added `sample_rle_environment_management.py`, demonstrating hosted RLE environment creation and pagination.
 
 ## 2.5.0 (2026-08-20)
 

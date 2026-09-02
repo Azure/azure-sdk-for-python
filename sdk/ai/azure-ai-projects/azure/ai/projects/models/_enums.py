@@ -1348,3 +1348,51 @@ class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FIXED_RATIO = "FixedRatio"
     """FIXED_RATIO."""
+
+
+class RLEInstanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Runtime status of an RLE instance, as observed by RLE from the backing runtime."""
+
+    CREATING = "Creating"
+    """The backing runtime is being provisioned."""
+    RUNNING = "Running"
+    """The instance is up and serving data-plane calls."""
+    STOPPED = "Stopped"
+    """The instance's task finished and RLE stopped the backing runtime."""
+    FAILED = "Failed"
+    """The instance errored during provisioning or at runtime. See ``error`` for details."""
+    DELETED = "Deleted"
+    """The backing runtime has been torn down / removed."""
+
+
+class RLEnvironmentDiskImageConversionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the asynchronous ACR image to disk image conversion. Serialized as its string name."""
+
+    NOT_REQUESTED = "NotRequested"
+    """Disk image conversion has not been requested for this environment yet."""
+    PENDING = "Pending"
+    """Disk image conversion is in progress."""
+    READY = "Ready"
+    """Disk image conversion completed successfully and the disk image is ready for use."""
+    FAILED = "Failed"
+    """Disk image conversion failed. See ``diskImageConversionError`` for details."""
+
+
+class RLEnvironmentVersionBump(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Semantic-version component to bump when creating a new version of an existing RLE environment."""
+
+    MAJOR = "Major"
+    """Increment the major version component."""
+    MINOR = "Minor"
+    """Increment the minor version component."""
+    PATCH = "Patch"
+    """Increment the patch version component."""
+
+
+class RLEPaginationOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sort order for continuation-token pagination."""
+
+    ASC = "asc"
+    """Ascending order."""
+    DESC = "desc"
+    """Descending order."""

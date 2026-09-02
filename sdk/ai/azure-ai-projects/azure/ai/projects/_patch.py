@@ -19,6 +19,7 @@ from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
+from .operations._patch_rle import RLEError
 from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
 _OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
@@ -237,6 +238,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self._custom_user_agent = self._kwargs.get("user_agent", None)
 
         super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
+
+        if not allow_preview and hasattr(self, "rle"):
+            del self.rle
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
@@ -501,6 +505,7 @@ class _OpenAILoggingTransport(httpx2.HTTPTransport):
 
 __all__: List[str] = [
     "AIProjectClient",
+    "RLEError",
 ]  # Add all objects you want publicly available to users at this package level
 
 

@@ -41,6 +41,9 @@ namespace azure.ai.projects
             ) -> HttpResponse: ...
 
 
+    class azure.ai.projects.RLEError(RuntimeError):
+
+
 namespace azure.ai.projects.aio
 
     class azure.ai.projects.aio.AIProjectClient(AIProjectClientGenerated): implements AsyncContextManager 
@@ -416,6 +419,81 @@ namespace azure.ai.projects.aio.operations
                 path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
+
+
+    class azure.ai.projects.aio.operations.AsyncOpenEnvClient: implements AsyncContextManager 
+        property environment_name: str    # Read-only
+        property environment_version: Optional[str]    # Read-only
+        property instance_group_id: Optional[str]    # Read-only
+        property max_active_instances: int    # Read-only
+
+        def __init__(
+                self, 
+                *, 
+                environments: _RLEnvironmentsOperationsGenerated, 
+                instance_acquire_timeout: float = _DEFAULT_INSTANCE_ACQUIRE_TIMEOUT_S, 
+                instance_groups: RLEInstanceGroupsOperations, 
+                instances: RLEInstancesOperations, 
+                max_active_instances: int = 1, 
+                name: str, 
+                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
+                runtime: RLEInstanceRuntimeOperations, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        async def close(self) -> None: ...
+
+        def get_instance(self) -> AsyncOpenEnvInstance: ...
+
+
+    class azure.ai.projects.aio.operations.AsyncOpenEnvInstance: implements AsyncContextManager 
+        property environment_name: str    # Read-only
+        property environment_version: str    # Read-only
+        property id: str    # Read-only
+        property instance: RLEInstance    # Read-only
+        property instance_group_id: str    # Read-only
+
+        def __init__(
+                self, 
+                environment_name: str, 
+                instance_group_id: str, 
+                *, 
+                environment_version: str, 
+                instance_acquire_timeout: float, 
+                instances: RLEInstancesOperations, 
+                is_client_closed: Callable[[], bool], 
+                poll_interval_s: float, 
+                runtime: RLEInstanceRuntimeOperations
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def health(self) -> Dict[str, Any]: ...
+
+        @distributed_trace_async
+        async def metadata(self) -> Dict[str, Any]: ...
+
+        async def release(self) -> None: ...
+
+        @distributed_trace_async
+        async def reset(
+                self, 
+                seed: Optional[int] = None, 
+                episode_id: Optional[str] = None, 
+                **kwargs: Any
+            ) -> RLEStepResult: ...
+
+        @distributed_trace_async
+        async def schema(self) -> Dict[str, Any]: ...
+
+        @distributed_trace_async
+        async def state(self) -> RLEnvironmentState: ...
+
+        @distributed_trace_async
+        async def step(
+                self, 
+                action: Any = None, 
+                **action_kwargs: Any
+            ) -> RLEStepResult: ...
 
 
     class azure.ai.projects.aio.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
@@ -2200,6 +2278,92 @@ namespace azure.ai.projects.aio.operations
                 name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[Index]: ...
+
+
+    class azure.ai.projects.aio.operations.RLEOperations:
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def create_environment(
+                self, 
+                acr_image_path: str, 
+                *, 
+                name: Optional[str] = ..., 
+                version_bump: Optional[Union[str, RLEnvironmentVersionBump]] = ..., 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace_async
+        async def delete_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_environment(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace_async
+        async def get_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        def get_openenv_client(
+                self, 
+                *, 
+                instance_acquire_timeout: float = _DEFAULT_INSTANCE_ACQUIRE_TIMEOUT_S, 
+                max_active_instances: int = 1, 
+                name: str, 
+                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
+                version: Optional[str] = ...
+            ) -> AsyncOpenEnvClient: ...
+
+        @distributed_trace
+        def list_environment_versions(
+                self, 
+                name: str, 
+                *, 
+                continuation_token: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, RLEPaginationOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RLEnvironment]: ...
+
+        @distributed_trace
+        def list_environments(
+                self, 
+                *, 
+                continuation_token: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                name: Optional[str] = ..., 
+                order: Optional[Union[str, RLEPaginationOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RLEnvironment]: ...
+
+        @distributed_trace
+        def list_instance_groups(
+                self, 
+                environment_name: str, 
+                environment_version: str, 
+                *, 
+                continuation_token: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, RLEPaginationOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RLEInstanceGroup]: ...
 
 
     class azure.ai.projects.aio.operations.TelemetryOperations:
@@ -4341,6 +4505,42 @@ namespace azure.ai.projects.models
                 *, 
                 location: Optional[str] = ..., 
                 operation_result: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CreateRLEInstanceGroupRequest(_Model):
+        max_active_instances: Optional[int]
+        metadata: Optional[dict[str, str]]
+        resource_profile: Optional[RLEInstanceGroupResourceProfile]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_active_instances: Optional[int] = ..., 
+                metadata: Optional[dict[str, str]] = ..., 
+                resource_profile: Optional[RLEInstanceGroupResourceProfile] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CreateRLEnvironmentRequest(_Model):
+        acr_image_path: str
+        name: Optional[str]
+        version_bump: Optional[Union[str, RLEnvironmentVersionBump]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                acr_image_path: str, 
+                name: Optional[str] = ..., 
+                version_bump: Optional[Union[str, RLEnvironmentVersionBump]] = ...
             ) -> None: ...
 
         @overload
@@ -6549,6 +6749,54 @@ namespace azure.ai.projects.models
         SUCCEEDED = "succeeded"
 
 
+    class azure.ai.projects.models.ListRLEInstanceGroupsResponse(_Model):
+        data: list[RLEInstanceGroup]
+        next_continuation_token: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data: list[RLEInstanceGroup], 
+                next_continuation_token: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ListRLEnvironmentVersionsResponse(_Model):
+        data: list[RLEnvironment]
+        next_continuation_token: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data: list[RLEnvironment], 
+                next_continuation_token: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ListRLEnvironmentsResponse(_Model):
+        data: list[RLEnvironment]
+        next_continuation_token: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data: list[RLEnvironment], 
+                next_continuation_token: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.LocalShellToolParam(Tool, discriminator='local_shell'):
         description: Optional[str]
         name: Optional[str]
@@ -7752,6 +8000,167 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RLEInstance(_Model):
+        base_url: Optional[str]
+        created_at_utc: datetime
+        error: Optional[str]
+        instance_group_id: str
+        instance_id: str
+        status: Union[str, RLEInstanceStatus]
+        updated_at_utc: datetime
+
+
+    class azure.ai.projects.models.RLEInstanceGroup(_Model):
+        created_at_utc: datetime
+        environment_name: str
+        environment_version: str
+        instance_group_id: str
+        max_active_instances: int
+        metadata: Optional[dict[str, str]]
+        project_id: str
+        resource_profile: Optional[RLEInstanceGroupResourceProfile]
+        updated_at_utc: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                metadata: Optional[dict[str, str]] = ..., 
+                resource_profile: Optional[RLEInstanceGroupResourceProfile] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RLEInstanceGroupResourceProfile(_Model):
+        cpu: Optional[str]
+        disk: Optional[str]
+        memory: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cpu: Optional[str] = ..., 
+                disk: Optional[str] = ..., 
+                memory: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RLEInstanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CREATING = "Creating"
+        DELETED = "Deleted"
+        FAILED = "Failed"
+        RUNNING = "Running"
+        STOPPED = "Stopped"
+
+
+    class azure.ai.projects.models.RLEPaginationOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ASC = "asc"
+        DESC = "desc"
+
+
+    class azure.ai.projects.models.RLEResetRequest(_Model):
+        episode_id: Optional[str]
+        seed: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                episode_id: Optional[str] = ..., 
+                seed: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RLEStepRequest(_Model):
+        action: dict[str, Any]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action: dict[str, Any]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RLEStepResult(_Model):
+        done: Optional[bool]
+        info: Optional[dict[str, Any]]
+        metadata: Optional[dict[str, Any]]
+        observation: Optional[dict[str, Any]]
+        reward: Optional[float]
+        terminated: Optional[bool]
+        truncated: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                done: Optional[bool] = ..., 
+                info: Optional[dict[str, Any]] = ..., 
+                metadata: Optional[dict[str, Any]] = ..., 
+                observation: Optional[dict[str, Any]] = ..., 
+                reward: Optional[float] = ..., 
+                terminated: Optional[bool] = ..., 
+                truncated: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RLEnvironment(_Model):
+        acr_image_path: str
+        created_at_utc: datetime
+        disk_image_conversion_error: Optional[str]
+        disk_image_conversion_status: Union[str, RLEnvironmentDiskImageConversionStatus]
+        environment_id: str
+        name: str
+        project_id: str
+        updated_at_utc: datetime
+        version: str
+
+
+    class azure.ai.projects.models.RLEnvironmentDiskImageConversionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        NOT_REQUESTED = "NotRequested"
+        PENDING = "Pending"
+        READY = "Ready"
+
+
+    class azure.ai.projects.models.RLEnvironmentState(_Model):
+        episode_id: Optional[str]
+        step_count: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                episode_id: Optional[str] = ..., 
+                step_count: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RLEnvironmentVersionBump(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MAJOR = "Major"
+        MINOR = "Minor"
+        PATCH = "Patch"
 
 
     class azure.ai.projects.models.RaiConfig(_Model):
@@ -11871,6 +12280,181 @@ namespace azure.ai.projects.operations
                 name: str, 
                 **kwargs: Any
             ) -> ItemPaged[Index]: ...
+
+
+    class azure.ai.projects.operations.OpenEnvClient: implements ContextManager 
+        property environment_name: str    # Read-only
+        property environment_version: Optional[str]    # Read-only
+        property instance_group_id: Optional[str]    # Read-only
+        property max_active_instances: int    # Read-only
+
+        def __init__(
+                self, 
+                *, 
+                environments: _RLEnvironmentsOperationsGenerated, 
+                instance_acquire_timeout: float = _DEFAULT_INSTANCE_ACQUIRE_TIMEOUT_S, 
+                instance_groups: RLEInstanceGroupsOperations, 
+                instances: RLEInstancesOperations, 
+                max_active_instances: int = 1, 
+                name: str, 
+                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
+                runtime: RLEInstanceRuntimeOperations, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        def close(self) -> None: ...
+
+        def get_instance(self) -> OpenEnvInstance: ...
+
+
+    class azure.ai.projects.operations.OpenEnvInstance: implements ContextManager 
+        property environment_name: str    # Read-only
+        property environment_version: str    # Read-only
+        property id: str    # Read-only
+        property instance: RLEInstance    # Read-only
+        property instance_group_id: str    # Read-only
+
+        def __init__(
+                self, 
+                environment_name: str, 
+                instance_group_id: str, 
+                *, 
+                environment_version: str, 
+                instance: RLEInstance, 
+                instances: RLEInstancesOperations, 
+                runtime: RLEInstanceRuntimeOperations
+            ) -> None: ...
+
+        @distributed_trace
+        def health(self) -> Dict[str, Any]: ...
+
+        @distributed_trace
+        def metadata(self) -> Dict[str, Any]: ...
+
+        def release(self) -> None: ...
+
+        @distributed_trace
+        def reset(
+                self, 
+                seed: Optional[int] = None, 
+                episode_id: Optional[str] = None, 
+                **kwargs: Any
+            ) -> RLEStepResult: ...
+
+        @distributed_trace
+        def schema(self) -> Dict[str, Any]: ...
+
+        @distributed_trace
+        def state(self) -> RLEnvironmentState: ...
+
+        @distributed_trace
+        def step(
+                self, 
+                action: Any = None, 
+                **action_kwargs: Any
+            ) -> RLEStepResult: ...
+
+
+    class azure.ai.projects.operations.RLEInstanceAcquireTimeoutError(RLEError):
+
+        def __init__(
+                self, 
+                message: str, 
+                *, 
+                details: Optional[Any] = ..., 
+                last_status: Optional[str] = ..., 
+                timeout: float
+            ) -> None: ...
+
+
+    class azure.ai.projects.operations.RLEOperations:
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def create_environment(
+                self, 
+                acr_image_path: str, 
+                *, 
+                name: Optional[str] = ..., 
+                version_bump: Optional[Union[str, RLEnvironmentVersionBump]] = ..., 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace
+        def delete_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get_environment(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace
+        def get_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace
+        def get_openenv_client(
+                self, 
+                *, 
+                instance_acquire_timeout: float = _DEFAULT_INSTANCE_ACQUIRE_TIMEOUT_S, 
+                max_active_instances: int = 1, 
+                name: str, 
+                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
+                version: Optional[str] = ...
+            ) -> OpenEnvClient: ...
+
+        @distributed_trace
+        def list_environment_versions(
+                self, 
+                name: str, 
+                *, 
+                continuation_token: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, RLEPaginationOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RLEnvironment]: ...
+
+        @distributed_trace
+        def list_environments(
+                self, 
+                *, 
+                continuation_token: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                name: Optional[str] = ..., 
+                order: Optional[Union[str, RLEPaginationOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RLEnvironment]: ...
+
+        @distributed_trace
+        def list_instance_groups(
+                self, 
+                environment_name: str, 
+                environment_version: str, 
+                *, 
+                continuation_token: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, RLEPaginationOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RLEInstanceGroup]: ...
+
+
+    class azure.ai.projects.operations.RLEQuotaExceededError(RLEError):
 
 
     class azure.ai.projects.operations.TelemetryOperations:
