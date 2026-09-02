@@ -79,8 +79,9 @@ class ServiceBusClient(
     :paramtype retry_mode: str
     :keyword float try_timeout: The timeout in seconds bounding a single attempt of an operation,
      rather than the whole operation. Applies to sending, management operations, and AMQP link
-     acquisition. Default is None, meaning no per-attempt bound. Does not apply to
-     `receive_messages`, iterating a receiver, or message settlement.
+     acquisition, including the link acquisition performed by `receive_messages`. Default is
+     None, meaning no per-attempt bound. It does not bound the `receive_messages` long poll,
+     iterating a receiver, or message settlement.
     :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Service Bus service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
@@ -233,8 +234,9 @@ class ServiceBusClient(
         :paramtype retry_mode: str
         :keyword float try_timeout: The timeout in seconds bounding a single attempt of an operation,
          rather than the whole operation. Applies to sending, management operations, and AMQP link
-         acquisition. Default is None, meaning no per-attempt bound. Does not apply to
-         `receive_messages`, iterating a receiver, or message settlement.
+         acquisition, including the link acquisition performed by `receive_messages`. Default is
+         None, meaning no per-attempt bound. It does not bound the `receive_messages` long poll,
+         iterating a receiver, or message settlement.
         :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Service Bus service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
