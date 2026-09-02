@@ -69,6 +69,28 @@ def peek_op(  # pylint: disable=inconsistent-return-statements
     )
 
 
+def batch_delete_op(  # pylint: disable=inconsistent-return-statements
+    status_code, message, description, amqp_transport, max_message_count
+):
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
+    if status_code == 200 or (status_code == 404 and condition == ERROR_CODE_MESSAGE_NOT_FOUND):
+        deleted_count = message.value.get(b"message-count") if isinstance(message.value, dict) else None
+        if (
+            isinstance(deleted_count, bool)
+            or not isinstance(deleted_count, int)
+            or deleted_count < 0
+            or deleted_count > max_message_count
+        ):
+            raise ValueError("Batch delete response did not contain a valid message-count.")
+        return deleted_count
+    if status_code == 204:
+        return 0
+
+    amqp_transport.handle_amqp_mgmt_error(
+        _LOGGER, "Batch delete messages failed.", condition, description, status_code
+    )
+
+
 def list_sessions_op(  # pylint: disable=inconsistent-return-statements
     status_code, message, description, amqp_transport
 ):

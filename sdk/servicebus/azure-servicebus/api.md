@@ -4,135 +4,149 @@ namespace azure.servicebus
     def azure.servicebus.parse_connection_string(conn_str: str) -> ServiceBusConnectionStringProperties: ...
 
 
-    class azure.servicebus.AutoLockRenewer: implements ContextManager 
+    class azure.servicebus.AutoLockRenewer: implements ContextManager
 
         def __init__(
-                self, 
-                max_lock_renewal_duration: float = 300, 
-                on_lock_renew_failure: Optional[LockRenewFailureCallback] = None, 
-                executor: Optional[ThreadPoolExecutor] = None, 
+                self,
+                max_lock_renewal_duration: float = 300,
+                on_lock_renew_failure: Optional[LockRenewFailureCallback] = None,
+                executor: Optional[ThreadPoolExecutor] = None,
                 max_workers: Optional[int] = None
             ) -> None: ...
 
         def close(self, wait: bool = True) -> None: ...
 
         def register(
-                self, 
-                receiver: ServiceBusReceiver, 
-                renewable: Union[ServiceBusReceivedMessage, ServiceBusSession], 
-                max_lock_renewal_duration: Optional[float] = None, 
+                self,
+                receiver: ServiceBusReceiver,
+                renewable: Union[ServiceBusReceivedMessage, ServiceBusSession],
+                max_lock_renewal_duration: Optional[float] = None,
                 on_lock_renew_failure: Optional[LockRenewFailureCallback] = None
             ) -> None: ...
 
 
-    class azure.servicebus.ServiceBusClient: implements ContextManager 
+    class azure.servicebus.DeleteMessagesResult:
+        property deleted_message_count: int    # Read-only
+        deleted_message_count: int
+
+        def __init__(self, deleted_message_count: int) -> None: ...
+
+
+    class azure.servicebus.PurgeMessagesResult(DeleteMessagesResult):
+        property deleted_message_count: int    # Read-only
+        deleted_message_count: int
+
+        def __init__(self, deleted_message_count: int) -> None: ...
+
+
+    class azure.servicebus.ServiceBusClient: implements ContextManager
         fully_qualified_namespace: str
 
         def __init__(
-                self, 
-                fully_qualified_namespace: str, 
-                credential: Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential], 
-                *, 
-                connection_verify: Optional[str] = ..., 
-                custom_endpoint_address: Optional[str] = ..., 
-                http_proxy: Optional[Dict] = ..., 
-                logging_enable: Optional[bool] = ..., 
-                retry_backoff_factor: float = 0.8, 
-                retry_backoff_max: float = 120, 
-                retry_mode: str = "exponential", 
-                retry_total: int = 3, 
-                ssl_context: Union[SSLContext, None] = ..., 
-                transport_type: TransportType = ..., 
-                uamqp_transport: bool = ..., 
-                user_agent: Optional[str] = ..., 
+                self,
+                fully_qualified_namespace: str,
+                credential: Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential],
+                *,
+                connection_verify: Optional[str] = ...,
+                custom_endpoint_address: Optional[str] = ...,
+                http_proxy: Optional[Dict] = ...,
+                logging_enable: Optional[bool] = ...,
+                retry_backoff_factor: float = 0.8,
+                retry_backoff_max: float = 120,
+                retry_mode: str = "exponential",
+                retry_total: int = 3,
+                ssl_context: Union[SSLContext, None] = ...,
+                transport_type: TransportType = ...,
+                uamqp_transport: bool = ...,
+                user_agent: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @classmethod
         def from_connection_string(
-                cls, 
-                conn_str: str, 
-                *, 
-                connection_verify: Optional[str] = ..., 
-                custom_endpoint_address: Optional[str] = ..., 
-                http_proxy: Optional[Dict] = ..., 
-                logging_enable: Optional[bool] = ..., 
-                retry_backoff_factor: float = 0.8, 
-                retry_backoff_max: float = 120, 
-                retry_mode: str = "exponential", 
-                retry_total: int = 3, 
-                ssl_context: Union[SSLContext, None] = ..., 
-                transport_type: TransportType = ..., 
-                uamqp_transport: bool = ..., 
-                user_agent: Optional[str] = ..., 
+                cls,
+                conn_str: str,
+                *,
+                connection_verify: Optional[str] = ...,
+                custom_endpoint_address: Optional[str] = ...,
+                http_proxy: Optional[Dict] = ...,
+                logging_enable: Optional[bool] = ...,
+                retry_backoff_factor: float = 0.8,
+                retry_backoff_max: float = 120,
+                retry_mode: str = "exponential",
+                retry_total: int = 3,
+                ssl_context: Union[SSLContext, None] = ...,
+                transport_type: TransportType = ...,
+                uamqp_transport: bool = ...,
+                user_agent: Optional[str] = ...,
                 **kwargs: Any
             ) -> ServiceBusClient: ...
 
         def close(self) -> None: ...
 
         def get_queue_receiver(
-                self, 
-                queue_name: str, 
-                *, 
-                auto_lock_renewer: Optional[AutoLockRenewer] = ..., 
-                client_identifier: Optional[str] = ..., 
-                max_wait_time: Optional[float] = ..., 
-                prefetch_count: int = 0, 
-                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK, 
-                session_id: Optional[Union[str, NextAvailableSessionType]] = ..., 
-                socket_timeout: Optional[float] = ..., 
-                sub_queue: Optional[Union[ServiceBusSubQueue, str]] = ..., 
+                self,
+                queue_name: str,
+                *,
+                auto_lock_renewer: Optional[AutoLockRenewer] = ...,
+                client_identifier: Optional[str] = ...,
+                max_wait_time: Optional[float] = ...,
+                prefetch_count: int = 0,
+                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+                session_id: Optional[Union[str, NextAvailableSessionType]] = ...,
+                socket_timeout: Optional[float] = ...,
+                sub_queue: Optional[Union[ServiceBusSubQueue, str]] = ...,
                 **kwargs: Any
             ) -> ServiceBusReceiver: ...
 
         def get_queue_sender(
-                self, 
-                queue_name: str, 
-                *, 
-                client_identifier: Optional[str] = ..., 
-                socket_timeout: Optional[float] = ..., 
+                self,
+                queue_name: str,
+                *,
+                client_identifier: Optional[str] = ...,
+                socket_timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> ServiceBusSender: ...
 
         def get_subscription_receiver(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                *, 
-                auto_lock_renewer: Optional[AutoLockRenewer] = ..., 
-                client_identifier: Optional[str] = ..., 
-                max_wait_time: Optional[float] = ..., 
-                prefetch_count: int = 0, 
-                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK, 
-                session_id: Optional[Union[str, NextAvailableSessionType]] = ..., 
-                socket_timeout: Optional[float] = ..., 
-                sub_queue: Optional[Union[ServiceBusSubQueue, str]] = ..., 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                *,
+                auto_lock_renewer: Optional[AutoLockRenewer] = ...,
+                client_identifier: Optional[str] = ...,
+                max_wait_time: Optional[float] = ...,
+                prefetch_count: int = 0,
+                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+                session_id: Optional[Union[str, NextAvailableSessionType]] = ...,
+                socket_timeout: Optional[float] = ...,
+                sub_queue: Optional[Union[ServiceBusSubQueue, str]] = ...,
                 **kwargs: Any
             ) -> ServiceBusReceiver: ...
 
         def get_topic_sender(
-                self, 
-                topic_name: str, 
-                *, 
-                client_identifier: Optional[str] = ..., 
-                socket_timeout: Optional[float] = ..., 
+                self,
+                topic_name: str,
+                *,
+                client_identifier: Optional[str] = ...,
+                socket_timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> ServiceBusSender: ...
 
         def list_queue_sessions(
-                self, 
-                queue_name: str, 
-                *, 
-                state_updated_after: Optional[datetime] = ..., 
+                self,
+                queue_name: str,
+                *,
+                state_updated_after: Optional[datetime] = ...,
                 timeout: Optional[float] = ...
             ) -> ItemPaged[str]: ...
 
         def list_subscription_sessions(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                *, 
-                state_updated_after: Optional[datetime] = ..., 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                *,
+                state_updated_after: Optional[datetime] = ...,
                 timeout: Optional[float] = ...
             ) -> ItemPaged[str]: ...
 
@@ -154,13 +168,13 @@ namespace azure.servicebus
         def __getitem__(self, key: str) -> Any: ...
 
         def __init__(
-                self, 
-                *, 
-                endpoint: str, 
-                entity_path: Optional[str] = ..., 
-                fully_qualified_namespace: str, 
-                shared_access_key: Optional[str] = ..., 
-                shared_access_key_name: Optional[str] = ..., 
+                self,
+                *,
+                endpoint: str,
+                entity_path: Optional[str] = ...,
+                fully_qualified_namespace: str,
+                shared_access_key: Optional[str] = ...,
+                shared_access_key_name: Optional[str] = ...,
                 shared_access_signature: Optional[str] = ...
             ): ...
 
@@ -171,16 +185,16 @@ namespace azure.servicebus
         def __repr__(self) -> str: ...
 
         def __setitem__(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 item: Any
             ) -> None: ...
 
         def __str__(self) -> str: ...
 
         def get(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 default: Optional[Any] = None
             ) -> Any: ...
 
@@ -191,8 +205,8 @@ namespace azure.servicebus
         def keys(self) -> List[str]: ...
 
         def update(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -218,21 +232,21 @@ namespace azure.servicebus
         property to: Optional[str]
 
         def __init__(
-                self, 
-                body: Optional[Union[str, bytes]], 
-                *, 
-                application_properties: Optional[Dict[Union[str, bytes], PrimitiveTypes]] = ..., 
-                content_type: Optional[str] = ..., 
-                correlation_id: Optional[str] = ..., 
-                message_id: Optional[str] = ..., 
-                partition_key: Optional[str] = ..., 
-                reply_to: Optional[str] = ..., 
-                reply_to_session_id: Optional[str] = ..., 
-                scheduled_enqueue_time_utc: Optional[datetime] = ..., 
-                session_id: Optional[str] = ..., 
-                subject: Optional[str] = ..., 
-                time_to_live: Optional[timedelta] = ..., 
-                to: Optional[str] = ..., 
+                self,
+                body: Optional[Union[str, bytes]],
+                *,
+                application_properties: Optional[Dict[Union[str, bytes], PrimitiveTypes]] = ...,
+                content_type: Optional[str] = ...,
+                correlation_id: Optional[str] = ...,
+                message_id: Optional[str] = ...,
+                partition_key: Optional[str] = ...,
+                reply_to: Optional[str] = ...,
+                reply_to_session_id: Optional[str] = ...,
+                scheduled_enqueue_time_utc: Optional[datetime] = ...,
+                session_id: Optional[str] = ...,
+                subject: Optional[str] = ...,
+                time_to_live: Optional[timedelta] = ...,
+                to: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -247,8 +261,8 @@ namespace azure.servicebus
         property size_in_bytes: int    # Read-only
 
         def __init__(
-                self, 
-                max_size_in_bytes: Optional[int] = None, 
+                self,
+                max_size_in_bytes: Optional[int] = None,
                 **kwargs: Any
             ) -> None: ...
 
@@ -303,10 +317,10 @@ namespace azure.servicebus
         def __getstate__(self) -> Dict[str, Any]: ...
 
         def __init__(
-                self, 
-                message: Union[Message, pyamqp_Message], 
-                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK, 
-                frame: Optional[TransferFrame] = None, 
+                self,
+                message: Union[Message, pyamqp_Message],
+                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+                frame: Optional[TransferFrame] = None,
                 **kwargs: Any
             ) -> None: ...
 
@@ -320,30 +334,30 @@ namespace azure.servicebus
         def from_bytes(cls, message: bytes) -> ServiceBusReceivedMessage: ...
 
 
-    class azure.servicebus.ServiceBusReceiver(BaseHandler, ReceiverMixin): implements ContextManager , Iterator 
+    class azure.servicebus.ServiceBusReceiver(BaseHandler, ReceiverMixin): implements ContextManager , Iterator
         property client_identifier: str    # Read-only
         property session: ServiceBusSession    # Read-only
         entity_path: str
         fully_qualified_namespace: str
 
         def __init__(
-                self, 
-                fully_qualified_namespace: str, 
-                credential: Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential], 
-                *, 
-                auto_lock_renewer: Optional[AutoLockRenewer] = ..., 
-                client_identifier: Optional[str] = ..., 
-                http_proxy: Optional[Dict] = ..., 
-                logging_enable: Optional[bool] = ..., 
-                max_wait_time: Optional[float] = ..., 
-                prefetch_count: int = 0, 
-                queue_name: Optional[str] = ..., 
-                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK, 
-                socket_timeout: Optional[float] = ..., 
-                subscription_name: Optional[str] = ..., 
-                topic_name: Optional[str] = ..., 
-                transport_type: TransportType = ..., 
-                user_agent: Optional[str] = ..., 
+                self,
+                fully_qualified_namespace: str,
+                credential: Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential],
+                *,
+                auto_lock_renewer: Optional[AutoLockRenewer] = ...,
+                client_identifier: Optional[str] = ...,
+                http_proxy: Optional[Dict] = ...,
+                logging_enable: Optional[bool] = ...,
+                max_wait_time: Optional[float] = ...,
+                prefetch_count: int = 0,
+                queue_name: Optional[str] = ...,
+                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+                socket_timeout: Optional[float] = ...,
+                subscription_name: Optional[str] = ...,
+                topic_name: Optional[str] = ...,
+                transport_type: TransportType = ...,
+                user_agent: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -356,74 +370,90 @@ namespace azure.servicebus
         def complete_message(self, message: ServiceBusReceivedMessage) -> None: ...
 
         def dead_letter_message(
-                self, 
-                message: ServiceBusReceivedMessage, 
-                reason: Optional[str] = None, 
+                self,
+                message: ServiceBusReceivedMessage,
+                reason: Optional[str] = None,
                 error_description: Optional[str] = None
             ) -> None: ...
 
         def defer_message(self, message: ServiceBusReceivedMessage) -> None: ...
 
+        def delete_messages(
+                self,
+                message_count: int,
+                *,
+                before_enqueued_time: Optional[datetime] = ...,
+                timeout: Optional[float] = ...
+            ) -> DeleteMessagesResult: ...
+
         def peek_messages(
-                self, 
-                max_message_count: int = 1, 
-                *, 
-                sequence_number: int = 0, 
-                timeout: Optional[float] = ..., 
+                self,
+                max_message_count: int = 1,
+                *,
+                sequence_number: int = 0,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> List[ServiceBusReceivedMessage]: ...
 
+        def purge_messages(
+                self,
+                *,
+                before_enqueued_time: Optional[datetime] = ...,
+                max_message_count_per_batch: int = 500,
+                timeout: Optional[float] = ...
+            ) -> PurgeMessagesResult: ...
+
         def receive_deferred_messages(
-                self, 
-                sequence_numbers: Union[int, List[int]], 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                sequence_numbers: Union[int, List[int]],
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> List[ServiceBusReceivedMessage]: ...
 
         def receive_messages(
-                self, 
-                max_message_count: Optional[int] = 1, 
+                self,
+                max_message_count: Optional[int] = 1,
                 max_wait_time: Optional[float] = None
             ) -> List[ServiceBusReceivedMessage]: ...
 
         def renew_message_lock(
-                self, 
-                message: ServiceBusReceivedMessage, 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                message: ServiceBusReceivedMessage,
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> datetime: ...
 
 
-    class azure.servicebus.ServiceBusSender(BaseHandler, SenderMixin): implements ContextManager 
+    class azure.servicebus.ServiceBusSender(BaseHandler, SenderMixin): implements ContextManager
         property client_identifier: str    # Read-only
         entity_name: str
         fully_qualified_namespace: str
 
         def __init__(
-                self, 
-                fully_qualified_namespace: str, 
-                credential: Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential], 
-                *, 
-                client_identifier: Optional[str] = ..., 
-                http_proxy: Optional[Dict] = ..., 
-                logging_enable: Optional[bool] = ..., 
-                queue_name: Optional[str] = ..., 
-                socket_timeout: Optional[float] = ..., 
-                topic_name: Optional[str] = ..., 
-                transport_type: TransportType = ..., 
-                user_agent: Optional[str] = ..., 
+                self,
+                fully_qualified_namespace: str,
+                credential: Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential],
+                *,
+                client_identifier: Optional[str] = ...,
+                http_proxy: Optional[Dict] = ...,
+                logging_enable: Optional[bool] = ...,
+                queue_name: Optional[str] = ...,
+                socket_timeout: Optional[float] = ...,
+                topic_name: Optional[str] = ...,
+                transport_type: TransportType = ...,
+                user_agent: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         def __str__(self) -> str: ...
 
         def cancel_scheduled_messages(
-                self, 
-                sequence_numbers: Union[int, List[int]], 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                sequence_numbers: Union[int, List[int]],
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -432,19 +462,19 @@ namespace azure.servicebus
         def create_message_batch(self, max_size_in_bytes: Optional[int] = None) -> ServiceBusMessageBatch: ...
 
         def schedule_messages(
-                self, 
-                messages: MessageTypes, 
-                schedule_time_utc: datetime, 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                messages: MessageTypes,
+                schedule_time_utc: datetime,
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> List[int]: ...
 
         def send_messages(
-                self, 
-                message: Union[MessageTypes, ServiceBusMessageBatch], 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                message: Union[MessageTypes, ServiceBusMessageBatch],
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -455,30 +485,30 @@ namespace azure.servicebus
         auto_renew_error: Union[AutoLockRenewTimeout, AutoLockRenewFailed]
 
         def __init__(
-                self, 
-                session_id: str, 
+                self,
+                session_id: str,
                 receiver: Union[ServiceBusReceiver, ServiceBusReceiverAsync]
             ) -> None: ...
 
         def get_state(
-                self, 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> bytes: ...
 
         def renew_lock(
-                self, 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> datetime: ...
 
         def set_state(
-                self, 
-                state: Optional[Union[str, bytes, bytearray]], 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                state: Optional[Union[str, bytes, bytearray]],
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -499,162 +529,162 @@ namespace azure.servicebus
 
 namespace azure.servicebus.aio
 
-    class azure.servicebus.aio.AutoLockRenewer: implements AsyncContextManager 
+    class azure.servicebus.aio.AutoLockRenewer: implements AsyncContextManager
 
         def __init__(
-                self, 
-                max_lock_renewal_duration: float = 300, 
-                on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None, 
+                self,
+                max_lock_renewal_duration: float = 300,
+                on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None,
                 loop: Optional[AbstractEventLoop] = None
             ) -> None: ...
 
         async def close(self) -> None: ...
 
         def register(
-                self, 
-                receiver: ServiceBusReceiver, 
-                renewable: Union[ServiceBusReceivedMessage, ServiceBusSession], 
-                max_lock_renewal_duration: Optional[float] = None, 
+                self,
+                receiver: ServiceBusReceiver,
+                renewable: Union[ServiceBusReceivedMessage, ServiceBusSession],
+                max_lock_renewal_duration: Optional[float] = None,
                 on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None
             ) -> None: ...
 
 
-    class azure.servicebus.aio.ServiceBusClient: implements AsyncContextManager 
+    class azure.servicebus.aio.ServiceBusClient: implements AsyncContextManager
         fully_qualified_namespace: str
 
         def __init__(
-                self, 
-                fully_qualified_namespace: str, 
-                credential: Union[AsyncTokenCredential, AzureSasCredential, AzureNamedKeyCredential], 
-                *, 
-                connection_verify: Optional[str] = ..., 
-                custom_endpoint_address: Optional[str] = ..., 
-                http_proxy: Optional[Dict] = ..., 
-                logging_enable: Optional[bool] = ..., 
-                retry_backoff_factor: float = 0.8, 
-                retry_backoff_max: float = 120, 
-                retry_mode: str = "exponential", 
-                retry_total: int = 3, 
-                ssl_context: Union[SSLContext, None] = ..., 
-                transport_type: TransportType = ..., 
-                uamqp_transport: bool = ..., 
-                user_agent: Optional[str] = ..., 
+                self,
+                fully_qualified_namespace: str,
+                credential: Union[AsyncTokenCredential, AzureSasCredential, AzureNamedKeyCredential],
+                *,
+                connection_verify: Optional[str] = ...,
+                custom_endpoint_address: Optional[str] = ...,
+                http_proxy: Optional[Dict] = ...,
+                logging_enable: Optional[bool] = ...,
+                retry_backoff_factor: float = 0.8,
+                retry_backoff_max: float = 120,
+                retry_mode: str = "exponential",
+                retry_total: int = 3,
+                ssl_context: Union[SSLContext, None] = ...,
+                transport_type: TransportType = ...,
+                uamqp_transport: bool = ...,
+                user_agent: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         @classmethod
         def from_connection_string(
-                cls, 
-                conn_str: str, 
-                *, 
-                connection_verify: Optional[str] = ..., 
-                custom_endpoint_address: Optional[str] = ..., 
-                http_proxy: Optional[Dict] = ..., 
-                logging_enable: Optional[bool] = ..., 
-                retry_backoff_factor: float = 0.8, 
-                retry_backoff_max: float = 120, 
-                retry_mode: str = "exponential", 
-                retry_total: int = 3, 
-                ssl_context: Union[SSLContext, None] = ..., 
-                transport_type: TransportType = ..., 
-                uamqp_transport: bool = ..., 
-                user_agent: Optional[str] = ..., 
+                cls,
+                conn_str: str,
+                *,
+                connection_verify: Optional[str] = ...,
+                custom_endpoint_address: Optional[str] = ...,
+                http_proxy: Optional[Dict] = ...,
+                logging_enable: Optional[bool] = ...,
+                retry_backoff_factor: float = 0.8,
+                retry_backoff_max: float = 120,
+                retry_mode: str = "exponential",
+                retry_total: int = 3,
+                ssl_context: Union[SSLContext, None] = ...,
+                transport_type: TransportType = ...,
+                uamqp_transport: bool = ...,
+                user_agent: Optional[str] = ...,
                 **kwargs: Any
             ) -> ServiceBusClient: ...
 
         async def close(self) -> None: ...
 
         def get_queue_receiver(
-                self, 
-                queue_name: str, 
-                *, 
-                auto_lock_renewer: Optional[AutoLockRenewer] = ..., 
-                client_identifier: Optional[str] = ..., 
-                max_wait_time: Optional[float] = ..., 
-                prefetch_count: int = 0, 
-                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK, 
-                session_id: Optional[Union[str, NextAvailableSessionType]] = ..., 
-                socket_timeout: Optional[float] = ..., 
-                sub_queue: Optional[Union[ServiceBusSubQueue, str]] = ..., 
+                self,
+                queue_name: str,
+                *,
+                auto_lock_renewer: Optional[AutoLockRenewer] = ...,
+                client_identifier: Optional[str] = ...,
+                max_wait_time: Optional[float] = ...,
+                prefetch_count: int = 0,
+                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+                session_id: Optional[Union[str, NextAvailableSessionType]] = ...,
+                socket_timeout: Optional[float] = ...,
+                sub_queue: Optional[Union[ServiceBusSubQueue, str]] = ...,
                 **kwargs: Any
             ) -> ServiceBusReceiver: ...
 
         def get_queue_sender(
-                self, 
-                queue_name: str, 
-                *, 
-                client_identifier: Optional[str] = ..., 
-                socket_timeout: Optional[float] = ..., 
+                self,
+                queue_name: str,
+                *,
+                client_identifier: Optional[str] = ...,
+                socket_timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> ServiceBusSender: ...
 
         def get_subscription_receiver(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                *, 
-                auto_lock_renewer: Optional[AutoLockRenewer] = ..., 
-                client_identifier: Optional[str] = ..., 
-                max_wait_time: Optional[float] = ..., 
-                prefetch_count: int = 0, 
-                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK, 
-                session_id: Optional[Union[str, NextAvailableSessionType]] = ..., 
-                socket_timeout: Optional[float] = ..., 
-                sub_queue: Optional[Union[ServiceBusSubQueue, str]] = ..., 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                *,
+                auto_lock_renewer: Optional[AutoLockRenewer] = ...,
+                client_identifier: Optional[str] = ...,
+                max_wait_time: Optional[float] = ...,
+                prefetch_count: int = 0,
+                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+                session_id: Optional[Union[str, NextAvailableSessionType]] = ...,
+                socket_timeout: Optional[float] = ...,
+                sub_queue: Optional[Union[ServiceBusSubQueue, str]] = ...,
                 **kwargs: Any
             ) -> ServiceBusReceiver: ...
 
         def get_topic_sender(
-                self, 
-                topic_name: str, 
-                *, 
-                client_identifier: Optional[str] = ..., 
-                socket_timeout: Optional[float] = ..., 
+                self,
+                topic_name: str,
+                *,
+                client_identifier: Optional[str] = ...,
+                socket_timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> ServiceBusSender: ...
 
         def list_queue_sessions(
-                self, 
-                queue_name: str, 
-                *, 
-                state_updated_after: Optional[datetime] = ..., 
+                self,
+                queue_name: str,
+                *,
+                state_updated_after: Optional[datetime] = ...,
                 timeout: Optional[float] = ...
             ) -> AsyncItemPaged[str]: ...
 
         def list_subscription_sessions(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                *, 
-                state_updated_after: Optional[datetime] = ..., 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                *,
+                state_updated_after: Optional[datetime] = ...,
                 timeout: Optional[float] = ...
             ) -> AsyncItemPaged[str]: ...
 
 
-    class azure.servicebus.aio.ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin): implements AsyncContextManager , AsyncIterable , AsyncIterator 
+    class azure.servicebus.aio.ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin): implements AsyncContextManager , AsyncIterable , AsyncIterator
         property client_identifier: str    # Read-only
         property session: ServiceBusSession    # Read-only
         entity_path: str
         fully_qualified_namespace: str
 
         def __init__(
-                self, 
-                fully_qualified_namespace: str, 
-                credential: Union[AsyncTokenCredential, AzureSasCredential, AzureNamedKeyCredential], 
-                *, 
-                auto_lock_renewer: Optional[AutoLockRenewer] = ..., 
-                client_identifier: Optional[str] = ..., 
-                http_proxy: Optional[Dict] = ..., 
-                logging_enable: Optional[bool] = ..., 
-                max_wait_time: Optional[float] = ..., 
-                prefetch_count: int = 0, 
-                queue_name: Optional[str] = ..., 
-                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK, 
-                socket_timeout: Optional[float] = ..., 
-                subscription_name: Optional[str] = ..., 
-                topic_name: Optional[str] = ..., 
-                transport_type: TransportType = ..., 
-                user_agent: Optional[str] = ..., 
+                self,
+                fully_qualified_namespace: str,
+                credential: Union[AsyncTokenCredential, AzureSasCredential, AzureNamedKeyCredential],
+                *,
+                auto_lock_renewer: Optional[AutoLockRenewer] = ...,
+                client_identifier: Optional[str] = ...,
+                http_proxy: Optional[Dict] = ...,
+                logging_enable: Optional[bool] = ...,
+                max_wait_time: Optional[float] = ...,
+                prefetch_count: int = 0,
+                queue_name: Optional[str] = ...,
+                receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
+                socket_timeout: Optional[float] = ...,
+                subscription_name: Optional[str] = ...,
+                topic_name: Optional[str] = ...,
+                transport_type: TransportType = ...,
+                user_agent: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -667,74 +697,90 @@ namespace azure.servicebus.aio
         async def complete_message(self, message: ServiceBusReceivedMessage) -> None: ...
 
         async def dead_letter_message(
-                self, 
-                message: ServiceBusReceivedMessage, 
-                reason: Optional[str] = None, 
+                self,
+                message: ServiceBusReceivedMessage,
+                reason: Optional[str] = None,
                 error_description: Optional[str] = None
             ) -> None: ...
 
         async def defer_message(self, message: ServiceBusReceivedMessage) -> None: ...
 
+        async def delete_messages(
+                self,
+                message_count: int,
+                *,
+                before_enqueued_time: Optional[datetime] = ...,
+                timeout: Optional[float] = ...
+            ) -> DeleteMessagesResult: ...
+
         async def peek_messages(
-                self, 
-                max_message_count: int = 1, 
-                *, 
-                sequence_number: int = 0, 
-                timeout: Optional[float] = ..., 
+                self,
+                max_message_count: int = 1,
+                *,
+                sequence_number: int = 0,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> List[ServiceBusReceivedMessage]: ...
 
+        async def purge_messages(
+                self,
+                *,
+                before_enqueued_time: Optional[datetime] = ...,
+                max_message_count_per_batch: int = 500,
+                timeout: Optional[float] = ...
+            ) -> PurgeMessagesResult: ...
+
         async def receive_deferred_messages(
-                self, 
-                sequence_numbers: Union[int, List[int]], 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                sequence_numbers: Union[int, List[int]],
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> List[ServiceBusReceivedMessage]: ...
 
         async def receive_messages(
-                self, 
-                max_message_count: Optional[int] = 1, 
+                self,
+                max_message_count: Optional[int] = 1,
                 max_wait_time: Optional[float] = None
             ) -> List[ServiceBusReceivedMessage]: ...
 
         async def renew_message_lock(
-                self, 
-                message: ServiceBusReceivedMessage, 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                message: ServiceBusReceivedMessage,
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> datetime: ...
 
 
-    class azure.servicebus.aio.ServiceBusSender(BaseHandler, SenderMixin): implements AsyncContextManager 
+    class azure.servicebus.aio.ServiceBusSender(BaseHandler, SenderMixin): implements AsyncContextManager
         property client_identifier: str    # Read-only
         entity_name: str
         fully_qualified_namespace: str
 
         def __init__(
-                self, 
-                fully_qualified_namespace: str, 
-                credential: Union[AsyncTokenCredential, AzureSasCredential, AzureNamedKeyCredential], 
-                *, 
-                client_identifier: Optional[str] = ..., 
-                http_proxy: Optional[Dict] = ..., 
-                logging_enable: Optional[bool] = ..., 
-                queue_name: Optional[str] = ..., 
-                socket_timeout: Optional[float] = ..., 
-                topic_name: Optional[str] = ..., 
-                transport_type: TransportType = ..., 
-                user_agent: Optional[str] = ..., 
+                self,
+                fully_qualified_namespace: str,
+                credential: Union[AsyncTokenCredential, AzureSasCredential, AzureNamedKeyCredential],
+                *,
+                client_identifier: Optional[str] = ...,
+                http_proxy: Optional[Dict] = ...,
+                logging_enable: Optional[bool] = ...,
+                queue_name: Optional[str] = ...,
+                socket_timeout: Optional[float] = ...,
+                topic_name: Optional[str] = ...,
+                transport_type: TransportType = ...,
+                user_agent: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
         def __str__(self) -> str: ...
 
         async def cancel_scheduled_messages(
-                self, 
-                sequence_numbers: Union[int, List[int]], 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                sequence_numbers: Union[int, List[int]],
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -743,19 +789,19 @@ namespace azure.servicebus.aio
         async def create_message_batch(self, max_size_in_bytes: Optional[int] = None) -> ServiceBusMessageBatch: ...
 
         async def schedule_messages(
-                self, 
-                messages: MessageTypes, 
-                schedule_time_utc: datetime, 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                messages: MessageTypes,
+                schedule_time_utc: datetime,
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> List[int]: ...
 
         async def send_messages(
-                self, 
-                message: Union[MessageTypes, ServiceBusMessageBatch], 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                message: Union[MessageTypes, ServiceBusMessageBatch],
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -765,205 +811,205 @@ namespace azure.servicebus.aio
         property session_id: str    # Read-only
 
         def __init__(
-                self, 
-                session_id: str, 
+                self,
+                session_id: str,
                 receiver: Union[ServiceBusReceiver, ServiceBusReceiverAsync]
             ) -> None: ...
 
         async def get_state(
-                self, 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> bytes: ...
 
         async def renew_lock(
-                self, 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> datetime: ...
 
         async def set_state(
-                self, 
-                state: Optional[Union[str, bytes, bytearray]], 
-                *, 
-                timeout: Optional[float] = ..., 
+                self,
+                state: Optional[Union[str, bytes, bytearray]],
+                *,
+                timeout: Optional[float] = ...,
                 **kwargs: Any
             ) -> None: ...
 
 
 namespace azure.servicebus.aio.management
 
-    class azure.servicebus.aio.management.ServiceBusAdministrationClient: implements AsyncContextManager 
+    class azure.servicebus.aio.management.ServiceBusAdministrationClient: implements AsyncContextManager
 
         def __init__(
-                self, 
-                fully_qualified_namespace: str, 
-                credential: AsyncTokenCredential, 
-                *, 
-                api_version: Union[str, ApiVersion] = DEFAULT_VERSION, 
+                self,
+                fully_qualified_namespace: str,
+                credential: AsyncTokenCredential,
+                *,
+                api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
                 **kwargs: Any
             ) -> None: ...
 
         @classmethod
         def from_connection_string(
-                cls, 
-                conn_str: str, 
-                *, 
-                api_version: Union[str, ApiVersion] = DEFAULT_VERSION, 
+                cls,
+                conn_str: str,
+                *,
+                api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
                 **kwargs: Any
             ) -> ServiceBusAdministrationClient: ...
 
         async def close(self) -> None: ...
 
         async def create_queue(
-                self, 
-                queue_name: str, 
-                *, 
-                authorization_rules: Optional[List[AuthorizationRule]] = ..., 
-                auto_delete_on_idle: Optional[Union[timedelta, str]] = ..., 
-                dead_lettering_on_message_expiration: Optional[bool] = ..., 
-                default_message_time_to_live: Optional[Union[timedelta, str]] = ..., 
-                duplicate_detection_history_time_window: Optional[Union[timedelta, str]] = ..., 
-                enable_batched_operations: Optional[bool] = ..., 
-                enable_express: Optional[bool] = ..., 
-                enable_partitioning: Optional[bool] = ..., 
-                forward_dead_lettered_messages_to: Optional[str] = ..., 
-                forward_to: Optional[str] = ..., 
-                lock_duration: Optional[Union[timedelta, str]] = ..., 
-                max_delivery_count: Optional[int] = ..., 
-                max_message_size_in_kilobytes: Optional[int] = ..., 
-                max_size_in_megabytes: Optional[int] = ..., 
-                requires_duplicate_detection: Optional[bool] = ..., 
-                requires_session: Optional[bool] = ..., 
-                user_metadata: Optional[str] = ..., 
+                self,
+                queue_name: str,
+                *,
+                authorization_rules: Optional[List[AuthorizationRule]] = ...,
+                auto_delete_on_idle: Optional[Union[timedelta, str]] = ...,
+                dead_lettering_on_message_expiration: Optional[bool] = ...,
+                default_message_time_to_live: Optional[Union[timedelta, str]] = ...,
+                duplicate_detection_history_time_window: Optional[Union[timedelta, str]] = ...,
+                enable_batched_operations: Optional[bool] = ...,
+                enable_express: Optional[bool] = ...,
+                enable_partitioning: Optional[bool] = ...,
+                forward_dead_lettered_messages_to: Optional[str] = ...,
+                forward_to: Optional[str] = ...,
+                lock_duration: Optional[Union[timedelta, str]] = ...,
+                max_delivery_count: Optional[int] = ...,
+                max_message_size_in_kilobytes: Optional[int] = ...,
+                max_size_in_megabytes: Optional[int] = ...,
+                requires_duplicate_detection: Optional[bool] = ...,
+                requires_session: Optional[bool] = ...,
+                user_metadata: Optional[str] = ...,
                 **kwargs: Any
             ) -> QueueProperties: ...
 
         async def create_rule(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                rule_name: str, 
-                *, 
-                action: Optional[SqlRuleAction] = ..., 
-                filter: Union[CorrelationRuleFilter, SqlRuleFilter] = TrueRuleFilter(), 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                rule_name: str,
+                *,
+                action: Optional[SqlRuleAction] = ...,
+                filter: Union[CorrelationRuleFilter, SqlRuleFilter] = TrueRuleFilter(),
                 **kwargs: Any
             ) -> RuleProperties: ...
 
         async def create_subscription(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                *, 
-                auto_delete_on_idle: Optional[Union[timedelta, str]] = ..., 
-                dead_lettering_on_filter_evaluation_exceptions: Optional[bool] = ..., 
-                dead_lettering_on_message_expiration: Optional[bool] = ..., 
-                default_message_time_to_live: Optional[Union[timedelta, str]] = ..., 
-                enable_batched_operations: Optional[bool] = ..., 
-                forward_dead_lettered_messages_to: Optional[str] = ..., 
-                forward_to: Optional[str] = ..., 
-                lock_duration: Optional[Union[timedelta, str]] = ..., 
-                max_delivery_count: Optional[int] = ..., 
-                requires_session: Optional[bool] = ..., 
-                user_metadata: Optional[str] = ..., 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                *,
+                auto_delete_on_idle: Optional[Union[timedelta, str]] = ...,
+                dead_lettering_on_filter_evaluation_exceptions: Optional[bool] = ...,
+                dead_lettering_on_message_expiration: Optional[bool] = ...,
+                default_message_time_to_live: Optional[Union[timedelta, str]] = ...,
+                enable_batched_operations: Optional[bool] = ...,
+                forward_dead_lettered_messages_to: Optional[str] = ...,
+                forward_to: Optional[str] = ...,
+                lock_duration: Optional[Union[timedelta, str]] = ...,
+                max_delivery_count: Optional[int] = ...,
+                requires_session: Optional[bool] = ...,
+                user_metadata: Optional[str] = ...,
                 **kwargs: Any
             ) -> SubscriptionProperties: ...
 
         async def create_topic(
-                self, 
-                topic_name: str, 
-                *, 
-                authorization_rules: Optional[List[AuthorizationRule]] = ..., 
-                auto_delete_on_idle: Optional[Union[timedelta, str]] = ..., 
-                default_message_time_to_live: Optional[Union[timedelta, str]] = ..., 
-                duplicate_detection_history_time_window: Optional[Union[timedelta, str]] = ..., 
-                enable_batched_operations: Optional[bool] = ..., 
-                enable_express: Optional[bool] = ..., 
-                enable_partitioning: Optional[bool] = ..., 
-                filtering_messages_before_publishing: Optional[bool] = ..., 
-                max_message_size_in_kilobytes: Optional[int] = ..., 
-                max_size_in_megabytes: Optional[int] = ..., 
-                requires_duplicate_detection: Optional[bool] = ..., 
-                size_in_bytes: Optional[int] = ..., 
-                support_ordering: Optional[bool] = ..., 
-                user_metadata: Optional[str] = ..., 
+                self,
+                topic_name: str,
+                *,
+                authorization_rules: Optional[List[AuthorizationRule]] = ...,
+                auto_delete_on_idle: Optional[Union[timedelta, str]] = ...,
+                default_message_time_to_live: Optional[Union[timedelta, str]] = ...,
+                duplicate_detection_history_time_window: Optional[Union[timedelta, str]] = ...,
+                enable_batched_operations: Optional[bool] = ...,
+                enable_express: Optional[bool] = ...,
+                enable_partitioning: Optional[bool] = ...,
+                filtering_messages_before_publishing: Optional[bool] = ...,
+                max_message_size_in_kilobytes: Optional[int] = ...,
+                max_size_in_megabytes: Optional[int] = ...,
+                requires_duplicate_detection: Optional[bool] = ...,
+                size_in_bytes: Optional[int] = ...,
+                support_ordering: Optional[bool] = ...,
+                user_metadata: Optional[str] = ...,
                 **kwargs: Any
             ) -> TopicProperties: ...
 
         async def delete_queue(
-                self, 
-                queue_name: str, 
+                self,
+                queue_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         async def delete_rule(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                rule_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                rule_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         async def delete_subscription(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         async def delete_topic(
-                self, 
-                topic_name: str, 
+                self,
+                topic_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         async def get_namespace_properties(self, **kwargs: Any) -> NamespaceProperties: ...
 
         async def get_queue(
-                self, 
-                queue_name: str, 
+                self,
+                queue_name: str,
                 **kwargs: Any
             ) -> QueueProperties: ...
 
         async def get_queue_runtime_properties(
-                self, 
-                queue_name: str, 
+                self,
+                queue_name: str,
                 **kwargs: Any
             ) -> QueueRuntimeProperties: ...
 
         async def get_rule(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                rule_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                rule_name: str,
                 **kwargs: Any
             ) -> RuleProperties: ...
 
         async def get_subscription(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
                 **kwargs: Any
             ) -> SubscriptionProperties: ...
 
         async def get_subscription_runtime_properties(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
                 **kwargs: Any
             ) -> SubscriptionRuntimeProperties: ...
 
         async def get_topic(
-                self, 
-                topic_name: str, 
+                self,
+                topic_name: str,
                 **kwargs: Any
             ) -> TopicProperties: ...
 
         async def get_topic_runtime_properties(
-                self, 
-                topic_name: str, 
+                self,
+                topic_name: str,
                 **kwargs: Any
             ) -> TopicRuntimeProperties: ...
 
@@ -972,21 +1018,21 @@ namespace azure.servicebus.aio.management
         def list_queues_runtime_properties(self, **kwargs: Any) -> AsyncItemPaged[QueueRuntimeProperties]: ...
 
         def list_rules(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
                 **kwargs: Any
             ) -> AsyncItemPaged[RuleProperties]: ...
 
         def list_subscriptions(
-                self, 
-                topic_name: str, 
+                self,
+                topic_name: str,
                 **kwargs: Any
             ) -> AsyncItemPaged[SubscriptionProperties]: ...
 
         def list_subscriptions_runtime_properties(
-                self, 
-                topic_name: str, 
+                self,
+                topic_name: str,
                 **kwargs: Any
             ) -> AsyncItemPaged[SubscriptionRuntimeProperties]: ...
 
@@ -995,29 +1041,29 @@ namespace azure.servicebus.aio.management
         def list_topics_runtime_properties(self, **kwargs: Any) -> AsyncItemPaged[TopicRuntimeProperties]: ...
 
         async def update_queue(
-                self, 
-                queue: Union[QueueProperties, Mapping[str, Any]], 
+                self,
+                queue: Union[QueueProperties, Mapping[str, Any]],
                 **kwargs: Any
             ) -> None: ...
 
         async def update_rule(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                rule: Union[RuleProperties, Mapping[str, Any]], 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                rule: Union[RuleProperties, Mapping[str, Any]],
                 **kwargs: Any
             ) -> None: ...
 
         async def update_subscription(
-                self, 
-                topic_name: str, 
-                subscription: Union[SubscriptionProperties, Mapping[str, Any]], 
+                self,
+                topic_name: str,
+                subscription: Union[SubscriptionProperties, Mapping[str, Any]],
                 **kwargs: Any
             ) -> None: ...
 
         async def update_topic(
-                self, 
-                topic: Union[TopicProperties, Mapping[str, Any]], 
+                self,
+                topic: Union[TopicProperties, Mapping[str, Any]],
                 **kwargs: Any
             ) -> None: ...
 
@@ -1035,17 +1081,17 @@ namespace azure.servicebus.amqp
         property properties: Optional[AmqpMessageProperties]
 
         def __init__(
-                self, 
-                *, 
-                annotations: Optional[Dict[str, Any]] = ..., 
-                application_properties: Optional[Dict[str, Any]] = ..., 
-                data_body: Union[str, bytes, list[str, bytes]] = ..., 
-                delivery_annotations: Optional[Dict[str, Any]] = ..., 
-                footer: Optional[Dict[str, Any]] = ..., 
-                header: Optional[Union[AmqpMessageHeader, Mapping[str, Any]]] = ..., 
-                properties: Optional[Union[AmqpMessageProperties, Mapping[str, Any]]] = ..., 
-                sequence_body: list[any] = ..., 
-                value_body: any = ..., 
+                self,
+                *,
+                annotations: Optional[Dict[str, Any]] = ...,
+                application_properties: Optional[Dict[str, Any]] = ...,
+                data_body: Union[str, bytes, list[str, bytes]] = ...,
+                delivery_annotations: Optional[Dict[str, Any]] = ...,
+                footer: Optional[Dict[str, Any]] = ...,
+                header: Optional[Union[AmqpMessageHeader, Mapping[str, Any]]] = ...,
+                properties: Optional[Union[AmqpMessageProperties, Mapping[str, Any]]] = ...,
+                sequence_body: list[any] = ...,
+                value_body: any = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -1076,13 +1122,13 @@ namespace azure.servicebus.amqp
         def __getitem__(self, key: str) -> Any: ...
 
         def __init__(
-                self, 
-                *, 
-                delivery_count: Optional[int] = ..., 
-                durable: Optional[bool] = ..., 
-                first_acquirer: Optional[bool] = ..., 
-                priority: Optional[int] = ..., 
-                time_to_live: Optional[int] = ..., 
+                self,
+                *,
+                delivery_count: Optional[int] = ...,
+                durable: Optional[bool] = ...,
+                first_acquirer: Optional[bool] = ...,
+                priority: Optional[int] = ...,
+                time_to_live: Optional[int] = ...,
                 **kwargs: Any
             ): ...
 
@@ -1093,16 +1139,16 @@ namespace azure.servicebus.amqp
         def __repr__(self) -> str: ...
 
         def __setitem__(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 item: Any
             ) -> None: ...
 
         def __str__(self) -> str: ...
 
         def get(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 default: Optional[Any] = None
             ) -> Any: ...
 
@@ -1113,8 +1159,8 @@ namespace azure.servicebus.amqp
         def keys(self) -> List[str]: ...
 
         def update(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -1145,21 +1191,21 @@ namespace azure.servicebus.amqp
         def __getitem__(self, key: str) -> Any: ...
 
         def __init__(
-                self, 
-                *, 
-                absolute_expiry_time: Optional[int] = ..., 
-                content_encoding: Optional[Union[str, bytes]] = ..., 
-                content_type: Optional[Union[str, bytes]] = ..., 
-                correlation_id: Optional[Union[str, bytes]] = ..., 
-                creation_time: Optional[int] = ..., 
-                group_id: Optional[Union[str, bytes]] = ..., 
-                group_sequence: Optional[int] = ..., 
-                message_id: Optional[Union[str, bytes, uuid.UUID]] = ..., 
-                reply_to: Optional[Union[str, bytes]] = ..., 
-                reply_to_group_id: Optional[Union[str, bytes]] = ..., 
-                subject: Optional[Union[str, bytes]] = ..., 
-                to: Optional[Union[str, bytes]] = ..., 
-                user_id: Optional[Union[str, bytes]] = ..., 
+                self,
+                *,
+                absolute_expiry_time: Optional[int] = ...,
+                content_encoding: Optional[Union[str, bytes]] = ...,
+                content_type: Optional[Union[str, bytes]] = ...,
+                correlation_id: Optional[Union[str, bytes]] = ...,
+                creation_time: Optional[int] = ...,
+                group_id: Optional[Union[str, bytes]] = ...,
+                group_sequence: Optional[int] = ...,
+                message_id: Optional[Union[str, bytes, uuid.UUID]] = ...,
+                reply_to: Optional[Union[str, bytes]] = ...,
+                reply_to_group_id: Optional[Union[str, bytes]] = ...,
+                subject: Optional[Union[str, bytes]] = ...,
+                to: Optional[Union[str, bytes]] = ...,
+                user_id: Optional[Union[str, bytes]] = ...,
                 **kwargs: Any
             ): ...
 
@@ -1170,16 +1216,16 @@ namespace azure.servicebus.amqp
         def __repr__(self) -> str: ...
 
         def __setitem__(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 item: Any
             ) -> None: ...
 
         def __str__(self) -> str: ...
 
         def get(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 default: Optional[Any] = None
             ) -> Any: ...
 
@@ -1190,8 +1236,8 @@ namespace azure.servicebus.amqp
         def keys(self) -> List[str]: ...
 
         def update(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -1203,9 +1249,9 @@ namespace azure.servicebus.exceptions
     class azure.servicebus.exceptions.AutoLockRenewFailed(ServiceBusError):
 
         def __init__(
-                self, 
-                message: Optional[Union[str, bytes]], 
-                *args: Any, 
+                self,
+                message: Optional[Union[str, bytes]],
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -1213,9 +1259,9 @@ namespace azure.servicebus.exceptions
     class azure.servicebus.exceptions.AutoLockRenewTimeout(ServiceBusError):
 
         def __init__(
-                self, 
-                message: Optional[Union[str, bytes]], 
-                *args: Any, 
+                self,
+                message: Optional[Union[str, bytes]],
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -1288,11 +1334,11 @@ namespace azure.servicebus.exceptions
         message: str
 
         def __init__(
-                self, 
-                message: Optional[Union[str, bytes]], 
-                *args: Any, 
-                *, 
-                error: Exception = ..., 
+                self,
+                message: Optional[Union[str, bytes]],
+                *args: Any,
+                *,
+                error: Exception = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -1334,16 +1380,16 @@ namespace azure.servicebus.management
     class azure.servicebus.management.AuthorizationRule:
 
         def __init__(
-                self, 
-                *, 
-                claim_type: Optional[str] = ..., 
-                claim_value: Optional[str] = ..., 
-                created_at_utc: Optional[datetime] = ..., 
-                key_name: Optional[str] = ..., 
-                modified_at_utc: Optional[datetime] = ..., 
-                primary_key: Optional[str] = ..., 
-                rights: Optional[List[Union[str, AccessRights]]] = ..., 
-                secondary_key: Optional[str] = ..., 
+                self,
+                *,
+                claim_type: Optional[str] = ...,
+                claim_value: Optional[str] = ...,
+                created_at_utc: Optional[datetime] = ...,
+                key_name: Optional[str] = ...,
+                modified_at_utc: Optional[datetime] = ...,
+                primary_key: Optional[str] = ...,
+                rights: Optional[List[Union[str, AccessRights]]] = ...,
+                secondary_key: Optional[str] = ...,
                 type: Optional[str] = ...
             ) -> None: ...
 
@@ -1351,16 +1397,16 @@ namespace azure.servicebus.management
     class azure.servicebus.management.CorrelationRuleFilter:
 
         def __init__(
-                self, 
-                *, 
-                content_type: Optional[str] = ..., 
-                correlation_id: Optional[str] = ..., 
-                label: Optional[str] = ..., 
-                message_id: Optional[str] = ..., 
-                properties: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = ..., 
-                reply_to: Optional[str] = ..., 
-                reply_to_session_id: Optional[str] = ..., 
-                session_id: Optional[str] = ..., 
+                self,
+                *,
+                content_type: Optional[str] = ...,
+                correlation_id: Optional[str] = ...,
+                label: Optional[str] = ...,
+                message_id: Optional[str] = ...,
+                properties: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = ...,
+                reply_to: Optional[str] = ...,
+                reply_to_session_id: Optional[str] = ...,
+                session_id: Optional[str] = ...,
                 to: Optional[str] = ...
             ) -> None: ...
 
@@ -1400,13 +1446,13 @@ namespace azure.servicebus.management
         def __eq__(self, other: Any) -> bool: ...
 
         def __init__(
-                self, 
-                *, 
-                active_message_count: Optional[int] = ..., 
-                dead_letter_message_count: Optional[int] = ..., 
-                scheduled_message_count: Optional[int] = ..., 
-                transfer_dead_letter_message_count: Optional[int] = ..., 
-                transfer_message_count: Optional[int] = ..., 
+                self,
+                *,
+                active_message_count: Optional[int] = ...,
+                dead_letter_message_count: Optional[int] = ...,
+                scheduled_message_count: Optional[int] = ...,
+                transfer_dead_letter_message_count: Optional[int] = ...,
+                transfer_message_count: Optional[int] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -1416,8 +1462,8 @@ namespace azure.servicebus.management
 
         @classmethod
         def deserialize(
-                cls: Type[ModelType], 
-                data: Any, 
+                cls: Type[ModelType],
+                data: Any,
                 content_type: Optional[str] = None
             ) -> ModelType: ...
 
@@ -1426,9 +1472,9 @@ namespace azure.servicebus.management
 
         @classmethod
         def from_dict(
-                cls: Type[ModelType], 
-                data: Any, 
-                key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None, 
+                cls: Type[ModelType],
+                data: Any,
+                key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
                 content_type: Optional[str] = None
             ) -> ModelType: ...
 
@@ -1436,15 +1482,15 @@ namespace azure.servicebus.management
         def is_xml_model(cls) -> bool: ...
 
         def as_dict(
-                self, 
-                keep_readonly: bool = True, 
-                key_transformer: Callable[[str, Dict[str, Any], Any], Any] = attribute_transformer, 
+                self,
+                keep_readonly: bool = True,
+                key_transformer: Callable[[str, Dict[str, Any], Any], Any] = attribute_transformer,
                 **kwargs: Any
             ) -> JSON: ...
 
         def serialize(
-                self, 
-                keep_readonly: bool = False, 
+                self,
+                keep_readonly: bool = False,
                 **kwargs: Any
             ) -> JSON: ...
 
@@ -1473,14 +1519,14 @@ namespace azure.servicebus.management
         def __getitem__(self, key: str) -> Any: ...
 
         def __init__(
-                self, 
-                name: str, 
-                *, 
-                alias: Optional[str], 
-                created_at_utc: Optional[datetime], 
-                messaging_sku: Optional[Union[str, MessagingSku]], 
-                messaging_units: Optional[int], 
-                modified_at_utc: Optional[datetime], 
+                self,
+                name: str,
+                *,
+                alias: Optional[str],
+                created_at_utc: Optional[datetime],
+                messaging_sku: Optional[Union[str, MessagingSku]],
+                messaging_units: Optional[int],
+                modified_at_utc: Optional[datetime],
                 namespace_type: Optional[Union[str, NamespaceType]]
             ) -> None: ...
 
@@ -1491,16 +1537,16 @@ namespace azure.servicebus.management
         def __repr__(self) -> str: ...
 
         def __setitem__(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 item: Any
             ) -> None: ...
 
         def __str__(self) -> str: ...
 
         def get(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 default: Optional[Any] = None
             ) -> Any: ...
 
@@ -1511,8 +1557,8 @@ namespace azure.servicebus.management
         def keys(self) -> List[str]: ...
 
         def update(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -1558,27 +1604,27 @@ namespace azure.servicebus.management
         def __getitem__(self, key: str) -> Any: ...
 
         def __init__(
-                self, 
-                name: str, 
-                *, 
-                authorization_rules: Optional[List[AuthorizationRule]], 
-                auto_delete_on_idle: Optional[Union[timedelta, str]], 
-                availability_status: Optional[Union[str, EntityAvailabilityStatus]], 
-                dead_lettering_on_message_expiration: Optional[bool], 
-                default_message_time_to_live: Optional[Union[timedelta, str]], 
-                duplicate_detection_history_time_window: Optional[Union[timedelta, str]], 
-                enable_batched_operations: Optional[bool], 
-                enable_express: Optional[bool], 
-                enable_partitioning: Optional[bool], 
-                forward_dead_lettered_messages_to: Optional[str], 
-                forward_to: Optional[str], 
-                lock_duration: Optional[Union[timedelta, str]], 
-                max_delivery_count: Optional[int], 
-                max_message_size_in_kilobytes: Optional[int], 
-                max_size_in_megabytes: Optional[int], 
-                requires_duplicate_detection: Optional[bool], 
-                requires_session: Optional[bool], 
-                status: Optional[Union[str, EntityStatus]], 
+                self,
+                name: str,
+                *,
+                authorization_rules: Optional[List[AuthorizationRule]],
+                auto_delete_on_idle: Optional[Union[timedelta, str]],
+                availability_status: Optional[Union[str, EntityAvailabilityStatus]],
+                dead_lettering_on_message_expiration: Optional[bool],
+                default_message_time_to_live: Optional[Union[timedelta, str]],
+                duplicate_detection_history_time_window: Optional[Union[timedelta, str]],
+                enable_batched_operations: Optional[bool],
+                enable_express: Optional[bool],
+                enable_partitioning: Optional[bool],
+                forward_dead_lettered_messages_to: Optional[str],
+                forward_to: Optional[str],
+                lock_duration: Optional[Union[timedelta, str]],
+                max_delivery_count: Optional[int],
+                max_message_size_in_kilobytes: Optional[int],
+                max_size_in_megabytes: Optional[int],
+                requires_duplicate_detection: Optional[bool],
+                requires_session: Optional[bool],
+                status: Optional[Union[str, EntityStatus]],
                 user_metadata: Optional[str]
             ) -> None: ...
 
@@ -1589,16 +1635,16 @@ namespace azure.servicebus.management
         def __repr__(self) -> str: ...
 
         def __setitem__(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 item: Any
             ) -> None: ...
 
         def __str__(self) -> str: ...
 
         def get(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 default: Optional[Any] = None
             ) -> Any: ...
 
@@ -1609,8 +1655,8 @@ namespace azure.servicebus.management
         def keys(self) -> List[str]: ...
 
         def update(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -1648,11 +1694,11 @@ namespace azure.servicebus.management
         def __getitem__(self, key: str) -> Any: ...
 
         def __init__(
-                self, 
-                name: str, 
-                *, 
-                action: Optional[SqlRuleAction], 
-                created_at_utc: Optional[datetime], 
+                self,
+                name: str,
+                *,
+                action: Optional[SqlRuleAction],
+                created_at_utc: Optional[datetime],
                 filter: Optional[Union[CorrelationRuleFilter, SqlRuleFilter]]
             ) -> None: ...
 
@@ -1663,16 +1709,16 @@ namespace azure.servicebus.management
         def __repr__(self) -> str: ...
 
         def __setitem__(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 item: Any
             ) -> None: ...
 
         def __str__(self) -> str: ...
 
         def get(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 default: Optional[Any] = None
             ) -> Any: ...
 
@@ -1683,183 +1729,183 @@ namespace azure.servicebus.management
         def keys(self) -> List[str]: ...
 
         def update(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
         def values(self) -> List[Any]: ...
 
 
-    class azure.servicebus.management.ServiceBusAdministrationClient: implements ContextManager 
+    class azure.servicebus.management.ServiceBusAdministrationClient: implements ContextManager
 
         def __init__(
-                self, 
-                fully_qualified_namespace: str, 
-                credential: TokenCredential, 
-                *, 
-                api_version: Union[str, ApiVersion] = DEFAULT_VERSION, 
+                self,
+                fully_qualified_namespace: str,
+                credential: TokenCredential,
+                *,
+                api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
                 **kwargs: Any
             ) -> None: ...
 
         @classmethod
         def from_connection_string(
-                cls, 
-                conn_str: str, 
-                *, 
-                api_version: Union[str, ApiVersion] = DEFAULT_VERSION, 
+                cls,
+                conn_str: str,
+                *,
+                api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
                 **kwargs: Any
             ) -> ServiceBusAdministrationClient: ...
 
         def close(self) -> None: ...
 
         def create_queue(
-                self, 
-                queue_name: str, 
-                *, 
-                authorization_rules: Optional[List[AuthorizationRule]] = ..., 
-                auto_delete_on_idle: Optional[Union[timedelta, str]] = ..., 
-                dead_lettering_on_message_expiration: Optional[bool] = ..., 
-                default_message_time_to_live: Optional[Union[timedelta, str]] = ..., 
-                duplicate_detection_history_time_window: Optional[Union[timedelta, str]] = ..., 
-                enable_batched_operations: Optional[bool] = ..., 
-                enable_express: Optional[bool] = ..., 
-                enable_partitioning: Optional[bool] = ..., 
-                forward_dead_lettered_messages_to: Optional[str] = ..., 
-                forward_to: Optional[str] = ..., 
-                lock_duration: Optional[Union[timedelta, str]] = ..., 
-                max_delivery_count: Optional[int] = ..., 
-                max_message_size_in_kilobytes: Optional[int] = ..., 
-                max_size_in_megabytes: Optional[int] = ..., 
-                requires_duplicate_detection: Optional[bool] = ..., 
-                requires_session: Optional[bool] = ..., 
-                user_metadata: Optional[str] = ..., 
+                self,
+                queue_name: str,
+                *,
+                authorization_rules: Optional[List[AuthorizationRule]] = ...,
+                auto_delete_on_idle: Optional[Union[timedelta, str]] = ...,
+                dead_lettering_on_message_expiration: Optional[bool] = ...,
+                default_message_time_to_live: Optional[Union[timedelta, str]] = ...,
+                duplicate_detection_history_time_window: Optional[Union[timedelta, str]] = ...,
+                enable_batched_operations: Optional[bool] = ...,
+                enable_express: Optional[bool] = ...,
+                enable_partitioning: Optional[bool] = ...,
+                forward_dead_lettered_messages_to: Optional[str] = ...,
+                forward_to: Optional[str] = ...,
+                lock_duration: Optional[Union[timedelta, str]] = ...,
+                max_delivery_count: Optional[int] = ...,
+                max_message_size_in_kilobytes: Optional[int] = ...,
+                max_size_in_megabytes: Optional[int] = ...,
+                requires_duplicate_detection: Optional[bool] = ...,
+                requires_session: Optional[bool] = ...,
+                user_metadata: Optional[str] = ...,
                 **kwargs: Any
             ) -> QueueProperties: ...
 
         def create_rule(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                rule_name: str, 
-                *, 
-                action: Optional[SqlRuleAction] = ..., 
-                filter: Union[CorrelationRuleFilter, SqlRuleFilter] = TrueRuleFilter(), 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                rule_name: str,
+                *,
+                action: Optional[SqlRuleAction] = ...,
+                filter: Union[CorrelationRuleFilter, SqlRuleFilter] = TrueRuleFilter(),
                 **kwargs: Any
             ) -> RuleProperties: ...
 
         def create_subscription(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                *, 
-                auto_delete_on_idle: Optional[Union[timedelta, str]] = ..., 
-                dead_lettering_on_filter_evaluation_exceptions: Optional[bool] = ..., 
-                dead_lettering_on_message_expiration: Optional[bool] = ..., 
-                default_message_time_to_live: Optional[Union[timedelta, str]] = ..., 
-                enable_batched_operations: Optional[bool] = ..., 
-                forward_dead_lettered_messages_to: Optional[str] = ..., 
-                forward_to: Optional[str] = ..., 
-                lock_duration: Optional[Union[timedelta, str]] = ..., 
-                max_delivery_count: Optional[int] = ..., 
-                requires_session: Optional[bool] = ..., 
-                user_metadata: Optional[str] = ..., 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                *,
+                auto_delete_on_idle: Optional[Union[timedelta, str]] = ...,
+                dead_lettering_on_filter_evaluation_exceptions: Optional[bool] = ...,
+                dead_lettering_on_message_expiration: Optional[bool] = ...,
+                default_message_time_to_live: Optional[Union[timedelta, str]] = ...,
+                enable_batched_operations: Optional[bool] = ...,
+                forward_dead_lettered_messages_to: Optional[str] = ...,
+                forward_to: Optional[str] = ...,
+                lock_duration: Optional[Union[timedelta, str]] = ...,
+                max_delivery_count: Optional[int] = ...,
+                requires_session: Optional[bool] = ...,
+                user_metadata: Optional[str] = ...,
                 **kwargs: Any
             ) -> SubscriptionProperties: ...
 
         def create_topic(
-                self, 
-                topic_name: str, 
-                *, 
-                authorization_rules: Optional[List[AuthorizationRule]] = ..., 
-                auto_delete_on_idle: Optional[Union[timedelta, str]] = ..., 
-                default_message_time_to_live: Optional[Union[timedelta, str]] = ..., 
-                duplicate_detection_history_time_window: Optional[Union[timedelta, str]] = ..., 
-                enable_batched_operations: Optional[bool] = ..., 
-                enable_express: Optional[bool] = ..., 
-                enable_partitioning: Optional[bool] = ..., 
-                filtering_messages_before_publishing: Optional[bool] = ..., 
-                max_message_size_in_kilobytes: Optional[int] = ..., 
-                max_size_in_megabytes: Optional[int] = ..., 
-                requires_duplicate_detection: Optional[bool] = ..., 
-                size_in_bytes: Optional[int] = ..., 
-                support_ordering: Optional[bool] = ..., 
-                user_metadata: Optional[str] = ..., 
+                self,
+                topic_name: str,
+                *,
+                authorization_rules: Optional[List[AuthorizationRule]] = ...,
+                auto_delete_on_idle: Optional[Union[timedelta, str]] = ...,
+                default_message_time_to_live: Optional[Union[timedelta, str]] = ...,
+                duplicate_detection_history_time_window: Optional[Union[timedelta, str]] = ...,
+                enable_batched_operations: Optional[bool] = ...,
+                enable_express: Optional[bool] = ...,
+                enable_partitioning: Optional[bool] = ...,
+                filtering_messages_before_publishing: Optional[bool] = ...,
+                max_message_size_in_kilobytes: Optional[int] = ...,
+                max_size_in_megabytes: Optional[int] = ...,
+                requires_duplicate_detection: Optional[bool] = ...,
+                size_in_bytes: Optional[int] = ...,
+                support_ordering: Optional[bool] = ...,
+                user_metadata: Optional[str] = ...,
                 **kwargs: Any
             ) -> TopicProperties: ...
 
         def delete_queue(
-                self, 
-                queue_name: str, 
+                self,
+                queue_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         def delete_rule(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                rule_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                rule_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         def delete_subscription(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         def delete_topic(
-                self, 
-                topic_name: str, 
+                self,
+                topic_name: str,
                 **kwargs: Any
             ) -> None: ...
 
         def get_namespace_properties(self, **kwargs: Any) -> NamespaceProperties: ...
 
         def get_queue(
-                self, 
-                queue_name: str, 
+                self,
+                queue_name: str,
                 **kwargs: Any
             ) -> QueueProperties: ...
 
         def get_queue_runtime_properties(
-                self, 
-                queue_name: str, 
+                self,
+                queue_name: str,
                 **kwargs: Any
             ) -> QueueRuntimeProperties: ...
 
         def get_rule(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                rule_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                rule_name: str,
                 **kwargs: Any
             ) -> RuleProperties: ...
 
         def get_subscription(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
                 **kwargs: Any
             ) -> SubscriptionProperties: ...
 
         def get_subscription_runtime_properties(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
                 **kwargs: Any
             ) -> SubscriptionRuntimeProperties: ...
 
         def get_topic(
-                self, 
-                topic_name: str, 
+                self,
+                topic_name: str,
                 **kwargs: Any
             ) -> TopicProperties: ...
 
         def get_topic_runtime_properties(
-                self, 
-                topic_name: str, 
+                self,
+                topic_name: str,
                 **kwargs: Any
             ) -> TopicRuntimeProperties: ...
 
@@ -1868,21 +1914,21 @@ namespace azure.servicebus.management
         def list_queues_runtime_properties(self, **kwargs: Any) -> ItemPaged[QueueRuntimeProperties]: ...
 
         def list_rules(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
+                self,
+                topic_name: str,
+                subscription_name: str,
                 **kwargs: Any
             ) -> ItemPaged[RuleProperties]: ...
 
         def list_subscriptions(
-                self, 
-                topic_name: str, 
+                self,
+                topic_name: str,
                 **kwargs: Any
             ) -> ItemPaged[SubscriptionProperties]: ...
 
         def list_subscriptions_runtime_properties(
-                self, 
-                topic_name: str, 
+                self,
+                topic_name: str,
                 **kwargs: Any
             ) -> ItemPaged[SubscriptionRuntimeProperties]: ...
 
@@ -1891,29 +1937,29 @@ namespace azure.servicebus.management
         def list_topics_runtime_properties(self, **kwargs: Any) -> ItemPaged[TopicRuntimeProperties]: ...
 
         def update_queue(
-                self, 
-                queue: Union[QueueProperties, Mapping[str, Any]], 
+                self,
+                queue: Union[QueueProperties, Mapping[str, Any]],
                 **kwargs: Any
             ) -> None: ...
 
         def update_rule(
-                self, 
-                topic_name: str, 
-                subscription_name: str, 
-                rule: Union[RuleProperties, Mapping[str, Any]], 
+                self,
+                topic_name: str,
+                subscription_name: str,
+                rule: Union[RuleProperties, Mapping[str, Any]],
                 **kwargs: Any
             ) -> None: ...
 
         def update_subscription(
-                self, 
-                topic_name: str, 
-                subscription: Union[SubscriptionProperties, Mapping[str, Any]], 
+                self,
+                topic_name: str,
+                subscription: Union[SubscriptionProperties, Mapping[str, Any]],
                 **kwargs: Any
             ) -> None: ...
 
         def update_topic(
-                self, 
-                topic: Union[TopicProperties, Mapping[str, Any]], 
+                self,
+                topic: Union[TopicProperties, Mapping[str, Any]],
                 **kwargs: Any
             ) -> None: ...
 
@@ -1921,8 +1967,8 @@ namespace azure.servicebus.management
     class azure.servicebus.management.SqlRuleAction:
 
         def __init__(
-                self, 
-                sql_expression: Optional[str] = None, 
+                self,
+                sql_expression: Optional[str] = None,
                 parameters: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = None
             ) -> None: ...
 
@@ -1930,8 +1976,8 @@ namespace azure.servicebus.management
     class azure.servicebus.management.SqlRuleFilter:
 
         def __init__(
-                self, 
-                sql_expression: Optional[str] = None, 
+                self,
+                sql_expression: Optional[str] = None,
                 parameters: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = None
             ) -> None: ...
 
@@ -1961,21 +2007,21 @@ namespace azure.servicebus.management
         def __getitem__(self, key: str) -> Any: ...
 
         def __init__(
-                self, 
-                name: str, 
-                *, 
-                auto_delete_on_idle: Optional[Union[timedelta, str]], 
-                availability_status: Optional[Union[str, EntityAvailabilityStatus]], 
-                dead_lettering_on_filter_evaluation_exceptions: Optional[bool], 
-                dead_lettering_on_message_expiration: Optional[bool], 
-                default_message_time_to_live: Optional[Union[timedelta, str]], 
-                enable_batched_operations: Optional[bool], 
-                forward_dead_lettered_messages_to: Optional[str], 
-                forward_to: Optional[str], 
-                lock_duration: Optional[Union[timedelta, str]], 
-                max_delivery_count: Optional[int], 
-                requires_session: Optional[bool], 
-                status: Optional[Union[str, EntityStatus]], 
+                self,
+                name: str,
+                *,
+                auto_delete_on_idle: Optional[Union[timedelta, str]],
+                availability_status: Optional[Union[str, EntityAvailabilityStatus]],
+                dead_lettering_on_filter_evaluation_exceptions: Optional[bool],
+                dead_lettering_on_message_expiration: Optional[bool],
+                default_message_time_to_live: Optional[Union[timedelta, str]],
+                enable_batched_operations: Optional[bool],
+                forward_dead_lettered_messages_to: Optional[str],
+                forward_to: Optional[str],
+                lock_duration: Optional[Union[timedelta, str]],
+                max_delivery_count: Optional[int],
+                requires_session: Optional[bool],
+                status: Optional[Union[str, EntityStatus]],
                 user_metadata: Optional[str]
             ) -> None: ...
 
@@ -1986,16 +2032,16 @@ namespace azure.servicebus.management
         def __repr__(self) -> str: ...
 
         def __setitem__(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 item: Any
             ) -> None: ...
 
         def __str__(self) -> str: ...
 
         def get(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 default: Optional[Any] = None
             ) -> Any: ...
 
@@ -2006,8 +2052,8 @@ namespace azure.servicebus.management
         def keys(self) -> List[str]: ...
 
         def update(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
@@ -2056,24 +2102,24 @@ namespace azure.servicebus.management
         def __getitem__(self, key: str) -> Any: ...
 
         def __init__(
-                self, 
-                name: str, 
-                *, 
-                authorization_rules: Optional[List[AuthorizationRule]], 
-                auto_delete_on_idle: Optional[Union[timedelta, str]], 
-                availability_status: Optional[Union[str, EntityAvailabilityStatus]], 
-                default_message_time_to_live: Optional[Union[timedelta, str]], 
-                duplicate_detection_history_time_window: Optional[Union[timedelta, str]], 
-                enable_batched_operations: Optional[bool], 
-                enable_express: Optional[bool], 
-                enable_partitioning: Optional[bool], 
-                filtering_messages_before_publishing: Optional[bool], 
-                max_message_size_in_kilobytes: Optional[int], 
-                max_size_in_megabytes: Optional[int], 
-                requires_duplicate_detection: Optional[bool], 
-                size_in_bytes: Optional[int], 
-                status: Optional[Union[str, EntityStatus]], 
-                support_ordering: Optional[bool], 
+                self,
+                name: str,
+                *,
+                authorization_rules: Optional[List[AuthorizationRule]],
+                auto_delete_on_idle: Optional[Union[timedelta, str]],
+                availability_status: Optional[Union[str, EntityAvailabilityStatus]],
+                default_message_time_to_live: Optional[Union[timedelta, str]],
+                duplicate_detection_history_time_window: Optional[Union[timedelta, str]],
+                enable_batched_operations: Optional[bool],
+                enable_express: Optional[bool],
+                enable_partitioning: Optional[bool],
+                filtering_messages_before_publishing: Optional[bool],
+                max_message_size_in_kilobytes: Optional[int],
+                max_size_in_megabytes: Optional[int],
+                requires_duplicate_detection: Optional[bool],
+                size_in_bytes: Optional[int],
+                status: Optional[Union[str, EntityStatus]],
+                support_ordering: Optional[bool],
                 user_metadata: Optional[str]
             ) -> None: ...
 
@@ -2084,16 +2130,16 @@ namespace azure.servicebus.management
         def __repr__(self) -> str: ...
 
         def __setitem__(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 item: Any
             ) -> None: ...
 
         def __str__(self) -> str: ...
 
         def get(
-                self, 
-                key: str, 
+                self,
+                key: str,
                 default: Optional[Any] = None
             ) -> Any: ...
 
@@ -2104,8 +2150,8 @@ namespace azure.servicebus.management
         def keys(self) -> List[str]: ...
 
         def update(
-                self, 
-                *args: Any, 
+                self,
+                *args: Any,
                 **kwargs: Any
             ) -> None: ...
 
