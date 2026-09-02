@@ -548,9 +548,9 @@ class TestUserAgent:
 
         expected_user_agent = f"{base_user_agent} {added_useragent}"
 
-        from httpx import AsyncClient, Request
+        from tests.__openai_patcher import TestProxyAsyncHttpxClient
 
-        with self._transparent_mock_method(AsyncClient, "send") as mock:
+        with self._transparent_mock_method(TestProxyAsyncHttpxClient, "send") as mock:
             evaluate(
                 data=data_file,
                 evaluators={"fluency": FluencyEvaluator(user_agent_model_config)},
@@ -561,7 +561,6 @@ class TestUserAgent:
 
             for call_args in mock.call_args_list:
                 _, request, *_ = call_args.args
-                request: Request
 
                 # Not checking for strict equality because some evaluators add to the user agent
                 assert expected_user_agent in request.headers["User-Agent"]
