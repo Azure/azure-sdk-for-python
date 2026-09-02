@@ -7,6 +7,7 @@
 """Tests for the native transfer acceleration dispatch module."""
 
 import unittest
+from types import ModuleType
 from unittest.mock import MagicMock, patch
 
 from azure.storage.blob._transfer_native import (
@@ -14,6 +15,7 @@ from azure.storage.blob._transfer_native import (
     _can_use_native_download,
     _can_use_native_upload,
     _is_native_available,
+    try_native_upload,
 )
 
 
@@ -269,6 +271,39 @@ class TestBuildTokenProvider(unittest.TestCase):
         for token, expires_on in results:
             self.assertTrue(token.startswith("tok-"))
             self.assertIsInstance(expires_on, int)
+
+
+class TestNativeCredentialIdentity(unittest.TestCase):
+    """Tests that native transfers identify the credential behind each provider closure."""
+
+    def test_upload_forwards_stable_distinct_credential_ids(self):
+        native_upload = MagicMock(return_value={"etag": "etag"})
+        native_module = ModuleType("azure.storage.extensions.transfer")
+        native_module.upload_blob = native_upload
+
+        first_credential = MagicMock()
+        second_credential = MagicMock()
+        first_client = MagicMock(
+            credential=first_credential,
+            url="https://account.blob.core.windows.net/container/first",
+        )
+        second_client = MagicMock(
+            credential=second_credential,
+            url="https://account.blob.core.windows.net/container/second",
+        )
+        config = MagicMock(max_single_put_size=64, max_block_size=32)
+
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ), patch.dict("sys.modules", {"azure.storage.extensions.transfer": native_module}):
+            try_native_upload(first_client, b"first", "BlockBlob", {}, None, config)
+            try_native_upload(first_client, b"again", "BlockBlob", {}, None, config)
+            try_native_upload(second_client, b"second", "BlockBlob", {}, None, config)
+
+        credential_ids = [call.kwargs["credential_id"] for call in native_upload.call_args_list]
+        self.assertEqual(credential_ids, [id(first_credential), id(first_credential), id(second_credential)])
+        self.assertNotEqual(credential_ids[0], credential_ids[2])
 
 
 class _FakeNativeStream:

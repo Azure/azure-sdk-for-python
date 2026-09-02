@@ -15,24 +15,25 @@ use std::sync::{Arc, Mutex, RwLock};
 
 use azure_core::credentials::{AccessToken, Secret, TokenCredential, TokenRequestOptions};
 use azure_core::http::headers::HeaderName;
-use azure_core::http::{new_http_client, HttpClientOptions, NoFormat, RequestContent, Transport, Url};
+use azure_core::http::{
+    new_http_client, HttpClientOptions, NoFormat, RequestContent, Transport, Url,
+};
 use azure_core::Bytes;
 use azure_storage_blob::models::{
     BlobClientDownloadOptions, BlockBlobClientUploadOptions, HttpRange,
 };
 use azure_storage_blob::{BlobClient, BlobClientOptions};
 use once_cell::sync::Lazy;
+use pyo3::buffer::PyBuffer;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
-use pyo3::buffer::PyBuffer;
 use pyo3::types::{PyBytes, PyDict};
 use tokio::runtime::Runtime;
 
 /// Shared tokio runtime — created once, reused across all calls to avoid
 /// per-call overhead of spawning a new runtime.
-static RUNTIME: Lazy<Runtime> = Lazy::new(|| {
-    Runtime::new().expect("Failed to create tokio runtime")
-});
+static RUNTIME: Lazy<Runtime> =
+    Lazy::new(|| Runtime::new().expect("Failed to create tokio runtime"));
 
 /// Shared HTTP transport — a single connection pool reused by every `BlobClient` we build.
 ///
@@ -48,12 +49,19 @@ static SHARED_TRANSPORT: Lazy<Transport> = Lazy::new(|| {
     })))
 });
 
-/// Process-wide token credential, cached so the token is fetched from the Python credential
-/// (and, for CLI-based credentials, the `az` subprocess) only once and then reused across
-/// every transfer. Without this, each per-transfer `BlobClient` starts with a cold
-/// per-pipeline token cache and re-invokes the Python credential on every operation.
-static CACHED_CREDENTIAL: Lazy<Mutex<Option<Arc<PyCallbackCredential>>>> =
-    Lazy::new(|| Mutex::new(None));
+/// Process-wide token credentials keyed by the identity of their Python credential.
+static CACHED_CREDENTIALS: Lazy<Mutex<HashMap<usize, Arc<PyCallbackCredential>>>> =
+    Lazy::new(|| Mutex::new(HashMap::new()));
+
+fn get_cached_credential(provider: Py<PyAny>, credential_id: usize) -> Arc<PyCallbackCredential> {
+    let mut cached = CACHED_CREDENTIALS
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    cached
+        .entry(credential_id)
+        .or_insert_with(|| Arc::new(PyCallbackCredential::new(provider)))
+        .clone()
+}
 
 /// Custom error wrapper for mapping `azure_core::Error` to Python exceptions.
 struct AzureError(azure_core::Error);
@@ -78,15 +86,16 @@ impl From<azure_core::Error> for AzureError {
 /// the caller to have encoded it correctly, and `Url::parse` preserves existing
 /// percent-encoding, so no double-encoding occurs.
 ///
-/// If `token_provider` is provided, the process-wide cached credential is used (fetching a
-/// token from Python once and reusing it). If the `blob_url` contains a SAS token in the
-/// query string, pass `token_provider=None`.
+/// If `token_provider` is provided, `credential_id` is required and selects the cached
+/// credential (fetching a token from Python once and reusing it). If the `blob_url` contains
+/// a SAS token in the query string, pass `token_provider=None`.
 ///
 /// Every client is built with the shared transport so connection pooling persists across
 /// transfers regardless of authentication mode.
 fn build_blob_client(
     blob_url: &str,
     token_provider: Option<Py<PyAny>>,
+    credential_id: Option<usize>,
 ) -> Result<BlobClient, AzureError> {
     let blob_url = Url::parse(blob_url).map_err(|e| {
         azure_core::Error::with_message(
@@ -101,23 +110,18 @@ fn build_blob_client(
 
     let credential: Option<Arc<dyn TokenCredential>> = match token_provider {
         Some(provider) => {
-            // Reuse a single process-wide credential so the token is fetched (and any `az`
-            // subprocess is spawned) only once, then served from the credential's own cache.
-            // The provider passed on later calls is ignored: the cached credential already
-            // references the same long-lived Python credential.
-            let mut cached = CACHED_CREDENTIAL
-                .lock()
-                .unwrap_or_else(|poisoned| poisoned.into_inner());
-            let credential = cached
-                .get_or_insert_with(|| Arc::new(PyCallbackCredential::new(provider)))
-                .clone();
-            Some(credential)
+            let credential_id = credential_id.ok_or_else(|| {
+                AzureError(azure_core::Error::with_message(
+                    azure_core::error::ErrorKind::Credential,
+                    "credential_id is required when token_provider is provided",
+                ))
+            })?;
+            Some(get_cached_credential(provider, credential_id))
         }
         None => None,
     };
 
-    let client =
-        BlobClient::new(blob_url, credential, Some(options)).map_err(AzureError::from)?;
+    let client = BlobClient::new(blob_url, credential, Some(options)).map_err(AzureError::from)?;
     Ok(client)
 }
 
@@ -167,7 +171,10 @@ impl TokenCredential for PyCallbackCredential {
         // avoids re-invoking the Python credential on every transfer, since each new
         // `BlobClient` starts with a cold per-pipeline token cache.
         {
-            let cache = self.cache.read().unwrap_or_else(|poisoned| poisoned.into_inner());
+            let cache = self
+                .cache
+                .read()
+                .unwrap_or_else(|poisoned| poisoned.into_inner());
             if let Some((token, expires)) = cache.as_ref() {
                 if expires.unix_timestamp() - now > REFRESH_WINDOW_SECS {
                     return Ok(AccessToken::new(Secret::new(token.clone()), *expires));
@@ -177,7 +184,10 @@ impl TokenCredential for PyCallbackCredential {
 
         // Slow path: fetch a fresh token. Hold the write lock across the fetch so concurrent
         // callers coalesce onto a single refresh rather than each calling into Python.
-        let mut cache = self.cache.write().unwrap_or_else(|poisoned| poisoned.into_inner());
+        let mut cache = self
+            .cache
+            .write()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
         if let Some((token, expires)) = cache.as_ref() {
             if expires.unix_timestamp() - now > REFRESH_WINDOW_SECS {
                 return Ok(AccessToken::new(Secret::new(token.clone()), *expires));
@@ -229,6 +239,7 @@ impl TokenCredential for PyCallbackCredential {
     data,
     *,
     token_provider = None,
+    credential_id = None,
     overwrite = false,
     content_type = None,
     metadata = None,
@@ -241,6 +252,7 @@ fn upload_blob<'py>(
     url: &str,
     data: &Bound<'py, PyAny>,
     token_provider: Option<Py<PyAny>>,
+    credential_id: Option<usize>,
     overwrite: bool,
     content_type: Option<&str>,
     metadata: Option<HashMap<String, String>>,
@@ -248,7 +260,7 @@ fn upload_blob<'py>(
     _max_single_put_size: Option<u64>,
     max_block_size: Option<u64>,
 ) -> PyResult<Bound<'py, PyDict>> {
-    let blob_client = build_blob_client(url, token_provider)?;
+    let blob_client = build_blob_client(url, token_provider, credential_id)?;
 
     // We copy the payload once into a Rust-owned `Bytes` here, while the interpreter is attached.
     //
@@ -294,9 +306,7 @@ fn upload_blob<'py>(
 
     // Release the interpreter (detach this thread) and perform the upload on the shared tokio runtime
     let result = py
-        .detach(|| {
-            RUNTIME.block_on(async { blob_client.upload(content, Some(options)).await })
-        })
+        .detach(|| RUNTIME.block_on(async { blob_client.upload(content, Some(options)).await }))
         .map_err(AzureError::from)?;
 
     // Build response dict from upload result fields
@@ -426,8 +436,13 @@ impl NativeDownloadStream {
         }
         let remaining = self.end_offset - self.next_offset;
         let len = remaining.min(self.window_size);
-        let (chunk, written) =
-            NativeDownloadStream::fetch_window(&self.client, self.max_concurrency, py, self.next_offset, len)?;
+        let (chunk, written) = NativeDownloadStream::fetch_window(
+            &self.client,
+            self.max_concurrency,
+            py,
+            self.next_offset,
+            len,
+        )?;
         // Guard against a zero-length read so a truncated/short response can't loop forever.
         if written == 0 {
             return Ok(None);
@@ -447,6 +462,7 @@ impl NativeDownloadStream {
     url,
     *,
     token_provider = None,
+    credential_id = None,
     offset = None,
     length = None,
     max_concurrency = None,
@@ -456,12 +472,13 @@ fn download_blob(
     py: Python<'_>,
     url: &str,
     token_provider: Option<Py<PyAny>>,
+    credential_id: Option<usize>,
     offset: Option<u64>,
     length: Option<u64>,
     max_concurrency: Option<usize>,
     max_chunk_size: Option<u64>,
 ) -> PyResult<NativeDownloadStream> {
-    let blob_client = build_blob_client(url, token_provider)?;
+    let blob_client = build_blob_client(url, token_provider, credential_id)?;
 
     // A window size of 0 would make no progress; clamp to at least 1 byte.
     let window_size = max_chunk_size.unwrap_or(DEFAULT_WINDOW_SIZE).max(1);
@@ -511,7 +528,9 @@ fn download_blob(
 
     // The total addressable size of the blob. Prefer the `Content-Range` total; fall back to
     // the response `Content-Length`, then to what we actually read.
-    let total_blob_size = content_range_total.or(content_length).unwrap_or(start + written);
+    let total_blob_size = content_range_total
+        .or(content_length)
+        .unwrap_or(start + written);
 
     let end_offset = match length {
         Some(l) => (start + l).min(total_blob_size),
