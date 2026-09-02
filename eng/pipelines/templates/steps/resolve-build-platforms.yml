@@ -18,8 +18,23 @@ steps:
 
         $targeted = @($packageProperties | Where-Object { $binaryPackages -contains $_ })
 
+        # sdk_build only streams subprocess output when its logger is at DEBUG,
+        # otherwise it buffers everything and replays it in a single record if the
+        # command fails. A cibuildwheel run takes many minutes, so buffering leaves
+        # the step silent and then collapses the whole build onto one timestamp.
+        # Stream extension builds, and leave everything else at the default level so
+        # the Linux job that builds every package stays readable.
+        $logLevel = "INFO"
+
         if ($targeted.Count -gt 0) {
           Write-Host "Targeting binary package(s) $($targeted -join ', '), enabling extension build."
           Write-Host "##vso[task.setvariable variable=ENABLE_EXTENSION_BUILD]true"
+          $logLevel = "DEBUG"
         }
+
+        # Always define this. It is consumed as $(SDK_BUILD_LOGLEVEL), and an
+        # undefined variable would reach sdk_build as the literal macro text and
+        # fail the logging setup.
+        Write-Host "sdk_build log level: $logLevel"
+        Write-Host "##vso[task.setvariable variable=SDK_BUILD_LOGLEVEL]$logLevel"
       displayName: Check extension package presence

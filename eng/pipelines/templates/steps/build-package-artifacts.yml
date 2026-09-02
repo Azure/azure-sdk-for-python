@@ -199,6 +199,10 @@ steps:
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
+      # Set to DEBUG for extension builds so sdk_build streams cibuildwheel output
+      # live instead of buffering it until the command finishes. See the step that
+      # defines this variable in resolve-build-platforms.yml.
+      LOGLEVEL: $(SDK_BUILD_LOGLEVEL)
       ${{ if parameters.InstallMsRustToolchain }}:
         # Linux wheels are compiled inside a manylinux container that cibuildwheel
         # starts, so the toolchain installed on the agent above is not visible to the

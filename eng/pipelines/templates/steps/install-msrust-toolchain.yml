@@ -23,6 +23,23 @@ parameters:
   - name: AdditionalTargets
     type: string
     default: ''
+  # Azure Artifacts Cargo feed used to replace the crates-io source. Agents run
+  # under 1ES network isolation, which does not allow index.crates.io, so an
+  # unmodified cargo resolve fails with
+  # "Could not connect to server ... index.crates.io port 443".
+  #
+  # This is the same feed and spelling azure-sdk-for-rust uses. The "~force-auth"
+  # suffix is required for Cargo upstream sources, see
+  # https://learn.microsoft.com/azure/devops/artifacts/cargo/cargo-upstream-source.
+  - name: CratesIoFeed
+    type: string
+    default: 'sparse+https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-rust-public~force-auth/Cargo/index/'
+  # Registry name used in the cargo config. CargoAuthenticate derives the
+  # credential variables it exports from this name, so it has to match the
+  # [registries] key written below.
+  - name: CratesIoRegistryName
+    type: string
+    default: 'azure-sdk-for-rust-public'
   # Applied to every step so callers can skip the install on jobs that will not
   # build a binary wheel.
   - name: Condition
@@ -63,3 +80,58 @@ steps:
       Write-Host "Bin path:   $env:RUST_BIN_PATH"
     displayName: 'Normalize Rust toolchain variables'
     condition: ${{ parameters.Condition }}
+
+  # Route crates.io through an Azure Artifacts feed. This mirrors the approach in
+  # eng/templates/config.toml.template and eng/pipelines/templates/steps/use-rust.yml
+  # in azure-sdk-for-rust, and is not optional: an agent that needs the internal
+  # toolchain is network isolated, so it cannot reach index.crates.io either.
+  #
+  # Written after RustInstaller because that task creates CARGO_HOME and sets the
+  # variable this step writes into.
+  - pwsh: |
+      $cargoHome = $env:CARGO_HOME
+      if (-not $cargoHome) { $cargoHome = [System.IO.Path]::Combine($HOME, '.cargo') }
+      New-Item -ItemType Directory -Force -Path $cargoHome | Out-Null
+
+      $configPath = [System.IO.Path]::Combine($cargoHome, 'config.toml')
+
+      # net.git-fetch-with-cli makes cargo shell out to git for git dependencies
+      # instead of using its built in libgit2 client, so those fetches pick up the
+      # agent's git configuration and credentials.
+      @'
+      [registries]
+      REGISTRY_NAME = { index = "CRATES_IO_FEED" }
+
+      [source.crates-io]
+      replace-with = "REGISTRY_NAME"
+
+      [net]
+      git-fetch-with-cli = true
+      '@ -replace 'CRATES_IO_FEED', '${{ parameters.CratesIoFeed }}' `
+         -replace 'REGISTRY_NAME', '${{ parameters.CratesIoRegistryName }}' `
+        | Set-Content -Path $configPath -Encoding utf8
+
+      Write-Host "Wrote cargo config to $configPath"
+      Get-Content $configPath
+      Write-Host "##vso[task.setvariable variable=CargoConfigPath]$configPath"
+    displayName: 'Configure cargo to use the Azure Artifacts feed'
+    condition: ${{ parameters.Condition }}
+
+  # NuGetAuthenticate publishes an Azure Artifacts token as VSS_NUGET_ACCESSTOKEN.
+  # CargoAuthenticate normally reads System.AccessToken, which is empty for builds
+  # from forks, so the token from this task is handed to it below instead. See
+  # https://github.com/microsoft/azure-pipelines-tasks/issues/22421.
+  - task: NuGetAuthenticate@1
+    displayName: 'Acquire an Azure Artifacts token'
+    condition: ${{ parameters.Condition }}
+
+  # Parses the [registries] table and exports the
+  # CARGO_REGISTRIES_<REGISTRY>_TOKEN and _CREDENTIAL_PROVIDER variables cargo
+  # needs to authenticate against the feed.
+  - task: CargoAuthenticate@0
+    displayName: 'Authenticate cargo to the Azure Artifacts feed'
+    condition: ${{ parameters.Condition }}
+    inputs:
+      configFile: $(CargoConfigPath)
+    env:
+      SYSTEM_ACCESSTOKEN: $(VSS_NUGET_ACCESSTOKEN)
