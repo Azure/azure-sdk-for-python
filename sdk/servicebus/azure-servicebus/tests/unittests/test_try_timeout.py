@@ -6,9 +6,11 @@
 
 `try_timeout` bounds a single attempt of an operation rather than the whole operation. It
 applies to sending, to management operations, and to AMQP link acquisition, where the wait for
-the link to become ready was previously unbounded. It is off by default.
+the link to become ready was previously unbounded. That includes the link acquisition performed
+by `receive_messages` and by the streaming iterator. It must be greater than 0 if given, and is
+off by default.
 
-It deliberately does not apply to the receive long poll or the streaming iterator: bounding
+It deliberately does not apply to the receive long poll or the iterator's own wait: bounding
 those would silently truncate a caller who asked for a long wait. That exclusion is the
 safety property these tests exist to pin.
 
@@ -101,15 +103,26 @@ class TestConfigurationTryTimeout:
         config = Configuration(hostname="fake.servicebus.windows.net", amqp_transport=MagicMock())
         assert config.try_timeout is None
 
-    def test_negative_value_preserved(self):
-        # A negative value is not normalized; it simply means disabled.
+    def test_non_positive_values_are_rejected(self):
+        # Every other timeout keyword validates, and silently disabling the bound on a
+        # mistyped value would remove the protection the caller asked for.
+        for bad in (0, -1):
+            with pytest.raises(ValueError) as exc:
+                Configuration(
+                    hostname="fake.servicebus.windows.net",
+                    amqp_transport=MagicMock(),
+                    try_timeout=bad,
+                )
+            assert "try_timeout" in str(exc.value)
+
+    def test_positive_value_is_preserved(self):
         config = Configuration(
             hostname="fake.servicebus.windows.net",
             amqp_transport=MagicMock(),
-            try_timeout=-1,
+            try_timeout=5,
         )
-        assert config.try_timeout == -1
-        assert get_attempt_timeout(30, config.try_timeout) == 30
+        assert config.try_timeout == 5
+        assert get_attempt_timeout(30, config.try_timeout) == 5
 
 
 class TestTryTimeoutPropagation:

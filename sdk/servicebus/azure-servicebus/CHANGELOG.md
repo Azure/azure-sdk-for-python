@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added an opt-in `try_timeout` client keyword that bounds a single attempt rather than the whole operation. Applies to sending, management operations, and AMQP link acquisition, where the wait for the link to become ready was previously unbounded. Each attempt gets a fresh `try_timeout`, still capped by the caller's remaining time; exceeding it raises a retryable `OperationTimeoutError` and retries. Defaults to `None` (off), preserving existing behavior. It also caps the link acquisition performed by `receive_messages()`, but does not bound that method's long poll, receiver iteration, or message settlement. Mirrors `TryTimeout` in the .NET, Java and Go SDKs.
+- Added an opt-in `try_timeout` client keyword that bounds a single attempt rather than the whole operation. Applies to sending, management operations, and AMQP link acquisition, where the wait for the link to become ready was previously unbounded. Each attempt gets a fresh `try_timeout`, still capped by the caller's remaining time; exceeding it raises a retryable `OperationTimeoutError` and retries. Must be greater than 0 if specified, and defaults to `None` (off), preserving existing behavior. It also caps the link acquisition performed by `receive_messages()` and by receiver iteration, but does not bound the `receive_messages()` long poll, the iterator's own wait, or message settlement. Mirrors `TryTimeout` in the .NET, Java and Go SDKs.
 
 ### Breaking Changes
 

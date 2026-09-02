@@ -21,8 +21,12 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.retry_mode = RetryMode(kwargs.get("retry_mode", "exponential"))
         self.retry_backoff_factor: float = kwargs.get("retry_backoff_factor", 0.8)
         self.retry_backoff_max: int = kwargs.get("retry_backoff_max", 120)
-        # Bounds a single attempt, not the whole operation. None or non-positive means off.
-        self.try_timeout: Optional[float] = kwargs.get("try_timeout")
+        # Bounds a single attempt, not the whole operation. Validated like every other
+        # timeout keyword so a mistyped value cannot silently remove the bound.
+        try_timeout = kwargs.get("try_timeout")
+        if try_timeout is not None and try_timeout <= 0:
+            raise ValueError("The try_timeout must be greater than 0.")
+        self.try_timeout: Optional[float] = try_timeout
         self.logging_enable: bool = kwargs.get("logging_enable", False)
         self.http_proxy: Optional[Dict[str, Any]] = kwargs.get("http_proxy")
 
