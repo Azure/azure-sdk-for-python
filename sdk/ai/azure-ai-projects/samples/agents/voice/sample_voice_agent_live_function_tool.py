@@ -20,7 +20,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" python-dotenv
+    pip install "azure-ai-projects[realtime]>=2.0.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
@@ -41,9 +41,9 @@ from azure.ai.projects.models import (
     RealtimeConversationItemMessageUser,
     RealtimeConversationItemMessageUserContent,
     RealtimeConversationItemType,
-    RealtimeFunctionTool,
     RealtimeServerEventError,
     VoiceAgentDefinition,
+    VoiceAgentFunctionTool,
     RealtimeServerEventResponseDone,
     RealtimeServerEventResponseFunctionCallArgumentsDone,
     RealtimeServerEventResponseTextDone,
@@ -87,7 +87,13 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
         )
         conn.response.create()
 
-        for event in conn:
+        while True:
+            try:
+                event = conn.recv(timeout=_RESPONSE_TIMEOUT)
+            except TimeoutError:
+                print("Timed out waiting for the agent's reply.")
+                conn.response.cancel()
+                return
             if isinstance(event, RealtimeServerEventResponseFunctionCallArgumentsDone):
                 # The service forwards the call to us; execute it locally and
                 # send the result back so the agent can use it in its reply.
@@ -123,8 +129,7 @@ def main() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-voice-agent-function-tool"
 
-    get_weather_tool = RealtimeFunctionTool(
-        type="function",
+    get_weather_tool = VoiceAgentFunctionTool(
         name="get_weather",
         description="Get the current weather for a city.",
         parameters=cast(
@@ -152,7 +157,7 @@ def main() -> None:
                         "caller asks about the weather, then answer using its result."
                     ),
                     output_modalities=[VoiceOutputModality.TEXT],
-                    tools=[get_weather_tool],  # type: ignore[list-item]
+                    tools=[get_weather_tool],
                 ),
             )
             print(f"Created voice agent: {agent_name}")

@@ -151,7 +151,13 @@ def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Optional
 
             def pump() -> None:
                 nonlocal conversation_id, audio_delta_count
-                for event in conn:
+                while True:
+                    try:
+                        event = conn.recv(timeout=_RESPONSE_TIMEOUT)
+                    except TimeoutError:
+                        print("Timed out waiting for the agent's reply.")
+                        conn.response.cancel()
+                        return
                     if isinstance(event, RealtimeServerEventSessionCreated):
                         # The persisted conversation id (only present when conversation
                         # persistence is enabled) is set here, not on response.done.

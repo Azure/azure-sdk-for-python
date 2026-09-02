@@ -40,6 +40,22 @@ if (Test-Path $typesFile) {
     Remove-Item $typesFile -Force
 }
 
+# `_AgentDefinitionOptInKeys` is an internal implementation-detail enum (leading underscore) used
+# only to build the `Foundry-Features` opt-in header value in hand-written `_patch.py`/`_realtime.py`
+# customization code, which always imports it directly from `.models._enums` (or `..models._enums`) -
+# never through the `models` package's public re-export. The emitter nonetheless includes it in
+# `models/__init__.py`'s import list and `__all__`, which makes it part of the public API surface
+# (and shows up in APIView) even though nothing needs it there. Strip it from both places.
+$f = 'azure\ai\projects\models\__init__.py'
+$lines = Get-Content $f
+$out = New-Object System.Collections.Generic.List[string]
+foreach ($line in $lines) {
+    if ($line -match '^\s*_AgentDefinitionOptInKeys,\s*$') { continue }
+    if ($line -match '^\s*"_AgentDefinitionOptInKeys",\s*$') { continue }
+    $out.Add($line)
+}
+Set-Content $f $out
+
 # Remove the generated `voice_agent_web_socket` operation group from the public surface entirely.
 # The generated operation only performs a plain HTTP GET (no WebSocket upgrade handshake) and
 # discards the connection - it's not a usable client and was never meant to be public (the real
@@ -73,25 +89,33 @@ foreach ($f in $files) {
 # get_session_log_stream must always treat the response as an SSE stream, but must still pop any
 # caller-supplied stream= kwarg first -- otherwise it collides with the explicit stream=_stream
 # argument passed to self._client._pipeline.run(), raising "got multiple values for keyword
-# argument 'stream'" (hit by samples calling get_session_log_stream(..., stream=True)).
+# argument 'stream'" (hit by samples calling get_session_log_stream(..., stream=True)). The popped
+# value is discarded (not used to set _stream): this operation must always stream regardless of
+# what the caller passes, otherwise a caller-supplied stream=False would make the generated method
+# attempt normal deserialization of an open SSE response, which is invalid per its SSE contract.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
     $lines = Get-Content $f
+    $out = New-Object System.Collections.Generic.List[string]
     $inFunc = $false
-    for ($i = 0; $i -lt $lines.Length; $i++) {
-        if ($lines[$i] -match '^\s*(async\s+)?def\s+get_session_log_stream\(') {
+    foreach ($line in $lines) {
+        if ($line -match '^\s*(async\s+)?def\s+get_session_log_stream\(') {
             $inFunc = $true
+            $out.Add($line)
             continue
         }
-        if ($inFunc -and $lines[$i] -match '^\s*(async\s+)?def\s+\w+\(') {
+        if ($inFunc -and $line -match '^\s*(async\s+)?def\s+\w+\(') {
             $inFunc = $false
         }
-        if ($inFunc -and $lines[$i] -match '^\s*_stream = (True|kwargs\.pop\(.+\))\s*$') {
-            $indent = ([regex]::Match($lines[$i], '^\s*')).Value
-            $lines[$i] = $indent + '_stream = kwargs.pop("stream", True)'
+        if ($inFunc -and $line -match '^\s*_stream = (True|kwargs\.pop\(.+\))\s*$') {
+            $indent = ([regex]::Match($line, '^\s*')).Value
+            $out.Add($indent + 'kwargs.pop("stream", None)  # must always stream; discard any caller override')
+            $out.Add($indent + '_stream = True')
+            continue
         }
+        $out.Add($line)
     }
-    Set-Content $f $lines
+    Set-Content $f $out
 }
 
 # Fix Sphinx docutils warnings in class SessionLogEvent: the generated docstring wraps two long
@@ -205,6 +229,65 @@ $c = $c.Replace(
 )
 Set-Content $f $c -NoNewline
 
+# Fix Sphinx docutils "Bullet list ends without a blank line; unexpected unindent" warnings in
+# RealtimeServerEventConversationItemAdded and RealtimeServerEventConversationItemCreated
+# (models/_models.py). Same root cause and fix pattern as the VoiceAudioOutputConfig/
+# VoiceConversationStatus fixup above: the emitter wraps long bullet-item lines without
+# indenting the continuation lines to align with the bullet's text, and (for
+# ConversationItemAdded) runs the trailing summary sentence straight into the last bullet with
+# no blank line to end the list. See the NOTE above the VoiceAudioOutputConfig fix for why these
+# use single-quoted @'...'@ here-strings (this text is full of literal Markdown backticks).
+$f = 'azure\ai\projects\models\_models.py'
+$c = Get-Content $f -Raw
+$c = $c.Replace(
+@'
+    * When the client sends a `conversation.item.create` event.
+    * When the input audio buffer is committed. In this case the item will be a user message
+    containing the audio from the buffer.
+    * When the model is generating a Response. In this case the `conversation.item.added` event
+    will be sent when the model starts generating a specific Item, and thus it will not yet have
+    any content (and `status` will be `in_progress`).
+    The event will include the full content of the Item (except when model is generating a
+    Response) except for audio data, which can be retrieved separately with a
+    `conversation.item.retrieve` event if necessary.
+'@,
+@'
+    * When the client sends a `conversation.item.create` event.
+    * When the input audio buffer is committed. In this case the item will be a user message
+      containing the audio from the buffer.
+    * When the model is generating a Response. In this case the `conversation.item.added` event
+      will be sent when the model starts generating a specific Item, and thus it will not yet have
+      any content (and `status` will be `in_progress`).
+
+    The event will include the full content of the Item (except when model is generating a
+    Response) except for audio data, which can be retrieved separately with a
+    `conversation.item.retrieve` event if necessary.
+'@
+)
+$c = $c.Replace(
+@'
+    * The server is generating a Response, which if successful will produce
+    either one or two Items, which will be of type `message`
+    (role `assistant`) or type `function_call`.
+    * The input audio buffer has been committed, either by the client or the
+    server (in `server_vad` mode). The server will take the content of the
+    input audio buffer and add it to a new user message Item.
+    * The client has sent a `conversation.item.create` event to add a new Item
+    to the Conversation.
+'@,
+@'
+    * The server is generating a Response, which if successful will produce
+      either one or two Items, which will be of type `message`
+      (role `assistant`) or type `function_call`.
+    * The input audio buffer has been committed, either by the client or the
+      server (in `server_vad` mode). The server will take the content of the
+      input audio buffer and add it to a new user message Item.
+    * The client has sent a `conversation.item.create` event to add a new Item
+      to the Conversation.
+'@
+)
+Set-Content $f $c -NoNewline
+
 # A block of code in the implementation of "list_memories", in both sync 
 # and async _operations.py files, needs to be moved up. It's emitted in the wrong place,
 # in the inline function named "prepare_request". Instead it should be moved up into the
@@ -258,9 +341,11 @@ foreach ($f in $files) {
     $c = Get-Content $f -Raw
     # Find all occurrences of "def list_memories(" and get the index of the last one
     $methodMatches = [regex]::Matches($c, 'def list_memories\(')
-    if ($methodMatches.Count -eq 0) { continue }
+    if ($methodMatches.Count -eq 0) {
+        throw "PostEmitter.ps1: expected to find at least one 'def list_memories(' in $f, but found none. The emitter output has likely changed shape; update this fixup instead of silently skipping it (it exists to avoid an unbound-'body' pyright/runtime failure)."
+    }
     $lastMethodStart = $methodMatches[$methodMatches.Count - 1].Index
-    
+
     # Find the pattern to replace - first occurrence after the last list_memories method
     $patternEscaped = [regex]::Escape($oldPattern)
     $patternMatches = [regex]::Matches($c, $patternEscaped)
@@ -271,11 +356,13 @@ foreach ($f in $files) {
             break
         }
     }
-    if ($matchToReplace -eq $null) { continue }
-    
+    if ($matchToReplace -eq $null) {
+        throw "PostEmitter.ps1: expected list_memories() body in $f to match the known emitter shape (the unbound-'body'-in-prepare_request pattern), but no match was found after the last 'def list_memories(' occurrence. The emitter output has likely changed shape; update `$oldPattern/`$newPattern instead of silently skipping this fixup, otherwise the regenerated package would ship with the unbound-variable bug this fixup exists to prevent."
+    }
+
     # Replace only that specific occurrence
     $c = $c.Substring(0, $matchToReplace.Index) + $newPattern + $c.Substring($matchToReplace.Index + $matchToReplace.Length)
-    
+
     Set-Content $f $c -NoNewline
 }
 

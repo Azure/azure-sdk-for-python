@@ -9,7 +9,9 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     AgentDetails,
+    AgentKind,
     AgentVersionDetails,
+    GenerateVoiceAgentRequest,
     VoiceAgentDefinition,
     VoiceAgentAudioConfig,
     VoiceAgentAudioOutputConfig,
@@ -30,10 +32,6 @@ class TestVoiceAgentCrud(TestBase):
         This is also not practical to cover with HTTP-only recorded tests since it requires an
         actual WebSocket session.
     Once these are fixed service-side, tests can be added for them.
-
-    `agents.generate_agent(GenerateVoiceAgentRequest(kind="voice", name=...))` was previously
-    blocked by a service-side bug (missing required `name`); that has since been fixed upstream,
-    but no recorded test has been added for it yet.
     """
 
     # To run only this test:
@@ -165,6 +163,36 @@ class TestVoiceAgentCrud(TestBase):
         project_client.agents.enable(agent_name=agent_name)
         enabled_agent: AgentDetails = project_client.agents.get(agent_name=agent_name)
         assert str(enabled_agent.state) == "AgentState.ENABLED" or enabled_agent.state == "enabled"
+
+        # Delete the voice agent.
+        result = project_client.agents.delete(agent_name=agent_name)
+        assert result.deleted
+
+    # To run only this test:
+    # pytest tests\agents\test_voice_agent_crud.py::TestVoiceAgentCrud::test_generate_agent -s
+    @servicePreparer()
+    @recorded_by_proxy()
+    def test_generate_agent(self, **kwargs):
+        """
+        Test guided authoring for a voice Agent via `agents.generate_agent()`.
+
+        Routes used in this test:
+
+        Action REST API Route             Client Method
+        ------+----------------------------+-----------------------------------
+        POST   /agents:generate            project_client.agents.generate_agent()
+        DELETE /agents/{agent_name}         project_client.agents.delete()
+        """
+        print("\n")
+        project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
+        agent_name = "VoiceAgentGenerateTest"
+
+        agent: AgentDetails = project_client.agents.generate_agent(
+            GenerateVoiceAgentRequest(kind=AgentKind.VOICE, name=agent_name)
+        )
+        self._validate_agent(agent, expected_name=agent_name)
+        assert agent.versions.latest.definition.kind == "voice"  # type: ignore[attr-defined]
+        assert agent.versions.latest.definition.instructions  # type: ignore[attr-defined]
 
         # Delete the voice agent.
         result = project_client.agents.delete(agent_name=agent_name)

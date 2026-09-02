@@ -184,6 +184,9 @@ async def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Op
                     await asyncio.wait_for(pump(), timeout=_RESPONSE_TIMEOUT)
                 except asyncio.TimeoutError:
                     print("Timed out waiting for the agent's reply.")
+                    # The server-side response is still active even though we stopped waiting
+                    # locally; cancel it so the next turn's response.create() isn't rejected.
+                    await conn.response.cancel()
     except (KeyboardInterrupt, asyncio.CancelledError):
         print("\n(ending session...)")
     finally:

@@ -535,21 +535,26 @@ class RealtimeConnection:  # pylint: disable=too-many-instance-attributes
             except ConnectionResetError:
                 return
 
-    def recv(self) -> ServerEvent:
+    def recv(self, *, timeout: Optional[float] = None) -> ServerEvent:
         """Receive and parse the next server event.
 
         Known event types are returned as their strongly-typed
         ``VoiceAgentServerEventXxx`` model. Event types not (yet) represented by a
         generated model are returned as a plain ``dict`` for forward compatibility.
 
+        :keyword timeout: Maximum time in seconds to wait for the next event. If ``None``
+         (the default), block until an event is received. If no event arrives within
+         ``timeout`` seconds, raise :exc:`TimeoutError`.
+        :paramtype timeout: float or None
         :return: The parsed server event.
         :rtype: ~azure.ai.projects.ServerEvent
         :raises ConnectionResetError: If the connection was closed by the server.
+        :raises TimeoutError: If ``timeout`` elapses before an event is received.
         """
         from websockets.exceptions import ConnectionClosed  # pylint: disable=import-outside-toplevel
 
         try:
-            raw = self._connection.recv()
+            raw = self._connection.recv(timeout=timeout)
         except ConnectionClosed as exc:
             self._closed = True
             raise ConnectionResetError("The realtime connection was closed.") from exc
@@ -669,7 +674,13 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
             params["x-agent-version-override"] = self._agent_version_override
         params.update(self._extra_query)
 
-        full_url = f"{url}?{urlencode(params)}" if params else url
+        if params:
+            # Preserve an existing query string on a `connection_url` override (for example a
+            # SAS-style `?sig=...`) instead of unconditionally appending a second `?`.
+            delimiter = "&" if urlparse(url).query else "?"
+            full_url = f"{url}{delimiter}{urlencode(params)}"
+        else:
+            full_url = url
 
         token = self._credential.get_token(*self._credential_scopes)
         headers: Dict[str, str] = {

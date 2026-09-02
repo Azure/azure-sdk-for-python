@@ -40,9 +40,9 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     RealtimeAudioFormatsAudioPcm,
-    RealtimeFunctionTool,
     ToolType,
     VoiceAgentDefinition,
+    VoiceAgentFunctionTool,
     VoiceAgentMcpTool,
     VoiceAgentAudioConfig,
     VoiceAgentAudioInputConfig,
@@ -70,8 +70,7 @@ agent_name = "sample-voice-agent-with-tools"
 
 # A client-executed tool: the service forwards the function call to your app,
 # and your app returns the result over the live session.
-get_weather = RealtimeFunctionTool(
-    type="function",
+get_weather = VoiceAgentFunctionTool(
     name="get_weather",
     description="Get the current weather for a city.",
     parameters=cast(
@@ -124,7 +123,7 @@ definition = VoiceAgentDefinition(
     output_modalities=[VoiceOutputModality.AUDIO],
     # Attach the self-contained tools. `_example_mcp_tool` and `_example_toolbox_tool`
     # reference external resources you must own, so they are left out here.
-    tools=[get_weather, end_call],  # type: ignore[list-item]
+    tools=[get_weather, end_call],
     store=True,
 )
 

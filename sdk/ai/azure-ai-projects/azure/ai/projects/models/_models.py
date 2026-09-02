@@ -16398,10 +16398,11 @@ class RealtimeServerEventConversationItemAdded(
 
     * When the client sends a `conversation.item.create` event.
     * When the input audio buffer is committed. In this case the item will be a user message
-    containing the audio from the buffer.
+      containing the audio from the buffer.
     * When the model is generating a Response. In this case the `conversation.item.added` event
-    will be sent when the model starts generating a specific Item, and thus it will not yet have
-    any content (and `status` will be `in_progress`).
+      will be sent when the model starts generating a specific Item, and thus it will not yet have
+      any content (and `status` will be `in_progress`).
+
     The event will include the full content of the Item (except when model is generating a
     Response) except for audio data, which can be retrieved separately with a
     `conversation.item.retrieve` event if necessary.
@@ -16453,13 +16454,13 @@ class RealtimeServerEventConversationItemCreated(
     event:
 
     * The server is generating a Response, which if successful will produce
-    either one or two Items, which will be of type `message`
-    (role `assistant`) or type `function_call`.
+      either one or two Items, which will be of type `message`
+      (role `assistant`) or type `function_call`.
     * The input audio buffer has been committed, either by the client or the
-    server (in `server_vad` mode). The server will take the content of the
-    input audio buffer and add it to a new user message Item.
+      server (in `server_vad` mode). The server will take the content of the
+      input audio buffer and add it to a new user message Item.
     * The client has sent a `conversation.item.create` event to add a new Item
-    to the Conversation.
+      to the Conversation.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str

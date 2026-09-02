@@ -84,6 +84,12 @@ IGNORED_SAMPLES = {
         "hello_world_sample_entra_id_and_bleu.py",
     ],
     "azure-ai-ml": ["ml_samples_authentication_sovereign_cloud.py"],
+    "azure-ai-projects": [
+        # These interactively read from stdin via input(), which raises EOFError when this
+        # runner executes the file non-interactively.
+        "sample_voice_agent_live_text_conversation.py",
+        "sample_voice_agent_live_text_conversation_async.py",
+    ],
     "azure-eventgrid": [
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",

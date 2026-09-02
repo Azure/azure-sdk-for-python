@@ -138,9 +138,15 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
         if self._output_stream is not None:
             return
         remaining = b""
+        # The sequence number the currently-buffered `remaining` bytes were dequeued from, so a
+        # barge-in that lands *between* callback invocations can still discard them below.
+        remaining_seq = -1
 
         def _playback_callback(_in_data, frame_count, _time_info, _status):
-            nonlocal remaining
+            nonlocal remaining, remaining_seq
+            if remaining and remaining_seq < self._playback_base:
+                remaining = b""  # a barge-in advanced the base since this chunk was dequeued
+
             wanted = frame_count * pyaudio.get_sample_size(pyaudio.paInt16)
             out = remaining[:wanted]
             remaining = remaining[wanted:]
@@ -159,6 +165,7 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
                 take = wanted - len(out)
                 out = out + data[:take]
                 remaining = data[take:]
+                remaining_seq = seq
 
             return (out, pyaudio.paContinue)
 

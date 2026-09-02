@@ -80,7 +80,9 @@ class _AcceptEncodingIdentityProxy:
                 try:
                     headers[_ACCEPT_ENCODING_HEADER_NAME] = _ACCEPT_ENCODING_IDENTITY_VALUE
                 except Exception:  # pylint: disable=broad-except
-                    kwargs["headers"] = {_ACCEPT_ENCODING_HEADER_NAME: _ACCEPT_ENCODING_IDENTITY_VALUE}
+                    # `headers` may be an immutable mapping; merge into a fresh mutable dict
+                    # instead of discarding the caller-supplied entries.
+                    kwargs["headers"] = {**headers, _ACCEPT_ENCODING_HEADER_NAME: _ACCEPT_ENCODING_IDENTITY_VALUE}
 
             return attribute(*args, **kwargs)
 
