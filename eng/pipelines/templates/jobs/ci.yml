@@ -76,7 +76,13 @@ parameters:
 
 jobs:
   - job: 'Build_Linux'
-    timeoutInMinutes: 90
+    # Compiling a Rust extension for every architecture takes far longer than a
+    # pure-Python build, mostly because the Linux aarch64 wheel is built inside
+    # an emulated container. Packages without a Rust toolchain keep the default.
+    ${{ if parameters.InstallMsRustToolchain }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: 90
 
     pool:
       name: $(LINUXPOOL)
@@ -106,7 +112,10 @@ jobs:
         MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_Windows'
-    timeoutInMinutes: 90
+    ${{ if parameters.InstallMsRustToolchain }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: 90
 
     pool:
       name: $(WINDOWSPOOL)
@@ -129,7 +138,10 @@ jobs:
         MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_MacOS'
-    timeoutInMinutes: 90
+    ${{ if parameters.InstallMsRustToolchain }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: 90
 
     pool:
       name: $(MACPOOL)

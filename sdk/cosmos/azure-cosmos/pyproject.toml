@@ -1,7 +1,15 @@
 # Build system. Maturin reads `[tool.maturin]` below to decide what to
 # compile and where to put the result.
+#
+# maturin is pinned rather than given a range because the wheel it produces has
+# to be identical everywhere. With a range, each platform resolved whatever the
+# package feed happened to offer for its architecture: x86_64 and Windows took
+# 1.14.1, macOS 1.15.0, and the emulated aarch64 container silently fell back to
+# 1.10.2, which built a wheel containing the Python sources but no compiled
+# extension. Pinning keeps every target on one known-good version and turns a
+# missing wheel into a loud failure instead of a silent downgrade.
 [build-system]
-requires      = ["maturin>=1.4,<2.0"]
+requires      = ["maturin==1.15.0"]
 build-backend = "azure_cosmos_build_backend"
 backend-path = ["."]
 
