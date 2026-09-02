@@ -138,7 +138,10 @@ steps:
   - ${{ if parameters.InstallMsRustToolchain }}:
     - template: /eng/pipelines/templates/steps/install-msrust-toolchain.yml
       parameters:
-        ToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        # Only forwarded when a caller overrides it, so the default feed defined by
+        # the template stays the single source of truth.
+        ${{ if ne(parameters.MsRustToolchainFeed, '') }}:
+          ToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
         WorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
         ${{ if eq(parameters.ArtifactSuffix, 'windows') }}:
           AdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
