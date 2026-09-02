@@ -1,0 +1,147 @@
+parameters:
+  # NuGet feed in this ADO organization whose upstream is
+  # azure-feed://devdiv/DevDiv/Rust.Sdk@Release. System.AccessToken is scoped to
+  # this organization and cannot authenticate to DevDiv directly, so pointing
+  # RustInstaller at the DevDiv feed fails with HTTP 401. Going through a local
+  # feed lets the upstream do the cross-organization fetch instead.
+  #
+  # This feed is organization scoped rather than project scoped, so its URL has no
+  # project segment. The project scoped spelling
+  # (.../azure-sdk/internal/_packaging/...) returns 404.
+  #
+  # See https://aka.ms/rustinado.
+  - name: ToolchainFeed
+    type: string
+    default: 'https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json'
+  # Directory holding rust-toolchain.toml. The toolchain name is read from that
+  # file, and it lives beside the package rather than at the repository root, so
+  # this has to be set for the correct toolchain to be resolved.
+  - name: WorkingDirectory
+    type: string
+    default: ''
+  # Space separated target triples to acquire in addition to the host triple.
+  - name: AdditionalTargets
+    type: string
+    default: ''
+  # Azure Artifacts Cargo feed used to replace the crates-io source. Agents run
+  # under 1ES network isolation, which does not allow index.crates.io, so an
+  # unmodified cargo resolve fails with
+  # "Could not connect to server ... index.crates.io port 443".
+  #
+  # This is the same feed and spelling azure-sdk-for-rust uses. The "~force-auth"
+  # suffix is required for Cargo upstream sources, see
+  # https://learn.microsoft.com/azure/devops/artifacts/cargo/cargo-upstream-source.
+  - name: CratesIoFeed
+    type: string
+    default: 'sparse+https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-rust-public~force-auth/Cargo/index/'
+  # Registry name used in the cargo config. CargoAuthenticate derives the
+  # credential variables it exports from this name, so it has to match the
+  # [registries] key written below.
+  - name: CratesIoRegistryName
+    type: string
+    default: 'azure-sdk-for-rust-public'
+  # Applied to every step so callers can skip the install on jobs that will not
+  # build a binary wheel.
+  - name: Condition
+    type: string
+    default: succeeded()
+
+steps:
+  # Installs msrustup and the toolchain named by rust-toolchain.toml, and exports
+  # CARGO_HOME, MSRUSTUP_HOME, MSRUSTUP_TOOLCHAIN, RUST_VERSION, RUST_BIN_PATH and
+  # an updated PATH to later steps. This is what Windows and macOS agents compile
+  # with. Linux agents do not compile here, see the note on the next step.
+  - task: RustInstaller@1
+    displayName: 'Install internal Rust toolchain'
+    condition: ${{ parameters.Condition }}
+    inputs:
+      ${{ if ne(parameters.ToolchainFeed, '') }}:
+        toolchainFeed: ${{ parameters.ToolchainFeed }}
+      ${{ if ne(parameters.WorkingDirectory, '') }}:
+        workingDirectory: ${{ parameters.WorkingDirectory }}
+      ${{ if ne(parameters.AdditionalTargets, '') }}:
+        additionalTargets: ${{ parameters.AdditionalTargets }}
+
+  # RustInstaller only defines MSRUSTUP_FEED_URL when it was given a feed. Later
+  # steps reference $(MSRUSTUP_FEED_URL) to forward the feed into the cibuildwheel
+  # containers, and an undefined variable would be forwarded as the literal string
+  # "$(MSRUSTUP_FEED_URL)" and then used as a URL. Define it as empty instead, which
+  # the msrustup bootstrap treats as "use the default feed".
+  - pwsh: |
+      $feed = $env:MSRUSTUP_FEED_URL
+      if (-not $feed) {
+        Write-Host "MSRUSTUP_FEED_URL is not set, defining it as empty so the container falls back to the default feed."
+        $feed = ''
+      }
+      Write-Host "##vso[task.setvariable variable=MSRUSTUP_FEED_URL]$feed"
+
+      Write-Host "Toolchain:  $env:MSRUSTUP_TOOLCHAIN"
+      Write-Host "Version:    $env:RUST_VERSION"
+      Write-Host "Bin path:   $env:RUST_BIN_PATH"
+    displayName: 'Normalize Rust toolchain variables'
+    condition: ${{ parameters.Condition }}
+
+  # Route crates.io through an Azure Artifacts feed. This mirrors the approach in
+  # eng/templates/config.toml.template and eng/pipelines/templates/steps/use-rust.yml
+  # in azure-sdk-for-rust, and is not optional: an agent that needs the internal
+  # toolchain is network isolated, so it cannot reach index.crates.io either.
+  #
+  # Written after RustInstaller because that task creates CARGO_HOME and sets the
+  # variable this step writes into.
+  - pwsh: |
+      $cargoHome = $env:CARGO_HOME
+      if (-not $cargoHome) { $cargoHome = [System.IO.Path]::Combine($HOME, '.cargo') }
+      New-Item -ItemType Directory -Force -Path $cargoHome | Out-Null
+
+      $configPath = [System.IO.Path]::Combine($cargoHome, 'config.toml')
+
+      # net.git-fetch-with-cli makes cargo shell out to git for git dependencies
+      # instead of using its built in libgit2 client, so those fetches pick up the
+      # agent's git configuration and credentials.
+      @'
+      [registries]
+      REGISTRY_NAME = { index = "CRATES_IO_FEED" }
+
+      [source.crates-io]
+      replace-with = "REGISTRY_NAME"
+
+      [net]
+      git-fetch-with-cli = true
+      '@ -replace 'CRATES_IO_FEED', '${{ parameters.CratesIoFeed }}' `
+         -replace 'REGISTRY_NAME', '${{ parameters.CratesIoRegistryName }}' `
+        | Set-Content -Path $configPath -Encoding utf8
+
+      Write-Host "Wrote cargo config to $configPath"
+      Get-Content $configPath
+      Write-Host "##vso[task.setvariable variable=CargoConfigPath]$configPath"
+
+      # cibuildwheel builds Linux wheels inside a container that cannot see this
+      # config. Cargo honors registries.<name>.index from the environment, but it
+      # ignores source replacement set that way, so the container writes its own
+      # minimal config naming this registry and picks the index up from here.
+      # The variable name is derived from the registry name, which is therefore a
+      # fixed contract with the environment-pass list in the package's pyproject.
+      $indexVar = 'CARGO_REGISTRIES_' + ('${{ parameters.CratesIoRegistryName }}' -replace '-', '_').ToUpperInvariant() + '_INDEX'
+      Write-Host "Exporting $indexVar"
+      Write-Host "##vso[task.setvariable variable=$indexVar]${{ parameters.CratesIoFeed }}"
+    displayName: 'Configure cargo to use the Azure Artifacts feed'
+    condition: ${{ parameters.Condition }}
+
+  # NuGetAuthenticate publishes an Azure Artifacts token as VSS_NUGET_ACCESSTOKEN.
+  # CargoAuthenticate normally reads System.AccessToken, which is empty for builds
+  # from forks, so the token from this task is handed to it below instead. See
+  # https://github.com/microsoft/azure-pipelines-tasks/issues/22421.
+  - task: NuGetAuthenticate@1
+    displayName: 'Acquire an Azure Artifacts token'
+    condition: ${{ parameters.Condition }}
+
+  # Parses the [registries] table and exports the
+  # CARGO_REGISTRIES_<REGISTRY>_TOKEN and _CREDENTIAL_PROVIDER variables cargo
+  # needs to authenticate against the feed.
+  - task: CargoAuthenticate@0
+    displayName: 'Authenticate cargo to the Azure Artifacts feed'
+    condition: ${{ parameters.Condition }}
+    inputs:
+      configFile: $(CargoConfigPath)
+    env:
+      SYSTEM_ACCESSTOKEN: $(VSS_NUGET_ACCESSTOKEN)

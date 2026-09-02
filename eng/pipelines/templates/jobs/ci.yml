@@ -61,10 +61,28 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
+  - name: MsRustAdditionalTargets
+    type: string
+    default: ''
 
 jobs:
   - job: 'Build_Linux'
-    timeoutInMinutes: 90
+    # Compiling a Rust extension for every architecture takes far longer than a
+    # pure-Python build, mostly because the Linux aarch64 wheel is built inside
+    # an emulated container. Packages without a Rust toolchain keep the default.
+    ${{ if parameters.InstallMsRustToolchain }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: 90
 
     pool:
       name: $(LINUXPOOL)
@@ -88,9 +106,16 @@ jobs:
         ArtifactSuffix: linux
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_Windows'
-    timeoutInMinutes: 90
+    ${{ if parameters.InstallMsRustToolchain }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: 90
 
     pool:
       name: $(WINDOWSPOOL)
@@ -107,14 +132,28 @@ jobs:
         ArtifactSuffix: windows
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_MacOS'
-    timeoutInMinutes: 90
+    ${{ if parameters.InstallMsRustToolchain }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: 90
 
     pool:
       name: $(MACPOOL)
       vmImage: $(MACVMIMAGE)
       os: macOS
+
+    templateContext:
+      sdl:
+        codeql:
+          compiled:
+            enabled: false
+            justificationForDisabling: "Compiled language support is not available on macOS ARM64. See: https://eng.ms/docs/coreai/devdiv/one-engineering-system-1es/1es-docs/codeql/troubleshooting/onboarding/language-compiled#arm64-cpu-on-macos"
 
     steps:
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
@@ -126,6 +165,10 @@ jobs:
         ArtifactSuffix: mac
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_Extended'
     displayName: Build Extended
@@ -142,12 +185,13 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-      parameters:
-        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-          TokenToUseForAuth: $(azuresdk-github-pat)
-        Paths:
-          - '**'
+    - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+      - checkout: self
+    - ${{ else }}:
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - '**'
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -181,12 +225,13 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-      parameters:
-        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-          TokenToUseForAuth: $(azuresdk-github-pat)
-        Paths:
-          - '**'
+    - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+      - checkout: self
+    - ${{ else }}:
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - '**'
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -235,16 +280,6 @@ jobs:
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
-
-    - template: /eng/common/pipelines/templates/steps/verify-links.yml
-      parameters:
-        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: ''
-          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
-        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: sdk/${{ parameters.ServiceDirectory }}
-        CheckLinkGuidance: $true
-        Condition: succeededOrFailed()
 
     - task: DownloadPipelineArtifact@2
       condition: succeededOrFailed()

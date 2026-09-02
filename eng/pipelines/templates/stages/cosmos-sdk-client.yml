@@ -15,6 +15,15 @@ parameters:
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
+    # azure-cosmos compiles a Rust extension with the Microsoft internal toolchain,
+    # so the build agents need msrustup and the toolchain named in the package's
+    # rust-toolchain.toml.
+    InstallMsRustToolchain: true
+    MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/cosmos/azure-cosmos
+    # The Windows ARM64 wheel is cross-compiled from the x64 agent, so that target
+    # has to be present in the toolchain. Keep in sync with the win_arm64 override
+    # in the package's pyproject.toml.
+    MsRustAdditionalTargets: aarch64-pc-windows-msvc
     # Run only emulator tests in Emulator CI
     TestMarkArgument: cosmosEmulator
     ServiceDirectory: cosmos

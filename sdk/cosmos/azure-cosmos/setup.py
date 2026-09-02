@@ -6,6 +6,11 @@
 # ------------------------------------
 # pylint:disable=missing-docstring
 
+# TODO: this file duplicates the metadata in pyproject.toml's [project] block.
+# Wheels built by maturin/cibuildwheel use [project] and ignore everything
+# below, so any edit here must be mirrored there (and vice versa) until the two
+# are consolidated. See the TODO above [project] in pyproject.toml.
+
 import re
 import os
 from io import open

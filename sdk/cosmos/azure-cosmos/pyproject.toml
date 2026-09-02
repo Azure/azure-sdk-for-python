@@ -1,11 +1,154 @@
 # Build system. Maturin reads `[tool.maturin]` below to decide what to
 # compile and where to put the result.
+#
+# maturin is pinned rather than given a range because the wheel it produces has
+# to be identical everywhere. With a range, each platform resolved whatever the
+# package feed happened to offer for its architecture: x86_64 and Windows took
+# 1.14.1, macOS 1.15.0, and the emulated aarch64 container silently fell back to
+# 1.10.2, which built a wheel containing the Python sources but no compiled
+# extension. Pinning keeps every target on one known-good version and turns a
+# missing wheel into a loud failure instead of a silent downgrade.
 [build-system]
-requires      = ["maturin>=1.4,<2.0"]
+requires      = ["maturin==1.15.0"]
 build-backend = "azure_cosmos_build_backend"
 backend-path = ["."]
 
+# Python project metadata, required by maturin. Without this block maturin
+# falls back to the Rust crate and produces a wheel named
+# `azure_cosmos_rust-0.1.0` with no dependencies; it never reads setup.py.
+#
+# TODO: consolidate metadata onto a single source. It currently lives in three
+# places that must be kept in agreement by hand:
+#   1. setup.py            - still the source used by the sdist/pure-Python path
+#   2. this [project] block - used by every cibuildwheel/maturin wheel
+#   3. azure/cosmos/_version.py - read by setup.py and by the runtime
+# The copies already disagree on purpose in two spots, and those decisions need
+# to be re-made when they are merged:
+#   - requires-python is >=3.10 here but >=3.9 in setup.py, because abi3-py310
+#     wheels cannot load on 3.9.
+#   - setup.py publishes README + CHANGELOG as the long description; PEP 621
+#     `readme` takes one file, so the changelog is absent from the wheel.
+# Until then: `azure/cosmos/_version.py` must report the same version as
+# `[project].version`, and nothing enforces that.
+[project]
+name = "azure-cosmos"
+version = "4.16.2"
+description = "Microsoft Azure Cosmos Client Library for Python"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT License" }
+authors = [{ name = "Microsoft Corporation", email = "askdocdb@microsoft.com" }]
+maintainers = [{ name = "Microsoft", email = "askdocdb@microsoft.com" }]
+keywords = ["azure", "azure sdk"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "azure-core>=1.30.0",
+    "typing-extensions>=4.6.0",
+]
+
+[project.optional-dependencies]
+aio = ["azure-core[aio]>=1.30.0"]
+
+[project.urls]
+Homepage = "https://github.com/Azure/azure-sdk-for-python"
+Repository = "https://github.com/Azure/azure-sdk-for-python"
+
+# `abi3-py310` means one wheel per platform serves every CPython 3.10+, so a
+# single `cp310-*` build covers the whole supported range.
+[tool.cibuildwheel]
+build = ["cp310-*"]
+skip = ["*-musllinux*"]
+test-command = "python -c \"from azure.cosmos import CosmosClient, _rust; assert _rust.create_database\""
+
+[tool.cibuildwheel.macos]
+archs = ["arm64"]
+# The extension is compiled by the internal Microsoft toolchain named in
+# rust-toolchain.toml. msrustup's multiplexers must come before any upstream
+# rustup proxies in ~/.cargo/bin, otherwise rustup receives the `ms-` channel
+# name it cannot resolve. Install msrustup first: https://aka.ms/msrustup
+environment = { PATH = "$HOME/.msrustup/multiplexers/bin:$PATH" }
+
+[tool.cibuildwheel.windows]
+# ARM64 is cross-compiled from an x64 agent; see the override below.
+archs = ["AMD64", "ARM64"]
+# PATH is deliberately not set here. cibuildwheel parses `environment` with
+# bashlex, which treats the backslashes in a Windows path as escapes. The
+# RustInstaller pipeline task already puts msrustup's multiplexers ahead of any
+# upstream rustup proxies on the agent, and msrustup updates the shell profile
+# for local builds, so the inherited PATH is already correct in both cases.
+
+[tool.cibuildwheel.linux]
+archs = ["x86_64", "aarch64"]
+manylinux-x86_64-image = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
+# PIP_INDEX_URL lets a build behind a package proxy reach an index from inside
+# the container. The MSRUSTUP_* values are the caller's credentials for the
+# internal Rust toolchain feed; they are forwarded at build time and must never
+# be written into this file.
+#
+# The CARGO_REGISTRIES_* names point cargo at an Azure Artifacts feed that
+# mirrors crates.io, because a build agent cannot reach index.crates.io. Cargo
+# reads registries.<name>.index and its credentials from the environment, but it
+# ignores source replacement set that way, so before-all writes a small config
+# naming the same registry. The registry name embedded in these variables has to
+# match the one the pipeline authenticates against.
+environment-pass = [
+    "PIP_INDEX_URL",
+    "MSRUSTUP_ACCESS_TOKEN",
+    "MSRUSTUP_PAT",
+    "MSRUSTUP_FEED_URL",
+    "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_INDEX",
+    "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN",
+    "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER",
+]
+environment = { MSRUSTUP_HOME = "/msrustup", CARGO_HOME = "/cargo", PATH = "/msrustup/multiplexers/bin:$PATH", CARGO_NET_GIT_FETCH_WITH_CLI = "true" }
+# The extension is compiled by the internal Microsoft toolchain named in
+# rust-toolchain.toml, so the container needs msrustup rather than rustup. The
+# manylinux image already provides git, curl, unzip and a C toolchain; only jq
+# is missing. The bootstrap runs outside /project because the installer drops
+# the msrustup binary into the working directory and /project is the mounted
+# source tree, but `toolchain install` runs inside /project so it reads
+# rust-toolchain.toml.
+#
+# The cargo config is only written when an index was forwarded, so a local build
+# with direct crates.io access keeps working unchanged.
+before-all = "dnf install -y jq && mkdir -p $MSRUSTUP_HOME/bootstrap && cd $MSRUSTUP_HOME/bootstrap && sh /project/scripts/install-msrustup.sh && cd /project && $MSRUSTUP_HOME/bootstrap/msrustup toolchain install && sh /project/scripts/configure-cargo-feed.sh"
+
+# Windows ARM64 has no hosted ARM64 build agent, so the wheel is cross-compiled
+# from x64. maturin reads the target from CARGO_BUILD_TARGET, and the toolchain
+# must have been installed with aarch64-pc-windows-msvc as an additional target
+# (the pipeline passes it to RustInstaller).
+#
+# cibuildwheel drives this build with the x64 interpreter, because an ARM64
+# python cannot be executed on an x64 agent. maturin refuses that interpreter
+# once it sees the mismatched target, and without PYO3_CROSS_LIB_DIR it falls
+# back to searching the host for an ARM64 interpreter that cannot exist. Setting
+# the variable moves maturin onto its abi3 Windows cross-compilation path, where
+# it substitutes a placeholder interpreter instead of probing for a real one.
+# The pipeline points it at the ARM64 CPython it already downloads for
+# cibuildwheel, so the value names a real directory of ARM64 import libraries.
+[[tool.cibuildwheel.overrides]]
+select = "*-win_arm64"
+environment = { CARGO_BUILD_TARGET = "aarch64-pc-windows-msvc", PYO3_CROSS_LIB_DIR = "$PYTHON_ARM64_LIB_DIR" }
+
 [tool.maturin]
+# Fail the build when Cargo.lock is missing or no longer matches the Cargo.toml
+# files, so a release cannot silently resolve different dependency versions.
+locked = true
+
 # Path to the binding crate's Cargo.toml. Maturin invokes `cargo build`
 # from there, locates the produced cdylib, renames it to
 # _rust.{pyd,so} and drops it into azure/cosmos/.
@@ -28,6 +171,17 @@ features = ["pyo3/extension-module"]
 include = [
     { path = "azure/cosmos/.libs/*", format = "wheel" },
     { path = "azure_cosmos_build_backend.py", format = "sdist" },
+]
+
+# Byte-compiled output and locally built extensions belong to whoever ran the
+# build, not to the release. Without this a developer's working tree leaks its
+# __pycache__ directories into every wheel.
+exclude = [
+    "**/__pycache__/**",
+    "**/*.py[co]",
+    "azure/cosmos/_rust.*.so",
+    "azure/cosmos/_rust.*.pyd",
+    "azure/cosmos/_rust.*.dylib",
 ]
 
 [tool.azure-sdk-build]

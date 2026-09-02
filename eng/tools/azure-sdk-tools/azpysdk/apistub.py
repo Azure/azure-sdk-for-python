@@ -13,6 +13,8 @@ from ci_tools.logging import logger
 from ci_tools.parsing import ParsedSetup
 
 REPO_ROOT = discover_repo_root()
+AZURE_SDK_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+PYPI_INDEX_URL = "https://pypi.org/simple/"
 
 
 def get_package_wheel_path(pkg_root: str) -> str:
@@ -57,24 +59,23 @@ class apistub(Check):
             "apistub", parents=parents, help="Run the apistub check to generate an API stub for a package"
         )
         p.add_argument(
+            "--token-file",
+            dest="token_file",
+            default=False,
+            action="store_true",
+            help="Generate only the raw APIView token file.",
+        )
+        p.add_argument(
             "--dest-dir",
             dest="dest_dir",
             default=None,
-            help="Destination directory for generated API stub token files.",
+            help="Destination directory for generated API stub files.",
         )
         p.add_argument(
-            "--md",
-            dest="generate_md",
-            default=False,
-            action="store_true",
-            help="Generate api.md from the JSON token file using Export-APIViewMarkdown.ps1. Output directory for api.md is the same as the generated token file.",
-        )
-        p.add_argument(
-            "--extract-metadata",
-            dest="extract_metadata",
-            default=False,
-            action="store_true",
-            help="Extract language-specific metadata from generated api.md into api.metadata.yml and remove metadata header from api.md.",
+            "--generate-from-pypi",
+            dest="generate_from_pypi",
+            default=None,
+            help="Generate the stub from this released PyPI version instead of local source code.",
         )
         p.add_argument(
             "--install-deps",
@@ -102,13 +103,50 @@ class apistub(Check):
             package_dir,
         )
 
+    def download_pypi_wheel(self, executable: str, package_name: str, version: str, staging_directory: str) -> str:
+        """Download a released wheel from PyPI into the staging directory and return its path."""
+        for index_url in (AZURE_SDK_INDEX_URL, PYPI_INDEX_URL):
+            logger.info(f"Downloading {package_name}=={version} from {index_url}.")
+            try:
+                self.run_venv_command(
+                    executable,
+                    [
+                        "-m",
+                        "pip",
+                        "download",
+                        f"{package_name}=={version}",
+                        "--no-deps",
+                        "--only-binary=:all:",
+                        f"--index-url={index_url}",
+                        "-d",
+                        staging_directory,
+                    ],
+                    cwd=staging_directory,
+                    check=True,
+                    additional_environment_settings={"PIP_EXTRA_INDEX_URL": ""},
+                )
+                break
+            except CalledProcessError as error:
+                if index_url == PYPI_INDEX_URL:
+                    error_details = error.stderr or error.stdout or str(error)
+                    logger.error(
+                        f"Failed to download {package_name}=={version} from both package indexes: {error_details}"
+                    )
+                    raise
+                logger.warning(f"Failed to download from the Azure SDK feed: {error}. Retrying from public PyPI.")
+        found_whl = find_whl(staging_directory, package_name, version)
+        if not found_whl:
+            raise FileNotFoundError(
+                f"No wheel found for package {package_name} version {version} after downloading from PyPI."
+            )
+        return os.path.join(staging_directory, found_whl)
+
     def run(self, args: argparse.Namespace) -> int:
         """Run the apistub check command."""
         logger.info("Running apistub check...")
 
-        if getattr(args, "extract_metadata", False) and not getattr(args, "generate_md", False):
-            logger.error("--extract-metadata requires --md.")
-            return 1
+        token_file = getattr(args, "token_file", False)
+        generate_markdown = not token_file
 
         set_envvar_defaults()
         targeted = self.get_targeted_directories(args)
@@ -141,31 +179,33 @@ class apistub(Check):
                 logger.error(f"Failed to install APIView dependencies: {e}")
                 return getattr(e, "returncode", 1)
 
-            if not os.getenv("PREBUILT_WHEEL_DIR"):
-                create_package_and_install(
-                    distribution_directory=staging_directory,
-                    target_setup=package_dir,
-                    skip_install=True,
-                    cache_dir=None,
-                    work_dir=staging_directory,
-                    force_create=False,
-                    package_type="wheel",
-                    pre_download_disabled=False,
-                    python_executable=executable,
-                )
+            generate_from_pypi = getattr(args, "generate_from_pypi", None)
+            package_version = generate_from_pypi or parsed.version
+
+            if generate_from_pypi:
+                pkg_path = self.download_pypi_wheel(executable, package_name, generate_from_pypi, staging_directory)
+            else:
+                if not os.getenv("PREBUILT_WHEEL_DIR"):
+                    create_package_and_install(
+                        distribution_directory=staging_directory,
+                        target_setup=package_dir,
+                        skip_install=True,
+                        cache_dir=None,
+                        work_dir=staging_directory,
+                        force_create=False,
+                        package_type="wheel",
+                        pre_download_disabled=False,
+                        python_executable=executable,
+                    )
+                pkg_path = get_package_wheel_path(package_dir)
 
             if install_deps:
                 self.pip_freeze(executable)
 
-            pkg_path = get_package_wheel_path(package_dir)
             pkg_path = os.path.abspath(pkg_path)
 
-            dest_dir = getattr(args, "dest_dir", None)
-            if dest_dir:
-                out_token_path = os.path.abspath(dest_dir)
-                os.makedirs(out_token_path, exist_ok=True)
-            else:
-                out_token_path = os.path.abspath(staging_directory)
+            out_token_path = os.path.abspath(getattr(args, "dest_dir", None) or package_dir)
+            os.makedirs(out_token_path, exist_ok=True)
 
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
 
@@ -178,17 +218,23 @@ class apistub(Check):
                 cmds.extend(["--out-path", out_token_path])
             if cross_language_mapping_path:
                 cmds.extend(["--mapping-path", cross_language_mapping_path])
-            if getattr(args, "generate_md", False):
+            if generate_markdown:
                 cmds.append("--skip-pylint")
 
             logger.info("Running apistub {}.".format(cmds))
 
             try:
                 self.run_venv_command(executable, cmds, cwd=staging_directory, check=True, immediately_dump=True)
-                if getattr(args, "generate_md", False):
-                    token_json_path = os.path.join(out_token_path, f"{package_name}_python.json")
+                token_json_path = os.path.join(out_token_path, f"{package_name}_python.json")
+                if token_file:
+                    if os.path.exists(token_json_path):
+                        logger.info(f"Generated APIView token file: {token_json_path}")
+                    else:
+                        logger.error(f"Expected APIView token file was not generated: {token_json_path}")
+                        results.append(1)
+                else:
                     md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
-                    metadata_script = os.path.join(REPO_ROOT, "eng", "scripts", "Extract-APIViewMetadata-Python.ps1")
+                    metadata_script = os.path.join(REPO_ROOT, "eng", "scripts", "extract_apiview_metadata.py")
                     logger.info(f"Generating api.md for {package_name}")
                     try:
                         result = run(
@@ -201,16 +247,22 @@ class apistub(Check):
                         if result.stdout:
                             logger.info(result.stdout)
 
-                        if getattr(args, "extract_metadata", False):
-                            logger.info(f"Extracting API metadata for {package_name}")
-                            metadata_result = run(
-                                ["pwsh", metadata_script, "-OutputPath", out_token_path],
-                                check=True,
-                                capture_output=True,
-                                text=True,
-                            )
-                            if metadata_result.stdout:
-                                logger.info(metadata_result.stdout)
+                        logger.info(f"Extracting API metadata for {package_name}")
+                        metadata_result = run(
+                            [
+                                executable,
+                                metadata_script,
+                                "--output-path",
+                                out_token_path,
+                                "--package-version",
+                                package_version,
+                            ],
+                            check=True,
+                            capture_output=True,
+                            text=True,
+                        )
+                        if metadata_result.stdout:
+                            logger.info(metadata_result.stdout)
                     except FileNotFoundError:
                         logger.error("Failed to generate api.md: pwsh (PowerShell) is not installed or not on PATH.")
                         results.append(1)

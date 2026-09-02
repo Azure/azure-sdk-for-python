@@ -309,6 +309,11 @@ class ParsedSetup:
 
         self.folder = os.path.dirname(self.setup_filename)
 
+        # Whether this package asks to be built by cibuildwheel. Checked in addition to
+        # `ext_modules` when routing builds, so that compiled packages using a non-setuptools
+        # backend (maturin/PyO3) are not mistaken for pure-Python ones.
+        self.uses_cibuildwheel = has_cibuildwheel_config(self.folder)
+
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
         """
@@ -703,6 +708,25 @@ def parse_pyproject(
     ext_modules = get_value_from_dict(toml_dict, "tool.setuptools.ext-modules", [])
     ext_modules = [Extension(**moduleArgDict) for moduleArgDict in ext_modules]
 
+    # Declaring ext-modules in [tool.setuptools.ext-modules] is still experimental in setuptools, and the
+    # abi3 / py_limited_api wheel tag cannot be expressed declaratively, so compiled-extension packages keep
+    # their Extension(...) definition in setup.py. When such a package also has a [project] table, pyproject
+    # wins over setup.py during parsing and the extension would otherwise go undetected, causing the build to
+    # be mis-routed to `python -m build` (pure-Python) instead of cibuildwheel. Fall back to setup.py here so
+    # the extension is still discovered. Guarded so a setup.py that cannot be parsed cannot regress packages
+    # that parse fine today.
+    if not ext_modules:
+        sibling_setup_py = os.path.join(package_directory, "setup.py")
+        if os.path.exists(sibling_setup_py):
+            try:
+                setup_py_result = parse_setup_py(sibling_setup_py)
+                ext_package = ext_package or setup_py_result[11]  # ext_package
+                ext_modules = setup_py_result[12]  # ext_modules
+            except Exception as e:  # pragma: no cover - defensive, preserves prior behavior
+                logging.warning(
+                    f"Found setup.py alongside {pyproject_filename} but could not parse it for ext_modules: {e}"
+                )
+
     # fmt: off
     return (
         name,                   # str
@@ -807,6 +831,23 @@ def parse_setup(
         result = parse_setup_py(resolved_filename)
 
     return result
+
+
+def has_cibuildwheel_config(folder: str) -> bool:
+    """
+    Given a package folder, returns whether its pyproject.toml declares a [tool.cibuildwheel] table.
+
+    A package that configures cibuildwheel is telling us it produces a compiled, platform-specific
+    wheel. This is a separate signal from `ext_modules`, which only covers setuptools `Extension`
+    objects: packages built by other backends (maturin/PyO3, for example) compile native code but
+    expose no `ext_modules` at all.
+    """
+    pyproject_filename = os.path.join(folder, "pyproject.toml")
+
+    if not os.path.exists(pyproject_filename):
+        return False
+
+    return get_value_from_dict(get_pyproject_dict(pyproject_filename), "tool.cibuildwheel", None) is not None
 
 
 def get_pyproject_dict(pyproject_file: str) -> Dict[str, Any]:
