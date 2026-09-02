@@ -4,18 +4,13 @@
 
 ### Features Added
 
-* Added the preview `.beta.agent_insight_monitors` subclient with operations to create, get, list, update, delete, and reset monitors; create, get, list, and cancel runs; and get, list, and update insights. `begin_create_run` returns a new `AgentInsightRunLROPoller` whose `details` property exposes the run ID. Added 20 supporting `AgentInsight*` models and six enums covering monitors, runs, generated insights, proposed fixes, highlighted and linked traces, costs, token usage, severity, status, and run triggers.
-* Added Microsoft 365 agent publishing through `.agents.publish_to_microsoft365`, `.agents.get_microsoft365_package`, and `.agents.get_microsoft365_publish_defaults`, along with `Microsoft365PermissionScopes`, `Microsoft365PublishDefaults`, `Microsoft365PublishResult`, and `Microsoft365PublishScope`.
-* Added the optional `AgentDetails.digital_worker_type` property and the new `DigitalWorkerType` enum for Microsoft 365 digital workers. Added activity-protocol access boundaries and the read-only `AgentEndpointConfig.publish_approval_status` property with the new `ActivityProtocolAccessBoundary` and `PublishApprovalStatus` enums.
+* Added supporting AgentInsight* models and enums covering monitors, runs, generated insights, proposed fixes, highlighted and linked traces, costs, token usage, severity, status, and run triggers.
+* Added Microsoft 365 agent publishing.
 * Added optional Hosted Agent session defaults through `HostedAgentDefinition.session_configuration` and `SessionConfiguration`, including idle-timeout configuration.
 * Added the optional `authorization` argument to `.beta.routines.create_or_update`, with `RoutineAuthorization` and `RoutineDispatchIdentity` for selecting the agent or routine creator identity.
 * Added `ShellToolboxTool` and supporting container environment and network policy models, with the new `ToolboxToolType.SHELL` enum member.
-* Added `WebIQPreviewTool` and `WebIQPreviewToolboxTool`, with new `ToolType.WEB_IQ_PREVIEW` and `ToolboxToolType.WEB_IQ_PREVIEW` enum members. These API and model additions are included in [GitHub pull request 48795](https://github.com/Azure/azure-sdk-for-python/pull/48795).
+* Added `WebIQPreviewTool` and `WebIQPreviewToolboxTool`, with new `ToolType.WEB_IQ_PREVIEW` and `ToolboxToolType.WEB_IQ_PREVIEW` enum members.
 
-### Bugs Fixed
-
-* Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
-* Fixed preview header composition so non-voice Agent requests no longer include the `VoiceAgents=V1Preview` opt-in ([GitHub pull request 48795](https://github.com/Azure/azure-sdk-for-python/pull/48795)).
 
 ## 2.5.0 (2026-08-20)
 
