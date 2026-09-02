@@ -677,6 +677,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
+        if max_wait_time is None:
+            max_wait_time = self._max_wait_time if self._max_wait_time is not None else DEFAULT_RECEIVE_WAIT_TIME_SECS
         start_time = time.time_ns()
         messages: List[ServiceBusReceivedMessage] = self._do_retryable_operation(
             self._receive,

@@ -444,7 +444,8 @@ class TestLongPollIsNeverTruncated:
         receiver._receive = fake_receive
         receiver.receive_messages(max_message_count=1)
 
-        assert seen == ["unset"]
+        # The receive gets the default 60s budget, not the 5s try_timeout.
+        assert seen[0] == pytest.approx(DEFAULT_RECEIVE_WAIT_TIME_SECS, abs=1)
 
     def test_streaming_iterator_keeps_the_callers_wait(self):
         # The receive-forever iterator must not be truncated either.
@@ -1154,3 +1155,75 @@ class TestAsyncSleepCrossingDeadlineStopsPolling:
             with pytest.raises(OperationTimeoutError):
                 await receiver._open(timeout=0.02)
         assert len(self.calls) == 1, f"readiness entered {len(self.calls)} times, expected 1"
+
+
+class TestRetryDoesNotRestartTheDefaultReceiveBudget:
+    """The 60s default is one budget for the whole call, not one per retry attempt.
+
+    Driven through the public receive_messages() so it covers the retry wrapper,
+    which is where the budget was previously restarting.
+    """
+
+    def _receiver(self, attempts):
+        from azure.servicebus import ServiceBusClient
+        from azure.servicebus.exceptions import ServiceBusConnectionError
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        receiver._check_live = lambda: None
+        self.deadlines = []
+
+        def fake_receive(max_message_count=None, timeout=None):
+            self.deadlines.append(timeout)
+            if len(self.deadlines) < attempts:
+                raise ServiceBusConnectionError(message="transient")
+            return []
+
+        receiver._receive = fake_receive
+        return receiver
+
+    def test_second_attempt_inherits_the_remaining_budget(self):
+        receiver = self._receiver(attempts=2)
+        receiver.receive_messages()
+        assert len(self.deadlines) == 2
+        # Both attempts are bounded, and the second cannot exceed the first.
+        assert self.deadlines[0] is not None and self.deadlines[1] is not None
+        assert self.deadlines[0] <= DEFAULT_RECEIVE_WAIT_TIME_SECS
+        assert self.deadlines[1] <= self.deadlines[0]
+
+    def test_explicit_max_wait_time_is_still_one_budget(self):
+        receiver = self._receiver(attempts=2)
+        receiver.receive_messages(max_wait_time=5)
+        assert self.deadlines[0] <= 5
+        assert self.deadlines[1] <= self.deadlines[0]
+
+
+class TestAsyncRetryDoesNotRestartTheDefaultReceiveBudget:
+    """Async mirror: the retry wrapper is a separate implementation."""
+
+    def _receiver(self, attempts):
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+        from azure.servicebus.exceptions import ServiceBusConnectionError
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        receiver._check_live = lambda: None
+        self.deadlines = []
+
+        async def fake_receive(max_message_count=None, timeout=None):
+            self.deadlines.append(timeout)
+            if len(self.deadlines) < attempts:
+                raise ServiceBusConnectionError(message="transient")
+            return []
+
+        receiver._receive = fake_receive
+        return receiver
+
+    @pytest.mark.asyncio
+    async def test_second_attempt_inherits_the_remaining_budget(self):
+        receiver = self._receiver(attempts=2)
+        await receiver.receive_messages()
+        assert len(self.deadlines) == 2
+        assert self.deadlines[0] is not None and self.deadlines[1] is not None
+        assert self.deadlines[0] <= DEFAULT_RECEIVE_WAIT_TIME_SECS
+        assert self.deadlines[1] <= self.deadlines[0]
