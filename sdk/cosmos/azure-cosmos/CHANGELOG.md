@@ -2,6 +2,16 @@
 > [!IMPORTANT]
 > We strongly recommend that customers use at least version 4.16.3 of `azure-cosmos`.
 
+### 4.16.5 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
 ### 4.16.4 (2026-09-02)
 
 #### Bugs Fixed
