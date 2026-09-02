@@ -1487,3 +1487,46 @@ class TestAsyncRetryDoesNotRestartTheDefaultReceiveBudget:
         assert self.deadlines[0] is not None and self.deadlines[1] is not None
         assert self.deadlines[0] <= DEFAULT_RECEIVE_WAIT_TIME_SECS
         assert self.deadlines[1] <= self.deadlines[0]
+
+
+class TestSessionHintOnlyForNextAvailableSession:
+    """The NEXT_AVAILABLE_SESSION advice belongs to session receivers, not senders or management."""
+
+    def _never_ready(self):
+        handler = MagicMock()
+        handler._shutdown = True
+        handler.client_ready.return_value = False
+        return handler
+
+    def test_sender_timeout_carries_no_session_advice(self):
+        from azure.servicebus import ServiceBusClient, ServiceBusMessage
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock(), try_timeout=0.2, retry_total=0)
+        sender = client.get_queue_sender("q")
+        sender._check_live = lambda: None
+        handler = self._never_ready()
+        sender._create_handler = lambda auth: setattr(sender, "_handler", handler)
+        sender._handler = handler
+
+        with patch("azure.servicebus._servicebus_sender.create_authentication", lambda c: None):
+            with pytest.raises(OperationTimeoutError) as exc:
+                sender.send_messages(ServiceBusMessage("m"))
+
+        assert "AMQP link" in str(exc.value)
+        assert "NEXT_AVAILABLE_SESSION" not in str(exc.value)
+
+    def test_next_available_session_receiver_keeps_the_advice(self):
+        from azure.servicebus import ServiceBusClient, NEXT_AVAILABLE_SESSION
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock(), try_timeout=0.2, retry_total=0)
+        receiver = client.get_queue_receiver("q", session_id=NEXT_AVAILABLE_SESSION)
+        receiver._check_live = lambda: None
+        handler = self._never_ready()
+        receiver._create_handler = lambda auth: setattr(receiver, "_handler", handler)
+        receiver._handler = handler
+
+        with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
+            with pytest.raises(OperationTimeoutError) as exc:
+                receiver.receive_messages(max_wait_time=1)
+
+        assert "NEXT_AVAILABLE_SESSION" in str(exc.value)

@@ -28,6 +28,7 @@ from .._common.constants import (
     CONTAINER_PREFIX,
     MANAGEMENT_PATH_SUFFIX,
     REQUEST_RESPONSE_TIMEOUT,
+    NEXT_AVAILABLE_SESSION,
 )
 from ..exceptions import (
     ServiceBusConnectionError,
@@ -264,11 +265,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         last_exception,
                     )
                     if isinstance(last_exception, OperationTimeoutError):
-                        description = (
-                            f"{last_exception} If trying to receive from NEXT_AVAILABLE_SESSION, "
-                            "use max_wait_time on the ServiceBusReceiver to control the"
-                            " timeout."
-                        )
+                        description = str(last_exception)
+                        if getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION:
+                            description += (
+                                " If trying to receive from NEXT_AVAILABLE_SESSION, use max_wait_time"
+                                " on the ServiceBusReceiver to control the timeout."
+                            )
                         error = OperationTimeoutError(
                             message=description,
                         )
@@ -304,11 +306,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 last_exception,
             )
             if isinstance(last_exception, OperationTimeoutError):
-                description = (
-                    f"{last_exception} If trying to receive from NEXT_AVAILABLE_SESSION, "
-                    "use max_wait_time on the ServiceBusReceiver to control the"
-                    " timeout."
-                )
+                description = str(last_exception)
+                if getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION:
+                    description += (
+                        " If trying to receive from NEXT_AVAILABLE_SESSION, use max_wait_time"
+                        " on the ServiceBusReceiver to control the timeout."
+                    )
                 error = OperationTimeoutError(
                     message=description,
                 )
