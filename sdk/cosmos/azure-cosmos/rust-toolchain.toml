@@ -1,0 +1,10 @@
+# Toolchain used to build the Rust extension. `ms-` channels are the internal
+# Microsoft Rust toolchains resolved by msrustup (https://aka.ms/msrustup);
+# upstream rustup cannot resolve them, so msrustup must be installed.
+#
+# The minor-only channel name keeps this pinned to the production 1.97 line
+# while still picking up its point releases via `msrustup toolchain update`.
+# It must stay at or above the `rust-version` declared in Cargo.toml.
+[toolchain]
+channel = "ms-prod-1.97"
+profile = "minimal"

@@ -148,6 +148,7 @@ dependencies = [
 [[package]]
 name = "azure_data_cosmos_driver"
 version = "0.7.0"
+source = "git+https://github.com/Azure/azure-sdk-for-rust?rev=658f396d722aacd8928a9018882f935d815f8bb6#658f396d722aacd8928a9018882f935d815f8bb6"
 dependencies = [
  "arc-swap",
  "async-lock",

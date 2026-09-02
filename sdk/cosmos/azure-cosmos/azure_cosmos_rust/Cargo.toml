@@ -21,9 +21,9 @@ crate-type = ["cdylib"]
 # PyO3 makes Rust functions Python-callable.
 #
 # `extension-module` : build a Python extension (no link to libpython).
-# `abi3-py39`        : target the stable ABI from Python 3.9 onward, so
-#                      one wheel per platform works for every Python 3.9+.
-pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }
+# `abi3-py310`       : target the stable ABI from Python 3.10 onward, so
+#                      one wheel per platform works for every Python 3.10+.
+pyo3 = { version = "0.22", features = ["extension-module", "abi3-py310"] }
 
 # The driver crate, pulled in as a path dependency from a sibling clone of
 # the azure-sdk-for-rust repo. Both repos are expected to live side-by-side
@@ -40,7 +40,7 @@ pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }
 # read_feed_ranges does not use it (listing key-space slices needs no query
 # plan). The `__internal_` prefix marks it as an unstable, not-yet-public
 # driver feature.
-azure_data_cosmos_driver = { path = "../../../../../azure-sdk-for-rust/sdk/cosmos/azure_data_cosmos_driver", features = ["__internal_native_query_plan"] }
+azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "658f396d722aacd8928a9018882f935d815f8bb6", features = ["__internal_native_query_plan"] }
 
 # Tokio runtime. Lives here, not in the driver, because the binding is
 # what bridges Python's sync call into Rust's async world.
