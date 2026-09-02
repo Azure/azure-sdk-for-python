@@ -148,11 +148,11 @@ class _SessionBrowser(BaseHandler):
             # The token fetch can use the budget, and open() cannot be cancelled once entered.
             check_link_ready_deadline(deadline)
             self._handler.open(connection=self._connection)
-            check_link_ready_deadline(deadline)
-            while not self._handler.client_ready():
+            while True:
                 check_link_ready_deadline(deadline)
+                if self._handler.client_ready():
+                    break
                 time.sleep(0.05)
-            # client_ready() can block and then return true past the deadline.
             check_link_ready_deadline(deadline)
             self._running = True
         except:

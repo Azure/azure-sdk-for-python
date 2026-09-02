@@ -72,11 +72,11 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             # The token fetch can use the budget, and open_async() cannot be cancelled once entered.
             check_link_ready_deadline(deadline)
             await self._handler.open_async(connection=self._connection)
-            check_link_ready_deadline(deadline)
-            while not await self._handler.client_ready_async():
+            while True:
                 check_link_ready_deadline(deadline)
+                if await self._handler.client_ready_async():
+                    break
                 await asyncio.sleep(0.05)
-            # client_ready_async() can await and then return true past the deadline.
             check_link_ready_deadline(deadline)
             self._running = True
         except:

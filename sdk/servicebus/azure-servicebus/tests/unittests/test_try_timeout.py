@@ -1071,3 +1071,86 @@ class TestAsyncSettlementIsNotBounded:
         await receiver._settle_message_with_retry(message, "completed")
 
         assert seen == ["unset"]
+
+
+class TestSleepCrossingDeadlineStopsPolling:
+    """The 50 ms sleep can cross the deadline, so readiness must not be entered again.
+
+    Readiness can block once entered, so checking only before the sleep is not enough:
+    the deadline must be re-checked before every readiness call.
+    """
+
+    def _receiver(self):
+        from azure.servicebus import ServiceBusClient
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        handler = MagicMock()
+        handler._shutdown = True
+        self.calls = []
+
+        def client_ready():
+            self.calls.append(time.time())
+            return False  # never ready, so the loop relies on the deadline
+
+        handler.client_ready = client_ready
+        receiver._create_handler = lambda auth: setattr(receiver, "_handler", handler)
+        receiver._handler = handler
+        return receiver
+
+    def test_second_readiness_call_is_not_entered_after_the_sleep_expires(self):
+        receiver = self._receiver()
+        # Budget smaller than one 50 ms sleep: the first call fits, the sleep exhausts it.
+        with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
+            with pytest.raises(OperationTimeoutError):
+                receiver._open(timeout=0.02)
+        assert len(self.calls) == 1, f"readiness entered {len(self.calls)} times, expected 1"
+
+    def test_polling_continues_while_budget_remains(self):
+        receiver = self._receiver()
+        with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
+            with pytest.raises(OperationTimeoutError):
+                receiver._open(timeout=0.4)
+        assert len(self.calls) > 1
+
+
+class TestAsyncSleepCrossingDeadlineStopsPolling:
+    """Async mirror: readiness is a separate implementation."""
+
+    def _receiver(self):
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        handler = MagicMock()
+        handler._shutdown = True
+        self.calls = []
+
+        async def close_async():
+            return None
+
+        async def open_async(connection=None):
+            return None
+
+        async def client_ready_async():
+            self.calls.append(time.time())
+            return False
+
+        handler.close_async = close_async
+        handler.open_async = open_async
+        handler.client_ready_async = client_ready_async
+        receiver._create_handler = lambda auth: setattr(receiver, "_handler", handler)
+        receiver._handler = handler
+        return receiver
+
+    @pytest.mark.asyncio
+    async def test_second_readiness_call_is_not_entered_after_the_sleep_expires(self):
+        receiver = self._receiver()
+
+        async def fake_auth(_c):
+            return None
+
+        with patch("azure.servicebus.aio._servicebus_receiver_async.create_authentication", fake_auth):
+            with pytest.raises(OperationTimeoutError):
+                await receiver._open(timeout=0.02)
+        assert len(self.calls) == 1, f"readiness entered {len(self.calls)} times, expected 1"
