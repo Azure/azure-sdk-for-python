@@ -21,6 +21,10 @@ import time
 
 from unittest.mock import MagicMock, patch
 
+import azure.servicebus._common.utils as utils_module
+import azure.servicebus._servicebus_receiver as sync_receiver_module
+import azure.servicebus.aio._servicebus_receiver_async as async_receiver_module
+
 import pytest
 
 from azure.servicebus._common._configuration import Configuration
@@ -32,6 +36,34 @@ from azure.servicebus._common.utils import (
     get_remaining_timeout,
 )
 from azure.servicebus.exceptions import OperationTimeoutError
+
+
+class VirtualClock:
+    """A fake clock so deadline tests do not depend on real scheduling.
+
+    Real-time budgets make these tests flaky: a GC pause or a descheduled CI worker can
+    cross a 20 ms deadline before the code under test runs at all. Here time only moves
+    when the code sleeps, or when a test explicitly injects a stall.
+    """
+
+    def __init__(self, stall_before_first_check=0.0):
+        self.now = 1000.0
+        self._stall = stall_before_first_check
+        self._reads = 0
+
+    def time(self):
+        self._reads += 1
+        value = self.now
+        if self._reads == 1:
+            # The first read creates the deadline; charge the injected stall to it.
+            self.now += self._stall
+        return value
+
+    def sleep(self, seconds):
+        self.now += seconds
+
+    async def sleep_async(self, seconds):
+        self.now += seconds
 
 
 class TestAttemptTimeout:
@@ -604,7 +636,8 @@ class TestLinkAcquisitionIsBoundedInsideOperations:
     def test_send_bounds_link_acquisition(self):
         from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock(), try_timeout=0.2)
+        # retry_total=1 still exercises the retry wrapper but keeps the real backoff short.
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock(), try_timeout=0.2, retry_total=1)
         sender = client.get_queue_sender("q")
         sender._check_live = lambda: None
         handler = self._never_ready()
@@ -740,7 +773,8 @@ class TestAsyncLinkAcquisitionIsBounded:
         from azure.servicebus import ServiceBusMessage
         from azure.servicebus.aio import ServiceBusClient as AsyncClient
 
-        client = AsyncClient("fake.servicebus.windows.net", MagicMock(), try_timeout=0.2)
+        # retry_total=1 still exercises the retry wrapper but keeps the real backoff short.
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock(), try_timeout=0.2, retry_total=1)
         sender = client.get_queue_sender("q")
         sender._check_live = lambda: None
 
@@ -853,10 +887,11 @@ class TestReceiveUsesOneBudget:
         receiver = client.get_queue_receiver("q", max_wait_time=max_wait_time)
         receiver._check_live = lambda: None
         self.open_timeouts = []
+        self.clock = VirtualClock()
 
         def slow_open(timeout=None):
             self.open_timeouts.append(timeout)
-            time.sleep(open_cost)
+            self.clock.sleep(open_cost)  # virtual, so the budget maths is exact
 
         receiver._open = slow_open
         return receiver
@@ -878,20 +913,23 @@ class TestReceiveUsesOneBudget:
         transport.TIMEOUT_FACTOR = 1
         transport.get_current_time = lambda _c: clock["t"]
         receiver._amqp_transport = transport
-        assert receiver._receive(max_message_count=1, **kwargs) == []
+        with patch.object(sync_receiver_module, "time", self.clock):
+            assert receiver._receive(max_message_count=1, **kwargs) == []
         return clock["t"]
 
     def test_open_time_is_deducted_from_the_poll_window(self):
-        # Budget 10s, acquisition spends 4s, so polling gets ~6s - not another full 10s.
+        # Budget 10s, acquisition spends 4s, so polling gets 6s - not another full 10s.
+        # do_work advances the transport clock 1s per tick and stops on the first tick past the
+        # window, so a 6s window ends at t=7. A fresh 10s budget would have ended at t=11.
         receiver = self._receiver(open_cost=4.0, max_wait_time=10)
-        assert self._polled_seconds(receiver) == pytest.approx(6, abs=1.5)
+        assert self._polled_seconds(receiver) == 7
 
     def test_try_timeout_caps_acquisition_not_the_poll(self):
         # try_timeout bounds only the open phase; the long poll keeps the caller's wait.
         receiver = self._receiver(open_cost=0.0, max_wait_time=300, try_timeout=5)
         polled = self._polled_seconds(receiver)
         assert self.open_timeouts == [5]
-        assert polled == pytest.approx(300, abs=2)
+        assert polled == 301  # 300s window, stopping on the first tick past it
 
     def test_acquisition_gets_the_budget_when_try_timeout_is_off(self):
         receiver = self._receiver(open_cost=0.0, max_wait_time=30)
@@ -914,10 +952,11 @@ class TestAsyncReceiveUsesOneBudget:
         receiver = client.get_queue_receiver("q", max_wait_time=max_wait_time)
         receiver._check_live = lambda: None
         self.open_timeouts = []
+        self.clock = VirtualClock()
 
         async def slow_open(timeout=None):
             self.open_timeouts.append(timeout)
-            time.sleep(open_cost)
+            self.clock.sleep(open_cost)  # virtual, so the budget maths is exact
 
         receiver._open = slow_open
         return receiver
@@ -944,20 +983,28 @@ class TestAsyncReceiveUsesOneBudget:
 
         transport.reset_link_credit_async = reset_link_credit_async
         receiver._amqp_transport = transport
-        assert await receiver._receive(max_message_count=1, **kwargs) == []
+        with patch.object(async_receiver_module, "time", self.clock):
+            assert await receiver._receive(max_message_count=1, **kwargs) == []
         return clock["t"]
 
     @pytest.mark.asyncio
     async def test_open_time_is_deducted_from_the_poll_window(self):
+        # 6s of window left after a 4s acquisition; the loop stops on the first tick past it.
         receiver = self._receiver(open_cost=4.0, max_wait_time=10)
-        assert await self._polled_seconds(receiver) == pytest.approx(6, abs=1.5)
+        assert await self._polled_seconds(receiver) == 7
 
     @pytest.mark.asyncio
     async def test_try_timeout_caps_acquisition_not_the_poll(self):
         receiver = self._receiver(open_cost=0.0, max_wait_time=300, try_timeout=5)
         polled = await self._polled_seconds(receiver)
         assert self.open_timeouts == [5]
-        assert polled == pytest.approx(300, abs=2)
+        assert polled == 301  # 300s window, stopping on the first tick past it
+
+    @pytest.mark.asyncio
+    async def test_acquisition_gets_the_budget_when_try_timeout_is_off(self):
+        receiver = self._receiver(open_cost=0.0, max_wait_time=30)
+        await self._polled_seconds(receiver)
+        assert self.open_timeouts == [30]
 
     @pytest.mark.asyncio
     async def test_zero_budget_does_not_select_the_default(self):
@@ -1013,6 +1060,114 @@ class TestExpiredBudgetStillDrainsPrefetched:
     def test_empty_queue_at_expiry_still_returns_empty(self):
         got = self._drive(queued=[], open_cost=1.2, max_wait_time=1)
         assert got == []
+
+
+class TestAsyncExpiredBudgetStillDrainsPrefetched:
+    """Async mirror: `_receive` is a separate implementation and needs its own coverage."""
+
+    async def _drive(self, queued, open_cost, max_wait_time=10):
+        from queue import Queue
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q", max_wait_time=max_wait_time)
+        receiver._check_live = lambda: None
+        receiver._build_received_message = lambda m: m
+
+        q = Queue()
+        handler = MagicMock()
+        handler._received_messages = q
+
+        async def slow_open(timeout=None):
+            time.sleep(open_cost)
+            for m in queued:  # prefetch delivers while the link is coming up
+                q.put(m)
+
+        receiver._open = slow_open
+        receiver._handler = handler
+        clock = {"t": 0.0}
+
+        async def do_work_async():
+            clock["t"] += 1.0
+            return True
+
+        handler.do_work_async = do_work_async
+        transport = MagicMock()
+        transport.TIMEOUT_FACTOR = 1
+        transport.get_current_time = lambda _c: clock["t"]
+
+        async def reset_link_credit_async(_c, _n):
+            return None
+
+        transport.reset_link_credit_async = reset_link_credit_async
+        receiver._amqp_transport = transport
+        return await receiver._receive(max_message_count=10)
+
+    @pytest.mark.asyncio
+    async def test_queued_messages_survive_an_expired_budget(self):
+        got = await self._drive(queued=["m1", "m2"], open_cost=1.2, max_wait_time=1)
+        assert got == ["m1", "m2"]
+
+    @pytest.mark.asyncio
+    async def test_empty_queue_at_expiry_still_returns_empty(self):
+        got = await self._drive(queued=[], open_cost=1.2, max_wait_time=1)
+        assert got == []
+
+
+class TestExpiredBudgetDoesNotIssueLinkCredit:
+    """An exhausted budget must not ask the broker for more messages.
+
+    Issuing credit makes the broker lock messages this call can no longer return, so they
+    sit unavailable until the lock expires rather than going to the next caller.
+    """
+
+    def _drive(self, queued, open_cost, max_wait_time, credit_calls):
+        from queue import Queue
+        from azure.servicebus import ServiceBusClient
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q", max_wait_time=max_wait_time)
+        receiver._check_live = lambda: None
+        receiver._build_received_message = lambda m: m
+
+        q = Queue()
+        handler = MagicMock()
+        handler._received_messages = q
+
+        def slow_open(timeout=None):
+            time.sleep(open_cost)
+            for m in queued:
+                q.put(m)
+
+        receiver._open = slow_open
+        receiver._handler = handler
+        clock = {"t": 0.0}
+
+        def do_work():
+            clock["t"] += 1.0
+            return True
+
+        handler.do_work = do_work
+        transport = MagicMock()
+        transport.TIMEOUT_FACTOR = 1
+        transport.get_current_time = lambda _c: clock["t"]
+        transport.reset_link_credit = lambda _c, n: credit_calls.append(n)
+        receiver._amqp_transport = transport
+        # prefetch_count 0 is the default, and the only mode that issues credit here
+        receiver._prefetch_count = 0
+        return receiver._receive(max_message_count=10)
+
+    def test_no_credit_is_issued_once_the_budget_is_spent(self):
+        credit_calls = []
+        # One queued message, ten asked for: the batch is short, so credit would normally follow.
+        got = self._drive(queued=["m1"], open_cost=1.2, max_wait_time=1, credit_calls=credit_calls)
+        assert got == ["m1"]
+        assert credit_calls == [], f"issued credit with no budget left: {credit_calls}"
+
+    def test_credit_is_still_issued_while_budget_remains(self):
+        credit_calls = []
+        self._drive(queued=["m1"], open_cost=0.0, max_wait_time=10, credit_calls=credit_calls)
+        assert credit_calls == [9]
 
 
 class TestAsyncSettlementIsNotBounded:
@@ -1081,17 +1236,16 @@ class TestSleepCrossingDeadlineStopsPolling:
     the deadline must be re-checked before every readiness call.
     """
 
-    def _receiver(self):
+    def _receiver(self, calls):
         from azure.servicebus import ServiceBusClient
 
         client = ServiceBusClient("fake.servicebus.windows.net", MagicMock())
         receiver = client.get_queue_receiver("q")
         handler = MagicMock()
-        handler._shutdown = True
-        self.calls = []
+        handler._shutdown = True  # already shut down, so no close happens first
 
         def client_ready():
-            self.calls.append(time.time())
+            calls.append(1)
             return False  # never ready, so the loop relies on the deadline
 
         handler.client_ready = client_ready
@@ -1100,32 +1254,37 @@ class TestSleepCrossingDeadlineStopsPolling:
         return receiver
 
     def test_second_readiness_call_is_not_entered_after_the_sleep_expires(self):
-        receiver = self._receiver()
+        calls = []
+        receiver = self._receiver(calls)
+        clock = VirtualClock()
         # Budget smaller than one 50 ms sleep: the first call fits, the sleep exhausts it.
-        with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
-            with pytest.raises(OperationTimeoutError):
-                receiver._open(timeout=0.02)
-        assert len(self.calls) == 1, f"readiness entered {len(self.calls)} times, expected 1"
+        with patch.object(utils_module, "time", clock), patch.object(sync_receiver_module, "time", clock):
+            with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
+                with pytest.raises(OperationTimeoutError):
+                    receiver._open(timeout=0.02)
+        assert len(calls) == 1, f"readiness entered {len(calls)} times, expected 1"
 
     def test_polling_continues_while_budget_remains(self):
-        receiver = self._receiver()
-        with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
-            with pytest.raises(OperationTimeoutError):
-                receiver._open(timeout=0.4)
-        assert len(self.calls) > 1
+        calls = []
+        receiver = self._receiver(calls)
+        clock = VirtualClock()
+        with patch.object(utils_module, "time", clock), patch.object(sync_receiver_module, "time", clock):
+            with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
+                with pytest.raises(OperationTimeoutError):
+                    receiver._open(timeout=0.4)
+        assert len(calls) > 1
 
 
 class TestAsyncSleepCrossingDeadlineStopsPolling:
     """Async mirror: readiness is a separate implementation."""
 
-    def _receiver(self):
+    def _receiver(self, calls):
         from azure.servicebus.aio import ServiceBusClient as AsyncClient
 
         client = AsyncClient("fake.servicebus.windows.net", MagicMock())
         receiver = client.get_queue_receiver("q")
         handler = MagicMock()
         handler._shutdown = True
-        self.calls = []
 
         async def close_async():
             return None
@@ -1134,7 +1293,7 @@ class TestAsyncSleepCrossingDeadlineStopsPolling:
             return None
 
         async def client_ready_async():
-            self.calls.append(time.time())
+            calls.append(1)
             return False
 
         handler.close_async = close_async
@@ -1146,15 +1305,116 @@ class TestAsyncSleepCrossingDeadlineStopsPolling:
 
     @pytest.mark.asyncio
     async def test_second_readiness_call_is_not_entered_after_the_sleep_expires(self):
-        receiver = self._receiver()
+        calls = []
+        receiver = self._receiver(calls)
+        clock = VirtualClock()
 
         async def fake_auth(_c):
             return None
 
-        with patch("azure.servicebus.aio._servicebus_receiver_async.create_authentication", fake_auth):
-            with pytest.raises(OperationTimeoutError):
+        with patch.object(utils_module, "time", clock):
+            with patch.object(async_receiver_module.asyncio, "sleep", clock.sleep_async):
+                with patch.object(async_receiver_module, "create_authentication", fake_auth):
+                    with pytest.raises(OperationTimeoutError):
+                        await receiver._open(timeout=0.02)
+        assert len(calls) == 1, f"readiness entered {len(calls)} times, expected 1"
+
+
+class TestSlowCloseIsChargedToTheBudget:
+    """Closing the previous link is link acquisition too.
+
+    close() does network I/O. If it spends the attempt budget, authentication and open()
+    must not then proceed against a fresh full timeout.
+    """
+
+    def _receiver(self, events):
+        from azure.servicebus import ServiceBusClient
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        handler = MagicMock()
+        handler._shutdown = False  # so the close path runs
+        handler.close = lambda: events.append("close")
+        handler.client_ready = lambda: True
+        receiver._create_handler = lambda auth: events.append("create_handler")
+        receiver._handler = handler
+        return receiver
+
+    def test_a_slow_close_stops_the_attempt_before_authentication(self):
+        events = []
+        receiver = self._receiver(events)
+        clock = VirtualClock(stall_before_first_check=0.05)  # close overruns the 20 ms budget
+        with patch.object(utils_module, "time", clock), patch.object(sync_receiver_module, "time", clock):
+            with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: events.append("auth")):
+                with pytest.raises(OperationTimeoutError):
+                    receiver._open(timeout=0.02)
+        assert events == ["close"], f"continued past a budget-consuming close: {events}"
+
+    def test_a_fast_close_leaves_the_attempt_running(self):
+        events = []
+        receiver = self._receiver(events)
+        clock = VirtualClock()  # close costs nothing
+        with patch.object(utils_module, "time", clock), patch.object(sync_receiver_module, "time", clock):
+            with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: events.append("auth")):
+                receiver._open(timeout=0.02)
+        assert events == ["close", "auth", "create_handler"]
+
+
+class TestAsyncSlowCloseIsChargedToTheBudget:
+    """Async mirror: close_async() is awaited before the rest of link acquisition."""
+
+    def _receiver(self, events):
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        handler = MagicMock()
+        handler._shutdown = False
+
+        async def close_async():
+            events.append("close")
+
+        async def open_async(connection=None):
+            return None
+
+        async def client_ready_async():
+            return True
+
+        handler.close_async = close_async
+        handler.open_async = open_async
+        handler.client_ready_async = client_ready_async
+        receiver._create_handler = lambda auth: events.append("create_handler")
+        receiver._handler = handler
+        return receiver
+
+    @pytest.mark.asyncio
+    async def test_a_slow_close_stops_the_attempt_before_authentication(self):
+        events = []
+        receiver = self._receiver(events)
+        clock = VirtualClock(stall_before_first_check=0.05)
+
+        async def fake_auth(_c):
+            events.append("auth")
+
+        with patch.object(utils_module, "time", clock):
+            with patch.object(async_receiver_module, "create_authentication", fake_auth):
+                with pytest.raises(OperationTimeoutError):
+                    await receiver._open(timeout=0.02)
+        assert events == ["close"], f"continued past a budget-consuming close: {events}"
+
+    @pytest.mark.asyncio
+    async def test_a_fast_close_leaves_the_attempt_running(self):
+        events = []
+        receiver = self._receiver(events)
+        clock = VirtualClock()  # close costs nothing
+
+        async def fake_auth(_c):
+            events.append("auth")
+
+        with patch.object(utils_module, "time", clock):
+            with patch.object(async_receiver_module, "create_authentication", fake_auth):
                 await receiver._open(timeout=0.02)
-        assert len(self.calls) == 1, f"readiness entered {len(self.calls)} times, expected 1"
+        assert events == ["close", "auth", "create_handler"]
 
 
 class TestRetryDoesNotRestartTheDefaultReceiveBudget:

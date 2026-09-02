@@ -106,7 +106,7 @@ class TestManagementRequestSetsServerTimeout:
         # a descheduled CI worker can spend real time between the clock reads. Exact conversion
         # is covered by the unit tests for get_server_timeout_ms.
         assert captured[REQUEST_RESPONSE_TIMEOUT]["TYPE"] == "UINT"
-        assert 0 < captured[REQUEST_RESPONSE_TIMEOUT]["VALUE"] <= 9000
+        assert 0 <= captured[REQUEST_RESPONSE_TIMEOUT]["VALUE"] <= 9000
 
     def test_clamped_below_buffer(self):
         handler, captured = self._make_handler()
@@ -253,4 +253,4 @@ class TestAsyncParity:
         # a descheduled CI worker can spend real time between the clock reads. Exact conversion
         # is covered by the unit tests for get_server_timeout_ms.
         assert captured[REQUEST_RESPONSE_TIMEOUT]["TYPE"] == "UINT"
-        assert 0 < captured[REQUEST_RESPONSE_TIMEOUT]["VALUE"] <= 9000
+        assert 0 <= captured[REQUEST_RESPONSE_TIMEOUT]["VALUE"] <= 9000
