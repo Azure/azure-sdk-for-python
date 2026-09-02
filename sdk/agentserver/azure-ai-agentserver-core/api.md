@@ -8,6 +8,7 @@ namespace azure.ai.agentserver.core
             *, 
             connection_string: Optional[str] = ..., 
             enable_sensitive_data: bool = False, 
+            instrumentation_options: Optional[dict[str, dict[str, Any]]] = ..., 
             log_level: Optional[str] = ...
         ) -> None: ...
 
