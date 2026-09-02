@@ -39,6 +39,8 @@ jobs:
         inputs:
           versionSpec: ${{ parameters.pythonVersion }}
 
+      - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+
       # Install Python API review tooling once for the job. The base and target
       # generation steps reuse this prepared environment.
       - bash: |
