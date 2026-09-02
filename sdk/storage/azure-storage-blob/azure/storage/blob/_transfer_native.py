@@ -276,6 +276,7 @@ def try_native_upload(
             url=blob_client.url,
             data=upload_data,
             token_provider=token_provider,
+            credential_id=id(blob_client.credential) if token_provider else None,
             overwrite=overwrite,
             content_type=content_type,
             metadata=metadata,
@@ -418,6 +419,7 @@ def try_native_download_eager(
         stream = native_download(
             url=blob_client.url,
             token_provider=token_provider,
+            credential_id=id(blob_client.credential) if token_provider else None,
             offset=offset,
             length=length,
             max_concurrency=max_concurrency,
