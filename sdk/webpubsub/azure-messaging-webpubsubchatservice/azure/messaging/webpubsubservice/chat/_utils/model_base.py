@@ -1260,7 +1260,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
                 rf._is_optional = True
             if len(annotation.__args__) <= 2:  # pyright: ignore
                 if_obj_deserializer = _get_deserialize_callable_from_annotation(
-                    next(a for a in annotation.__args__ if a is not _NONE_TYPE),
+                    next(a for a in annotation.__args__ if a is not _NONE_TYPE),  # pyright: ignore
                     module,
                     rf,  # pyright: ignore
                 )
