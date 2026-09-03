@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------
 
 
-class ChatRoles:
+class BuiltInChatRoles:
     """Built-in Web PubSub Chat roles."""
 
     USER_NORMAL = "user.normal"
@@ -12,20 +12,4 @@ class ChatRoles:
     ROOM_OPERATOR = "room.operator"
 
 
-class UserPermissions:
-    """Built-in Web PubSub Chat user permissions."""
-
-    CREATE_ROOM = "user.create_room"
-    FETCH_ALL_ROOMS = "user.fetch_all_rooms"
-
-
-class RoomPermissions:
-    """Built-in Web PubSub Chat room permissions."""
-
-    INVITE_USER = "room.invite"
-    REMOVE_USER = "room.remove_user"
-    READ_HISTORY = "room.history"
-    PUBLISH_MESSAGE = "room.publish_message"
-
-
-__all__ = ["ChatRoles", "RoomPermissions", "UserPermissions"]
+__all__ = ["BuiltInChatRoles"]

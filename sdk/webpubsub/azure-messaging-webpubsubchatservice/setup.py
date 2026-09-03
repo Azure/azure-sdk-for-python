@@ -9,11 +9,11 @@
 
 import os
 import re
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 
 PACKAGE_NAME = "azure-messaging-webpubsubchatservice"
-PACKAGE_PPRINT_NAME = "Azure Web PubSub Chat Service"
+PACKAGE_PPRINT_NAME = "Azure Web PubSub Chat Service Client"
 PACKAGE_NAMESPACE = "azure.messaging.webpubsubservice.chat"
 
 # a.b.c => a/b/c
@@ -51,7 +51,7 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    packages=find_packages(
+    packages=find_namespace_packages(
         exclude=[
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
@@ -67,7 +67,6 @@ setup(
     install_requires=[
         "isodate>=0.6.1",
         "azure-core>=1.37.0",
-        "azure-messaging-webpubsubservice>=1.3.0",
         "PyJWT>=2.6.0",
         "typing-extensions>=4.6.0",
     ],

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 import time
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock, patch
 from urllib.parse import urlparse
 
 import jwt
@@ -11,7 +11,6 @@ import pytest
 from azure.core.credentials import AccessToken, AzureKeyCredential
 
 from azure.messaging.webpubsubservice.chat.aio import WebPubSubChatServiceClient
-
 
 ACCESS_KEY = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGH"
 ENDPOINT = "https://example.webpubsub.azure.com"
@@ -50,7 +49,9 @@ async def test_async_connection_string_and_key_request_match_sync_behavior():
     try:
         request = await _capture_list_roles_request(client)
         token = request.headers["Authorization"].removeprefix("Bearer ")
-        claims = jwt.decode(token, ACCESS_KEY, algorithms=["HS256"], audience=request.url)
+        claims = jwt.decode(
+            token, ACCESS_KEY, algorithms=["HS256"], audience=request.url
+        )
 
         assert client._config.endpoint == f"{ENDPOINT}:8443"
         assert claims["aud"] == request.url
@@ -72,7 +73,9 @@ async def test_async_reverse_proxy_with_key_uses_original_audience():
         request = await _capture_list_roles_request(client)
         original_url = request.url.replace(proxy_endpoint, ENDPOINT, 1)
         token = request.headers["Authorization"].removeprefix("Bearer ")
-        claims = jwt.decode(token, ACCESS_KEY, algorithms=["HS256"], audience=original_url)
+        claims = jwt.decode(
+            token, ACCESS_KEY, algorithms=["HS256"], audience=original_url
+        )
 
         assert urlparse(request.url).netloc == "proxy.contoso.com"
         assert claims["aud"] == original_url
@@ -97,48 +100,49 @@ async def test_async_reverse_proxy_with_entra_credential_keeps_bearer_token():
 
 
 @pytest.mark.asyncio
-async def test_async_client_access_token_delegates_fixed_chat_requirements():
-    client = WebPubSubChatServiceClient(ENDPOINT, HUB, AzureKeyCredential(ACCESS_KEY))
-    expected = {"baseUrl": "wss://example", "token": "token", "url": "wss://example?access_token=token"}
-    client._web_pub_sub_service_client.get_client_access_token = AsyncMock(return_value=expected)
+async def test_async_token_credential_client_access_token_uses_generated_operation():
+    client = WebPubSubChatServiceClient(ENDPOINT, HUB, FakeAsyncTokenCredential())
     try:
-        result = await client.get_client_access_token(user_id="alice")
-        assert result is expected
-        client._web_pub_sub_service_client.get_client_access_token.assert_awaited_once_with(
-            user_id="alice",
-            roles=CHAT_ROLES,
-            minutes_to_expire=60,
-            groups=[],
-            client_protocol="Default",
+        with patch.object(
+            client, "_generate_client_token", new_callable=AsyncMock
+        ) as generate:
+            generate.return_value = Mock(token="token")
+            result = await client.get_client_access_token(user_id="alice")
+
+        base_url = f"wss://example.webpubsub.azure.com/client/hubs/{HUB}"
+        assert result == {
+            "baseUrl": base_url,
+            "token": "token",
+            "url": f"{base_url}?access_token=token",
+        }
+        generate.assert_awaited_once_with(
+            user_id="alice", role=CHAT_ROLES, minutes_to_expire=60
         )
     finally:
         await client.close()
 
 
 @pytest.mark.asyncio
-async def test_async_entra_client_access_delegation_propagates_reverse_proxy():
-    credential = FakeAsyncTokenCredential()
-    proxy_endpoint = "https://proxy.contoso.com"
-    client = WebPubSubChatServiceClient(
-        ENDPOINT,
-        HUB,
-        credential,
-        reverse_proxy_endpoint=proxy_endpoint,
-    )
-    expected = {"baseUrl": "wss://example", "token": "token", "url": "wss://example?access_token=token"}
-    client._web_pub_sub_service_client.get_client_access_token = AsyncMock(return_value=expected)
+async def test_async_key_client_access_token_is_generated_locally():
+    client = WebPubSubChatServiceClient(ENDPOINT, HUB, AzureKeyCredential(ACCESS_KEY))
     try:
-        inner = client._web_pub_sub_service_client
-        assert inner._config.credential is credential
-        assert inner._config.proxy_policy._endpoint == ENDPOINT
-        assert inner._config.proxy_policy._reverse_proxy_endpoint == proxy_endpoint
-        assert await client.get_client_access_token(user_id="alice") is expected
-        inner.get_client_access_token.assert_awaited_once_with(
-            user_id="alice",
-            roles=CHAT_ROLES,
-            minutes_to_expire=60,
-            groups=[],
-            client_protocol="Default",
+        with patch.object(
+            client, "_generate_client_token", new_callable=AsyncMock
+        ) as generate:
+            result = await client.get_client_access_token(user_id="alice")
+
+        generate.assert_not_awaited()
+        base_url = f"wss://example.webpubsub.azure.com/client/hubs/{HUB}"
+        assert result["baseUrl"] == base_url
+        assert result["url"] == f"{base_url}?access_token={result['token']}"
+        claims = jwt.decode(
+            result["token"],
+            ACCESS_KEY,
+            algorithms=["HS256"],
+            audience=result["baseUrl"].replace("wss://", "https://"),
         )
+        assert claims["sub"] == "alice"
+        assert claims["role"] == CHAT_ROLES
+        assert 3595 <= claims["exp"] - claims["iat"] <= 3605
     finally:
         await client.close()

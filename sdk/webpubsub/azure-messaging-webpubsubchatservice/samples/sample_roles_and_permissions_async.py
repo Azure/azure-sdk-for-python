@@ -7,9 +7,14 @@ import os
 import uuid
 
 from azure.core.exceptions import HttpResponseError
-from azure.messaging.webpubsubservice.chat import RoomPermissions, UserPermissions
 from azure.messaging.webpubsubservice.chat.aio import WebPubSubChatServiceClient
-from azure.messaging.webpubsubservice.chat.models import ChatRole, ChatRoom, ChatRoomMember, HumanChatUser
+from azure.messaging.webpubsubservice.chat.models import (
+    ChatPermission,
+    ChatRole,
+    ChatRoom,
+    ChatRoomMember,
+    HumanChatUser,
+)
 
 
 async def main():
@@ -28,8 +33,8 @@ async def main():
         os.environ.get("WPS_CHAT_HUB", "test_hub"),
     )
     try:
-        await client.create_or_replace_role(user_role, ChatRole(permissions=[UserPermissions.CREATE_ROOM]))
-        await client.create_or_replace_role(room_role, ChatRole(permissions=[RoomPermissions.PUBLISH_MESSAGE]))
+        await client.create_or_replace_role(user_role, ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]))
+        await client.create_or_replace_role(room_role, ChatRole(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE]))
         await client.create_or_replace_user(
             user_id,
             HumanChatUser(nickname="Async Sample User", role_name=user_role),

@@ -1,22 +1,10 @@
 ```py
 namespace azure.messaging.webpubsubservice.chat
 
-    class azure.messaging.webpubsubservice.chat.ChatRoles:
+    class azure.messaging.webpubsubservice.chat.BuiltInChatRoles:
         ROOM_MEMBER = room.member
         ROOM_OPERATOR = room.operator
         USER_NORMAL = user.normal
-
-
-    class azure.messaging.webpubsubservice.chat.RoomPermissions:
-        INVITE_USER = room.invite
-        PUBLISH_MESSAGE = room.publish_message
-        READ_HISTORY = room.history
-        REMOVE_USER = room.remove_user
-
-
-    class azure.messaging.webpubsubservice.chat.UserPermissions:
-        CREATE_ROOM = user.create_room
-        FETCH_ALL_ROOMS = user.fetch_all_rooms
 
 
     class azure.messaging.webpubsubservice.chat.WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated): implements ContextManager 
@@ -724,16 +712,25 @@ namespace azure.messaging.webpubsubservice.chat.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.messaging.webpubsubservice.chat.models.ChatPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ROOM_HISTORY = "room.history"
+        ROOM_INVITE = "room.invite"
+        ROOM_PUBLISH_MESSAGE = "room.publish_message"
+        ROOM_REMOVE_USER = "room.remove_user"
+        USER_CREATE_ROOM = "user.create_room"
+        USER_FETCH_ALL_ROOMS = "user.fetch_all_rooms"
+
+
     class azure.messaging.webpubsubservice.chat.models.ChatRole(_Model):
         etag: str
         name: str
-        permissions: list[str]
+        permissions: list[Union[str, ChatPermission]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                permissions: list[str]
+                permissions: list[Union[str, ChatPermission]]
             ) -> None: ...
 
         @overload
@@ -832,15 +829,6 @@ namespace azure.messaging.webpubsubservice.chat.models
 
 namespace azure.messaging.webpubsubservice.chat.types
 
-    class azure.messaging.webpubsubservice.chat.types.ChatConversation(TypedDict, total=False):
-        key "etag": Required[str]
-        key "id": Required[str]
-        key "parentRoom": Required[str]
-        etag: str
-        id: str
-        parent_room: str
-
-
     class azure.messaging.webpubsubservice.chat.types.ChatMessage(TypedDict, total=False):
         key "content": Required[MessageContent]
         key "createdAt": Required[str]
@@ -848,8 +836,8 @@ namespace azure.messaging.webpubsubservice.chat.types
         key "etag": Required[str]
         key "id": Required[str]
         content: MessageContent
-        created_at: str
-        created_by: str
+        createdAt: str
+        createdBy: str
         etag: str
         id: str
 
@@ -857,10 +845,10 @@ namespace azure.messaging.webpubsubservice.chat.types
     class azure.messaging.webpubsubservice.chat.types.ChatRole(TypedDict, total=False):
         key "etag": Required[str]
         key "name": Required[str]
-        key "permissions": Required[list[str]]
+        key "permissions": Required[list[Union[str, ChatPermission]]]
         etag: str
         name: str
-        permissions: list[str]
+        permissions: list[Union[str, ChatPermission]]
 
 
     class azure.messaging.webpubsubservice.chat.types.ChatRoom(TypedDict, total=False):
@@ -868,7 +856,7 @@ namespace azure.messaging.webpubsubservice.chat.types
         key "etag": Required[str]
         key "id": Required[str]
         key "title": Required[str]
-        default_conversation: str
+        defaultConversation: str
         etag: str
         id: str
         title: str
@@ -879,8 +867,8 @@ namespace azure.messaging.webpubsubservice.chat.types
         key "roleName": Required[str]
         key "userId": Required[str]
         etag: str
-        role_name: str
-        user_id: str
+        roleName: str
+        userId: str
 
 
     class azure.messaging.webpubsubservice.chat.types.ChatUser(TypedDict, total=False):
@@ -893,7 +881,7 @@ namespace azure.messaging.webpubsubservice.chat.types
         id: str
         kind: Literal[ChatUserKind.HUMAN]
         nickname: str
-        role_name: str
+        roleName: str
 
 
     class azure.messaging.webpubsubservice.chat.types.ChatUserKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -910,7 +898,7 @@ namespace azure.messaging.webpubsubservice.chat.types
         id: str
         kind: Literal[ChatUserKind.HUMAN]
         nickname: str
-        role_name: str
+        roleName: str
 
 
     class azure.messaging.webpubsubservice.chat.types.MessageContent(TypedDict, total=False):

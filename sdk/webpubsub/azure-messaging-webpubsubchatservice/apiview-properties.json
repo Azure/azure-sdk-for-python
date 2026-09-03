@@ -9,6 +9,7 @@
         "azure.messaging.webpubsubservice.chat.models.ChatUser": "WebPubSubChat.ChatUser",
         "azure.messaging.webpubsubservice.chat.models.HumanChatUser": "WebPubSubChat.HumanChatUser",
         "azure.messaging.webpubsubservice.chat.models.MessageContent": "WebPubSubChat.MessageContent",
+        "azure.messaging.webpubsubservice.chat.models.ChatPermission": "WebPubSubChat.ChatPermission",
         "azure.messaging.webpubsubservice.chat.models.ChatUserKind": "WebPubSubChat.ChatUserKind",
         "azure.messaging.webpubsubservice.chat.WebPubSubChatServiceClient.get_conversation": "WebPubSubChat.WebPubSubChatServiceClient.getConversation",
         "azure.messaging.webpubsubservice.chat.aio.WebPubSubChatServiceClient.get_conversation": "WebPubSubChat.WebPubSubChatServiceClient.getConversation",
@@ -45,5 +46,5 @@
         "azure.messaging.webpubsubservice.chat.WebPubSubChatServiceClient.delete_user": "WebPubSubChat.WebPubSubChatServiceClient.deleteUser",
         "azure.messaging.webpubsubservice.chat.aio.WebPubSubChatServiceClient.delete_user": "WebPubSubChat.WebPubSubChatServiceClient.deleteUser"
     },
-    "CrossLanguageVersion": "bc8ec95ed6af"
+    "CrossLanguageVersion": "cb67ac71a86e"
 }

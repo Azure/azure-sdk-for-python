@@ -10,6 +10,23 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ChatPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A permission that can be assigned to a chat role."""
+
+    USER_CREATE_ROOM = "user.create_room"
+    """Allows a user to create chat rooms."""
+    USER_FETCH_ALL_ROOMS = "user.fetch_all_rooms"
+    """Allows a user to list the rooms they belong to."""
+    ROOM_PUBLISH_MESSAGE = "room.publish_message"
+    """Allows a room member to publish messages."""
+    ROOM_HISTORY = "room.history"
+    """Allows a room member to read message history."""
+    ROOM_INVITE = "room.invite"
+    """Allows a room member to add users to a room."""
+    ROOM_REMOVE_USER = "room.remove_user"
+    """Allows a room operator to remove users from a room."""
+
+
 class ChatUserKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Discriminator for the kind of chat user."""
 

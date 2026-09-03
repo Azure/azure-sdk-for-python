@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import ChatUserKind
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ChatConversation(_Model):
+class ChatConversation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a chat conversation.
 
     :ivar id: Conversation identifier. Required.
@@ -54,7 +54,7 @@ class ChatConversation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatMessage(_Model):
+class ChatMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a chat message.
 
     :ivar id: Message identifier. Required.
@@ -99,7 +99,7 @@ class ChatMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatRole(_Model):
+class ChatRole(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a chat role. A role name must start with 'user.' or 'room.' prefix. A role must
     contain either user permissions or room permissions, but not both.
 
@@ -107,14 +107,16 @@ class ChatRole(_Model):
     :vartype name: str
     :ivar permissions: Permissions associated with the role. Do not mix user permissions and room
      permissions in one role. Required.
-    :vartype permissions: list[str]
+    :vartype permissions: list[str or ~azure.messaging.webpubsubservice.chat.models.ChatPermission]
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     """
 
     name: str = rest_field(visibility=["read"])
     """Role name. Must start with 'user.' or 'room.' prefix. Required."""
-    permissions: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    permissions: list[Union[str, "_models.ChatPermission"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Permissions associated with the role. Do not mix user permissions and room permissions in one
      role. Required."""
     etag: str = rest_field(visibility=["read"])
@@ -124,7 +126,7 @@ class ChatRole(_Model):
     def __init__(
         self,
         *,
-        permissions: list[str],
+        permissions: list[Union[str, "_models.ChatPermission"]],
     ) -> None: ...
 
     @overload
@@ -138,7 +140,7 @@ class ChatRole(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatRoom(_Model):
+class ChatRoom(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a chat room.
 
     :ivar id: Room identifier. Required.
@@ -178,7 +180,7 @@ class ChatRoom(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatRoomMember(_Model):
+class ChatRoomMember(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a room member.
 
     :ivar user_id: User ID of the member. Required.
@@ -214,7 +216,7 @@ class ChatRoomMember(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatUser(_Model):
+class ChatUser(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a user profile in the chat system. This is a discriminated base type; concrete
     payloads are selected by the ``kind`` field (e.g. ``HumanChatUser``).
 
@@ -260,7 +262,35 @@ class ChatUser(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HumanChatUser(ChatUser, discriminator="Human"):
+class GenerateClientTokenResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Response containing a Web PubSub client access token.
+
+    :ivar token: Access token used to connect to Azure Web PubSub. Required.
+    :vartype token: str
+    """
+
+    token: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Access token used to connect to Azure Web PubSub. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        token: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HumanChatUser(ChatUser, discriminator="Human"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A human end-user, identified by a user role.
 
     :ivar id: User identifier. Required.
@@ -300,7 +330,7 @@ class HumanChatUser(ChatUser, discriminator="Human"):
         self.kind = ChatUserKind.HUMAN  # type: ignore
 
 
-class MessageContent(_Model):
+class MessageContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Message content body.
 
     :ivar text: Text content.

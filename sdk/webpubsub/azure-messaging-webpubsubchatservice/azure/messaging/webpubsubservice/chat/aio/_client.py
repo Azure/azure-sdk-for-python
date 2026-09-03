@@ -27,7 +27,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class WebPubSubChatServiceClient(_WebPubSubChatServiceClientOperationsMixin):
+class WebPubSubChatServiceClient(
+    _WebPubSubChatServiceClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WebPubSubChatServiceClient.
 
     :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance. Required.
@@ -64,7 +66,7 @@ class WebPubSubChatServiceClient(_WebPubSubChatServiceClientOperationsMixin):
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                (policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None),
                 self._config.http_logging_policy,
             ]
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)

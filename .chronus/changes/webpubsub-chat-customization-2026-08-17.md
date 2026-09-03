@@ -4,4 +4,4 @@ packages:
   - azure-messaging-webpubsubchatservice
 ---
 
-Add authentication options, client access token generation, built-in Chat constants, tests, samples, and live-test pipeline support.
+Add the first version of Web PubSub Chat service client.

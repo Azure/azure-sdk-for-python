@@ -158,9 +158,23 @@ def _is_readonly(p):
 
 
 class SdkJSONEncoder(JSONEncoder):
-    """A JSON encoder that's capable of serializing datetime objects and bytes."""
+    """A JSON encoder that's capable of serializing datetime objects and bytes.
 
-    def __init__(self, *args, exclude_readonly: bool = False, format: typing.Optional[str] = None, **kwargs):
+    :param args: Additional positional arguments passed to the base ``JSONEncoder``.
+    :type args: typing.Any
+    :keyword exclude_readonly: Whether to exclude readonly properties. Defaults to False.
+    :paramtype exclude_readonly: bool
+    :keyword format: The format to use for serialization. Defaults to None.
+    :paramtype format: typing.Optional[str]
+    """
+
+    def __init__(
+        self,
+        *args,
+        exclude_readonly: bool = False,
+        format: typing.Optional[str] = None,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
         self.exclude_readonly = exclude_readonly
         self.format = format
@@ -342,6 +356,12 @@ def _deserialize_int_as_str(attr):
     return int(attr)
 
 
+def _deserialize_bool_as_str(attr):
+    if isinstance(attr, bool):
+        return attr
+    return attr.lower() == "true"
+
+
 _DESERIALIZE_MAPPING = {
     datetime: _deserialize_datetime,
     date: _deserialize_date,
@@ -369,6 +389,8 @@ _DESERIALIZE_MAPPING_WITHFORMAT = {
 def get_deserializer(annotation: typing.Any, rf: typing.Optional["_RestField"] = None):
     if annotation is int and rf and rf._format == "str":
         return _deserialize_int_as_str
+    if annotation is bool and rf and rf._format == "str":
+        return _deserialize_bool_as_str
     if annotation is str and rf and rf._format in _ARRAY_ENCODE_MAPPING:
         return functools.partial(_deserialize_array_encoded, _ARRAY_ENCODE_MAPPING[rf._format])
     if rf and rf._format:
@@ -458,21 +480,21 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
 
     def keys(self) -> typing.KeysView[str]:
         """
-        :returns: a set-like object providing a view on D's keys
+        :returns: a set-like object providing a view on the mapping's keys
         :rtype: ~typing.KeysView
         """
         return self._data.keys()
 
     def values(self) -> typing.ValuesView[typing.Any]:
         """
-        :returns: an object providing a view on D's values
+        :returns: an object providing a view on the mapping's values
         :rtype: ~typing.ValuesView
         """
         return self._data.values()
 
     def items(self) -> typing.ItemsView[str, typing.Any]:
         """
-        :returns: set-like object providing a view on D's items
+        :returns: a set-like object providing a view on the mapping's items
         :rtype: ~typing.ItemsView
         """
         return self._data.items()
@@ -482,7 +504,7 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         Get the value for key if key is in the dictionary, else default.
         :param str key: The key to look up.
         :param any default: The value to return if key is not in the dictionary. Defaults to None
-        :returns: D[k] if k in D, else d.
+        :returns: The value for key if key is in the dictionary, else default.
         :rtype: any
         """
         try:
@@ -517,19 +539,19 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         Removes and returns some (key, value) pair
         :returns: The (key, value) pair.
         :rtype: tuple
-        :raises KeyError: if D is empty.
+        :raises KeyError: if the dictionary is empty.
         """
         return self._data.popitem()
 
     def clear(self) -> None:
         """
-        Remove all items from D.
+        Remove all items from the dictionary.
         """
         self._data.clear()
 
     def update(self, *args: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=arguments-differ
         """
-        Updates D from mapping/iterable E and F.
+        Update the dictionary from a mapping or an iterable of key-value pairs.
         :param any args: Either a mapping object or an iterable of key-value pairs.
         """
         self._data.update(*args, **kwargs)
@@ -542,10 +564,11 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
 
     def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
         """
-        Same as calling D.get(k, d), and setting D[k]=d if k not found
+        Return the value for key if key is in the dictionary; otherwise set the key to
+        default and return default.
         :param str key: The key to look up.
         :param any default: The value to set if key is not in the dictionary
-        :returns: D[k] if k in D, else d.
+        :returns: The value for key if key is in the dictionary, else default.
         :rtype: any
         """
         if default is _UNSET:
@@ -910,7 +933,15 @@ class Model(_MyMutableMapping):
 
         field_plan = getattr(self, "_xml_field_plan", None)
         if field_plan:
-            for rest_name, xml_name, kind, deser, rf_type, is_optional, items_name in field_plan:
+            for (
+                rest_name,
+                xml_name,
+                kind,
+                deser,
+                rf_type,
+                is_optional,
+                items_name,
+            ) in field_plan:
                 if kind == 0:  # wrapped element (most common)
                     item = element.find(xml_name)
                     if item is not None:
@@ -1229,7 +1260,9 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
                 rf._is_optional = True
             if len(annotation.__args__) <= 2:  # pyright: ignore
                 if_obj_deserializer = _get_deserialize_callable_from_annotation(
-                    next(a for a in annotation.__args__ if a is not _NONE_TYPE), module, rf  # pyright: ignore
+                    next(a for a in annotation.__args__ if a is not _NONE_TYPE),
+                    module,
+                    rf,  # pyright: ignore
                 )
 
                 return functools.partial(_deserialize_with_optional, if_obj_deserializer)
@@ -1367,7 +1400,8 @@ def _failsafe_deserialize(
         return _deserialize(deserializer, response.json(), module, rf, format)
     except Exception:  # pylint: disable=broad-except
         _LOGGER.warning(
-            "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
+            "Ran into a deserialization error. Ignoring since this is failsafe deserialization",
+            exc_info=True,
         )
         return None
 
@@ -1380,7 +1414,8 @@ def _failsafe_deserialize_xml(
         return _deserialize_xml(deserializer, response.text())
     except Exception:  # pylint: disable=broad-except
         _LOGGER.warning(
-            "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
+            "Ran into a deserialization error. Ignoring since this is failsafe deserialization",
+            exc_info=True,
         )
         return None
 
@@ -1546,7 +1581,8 @@ def _get_xml_ns(meta: dict[str, typing.Any]) -> typing.Optional[str]:
 
 
 def _resolve_xml_ns(
-    prop_meta: dict[str, typing.Any], model_meta: typing.Optional[dict[str, typing.Any]] = None
+    prop_meta: dict[str, typing.Any],
+    model_meta: typing.Optional[dict[str, typing.Any]] = None,
 ) -> typing.Optional[str]:
     """Resolve XML namespace for a property, falling back to model namespace when appropriate.
 
@@ -1687,7 +1723,9 @@ def _get_wrapped_element(
 ) -> ET.Element:
     _meta_ns = _get_xml_ns(meta) if meta else None
     wrapped_element = _create_xml_element(
-        meta.get("name") if meta else None, meta.get("prefix") if meta else None, _meta_ns
+        meta.get("name") if meta else None,
+        meta.get("prefix") if meta else None,
+        _meta_ns,
     )
     if isinstance(v, (dict, list)):
         wrapped_element.extend(_get_element(v, exclude_readonly, meta))
@@ -1727,7 +1765,9 @@ def _safe_register_namespace(prefix: str, ns: str) -> None:
 
 
 def _create_xml_element(
-    tag: typing.Any, prefix: typing.Optional[str] = None, ns: typing.Optional[str] = None
+    tag: typing.Any,
+    prefix: typing.Optional[str] = None,
+    ns: typing.Optional[str] = None,
 ) -> ET.Element:
     if prefix and ns:
         _safe_register_namespace(prefix, ns)
@@ -1755,7 +1795,10 @@ def _convert_element(e: ET.Element):
                 if isinstance(dict_result[child.tag], list):
                     dict_result[child.tag].append(_convert_element(child))
                 else:
-                    dict_result[child.tag] = [dict_result[child.tag], _convert_element(child)]
+                    dict_result[child.tag] = [
+                        dict_result[child.tag],
+                        _convert_element(child),
+                    ]
             else:
                 dict_result[child.tag] = _convert_element(child)
         dict_result.update(e.attrib)

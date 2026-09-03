@@ -49,7 +49,11 @@ def entra_auth():
 
 
 def main():
-    required = ("WPS_CHAT_ENDPOINT", "WPS_CHAT_CONNECTION_STRING", "WPS_CHAT_ACCESS_KEY")
+    required = (
+        "WPS_CHAT_ENDPOINT",
+        "WPS_CHAT_CONNECTION_STRING",
+        "WPS_CHAT_ACCESS_KEY",
+    )
     missing = [name for name in required if not os.environ.get(name)]
     if missing:
         print(f"Set {', '.join(missing)} to run this sample.")

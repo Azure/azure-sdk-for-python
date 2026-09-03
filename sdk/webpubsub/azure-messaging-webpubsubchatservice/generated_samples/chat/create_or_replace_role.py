@@ -33,9 +33,7 @@ def main():
 
     response = client.create_or_replace_role(
         role_name="room.moderator",
-        resource={
-            "permissions": ["room.history", "room.mute", "room.freeze", "room.remove_user", "room.publish_message"]
-        },
+        resource={"permissions": ["room.history", "room.remove_user", "room.publish_message"]},
     )
     print(response)
 

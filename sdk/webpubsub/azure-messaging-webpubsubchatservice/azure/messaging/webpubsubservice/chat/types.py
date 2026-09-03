@@ -6,29 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Literal, Union
+from typing import Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 from .models._enums import ChatUserKind
 
-
-class ChatConversation(TypedDict, total=False):
-    """Represents a chat conversation.
-
-    :ivar id: Conversation identifier. Required.
-    :vartype id: str
-    :ivar parent_room: Parent room identifier. Required.
-    :vartype parent_room: str
-    :ivar etag: The entity tag for this resource. Required.
-    :vartype etag: str
-    """
-
-    id: Required[str]
-    """Conversation identifier. Required."""
-    parentRoom: Required[str]
-    """Parent room identifier. Required."""
-    etag: Required[str]
-    """The entity tag for this resource. Required."""
+if TYPE_CHECKING:
+    from .models import ChatPermission
 
 
 class ChatMessage(TypedDict, total=False):
@@ -36,12 +20,12 @@ class ChatMessage(TypedDict, total=False):
 
     :ivar id: Message identifier. Required.
     :vartype id: str
-    :ivar created_by: User who created the message. Required.
-    :vartype created_by: str
+    :ivar createdBy: User who created the message. Required.
+    :vartype createdBy: str
     :ivar content: Message content. Required.
     :vartype content: "MessageContent"
-    :ivar created_at: Timestamp when the message was created. Required.
-    :vartype created_at: str
+    :ivar createdAt: Timestamp when the message was created. Required.
+    :vartype createdAt: str
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     """
@@ -66,14 +50,14 @@ class ChatRole(TypedDict, total=False):
     :vartype name: str
     :ivar permissions: Permissions associated with the role. Do not mix user permissions and room
      permissions in one role. Required.
-    :vartype permissions: list[str]
+    :vartype permissions: list[Union[str, "ChatPermission"]]
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     """
 
     name: Required[str]
     """Role name. Must start with 'user.' or 'room.' prefix. Required."""
-    permissions: Required[list[str]]
+    permissions: Required[list[Union[str, "ChatPermission"]]]
     """Permissions associated with the role. Do not mix user permissions and room permissions in one
      role. Required."""
     etag: Required[str]
@@ -87,8 +71,8 @@ class ChatRoom(TypedDict, total=False):
     :vartype id: str
     :ivar title: Room title. Required.
     :vartype title: str
-    :ivar default_conversation: Default conversation ID for this room. Required.
-    :vartype default_conversation: str
+    :ivar defaultConversation: Default conversation ID for this room. Required.
+    :vartype defaultConversation: str
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     """
@@ -106,10 +90,10 @@ class ChatRoom(TypedDict, total=False):
 class ChatRoomMember(TypedDict, total=False):
     """Represents a room member.
 
-    :ivar user_id: User ID of the member. Required.
-    :vartype user_id: str
-    :ivar role_name: Room role assigned to the user within this room. Required.
-    :vartype role_name: str
+    :ivar userId: User ID of the member. Required.
+    :vartype userId: str
+    :ivar roleName: Room role assigned to the user within this room. Required.
+    :vartype roleName: str
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     """
@@ -133,8 +117,8 @@ class HumanChatUser(TypedDict, total=False):
     :vartype etag: str
     :ivar kind: Required. A human end-user.
     :vartype kind: Literal[ChatUserKind.HUMAN]
-    :ivar role_name: Global user role assigned to the user. Must start with ``user.``. Required.
-    :vartype role_name: str
+    :ivar roleName: Global user role assigned to the user. Must start with ``user.``. Required.
+    :vartype roleName: str
     """
 
     id: Required[str]

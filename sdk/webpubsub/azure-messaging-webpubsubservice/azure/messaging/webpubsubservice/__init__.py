@@ -7,6 +7,10 @@
 # --------------------------------------------------------------------------
 # pylint: disable=wrong-import-position
 
+# The Chat client currently ships separately under this namespace. Extend the
+# path so both distributions can coexist; revisit after Architecture Board review.
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

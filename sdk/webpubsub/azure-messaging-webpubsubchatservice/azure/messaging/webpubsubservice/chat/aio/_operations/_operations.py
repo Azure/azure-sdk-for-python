@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient, MatchConditions
@@ -42,6 +42,7 @@ from ..._operations._operations import (
     build_web_pub_sub_chat_service_delete_room_member_request,
     build_web_pub_sub_chat_service_delete_room_request,
     build_web_pub_sub_chat_service_delete_user_request,
+    build_web_pub_sub_chat_service_generate_client_token_request,
     build_web_pub_sub_chat_service_get_conversation_request,
     build_web_pub_sub_chat_service_get_role_request,
     build_web_pub_sub_chat_service_get_room_request,
@@ -60,7 +61,10 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 
 class _WebPubSubChatServiceClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], WebPubSubChatServiceClientConfiguration]
+    ClientMixinABC[
+        AsyncPipelineClient[HttpRequest, AsyncHttpResponse],
+        WebPubSubChatServiceClientConfiguration,
+    ]
 ):
 
     @distributed_trace_async
@@ -182,7 +186,10 @@ class _WebPubSubChatServiceClientOperationsMixin(
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
@@ -205,7 +212,10 @@ class _WebPubSubChatServiceClientOperationsMixin(
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
@@ -232,7 +242,11 @@ class _WebPubSubChatServiceClientOperationsMixin(
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -568,7 +582,10 @@ class _WebPubSubChatServiceClientOperationsMixin(
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
@@ -591,7 +608,10 @@ class _WebPubSubChatServiceClientOperationsMixin(
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
@@ -618,7 +638,11 @@ class _WebPubSubChatServiceClientOperationsMixin(
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -1337,7 +1361,10 @@ class _WebPubSubChatServiceClientOperationsMixin(
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
@@ -1360,7 +1387,10 @@ class _WebPubSubChatServiceClientOperationsMixin(
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
@@ -1387,7 +1417,11 @@ class _WebPubSubChatServiceClientOperationsMixin(
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -2017,3 +2051,90 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def _generate_client_token(
+        self,
+        *,
+        user_id: Optional[str] = None,
+        role: Optional[list[str]] = None,
+        minutes_to_expire: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models._models.GenerateClientTokenResponse:
+        """Generate a token for connecting a client to Azure Web PubSub.
+
+        Generate a token for connecting a client to Azure Web PubSub.
+
+        :keyword user_id: User identifier for the client connection. Default value is None.
+        :paramtype user_id: str
+        :keyword role: Roles granted to the client connection. Default value is None.
+        :paramtype role: list[str]
+        :keyword minutes_to_expire: Lifetime of the generated token, in minutes. Default value is None.
+        :paramtype minutes_to_expire: int
+        :return: GenerateClientTokenResponse. The GenerateClientTokenResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.messaging.webpubsubservice.chat.models._models.GenerateClientTokenResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        api_version: Literal["2024-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01"))
+        client_type: Literal["default"] = kwargs.pop("client_type", _params.pop("clientType", "default"))
+        cls: ClsType[_models._models.GenerateClientTokenResponse] = kwargs.pop("cls", None)
+
+        _request = build_web_pub_sub_chat_service_generate_client_token_request(
+            hub=self._config.hub,
+            user_id=user_id,
+            role=role,
+            minutes_to_expire=minutes_to_expire,
+            api_version=api_version,
+            client_type=client_type,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(
+                _models._models.GenerateClientTokenResponse,
+                response.json(),  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore

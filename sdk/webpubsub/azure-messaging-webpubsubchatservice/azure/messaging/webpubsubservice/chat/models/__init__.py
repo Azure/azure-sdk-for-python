@@ -25,6 +25,7 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
+    ChatPermission,
     ChatUserKind,
 )
 from ._patch import __all__ as _patch_all
@@ -40,6 +41,7 @@ __all__ = [
     "ChatUser",
     "HumanChatUser",
     "MessageContent",
+    "ChatPermission",
     "ChatUserKind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

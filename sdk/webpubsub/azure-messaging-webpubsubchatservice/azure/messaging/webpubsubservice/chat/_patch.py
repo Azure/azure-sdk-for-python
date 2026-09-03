@@ -7,20 +7,21 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Dict, Optional, TYPE_CHECKING, Union
+
+from typing import Any, Dict, Optional, TYPE_CHECKING, Union, cast
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 
-from azure.messaging.webpubsubservice._patch import (
+from ._shared import (
     ApiManagementProxy,
     JwtCredentialPolicy,
-    WebPubSubServiceClient,
     _parse_connection_string,
+    get_token_by_key,
 )
 
 from ._client import WebPubSubChatServiceClient as WebPubSubChatServiceClientGenerated
-from ._constants import ChatRoles, RoomPermissions, UserPermissions
+from ._constants import BuiltInChatRoles
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -57,9 +58,6 @@ class WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated):
             raise ValueError("Parameter 'hub' must not be empty.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        service_client_kwargs = {
-            name: kwargs[name] for name in ("reverse_proxy_endpoint", "transport") if name in kwargs
-        }
         port = kwargs.pop("port", None)
         if port:
             endpoint = f"{endpoint.rstrip('/')}:{port}"
@@ -74,12 +72,11 @@ class WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated):
             kwargs["proxy_policy"] = ApiManagementProxy(**kwargs)
         if api_version is not None:
             kwargs["api_version"] = api_version
-        super().__init__(endpoint=endpoint, hub=hub, credential=credential, **kwargs)
-        self._web_pub_sub_service_client = WebPubSubServiceClient(
+        super().__init__(
             endpoint=endpoint,
             hub=hub,
-            credential=credential,
-            **service_client_kwargs,
+            credential=cast("TokenCredential", credential),
+            **kwargs,
         )
 
     @classmethod
@@ -116,24 +113,36 @@ class WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated):
         :return: The Web PubSub client endpoint, token, and connection URL.
         :rtype: dict[str, Any]
         """
-        return self._web_pub_sub_service_client.get_client_access_token(  # pylint: disable=no-member
-            user_id=user_id,
-            roles=list(_CHAT_CLIENT_ROLES),
-            minutes_to_expire=minutes_to_expire,
-            groups=[],
-            client_protocol="Default",
-            **kwargs,
-        )
-
-    def close(self) -> None:
-        self._web_pub_sub_service_client.close()
-        super().close()
+        endpoint = self._config.endpoint.lower().rstrip("/")
+        path = "/client/hubs/"
+        base_url = f"ws{endpoint[4:]}{path}{self._config.hub}"
+        if isinstance(self._config.credential, AzureKeyCredential):
+            token = get_token_by_key(
+                endpoint,
+                path,
+                self._config.hub,
+                self._config.credential.key,
+                user_id=user_id,
+                roles=list(_CHAT_CLIENT_ROLES),
+                minutes_to_expire=minutes_to_expire,
+            )
+        else:
+            response = self._generate_client_token(
+                user_id=user_id,
+                role=list(_CHAT_CLIENT_ROLES),
+                minutes_to_expire=minutes_to_expire,
+                **kwargs,
+            )
+            token = response.token
+        return {
+            "baseUrl": base_url,
+            "token": token,
+            "url": f"{base_url}?access_token={token}",
+        }
 
 
 __all__: list[str] = [
-    "ChatRoles",
-    "RoomPermissions",
-    "UserPermissions",
+    "BuiltInChatRoles",
     "WebPubSubChatServiceClient",
 ]
 

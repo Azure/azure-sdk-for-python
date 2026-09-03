@@ -34,11 +34,21 @@ def add_sanitizers(test_proxy):
         "WEBPUBSUBCHATSERVICE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
     )
     add_general_regex_sanitizer(
-        regex=webpubsubchatservice_subscription_id, value="00000000-0000-0000-0000-000000000000"
+        regex=webpubsubchatservice_subscription_id,
+        value="00000000-0000-0000-0000-000000000000",
     )
-    add_general_regex_sanitizer(regex=webpubsubchatservice_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=webpubsubchatservice_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=webpubsubchatservice_client_secret, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(
+        regex=webpubsubchatservice_tenant_id,
+        value="00000000-0000-0000-0000-000000000000",
+    )
+    add_general_regex_sanitizer(
+        regex=webpubsubchatservice_client_id,
+        value="00000000-0000-0000-0000-000000000000",
+    )
+    add_general_regex_sanitizer(
+        regex=webpubsubchatservice_client_secret,
+        value="00000000-0000-0000-0000-000000000000",
+    )
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
