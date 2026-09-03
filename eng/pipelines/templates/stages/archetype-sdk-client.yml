@@ -176,10 +176,12 @@ extends:
                   - pwsh: |
                       & '$(Build.SourcesDirectory)/eng/scripts/Filter-PackageInfoForPackageApproval.ps1' `
                         -PackageInfoDirectory '$(Pipeline.Workspace)/packages_extended/PackageInfo' `
-                        -ArtifactsJson '${{ convertToJson(parameters.Artifacts) }}' `
+                        -ArtifactsJson $env:ARTIFACTS_JSON `
                         -PackageInfoPathPrefix 'packages_extended/PackageInfo'
                     name: filterPackageInfo
                     displayName: Filter management plane packages from package approval
+                    env:
+                      ARTIFACTS_JSON: ${{ convertToJson(parameters.Artifacts) }}
 
               - job: CheckPackageApproval
                 displayName: Check Package Approval Status
