@@ -47,6 +47,13 @@ _REQUIRED_RESILIENT_SAMPLES: tuple[str, ...] = (
     "resilient_research",
 )
 
+# Minimal, dependency-light long-running-agent samples (core + invocations only,
+# no LLM). They ship a README in addition to the standard three files.
+_MINIMAL_RESILIENT_SAMPLES: tuple[str, ...] = (
+    "resilient_hello_world",
+    "resilient_hello_forever",
+)
+
 _DROPPED_SAMPLES: tuple[str, ...] = ("resilient_claude", "resilient_copilot")
 
 _REQUIRED_FILES_PER_SAMPLE: tuple[str, ...] = (
@@ -169,3 +176,81 @@ def test_sample_has_no_retired_name_references(sample_name: str) -> None:
 # core/invocations packages. The demo has been split into its own branch
 # and is no longer part of this
 # package's shipping surface, so the structural guard is no longer relevant.
+
+
+# ---------------------------------------------------------------------------
+# 6. Minimal (no-LLM) resilient samples
+# ---------------------------------------------------------------------------
+
+_REQUIRED_FILES_MINIMAL_SAMPLE: tuple[str, ...] = (
+    "agent.py",
+    "app.py",
+    "requirements.txt",
+    "README.md",
+)
+
+
+@pytest.mark.parametrize("sample_name", _MINIMAL_RESILIENT_SAMPLES)
+def test_minimal_resilient_sample_directory_exists(sample_name: str) -> None:
+    """Each minimal long-running-agent sample directory MUST exist."""
+
+    p = _sample_path(sample_name)
+    assert p.is_dir(), (
+        f"Minimal resilient invocation sample missing: {p}. "
+        f"Expected samples: {', '.join(_MINIMAL_RESILIENT_SAMPLES)}."
+    )
+
+
+@pytest.mark.parametrize("sample_name", _MINIMAL_RESILIENT_SAMPLES)
+@pytest.mark.parametrize("filename", _REQUIRED_FILES_MINIMAL_SAMPLE)
+def test_minimal_required_files_per_sample(sample_name: str, filename: str) -> None:
+    """Each minimal sample ships agent + app + requirements + a README walkthrough."""
+
+    p = _sample_path(sample_name) / filename
+    assert p.is_file(), (
+        f"Missing required file {filename} for minimal sample {sample_name} "
+        f"(expected at {p})."
+    )
+
+
+@pytest.mark.parametrize("sample_name", _MINIMAL_RESILIENT_SAMPLES)
+def test_minimal_sample_has_no_retired_name_references(sample_name: str) -> None:
+    """Minimal samples MUST NOT reference retired task-framework names."""
+
+    offenders: list[tuple[str, str]] = []
+    for src in _python_sources_under(_sample_path(sample_name)):
+        text = src.read_text(encoding="utf-8")
+        for name in _RETIRED_NAMES:
+            if name in text:
+                offenders.append((str(src.relative_to(_SAMPLES_DIR)), name))
+    assert not offenders, (
+        f"Retired task-framework names still referenced in minimal sample "
+        f"{sample_name}: {offenders}."
+    )
+
+
+# ---------------------------------------------------------------------------
+# 7. Regression guard: durable tasks are strictly opt-in (2.1.0b1+)
+# ---------------------------------------------------------------------------
+#
+# Since core 2.1.0b1, ``get_task_manager()`` raises ``TaskManagerNotInitialized``
+# unless ``set_resilient_tasks_enabled(True)`` runs before host startup. Every
+# resilient invocation sample MUST enable it in ``app.py`` or the durable /
+# crash-recovery behaviour the sample advertises silently does not work.
+
+
+@pytest.mark.parametrize(
+    "sample_name", _REQUIRED_RESILIENT_SAMPLES + _MINIMAL_RESILIENT_SAMPLES
+)
+def test_resilient_sample_enables_resilient_tasks(sample_name: str) -> None:
+    """Every resilient sample's ``app.py`` MUST opt in to durable tasks."""
+
+    app_py = _sample_path(sample_name) / "app.py"
+    assert app_py.is_file(), f"Missing app.py for sample {sample_name} ({app_py})."
+    text = app_py.read_text(encoding="utf-8")
+    assert "set_resilient_tasks_enabled(True)" in text, (
+        f"Sample {sample_name} does not call set_resilient_tasks_enabled(True) in "
+        "app.py. Durable tasks are strictly opt-in since core 2.1.0b1; without this "
+        "call get_task_manager() raises TaskManagerNotInitialized and long-running "
+        "recovery is silently disabled."
+    )
