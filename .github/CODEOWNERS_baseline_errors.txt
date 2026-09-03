@@ -79,7 +79,6 @@ athipp is an invalid user. Ensure the user exists, is public member of Azure and
 taiwu is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
 minghan is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
 miaojiang is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
-'Application Insights' is not a valid label for this repository.
 antcp is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
 AzureAppServiceCLI is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
 mjudeikis is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
