@@ -1433,7 +1433,7 @@ def build_usages_list_request(location: str, subscription_id: str, **kwargs: Any
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1543,7 +1543,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class WebPubSubHubsOperations:
+class WebPubSubHubsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2110,7 +2110,7 @@ class WebPubSubHubsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WebPubSubSharedPrivateLinkResourcesOperations:  # pylint: disable=name-too-long
+class WebPubSubSharedPrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2688,7 +2688,7 @@ class WebPubSubSharedPrivateLinkResourcesOperations:  # pylint: disable=name-too
         return ItemPaged(get_next, extract_data)
 
 
-class WebPubSubOperations:
+class WebPubSubOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4271,7 +4271,7 @@ class WebPubSubOperations:
         return deserialized  # type: ignore
 
 
-class WebPubSubPrivateLinkResourcesOperations:
+class WebPubSubPrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4391,7 +4391,7 @@ class WebPubSubPrivateLinkResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WebPubSubCustomCertificatesOperations:
+class WebPubSubCustomCertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4899,7 +4899,7 @@ class WebPubSubCustomCertificatesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WebPubSubCustomDomainsOperations:
+class WebPubSubCustomDomainsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5466,7 +5466,7 @@ class WebPubSubCustomDomainsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WebPubSubPrivateEndpointConnectionsOperations:  # pylint: disable=name-too-long
+class WebPubSubPrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5980,7 +5980,7 @@ class WebPubSubPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         return ItemPaged(get_next, extract_data)
 
 
-class WebPubSubReplicasOperations:
+class WebPubSubReplicasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6858,7 +6858,7 @@ class WebPubSubReplicasOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class WebPubSubReplicaSharedPrivateLinkResourcesOperations:  # pylint: disable=name-too-long
+class WebPubSubReplicaSharedPrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7337,7 +7337,7 @@ class WebPubSubReplicaSharedPrivateLinkResourcesOperations:  # pylint: disable=n
         return ItemPaged(get_next, extract_data)
 
 
-class WebPubSubPersistentStoragesOperations:
+class WebPubSubPersistentStoragesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7904,7 +7904,7 @@ class WebPubSubPersistentStoragesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class UsagesOperations:
+class UsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

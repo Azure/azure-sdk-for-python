@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -44,7 +45,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class WebPubSubManagementClient:  # pylint: disable=too-many-instance-attributes
+class WebPubSubManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """REST API for Azure WebPubSub Service.
 
     :ivar operations: Operations operations
