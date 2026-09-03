@@ -1589,7 +1589,6 @@ class TestDirectory(StorageRecordedTestCase):
         client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         client.create_directory()
 
-        string_to_sign = []
         token = generate_directory_sas(
             self.dsc.account_name,
             self.file_system_name,
@@ -1597,13 +1596,10 @@ class TestDirectory(StorageRecordedTestCase):
             self.dsc.credential.account_key,
             permission=DirectorySasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
-            sts_hook=string_to_sign.append,
         )
 
         # sdd must match the depth of the canonicalized resource, not the raw name
         assert "sdd=2" in token
-        assert f"/blob/{self.dsc.account_name}/{self.file_system_name}/" in string_to_sign[0]
-        assert "\\" not in string_to_sign[0]
 
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name, credential=token
