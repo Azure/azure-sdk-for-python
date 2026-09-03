@@ -34,7 +34,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -71,6 +71,7 @@ from ...operations._operations import (
     build_hcx_enterprise_sites_list_request,
     build_hosts_get_request,
     build_hosts_list_request,
+    build_hosts_update_request,
     build_iscsi_paths_create_or_update_request,
     build_iscsi_paths_delete_request,
     build_iscsi_paths_get_request,
@@ -167,11 +168,10 @@ from .._configuration import AVSClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -235,7 +235,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -248,7 +251,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -275,7 +281,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AddonsOperations:
+class AddonsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -347,7 +353,10 @@ class AddonsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -360,7 +369,10 @@ class AddonsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Addon], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Addon],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -430,6 +442,7 @@ class AddonsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -451,7 +464,7 @@ class AddonsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Addon, response.json())
 
@@ -465,7 +478,7 @@ class AddonsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         addon_name: str,
-        addon: Union[_models.Addon, JSON, IO[bytes]],
+        addon: Union[_models.Addon, _types.Addon, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -505,6 +518,7 @@ class AddonsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -528,7 +542,7 @@ class AddonsOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -572,7 +586,7 @@ class AddonsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         addon_name: str,
-        addon: JSON,
+        addon: _types.Addon,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -587,7 +601,7 @@ class AddonsOperations:
         :param addon_name: Name of the addon. Required.
         :type addon_name: str
         :param addon: Resource create parameters. Required.
-        :type addon: JSON
+        :type addon: ~azure.mgmt.avs.types.Addon
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -634,7 +648,7 @@ class AddonsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         addon_name: str,
-        addon: Union[_models.Addon, JSON, IO[bytes]],
+        addon: Union[_models.Addon, _types.Addon, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Addon]:
         """Create a Addon.
@@ -646,9 +660,8 @@ class AddonsOperations:
         :type private_cloud_name: str
         :param addon_name: Name of the addon. Required.
         :type addon_name: str
-        :param addon: Resource create parameters. Is one of the following types: Addon, JSON, IO[bytes]
-         Required.
-        :type addon: ~azure.mgmt.avs.models.Addon or JSON or IO[bytes]
+        :param addon: Resource create parameters. Is either a Addon type or a IO[bytes] type. Required.
+        :type addon: ~azure.mgmt.avs.models.Addon or ~azure.mgmt.avs.types.Addon or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Addon. The Addon is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.Addon]
@@ -737,6 +750,7 @@ class AddonsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -761,7 +775,7 @@ class AddonsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -831,7 +845,7 @@ class AddonsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class AuthorizationsOperations:
+class AuthorizationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -906,7 +920,10 @@ class AuthorizationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -919,7 +936,10 @@ class AuthorizationsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ExpressRouteAuthorization], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ExpressRouteAuthorization],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -990,6 +1010,7 @@ class AuthorizationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1011,7 +1032,7 @@ class AuthorizationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ExpressRouteAuthorization, response.json())
 
@@ -1025,7 +1046,7 @@ class AuthorizationsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         authorization_name: str,
-        authorization: Union[_models.ExpressRouteAuthorization, JSON, IO[bytes]],
+        authorization: Union[_models.ExpressRouteAuthorization, _types.ExpressRouteAuthorization, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1065,6 +1086,7 @@ class AuthorizationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1088,7 +1110,7 @@ class AuthorizationsOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1132,7 +1154,7 @@ class AuthorizationsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         authorization_name: str,
-        authorization: JSON,
+        authorization: _types.ExpressRouteAuthorization,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1147,7 +1169,7 @@ class AuthorizationsOperations:
         :param authorization_name: Name of the ExpressRoute Circuit Authorization. Required.
         :type authorization_name: str
         :param authorization: Resource create parameters. Required.
-        :type authorization: JSON
+        :type authorization: ~azure.mgmt.avs.types.ExpressRouteAuthorization
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1194,7 +1216,7 @@ class AuthorizationsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         authorization_name: str,
-        authorization: Union[_models.ExpressRouteAuthorization, JSON, IO[bytes]],
+        authorization: Union[_models.ExpressRouteAuthorization, _types.ExpressRouteAuthorization, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExpressRouteAuthorization]:
         """Create a ExpressRouteAuthorization.
@@ -1206,9 +1228,10 @@ class AuthorizationsOperations:
         :type private_cloud_name: str
         :param authorization_name: Name of the ExpressRoute Circuit Authorization. Required.
         :type authorization_name: str
-        :param authorization: Resource create parameters. Is one of the following types:
-         ExpressRouteAuthorization, JSON, IO[bytes] Required.
-        :type authorization: ~azure.mgmt.avs.models.ExpressRouteAuthorization or JSON or IO[bytes]
+        :param authorization: Resource create parameters. Is either a ExpressRouteAuthorization type or
+         a IO[bytes] type. Required.
+        :type authorization: ~azure.mgmt.avs.models.ExpressRouteAuthorization or
+         ~azure.mgmt.avs.types.ExpressRouteAuthorization or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExpressRouteAuthorization. The
          ExpressRouteAuthorization is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.ExpressRouteAuthorization]
@@ -1297,6 +1320,7 @@ class AuthorizationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1321,7 +1345,7 @@ class AuthorizationsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1391,7 +1415,7 @@ class AuthorizationsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class CloudLinksOperations:
+class CloudLinksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1465,7 +1489,10 @@ class CloudLinksOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1478,7 +1505,10 @@ class CloudLinksOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CloudLink], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CloudLink],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1548,6 +1578,7 @@ class CloudLinksOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1569,7 +1600,7 @@ class CloudLinksOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CloudLink, response.json())
 
@@ -1583,7 +1614,7 @@ class CloudLinksOperations:
         resource_group_name: str,
         private_cloud_name: str,
         cloud_link_name: str,
-        cloud_link: Union[_models.CloudLink, JSON, IO[bytes]],
+        cloud_link: Union[_models.CloudLink, _types.CloudLink, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1623,6 +1654,7 @@ class CloudLinksOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1646,7 +1678,7 @@ class CloudLinksOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1690,7 +1722,7 @@ class CloudLinksOperations:
         resource_group_name: str,
         private_cloud_name: str,
         cloud_link_name: str,
-        cloud_link: JSON,
+        cloud_link: _types.CloudLink,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1705,7 +1737,7 @@ class CloudLinksOperations:
         :param cloud_link_name: Name of the cloud link. Required.
         :type cloud_link_name: str
         :param cloud_link: Resource create parameters. Required.
-        :type cloud_link: JSON
+        :type cloud_link: ~azure.mgmt.avs.types.CloudLink
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1752,7 +1784,7 @@ class CloudLinksOperations:
         resource_group_name: str,
         private_cloud_name: str,
         cloud_link_name: str,
-        cloud_link: Union[_models.CloudLink, JSON, IO[bytes]],
+        cloud_link: Union[_models.CloudLink, _types.CloudLink, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CloudLink]:
         """Create a CloudLink.
@@ -1764,9 +1796,10 @@ class CloudLinksOperations:
         :type private_cloud_name: str
         :param cloud_link_name: Name of the cloud link. Required.
         :type cloud_link_name: str
-        :param cloud_link: Resource create parameters. Is one of the following types: CloudLink, JSON,
-         IO[bytes] Required.
-        :type cloud_link: ~azure.mgmt.avs.models.CloudLink or JSON or IO[bytes]
+        :param cloud_link: Resource create parameters. Is either a CloudLink type or a IO[bytes] type.
+         Required.
+        :type cloud_link: ~azure.mgmt.avs.models.CloudLink or ~azure.mgmt.avs.types.CloudLink or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns CloudLink. The CloudLink is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.CloudLink]
@@ -1855,6 +1888,7 @@ class CloudLinksOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1879,7 +1913,7 @@ class CloudLinksOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1949,7 +1983,7 @@ class CloudLinksOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ClustersOperations:
+class ClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2023,7 +2057,10 @@ class ClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2036,7 +2073,10 @@ class ClustersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Cluster], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Cluster],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2106,6 +2146,7 @@ class ClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2127,7 +2168,7 @@ class ClustersOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Cluster, response.json())
 
@@ -2141,7 +2182,7 @@ class ClustersOperations:
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
-        cluster: Union[_models.Cluster, JSON, IO[bytes]],
+        cluster: Union[_models.Cluster, _types.Cluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2181,6 +2222,7 @@ class ClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2204,7 +2246,7 @@ class ClustersOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2248,7 +2290,7 @@ class ClustersOperations:
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
-        cluster: JSON,
+        cluster: _types.Cluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2263,7 +2305,7 @@ class ClustersOperations:
         :param cluster_name: Name of the cluster. Required.
         :type cluster_name: str
         :param cluster: Resource create parameters. Required.
-        :type cluster: JSON
+        :type cluster: ~azure.mgmt.avs.types.Cluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2310,7 +2352,7 @@ class ClustersOperations:
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
-        cluster: Union[_models.Cluster, JSON, IO[bytes]],
+        cluster: Union[_models.Cluster, _types.Cluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Cluster]:
         """Create a Cluster.
@@ -2322,9 +2364,9 @@ class ClustersOperations:
         :type private_cloud_name: str
         :param cluster_name: Name of the cluster. Required.
         :type cluster_name: str
-        :param cluster: Resource create parameters. Is one of the following types: Cluster, JSON,
-         IO[bytes] Required.
-        :type cluster: ~azure.mgmt.avs.models.Cluster or JSON or IO[bytes]
+        :param cluster: Resource create parameters. Is either a Cluster type or a IO[bytes] type.
+         Required.
+        :type cluster: ~azure.mgmt.avs.models.Cluster or ~azure.mgmt.avs.types.Cluster or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Cluster. The Cluster is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.Cluster]
@@ -2388,7 +2430,7 @@ class ClustersOperations:
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
-        cluster_update: Union[_models.ClusterUpdate, JSON, IO[bytes]],
+        cluster_update: Union[_models.ClusterUpdate, _types.ClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2428,6 +2470,7 @@ class ClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2452,7 +2495,7 @@ class ClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2496,7 +2539,7 @@ class ClustersOperations:
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
-        cluster_update: JSON,
+        cluster_update: _types.ClusterUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2511,7 +2554,7 @@ class ClustersOperations:
         :param cluster_name: Name of the cluster. Required.
         :type cluster_name: str
         :param cluster_update: The resource properties to be updated. Required.
-        :type cluster_update: JSON
+        :type cluster_update: ~azure.mgmt.avs.types.ClusterUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2558,7 +2601,7 @@ class ClustersOperations:
         resource_group_name: str,
         private_cloud_name: str,
         cluster_name: str,
-        cluster_update: Union[_models.ClusterUpdate, JSON, IO[bytes]],
+        cluster_update: Union[_models.ClusterUpdate, _types.ClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Cluster]:
         """Update a Cluster.
@@ -2570,9 +2613,10 @@ class ClustersOperations:
         :type private_cloud_name: str
         :param cluster_name: Name of the cluster. Required.
         :type cluster_name: str
-        :param cluster_update: The resource properties to be updated. Is one of the following types:
-         ClusterUpdate, JSON, IO[bytes] Required.
-        :type cluster_update: ~azure.mgmt.avs.models.ClusterUpdate or JSON or IO[bytes]
+        :param cluster_update: The resource properties to be updated. Is either a ClusterUpdate type or
+         a IO[bytes] type. Required.
+        :type cluster_update: ~azure.mgmt.avs.models.ClusterUpdate or
+         ~azure.mgmt.avs.types.ClusterUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Cluster. The Cluster is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.Cluster]
@@ -2661,6 +2705,7 @@ class ClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2685,7 +2730,7 @@ class ClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2798,6 +2843,7 @@ class ClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2819,7 +2865,7 @@ class ClustersOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ClusterZoneList, response.json())
 
@@ -2829,7 +2875,7 @@ class ClustersOperations:
         return deserialized  # type: ignore
 
 
-class DatastoresOperations:
+class DatastoresOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2906,7 +2952,10 @@ class DatastoresOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2919,7 +2968,10 @@ class DatastoresOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Datastore], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Datastore],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2992,6 +3044,7 @@ class DatastoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3013,7 +3066,7 @@ class DatastoresOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Datastore, response.json())
 
@@ -3028,7 +3081,7 @@ class DatastoresOperations:
         private_cloud_name: str,
         cluster_name: str,
         datastore_name: str,
-        datastore: Union[_models.Datastore, JSON, IO[bytes]],
+        datastore: Union[_models.Datastore, _types.Datastore, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3069,6 +3122,7 @@ class DatastoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3092,7 +3146,7 @@ class DatastoresOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3140,7 +3194,7 @@ class DatastoresOperations:
         private_cloud_name: str,
         cluster_name: str,
         datastore_name: str,
-        datastore: JSON,
+        datastore: _types.Datastore,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3157,7 +3211,7 @@ class DatastoresOperations:
         :param datastore_name: Name of the datastore. Required.
         :type datastore_name: str
         :param datastore: Resource create parameters. Required.
-        :type datastore: JSON
+        :type datastore: ~azure.mgmt.avs.types.Datastore
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3208,7 +3262,7 @@ class DatastoresOperations:
         private_cloud_name: str,
         cluster_name: str,
         datastore_name: str,
-        datastore: Union[_models.Datastore, JSON, IO[bytes]],
+        datastore: Union[_models.Datastore, _types.Datastore, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Datastore]:
         """Create a Datastore.
@@ -3222,9 +3276,10 @@ class DatastoresOperations:
         :type cluster_name: str
         :param datastore_name: Name of the datastore. Required.
         :type datastore_name: str
-        :param datastore: Resource create parameters. Is one of the following types: Datastore, JSON,
-         IO[bytes] Required.
-        :type datastore: ~azure.mgmt.avs.models.Datastore or JSON or IO[bytes]
+        :param datastore: Resource create parameters. Is either a Datastore type or a IO[bytes] type.
+         Required.
+        :type datastore: ~azure.mgmt.avs.models.Datastore or ~azure.mgmt.avs.types.Datastore or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Datastore. The Datastore is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.Datastore]
@@ -3315,6 +3370,7 @@ class DatastoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3339,7 +3395,7 @@ class DatastoresOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3412,7 +3468,7 @@ class DatastoresOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class GlobalReachConnectionsOperations:
+class GlobalReachConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3486,7 +3542,10 @@ class GlobalReachConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3499,7 +3558,10 @@ class GlobalReachConnectionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.GlobalReachConnection], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.GlobalReachConnection],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3569,6 +3631,7 @@ class GlobalReachConnectionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3590,7 +3653,7 @@ class GlobalReachConnectionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GlobalReachConnection, response.json())
 
@@ -3604,7 +3667,7 @@ class GlobalReachConnectionsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         global_reach_connection_name: str,
-        global_reach_connection: Union[_models.GlobalReachConnection, JSON, IO[bytes]],
+        global_reach_connection: Union[_models.GlobalReachConnection, _types.GlobalReachConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3644,6 +3707,7 @@ class GlobalReachConnectionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3667,7 +3731,7 @@ class GlobalReachConnectionsOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3711,7 +3775,7 @@ class GlobalReachConnectionsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         global_reach_connection_name: str,
-        global_reach_connection: JSON,
+        global_reach_connection: _types.GlobalReachConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3726,7 +3790,7 @@ class GlobalReachConnectionsOperations:
         :param global_reach_connection_name: Name of the global reach connection. Required.
         :type global_reach_connection_name: str
         :param global_reach_connection: Resource create parameters. Required.
-        :type global_reach_connection: JSON
+        :type global_reach_connection: ~azure.mgmt.avs.types.GlobalReachConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3773,7 +3837,7 @@ class GlobalReachConnectionsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         global_reach_connection_name: str,
-        global_reach_connection: Union[_models.GlobalReachConnection, JSON, IO[bytes]],
+        global_reach_connection: Union[_models.GlobalReachConnection, _types.GlobalReachConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GlobalReachConnection]:
         """Create a GlobalReachConnection.
@@ -3785,10 +3849,10 @@ class GlobalReachConnectionsOperations:
         :type private_cloud_name: str
         :param global_reach_connection_name: Name of the global reach connection. Required.
         :type global_reach_connection_name: str
-        :param global_reach_connection: Resource create parameters. Is one of the following types:
-         GlobalReachConnection, JSON, IO[bytes] Required.
-        :type global_reach_connection: ~azure.mgmt.avs.models.GlobalReachConnection or JSON or
-         IO[bytes]
+        :param global_reach_connection: Resource create parameters. Is either a GlobalReachConnection
+         type or a IO[bytes] type. Required.
+        :type global_reach_connection: ~azure.mgmt.avs.models.GlobalReachConnection or
+         ~azure.mgmt.avs.types.GlobalReachConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns GlobalReachConnection. The
          GlobalReachConnection is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.GlobalReachConnection]
@@ -3877,6 +3941,7 @@ class GlobalReachConnectionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3901,7 +3966,7 @@ class GlobalReachConnectionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3971,7 +4036,7 @@ class GlobalReachConnectionsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class HcxEnterpriseSitesOperations:
+class HcxEnterpriseSitesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4045,7 +4110,10 @@ class HcxEnterpriseSitesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4058,7 +4126,10 @@ class HcxEnterpriseSitesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.HcxEnterpriseSite], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.HcxEnterpriseSite],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4128,6 +4199,7 @@ class HcxEnterpriseSitesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4149,7 +4221,7 @@ class HcxEnterpriseSitesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.HcxEnterpriseSite, response.json())
 
@@ -4194,7 +4266,7 @@ class HcxEnterpriseSitesOperations:
         resource_group_name: str,
         private_cloud_name: str,
         hcx_enterprise_site_name: str,
-        hcx_enterprise_site: JSON,
+        hcx_enterprise_site: _types.HcxEnterpriseSite,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4209,7 +4281,7 @@ class HcxEnterpriseSitesOperations:
         :param hcx_enterprise_site_name: Name of the HCX Enterprise Site. Required.
         :type hcx_enterprise_site_name: str
         :param hcx_enterprise_site: Resource create parameters. Required.
-        :type hcx_enterprise_site: JSON
+        :type hcx_enterprise_site: ~azure.mgmt.avs.types.HcxEnterpriseSite
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4254,7 +4326,7 @@ class HcxEnterpriseSitesOperations:
         resource_group_name: str,
         private_cloud_name: str,
         hcx_enterprise_site_name: str,
-        hcx_enterprise_site: Union[_models.HcxEnterpriseSite, JSON, IO[bytes]],
+        hcx_enterprise_site: Union[_models.HcxEnterpriseSite, _types.HcxEnterpriseSite, IO[bytes]],
         **kwargs: Any
     ) -> _models.HcxEnterpriseSite:
         """Create a HcxEnterpriseSite.
@@ -4266,9 +4338,10 @@ class HcxEnterpriseSitesOperations:
         :type private_cloud_name: str
         :param hcx_enterprise_site_name: Name of the HCX Enterprise Site. Required.
         :type hcx_enterprise_site_name: str
-        :param hcx_enterprise_site: Resource create parameters. Is one of the following types:
-         HcxEnterpriseSite, JSON, IO[bytes] Required.
-        :type hcx_enterprise_site: ~azure.mgmt.avs.models.HcxEnterpriseSite or JSON or IO[bytes]
+        :param hcx_enterprise_site: Resource create parameters. Is either a HcxEnterpriseSite type or a
+         IO[bytes] type. Required.
+        :type hcx_enterprise_site: ~azure.mgmt.avs.models.HcxEnterpriseSite or
+         ~azure.mgmt.avs.types.HcxEnterpriseSite or IO[bytes]
         :return: HcxEnterpriseSite. The HcxEnterpriseSite is compatible with MutableMapping
         :rtype: ~azure.mgmt.avs.models.HcxEnterpriseSite
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4310,6 +4383,7 @@ class HcxEnterpriseSitesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4331,7 +4405,7 @@ class HcxEnterpriseSitesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.HcxEnterpriseSite, response.json())
 
@@ -4403,7 +4477,7 @@ class HcxEnterpriseSitesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class HostsOperations:
+class HostsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4433,7 +4507,7 @@ class HostsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01", "2025-09-01"],
+        api_versions_list=["2024-09-01", "2025-09-01", "2026-03-01"],
     )
     def list(
         self, resource_group_name: str, private_cloud_name: str, cluster_name: str, **kwargs: Any
@@ -4494,7 +4568,10 @@ class HostsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4507,7 +4584,10 @@ class HostsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Host], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Host],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4547,7 +4627,7 @@ class HostsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01", "2025-09-01"],
+        api_versions_list=["2024-09-01", "2025-09-01", "2026-03-01"],
     )
     async def get(
         self, resource_group_name: str, private_cloud_name: str, cluster_name: str, host_id: str, **kwargs: Any
@@ -4595,6 +4675,7 @@ class HostsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4616,7 +4697,220 @@ class HostsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Host, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        private_cloud_name: str,
+        cluster_name: str,
+        host_id: str,
+        properties: _models.HostUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.Host:
+        """Update a Host.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param private_cloud_name: Name of the private cloud. Required.
+        :type private_cloud_name: str
+        :param cluster_name: Name of the cluster. Required.
+        :type cluster_name: str
+        :param host_id: The host identifier. Required.
+        :type host_id: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.avs.models.HostUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Host. The Host is compatible with MutableMapping
+        :rtype: ~azure.mgmt.avs.models.Host
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        private_cloud_name: str,
+        cluster_name: str,
+        host_id: str,
+        properties: _types.HostUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.Host:
+        """Update a Host.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param private_cloud_name: Name of the private cloud. Required.
+        :type private_cloud_name: str
+        :param cluster_name: Name of the cluster. Required.
+        :type cluster_name: str
+        :param host_id: The host identifier. Required.
+        :type host_id: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.avs.types.HostUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Host. The Host is compatible with MutableMapping
+        :rtype: ~azure.mgmt.avs.models.Host
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        private_cloud_name: str,
+        cluster_name: str,
+        host_id: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.Host:
+        """Update a Host.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param private_cloud_name: Name of the private cloud. Required.
+        :type private_cloud_name: str
+        :param cluster_name: Name of the cluster. Required.
+        :type cluster_name: str
+        :param host_id: The host identifier. Required.
+        :type host_id: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Host. The Host is compatible with MutableMapping
+        :rtype: ~azure.mgmt.avs.models.Host
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "private_cloud_name",
+                "cluster_name",
+                "host_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        private_cloud_name: str,
+        cluster_name: str,
+        host_id: str,
+        properties: Union[_models.HostUpdate, _types.HostUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.Host:
+        """Update a Host.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param private_cloud_name: Name of the private cloud. Required.
+        :type private_cloud_name: str
+        :param cluster_name: Name of the cluster. Required.
+        :type cluster_name: str
+        :param host_id: The host identifier. Required.
+        :type host_id: str
+        :param properties: The resource properties to be updated. Is either a HostUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.avs.models.HostUpdate or ~azure.mgmt.avs.types.HostUpdate or
+         IO[bytes]
+        :return: Host. The Host is compatible with MutableMapping
+        :rtype: ~azure.mgmt.avs.models.Host
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Host] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_hosts_update_request(
+            resource_group_name=resource_group_name,
+            private_cloud_name=private_cloud_name,
+            cluster_name=cluster_name,
+            host_id=host_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Host, response.json())
 
@@ -4626,7 +4920,7 @@ class HostsOperations:
         return deserialized  # type: ignore
 
 
-class IscsiPathsOperations:
+class IscsiPathsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4700,7 +4994,10 @@ class IscsiPathsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4713,7 +5010,10 @@ class IscsiPathsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.IscsiPath], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.IscsiPath],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4778,6 +5078,7 @@ class IscsiPathsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4799,7 +5100,7 @@ class IscsiPathsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.IscsiPath, response.json())
 
@@ -4812,7 +5113,7 @@ class IscsiPathsOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        resource: Union[_models.IscsiPath, JSON, IO[bytes]],
+        resource: Union[_models.IscsiPath, _types.IscsiPath, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4851,6 +5152,7 @@ class IscsiPathsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4874,7 +5176,7 @@ class IscsiPathsOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4914,7 +5216,7 @@ class IscsiPathsOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        resource: JSON,
+        resource: _types.IscsiPath,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4927,7 +5229,7 @@ class IscsiPathsOperations:
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.avs.types.IscsiPath
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4970,7 +5272,7 @@ class IscsiPathsOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        resource: Union[_models.IscsiPath, JSON, IO[bytes]],
+        resource: Union[_models.IscsiPath, _types.IscsiPath, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IscsiPath]:
         """Create a IscsiPath.
@@ -4980,9 +5282,10 @@ class IscsiPathsOperations:
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param resource: Resource create parameters. Is one of the following types: IscsiPath, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.avs.models.IscsiPath or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a IscsiPath type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.avs.models.IscsiPath or ~azure.mgmt.avs.types.IscsiPath or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns IscsiPath. The IscsiPath is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.IscsiPath]
@@ -5069,6 +5372,7 @@ class IscsiPathsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5093,7 +5397,7 @@ class IscsiPathsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5160,7 +5464,7 @@ class IscsiPathsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class LicensesOperations:
+class LicensesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5183,7 +5487,7 @@ class LicensesOperations:
         params_added_on={
             "2025-09-01": ["api_version", "subscription_id", "resource_group_name", "private_cloud_name", "accept"]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     def list(
         self, resource_group_name: str, private_cloud_name: str, **kwargs: Any
@@ -5241,7 +5545,10 @@ class LicensesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5254,7 +5561,10 @@ class LicensesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.License], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.License],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5293,7 +5603,7 @@ class LicensesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     async def get(
         self,
@@ -5342,6 +5652,7 @@ class LicensesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5363,7 +5674,7 @@ class LicensesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.License, response.json())
 
@@ -5385,14 +5696,14 @@ class LicensesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         license_name: Union[str, _models.LicenseName],
-        resource: Union[_models.License, JSON, IO[bytes]],
+        resource: Union[_models.License, _types.License, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5432,6 +5743,7 @@ class LicensesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5458,7 +5770,7 @@ class LicensesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5502,7 +5814,7 @@ class LicensesOperations:
         resource_group_name: str,
         private_cloud_name: str,
         license_name: Union[str, _models.LicenseName],
-        resource: JSON,
+        resource: _types.License,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5517,7 +5829,7 @@ class LicensesOperations:
         :param license_name: Name of the license. "VmwareFirewall" Required.
         :type license_name: str or ~azure.mgmt.avs.models.LicenseName
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.avs.types.License
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5572,14 +5884,14 @@ class LicensesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         license_name: Union[str, _models.LicenseName],
-        resource: Union[_models.License, JSON, IO[bytes]],
+        resource: Union[_models.License, _types.License, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.License]:
         """Create a License.
@@ -5591,9 +5903,9 @@ class LicensesOperations:
         :type private_cloud_name: str
         :param license_name: Name of the license. "VmwareFirewall" Required.
         :type license_name: str or ~azure.mgmt.avs.models.LicenseName
-        :param resource: Resource create parameters. Is one of the following types: License, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.avs.models.License or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a License type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.avs.models.License or ~azure.mgmt.avs.types.License or IO[bytes]
         :return: An instance of AsyncLROPoller that returns License. The License is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.License]
@@ -5663,7 +5975,7 @@ class LicensesOperations:
                 "license_name",
             ]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     async def _delete_initial(
         self,
@@ -5699,6 +6011,7 @@ class LicensesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5723,7 +6036,7 @@ class LicensesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5742,7 +6055,7 @@ class LicensesOperations:
                 "license_name",
             ]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     async def begin_delete(
         self,
@@ -5822,7 +6135,7 @@ class LicensesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     async def get_properties(
         self,
@@ -5871,6 +6184,7 @@ class LicensesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5892,7 +6206,7 @@ class LicensesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.LicenseProperties, response.json())
 
@@ -5902,7 +6216,7 @@ class LicensesOperations:
         return deserialized  # type: ignore
 
 
-class LocationsOperations:
+class LocationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5939,14 +6253,14 @@ class LocationsOperations:
 
     @overload
     async def check_trial_availability(
-        self, location: str, sku: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
+        self, location: str, sku: Optional[_types.Sku] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Trial:
         """Return trial status for subscription by region.
 
         :param location: A location in a subscription. Required.
         :type location: str
         :param sku: Optionally, check for a specific SKU. Default value is None.
-        :type sku: JSON
+        :type sku: ~azure.mgmt.avs.types.Sku
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5975,15 +6289,15 @@ class LocationsOperations:
 
     @distributed_trace_async
     async def check_trial_availability(
-        self, location: str, sku: Optional[Union[_models.Sku, JSON, IO[bytes]]] = None, **kwargs: Any
+        self, location: str, sku: Optional[Union[_models.Sku, _types.Sku, IO[bytes]]] = None, **kwargs: Any
     ) -> _models.Trial:
         """Return trial status for subscription by region.
 
         :param location: A location in a subscription. Required.
         :type location: str
-        :param sku: Optionally, check for a specific SKU. Is one of the following types: Sku, JSON,
-         IO[bytes] Default value is None.
-        :type sku: ~azure.mgmt.avs.models.Sku or JSON or IO[bytes]
+        :param sku: Optionally, check for a specific SKU. Is either a Sku type or a IO[bytes] type.
+         Default value is None.
+        :type sku: ~azure.mgmt.avs.models.Sku or ~azure.mgmt.avs.types.Sku or IO[bytes]
         :return: Trial. The Trial is compatible with MutableMapping
         :rtype: ~azure.mgmt.avs.models.Trial
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6027,6 +6341,7 @@ class LocationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6048,7 +6363,7 @@ class LocationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Trial, response.json())
 
@@ -6092,6 +6407,7 @@ class LocationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6113,7 +6429,7 @@ class LocationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Quota, response.json())
 
@@ -6123,7 +6439,7 @@ class LocationsOperations:
         return deserialized  # type: ignore
 
 
-class MaintenancesOperations:
+class MaintenancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6156,7 +6472,7 @@ class MaintenancesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     def list(
         self,
@@ -6238,7 +6554,10 @@ class MaintenancesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6251,7 +6570,10 @@ class MaintenancesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Maintenance], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Maintenance],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6290,7 +6612,7 @@ class MaintenancesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     async def get(
         self, resource_group_name: str, private_cloud_name: str, maintenance_name: str, **kwargs: Any
@@ -6335,6 +6657,7 @@ class MaintenancesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6356,7 +6679,7 @@ class MaintenancesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Maintenance, response.json())
 
@@ -6401,7 +6724,7 @@ class MaintenancesOperations:
         resource_group_name: str,
         private_cloud_name: str,
         maintenance_name: str,
-        body: JSON,
+        body: _types.MaintenanceReschedule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6416,7 +6739,7 @@ class MaintenancesOperations:
         :param maintenance_name: Name of the maintenance. Required.
         :type maintenance_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.avs.types.MaintenanceReschedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6469,14 +6792,14 @@ class MaintenancesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     async def reschedule(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         maintenance_name: str,
-        body: Union[_models.MaintenanceReschedule, JSON, IO[bytes]],
+        body: Union[_models.MaintenanceReschedule, _types.MaintenanceReschedule, IO[bytes]],
         **kwargs: Any
     ) -> _models.Maintenance:
         """Reschedule a maintenance.
@@ -6488,9 +6811,10 @@ class MaintenancesOperations:
         :type private_cloud_name: str
         :param maintenance_name: Name of the maintenance. Required.
         :type maintenance_name: str
-        :param body: The content of the action request. Is one of the following types:
-         MaintenanceReschedule, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.avs.models.MaintenanceReschedule or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a MaintenanceReschedule type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.avs.models.MaintenanceReschedule or
+         ~azure.mgmt.avs.types.MaintenanceReschedule or IO[bytes]
         :return: Maintenance. The Maintenance is compatible with MutableMapping
         :rtype: ~azure.mgmt.avs.models.Maintenance
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6532,6 +6856,7 @@ class MaintenancesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6553,7 +6878,7 @@ class MaintenancesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Maintenance, response.json())
 
@@ -6598,7 +6923,7 @@ class MaintenancesOperations:
         resource_group_name: str,
         private_cloud_name: str,
         maintenance_name: str,
-        body: JSON,
+        body: _types.MaintenanceSchedule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6613,7 +6938,7 @@ class MaintenancesOperations:
         :param maintenance_name: Name of the maintenance. Required.
         :type maintenance_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.avs.types.MaintenanceSchedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6666,14 +6991,14 @@ class MaintenancesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     async def schedule(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         maintenance_name: str,
-        body: Union[_models.MaintenanceSchedule, JSON, IO[bytes]],
+        body: Union[_models.MaintenanceSchedule, _types.MaintenanceSchedule, IO[bytes]],
         **kwargs: Any
     ) -> _models.Maintenance:
         """Schedule a maintenance.
@@ -6685,9 +7010,10 @@ class MaintenancesOperations:
         :type private_cloud_name: str
         :param maintenance_name: Name of the maintenance. Required.
         :type maintenance_name: str
-        :param body: The content of the action request. Is one of the following types:
-         MaintenanceSchedule, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.avs.models.MaintenanceSchedule or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a MaintenanceSchedule type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.avs.models.MaintenanceSchedule or
+         ~azure.mgmt.avs.types.MaintenanceSchedule or IO[bytes]
         :return: Maintenance. The Maintenance is compatible with MutableMapping
         :rtype: ~azure.mgmt.avs.models.Maintenance
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6729,6 +7055,7 @@ class MaintenancesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6750,7 +7077,7 @@ class MaintenancesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Maintenance, response.json())
 
@@ -6772,7 +7099,7 @@ class MaintenancesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     async def initiate_checks(
         self, resource_group_name: str, private_cloud_name: str, maintenance_name: str, **kwargs: Any
@@ -6817,6 +7144,7 @@ class MaintenancesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6838,7 +7166,7 @@ class MaintenancesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Maintenance, response.json())
 
@@ -6848,7 +7176,7 @@ class MaintenancesOperations:
         return deserialized  # type: ignore
 
 
-class PlacementPoliciesOperations:
+class PlacementPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6925,7 +7253,10 @@ class PlacementPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6938,7 +7269,10 @@ class PlacementPoliciesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PlacementPolicy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PlacementPolicy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7016,6 +7350,7 @@ class PlacementPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7037,7 +7372,7 @@ class PlacementPoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PlacementPolicy, response.json())
 
@@ -7052,7 +7387,7 @@ class PlacementPoliciesOperations:
         private_cloud_name: str,
         cluster_name: str,
         placement_policy_name: str,
-        placement_policy: Union[_models.PlacementPolicy, JSON, IO[bytes]],
+        placement_policy: Union[_models.PlacementPolicy, _types.PlacementPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7093,6 +7428,7 @@ class PlacementPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7116,7 +7452,7 @@ class PlacementPoliciesOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7164,7 +7500,7 @@ class PlacementPoliciesOperations:
         private_cloud_name: str,
         cluster_name: str,
         placement_policy_name: str,
-        placement_policy: JSON,
+        placement_policy: _types.PlacementPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7181,7 +7517,7 @@ class PlacementPoliciesOperations:
         :param placement_policy_name: Name of the placement policy. Required.
         :type placement_policy_name: str
         :param placement_policy: Resource create parameters. Required.
-        :type placement_policy: JSON
+        :type placement_policy: ~azure.mgmt.avs.types.PlacementPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7232,7 +7568,7 @@ class PlacementPoliciesOperations:
         private_cloud_name: str,
         cluster_name: str,
         placement_policy_name: str,
-        placement_policy: Union[_models.PlacementPolicy, JSON, IO[bytes]],
+        placement_policy: Union[_models.PlacementPolicy, _types.PlacementPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PlacementPolicy]:
         """Create a PlacementPolicy.
@@ -7246,9 +7582,10 @@ class PlacementPoliciesOperations:
         :type cluster_name: str
         :param placement_policy_name: Name of the placement policy. Required.
         :type placement_policy_name: str
-        :param placement_policy: Resource create parameters. Is one of the following types:
-         PlacementPolicy, JSON, IO[bytes] Required.
-        :type placement_policy: ~azure.mgmt.avs.models.PlacementPolicy or JSON or IO[bytes]
+        :param placement_policy: Resource create parameters. Is either a PlacementPolicy type or a
+         IO[bytes] type. Required.
+        :type placement_policy: ~azure.mgmt.avs.models.PlacementPolicy or
+         ~azure.mgmt.avs.types.PlacementPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PlacementPolicy. The PlacementPolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.PlacementPolicy]
@@ -7314,7 +7651,7 @@ class PlacementPoliciesOperations:
         private_cloud_name: str,
         cluster_name: str,
         placement_policy_name: str,
-        placement_policy_update: Union[_models.PlacementPolicyUpdate, JSON, IO[bytes]],
+        placement_policy_update: Union[_models.PlacementPolicyUpdate, _types.PlacementPolicyUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7355,6 +7692,7 @@ class PlacementPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7379,7 +7717,7 @@ class PlacementPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7427,7 +7765,7 @@ class PlacementPoliciesOperations:
         private_cloud_name: str,
         cluster_name: str,
         placement_policy_name: str,
-        placement_policy_update: JSON,
+        placement_policy_update: _types.PlacementPolicyUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7444,7 +7782,7 @@ class PlacementPoliciesOperations:
         :param placement_policy_name: Name of the placement policy. Required.
         :type placement_policy_name: str
         :param placement_policy_update: The resource properties to be updated. Required.
-        :type placement_policy_update: JSON
+        :type placement_policy_update: ~azure.mgmt.avs.types.PlacementPolicyUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7495,7 +7833,7 @@ class PlacementPoliciesOperations:
         private_cloud_name: str,
         cluster_name: str,
         placement_policy_name: str,
-        placement_policy_update: Union[_models.PlacementPolicyUpdate, JSON, IO[bytes]],
+        placement_policy_update: Union[_models.PlacementPolicyUpdate, _types.PlacementPolicyUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PlacementPolicy]:
         """Update a PlacementPolicy.
@@ -7509,10 +7847,10 @@ class PlacementPoliciesOperations:
         :type cluster_name: str
         :param placement_policy_name: Name of the placement policy. Required.
         :type placement_policy_name: str
-        :param placement_policy_update: The resource properties to be updated. Is one of the following
-         types: PlacementPolicyUpdate, JSON, IO[bytes] Required.
-        :type placement_policy_update: ~azure.mgmt.avs.models.PlacementPolicyUpdate or JSON or
-         IO[bytes]
+        :param placement_policy_update: The resource properties to be updated. Is either a
+         PlacementPolicyUpdate type or a IO[bytes] type. Required.
+        :type placement_policy_update: ~azure.mgmt.avs.models.PlacementPolicyUpdate or
+         ~azure.mgmt.avs.types.PlacementPolicyUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PlacementPolicy. The PlacementPolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.PlacementPolicy]
@@ -7608,6 +7946,7 @@ class PlacementPoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7632,7 +7971,7 @@ class PlacementPoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7710,7 +8049,7 @@ class PlacementPoliciesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class PrivateCloudsOperations:
+class PrivateCloudsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7779,7 +8118,10 @@ class PrivateCloudsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7792,7 +8134,10 @@ class PrivateCloudsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateCloud], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PrivateCloud],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7866,7 +8211,10 @@ class PrivateCloudsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7879,7 +8227,10 @@ class PrivateCloudsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateCloud], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PrivateCloud],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7944,6 +8295,7 @@ class PrivateCloudsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7965,7 +8317,7 @@ class PrivateCloudsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateCloud, response.json())
 
@@ -7978,7 +8330,7 @@ class PrivateCloudsOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        private_cloud: Union[_models.PrivateCloud, JSON, IO[bytes]],
+        private_cloud: Union[_models.PrivateCloud, _types.PrivateCloud, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8017,6 +8369,7 @@ class PrivateCloudsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8040,7 +8393,7 @@ class PrivateCloudsOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8080,7 +8433,7 @@ class PrivateCloudsOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        private_cloud: JSON,
+        private_cloud: _types.PrivateCloud,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8093,7 +8446,7 @@ class PrivateCloudsOperations:
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
         :param private_cloud: Resource create parameters. Required.
-        :type private_cloud: JSON
+        :type private_cloud: ~azure.mgmt.avs.types.PrivateCloud
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8136,7 +8489,7 @@ class PrivateCloudsOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        private_cloud: Union[_models.PrivateCloud, JSON, IO[bytes]],
+        private_cloud: Union[_models.PrivateCloud, _types.PrivateCloud, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateCloud]:
         """Create a PrivateCloud.
@@ -8146,9 +8499,10 @@ class PrivateCloudsOperations:
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param private_cloud: Resource create parameters. Is one of the following types: PrivateCloud,
-         JSON, IO[bytes] Required.
-        :type private_cloud: ~azure.mgmt.avs.models.PrivateCloud or JSON or IO[bytes]
+        :param private_cloud: Resource create parameters. Is either a PrivateCloud type or a IO[bytes]
+         type. Required.
+        :type private_cloud: ~azure.mgmt.avs.models.PrivateCloud or ~azure.mgmt.avs.types.PrivateCloud
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateCloud. The PrivateCloud is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.PrivateCloud]
@@ -8210,7 +8564,7 @@ class PrivateCloudsOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        private_cloud_update: Union[_models.PrivateCloudUpdate, JSON, IO[bytes]],
+        private_cloud_update: Union[_models.PrivateCloudUpdate, _types.PrivateCloudUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8249,6 +8603,7 @@ class PrivateCloudsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8273,7 +8628,7 @@ class PrivateCloudsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8313,7 +8668,7 @@ class PrivateCloudsOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        private_cloud_update: JSON,
+        private_cloud_update: _types.PrivateCloudUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8326,7 +8681,7 @@ class PrivateCloudsOperations:
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
         :param private_cloud_update: The resource properties to be updated. Required.
-        :type private_cloud_update: JSON
+        :type private_cloud_update: ~azure.mgmt.avs.types.PrivateCloudUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8369,7 +8724,7 @@ class PrivateCloudsOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        private_cloud_update: Union[_models.PrivateCloudUpdate, JSON, IO[bytes]],
+        private_cloud_update: Union[_models.PrivateCloudUpdate, _types.PrivateCloudUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateCloud]:
         """Update a PrivateCloud.
@@ -8379,9 +8734,10 @@ class PrivateCloudsOperations:
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param private_cloud_update: The resource properties to be updated. Is one of the following
-         types: PrivateCloudUpdate, JSON, IO[bytes] Required.
-        :type private_cloud_update: ~azure.mgmt.avs.models.PrivateCloudUpdate or JSON or IO[bytes]
+        :param private_cloud_update: The resource properties to be updated. Is either a
+         PrivateCloudUpdate type or a IO[bytes] type. Required.
+        :type private_cloud_update: ~azure.mgmt.avs.models.PrivateCloudUpdate or
+         ~azure.mgmt.avs.types.PrivateCloudUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateCloud. The PrivateCloud is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.PrivateCloud]
@@ -8468,6 +8824,7 @@ class PrivateCloudsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8492,7 +8849,7 @@ class PrivateCloudsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8587,6 +8944,7 @@ class PrivateCloudsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8611,7 +8969,7 @@ class PrivateCloudsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8706,6 +9064,7 @@ class PrivateCloudsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8730,7 +9089,7 @@ class PrivateCloudsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8837,6 +9196,7 @@ class PrivateCloudsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8858,7 +9218,7 @@ class PrivateCloudsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AdminCredentials, response.json())
 
@@ -8873,7 +9233,7 @@ class PrivateCloudsOperations:
         params_added_on={
             "2025-09-01": ["api_version", "subscription_id", "resource_group_name", "private_cloud_name", "accept"]
         },
-        api_versions_list=["2025-09-01"],
+        api_versions_list=["2025-09-01", "2026-03-01"],
     )
     async def get_vcf_license(
         self, resource_group_name: str, private_cloud_name: str, **kwargs: Any
@@ -8915,6 +9275,7 @@ class PrivateCloudsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8936,7 +9297,7 @@ class PrivateCloudsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VcfLicense, response.json())
 
@@ -8946,7 +9307,7 @@ class PrivateCloudsOperations:
         return deserialized  # type: ignore
 
 
-class ProvisionedNetworksOperations:
+class ProvisionedNetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8969,7 +9330,7 @@ class ProvisionedNetworksOperations:
         params_added_on={
             "2024-09-01": ["api_version", "subscription_id", "resource_group_name", "private_cloud_name", "accept"]
         },
-        api_versions_list=["2024-09-01", "2025-09-01"],
+        api_versions_list=["2024-09-01", "2025-09-01", "2026-03-01"],
     )
     def list(
         self, resource_group_name: str, private_cloud_name: str, **kwargs: Any
@@ -9027,7 +9388,10 @@ class ProvisionedNetworksOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9040,7 +9404,10 @@ class ProvisionedNetworksOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ProvisionedNetwork], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ProvisionedNetwork],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -9079,7 +9446,7 @@ class ProvisionedNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01", "2025-09-01"],
+        api_versions_list=["2024-09-01", "2025-09-01", "2026-03-01"],
     )
     async def get(
         self, resource_group_name: str, private_cloud_name: str, provisioned_network_name: str, **kwargs: Any
@@ -9124,6 +9491,7 @@ class ProvisionedNetworksOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9145,7 +9513,7 @@ class ProvisionedNetworksOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ProvisionedNetwork, response.json())
 
@@ -9155,7 +9523,7 @@ class ProvisionedNetworksOperations:
         return deserialized  # type: ignore
 
 
-class PureStoragePoliciesOperations:
+class PureStoragePoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9178,7 +9546,7 @@ class PureStoragePoliciesOperations:
         params_added_on={
             "2024-09-01": ["api_version", "subscription_id", "resource_group_name", "private_cloud_name", "accept"]
         },
-        api_versions_list=["2024-09-01", "2025-09-01"],
+        api_versions_list=["2024-09-01", "2025-09-01", "2026-03-01"],
     )
     def list(
         self, resource_group_name: str, private_cloud_name: str, **kwargs: Any
@@ -9236,7 +9604,10 @@ class PureStoragePoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9249,7 +9620,10 @@ class PureStoragePoliciesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PureStoragePolicy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PureStoragePolicy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -9288,7 +9662,7 @@ class PureStoragePoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01", "2025-09-01"],
+        api_versions_list=["2024-09-01", "2025-09-01", "2026-03-01"],
     )
     async def get(
         self, resource_group_name: str, private_cloud_name: str, storage_policy_name: str, **kwargs: Any
@@ -9333,6 +9707,7 @@ class PureStoragePoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9354,7 +9729,7 @@ class PureStoragePoliciesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PureStoragePolicy, response.json())
 
@@ -9376,14 +9751,14 @@ class PureStoragePoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01", "2025-09-01"],
+        api_versions_list=["2024-09-01", "2025-09-01", "2026-03-01"],
     )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         storage_policy_name: str,
-        resource: Union[_models.PureStoragePolicy, JSON, IO[bytes]],
+        resource: Union[_models.PureStoragePolicy, _types.PureStoragePolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9423,6 +9798,7 @@ class PureStoragePoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9449,7 +9825,7 @@ class PureStoragePoliciesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9493,7 +9869,7 @@ class PureStoragePoliciesOperations:
         resource_group_name: str,
         private_cloud_name: str,
         storage_policy_name: str,
-        resource: JSON,
+        resource: _types.PureStoragePolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9508,7 +9884,7 @@ class PureStoragePoliciesOperations:
         :param storage_policy_name: Name of the storage policy. Required.
         :type storage_policy_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.avs.types.PureStoragePolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9563,14 +9939,14 @@ class PureStoragePoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01", "2025-09-01"],
+        api_versions_list=["2024-09-01", "2025-09-01", "2026-03-01"],
     )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         storage_policy_name: str,
-        resource: Union[_models.PureStoragePolicy, JSON, IO[bytes]],
+        resource: Union[_models.PureStoragePolicy, _types.PureStoragePolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PureStoragePolicy]:
         """Create a PureStoragePolicy.
@@ -9582,9 +9958,10 @@ class PureStoragePoliciesOperations:
         :type private_cloud_name: str
         :param storage_policy_name: Name of the storage policy. Required.
         :type storage_policy_name: str
-        :param resource: Resource create parameters. Is one of the following types: PureStoragePolicy,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.avs.models.PureStoragePolicy or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a PureStoragePolicy type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.avs.models.PureStoragePolicy or
+         ~azure.mgmt.avs.types.PureStoragePolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PureStoragePolicy. The PureStoragePolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.PureStoragePolicy]
@@ -9654,7 +10031,7 @@ class PureStoragePoliciesOperations:
                 "storage_policy_name",
             ]
         },
-        api_versions_list=["2024-09-01", "2025-09-01"],
+        api_versions_list=["2024-09-01", "2025-09-01", "2026-03-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, private_cloud_name: str, storage_policy_name: str, **kwargs: Any
@@ -9686,6 +10063,7 @@ class PureStoragePoliciesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9710,7 +10088,7 @@ class PureStoragePoliciesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9729,7 +10107,7 @@ class PureStoragePoliciesOperations:
                 "storage_policy_name",
             ]
         },
-        api_versions_list=["2024-09-01", "2025-09-01"],
+        api_versions_list=["2024-09-01", "2025-09-01", "2026-03-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, private_cloud_name: str, storage_policy_name: str, **kwargs: Any
@@ -9793,7 +10171,7 @@ class PureStoragePoliciesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ScriptCmdletsOperations:
+class ScriptCmdletsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9870,7 +10248,10 @@ class ScriptCmdletsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9883,7 +10264,10 @@ class ScriptCmdletsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScriptCmdlet], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScriptCmdlet],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -9961,6 +10345,7 @@ class ScriptCmdletsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9982,7 +10367,7 @@ class ScriptCmdletsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ScriptCmdlet, response.json())
 
@@ -9992,7 +10377,7 @@ class ScriptCmdletsOperations:
         return deserialized  # type: ignore
 
 
-class ScriptExecutionsOperations:
+class ScriptExecutionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10066,7 +10451,10 @@ class ScriptExecutionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10079,7 +10467,10 @@ class ScriptExecutionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScriptExecution], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScriptExecution],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -10149,6 +10540,7 @@ class ScriptExecutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10170,7 +10562,7 @@ class ScriptExecutionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ScriptExecution, response.json())
 
@@ -10184,7 +10576,7 @@ class ScriptExecutionsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         script_execution_name: str,
-        script_execution: Union[_models.ScriptExecution, JSON, IO[bytes]],
+        script_execution: Union[_models.ScriptExecution, _types.ScriptExecution, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10224,6 +10616,7 @@ class ScriptExecutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10247,7 +10640,7 @@ class ScriptExecutionsOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10291,7 +10684,7 @@ class ScriptExecutionsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         script_execution_name: str,
-        script_execution: JSON,
+        script_execution: _types.ScriptExecution,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10306,7 +10699,7 @@ class ScriptExecutionsOperations:
         :param script_execution_name: Name of the script cmdlet. Required.
         :type script_execution_name: str
         :param script_execution: Resource create parameters. Required.
-        :type script_execution: JSON
+        :type script_execution: ~azure.mgmt.avs.types.ScriptExecution
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10353,7 +10746,7 @@ class ScriptExecutionsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         script_execution_name: str,
-        script_execution: Union[_models.ScriptExecution, JSON, IO[bytes]],
+        script_execution: Union[_models.ScriptExecution, _types.ScriptExecution, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScriptExecution]:
         """Create a ScriptExecution.
@@ -10365,9 +10758,10 @@ class ScriptExecutionsOperations:
         :type private_cloud_name: str
         :param script_execution_name: Name of the script cmdlet. Required.
         :type script_execution_name: str
-        :param script_execution: Resource create parameters. Is one of the following types:
-         ScriptExecution, JSON, IO[bytes] Required.
-        :type script_execution: ~azure.mgmt.avs.models.ScriptExecution or JSON or IO[bytes]
+        :param script_execution: Resource create parameters. Is either a ScriptExecution type or a
+         IO[bytes] type. Required.
+        :type script_execution: ~azure.mgmt.avs.models.ScriptExecution or
+         ~azure.mgmt.avs.types.ScriptExecution or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ScriptExecution. The ScriptExecution is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.ScriptExecution]
@@ -10456,6 +10850,7 @@ class ScriptExecutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10480,7 +10875,7 @@ class ScriptExecutionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10679,6 +11074,7 @@ class ScriptExecutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10700,7 +11096,7 @@ class ScriptExecutionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ScriptExecution, response.json())
 
@@ -10710,7 +11106,7 @@ class ScriptExecutionsOperations:
         return deserialized  # type: ignore
 
 
-class ScriptPackagesOperations:
+class ScriptPackagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10784,7 +11180,10 @@ class ScriptPackagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10797,7 +11196,10 @@ class ScriptPackagesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScriptPackage], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScriptPackage],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -10867,6 +11269,7 @@ class ScriptPackagesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10888,7 +11291,7 @@ class ScriptPackagesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ScriptPackage, response.json())
 
@@ -10898,7 +11301,7 @@ class ScriptPackagesOperations:
         return deserialized  # type: ignore
 
 
-class SkusOperations:
+class SkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10919,7 +11322,7 @@ class SkusOperations:
     @api_version_validation(
         method_added_on="2024-09-01",
         params_added_on={"2024-09-01": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2024-09-01", "2025-09-01"],
+        api_versions_list=["2024-09-01", "2025-09-01", "2026-03-01"],
     )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ResourceSku"]:
         """A list of SKUs.
@@ -10968,7 +11371,10 @@ class SkusOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10981,7 +11387,10 @@ class SkusOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ResourceSku], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ResourceSku],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -11008,7 +11417,7 @@ class SkusOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachinesOperations:
+class VirtualMachinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11085,7 +11494,10 @@ class VirtualMachinesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11098,7 +11510,10 @@ class VirtualMachinesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VirtualMachine], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.VirtualMachine],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -11176,6 +11591,7 @@ class VirtualMachinesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11197,7 +11613,7 @@ class VirtualMachinesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VirtualMachine, response.json())
 
@@ -11212,7 +11628,9 @@ class VirtualMachinesOperations:
         private_cloud_name: str,
         cluster_name: str,
         virtual_machine_id: str,
-        restrict_movement: Union[_models.VirtualMachineRestrictMovement, JSON, IO[bytes]],
+        restrict_movement: Union[
+            _models.VirtualMachineRestrictMovement, _types.VirtualMachineRestrictMovement, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11253,6 +11671,7 @@ class VirtualMachinesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11276,7 +11695,7 @@ class VirtualMachinesOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11323,7 +11742,7 @@ class VirtualMachinesOperations:
         private_cloud_name: str,
         cluster_name: str,
         virtual_machine_id: str,
-        restrict_movement: JSON,
+        restrict_movement: _types.VirtualMachineRestrictMovement,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11340,7 +11759,7 @@ class VirtualMachinesOperations:
         :param virtual_machine_id: ID of the virtual machine. Required.
         :type virtual_machine_id: str
         :param restrict_movement: The content of the action request. Required.
-        :type restrict_movement: JSON
+        :type restrict_movement: ~azure.mgmt.avs.types.VirtualMachineRestrictMovement
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11389,7 +11808,9 @@ class VirtualMachinesOperations:
         private_cloud_name: str,
         cluster_name: str,
         virtual_machine_id: str,
-        restrict_movement: Union[_models.VirtualMachineRestrictMovement, JSON, IO[bytes]],
+        restrict_movement: Union[
+            _models.VirtualMachineRestrictMovement, _types.VirtualMachineRestrictMovement, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Enable or disable DRS-driven VM movement restriction.
@@ -11403,10 +11824,10 @@ class VirtualMachinesOperations:
         :type cluster_name: str
         :param virtual_machine_id: ID of the virtual machine. Required.
         :type virtual_machine_id: str
-        :param restrict_movement: The content of the action request. Is one of the following types:
-         VirtualMachineRestrictMovement, JSON, IO[bytes] Required.
-        :type restrict_movement: ~azure.mgmt.avs.models.VirtualMachineRestrictMovement or JSON or
-         IO[bytes]
+        :param restrict_movement: The content of the action request. Is either a
+         VirtualMachineRestrictMovement type or a IO[bytes] type. Required.
+        :type restrict_movement: ~azure.mgmt.avs.models.VirtualMachineRestrictMovement or
+         ~azure.mgmt.avs.types.VirtualMachineRestrictMovement or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11461,7 +11882,7 @@ class VirtualMachinesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
+class WorkloadNetworksOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11517,6 +11938,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11538,7 +11960,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.WorkloadNetwork, response.json())
 
@@ -11604,7 +12026,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11617,7 +12042,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.WorkloadNetwork], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.WorkloadNetwork],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -11700,7 +12128,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11713,7 +12144,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.WorkloadNetworkDhcp], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.WorkloadNetworkDhcp],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -11783,6 +12217,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11804,7 +12239,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.WorkloadNetworkDhcp, response.json())
 
@@ -11818,7 +12253,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dhcp_id: str,
-        workload_network_dhcp: Union[_models.WorkloadNetworkDhcp, JSON, IO[bytes]],
+        workload_network_dhcp: Union[_models.WorkloadNetworkDhcp, _types.WorkloadNetworkDhcp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11858,6 +12293,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11881,7 +12317,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11925,7 +12361,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dhcp_id: str,
-        workload_network_dhcp: JSON,
+        workload_network_dhcp: _types.WorkloadNetworkDhcp,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11940,7 +12376,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param dhcp_id: The ID of the DHCP configuration. Required.
         :type dhcp_id: str
         :param workload_network_dhcp: Resource create parameters. Required.
-        :type workload_network_dhcp: JSON
+        :type workload_network_dhcp: ~azure.mgmt.avs.types.WorkloadNetworkDhcp
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11987,7 +12423,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dhcp_id: str,
-        workload_network_dhcp: Union[_models.WorkloadNetworkDhcp, JSON, IO[bytes]],
+        workload_network_dhcp: Union[_models.WorkloadNetworkDhcp, _types.WorkloadNetworkDhcp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkDhcp]:
         """Create a WorkloadNetworkDhcp.
@@ -11999,9 +12435,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param dhcp_id: The ID of the DHCP configuration. Required.
         :type dhcp_id: str
-        :param workload_network_dhcp: Resource create parameters. Is one of the following types:
-         WorkloadNetworkDhcp, JSON, IO[bytes] Required.
-        :type workload_network_dhcp: ~azure.mgmt.avs.models.WorkloadNetworkDhcp or JSON or IO[bytes]
+        :param workload_network_dhcp: Resource create parameters. Is either a WorkloadNetworkDhcp type
+         or a IO[bytes] type. Required.
+        :type workload_network_dhcp: ~azure.mgmt.avs.models.WorkloadNetworkDhcp or
+         ~azure.mgmt.avs.types.WorkloadNetworkDhcp or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkDhcp. The
          WorkloadNetworkDhcp is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkDhcp]
@@ -12065,7 +12502,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dhcp_id: str,
-        workload_network_dhcp: Union[_models.WorkloadNetworkDhcp, JSON, IO[bytes]],
+        workload_network_dhcp: Union[_models.WorkloadNetworkDhcp, _types.WorkloadNetworkDhcp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12105,6 +12542,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12129,7 +12567,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12173,7 +12611,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dhcp_id: str,
-        workload_network_dhcp: JSON,
+        workload_network_dhcp: _types.WorkloadNetworkDhcp,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12188,7 +12626,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param dhcp_id: The ID of the DHCP configuration. Required.
         :type dhcp_id: str
         :param workload_network_dhcp: The resource properties to be updated. Required.
-        :type workload_network_dhcp: JSON
+        :type workload_network_dhcp: ~azure.mgmt.avs.types.WorkloadNetworkDhcp
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12235,7 +12673,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dhcp_id: str,
-        workload_network_dhcp: Union[_models.WorkloadNetworkDhcp, JSON, IO[bytes]],
+        workload_network_dhcp: Union[_models.WorkloadNetworkDhcp, _types.WorkloadNetworkDhcp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkDhcp]:
         """Update a WorkloadNetworkDhcp.
@@ -12247,9 +12685,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param dhcp_id: The ID of the DHCP configuration. Required.
         :type dhcp_id: str
-        :param workload_network_dhcp: The resource properties to be updated. Is one of the following
-         types: WorkloadNetworkDhcp, JSON, IO[bytes] Required.
-        :type workload_network_dhcp: ~azure.mgmt.avs.models.WorkloadNetworkDhcp or JSON or IO[bytes]
+        :param workload_network_dhcp: The resource properties to be updated. Is either a
+         WorkloadNetworkDhcp type or a IO[bytes] type. Required.
+        :type workload_network_dhcp: ~azure.mgmt.avs.models.WorkloadNetworkDhcp or
+         ~azure.mgmt.avs.types.WorkloadNetworkDhcp or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkDhcp. The
          WorkloadNetworkDhcp is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkDhcp]
@@ -12338,6 +12777,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12362,7 +12802,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12489,7 +12929,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12502,7 +12945,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.WorkloadNetworkDnsService], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.WorkloadNetworkDnsService],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -12573,6 +13019,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12594,7 +13041,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.WorkloadNetworkDnsService, response.json())
 
@@ -12608,7 +13055,9 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_service_id: str,
-        workload_network_dns_service: Union[_models.WorkloadNetworkDnsService, JSON, IO[bytes]],
+        workload_network_dns_service: Union[
+            _models.WorkloadNetworkDnsService, _types.WorkloadNetworkDnsService, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12648,6 +13097,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12671,7 +13121,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12715,7 +13165,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_service_id: str,
-        workload_network_dns_service: JSON,
+        workload_network_dns_service: _types.WorkloadNetworkDnsService,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12730,7 +13180,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param dns_service_id: ID of the DNS service. Required.
         :type dns_service_id: str
         :param workload_network_dns_service: Resource create parameters. Required.
-        :type workload_network_dns_service: JSON
+        :type workload_network_dns_service: ~azure.mgmt.avs.types.WorkloadNetworkDnsService
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12777,7 +13227,9 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_service_id: str,
-        workload_network_dns_service: Union[_models.WorkloadNetworkDnsService, JSON, IO[bytes]],
+        workload_network_dns_service: Union[
+            _models.WorkloadNetworkDnsService, _types.WorkloadNetworkDnsService, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkDnsService]:
         """Create a WorkloadNetworkDnsService.
@@ -12789,10 +13241,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param dns_service_id: ID of the DNS service. Required.
         :type dns_service_id: str
-        :param workload_network_dns_service: Resource create parameters. Is one of the following types:
-         WorkloadNetworkDnsService, JSON, IO[bytes] Required.
-        :type workload_network_dns_service: ~azure.mgmt.avs.models.WorkloadNetworkDnsService or JSON or
-         IO[bytes]
+        :param workload_network_dns_service: Resource create parameters. Is either a
+         WorkloadNetworkDnsService type or a IO[bytes] type. Required.
+        :type workload_network_dns_service: ~azure.mgmt.avs.models.WorkloadNetworkDnsService or
+         ~azure.mgmt.avs.types.WorkloadNetworkDnsService or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkDnsService. The
          WorkloadNetworkDnsService is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkDnsService]
@@ -12856,7 +13308,9 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_service_id: str,
-        workload_network_dns_service: Union[_models.WorkloadNetworkDnsService, JSON, IO[bytes]],
+        workload_network_dns_service: Union[
+            _models.WorkloadNetworkDnsService, _types.WorkloadNetworkDnsService, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12896,6 +13350,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12920,7 +13375,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12964,7 +13419,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_service_id: str,
-        workload_network_dns_service: JSON,
+        workload_network_dns_service: _types.WorkloadNetworkDnsService,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12979,7 +13434,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param dns_service_id: ID of the DNS service. Required.
         :type dns_service_id: str
         :param workload_network_dns_service: The resource properties to be updated. Required.
-        :type workload_network_dns_service: JSON
+        :type workload_network_dns_service: ~azure.mgmt.avs.types.WorkloadNetworkDnsService
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13026,7 +13481,9 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_service_id: str,
-        workload_network_dns_service: Union[_models.WorkloadNetworkDnsService, JSON, IO[bytes]],
+        workload_network_dns_service: Union[
+            _models.WorkloadNetworkDnsService, _types.WorkloadNetworkDnsService, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkDnsService]:
         """Update a WorkloadNetworkDnsService.
@@ -13038,10 +13495,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param dns_service_id: ID of the DNS service. Required.
         :type dns_service_id: str
-        :param workload_network_dns_service: The resource properties to be updated. Is one of the
-         following types: WorkloadNetworkDnsService, JSON, IO[bytes] Required.
-        :type workload_network_dns_service: ~azure.mgmt.avs.models.WorkloadNetworkDnsService or JSON or
-         IO[bytes]
+        :param workload_network_dns_service: The resource properties to be updated. Is either a
+         WorkloadNetworkDnsService type or a IO[bytes] type. Required.
+        :type workload_network_dns_service: ~azure.mgmt.avs.models.WorkloadNetworkDnsService or
+         ~azure.mgmt.avs.types.WorkloadNetworkDnsService or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkDnsService. The
          WorkloadNetworkDnsService is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkDnsService]
@@ -13130,6 +13587,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13154,7 +13612,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13280,7 +13738,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13293,7 +13754,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.WorkloadNetworkDnsZone], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.WorkloadNetworkDnsZone],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -13363,6 +13827,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13384,7 +13849,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.WorkloadNetworkDnsZone, response.json())
 
@@ -13398,7 +13863,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_zone_id: str,
-        workload_network_dns_zone: Union[_models.WorkloadNetworkDnsZone, JSON, IO[bytes]],
+        workload_network_dns_zone: Union[_models.WorkloadNetworkDnsZone, _types.WorkloadNetworkDnsZone, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13438,6 +13903,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13461,7 +13927,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13505,7 +13971,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_zone_id: str,
-        workload_network_dns_zone: JSON,
+        workload_network_dns_zone: _types.WorkloadNetworkDnsZone,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13520,7 +13986,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param dns_zone_id: ID of the DNS zone. Required.
         :type dns_zone_id: str
         :param workload_network_dns_zone: Resource create parameters. Required.
-        :type workload_network_dns_zone: JSON
+        :type workload_network_dns_zone: ~azure.mgmt.avs.types.WorkloadNetworkDnsZone
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13567,7 +14033,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_zone_id: str,
-        workload_network_dns_zone: Union[_models.WorkloadNetworkDnsZone, JSON, IO[bytes]],
+        workload_network_dns_zone: Union[_models.WorkloadNetworkDnsZone, _types.WorkloadNetworkDnsZone, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkDnsZone]:
         """Create a WorkloadNetworkDnsZone.
@@ -13579,10 +14045,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param dns_zone_id: ID of the DNS zone. Required.
         :type dns_zone_id: str
-        :param workload_network_dns_zone: Resource create parameters. Is one of the following types:
-         WorkloadNetworkDnsZone, JSON, IO[bytes] Required.
-        :type workload_network_dns_zone: ~azure.mgmt.avs.models.WorkloadNetworkDnsZone or JSON or
-         IO[bytes]
+        :param workload_network_dns_zone: Resource create parameters. Is either a
+         WorkloadNetworkDnsZone type or a IO[bytes] type. Required.
+        :type workload_network_dns_zone: ~azure.mgmt.avs.models.WorkloadNetworkDnsZone or
+         ~azure.mgmt.avs.types.WorkloadNetworkDnsZone or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkDnsZone. The
          WorkloadNetworkDnsZone is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkDnsZone]
@@ -13646,7 +14112,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_zone_id: str,
-        workload_network_dns_zone: Union[_models.WorkloadNetworkDnsZone, JSON, IO[bytes]],
+        workload_network_dns_zone: Union[_models.WorkloadNetworkDnsZone, _types.WorkloadNetworkDnsZone, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13686,6 +14152,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13710,7 +14177,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13754,7 +14221,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_zone_id: str,
-        workload_network_dns_zone: JSON,
+        workload_network_dns_zone: _types.WorkloadNetworkDnsZone,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13769,7 +14236,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param dns_zone_id: ID of the DNS zone. Required.
         :type dns_zone_id: str
         :param workload_network_dns_zone: The resource properties to be updated. Required.
-        :type workload_network_dns_zone: JSON
+        :type workload_network_dns_zone: ~azure.mgmt.avs.types.WorkloadNetworkDnsZone
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13816,7 +14283,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         dns_zone_id: str,
-        workload_network_dns_zone: Union[_models.WorkloadNetworkDnsZone, JSON, IO[bytes]],
+        workload_network_dns_zone: Union[_models.WorkloadNetworkDnsZone, _types.WorkloadNetworkDnsZone, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkDnsZone]:
         """Update a WorkloadNetworkDnsZone.
@@ -13828,10 +14295,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param dns_zone_id: ID of the DNS zone. Required.
         :type dns_zone_id: str
-        :param workload_network_dns_zone: The resource properties to be updated. Is one of the
-         following types: WorkloadNetworkDnsZone, JSON, IO[bytes] Required.
-        :type workload_network_dns_zone: ~azure.mgmt.avs.models.WorkloadNetworkDnsZone or JSON or
-         IO[bytes]
+        :param workload_network_dns_zone: The resource properties to be updated. Is either a
+         WorkloadNetworkDnsZone type or a IO[bytes] type. Required.
+        :type workload_network_dns_zone: ~azure.mgmt.avs.models.WorkloadNetworkDnsZone or
+         ~azure.mgmt.avs.types.WorkloadNetworkDnsZone or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkDnsZone. The
          WorkloadNetworkDnsZone is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkDnsZone]
@@ -13920,6 +14387,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13944,7 +14412,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14070,7 +14538,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14083,7 +14554,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.WorkloadNetworkGateway], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.WorkloadNetworkGateway],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -14153,6 +14627,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14174,7 +14649,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.WorkloadNetworkGateway, response.json())
 
@@ -14241,7 +14716,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14254,7 +14732,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.WorkloadNetworkPortMirroring], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.WorkloadNetworkPortMirroring],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -14325,6 +14806,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14346,7 +14828,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.WorkloadNetworkPortMirroring, response.json())
 
@@ -14360,7 +14842,9 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         port_mirroring_id: str,
-        workload_network_port_mirroring: Union[_models.WorkloadNetworkPortMirroring, JSON, IO[bytes]],
+        workload_network_port_mirroring: Union[
+            _models.WorkloadNetworkPortMirroring, _types.WorkloadNetworkPortMirroring, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14400,6 +14884,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14423,7 +14908,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14467,7 +14952,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         port_mirroring_id: str,
-        workload_network_port_mirroring: JSON,
+        workload_network_port_mirroring: _types.WorkloadNetworkPortMirroring,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14482,7 +14967,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param port_mirroring_id: ID of the NSX port mirroring profile. Required.
         :type port_mirroring_id: str
         :param workload_network_port_mirroring: Resource create parameters. Required.
-        :type workload_network_port_mirroring: JSON
+        :type workload_network_port_mirroring: ~azure.mgmt.avs.types.WorkloadNetworkPortMirroring
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14529,7 +15014,9 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         port_mirroring_id: str,
-        workload_network_port_mirroring: Union[_models.WorkloadNetworkPortMirroring, JSON, IO[bytes]],
+        workload_network_port_mirroring: Union[
+            _models.WorkloadNetworkPortMirroring, _types.WorkloadNetworkPortMirroring, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkPortMirroring]:
         """Create a WorkloadNetworkPortMirroring.
@@ -14541,10 +15028,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param port_mirroring_id: ID of the NSX port mirroring profile. Required.
         :type port_mirroring_id: str
-        :param workload_network_port_mirroring: Resource create parameters. Is one of the following
-         types: WorkloadNetworkPortMirroring, JSON, IO[bytes] Required.
+        :param workload_network_port_mirroring: Resource create parameters. Is either a
+         WorkloadNetworkPortMirroring type or a IO[bytes] type. Required.
         :type workload_network_port_mirroring: ~azure.mgmt.avs.models.WorkloadNetworkPortMirroring or
-         JSON or IO[bytes]
+         ~azure.mgmt.avs.types.WorkloadNetworkPortMirroring or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkPortMirroring. The
          WorkloadNetworkPortMirroring is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkPortMirroring]
@@ -14608,7 +15095,9 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         port_mirroring_id: str,
-        workload_network_port_mirroring: Union[_models.WorkloadNetworkPortMirroring, JSON, IO[bytes]],
+        workload_network_port_mirroring: Union[
+            _models.WorkloadNetworkPortMirroring, _types.WorkloadNetworkPortMirroring, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14648,6 +15137,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14672,7 +15162,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14716,7 +15206,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         port_mirroring_id: str,
-        workload_network_port_mirroring: JSON,
+        workload_network_port_mirroring: _types.WorkloadNetworkPortMirroring,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14731,7 +15221,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param port_mirroring_id: ID of the NSX port mirroring profile. Required.
         :type port_mirroring_id: str
         :param workload_network_port_mirroring: The resource properties to be updated. Required.
-        :type workload_network_port_mirroring: JSON
+        :type workload_network_port_mirroring: ~azure.mgmt.avs.types.WorkloadNetworkPortMirroring
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14778,7 +15268,9 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         port_mirroring_id: str,
-        workload_network_port_mirroring: Union[_models.WorkloadNetworkPortMirroring, JSON, IO[bytes]],
+        workload_network_port_mirroring: Union[
+            _models.WorkloadNetworkPortMirroring, _types.WorkloadNetworkPortMirroring, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkPortMirroring]:
         """Update a WorkloadNetworkPortMirroring.
@@ -14790,10 +15282,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param port_mirroring_id: ID of the NSX port mirroring profile. Required.
         :type port_mirroring_id: str
-        :param workload_network_port_mirroring: The resource properties to be updated. Is one of the
-         following types: WorkloadNetworkPortMirroring, JSON, IO[bytes] Required.
+        :param workload_network_port_mirroring: The resource properties to be updated. Is either a
+         WorkloadNetworkPortMirroring type or a IO[bytes] type. Required.
         :type workload_network_port_mirroring: ~azure.mgmt.avs.models.WorkloadNetworkPortMirroring or
-         JSON or IO[bytes]
+         ~azure.mgmt.avs.types.WorkloadNetworkPortMirroring or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkPortMirroring. The
          WorkloadNetworkPortMirroring is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkPortMirroring]
@@ -14882,6 +15374,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14906,7 +15399,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15032,7 +15525,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15045,7 +15541,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.WorkloadNetworkPublicIP], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.WorkloadNetworkPublicIP],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -15115,6 +15614,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15136,7 +15636,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.WorkloadNetworkPublicIP, response.json())
 
@@ -15150,7 +15650,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         public_ip_id: str,
-        workload_network_public_ip: Union[_models.WorkloadNetworkPublicIP, JSON, IO[bytes]],
+        workload_network_public_ip: Union[_models.WorkloadNetworkPublicIP, _types.WorkloadNetworkPublicIP, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15190,6 +15690,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15213,7 +15714,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15257,7 +15758,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         public_ip_id: str,
-        workload_network_public_ip: JSON,
+        workload_network_public_ip: _types.WorkloadNetworkPublicIP,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15272,7 +15773,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param public_ip_id: ID of the DNS zone. Required.
         :type public_ip_id: str
         :param workload_network_public_ip: Resource create parameters. Required.
-        :type workload_network_public_ip: JSON
+        :type workload_network_public_ip: ~azure.mgmt.avs.types.WorkloadNetworkPublicIP
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15319,7 +15820,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         public_ip_id: str,
-        workload_network_public_ip: Union[_models.WorkloadNetworkPublicIP, JSON, IO[bytes]],
+        workload_network_public_ip: Union[_models.WorkloadNetworkPublicIP, _types.WorkloadNetworkPublicIP, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkPublicIP]:
         """Create a WorkloadNetworkPublicIP.
@@ -15331,10 +15832,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param public_ip_id: ID of the DNS zone. Required.
         :type public_ip_id: str
-        :param workload_network_public_ip: Resource create parameters. Is one of the following types:
-         WorkloadNetworkPublicIP, JSON, IO[bytes] Required.
-        :type workload_network_public_ip: ~azure.mgmt.avs.models.WorkloadNetworkPublicIP or JSON or
-         IO[bytes]
+        :param workload_network_public_ip: Resource create parameters. Is either a
+         WorkloadNetworkPublicIP type or a IO[bytes] type. Required.
+        :type workload_network_public_ip: ~azure.mgmt.avs.models.WorkloadNetworkPublicIP or
+         ~azure.mgmt.avs.types.WorkloadNetworkPublicIP or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkPublicIP. The
          WorkloadNetworkPublicIP is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkPublicIP]
@@ -15423,6 +15924,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15447,7 +15949,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15573,7 +16075,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15586,7 +16091,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.WorkloadNetworkSegment], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.WorkloadNetworkSegment],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -15656,6 +16164,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15677,7 +16186,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.WorkloadNetworkSegment, response.json())
 
@@ -15691,7 +16200,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         segment_id: str,
-        workload_network_segment: Union[_models.WorkloadNetworkSegment, JSON, IO[bytes]],
+        workload_network_segment: Union[_models.WorkloadNetworkSegment, _types.WorkloadNetworkSegment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15731,6 +16240,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15754,7 +16264,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15798,7 +16308,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         segment_id: str,
-        workload_network_segment: JSON,
+        workload_network_segment: _types.WorkloadNetworkSegment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15813,7 +16323,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param segment_id: The ID of the NSX Segment. Required.
         :type segment_id: str
         :param workload_network_segment: Resource create parameters. Required.
-        :type workload_network_segment: JSON
+        :type workload_network_segment: ~azure.mgmt.avs.types.WorkloadNetworkSegment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15860,7 +16370,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         segment_id: str,
-        workload_network_segment: Union[_models.WorkloadNetworkSegment, JSON, IO[bytes]],
+        workload_network_segment: Union[_models.WorkloadNetworkSegment, _types.WorkloadNetworkSegment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkSegment]:
         """Create a WorkloadNetworkSegment.
@@ -15872,10 +16382,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param segment_id: The ID of the NSX Segment. Required.
         :type segment_id: str
-        :param workload_network_segment: Resource create parameters. Is one of the following types:
-         WorkloadNetworkSegment, JSON, IO[bytes] Required.
-        :type workload_network_segment: ~azure.mgmt.avs.models.WorkloadNetworkSegment or JSON or
-         IO[bytes]
+        :param workload_network_segment: Resource create parameters. Is either a WorkloadNetworkSegment
+         type or a IO[bytes] type. Required.
+        :type workload_network_segment: ~azure.mgmt.avs.models.WorkloadNetworkSegment or
+         ~azure.mgmt.avs.types.WorkloadNetworkSegment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkSegment. The
          WorkloadNetworkSegment is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkSegment]
@@ -15939,7 +16449,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         segment_id: str,
-        workload_network_segment: Union[_models.WorkloadNetworkSegment, JSON, IO[bytes]],
+        workload_network_segment: Union[_models.WorkloadNetworkSegment, _types.WorkloadNetworkSegment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15979,6 +16489,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16003,7 +16514,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16047,7 +16558,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         segment_id: str,
-        workload_network_segment: JSON,
+        workload_network_segment: _types.WorkloadNetworkSegment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16062,7 +16573,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param segment_id: The ID of the NSX Segment. Required.
         :type segment_id: str
         :param workload_network_segment: The resource properties to be updated. Required.
-        :type workload_network_segment: JSON
+        :type workload_network_segment: ~azure.mgmt.avs.types.WorkloadNetworkSegment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16109,7 +16620,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         segment_id: str,
-        workload_network_segment: Union[_models.WorkloadNetworkSegment, JSON, IO[bytes]],
+        workload_network_segment: Union[_models.WorkloadNetworkSegment, _types.WorkloadNetworkSegment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkSegment]:
         """Update a WorkloadNetworkSegment.
@@ -16121,10 +16632,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param segment_id: The ID of the NSX Segment. Required.
         :type segment_id: str
-        :param workload_network_segment: The resource properties to be updated. Is one of the following
-         types: WorkloadNetworkSegment, JSON, IO[bytes] Required.
-        :type workload_network_segment: ~azure.mgmt.avs.models.WorkloadNetworkSegment or JSON or
-         IO[bytes]
+        :param workload_network_segment: The resource properties to be updated. Is either a
+         WorkloadNetworkSegment type or a IO[bytes] type. Required.
+        :type workload_network_segment: ~azure.mgmt.avs.models.WorkloadNetworkSegment or
+         ~azure.mgmt.avs.types.WorkloadNetworkSegment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkSegment. The
          WorkloadNetworkSegment is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkSegment]
@@ -16213,6 +16724,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16237,7 +16749,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16364,7 +16876,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16377,7 +16892,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.WorkloadNetworkVirtualMachine], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.WorkloadNetworkVirtualMachine],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -16448,6 +16966,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16469,7 +16988,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.WorkloadNetworkVirtualMachine, response.json())
 
@@ -16535,7 +17054,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16548,7 +17070,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.WorkloadNetworkVMGroup], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.WorkloadNetworkVMGroup],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -16618,6 +17143,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16639,7 +17165,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.WorkloadNetworkVMGroup, response.json())
 
@@ -16653,7 +17179,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         vm_group_id: str,
-        workload_network_vm_group: Union[_models.WorkloadNetworkVMGroup, JSON, IO[bytes]],
+        workload_network_vm_group: Union[_models.WorkloadNetworkVMGroup, _types.WorkloadNetworkVMGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16693,6 +17219,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16716,7 +17243,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16760,7 +17287,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         vm_group_id: str,
-        workload_network_vm_group: JSON,
+        workload_network_vm_group: _types.WorkloadNetworkVMGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16775,7 +17302,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param vm_group_id: ID of the VM group. Required.
         :type vm_group_id: str
         :param workload_network_vm_group: Resource create parameters. Required.
-        :type workload_network_vm_group: JSON
+        :type workload_network_vm_group: ~azure.mgmt.avs.types.WorkloadNetworkVMGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16822,7 +17349,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         vm_group_id: str,
-        workload_network_vm_group: Union[_models.WorkloadNetworkVMGroup, JSON, IO[bytes]],
+        workload_network_vm_group: Union[_models.WorkloadNetworkVMGroup, _types.WorkloadNetworkVMGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkVMGroup]:
         """Create a WorkloadNetworkVMGroup.
@@ -16834,10 +17361,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param vm_group_id: ID of the VM group. Required.
         :type vm_group_id: str
-        :param workload_network_vm_group: Resource create parameters. Is one of the following types:
-         WorkloadNetworkVMGroup, JSON, IO[bytes] Required.
-        :type workload_network_vm_group: ~azure.mgmt.avs.models.WorkloadNetworkVMGroup or JSON or
-         IO[bytes]
+        :param workload_network_vm_group: Resource create parameters. Is either a
+         WorkloadNetworkVMGroup type or a IO[bytes] type. Required.
+        :type workload_network_vm_group: ~azure.mgmt.avs.models.WorkloadNetworkVMGroup or
+         ~azure.mgmt.avs.types.WorkloadNetworkVMGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkVMGroup. The
          WorkloadNetworkVMGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkVMGroup]
@@ -16901,7 +17428,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         vm_group_id: str,
-        workload_network_vm_group: Union[_models.WorkloadNetworkVMGroup, JSON, IO[bytes]],
+        workload_network_vm_group: Union[_models.WorkloadNetworkVMGroup, _types.WorkloadNetworkVMGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16941,6 +17468,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16965,7 +17493,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17009,7 +17537,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         vm_group_id: str,
-        workload_network_vm_group: JSON,
+        workload_network_vm_group: _types.WorkloadNetworkVMGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17024,7 +17552,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :param vm_group_id: ID of the VM group. Required.
         :type vm_group_id: str
         :param workload_network_vm_group: The resource properties to be updated. Required.
-        :type workload_network_vm_group: JSON
+        :type workload_network_vm_group: ~azure.mgmt.avs.types.WorkloadNetworkVMGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17071,7 +17599,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         private_cloud_name: str,
         vm_group_id: str,
-        workload_network_vm_group: Union[_models.WorkloadNetworkVMGroup, JSON, IO[bytes]],
+        workload_network_vm_group: Union[_models.WorkloadNetworkVMGroup, _types.WorkloadNetworkVMGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadNetworkVMGroup]:
         """Update a WorkloadNetworkVMGroup.
@@ -17083,10 +17611,10 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         :type private_cloud_name: str
         :param vm_group_id: ID of the VM group. Required.
         :type vm_group_id: str
-        :param workload_network_vm_group: The resource properties to be updated. Is one of the
-         following types: WorkloadNetworkVMGroup, JSON, IO[bytes] Required.
-        :type workload_network_vm_group: ~azure.mgmt.avs.models.WorkloadNetworkVMGroup or JSON or
-         IO[bytes]
+        :param workload_network_vm_group: The resource properties to be updated. Is either a
+         WorkloadNetworkVMGroup type or a IO[bytes] type. Required.
+        :type workload_network_vm_group: ~azure.mgmt.avs.models.WorkloadNetworkVMGroup or
+         ~azure.mgmt.avs.types.WorkloadNetworkVMGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadNetworkVMGroup. The
          WorkloadNetworkVMGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.WorkloadNetworkVMGroup]
@@ -17175,6 +17703,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -17199,7 +17728,7 @@ class WorkloadNetworksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
