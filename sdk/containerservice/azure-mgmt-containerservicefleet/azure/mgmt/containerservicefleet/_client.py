@@ -23,6 +23,7 @@ from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AutoUpgradeProfileOperationsOperations,
     AutoUpgradeProfilesOperations,
+    ClusterMeshProfilesOperations,
     FleetManagedNamespacesOperations,
     FleetMembersOperations,
     FleetUpdateStrategiesOperations,
@@ -47,6 +48,9 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attr
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.containerservicefleet.operations.Operations
+    :ivar cluster_mesh_profiles: ClusterMeshProfilesOperations operations
+    :vartype cluster_mesh_profiles:
+     azure.mgmt.containerservicefleet.operations.ClusterMeshProfilesOperations
     :ivar fleets: FleetsOperations operations
     :vartype fleets: azure.mgmt.containerservicefleet.operations.FleetsOperations
     :ivar fleet_members: FleetMembersOperations operations
@@ -76,9 +80,10 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attr
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-06-02-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -132,6 +137,9 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attr
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.cluster_mesh_profiles = ClusterMeshProfilesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.fleets = FleetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.fleet_members = FleetMembersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.fleet_managed_namespaces = FleetManagedNamespacesOperations(
