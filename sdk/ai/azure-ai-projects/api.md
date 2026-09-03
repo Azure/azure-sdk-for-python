@@ -1024,7 +1024,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[VoiceConversation]: ...
 
 
-    class azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations:
+    class azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -1040,7 +1040,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[AgentInsightRunResult]: ...
+            ) -> AsyncAgentInsightRunLROPoller: ...
 
         @overload
         async def begin_create_run(
@@ -1050,7 +1050,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[AgentInsightRunResult]: ...
+            ) -> AsyncAgentInsightRunLROPoller: ...
 
         @overload
         async def begin_create_run(
@@ -1060,7 +1060,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[AgentInsightRunResult]: ...
+            ) -> AsyncAgentInsightRunLROPoller: ...
 
         @distributed_trace_async
         async def cancel_run(
@@ -3831,6 +3831,26 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.AgentInsightRunLROPoller(LROPoller[AgentInsightRunResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: PollingMethod[AgentInsightRunResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AgentInsightRunLROPoller: ...
+
+
     class azure.ai.projects.models.AgentInsightRunResult(_Model):
         insights_created: int
         insights_reopened: int
@@ -4467,6 +4487,26 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AsyncAgentInsightRunLROPoller(AsyncLROPoller[AgentInsightRunResult]):
+        property details: Mapping[str, Any]    # Read-only
+
+        def __init__(
+                self, 
+                client: Any, 
+                initial_response: Any, 
+                deserialization_callback: Any, 
+                polling_method: Any
+            ) -> None: ...
+
+        @classmethod
+        def from_continuation_token(
+                cls, 
+                polling_method: AsyncPollingMethod[AgentInsightRunResult], 
+                continuation_token: str, 
+                **kwargs: Any
+            ) -> AsyncAgentInsightRunLROPoller: ...
 
 
     class azure.ai.projects.models.AsyncAgentOptimizationLROPoller(AsyncLROPoller[AgentOptimizationJobResult]):
@@ -16648,7 +16688,7 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[VoiceConversation]: ...
 
 
-    class azure.ai.projects.operations.BetaAgentInsightMonitorsOperations:
+    class azure.ai.projects.operations.BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
 
         def __init__(
                 self, 
@@ -16664,7 +16704,7 @@ namespace azure.ai.projects.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[AgentInsightRunResult]: ...
+            ) -> AgentInsightRunLROPoller: ...
 
         @overload
         def begin_create_run(
@@ -16674,7 +16714,7 @@ namespace azure.ai.projects.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[AgentInsightRunResult]: ...
+            ) -> AgentInsightRunLROPoller: ...
 
         @overload
         def begin_create_run(
@@ -16684,7 +16724,7 @@ namespace azure.ai.projects.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[AgentInsightRunResult]: ...
+            ) -> AgentInsightRunLROPoller: ...
 
         @distributed_trace
         def cancel_run(
