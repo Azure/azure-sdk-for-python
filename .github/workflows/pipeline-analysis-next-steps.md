@@ -261,19 +261,27 @@ jobs:
                 .filter(candidate => candidate.base?.repo?.id === repositoryId)
                 .map(candidate => candidate.number)
             )];
-            const pulls = await Promise.all(prNumbers.map(async pullNumber => {
-              const { data: pull } = await github.rest.pulls.get({
-                ...context.repo,
-                pull_number: pullNumber,
-              });
-              return pull;
-            }));
+            const pulls = (await Promise.all(prNumbers.map(async pullNumber => {
+              try {
+                const { data: pull } = await github.rest.pulls.get({
+                  ...context.repo,
+                  pull_number: pullNumber,
+                });
+                return pull;
+              } catch (error) {
+                if (error.status === 404) {
+                  core.info(`Ignoring pull request ${pullNumber} because it no longer exists.`);
+                  return null;
+                }
+                throw error;
+              }
+            }))).filter(Boolean);
             const matchingPulls = pulls.filter(
               pull => pull.state === "open" && pull.head.sha === suite.head_sha
             );
             if (matchingPulls.length !== 1) {
-              core.setFailed(
-                `Expected exactly one open pull request in ${context.repo.owner}/${context.repo.repo} at ${suite.head_sha}; found ${matchingPulls.length}.`
+              core.info(
+                `Skipping comment target resolution because ${matchingPulls.length} open pull requests in ${context.repo.owner}/${context.repo.repo} point to ${suite.head_sha}; expected exactly one.`
               );
               return;
             }
