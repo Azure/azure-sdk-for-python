@@ -2,8 +2,6 @@
 
 ## 1.35.0 (2026-09-08)
 
-### Features Added
-
 ### Bugs Fixed
 - Simplified schedule validation errors so invalid local job paths report the relevant file error instead of errors from every supported job schema.
 - Fixed internal pipeline `Command` node dropping node-level interactive `services` (SSH, JupyterLab, TensorBoard, VS Code, etc.) during serialization, which prevented interactive endpoints from being created for Singularity jobs. The `services` are now serialized into the pipeline REST request and round-tripped on deserialization, matching the public `Command` node behavior.
