@@ -679,6 +679,26 @@ class TestDeleteMessagesAsync:
         receiver._create_handler.assert_called_once_with(None)
 
     @pytest.mark.asyncio
+    async def test_open_does_not_create_awaitable_after_timeout(self):
+        receiver = _receiver(AsyncServiceBusReceiver)
+        receiver._running = False
+        receiver._connection = None
+        receiver._handler = None
+        authentication = AsyncMock(return_value=None)
+
+        with patch(
+            "azure.servicebus.aio._servicebus_receiver_async.create_authentication",
+            new=authentication,
+        ), patch(
+            "azure.servicebus.aio._servicebus_receiver_async.time.monotonic",
+            side_effect=[10.0, 11.0],
+        ):
+            with pytest.raises(OperationTimeoutError):
+                await receiver._open(timeout=0.5)
+
+        authentication.assert_not_called()
+
+    @pytest.mark.asyncio
     async def test_dispatch_failure_is_not_retried(self):
         receiver = _receiver(AsyncServiceBusReceiver)
         receiver._mgmt_request_response = AsyncMock(

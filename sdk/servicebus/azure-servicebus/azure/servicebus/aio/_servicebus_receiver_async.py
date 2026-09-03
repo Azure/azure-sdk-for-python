@@ -413,8 +413,9 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                 raise OperationTimeoutError()
             return remaining
 
-        async def wait_for_setup(awaitable):
+        async def wait_for_setup(operation, *args, **kwargs):
             remaining = remaining_timeout()
+            awaitable = operation(*args, **kwargs)
             if remaining is None:
                 return await awaitable
             try:
@@ -424,12 +425,12 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
         try:
             if self._handler and not self._handler._shutdown:
-                await wait_for_setup(self._handler.close_async())
-            auth = None if self._connection else (await wait_for_setup(create_authentication(self)))
+                await wait_for_setup(self._handler.close_async)
+            auth = None if self._connection else (await wait_for_setup(create_authentication, self))
             self._create_handler(auth)
             remaining_timeout()
-            await wait_for_setup(self._handler.open_async(connection=self._connection))
-            while not await wait_for_setup(self._handler.client_ready_async()):
+            await wait_for_setup(self._handler.open_async, connection=self._connection)
+            while not await wait_for_setup(self._handler.client_ready_async):
                 remaining = remaining_timeout()
                 await asyncio.sleep(0.05 if remaining is None else min(0.05, remaining))
             self._running = True
