@@ -462,18 +462,21 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
         # Create a SecretProvider with the credential
         secret_provider = SecretProvider(keyvault_credential=credential)
 
-        # Create a Key Vault reference
-        config = SecretReferenceConfigurationSetting(key="test-key", secret_id=appconfiguration_keyvault_secret_url)
+        try:
+            # Create a Key Vault reference
+            config = SecretReferenceConfigurationSetting(key="test-key", secret_id=appconfiguration_keyvault_secret_url)
 
-        # Resolve the reference
-        secret_value = await secret_provider.resolve_keyvault_reference(config)
+            # Resolve the reference
+            secret_value = await secret_provider.resolve_keyvault_reference(config)
 
-        # Verify a value was returned (we can't know the exact value)
-        self.assertIsNotNone(secret_value)
-        self.assertTrue(isinstance(secret_value, str))
+            # Verify a value was returned (we can't know the exact value)
+            self.assertIsNotNone(secret_value)
+            self.assertTrue(isinstance(secret_value, str))
 
-        # Verify the secret was cached
-        self.assertIn(appconfiguration_keyvault_secret_url, secret_provider._secret_cache)
+            # Verify the secret was cached
+            self.assertIn(appconfiguration_keyvault_secret_url, secret_provider._secret_cache)
+        finally:
+            await secret_provider.close()
 
 
 if __name__ == "__main__":
