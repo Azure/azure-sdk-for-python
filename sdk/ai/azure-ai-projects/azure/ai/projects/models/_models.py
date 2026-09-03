@@ -162,7 +162,7 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
     CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
     ImageGenTool, LocalShellToolParam, MCPTool, MemorySearchPreviewTool, NamespaceToolParam,
     OpenApiTool, ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
-    ToolSearchToolParam, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    ToolSearchToolParam, WebIQPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "programmatic_tool_calling",
@@ -170,8 +170,8 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      "web_search_preview", "apply_patch", "a2a_preview", "bing_custom_search_preview",
      "browser_automation_preview", "fabric_dataagent_preview", "sharepoint_grounding_preview",
      "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
-     "a2a", "azure_ai_search", "azure_function", "bing_grounding", "capture_structured_outputs", and
-     "openapi".
+     "web_iq_preview", "a2a", "azure_ai_search", "azure_function", "bing_grounding",
+     "capture_structured_outputs", and "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -183,8 +183,9 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      \"namespace\", \"tool_search\", \"web_search_preview\", \"apply_patch\", \"a2a_preview\",
      \"bing_custom_search_preview\", \"browser_automation_preview\", \"fabric_dataagent_preview\",
      \"sharepoint_grounding_preview\", \"memory_search_preview\", \"work_iq_preview\",
-     \"fabric_iq_preview\", \"toolbox_search_preview\", \"a2a\", \"azure_ai_search\",
-     \"azure_function\", \"bing_grounding\", \"capture_structured_outputs\", and \"openapi\"."""
+     \"fabric_iq_preview\", \"toolbox_search_preview\", \"web_iq_preview\", \"a2a\",
+     \"azure_ai_search\", \"azure_function\", \"bing_grounding\", \"capture_structured_outputs\",
+     and \"openapi\"."""
 
     @overload
     def __init__(
@@ -269,13 +270,13 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
     A2AToolboxTool, A2APreviewToolboxTool, AzureAISearchToolboxTool,
     BrowserAutomationPreviewToolboxTool, CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool,
     FileSearchToolboxTool, MCPToolboxTool, OpenApiToolboxTool, ReminderPreviewToolboxTool,
-    ToolSearchToolboxTool, ToolboxSearchPreviewToolboxTool, WebSearchToolboxTool,
-    WorkIQPreviewToolboxTool
+    ShellToolboxTool, ToolSearchToolboxTool, ToolboxSearchPreviewToolboxTool,
+    WebIQPreviewToolboxTool, WebSearchToolboxTool, WorkIQPreviewToolboxTool
 
     :ivar type: The type of tool. Required. Known values are: "code_interpreter", "file_search",
-     "web_search", "mcp", "azure_ai_search", "openapi", "a2a", "a2a_preview",
-     "browser_automation_preview", "reminder_preview", "work_iq_preview", "fabric_iq_preview",
-     "toolbox_search", and "toolbox_search_preview".
+     "web_search", "mcp", "azure_ai_search", "openapi", "a2a_preview", "browser_automation_preview",
+     "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search",
+     "toolbox_search_preview", "a2a", "shell", and "web_iq_preview".
     :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -290,9 +291,10 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of tool. Required. Known values are: \"code_interpreter\", \"file_search\",
-     \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a\", \"a2a_preview\",
+     \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a_preview\",
      \"browser_automation_preview\", \"reminder_preview\", \"work_iq_preview\",
-     \"fabric_iq_preview\", \"toolbox_search\", and \"toolbox_search_preview\"."""
+     \"fabric_iq_preview\", \"toolbox_search\", \"toolbox_search_preview\", \"a2a\", \"shell\", and
+     \"web_iq_preview\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -547,10 +549,17 @@ class ActivityProtocolConfiguration(_Model):  # pylint: disable=docstring-keywor
     :ivar enable_m365_public_endpoint: Whether to enable the M365 public endpoint for the activity
      protocol.
     :vartype enable_m365_public_endpoint: bool
+    :ivar access_boundaries: The access boundaries for the activity protocol.
+    :vartype access_boundaries: list[str or
+     ~azure.ai.projects.models.ActivityProtocolAccessBoundary]
     """
 
     enable_m365_public_endpoint: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable the M365 public endpoint for the activity protocol."""
+    access_boundaries: Optional[list[Union[str, "_models.ActivityProtocolAccessBoundary"]]] = rest_field(
+        visibility=["read"]
+    )
+    """The access boundaries for the activity protocol."""
 
     @overload
     def __init__(
@@ -983,6 +992,9 @@ class AgentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     :vartype versions: ~azure.ai.projects.models.AgentObjectVersions
     :ivar agent_endpoint: The endpoint configuration for the agent.
     :vartype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
+    :ivar digital_worker_type: (Preview) The type of digital worker (previously known as
+     ``autopilot``). If omitted, it is not a digital worker. "m365"
+    :vartype digital_worker_type: str or ~azure.ai.projects.models.DigitalWorkerType
     :ivar instance_identity: The instance identity of the agent.
     :vartype instance_identity: ~azure.ai.projects.models.AgentIdentity
     :ivar blueprint: The blueprint for the agent.
@@ -1012,6 +1024,11 @@ class AgentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The endpoint configuration for the agent."""
+    digital_worker_type: Optional[Union[str, "_models.DigitalWorkerType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """(Preview) The type of digital worker (previously known as ``autopilot``). If omitted, it is not
+     a digital worker. \"m365\""""
     instance_identity: Optional["_models.AgentIdentity"] = rest_field(visibility=["read"])
     """The instance identity of the agent."""
     blueprint: Optional["_models.AgentIdentity"] = rest_field(visibility=["read"])
@@ -1029,6 +1046,7 @@ class AgentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         name: str,
         versions: "_models.AgentObjectVersions",
         agent_endpoint: Optional["_models.AgentEndpointConfig"] = None,
+        digital_worker_type: Optional[Union[str, "_models.DigitalWorkerType"]] = None,
         agent_card: Optional["_models.AgentCard"] = None,
     ) -> None: ...
 
@@ -1089,6 +1107,13 @@ class AgentEndpointConfig(_Model):  # pylint: disable=docstring-keyword-should-m
     :ivar authorization_schemes: The authorization schemes supported by the agent endpoint.
     :vartype authorization_schemes:
      list[~azure.ai.projects.models.AgentEndpointAuthorizationScheme]
+    :ivar publish_approval_status: The Microsoft Agent Certification review status of the Microsoft
+     365 store title published for this agent. Server-populated and best-effort: it is absent when
+     the status could not be determined, and an absent value must not be interpreted as the agent
+     not being published. No value is terminal, because publishing a new version of an agent reuses
+     the same store title and sends it back through review. Known values are: "not_published",
+     "pending", "approved", "rejected", and "no_approval_needed".
+    :vartype publish_approval_status: str or ~azure.ai.projects.models.PublishApprovalStatus
     """
 
     version_selector: Optional["_models.VersionSelector"] = rest_field(
@@ -1104,6 +1129,13 @@ class AgentEndpointConfig(_Model):  # pylint: disable=docstring-keyword-should-m
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The authorization schemes supported by the agent endpoint."""
+    publish_approval_status: Optional[Union[str, "_models.PublishApprovalStatus"]] = rest_field(visibility=["read"])
+    """The Microsoft Agent Certification review status of the Microsoft 365 store title published for
+     this agent. Server-populated and best-effort: it is absent when the status could not be
+     determined, and an absent value must not be interpreted as the agent not being published. No
+     value is terminal, because publishing a new version of an agent reuses the same store title and
+     sends it back through review. Known values are: \"not_published\", \"pending\", \"approved\",
+     \"rejected\", and \"no_approval_needed\"."""
 
     @overload
     def __init__(
@@ -1303,6 +1335,930 @@ class AgentIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-k
         principal_id: str,
         client_id: str,
         status: Optional[Union[str, "_models.AgentIdentityStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsight(_Model):
+    """A persisted issue discovered from an agent's traces.
+
+    :ivar id: The insight identifier. Required.
+    :vartype id: str
+    :ivar monitor_id: The Agent Insights monitor this insight belongs to. Required.
+    :vartype monitor_id: str
+    :ivar agent_name: The agent this insight belongs to. Required.
+    :vartype agent_name: str
+    :ivar agent_version: The latest immutable agent version associated with this insight. Required.
+    :vartype agent_version: str
+    :ivar title: A short title for the issue. Required.
+    :vartype title: str
+    :ivar severity: The severity of the issue. Required. Known values are: "high", "medium", and
+     "low".
+    :vartype severity: str or ~azure.ai.projects.models.AgentInsightSeverity
+    :ivar category: An open, service-generated category label for the issue. Clients must accept
+     previously unseen values. Required.
+    :vartype category: str
+    :ivar status: The lifecycle status of the insight. Required. Known values are: "active",
+     "resolved", and "ignored".
+    :vartype status: str or ~azure.ai.projects.models.AgentInsightStatus
+    :ivar trace_count: The number of traces that provide evidence for this insight. Required.
+    :vartype trace_count: int
+    :ivar created_at: The time when this insight was created. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The time when this insight was last updated. Required.
+    :vartype updated_at: ~datetime.datetime
+    :ivar description: The root-cause diagnosis for the issue. Required.
+    :vartype description: str
+    :ivar details: Additional insight details. Omitted unless details are requested.
+    :vartype details: ~azure.ai.projects.models.AgentInsightDetails
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """The insight identifier. Required."""
+    monitor_id: str = rest_field(visibility=["read"])
+    """The Agent Insights monitor this insight belongs to. Required."""
+    agent_name: str = rest_field(visibility=["read"])
+    """The agent this insight belongs to. Required."""
+    agent_version: str = rest_field(visibility=["read"])
+    """The latest immutable agent version associated with this insight. Required."""
+    title: str = rest_field(visibility=["read"])
+    """A short title for the issue. Required."""
+    severity: Union[str, "_models.AgentInsightSeverity"] = rest_field(visibility=["read"])
+    """The severity of the issue. Required. Known values are: \"high\", \"medium\", and \"low\"."""
+    category: str = rest_field(visibility=["read"])
+    """An open, service-generated category label for the issue. Clients must accept previously unseen
+     values. Required."""
+    status: Union[str, "_models.AgentInsightStatus"] = rest_field(visibility=["read"])
+    """The lifecycle status of the insight. Required. Known values are: \"active\", \"resolved\", and
+     \"ignored\"."""
+    trace_count: int = rest_field(visibility=["read"])
+    """The number of traces that provide evidence for this insight. Required."""
+    created_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The time when this insight was created. Required."""
+    updated_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The time when this insight was last updated. Required."""
+    description: str = rest_field(visibility=["read"])
+    """The root-cause diagnosis for the issue. Required."""
+    details: Optional["_models.AgentInsightDetails"] = rest_field(visibility=["read"])
+    """Additional insight details. Omitted unless details are requested."""
+
+
+class AgentInsightDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Additional insight details. Omitted unless details are requested.
+
+    :ivar highlighted_traces: Up to 5 highlighted traces that provide evidence for this insight.
+     Required.
+    :vartype highlighted_traces: list[~azure.ai.projects.models.AgentInsightHighlightedTrace]
+    :ivar linked_traces: Up to 200 most recent traces linked to this insight as supporting
+     evidence. Required.
+    :vartype linked_traces: list[~azure.ai.projects.models.AgentInsightLinkedTrace]
+    :ivar recommended_actions: The recommended remediation for this insight. Required.
+    :vartype recommended_actions: ~azure.ai.projects.models.AgentInsightRecommendedAction
+    """
+
+    highlighted_traces: list["_models.AgentInsightHighlightedTrace"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Up to 5 highlighted traces that provide evidence for this insight. Required."""
+    linked_traces: list["_models.AgentInsightLinkedTrace"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Up to 200 most recent traces linked to this insight as supporting evidence. Required."""
+    recommended_actions: "_models.AgentInsightRecommendedAction" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recommended remediation for this insight. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        highlighted_traces: list["_models.AgentInsightHighlightedTrace"],
+        linked_traces: list["_models.AgentInsightLinkedTrace"],
+        recommended_actions: "_models.AgentInsightRecommendedAction",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightEstimatedCost(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Estimated Agent Insights cost.
+
+    :ivar amount: Estimated cost amount. Required.
+    :vartype amount: float
+    :ivar currency: Currency for the estimated cost amount. Agent Insights estimates are reported
+     in US dollars. Required. Default value is "USD".
+    :vartype currency: str
+    """
+
+    amount: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Estimated cost amount. Required."""
+    currency: Literal["USD"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Currency for the estimated cost amount. Agent Insights estimates are reported in US dollars.
+     Required. Default value is \"USD\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        amount: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.currency: Literal["USD"] = "USD"
+
+
+class AgentInsightHighlightedTrace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A highlighted trace that provides evidence for an agent insight.
+
+    :ivar trace_id: The trace identifier. Required.
+    :vartype trace_id: str
+    :ivar summary: A short summary of the trace. Required.
+    :vartype summary: str
+    :ivar duration_ms: The end-to-end duration of the trace in milliseconds. Required.
+    :vartype duration_ms: ~datetime.timedelta
+    :ivar total_tokens: Aggregate input and output tokens reported across all model inference calls
+     in this trace, including calls to different models. Intended for relative usage comparison, not
+     cost estimation.
+    :vartype total_tokens: int
+    :ivar timestamp: The time when the trace was recorded. Required.
+    :vartype timestamp: ~datetime.datetime
+    """
+
+    trace_id: str = rest_field(visibility=["read"])
+    """The trace identifier. Required."""
+    summary: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A short summary of the trace. Required."""
+    duration_ms: datetime.timedelta = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The end-to-end duration of the trace in milliseconds. Required."""
+    total_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Aggregate input and output tokens reported across all model inference calls in this trace,
+     including calls to different models. Intended for relative usage comparison, not cost
+     estimation."""
+    timestamp: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The time when the trace was recorded. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        summary: str,
+        duration_ms: datetime.timedelta,
+        timestamp: datetime.datetime,
+        total_tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightLinkedTrace(_Model):
+    """A lightweight trace reference linked to an agent insight as supporting evidence.
+
+    :ivar trace_id: The trace identifier. Required.
+    :vartype trace_id: str
+    :ivar timestamp: The time when the trace was recorded. Required.
+    :vartype timestamp: ~datetime.datetime
+    """
+
+    trace_id: str = rest_field(visibility=["read"])
+    """The trace identifier. Required."""
+    timestamp: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The time when the trace was recorded. Required."""
+
+
+class AgentInsightMonitor(_Model):
+    """A per-agent Agent Insights monitor that owns configuration, runs, and discovered insights.
+
+    :ivar id: The monitor identifier. Required.
+    :vartype id: str
+    :ivar agent_name: The agent this monitor analyzes. There can be only one monitor per agent.
+     Required.
+    :vartype agent_name: str
+    :ivar enabled: Whether scheduled insight generation is armed for the monitor. Required.
+    :vartype enabled: bool
+    :ivar run_interval_hours: Interval between scheduled insight runs, in hours. Required.
+    :vartype run_interval_hours: float
+    :ivar model_deployment_name: The model deployment to use for analyzing traces. Accepts either
+     the deployment name alone or with the connection name as
+     '{connectionName}/modelDeploymentName'. Required.
+    :vartype model_deployment_name: str
+    :ivar next_scheduled_run_at: The next time a scheduled agent insight run will start. Omitted
+     when scheduled generation is disabled.
+    :vartype next_scheduled_run_at: ~datetime.datetime
+    :ivar estimated_cost: Estimated cost accumulated by Agent Insights for this monitor.
+    :vartype estimated_cost: ~azure.ai.projects.models.AgentInsightEstimatedCost
+    :ivar suspension: Why the system suspended scheduled generation. Null when the monitor is not
+     suspended. Required.
+    :vartype suspension: ~azure.ai.projects.models.AgentInsightSuspension
+    :ivar overview: The effective overview, or null before an overview is available. Required.
+    :vartype overview: ~azure.ai.projects.models.AgentInsightsOverview
+    :ivar updated_at: The time when this monitor was last updated. Required.
+    :vartype updated_at: ~datetime.datetime
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """The monitor identifier. Required."""
+    agent_name: str = rest_field(visibility=["read"])
+    """The agent this monitor analyzes. There can be only one monitor per agent. Required."""
+    enabled: bool = rest_field(visibility=["read"])
+    """Whether scheduled insight generation is armed for the monitor. Required."""
+    run_interval_hours: float = rest_field(visibility=["read"])
+    """Interval between scheduled insight runs, in hours. Required."""
+    model_deployment_name: str = rest_field(visibility=["read"])
+    """The model deployment to use for analyzing traces. Accepts either the deployment name alone or
+     with the connection name as '{connectionName}/modelDeploymentName'. Required."""
+    next_scheduled_run_at: Optional[datetime.datetime] = rest_field(visibility=["read"], format="unix-timestamp")
+    """The next time a scheduled agent insight run will start. Omitted when scheduled generation is
+     disabled."""
+    estimated_cost: Optional["_models.AgentInsightEstimatedCost"] = rest_field(visibility=["read"])
+    """Estimated cost accumulated by Agent Insights for this monitor."""
+    suspension: "_models.AgentInsightSuspension" = rest_field(visibility=["read"])
+    """Why the system suspended scheduled generation. Null when the monitor is not suspended.
+     Required."""
+    overview: "_models.AgentInsightsOverview" = rest_field(visibility=["read"])
+    """The effective overview, or null before an overview is available. Required."""
+    updated_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The time when this monitor was last updated. Required."""
+
+
+class AgentInsightMonitorCreate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Fields accepted when creating an Agent Insights monitor for an agent.
+
+    :ivar agent_name: The agent this monitor should analyze. Required.
+    :vartype agent_name: str
+    :ivar enabled: Whether scheduled insight generation should be armed. Defaults to false.
+    :vartype enabled: bool
+    :ivar run_interval_hours: Interval between scheduled insight runs, in hours. Defaults to 6.
+    :vartype run_interval_hours: float
+    :ivar model_deployment_name: The model deployment to use for analyzing traces. Accepts either
+     the deployment name alone or with the connection name as
+     '{connectionName}/modelDeploymentName'. Required.
+    :vartype model_deployment_name: str
+    """
+
+    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The agent this monitor should analyze. Required."""
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether scheduled insight generation should be armed. Defaults to false."""
+    run_interval_hours: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Interval between scheduled insight runs, in hours. Defaults to 6."""
+    model_deployment_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model deployment to use for analyzing traces. Accepts either the deployment name alone or
+     with the connection name as '{connectionName}/modelDeploymentName'. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_name: str,
+        model_deployment_name: str,
+        enabled: Optional[bool] = None,
+        run_interval_hours: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightMonitorListItem(_Model):
+    """An Agent Insights monitor summary returned by list operations.
+
+    :ivar id: The monitor identifier. Required.
+    :vartype id: str
+    :ivar agent_name: The agent this monitor analyzes. There can be only one monitor per agent.
+     Required.
+    :vartype agent_name: str
+    :ivar enabled: Whether scheduled insight generation is armed for the monitor. Required.
+    :vartype enabled: bool
+    :ivar run_interval_hours: Interval between scheduled insight runs, in hours. Required.
+    :vartype run_interval_hours: float
+    :ivar model_deployment_name: The model deployment to use for analyzing traces. Accepts either
+     the deployment name alone or with the connection name as
+     '{connectionName}/modelDeploymentName'. Required.
+    :vartype model_deployment_name: str
+    :ivar next_scheduled_run_at: The next time a scheduled agent insight run will start. Omitted
+     when scheduled generation is disabled.
+    :vartype next_scheduled_run_at: ~datetime.datetime
+    :ivar estimated_cost: Estimated cost accumulated by Agent Insights for this monitor.
+    :vartype estimated_cost: ~azure.ai.projects.models.AgentInsightEstimatedCost
+    :ivar suspension: Why the system suspended scheduled generation. Null when the monitor is not
+     suspended. Required.
+    :vartype suspension: ~azure.ai.projects.models.AgentInsightSuspension
+    :ivar updated_at: The time when this monitor was last updated. Required.
+    :vartype updated_at: ~datetime.datetime
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """The monitor identifier. Required."""
+    agent_name: str = rest_field(visibility=["read"])
+    """The agent this monitor analyzes. There can be only one monitor per agent. Required."""
+    enabled: bool = rest_field(visibility=["read"])
+    """Whether scheduled insight generation is armed for the monitor. Required."""
+    run_interval_hours: float = rest_field(visibility=["read"])
+    """Interval between scheduled insight runs, in hours. Required."""
+    model_deployment_name: str = rest_field(visibility=["read"])
+    """The model deployment to use for analyzing traces. Accepts either the deployment name alone or
+     with the connection name as '{connectionName}/modelDeploymentName'. Required."""
+    next_scheduled_run_at: Optional[datetime.datetime] = rest_field(visibility=["read"], format="unix-timestamp")
+    """The next time a scheduled agent insight run will start. Omitted when scheduled generation is
+     disabled."""
+    estimated_cost: Optional["_models.AgentInsightEstimatedCost"] = rest_field(visibility=["read"])
+    """Estimated cost accumulated by Agent Insights for this monitor."""
+    suspension: "_models.AgentInsightSuspension" = rest_field(visibility=["read"])
+    """Why the system suspended scheduled generation. Null when the monitor is not suspended.
+     Required."""
+    updated_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The time when this monitor was last updated. Required."""
+
+
+class AgentInsightMonitorUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Fields that can be updated on an Agent Insights monitor.
+
+    :ivar enabled: Whether scheduled insight generation is armed for the monitor.
+    :vartype enabled: bool
+    :ivar run_interval_hours: Interval between scheduled insight runs, in hours.
+    :vartype run_interval_hours: float
+    :ivar model_deployment_name: The model deployment to use for analyzing traces. Accepts either
+     the deployment name alone or with the connection name as
+     '{connectionName}/modelDeploymentName'.
+    :vartype model_deployment_name: str
+    :ivar overview_override: Sets the effective user overview, or clears it when explicitly set to
+     null. Omission leaves the overview unchanged. This field cannot be combined with other monitor
+     updates.
+    :vartype overview_override: ~azure.ai.projects.models.AgentInsightsOverviewOverride
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether scheduled insight generation is armed for the monitor."""
+    run_interval_hours: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Interval between scheduled insight runs, in hours."""
+    model_deployment_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model deployment to use for analyzing traces. Accepts either the deployment name alone or
+     with the connection name as '{connectionName}/modelDeploymentName'."""
+    overview_override: Optional["_models.AgentInsightsOverviewOverride"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sets the effective user overview, or clears it when explicitly set to null. Omission leaves the
+     overview unchanged. This field cannot be combined with other monitor updates."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        run_interval_hours: Optional[float] = None,
+        model_deployment_name: Optional[str] = None,
+        overview_override: Optional["_models.AgentInsightsOverviewOverride"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightProposedFix(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A recommended fix for an agent insight.
+
+    :ivar kind: The proposed-fix discriminator. Required. Known values are: "prose", "code_change",
+     and "prompt_change".
+    :vartype kind: str or ~azure.ai.projects.models.AgentInsightProposedFixKind
+    :ivar text: The human-readable remediation guidance. Required.
+    :vartype text: str
+    :ivar changes: The concrete changes. Omitted for a prose-only fix.
+    :vartype changes: list[~azure.ai.projects.models.AgentInsightProposedFixChange]
+    """
+
+    kind: Union[str, "_models.AgentInsightProposedFixKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The proposed-fix discriminator. Required. Known values are: \"prose\", \"code_change\", and
+     \"prompt_change\"."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The human-readable remediation guidance. Required."""
+    changes: Optional[list["_models.AgentInsightProposedFixChange"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The concrete changes. Omitted for a prose-only fix."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: Union[str, "_models.AgentInsightProposedFixKind"],
+        text: str,
+        changes: Optional[list["_models.AgentInsightProposedFixChange"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightProposedFixChange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A customer-renderable change in a proposed fix.
+
+    :ivar path: The source path changed by a code change.
+    :vartype path: str
+    :ivar language: The language of the changed source path.
+    :vartype language: str
+    :ivar diff: The unified diff for the changed source path.
+    :vartype diff: str
+    :ivar surface: The Prompt surface changed by a Prompt change. Known values are: "instructions"
+     and "tool".
+    :vartype surface: str or ~azure.ai.projects.models.AgentInsightPromptSurface
+    :ivar target: The user-visible target within a Prompt surface, when needed.
+    :vartype target: str
+    :ivar old_value: The bounded Prompt value before the change. Present for Prompt changes,
+     including when null.
+    :vartype old_value: any
+    :ivar new_value: The bounded Prompt value after the change. Present for Prompt changes,
+     including when null.
+    :vartype new_value: any
+    """
+
+    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source path changed by a code change."""
+    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The language of the changed source path."""
+    diff: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unified diff for the changed source path."""
+    surface: Optional[Union[str, "_models.AgentInsightPromptSurface"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Prompt surface changed by a Prompt change. Known values are: \"instructions\" and \"tool\"."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The user-visible target within a Prompt surface, when needed."""
+    old_value: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The bounded Prompt value before the change. Present for Prompt changes, including when null."""
+    new_value: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The bounded Prompt value after the change. Present for Prompt changes, including when null."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        path: Optional[str] = None,
+        language: Optional[str] = None,
+        diff: Optional[str] = None,
+        surface: Optional[Union[str, "_models.AgentInsightPromptSurface"]] = None,
+        target: Optional[str] = None,
+        old_value: Optional[Any] = None,
+        new_value: Optional[Any] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightRecommendedAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The recommended remediation for an agent insight.
+
+    :ivar proposed_fix: The single recommended fix for the issue represented by the insight.
+     Required.
+    :vartype proposed_fix: ~azure.ai.projects.models.AgentInsightProposedFix
+    """
+
+    proposed_fix: "_models.AgentInsightProposedFix" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The single recommended fix for the issue represented by the insight. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        proposed_fix: "_models.AgentInsightProposedFix",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightRun(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A long-running run that analyzes one agent's traces and updates that agent's insights.
+
+    :ivar id: Server-assigned unique identifier. Required.
+    :vartype id: str
+    :ivar inputs: Caller-supplied inputs.
+    :vartype inputs: ~azure.ai.projects.models.AgentInsightRunCreate
+    :ivar result: Result produced on success.
+    :vartype result: ~azure.ai.projects.models.AgentInsightRunResult
+    :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
+     "succeeded", "failed", and "cancelled".
+    :vartype status: str or ~azure.ai.projects.models.JobStatus
+    :ivar error: Error details — populated only on failure.
+    :vartype error: ~azure.ai.projects.models.ApiError
+    :ivar monitor_id: The Agent Insights monitor this run belongs to. Required.
+    :vartype monitor_id: str
+    :ivar agent_name: The agent whose traces are analyzed by this run. Required.
+    :vartype agent_name: str
+    :ivar trigger: The trigger that started the run. Required. Known values are: "on_demand" and
+     "scheduled".
+    :vartype trigger: str or ~azure.ai.projects.models.AgentInsightRunTrigger
+    :ivar created_at: The time when this run was created. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The time when this run was last updated. Required.
+    :vartype updated_at: ~datetime.datetime
+    :ivar window_start: The start of the trace window analyzed by this run. Required.
+    :vartype window_start: ~datetime.datetime
+    :ivar window_end: The end of the trace window analyzed by this run. Required.
+    :vartype window_end: ~datetime.datetime
+    :ivar started_at: The time when this run started processing.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time when this run reached a terminal status.
+    :vartype completed_at: ~datetime.datetime
+    :ivar model_deployment_name: The model deployment used to analyze traces for this run.
+     Required.
+    :vartype model_deployment_name: str
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Server-assigned unique identifier. Required."""
+    inputs: Optional["_models.AgentInsightRunCreate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Caller-supplied inputs."""
+    result: Optional["_models.AgentInsightRunResult"] = rest_field(visibility=["read"])
+    """Result produced on success."""
+    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
+    """Current lifecycle status. Required. Known values are: \"queued\", \"in_progress\",
+     \"succeeded\", \"failed\", and \"cancelled\"."""
+    error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
+    """Error details — populated only on failure."""
+    monitor_id: str = rest_field(visibility=["read"])
+    """The Agent Insights monitor this run belongs to. Required."""
+    agent_name: str = rest_field(visibility=["read"])
+    """The agent whose traces are analyzed by this run. Required."""
+    trigger: Union[str, "_models.AgentInsightRunTrigger"] = rest_field(visibility=["read"])
+    """The trigger that started the run. Required. Known values are: \"on_demand\" and \"scheduled\"."""
+    created_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The time when this run was created. Required."""
+    updated_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The time when this run was last updated. Required."""
+    window_start: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The start of the trace window analyzed by this run. Required."""
+    window_end: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The end of the trace window analyzed by this run. Required."""
+    started_at: Optional[datetime.datetime] = rest_field(visibility=["read"], format="unix-timestamp")
+    """The time when this run started processing."""
+    completed_at: Optional[datetime.datetime] = rest_field(visibility=["read"], format="unix-timestamp")
+    """The time when this run reached a terminal status."""
+    model_deployment_name: str = rest_field(visibility=["read"])
+    """The model deployment used to analyze traces for this run. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inputs: Optional["_models.AgentInsightRunCreate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightRunCreate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Inputs used when creating an agent insight run.
+
+    :ivar lookback_hours: Optional finite positive number of hours of trace history to analyze, up
+     to 2,160. Defaults to 168.
+    :vartype lookback_hours: float
+    """
+
+    lookback_hours: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional finite positive number of hours of trace history to analyze, up to 2,160. Defaults to
+     168."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        lookback_hours: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightRunResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Result statistics produced when an agent insight run succeeds.
+
+    :ivar traces_in_window: The number of traces in the analyzed time window. Required.
+    :vartype traces_in_window: int
+    :ivar traces_analyzed: The number of traces analyzed by the run. Required.
+    :vartype traces_analyzed: int
+    :ivar insights_created: The number of insights created by the run. Required.
+    :vartype insights_created: int
+    :ivar insights_updated: The number of insights updated by the run. Required.
+    :vartype insights_updated: int
+    :ivar insights_reopened: The number of insights reopened by the run. Required.
+    :vartype insights_reopened: int
+    :ivar token_usage: Token usage for the run's insight-generation analysis. Required.
+    :vartype token_usage: ~azure.ai.projects.models.AgentInsightTokenUsage
+    """
+
+    traces_in_window: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of traces in the analyzed time window. Required."""
+    traces_analyzed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of traces analyzed by the run. Required."""
+    insights_created: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of insights created by the run. Required."""
+    insights_updated: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of insights updated by the run. Required."""
+    insights_reopened: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of insights reopened by the run. Required."""
+    token_usage: "_models.AgentInsightTokenUsage" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Token usage for the run's insight-generation analysis. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        traces_in_window: int,
+        traces_analyzed: int,
+        insights_created: int,
+        insights_updated: int,
+        insights_reopened: int,
+        token_usage: "_models.AgentInsightTokenUsage",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightsOverview(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The effective overview for an Agent Insights monitor.
+
+    :ivar content: The overview content. Required.
+    :vartype content: str
+    :ivar source: Where the effective overview came from. Required. Known values are: "generated"
+     and "user_override".
+    :vartype source: str or ~azure.ai.projects.models.AgentInsightOverviewSource
+    :ivar updated_at: The time when this overview was last updated. Required.
+    :vartype updated_at: ~datetime.datetime
+    """
+
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The overview content. Required."""
+    source: Union[str, "_models.AgentInsightOverviewSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Where the effective overview came from. Required. Known values are: \"generated\" and
+     \"user_override\"."""
+    updated_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The time when this overview was last updated. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: str,
+        source: Union[str, "_models.AgentInsightOverviewSource"],
+        updated_at: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightsOverviewOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A user-provided overview that becomes effective immediately and seeds the next generation.
+
+    :ivar content: The nonblank overview content, limited to 64 KiB when encoded as UTF-8.
+     Required.
+    :vartype content: str
+    """
+
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The nonblank overview content, limited to 64 KiB when encoded as UTF-8. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightSuspension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Structured reason why scheduled generation is suspended for a monitor.
+
+    :ivar code: Stable, machine-readable suspension category. Required.
+    :vartype code: str
+    :ivar message: Human-readable description of the suspension. Required.
+    :vartype message: str
+    :ivar occurred_at: The time when the suspension occurred. Required.
+    :vartype occurred_at: ~datetime.datetime
+    :ivar details: Additional reason-specific suspension details.
+    :vartype details: dict[str, any]
+    """
+
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Stable, machine-readable suspension category. Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable description of the suspension. Required."""
+    occurred_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The time when the suspension occurred. Required."""
+    details: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional reason-specific suspension details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        occurred_at: datetime.datetime,
+        details: Optional[dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightTokenUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Token usage for an Agent Insights run.
+
+    :ivar input_tokens: The number of input tokens used by the run. Required.
+    :vartype input_tokens: int
+    :ivar output_tokens: The number of output tokens used by the run. Required.
+    :vartype output_tokens: int
+    :ivar cached_tokens: The number of input tokens served from cache.
+    :vartype cached_tokens: int
+    :ivar total_tokens: The total number of tokens used by the run. Required.
+    :vartype total_tokens: int
+    """
+
+    input_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of input tokens used by the run. Required."""
+    output_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of output tokens used by the run. Required."""
+    cached_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of input tokens served from cache."""
+    total_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The total number of tokens used by the run. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input_tokens: int,
+        output_tokens: int,
+        total_tokens: int,
+        cached_tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentInsightUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Fields that can be updated on an agent insight.
+
+    :ivar status: The lifecycle status to apply to the insight. Known values are: "active",
+     "resolved", and "ignored".
+    :vartype status: str or ~azure.ai.projects.models.AgentInsightStatus
+    """
+
+    status: Optional[Union[str, "_models.AgentInsightStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The lifecycle status to apply to the insight. Known values are: \"active\", \"resolved\", and
+     \"ignored\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.AgentInsightStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -8963,6 +9919,9 @@ class HostedAgentDefinition(
     :ivar telemetry_config: Optional customer-supplied telemetry configuration for exporting
      container logs, traces, and metrics.
     :vartype telemetry_config: ~azure.ai.projects.models.TelemetryConfig
+    :ivar session_configuration: Optional session defaults (for example, the idle timeout) applied
+     to sessions created for this agent version.
+    :vartype session_configuration: ~azure.ai.projects.models.SessionConfiguration
     """
 
     kind: Literal[AgentKind.HOSTED] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -8994,6 +9953,11 @@ class HostedAgentDefinition(
     )
     """Optional customer-supplied telemetry configuration for exporting container logs, traces, and
      metrics."""
+    session_configuration: Optional["_models.SessionConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional session defaults (for example, the idle timeout) applied to sessions created for this
+     agent version."""
 
     @overload
     def __init__(
@@ -9007,6 +9971,7 @@ class HostedAgentDefinition(
         protocol_versions: Optional[list["_models.ProtocolVersionRecord"]] = None,
         code_configuration: Optional["_models.CodeConfiguration"] = None,
         telemetry_config: Optional["_models.TelemetryConfig"] = None,
+        session_configuration: Optional["_models.SessionConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -11163,6 +12128,206 @@ class MemoryStoreUpdateResult(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
+class Microsoft365PermissionScopes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A set of delegated permission scopes requested from a single resource application.
+
+    :ivar resource_app_id: Application id of the resource that exposes the requested delegated
+     scopes. Required.
+    :vartype resource_app_id: str
+    :ivar scopes: Delegated scope names requested from the resource application. Must not be empty.
+     Required.
+    :vartype scopes: list[str]
+    """
+
+    resource_app_id: str = rest_field(name="resourceAppId", visibility=["read", "create", "update", "delete", "query"])
+    """Application id of the resource that exposes the requested delegated scopes. Required."""
+    scopes: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Delegated scope names requested from the resource application. Must not be empty. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_app_id: str,
+        scopes: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Microsoft365PublishDefaults(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Default and previously-published values used to pre-populate a Microsoft 365 publish request
+    for a Foundry agent.
+
+    :ivar app_publish_scope: The publish scope. Known values are: "Personal", "Shared", and
+     "Tenant".
+    :vartype app_publish_scope: str or ~azure.ai.projects.models.Microsoft365PublishScope
+    :ivar agent_name: The agent name.
+    :vartype agent_name: str
+    :ivar agent_display_name: The user-facing display name for the agent. Defaults to the agent
+     name if not previously overridden.
+    :vartype agent_display_name: str
+    :ivar app_registration_client_id: The app-registration client id associated with the agent.
+    :vartype app_registration_client_id: str
+    :ivar bot_service_arm_id: ARM resource id of the Azure Bot Service associated with the
+     previously-published app, if any.
+    :vartype bot_service_arm_id: str
+    :ivar app_version: The most recently published app version.
+    :vartype app_version: str
+    :ivar recommended_next_app_version: The recommended next app version (the most recent app
+     version, incremented).
+    :vartype recommended_next_app_version: str
+    :ivar title_id: The Microsoft 365 title id of the previously-published app, if any.
+    :vartype title_id: str
+    :ivar teams_app_id: The Microsoft Teams app id of the previously-published app, if any.
+    :vartype teams_app_id: str
+    :ivar short_description: Short, one-line description shown in the Teams app listing.
+    :vartype short_description: str
+    :ivar full_description: Full description shown on the Teams app details page.
+    :vartype full_description: str
+    :ivar developer_name: Display name of the developer / publisher.
+    :vartype developer_name: str
+    :ivar developer_website_url: Developer / publisher website URL.
+    :vartype developer_website_url: str
+    :ivar privacy_url: Privacy policy URL.
+    :vartype privacy_url: str
+    :ivar terms_of_use_url: Terms-of-use URL.
+    :vartype terms_of_use_url: str
+    """
+
+    app_publish_scope: Optional[Union[str, "_models.Microsoft365PublishScope"]] = rest_field(
+        name="appPublishScope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The publish scope. Known values are: \"Personal\", \"Shared\", and \"Tenant\"."""
+    agent_name: Optional[str] = rest_field(name="agentName", visibility=["read", "create", "update", "delete", "query"])
+    """The agent name."""
+    agent_display_name: Optional[str] = rest_field(
+        name="agentDisplayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user-facing display name for the agent. Defaults to the agent name if not previously
+     overridden."""
+    app_registration_client_id: Optional[str] = rest_field(
+        name="appRegistrationClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The app-registration client id associated with the agent."""
+    bot_service_arm_id: Optional[str] = rest_field(
+        name="botServiceArmId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource id of the Azure Bot Service associated with the previously-published app, if any."""
+    app_version: Optional[str] = rest_field(
+        name="appVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The most recently published app version."""
+    recommended_next_app_version: Optional[str] = rest_field(
+        name="recommendedNextAppVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recommended next app version (the most recent app version, incremented)."""
+    title_id: Optional[str] = rest_field(name="titleId", visibility=["read", "create", "update", "delete", "query"])
+    """The Microsoft 365 title id of the previously-published app, if any."""
+    teams_app_id: Optional[str] = rest_field(
+        name="teamsAppId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Teams app id of the previously-published app, if any."""
+    short_description: Optional[str] = rest_field(
+        name="shortDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Short, one-line description shown in the Teams app listing."""
+    full_description: Optional[str] = rest_field(
+        name="fullDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Full description shown on the Teams app details page."""
+    developer_name: Optional[str] = rest_field(
+        name="developerName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of the developer / publisher."""
+    developer_website_url: Optional[str] = rest_field(
+        name="developerWebsiteUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Developer / publisher website URL."""
+    privacy_url: Optional[str] = rest_field(
+        name="privacyUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Privacy policy URL."""
+    terms_of_use_url: Optional[str] = rest_field(
+        name="termsOfUseUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Terms-of-use URL."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_publish_scope: Optional[Union[str, "_models.Microsoft365PublishScope"]] = None,
+        agent_name: Optional[str] = None,
+        agent_display_name: Optional[str] = None,
+        app_registration_client_id: Optional[str] = None,
+        bot_service_arm_id: Optional[str] = None,
+        app_version: Optional[str] = None,
+        recommended_next_app_version: Optional[str] = None,
+        title_id: Optional[str] = None,
+        teams_app_id: Optional[str] = None,
+        short_description: Optional[str] = None,
+        full_description: Optional[str] = None,
+        developer_name: Optional[str] = None,
+        developer_website_url: Optional[str] = None,
+        privacy_url: Optional[str] = None,
+        terms_of_use_url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Microsoft365PublishResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Response from publishing an agent to Microsoft 365 / Microsoft Teams.
+
+    :ivar title_id: The Microsoft 365 title id of the published app.
+    :vartype title_id: str
+    :ivar teams_app_id: The Microsoft Teams app id of the published app.
+    :vartype teams_app_id: str
+    """
+
+    title_id: Optional[str] = rest_field(name="titleId", visibility=["read", "create", "update", "delete", "query"])
+    """The Microsoft 365 title id of the published app."""
+    teams_app_id: Optional[str] = rest_field(
+        name="teamsAppId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Teams app id of the published app."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title_id: Optional[str] = None,
+        teams_app_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MicrosoftFabricPreviewTool(
     Tool, discriminator="fabric_dataagent_preview"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -13303,6 +14468,40 @@ class Routine(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
         super().__init__(*args, **kwargs)
 
 
+class RoutineAuthorization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Optional authorization configuration for a routine dispatch.
+
+    :ivar identity: The identity used when dispatching the routine. Defaults to agent when omitted;
+     set to creator only when the customer opts in to creator identity dispatch. Known values are:
+     "agent" and "creator".
+    :vartype identity: str or ~azure.ai.projects.models.RoutineDispatchIdentity
+    """
+
+    identity: Optional[Union[str, "_models.RoutineDispatchIdentity"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identity used when dispatching the routine. Defaults to agent when omitted; set to creator
+     only when the customer opts in to creator identity dispatch. Known values are: \"agent\" and
+     \"creator\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional[Union[str, "_models.RoutineDispatchIdentity"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RoutineRun(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single routine run returned from the run history API.
 
@@ -13813,6 +15012,39 @@ class ScheduleRun(_Model):  # pylint: disable=docstring-keyword-should-match-key
         super().__init__(*args, **kwargs)
 
 
+class SessionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Session defaults applied to sessions created for a hosted agent version.
+
+    :ivar idle_timeout_seconds: The idle duration, in seconds, before a session's sandbox is
+     suspended. Optional — when unset, the server default of 900 seconds is used. Must be between
+     120 and 3600 seconds (inclusive).
+    :vartype idle_timeout_seconds: ~datetime.timedelta
+    """
+
+    idle_timeout_seconds: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-seconds-int"
+    )
+    """The idle duration, in seconds, before a session's sandbox is suspended. Optional — when unset,
+     the server default of 900 seconds is used. Must be between 120 and 3600 seconds (inclusive)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        idle_timeout_seconds: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SessionDirectoryEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single entry in a directory listing.
 
@@ -14020,6 +15252,63 @@ class SharepointPreviewTool(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.SHAREPOINT_GROUNDING_PREVIEW  # type: ignore
+
+
+class ShellToolboxTool(
+    ToolboxTool, discriminator="shell"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A shell tool stored in a toolbox. This model is additive to toolbox configuration and does not
+    modify the OpenAI tool contract or existing toolbox tool definitions.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: The type of the tool. Always ``shell``. Required. SHELL.
+    :vartype type: str or ~azure.ai.projects.models.SHELL
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
+    :ivar environment: The environment in which shell commands are executed. Specify an
+     automatically provisioned container or an existing container. Required.
+    :vartype environment: ~azure.ai.projects.models.ToolboxShellEnvironment
+    """
+
+    type: Literal[ToolboxToolType.SHELL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``shell``. Required. SHELL."""
+    allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    environment: "_models.ToolboxShellEnvironment" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The environment in which shell commands are executed. Specify an automatically provisioned
+     container or an existing container. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        environment: "_models.ToolboxShellEnvironment",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.SHELL  # type: ignore
 
 
 class SimpleQnADataGenerationJobOptions(
@@ -14972,6 +16261,197 @@ class ToolboxSearchPreviewToolboxTool(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolboxToolType.TOOLBOX_SEARCH_PREVIEW  # type: ignore
+
+
+class ToolboxShellEnvironment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An execution environment for a shell tool stored in a toolbox. This environment model is scoped
+    to toolbox configuration and does not modify the OpenAI shell environment contract.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ToolboxShellContainerAutoEnvironment, ToolboxShellContainerReferenceEnvironment
+
+    :ivar type: The type of the shell execution environment. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the shell execution environment. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ToolboxShellContainerAutoEnvironment(
+    ToolboxShellEnvironment, discriminator="container_auto"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An automatically provisioned container environment for a shell tool stored in a toolbox.
+
+    :ivar type: The type of the shell execution environment. Always ``container_auto``. Required.
+     Default value is "container_auto".
+    :vartype type: str
+    :ivar file_ids: An optional list of uploaded files to make available to your code.
+    :vartype file_ids: list[str]
+    :ivar memory_limit: Known values are: "1g", "4g", "16g", and "64g".
+    :vartype memory_limit: str or ~azure.ai.projects.models.ContainerMemoryLimit
+    :ivar skills: An optional list of skills referenced by id or inline data.
+    :vartype skills: list[~azure.ai.projects.models.ContainerSkill]
+    :ivar network_policy: The network access policy for the container. When omitted, the service
+     defaults to disabled outbound network access.
+    :vartype network_policy: ~azure.ai.projects.models.ToolboxShellNetworkPolicy
+    """
+
+    type: Literal["container_auto"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the shell execution environment. Always ``container_auto``. Required. Default value
+     is \"container_auto\"."""
+    file_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional list of uploaded files to make available to your code."""
+    memory_limit: Optional[Union[str, "_models.ContainerMemoryLimit"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"1g\", \"4g\", \"16g\", and \"64g\"."""
+    skills: Optional[list["_models.ContainerSkill"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional list of skills referenced by id or inline data."""
+    network_policy: Optional["_models.ToolboxShellNetworkPolicy"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The network access policy for the container. When omitted, the service defaults to disabled
+     outbound network access."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_ids: Optional[list[str]] = None,
+        memory_limit: Optional[Union[str, "_models.ContainerMemoryLimit"]] = None,
+        skills: Optional[list["_models.ContainerSkill"]] = None,
+        network_policy: Optional["_models.ToolboxShellNetworkPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "container_auto"  # type: ignore
+
+
+class ToolboxShellContainerReferenceEnvironment(
+    ToolboxShellEnvironment, discriminator="container_reference"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """An existing container environment for a shell tool stored in a toolbox.
+
+    :ivar type: The type of the shell execution environment. Always ``container_reference``.
+     Required. Default value is "container_reference".
+    :vartype type: str
+    :ivar container_id: The ID of the referenced container. Required.
+    :vartype container_id: str
+    """
+
+    type: Literal["container_reference"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the shell execution environment. Always ``container_reference``. Required. Default
+     value is \"container_reference\"."""
+    container_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the referenced container. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        container_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "container_reference"  # type: ignore
+
+
+class ToolboxShellNetworkPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Network access policy for an automatically provisioned toolbox shell container.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ToolboxShellNetworkPolicyDisabled
+
+    :ivar type: The type of network access policy. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of network access policy. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ToolboxShellNetworkPolicyDisabled(ToolboxShellNetworkPolicy, discriminator="disabled"):
+    """A network policy that disables outbound access from a toolbox shell container.
+
+    :ivar type: The type of network access policy. Always ``disabled``. Required. Default value is
+     "disabled".
+    :vartype type: str
+    """
+
+    type: Literal["disabled"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of network access policy. Always ``disabled``. Required. Default value is
+     \"disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "disabled"  # type: ignore
 
 
 class ToolboxSkill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -16166,6 +17646,121 @@ class VersionSelector(_Model):  # pylint: disable=docstring-keyword-should-match
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class WebIQPreviewTool(
+    Tool, discriminator="web_iq_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A WebIQ server-side tool.
+
+    :ivar type: The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.WEB_IQ_PREVIEW
+    :ivar project_connection_id: The ID of the WebIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: The label of the WebIQ MCP server to connect to. When omitted, the service
+     defaults to connection name extracted from project_connection_id.
+    :vartype server_label: str
+    :ivar require_approval: Whether the agent requires approval before executing actions. When
+     omitted, the service defaults to "always". Is either a MCPToolRequireApproval type or a str
+     type.
+    :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str
+    """
+
+    type: Literal[ToolType.WEB_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW."""
+    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the WebIQ project connection. Required."""
+    server_label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label of the WebIQ MCP server to connect to. When omitted, the service defaults to
+     connection name extracted from project_connection_id."""
+    require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the agent requires approval before executing actions. When omitted, the service
+     defaults to \"always\". Is either a MCPToolRequireApproval type or a str type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_connection_id: str,
+        server_label: Optional[str] = None,
+        require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.WEB_IQ_PREVIEW  # type: ignore
+
+
+class WebIQPreviewToolboxTool(
+    ToolboxTool, discriminator="web_iq_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A WebIQ tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. WEB_IQ_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.WEB_IQ_PREVIEW
+    :ivar project_connection_id: The ID of the WebIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: The label of the WebIQ MCP server to connect to. When omitted, the service
+     defaults to connection name extracted from project_connection_id.
+    :vartype server_label: str
+    :ivar require_approval: Whether the agent requires approval before executing actions. When
+     omitted, the service defaults to "always". Is either a MCPToolRequireApproval type or a str
+     type.
+    :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str
+    """
+
+    type: Literal[ToolboxToolType.WEB_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. WEB_IQ_PREVIEW."""
+    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the WebIQ project connection. Required."""
+    server_label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label of the WebIQ MCP server to connect to. When omitted, the service defaults to
+     connection name extracted from project_connection_id."""
+    require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the agent requires approval before executing actions. When omitted, the service
+     defaults to \"always\". Is either a MCPToolRequireApproval type or a str type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_connection_id: str,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        server_label: Optional[str] = None,
+        require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.WEB_IQ_PREVIEW  # type: ignore
 
 
 class WebSearchApproximateLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

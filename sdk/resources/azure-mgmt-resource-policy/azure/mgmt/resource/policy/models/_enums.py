@@ -121,6 +121,19 @@ class ExemptionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     scope."""
 
 
+class ExemptionManagementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode indicating how the policy exemption is managed. Possible values are Admin and
+    UserSelfServe.
+    """
+
+    ADMIN = "Admin"
+    """This mode means the exemption is managed by an administrator and requires permission for the
+    policy exemption action."""
+    USER_SELF_SERVE = "UserSelfServe"
+    """This mode means the exemption is managed by the user it applies to, through the self-serve
+    exemption settings on the policy assignment."""
+
+
 class ExternalEndpointResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The result of the external endpoint. Possible values are Succeeded and Failed."""
 
@@ -207,7 +220,7 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_ASSIGNED = "SystemAssigned"
     """Indicates that a system assigned identity is associated with the resource."""
     USER_ASSIGNED = "UserAssigned"
-    """Indicates that a system assigned identity is associated with the resource."""
+    """Indicates that a user assigned identity is associated with the resource."""
     NONE = "None"
     """Indicates that no identity is associated with the resource or that the existing identity should
     be removed."""
