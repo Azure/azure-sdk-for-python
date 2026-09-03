@@ -140,6 +140,7 @@ class _SessionBrowser(BaseHandler):
             return
         deadline = get_link_ready_deadline(timeout)
         if self._handler:
+            check_link_ready_deadline(deadline)
             self._handler.close()
 
         check_link_ready_deadline(deadline)

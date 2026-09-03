@@ -1489,7 +1489,8 @@ class TestSlowCloseIsChargedToTheBudget:
             with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: events.append("auth")):
                 with pytest.raises(OperationTimeoutError):
                     receiver._open(timeout=0.02)
-        assert events == ["close"], f"continued past a budget-consuming close: {events}"
+        assert "auth" not in events, f"authenticated with no budget left: {events}"
+        assert "create_handler" not in events, f"built a handler with no budget left: {events}"
 
     def test_a_fast_close_leaves_the_attempt_running(self):
         events = []

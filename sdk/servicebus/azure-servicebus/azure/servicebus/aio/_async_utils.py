@@ -129,3 +129,21 @@ async def close_handler_for_cleanup(close_coro, deadline):
             await asyncio.wait_for(close_coro, timeout=get_time_until_deadline(deadline))
     except Exception:  # pylint: disable=broad-except
         _log.warning("Handler cleanup did not complete; preserving the original error.", exc_info=True)
+
+
+async def await_with_deadline(coro, deadline, timeout_message):
+    """Await a coroutine, cancelling it once the deadline passes.
+
+    :param coroutine coro: The coroutine to await.
+    :param float or None deadline: The absolute deadline, or None when unbounded.
+    :param str timeout_message: Message for the raised error.
+    :rtype: any
+    :returns: Whatever the coroutine returns.
+    :raises ~azure.servicebus.exceptions.OperationTimeoutError: If the await outlives the deadline.
+    """
+    if deadline is None:
+        return await coro
+    try:
+        return await asyncio.wait_for(coro, timeout=get_time_until_deadline(deadline))
+    except (asyncio.TimeoutError, TimeoutError):
+        raise OperationTimeoutError(message=timeout_message) from None

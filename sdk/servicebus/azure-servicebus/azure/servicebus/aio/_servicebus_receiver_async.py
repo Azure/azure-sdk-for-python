@@ -57,6 +57,7 @@ from .._common.tracing import (
     SPAN_NAME_PEEK,
 )
 from ._async_utils import (
+    await_with_deadline,
     close_handler_for_cleanup,
     close_handler_with_deadline,
     create_authentication,
@@ -364,7 +365,13 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             await close_handler_with_deadline(self._handler, deadline)
 
         check_link_ready_deadline(deadline)
-        auth = None if self._connection else (await create_authentication(self))
+        auth = (
+            None
+            if self._connection
+            else await await_with_deadline(
+                create_authentication(self), deadline, "Timed out acquiring the AMQP credential."
+            )
+        )
         self._create_handler(auth)
         try:
             # The token fetch can use the budget, so re-check before opening; the open itself
@@ -373,7 +380,9 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             await open_handler_with_deadline(self._handler, self._connection, deadline)
             while True:
                 check_link_ready_deadline(deadline)
-                if await self._handler.client_ready_async():
+                if await await_with_deadline(
+                    self._handler.client_ready_async(), deadline, "Timed out waiting for the AMQP link to open."
+                ):
                     break
                 await asyncio.sleep(0.05)
             check_link_ready_deadline(deadline)
@@ -413,6 +422,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                 return []
             timeout_seconds = self._amqp_transport.TIMEOUT_FACTOR * remaining
             abs_timeout = self._amqp_transport.get_current_time(amqp_receive_client) + timeout_seconds
+            receive_deadline = abs_timeout
 
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
 
@@ -442,9 +452,10 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                     if not first_message_received and received_messages_queue.qsize() > 0 and received > 0:
                         # first message(s) received, continue receiving for some time
                         first_message_received = True
-                        abs_timeout = (
+                        abs_timeout = min(
                             self._amqp_transport.get_current_time(amqp_receive_client)
-                            + self._further_pull_receive_timeout
+                            + self._further_pull_receive_timeout,
+                            receive_deadline,
                         )
                 while not received_messages_queue.empty() and len(batch) < max_message_count:
                     batch.append(received_messages_queue.get())

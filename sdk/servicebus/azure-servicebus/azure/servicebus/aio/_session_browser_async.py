@@ -19,6 +19,7 @@ from .._common.utils import get_link_ready_deadline, check_link_ready_deadline
 from .._session_browser import _to_last_updated_ms, _page_request_body, _PAGE_SIZE
 from ..exceptions import OperationTimeoutError
 from ._async_utils import (
+    await_with_deadline,
     close_handler_for_cleanup,
     close_handler_with_deadline,
     create_authentication,
@@ -72,7 +73,13 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             await close_handler_with_deadline(self._handler, deadline)
 
         check_link_ready_deadline(deadline)
-        auth = None if self._connection else (await create_authentication(self))
+        auth = (
+            None
+            if self._connection
+            else await await_with_deadline(
+                create_authentication(self), deadline, "Timed out acquiring the AMQP credential."
+            )
+        )
         self._create_handler(auth)
         try:
             # The token fetch can use the budget, so re-check before opening; the open itself
@@ -81,7 +88,9 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             await open_handler_with_deadline(self._handler, self._connection, deadline)
             while True:
                 check_link_ready_deadline(deadline)
-                if await self._handler.client_ready_async():
+                if await await_with_deadline(
+                    self._handler.client_ready_async(), deadline, "Timed out waiting for the AMQP link to open."
+                ):
                     break
                 await asyncio.sleep(0.05)
             check_link_ready_deadline(deadline)

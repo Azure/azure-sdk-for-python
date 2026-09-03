@@ -362,6 +362,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             return
         deadline = get_link_ready_deadline(timeout)
         if self._handler and not self._handler._shutdown:
+            check_link_ready_deadline(deadline)
             self._handler.close()
 
         check_link_ready_deadline(deadline)
@@ -416,6 +417,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
                 return []
             timeout_time = self._amqp_transport.TIMEOUT_FACTOR * remaining
             abs_timeout = self._amqp_transport.get_current_time(amqp_receive_client) + timeout_time
+            receive_deadline = abs_timeout
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
 
             while not received_messages_queue.empty() and len(batch) < max_message_count:
@@ -444,9 +446,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
                     if not first_message_received and received_messages_queue.qsize() > 0 and received > 0:
                         # first message(s) received, continue receiving for some time
                         first_message_received = True
-                        abs_timeout = (
+                        abs_timeout = min(
                             self._amqp_transport.get_current_time(amqp_receive_client)
-                            + self._further_pull_receive_timeout
+                            + self._further_pull_receive_timeout,
+                            receive_deadline,
                         )
                 while not received_messages_queue.empty() and len(batch) < max_message_count:
                     batch.append(received_messages_queue.get())
