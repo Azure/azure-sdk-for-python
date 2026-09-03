@@ -139,15 +139,11 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
                 return await ctx.exit_for_recovery()
 
             # 2) Explicit stop. The DURABLE stop marker is the single source of
-            #    truth and is checked EVERY iteration, independently of
-            #    ``ctx.cancel``. A cancel routed to a *different* replica cannot
-            #    set this process's ``ctx.cancel`` event, but it writes the marker
-            #    — so the replica that actually owns the run still observes it here
-            #    and stops. (On the owning replica, ``run.cancel()`` additionally
-            #    wakes the tick sleep below so the stop is noticed within a tick
-            #    rather than after a full interval.) The marker also survives the
-            #    per-turn watchdog and crash/recovery, so it never races the
-            #    checkpoint's ETag.
+            #    truth and is checked EVERY iteration. The cancel endpoint writes
+            #    the marker (it does NOT rely on an in-process signal), so a stop
+            #    is observed here regardless of which replica received the cancel
+            #    request. The marker also survives the per-turn watchdog and
+            #    crash/recovery, so it never races the checkpoint's ETag.
             if await store.get_item(stop_key) is not None:
                 logger.info("stop requested — stopping at iteration %d", n)
                 return {"name": name, "iterations": n, "stopped": True}

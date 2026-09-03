@@ -41,7 +41,10 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.core.storage import FoundryStateStore
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
+from azure.ai.agentserver.core.tasks import (
+    TaskConflictError,
+    set_resilient_tasks_enabled,
+)
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
@@ -107,9 +110,18 @@ async def handle_invoke(request: Request) -> Response:
     finally:
         await store.aclose()
 
-    await hello_forever.start(
-        task_id=task_id, input={"name": name, "session_id": session_id}
-    )
+    try:
+        await hello_forever.start(
+            task_id=task_id, input={"name": name, "session_id": session_id}
+        )
+    except TaskConflictError:
+        # The invocation id is caller-supplied and may be retried; a task that is
+        # already in progress (or completed) for this session+id is not an error
+        # to the caller — report the existing run rather than 500ing.
+        return JSONResponse(
+            {"status": "already_running", "invocation_id": invocation_id},
+            status_code=409,
+        )
 
     return JSONResponse(
         {"status": "started", "invocation_id": invocation_id}, status_code=202
@@ -169,8 +181,9 @@ async def handle_cancel(request: Request) -> Response:
     ``stopped`` and would poison a *later* legitimate start with the same
     session/id (the worker would see the stale marker and exit immediately).
     Existence is decided by the **durable record** seeded at invoke time (visible
-    on every replica), not the replica-local ``get_active_run()``. Only then do
-    we write the marker and wake the running turn.
+    on every replica), not the replica-local ``get_active_run()``. The worker
+    re-reads the stop marker at the top of every iteration, so it stops within one
+    tick without any in-process wake signal.
     """
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
@@ -189,8 +202,6 @@ async def handle_cancel(request: Request) -> Response:
     finally:
         await store.aclose()
 
-    if run is not None:
-        await run.cancel()  # wake the worker so it notices the stop marker promptly
     return JSONResponse({"status": "cancelling", "invocation_id": invocation_id})
 
 

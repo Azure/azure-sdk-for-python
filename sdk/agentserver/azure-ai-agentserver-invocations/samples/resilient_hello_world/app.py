@@ -38,7 +38,10 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.core.storage import FoundryStateStore
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
+from azure.ai.agentserver.core.tasks import (
+    TaskConflictError,
+    set_resilient_tasks_enabled,
+)
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
@@ -91,12 +94,35 @@ async def handle_invoke(request: Request) -> Response:
     session_id: str = request.state.session_id
     task_id = durable_task_id(session_id, invocation_id)
 
+    # Persist an initial durable checkpoint BEFORE starting the task so the
+    # invocation is visible on every replica immediately. Without it a poll routed
+    # to a different replica during the pre-first-checkpoint window sees
+    # get_active_run()==None (the live lease may be owned elsewhere) and would
+    # wrongly 404. Only seed when absent so a retry never resets progress.
+    store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
+    try:
+        if await store.get_item(task_id) is None:
+            await store.set_item(
+                task_id, {"name": name, "steps": steps, "completed_steps": 0}
+            )
+    finally:
+        await store.aclose()
+
     # start() schedules the task on the TaskManager and returns right away — the
     # work is NOT tied to this HTTP request's lifetime.
-    await hello_world.start(
-        task_id=task_id,
-        input={"name": name, "steps": steps, "session_id": session_id},
-    )
+    try:
+        await hello_world.start(
+            task_id=task_id,
+            input={"name": name, "steps": steps, "session_id": session_id},
+        )
+    except TaskConflictError:
+        # The invocation id is caller-supplied and may be retried; a task already
+        # in progress (or completed) for this session+id is not an error — report
+        # the existing run rather than 500ing.
+        return JSONResponse(
+            {"status": "already_started", "invocation_id": invocation_id},
+            status_code=409,
+        )
 
     return JSONResponse(
         {"status": "started", "invocation_id": invocation_id, "total_steps": steps},
@@ -122,14 +148,8 @@ async def handle_get(request: Request) -> Response:
         await store.aclose()
 
     if item is None:
-        # No checkpoint yet. The task may be active but still on its first step
-        # (it sleeps before the first checkpoint), so distinguish "running with
-        # zero completed steps" from "unknown invocation".
-        run = await hello_world.get_active_run(task_id)
-        if run is not None:
-            return JSONResponse(
-                {"status": "in_progress", "invocation_id": invocation_id, "completed_steps": 0}
-            )
+        # A started invocation always has a durable record (seeded by the invoke
+        # handler), so an absent record means a genuinely unknown invocation.
         return JSONResponse(
             {"status": "not_found", "invocation_id": invocation_id}, status_code=404
         )
