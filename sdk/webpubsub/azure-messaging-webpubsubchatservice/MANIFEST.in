@@ -3,5 +3,6 @@ include LICENSE
 include azure/messaging/webpubsubservice/chat/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
+recursive-include doc *.rst
 include azure/__init__.py
 include azure/messaging/__init__.py

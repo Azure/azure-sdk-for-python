@@ -285,6 +285,8 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
         wps_chat_connection_string,
         wps_chat_disable_local_auth,
     ):
+        if wps_chat_disable_local_auth.lower() == "true":
+            pytest.skip("Local authentication is disabled")
         token_client = self.create_client(wps_chat_endpoint)
         key_client = None
         try:

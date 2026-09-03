@@ -99,4 +99,5 @@ WebPubSubChatAccessPreparer = functools.partial(
         "Endpoint=https://myservice.webpubsub.azure.com;"
         "AccessKey=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGH;"
     ),
+    wps_chat_disable_local_auth="false",
 )
