@@ -1429,7 +1429,38 @@ class TestAsyncSlowCloseIsChargedToTheBudget:
             with patch.object(async_receiver_module, "create_authentication", fake_auth):
                 with pytest.raises(OperationTimeoutError):
                     await receiver._open(timeout=0.02)
-        assert events == ["close"], f"continued past a budget-consuming close: {events}"
+        # The budget was already spent on entry, so the close is now cancelled rather than
+        # awaited; either way the attempt must stop before authentication.
+        assert "auth" not in events, f"authenticated with no budget left: {events}"
+        assert "create_handler" not in events, f"built a handler with no budget left: {events}"
+
+    @pytest.mark.asyncio
+    async def test_a_hanging_close_is_cancelled_at_the_deadline(self):
+        # close_async awaits link detach, CBS close, session end and connection close, so a
+        # stalled handler would otherwise hold link acquisition past the attempt budget.
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        handler = MagicMock()
+        handler._shutdown = False
+        closed_fully = []
+
+        async def hanging_close():
+            await asyncio.sleep(1.0)
+            closed_fully.append(1)
+
+        handler.close_async = hanging_close
+        receiver._create_handler = lambda auth: None
+        receiver._handler = handler
+
+        async def fake_auth(_c):
+            return None
+
+        with patch.object(async_receiver_module, "create_authentication", fake_auth):
+            with pytest.raises(OperationTimeoutError):
+                await receiver._open(timeout=0.05)
+        assert not closed_fully, "close ran to completion instead of being cancelled"
 
     @pytest.mark.asyncio
     async def test_a_fast_close_leaves_the_attempt_running(self):

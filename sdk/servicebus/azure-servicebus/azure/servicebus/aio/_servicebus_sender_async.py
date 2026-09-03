@@ -42,7 +42,7 @@ from .._common.tracing import (
     SPAN_NAME_SCHEDULE,
     TraceAttributes,
 )
-from ._async_utils import create_authentication, open_handler_with_deadline
+from ._async_utils import create_authentication, close_handler_with_deadline, open_handler_with_deadline
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -211,7 +211,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             return
         deadline = get_link_ready_deadline(timeout)
         if self._handler:
-            await self._handler.close_async()
+            await close_handler_with_deadline(self._handler, deadline)
             check_link_ready_deadline(deadline)
 
         auth = None if self._connection else (await create_authentication(self))

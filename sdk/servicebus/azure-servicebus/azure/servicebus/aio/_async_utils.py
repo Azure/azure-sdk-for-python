@@ -88,3 +88,24 @@ async def open_handler_with_deadline(handler, connection, deadline):
         await asyncio.wait_for(handler.open_async(connection=connection), timeout=get_time_until_deadline(deadline))
     except (asyncio.TimeoutError, TimeoutError):
         raise OperationTimeoutError(message="Timed out waiting for the AMQP link to open.") from None
+
+
+async def close_handler_with_deadline(handler, deadline):
+    """Close a previous AMQP handler, cancelling the close once the deadline passes.
+
+    Closing awaits several shutdown operations - link detach, CBS close, session end and
+    connection close - so a stalled handler would otherwise hold link acquisition past the
+    attempt budget. The handler is being replaced either way, so a cancelled close only
+    leaves state that is about to be discarded.
+
+    :param AMQPClientAsync handler: The AMQP client to close.
+    :param float or None deadline: The absolute deadline, or None when unbounded.
+    :raises ~azure.servicebus.exceptions.OperationTimeoutError: If the close outlives the deadline.
+    """
+    if deadline is None:
+        await handler.close_async()
+        return
+    try:
+        await asyncio.wait_for(handler.close_async(), timeout=get_time_until_deadline(deadline))
+    except (asyncio.TimeoutError, TimeoutError):
+        raise OperationTimeoutError(message="Timed out closing the previous AMQP link.") from None
