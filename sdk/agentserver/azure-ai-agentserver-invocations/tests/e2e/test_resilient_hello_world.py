@@ -96,6 +96,11 @@ async def _seed_item(store_name: str, key: str, value: dict):
         return ref.etag
 
 
+# A fixed session id so the tests read the same session-scoped store the task
+# writes to (the host injects this from ``?agent_session_id=`` at runtime).
+_SESSION = "test-hw-session"
+
+
 @pytest.mark.asyncio
 async def test_runs_to_completion_and_checkpoints_every_step(
     task_manager,
@@ -110,13 +115,13 @@ async def test_runs_to_completion_and_checkpoints_every_step(
     task_id = "hw-complete"
     run = await hw.hello_world.start(
         task_id=task_id,
-        input={"name": "alice", "steps": 3},
+        input={"name": "alice", "steps": 3, "session_id": _SESSION},
     )
     result = await run.result()
 
     assert result == {"name": "alice", "steps": 3, "status": "complete"}
 
-    item = await _load_item(hw.CHECKPOINT_STORE, task_id)
+    item = await _load_item(hw.checkpoint_store_name(_SESSION), task_id)
     assert item is not None
     assert item.value.get("completed_steps") == 3
     assert item.value.get("steps") == 3
@@ -138,21 +143,22 @@ async def test_completed_checkpoint_skips_all_work(
     monkeypatch.setattr(hw, "_STEP_DELAY", 0.0)
 
     task_id = "hw-already-done"
+    store_name = hw.checkpoint_store_name(_SESSION)
     seeded_etag = await _seed_item(
-        hw.CHECKPOINT_STORE,
+        store_name,
         task_id,
         {"name": "bob", "steps": 3, "completed_steps": 3},
     )
 
     run = await hw.hello_world.start(
         task_id=task_id,
-        input={"name": "bob", "steps": 3},
+        input={"name": "bob", "steps": 3, "session_id": _SESSION},
     )
     result = await run.result()
 
     assert result["status"] == "complete"
 
-    item = await _load_item(hw.CHECKPOINT_STORE, task_id)
+    item = await _load_item(store_name, task_id)
     assert item is not None
     assert item.value.get("completed_steps") == 3
     # No step ran, so no checkpoint write happened → ETag is unchanged.
@@ -171,21 +177,22 @@ async def test_partial_checkpoint_resumes_at_next_step(
     monkeypatch.setattr(hw, "_STEP_DELAY", 0.0)
 
     task_id = "hw-partial"
+    store_name = hw.checkpoint_store_name(_SESSION)
     seeded_etag = await _seed_item(
-        hw.CHECKPOINT_STORE,
+        store_name,
         task_id,
         {"name": "carol", "steps": 4, "completed_steps": 2},
     )
 
     run = await hw.hello_world.start(
         task_id=task_id,
-        input={"name": "carol", "steps": 4},
+        input={"name": "carol", "steps": 4, "session_id": _SESSION},
     )
     result = await run.result()
 
     assert result == {"name": "carol", "steps": 4, "status": "complete"}
 
-    item = await _load_item(hw.CHECKPOINT_STORE, task_id)
+    item = await _load_item(store_name, task_id)
     assert item is not None
     assert item.value.get("completed_steps") == 4
     # Work continued from the seed, so the checkpoint was rewritten.

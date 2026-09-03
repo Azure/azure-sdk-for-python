@@ -250,31 +250,48 @@ def _call_name(node: ast.Call) -> str | None:
     return None
 
 
+def _module_level_call_statements(source: str):
+    """Yield ``(lineno, call_node)`` for calls that run at import time.
+
+    Only *direct* module-level statements are considered — a bare expression
+    statement (``set_resilient_tasks_enabled(True)``) or the call on the
+    right-hand side of a module-level assignment (``app = Host()``). Calls nested
+    inside a ``def``/``class``/``if``/``with`` are ignored, because they do not
+    (necessarily) execute on import; ``ast.walk`` would wrongly accept a call
+    defined inside an uncalled helper.
+    """
+    for stmt in ast.parse(source).body:
+        value = None
+        if isinstance(stmt, ast.Expr):
+            value = stmt.value
+        elif isinstance(stmt, (ast.Assign, ast.AnnAssign)):
+            value = stmt.value
+        if isinstance(value, ast.Call):
+            yield stmt.lineno, value
+
+
 def _first_enable_and_host_lines(source: str) -> tuple[int | None, int | None]:
     """Locate the real opt-in call and the host construction in source order.
 
     Returns ``(enable_line, host_line)`` where ``enable_line`` is the earliest
-    line of a genuine ``set_resilient_tasks_enabled(True)`` **call** (a literal
+    module-level ``set_resilient_tasks_enabled(True)`` **call** (a literal
     ``True`` argument — not a comment or a call with a different value) and
-    ``host_line`` is the earliest line constructing an
-    ``InvocationAgentServerHost``. ``None`` means "not found".
+    ``host_line`` is the earliest module-level ``InvocationAgentServerHost``
+    construction. ``None`` means "not found at import time".
     """
-    tree = ast.parse(source)
     enable_line: int | None = None
     host_line: int | None = None
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call):
-            continue
-        name = _call_name(node)
+    for lineno, call in _module_level_call_statements(source):
+        name = _call_name(call)
         if name == "set_resilient_tasks_enabled":
             enables_true = any(
-                isinstance(a, ast.Constant) and a.value is True for a in node.args
+                isinstance(a, ast.Constant) and a.value is True for a in call.args
             )
-            if enables_true and (enable_line is None or node.lineno < enable_line):
-                enable_line = node.lineno
+            if enables_true and enable_line is None:
+                enable_line = lineno
         elif name == "InvocationAgentServerHost":
-            if host_line is None or node.lineno < host_line:
-                host_line = node.lineno
+            if host_line is None:
+                host_line = lineno
     return enable_line, host_line
 
 

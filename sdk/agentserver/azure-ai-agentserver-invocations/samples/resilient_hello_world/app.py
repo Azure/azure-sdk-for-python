@@ -14,16 +14,18 @@ Run it::
     pip install -r requirements.txt
     python app.py
 
-Then, in another shell::
+Then, in another shell (pass ``?agent_session_id=`` to isolate a run's
+checkpoints; GET/cancel must use the same session)::
 
     # start a run — note the invocation_id in the response (also the
     # X-Agent-Invocation-Id response header)
     curl -s -XPOST -H "Content-Type: application/json" \\
-        -d '{"name": "Ada", "steps": 10}' http://localhost:8088/invocations
+        -d '{"name": "Ada", "steps": 10}' \\
+        "http://localhost:8088/invocations?agent_session_id=demo"
     # -> {"status": "started", "invocation_id": "<inv>", "total_steps": 10}
 
-    # poll it (repeat every couple seconds)
-    curl -s "http://localhost:8088/invocations/<inv>"
+    # poll it (repeat every couple seconds) — same session id
+    curl -s "http://localhost:8088/invocations/<inv>?agent_session_id=demo"
     # -> {"status": "in_progress", "completed_steps": 3, "total_steps": 10}
     # ... eventually -> {"status": "completed", "completed_steps": 10, ...}
 """
@@ -40,9 +42,9 @@ from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import CHECKPOINT_STORE, hello_world
+    from .agent import checkpoint_store_name, hello_world
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import CHECKPOINT_STORE, hello_world
+    from agent import checkpoint_store_name, hello_world
 
 # Resilient tasks (durable execution + crash recovery) are strictly opt-in as of
 # azure-ai-agentserver-core 2.2.0b1: ``AgentServerHost`` builds the
@@ -66,12 +68,19 @@ async def handle_invoke(request: Request) -> Response:
     steps = int(data.get("steps", 10))
 
     # Key the durable task by this turn's invocation id (the platform-defined
-    # identity that GET /invocations/{invocation_id} addresses).
+    # identity that GET /invocations/{invocation_id} addresses). The session id
+    # scopes the checkpoint store so runs in different sessions cannot collide on
+    # a reused invocation id; carry it in the input so recovery uses the same
+    # scope.
     invocation_id: str = request.state.invocation_id
+    session_id: str = request.state.session_id
 
     # start() schedules the task on the TaskManager and returns right away — the
     # work is NOT tied to this HTTP request's lifetime.
-    await hello_world.start(task_id=invocation_id, input={"name": name, "steps": steps})
+    await hello_world.start(
+        task_id=invocation_id,
+        input={"name": name, "steps": steps, "session_id": session_id},
+    )
 
     return JSONResponse(
         {"status": "started", "invocation_id": invocation_id, "total_steps": steps},
@@ -83,10 +92,12 @@ async def handle_invoke(request: Request) -> Response:
 async def handle_get(request: Request) -> Response:
     """Return a JSON status snapshot from the durable checkpoint (poll this)."""
     # The invocations protocol addresses the run by the {invocation_id} path
-    # segment, surfaced here as request.state.invocation_id.
+    # segment, surfaced here as request.state.invocation_id. The session id
+    # selects the same session-scoped checkpoint store the task wrote to.
     invocation_id: str = request.state.invocation_id
+    session_id: str = request.state.session_id
 
-    store = await FoundryStateStore.get_or_create(CHECKPOINT_STORE)
+    store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
     try:
         item = await store.get_item(invocation_id)
     finally:

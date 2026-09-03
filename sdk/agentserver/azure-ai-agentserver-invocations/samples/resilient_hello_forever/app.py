@@ -14,19 +14,22 @@ Run it::
     pip install -r requirements.txt
     python app.py
 
-Then (use the invocation_id from the POST response / X-Agent-Invocation-Id)::
+Then (use the invocation_id from the POST response / X-Agent-Invocation-Id, and
+the same ``?agent_session_id=`` on every call so poll/cancel hit the same
+session-scoped store)::
 
     # start the forever worker
     curl -s -XPOST -H "Content-Type: application/json" \\
-        -d '{"name": "Ada"}' http://localhost:8088/invocations
+        -d '{"name": "Ada"}' \\
+        "http://localhost:8088/invocations?agent_session_id=demo"
     # -> {"status": "started", "invocation_id": "<inv>"}
 
     # poll it — iterations keep climbing, status stays "running"
-    curl -s "http://localhost:8088/invocations/<inv>"
+    curl -s "http://localhost:8088/invocations/<inv>?agent_session_id=demo"
     # -> {"status": "running", "iterations": 12}
 
     # stop it
-    curl -s -XPOST "http://localhost:8088/invocations/<inv>/cancel"
+    curl -s -XPOST "http://localhost:8088/invocations/<inv>/cancel?agent_session_id=demo"
     # -> {"status": "cancelling", "invocation_id": "<inv>"}
 """
 
@@ -42,9 +45,9 @@ from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import CHECKPOINT_STORE, STOP_SUFFIX, hello_forever
+    from .agent import STOP_SUFFIX, checkpoint_store_name, hello_forever
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import CHECKPOINT_STORE, STOP_SUFFIX, hello_forever
+    from agent import STOP_SUFFIX, checkpoint_store_name, hello_forever
 
 # Resilient tasks (durable execution + crash recovery) are strictly opt-in as of
 # azure-ai-agentserver-core 2.2.0b1: ``AgentServerHost`` builds the
@@ -67,9 +70,15 @@ async def handle_invoke(request: Request) -> Response:
     name = str(data.get("name", "world"))
 
     # Key the worker by this turn's invocation id (the platform-defined identity
-    # that GET/cancel address via the {invocation_id} path).
+    # that GET/cancel address via the {invocation_id} path). The session id
+    # scopes the checkpoint store so workers in different sessions cannot collide
+    # on a reused invocation id; carry it in the input so recovery uses the same
+    # scope.
     invocation_id: str = request.state.invocation_id
-    await hello_forever.start(task_id=invocation_id, input={"name": name})
+    session_id: str = request.state.session_id
+    await hello_forever.start(
+        task_id=invocation_id, input={"name": name, "session_id": session_id}
+    )
 
     return JSONResponse(
         {"status": "started", "invocation_id": invocation_id}, status_code=202
@@ -88,8 +97,9 @@ async def handle_get(request: Request) -> Response:
     every replica agrees on the terminal state.
     """
     invocation_id: str = request.state.invocation_id
+    session_id: str = request.state.session_id
 
-    store = await FoundryStateStore.get_or_create(CHECKPOINT_STORE)
+    store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
     try:
         item = await store.get_item(invocation_id)
         stop_marker = await store.get_item(f"{invocation_id}{STOP_SUFFIX}")
@@ -120,8 +130,9 @@ async def handle_cancel(request: Request) -> Response:
     to wake promptly from its sleep.
     """
     invocation_id: str = request.state.invocation_id
+    session_id: str = request.state.session_id
 
-    store = await FoundryStateStore.get_or_create(CHECKPOINT_STORE)
+    store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
     try:
         await store.set_item(f"{invocation_id}{STOP_SUFFIX}", {"stop": True})
     finally:

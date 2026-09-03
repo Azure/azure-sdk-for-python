@@ -22,18 +22,21 @@ pip install -r requirements.txt
 python app.py            # listens on http://localhost:8088
 ```
 
-Start a run (returns immediately — the task keeps running in the background):
+Start a run (returns immediately — the task keeps running in the background).
+Pass `?agent_session_id=` to isolate this run's checkpoints; use the **same**
+session id when you poll:
 
 ```bash
 curl -s -XPOST -H "Content-Type: application/json" \
-    -d '{"name": "Ada", "steps": 10}' http://localhost:8088/invocations
+    -d '{"name": "Ada", "steps": 10}' \
+    "http://localhost:8088/invocations?agent_session_id=demo"
 # -> {"status": "started", "invocation_id": "<inv>", "total_steps": 10}
 ```
 
-Poll it by that invocation id (repeat every couple of seconds):
+Poll it by that invocation id (repeat every couple of seconds, same session):
 
 ```bash
-curl -s "http://localhost:8088/invocations/<inv>"
+curl -s "http://localhost:8088/invocations/<inv>?agent_session_id=demo"
 # -> {"status": "in_progress", "completed_steps": 3, "total_steps": 10}
 # ... while running you see completed_steps climb.
 # When it finishes:

@@ -14,7 +14,9 @@ restarts it and the framework re-enters this task with
 ``ctx.entry_mode == "recovered"`` — the handler reads ``completed_steps`` from
 the checkpoint and resumes at the next step instead of starting over.
 
-Input schema: ``{"name": str, "steps": int?}``
+Input schema: ``{"name": str, "steps": int?}``. The host also injects the
+invocation's ``session_id`` into the durable input so the checkpoint store is
+isolated per session (see ``checkpoint_store_name``).
 
 Environment:
 
@@ -36,24 +38,36 @@ logger = logging.getLogger(__name__)
 
 _STEP_DELAY = float(os.environ.get("STEP_DELAY", "2"))
 
-# The state store that holds each run's durable checkpoint. Shared with app.py
-# so the poll endpoint can read the same progress.
-CHECKPOINT_STORE = "hello_world_checkpoints"
+
+def checkpoint_store_name(session_id: str) -> str:
+    """Return the **session-isolated** checkpoint store name.
+
+    ``FoundryStateStore`` is agent-scoped and has no built-in per-session
+    isolation, so the store is namespaced by the invocation's session id (as the
+    other resilient samples do). This keeps one session's progress from being
+    read or overwritten by another — important because POST accepts a
+    caller-supplied invocation id that a different session could otherwise reuse
+    as a key. Shared with app.py so the poll endpoint reads the same scope.
+    """
+    return f"resilient-hello-world/{session_id}"
 
 
 @task(name="hello_world")
 async def hello_world(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Count through ``steps`` steps, checkpointing after each one.
 
-    The checkpoint (``completed_steps``) lives in a durable state store keyed by
-    ``ctx.task_id``, so a crash mid-run resumes from the next step.
+    The checkpoint (``completed_steps``) lives in a durable, session-scoped state
+    store keyed by ``ctx.task_id``, so a crash mid-run resumes from the next step.
     """
 
     data = ctx.input or {}
     name = str(data.get("name", "world"))
     steps = int(data.get("steps", 10))
+    # ``session_id`` is carried in the durable input so recovery re-enters with
+    # the same store scope as the original run.
+    session_id = str(data.get("session_id", ""))
 
-    store = await FoundryStateStore.get_or_create(CHECKPOINT_STORE)
+    store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
     try:
         item = await store.get_item(ctx.task_id)
         completed = int((item.value.get("completed_steps", 0) if item else 0) or 0)
@@ -83,4 +97,4 @@ async def hello_world(ctx: TaskContext[dict]) -> dict[str, Any]:
         await store.aclose()
 
 
-__all__ = ["hello_world", "CHECKPOINT_STORE"]
+__all__ = ["hello_world", "checkpoint_store_name"]

@@ -16,14 +16,19 @@ The body is a `while True` loop, plus the three things such a loop needs:
 2. **Graceful shutdown** — on redeploy / SIGTERM the framework sets
    `ctx.shutdown`; the loop does `return await ctx.exit_for_recovery()` to release
    the lease cleanly so the next instance re-enters and continues.
-3. **A stop path** — an explicit cancel sets `ctx.cancel` with
-   `ctx.cancel_requested`; the loop returns terminally so it can actually be
-   stopped.
+3. **A stop path** — an explicit cancel writes a durable *stop marker* to the
+   checkpoint store; the loop re-reads that marker every iteration (independently
+   of `ctx.cancel`) and returns terminally, so it can be stopped on demand even
+   when the cancel lands on a different replica than the one running the loop.
 
-It also sets `timeout=timedelta(days=7)` (the maximum per-turn budget), because
-each *turn* is watchdog-bounded (default 1 day). When any interruption occurs —
-crash, redeploy, or turn-budget expiry — the task is re-entered with
-`ctx.entry_mode == "recovered"` and resumes from its checkpointed iteration.
+It also sets `timeout=timedelta(days=7)` (the maximum per-turn budget). The
+framework's per-turn watchdog is *cooperative*: at the budget it only sets
+`ctx.timeout_exceeded` / `ctx.cancel` — it does **not** forcibly end the turn,
+and this loop deliberately keeps ticking rather than treating that as a stop.
+Re-entry with `ctx.entry_mode == "recovered"` happens on **crash** or
+**redeploy** (via `exit_for_recovery` on `ctx.shutdown`), resuming from the
+checkpointed iteration; raising the budget to the 7-day maximum just avoids noisy
+watchdog signals for a task meant to run indefinitely.
 
 ## Files
 
@@ -41,17 +46,19 @@ python app.py
 ```
 
 ```bash
-# start the forever worker (note the invocation_id in the response)
+# start the forever worker (note the invocation_id in the response). Pass the
+# same ?agent_session_id= on every call so poll/cancel hit the same store.
 curl -s -XPOST -H "Content-Type: application/json" \
-    -d '{"name": "Ada"}' http://localhost:8088/invocations
+    -d '{"name": "Ada"}' \
+    "http://localhost:8088/invocations?agent_session_id=demo"
 # -> {"status": "started", "invocation_id": "<inv>"}
 
 # poll — iterations keep climbing, status stays "running"
-curl -s "http://localhost:8088/invocations/<inv>"
+curl -s "http://localhost:8088/invocations/<inv>?agent_session_id=demo"
 # -> {"status": "running", "iterations": 12}
 
 # stop it
-curl -s -XPOST "http://localhost:8088/invocations/<inv>/cancel"
+curl -s -XPOST "http://localhost:8088/invocations/<inv>/cancel?agent_session_id=demo"
 # -> {"status": "cancelling", "invocation_id": "<inv>"}
 ```
 

@@ -106,6 +106,11 @@ async def _wait_for_iterations(store_name: str, key: str, minimum: int, timeout:
     )
 
 
+# A fixed session id so the tests read the same session-scoped store the worker
+# writes to (the host injects this from ``?agent_session_id=`` at runtime).
+_SESSION = "test-hf-session"
+
+
 @pytest.mark.asyncio
 async def test_ticks_then_stops_on_cancel_with_marker(
     task_manager,
@@ -118,14 +123,17 @@ async def test_ticks_then_stops_on_cancel_with_marker(
     monkeypatch.setattr(hf, "_TICK", 0.01)
 
     task_id = "hf-stop"
-    run = await hf.hello_forever.start(task_id=task_id, input={"name": "alice"})
+    store_name = hf.checkpoint_store_name(_SESSION)
+    run = await hf.hello_forever.start(
+        task_id=task_id, input={"name": "alice", "session_id": _SESSION}
+    )
 
     # Let it tick a few times so there is real progress to stop.
-    reached = await _wait_for_iterations(hf.CHECKPOINT_STORE, task_id, minimum=2)
+    reached = await _wait_for_iterations(store_name, task_id, minimum=2)
 
     # Request a stop: write the durable marker, then signal cancel. The worker
     # only treats cancel as a real stop when the marker is present.
-    await _seed_item(hf.CHECKPOINT_STORE, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
+    await _seed_item(store_name, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
     await run.cancel()
 
     result = await asyncio.wait_for(run.result(), timeout=5.0)
@@ -152,12 +160,15 @@ async def test_stops_on_marker_without_local_cancel(
     monkeypatch.setattr(hf, "_TICK", 0.01)
 
     task_id = "hf-marker-only"
-    run = await hf.hello_forever.start(task_id=task_id, input={"name": "carol"})
+    store_name = hf.checkpoint_store_name(_SESSION)
+    run = await hf.hello_forever.start(
+        task_id=task_id, input={"name": "carol", "session_id": _SESSION}
+    )
 
-    await _wait_for_iterations(hf.CHECKPOINT_STORE, task_id, minimum=2)
+    await _wait_for_iterations(store_name, task_id, minimum=2)
 
     # Write ONLY the durable stop marker — do not call run.cancel().
-    await _seed_item(hf.CHECKPOINT_STORE, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
+    await _seed_item(store_name, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
 
     result = await asyncio.wait_for(run.result(), timeout=5.0)
     assert result["stopped"] is True
@@ -176,15 +187,18 @@ async def test_resumes_from_existing_checkpoint(
     monkeypatch.setattr(hf, "_TICK", 0.01)
 
     task_id = "hf-resume"
-    await _seed_item(hf.CHECKPOINT_STORE, task_id, {"name": "bob", "iterations": 5})
+    store_name = hf.checkpoint_store_name(_SESSION)
+    await _seed_item(store_name, task_id, {"name": "bob", "iterations": 5})
 
-    run = await hf.hello_forever.start(task_id=task_id, input={"name": "bob"})
+    run = await hf.hello_forever.start(
+        task_id=task_id, input={"name": "bob", "session_id": _SESSION}
+    )
 
     # It must continue past the seeded cursor rather than counting up from 1.
-    reached = await _wait_for_iterations(hf.CHECKPOINT_STORE, task_id, minimum=6)
+    reached = await _wait_for_iterations(store_name, task_id, minimum=6)
     assert reached >= 6
 
-    await _seed_item(hf.CHECKPOINT_STORE, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
+    await _seed_item(store_name, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
     await run.cancel()
 
     result = await asyncio.wait_for(run.result(), timeout=5.0)

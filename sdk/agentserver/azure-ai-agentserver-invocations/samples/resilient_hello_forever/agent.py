@@ -16,16 +16,22 @@ loop needs to be a well-behaved LRA:
    terminally, so the worker can actually be stopped on demand — even when the
    cancel request lands on a different replica than the one running the loop.
 
-It also sets ``timeout=timedelta(days=7)`` — the maximum per-turn budget — so the
-per-turn watchdog (default 1 day) rarely interrupts it; when any interruption
-does occur (crash, redeploy, or turn-budget expiry) the task is re-entered with
-``ctx.entry_mode == "recovered"`` and resumes from its checkpointed iteration.
+It also sets ``timeout=timedelta(days=7)`` — the maximum per-turn budget. The
+framework's per-turn watchdog is *cooperative*: when the budget is reached it
+only sets ``ctx.timeout_exceeded``/``ctx.cancel``; it does not forcibly end the
+turn. This loop deliberately does not treat that as a stop, so it simply keeps
+ticking. Re-entry with ``ctx.entry_mode == "recovered"`` happens on **crash** or
+**redeploy** (via ``exit_for_recovery`` on ``ctx.shutdown``), and the worker
+resumes from its checkpointed iteration. Raising the budget to the 7-day maximum
+just avoids noisy watchdog signals for a task that is meant to run indefinitely.
 
-Progress (the ``iterations`` cursor) is checkpointed to a durable state store
-(``FoundryStateStore``, which uses a local on-disk backend when running outside
-Foundry — so no Azure resources are required to run this locally).
+Progress (the ``iterations`` cursor) is checkpointed to a durable, session-scoped
+state store (``FoundryStateStore``, which uses a local on-disk backend when
+running outside Foundry — so no Azure resources are required to run this locally).
 
-Input schema: ``{"name": str}``
+Input schema: ``{"name": str}``. The host also injects the invocation's
+``session_id`` into the durable input so the checkpoint store is isolated per
+session (see ``checkpoint_store_name``).
 
 Environment:
 
@@ -47,14 +53,23 @@ logger = logging.getLogger(__name__)
 
 _TICK = float(os.environ.get("TICK_SECONDS", "2"))
 
-# The state store that holds each worker's durable checkpoint. Shared with app.py
-# so the poll endpoint can read the same progress.
-CHECKPOINT_STORE = "hello_forever_checkpoints"
+
+def checkpoint_store_name(session_id: str) -> str:
+    """Return the **session-isolated** checkpoint store name.
+
+    ``FoundryStateStore`` is agent-scoped and has no built-in per-session
+    isolation, so the store is namespaced by the invocation's session id (as the
+    other resilient samples do). This keeps one session's worker from being read
+    or stopped by another — important because POST accepts a caller-supplied
+    invocation id that a different session could otherwise reuse as a key. Shared
+    with app.py so the poll/cancel endpoints read the same scope.
+    """
+    return f"resilient-hello-forever/{session_id}"
+
 
 # Suffix for the durable "stop" marker key. The cancel endpoint (app.py) writes
-# this key; the worker checks it to decide whether an observed cancel signal is a
-# real stop request. Keeping it in a SEPARATE key means the cancel write never
-# races the checkpoint's ETag.
+# this key; the worker checks it to decide whether to stop. Keeping it in a
+# SEPARATE key means the cancel write never races the checkpoint's ETag.
 STOP_SUFFIX = "/stop"
 
 
@@ -68,9 +83,12 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
     """
 
     name = str((ctx.input or {}).get("name", "world"))
+    # ``session_id`` is carried in the durable input so recovery re-enters with
+    # the same store scope as the original run.
+    session_id = str((ctx.input or {}).get("session_id", ""))
     stop_key = f"{ctx.task_id}{STOP_SUFFIX}"
 
-    store = await FoundryStateStore.get_or_create(CHECKPOINT_STORE)
+    store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
     try:
         item = await store.get_item(ctx.task_id)
         n = int((item.value.get("iterations", 0) if item else 0) or 0)
@@ -116,4 +134,4 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
         await store.aclose()
 
 
-__all__ = ["hello_forever", "CHECKPOINT_STORE", "STOP_SUFFIX"]
+__all__ = ["hello_forever", "checkpoint_store_name", "STOP_SUFFIX"]
