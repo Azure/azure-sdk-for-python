@@ -19,6 +19,7 @@ and off by default, and the same concept in the .NET (`ServiceBusRetryOptions.Tr
 Java (`AmqpRetryOptions.tryTimeout`) SDKs, which default it on at 60 seconds.
 """
 
+import asyncio  # pylint:disable=do-not-import-asyncio
 import time
 
 from unittest.mock import MagicMock, patch
@@ -1614,3 +1615,73 @@ class TestIteratorBoundsLinkAcquisition:
         with pytest.raises(StopAsyncIteration):
             await PyamqpTransportAsync.iter_next_async(self._async_receiver(seen, try_timeout=7))
         assert seen == [7]
+
+
+class TestDelayedHandlerOpen:
+    """A slow `open` must not run unbounded past the attempt budget.
+
+    Sync and async differ deliberately. A blocking `open()` cannot be interrupted, so the
+    sync path can only detect the overrun once it returns; an async open can be cancelled,
+    so the budget bounds the open itself. These tests pin both behaviours with real elapsed
+    time, since that is the property under test.
+    """
+
+    OPEN_COST = 1.0
+    BUDGET = 0.05
+
+    def test_sync_open_completes_then_raises(self):
+        from azure.servicebus import ServiceBusClient
+
+        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        handler = MagicMock()
+        handler._shutdown = True
+        handler.open = lambda connection=None: time.sleep(self.OPEN_COST)
+        handler.client_ready = lambda: True
+        receiver._create_handler = lambda auth: setattr(receiver, "_handler", handler)
+        receiver._handler = handler
+
+        started = time.time()
+        with patch("azure.servicebus._servicebus_receiver.create_authentication", lambda c: None):
+            with pytest.raises(OperationTimeoutError):
+                receiver._open(timeout=self.BUDGET)
+        elapsed = time.time() - started
+        # Documents the limitation rather than hiding it: the open runs to completion.
+        assert elapsed >= self.OPEN_COST
+
+    @pytest.mark.asyncio
+    async def test_async_open_is_cancelled_at_the_deadline(self):
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        handler = MagicMock()
+        handler._shutdown = True
+        opened_fully = []
+
+        async def slow_open(connection=None):
+            await asyncio.sleep(self.OPEN_COST)
+            opened_fully.append(1)
+
+        async def close_async():
+            return None
+
+        async def client_ready_async():
+            return True
+
+        handler.open_async = slow_open
+        handler.close_async = close_async
+        handler.client_ready_async = client_ready_async
+        receiver._create_handler = lambda auth: setattr(receiver, "_handler", handler)
+        receiver._handler = handler
+
+        async def fake_auth(_c):
+            return None
+
+        started = time.time()
+        with patch("azure.servicebus.aio._servicebus_receiver_async.create_authentication", fake_auth):
+            with pytest.raises(OperationTimeoutError):
+                await receiver._open(timeout=self.BUDGET)
+        elapsed = time.time() - started
+        assert elapsed < self.OPEN_COST / 2, f"open was not cancelled: took {elapsed:.2f}s"
+        assert not opened_fully, "open ran to completion instead of being cancelled"

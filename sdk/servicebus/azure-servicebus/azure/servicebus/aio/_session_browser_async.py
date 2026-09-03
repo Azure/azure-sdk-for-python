@@ -18,7 +18,7 @@ from .._common import mgmt_handlers
 from .._common.utils import get_link_ready_deadline, check_link_ready_deadline
 from .._session_browser import _to_last_updated_ms, _page_request_body, _PAGE_SIZE
 from ..exceptions import OperationTimeoutError
-from ._async_utils import create_authentication
+from ._async_utils import create_authentication, open_handler_with_deadline
 
 if TYPE_CHECKING:
     try:
@@ -72,7 +72,7 @@ class _SessionBrowserAsync(AsyncBaseHandler):
         try:
             # The token fetch can use the budget, and open_async() cannot be cancelled once entered.
             check_link_ready_deadline(deadline)
-            await self._handler.open_async(connection=self._connection)
+            await open_handler_with_deadline(self._handler, self._connection, deadline)
             while True:
                 check_link_ready_deadline(deadline)
                 if await self._handler.client_ready_async():

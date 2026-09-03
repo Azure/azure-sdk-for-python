@@ -161,6 +161,19 @@ def get_remaining_timeout(timeout: Optional[float], started: float) -> Optional[
     return remaining
 
 
+def get_time_until_deadline(deadline: float) -> float:
+    """Return the seconds remaining before an absolute deadline.
+
+    Uses the same clock that created and checks the deadline, so all of the deadline
+    arithmetic moves together when a test fakes time.
+
+    :param float deadline: The absolute deadline.
+    :rtype: float
+    :returns: The seconds left, negative once the deadline has passed.
+    """
+    return deadline - time.time()
+
+
 def check_link_ready_deadline(deadline: Optional[float]) -> None:
     """Raise if an AMQP link has not reported ready by its deadline.
 

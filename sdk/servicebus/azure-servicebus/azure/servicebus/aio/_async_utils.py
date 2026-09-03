@@ -11,7 +11,8 @@ import logging
 import functools
 
 from .._common.constants import JWT_TOKEN_SCOPE, TOKEN_TYPE_JWT, TOKEN_TYPE_SASTOKEN
-
+from .._common.utils import get_time_until_deadline
+from ..exceptions import OperationTimeoutError
 
 _log = logging.getLogger(__name__)
 
@@ -66,3 +67,24 @@ def get_dict_with_loop_if_needed(loop):
     elif loop:
         return {"loop": loop}
     return {}
+
+
+async def open_handler_with_deadline(handler, connection, deadline):
+    """Open the AMQP handler, cancelling the open itself once the deadline passes.
+
+    The sync path can only check the deadline once `open()` returns, because a blocking
+    open cannot be interrupted. An async open can be cancelled, so here the budget bounds
+    the open rather than merely detecting an overrun afterwards.
+
+    :param AMQPClientAsync handler: The AMQP client to open.
+    :param Connection or None connection: An existing connection to reuse, or None.
+    :param float or None deadline: The absolute deadline, or None when unbounded.
+    :raises ~azure.servicebus.exceptions.OperationTimeoutError: If the open outlives the deadline.
+    """
+    if deadline is None:
+        await handler.open_async(connection=connection)
+        return
+    try:
+        await asyncio.wait_for(handler.open_async(connection=connection), timeout=get_time_until_deadline(deadline))
+    except (asyncio.TimeoutError, TimeoutError):
+        raise OperationTimeoutError(message="Timed out waiting for the AMQP link to open.") from None

@@ -56,7 +56,7 @@ from .._common.tracing import (
     SPAN_NAME_RECEIVE_DEFERRED,
     SPAN_NAME_PEEK,
 )
-from ._async_utils import create_authentication
+from ._async_utils import create_authentication, open_handler_with_deadline
 
 if TYPE_CHECKING:
     try:
@@ -364,7 +364,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         try:
             # The token fetch can use the budget, and open_async() cannot be cancelled once entered.
             check_link_ready_deadline(deadline)
-            await self._handler.open_async(connection=self._connection)
+            await open_handler_with_deadline(self._handler, self._connection, deadline)
             while True:
                 check_link_ready_deadline(deadline)
                 if await self._handler.client_ready_async():
