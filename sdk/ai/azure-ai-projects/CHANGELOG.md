@@ -1,6 +1,6 @@
 # Release History
 
-## 2.6.0 (Unreleased)
+## 2.6.0 (2026-09-04)
 
 ### Features Added
 
@@ -12,11 +12,14 @@
 * Added `ShellToolboxTool` and supporting container environment and network policy models, with the new `ToolboxToolType.SHELL` enum member.
 * Added `WebIQPreviewTool` and `WebIQPreviewToolboxTool`, with new `ToolType.WEB_IQ_PREVIEW` and `ToolboxToolType.WEB_IQ_PREVIEW` enum members.
 * Added the optional `external_web_access` property to `WebSearchTool` and `WebSearchToolboxTool` for disabling live internet access.
+* Added preview support for Model Router, which dynamically routes each request to an appropriate model.
 
 ### Sample updates
 
-* Added `sample_toolbox_with_shell.py`, demonstrating a Prompt Agent invoking a `ShellToolboxTool`.
-* Added `sample_synthetic_multiturn_evaluation.py`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+* Added `sample_toolbox_with_shell.py` under `samples/agents/tools/`, demonstrating a Prompt Agent invoking a `ShellToolboxTool`.
+* Added `sample_toolbox_with_shell_and_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using an inline Skill with a `ShellToolboxTool` through a Toolbox MCP endpoint.
+* Added `sample_synthetic_multiturn_evaluation.py` under `samples/evaluations/`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+* Added `sample_responses_model_router.py` under `samples/responses/`, demonstrating Responses API calls to a Model Router deployment and inspection of the selected models for each inference turn.
 
 ### Bugs Fixed
 
