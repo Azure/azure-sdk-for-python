@@ -362,7 +362,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         try:
-            # The token fetch can use the budget, and open_async() cannot be cancelled once entered.
+            # The token fetch can use the budget, so re-check before opening; the open itself
+            # is bounded by open_handler_with_deadline.
             check_link_ready_deadline(deadline)
             await open_handler_with_deadline(self._handler, self._connection, deadline)
             while True:
