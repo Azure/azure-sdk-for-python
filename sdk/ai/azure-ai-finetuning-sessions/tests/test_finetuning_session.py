@@ -148,7 +148,7 @@ class TestSample:
         body = json.loads(transport.requests[0].body)
         assert body.get("promptLogprobs", False) is False
 
-    def test_request_can_return_prompt_token_ids(self, session, monkeypatch):
+    def test_request_can_include_prompt_token_ids(self, session, monkeypatch):
         captured = {}
 
         def fake_post_and_poll(subpath, body, extra_params=None, extra_result_fields=None):
@@ -163,14 +163,14 @@ class TestSample:
             prompt_tokens=[1, 2],
             sampling_params=SamplingParams(max_tokens=8, temperature=1.0, top_p=1.0, top_k=-1),
             checkpoint_id="checkpoint-1",
-            return_prompt_token_ids=True,
+            prompt_token_ids=True,
         )
         assert captured["subpath"].endswith("/sample")
-        assert captured["body"].return_prompt_token_ids is True
+        assert captured["body"].prompt_token_ids is True
         body = json.loads(
             json.dumps(captured["body"], cls=SdkJSONEncoder, exclude_readonly=True)
         )
-        assert body["return_prompt_token_ids"] is True
+        assert body["prompt_token_ids"] is True
 
     def test_result_deserializes_prompt_token_ids(self):
         result = _deserialize(
@@ -200,7 +200,7 @@ class TestSample:
         assert legacy_result.prompt_token_ids is None
 
     @pytest.mark.asyncio
-    async def test_async_request_can_return_prompt_token_ids(self, monkeypatch):
+    async def test_async_request_can_include_prompt_token_ids(self, monkeypatch):
         captured = {}
 
         async def fake_post_and_poll(client, session_id, subpath, body, extra_params=None):
@@ -219,13 +219,13 @@ class TestSample:
             [1, 2],
             SamplingParams(max_tokens=8, temperature=1.0, top_p=1.0, top_k=-1),
             checkpoint_id="checkpoint-1",
-            return_prompt_token_ids=True,
+            prompt_token_ids=True,
         )
 
         assert captured["client"] is client
         assert captured["session_id"] == "session_test"
         assert captured["subpath"].endswith("/sample")
-        assert captured["body"].return_prompt_token_ids is True
+        assert captured["body"].prompt_token_ids is True
         assert captured["extra_params"] == {"checkpoint_id": "checkpoint-1"}
 
 

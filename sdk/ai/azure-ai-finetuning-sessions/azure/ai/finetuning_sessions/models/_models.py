@@ -947,8 +947,8 @@ class SampleRequest(_Model):
     :vartype seq_id: int
     :ivar prompt_logprobs: If true, return per-token log-probabilities for the prompt tokens.
     :vartype prompt_logprobs: bool
-    :ivar return_prompt_token_ids: If true, return the exact input prompt token IDs with the sample result.
-    :vartype return_prompt_token_ids: bool
+    :ivar prompt_token_ids: If true, return the exact input prompt token IDs with the sample result.
+    :vartype prompt_token_ids: bool
     :ivar topk_prompt_logprobs: Number of top-k log-probabilities to return per prompt token. 0 =
      none. Required.
     :vartype topk_prompt_logprobs: int
@@ -966,7 +966,7 @@ class SampleRequest(_Model):
     """Training step index; must match the seq_id used in save_sampler_weights."""
     prompt_logprobs: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If true, return per-token log-probabilities for the prompt tokens."""
-    return_prompt_token_ids: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prompt_token_ids: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If true, return the exact input prompt token IDs with the sample result."""
     topk_prompt_logprobs: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of top-k log-probabilities to return per prompt token. 0 = none. Required."""
@@ -982,7 +982,7 @@ class SampleRequest(_Model):
         sampling_session_id: Optional[str] = None,
         seq_id: Optional[int] = None,
         prompt_logprobs: Optional[bool] = None,
-        return_prompt_token_ids: Optional[bool] = None,
+        prompt_token_ids: Optional[bool] = None,
     ) -> None: ...
 
     @overload

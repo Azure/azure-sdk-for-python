@@ -1249,7 +1249,7 @@ class FineTuningSession:
         sampling_session_id: Optional[str] = None,
         seq_id: Optional[int] = None,
         prompt_logprobs: bool = False,
-        return_prompt_token_ids: bool = False,
+        prompt_token_ids: bool = False,
         topk_prompt_logprobs: int = 0,
         **kwargs: Any,
     ) -> OperationResult:
@@ -1266,7 +1266,7 @@ class FineTuningSession:
         :param sampling_session_id: ID returned by a prior ``save_weights_for_sampler`` call.
         :param seq_id: Training step index; must match the one used in ``save_weights_for_sampler``.
         :param prompt_logprobs: If True, return per-token log-probabilities for the prompt.
-        :param return_prompt_token_ids: If True, return the exact prompt token IDs with the sample result.
+        :param prompt_token_ids: If True, return the exact prompt token IDs with the sample result.
         :param topk_prompt_logprobs: Top-k log-probabilities per prompt token. 0 = none.
         """
         return self._post_and_poll(
@@ -1276,7 +1276,7 @@ class FineTuningSession:
                 prompt=ModelInput(chunks=[ModelInputChunk(tokens=prompt_tokens)]),
                 sampling_params=sampling_params,
                 topk_prompt_logprobs=topk_prompt_logprobs,
-                return_prompt_token_ids=return_prompt_token_ids,
+                prompt_token_ids=prompt_token_ids,
                 sampling_session_id=sampling_session_id,
                 seq_id=seq_id,
                 prompt_logprobs=prompt_logprobs,
