@@ -385,14 +385,15 @@ class AMQPClientAsync(AMQPClientSync):
         :rtype: ~pyamqp.aio.management_link_async.ManagementOperation
         """
         start_time = time.monotonic()
-        async with self._mgmt_link_lock_async:
-            try:
-                mgmt_link = self._mgmt_links[node]
-            except KeyError:
-                mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-                self._mgmt_links[node] = mgmt_link
-                await mgmt_link.open()
+        mgmt_link = None
         try:
+            async with self._mgmt_link_lock_async:
+                try:
+                    mgmt_link = self._mgmt_links[node]
+                except KeyError:
+                    mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                    self._mgmt_links[node] = mgmt_link
+                    await mgmt_link.open()
             while not await self.client_ready_async():
                 if timeout and time.monotonic() - start_time >= timeout:
                     raise TimeoutError("Management link setup timed out.")
@@ -403,11 +404,12 @@ class AMQPClientAsync(AMQPClientSync):
                     raise TimeoutError("Management link setup timed out.")
                 await self._connection.listen(wait=False)
             return mgmt_link
-        except Exception:
-            async with self._mgmt_link_lock_async:
-                if self._mgmt_links.get(node) is mgmt_link:
-                    self._mgmt_links.pop(node, None)
-            await mgmt_link.close()
+        except BaseException:
+            if mgmt_link is not None:
+                async with self._mgmt_link_lock_async:
+                    if self._mgmt_links.get(node) is mgmt_link:
+                        self._mgmt_links.pop(node, None)
+                await mgmt_link.close()
             raise
 
 

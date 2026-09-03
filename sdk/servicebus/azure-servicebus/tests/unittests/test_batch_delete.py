@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import asyncio
+import threading
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -22,6 +24,8 @@ from azure.servicebus._common.constants import (
 )
 from azure.servicebus._common import mgmt_handlers
 from azure.servicebus._pyamqp._encode import encode_payload
+from azure.servicebus._pyamqp.client import AMQPClient
+from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 from azure.servicebus.exceptions import OperationTimeoutError
 
@@ -114,6 +118,59 @@ def _receiver(receiver_type, session_id=None):
         side_effect=AssertionError("destructive requests must not be retried")
     )
     return receiver
+
+
+def test_failed_management_link_open_is_evicted_before_retry():
+    client = object.__new__(AMQPClient)
+    client._mgmt_links = {}
+    client._mgmt_link_lock = threading.Lock()
+    client._session = MagicMock()
+    client.client_ready = MagicMock(return_value=True)
+    failed_link = MagicMock()
+    failed_link.open.side_effect = RuntimeError("attach failed")
+    ready_link = MagicMock()
+    ready_link.ready.return_value = True
+
+    with patch(
+        "azure.servicebus._pyamqp.client.ManagementOperation",
+        side_effect=[failed_link, ready_link],
+    ) as operation_type:
+        with pytest.raises(RuntimeError, match="attach failed"):
+            client.open_mgmt_link()
+        assert client._mgmt_links == {}
+        failed_link.close.assert_called_once()
+
+        assert client.open_mgmt_link() is ready_link
+
+    assert operation_type.call_count == 2
+
+
+@pytest.mark.asyncio
+async def test_cancelled_management_link_open_is_evicted_before_retry():
+    client = object.__new__(AMQPClientAsync)
+    client._mgmt_links = {}
+    client._mgmt_link_lock_async = asyncio.Lock()
+    client._session = MagicMock()
+    client.client_ready_async = AsyncMock(return_value=True)
+    failed_link = MagicMock()
+    failed_link.open = AsyncMock(side_effect=asyncio.CancelledError())
+    failed_link.close = AsyncMock()
+    ready_link = MagicMock()
+    ready_link.open = AsyncMock()
+    ready_link.ready = AsyncMock(return_value=True)
+
+    with patch(
+        "azure.servicebus._pyamqp.aio._client_async.ManagementOperation",
+        side_effect=[failed_link, ready_link],
+    ) as operation_type:
+        with pytest.raises(asyncio.CancelledError):
+            await client.open_mgmt_link_async()
+        assert client._mgmt_links == {}
+        failed_link.close.assert_awaited_once()
+
+        assert await client.open_mgmt_link_async() is ready_link
+
+    assert operation_type.call_count == 2
 
 
 class TestDeleteMessages:

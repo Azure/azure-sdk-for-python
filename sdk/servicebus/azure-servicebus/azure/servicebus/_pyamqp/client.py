@@ -472,14 +472,15 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         :rtype: ~pyamqp.management_link.ManagementOperation
         """
         start_time = time.monotonic()
-        with self._mgmt_link_lock:
-            try:
-                mgmt_link = self._mgmt_links[node]
-            except KeyError:
-                mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-                self._mgmt_links[node] = mgmt_link
-                mgmt_link.open()
+        mgmt_link = None
         try:
+            with self._mgmt_link_lock:
+                try:
+                    mgmt_link = self._mgmt_links[node]
+                except KeyError:
+                    mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                    self._mgmt_links[node] = mgmt_link
+                    mgmt_link.open()
             while not self.client_ready():
                 if timeout and time.monotonic() - start_time >= timeout:
                     raise TimeoutError("Management link setup timed out.")
@@ -491,10 +492,11 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
                 self._connection.listen(wait=False)
             return mgmt_link
         except Exception:
-            with self._mgmt_link_lock:
-                if self._mgmt_links.get(node) is mgmt_link:
-                    self._mgmt_links.pop(node, None)
-            mgmt_link.close()
+            if mgmt_link is not None:
+                with self._mgmt_link_lock:
+                    if self._mgmt_links.get(node) is mgmt_link:
+                        self._mgmt_links.pop(node, None)
+                mgmt_link.close()
             raise
 
 
