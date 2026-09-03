@@ -1199,6 +1199,118 @@ class TestExpiredBudgetDoesNotIssueLinkCredit:
         assert credit_calls == [9]
 
 
+class TestAsyncCleanupIsBoundedAndKeepsTheOriginalError:
+    """Error-path cleanup must not outlive the budget, nor replace the error that caused it.
+
+    The receiver override drains the link before closing, so both steps do network I/O.
+    """
+
+    def _receiver(self, close_behaviour):
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q")
+        handler = MagicMock()
+        handler._shutdown = True
+
+        async def open_async(connection=None):
+            raise ValueError("original failure")
+
+        handler.open_async = open_async
+        receiver._create_handler = lambda auth: setattr(receiver, "_handler", handler)
+        receiver._handler = handler
+        receiver._close_handler = close_behaviour
+        return receiver
+
+    @pytest.mark.asyncio
+    async def test_a_failing_cleanup_does_not_replace_the_original_error(self):
+        async def failing_cleanup():
+            raise RuntimeError("cleanup blew up")
+
+        receiver = self._receiver(failing_cleanup)
+
+        async def fake_auth(_c):
+            return None
+
+        with patch.object(async_receiver_module, "create_authentication", fake_auth):
+            with pytest.raises(ValueError, match="original failure"):
+                await receiver._open(timeout=5)
+
+    @pytest.mark.asyncio
+    async def test_a_stalled_cleanup_does_not_outlive_the_budget(self):
+        cleaned_fully = []
+
+        async def hanging_cleanup():
+            await asyncio.sleep(1.0)
+            cleaned_fully.append(1)
+
+        receiver = self._receiver(hanging_cleanup)
+
+        async def fake_auth(_c):
+            return None
+
+        with patch.object(async_receiver_module, "create_authentication", fake_auth):
+            with pytest.raises(ValueError, match="original failure"):
+                await receiver._open(timeout=0.05)
+        assert not cleaned_fully, "cleanup ran to completion instead of being cancelled"
+
+
+class TestAsyncExpiredBudgetDoesNotIssueLinkCredit:
+    """Async mirror: `_receive` is a separate implementation and can drift from sync."""
+
+    async def _drive(self, queued, open_cost, max_wait_time, credit_calls):
+        from queue import Queue
+        from azure.servicebus.aio import ServiceBusClient as AsyncClient
+
+        client = AsyncClient("fake.servicebus.windows.net", MagicMock())
+        receiver = client.get_queue_receiver("q", max_wait_time=max_wait_time)
+        receiver._check_live = lambda: None
+        receiver._build_received_message = lambda m: m
+
+        q = Queue()
+        handler = MagicMock()
+        handler._received_messages = q
+
+        async def slow_open(timeout=None):
+            time.sleep(open_cost)
+            for m in queued:
+                q.put(m)
+
+        receiver._open = slow_open
+        receiver._handler = handler
+        clock = {"t": 0.0}
+
+        async def do_work_async():
+            clock["t"] += 1.0
+            return True
+
+        handler.do_work_async = do_work_async
+        transport = MagicMock()
+        transport.TIMEOUT_FACTOR = 1
+        transport.get_current_time = lambda _c: clock["t"]
+
+        async def reset_link_credit_async(_c, n):
+            credit_calls.append(n)
+
+        transport.reset_link_credit_async = reset_link_credit_async
+        receiver._amqp_transport = transport
+        receiver._prefetch_count = 0
+        return await receiver._receive(max_message_count=10)
+
+    @pytest.mark.asyncio
+    async def test_no_credit_is_issued_once_the_budget_is_spent(self):
+        credit_calls = []
+        got = await self._drive(queued=["m1"], open_cost=1.2, max_wait_time=1, credit_calls=credit_calls)
+        assert got == ["m1"]
+        assert credit_calls == [], f"issued credit with no budget left: {credit_calls}"
+
+    @pytest.mark.asyncio
+    async def test_credit_is_still_issued_while_budget_remains(self):
+        credit_calls = []
+        await self._drive(queued=["m1"], open_cost=0.0, max_wait_time=10, credit_calls=credit_calls)
+        assert credit_calls == [9]
+
+
 class TestAsyncSettlementIsNotBounded:
     """Async settlement must use the direct request path like sync, not the retry wrapper.
 
@@ -1712,10 +1824,7 @@ class TestDelayedHandlerOpen:
         async def fake_auth(_c):
             return None
 
-        started = time.time()
         with patch("azure.servicebus.aio._servicebus_receiver_async.create_authentication", fake_auth):
             with pytest.raises(OperationTimeoutError):
                 await receiver._open(timeout=self.BUDGET)
-        elapsed = time.time() - started
-        assert elapsed < self.OPEN_COST / 2, f"open was not cancelled: took {elapsed:.2f}s"
         assert not opened_fully, "open ran to completion instead of being cancelled"

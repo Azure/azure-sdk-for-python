@@ -363,8 +363,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
         deadline = get_link_ready_deadline(timeout)
         if self._handler and not self._handler._shutdown:
             self._handler.close()
-            check_link_ready_deadline(deadline)
 
+        check_link_ready_deadline(deadline)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
@@ -379,7 +379,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             check_link_ready_deadline(deadline)
             self._running = True
         except:
-            self._close_handler()
+            try:
+                self._close_handler()
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.warning("Handler cleanup failed; preserving the original error.", exc_info=True)
             raise
 
         if self._auto_lock_renewer and self._session:

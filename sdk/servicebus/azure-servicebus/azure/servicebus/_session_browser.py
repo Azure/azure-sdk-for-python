@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import logging
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -20,6 +21,8 @@ from ._common.constants import (
 )
 from ._common import mgmt_handlers
 from .exceptions import OperationTimeoutError
+
+_LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     try:
@@ -72,9 +75,7 @@ def _to_last_updated_ms(state_updated_after: Optional[datetime]) -> int:
     return (normalized - _EPOCH) // timedelta(milliseconds=1)
 
 
-def _page_request_body(
-    amqp_transport: Any, last_updated_time_ms: int, skip: int
-) -> Dict[str, Any]:
+def _page_request_body(amqp_transport: Any, last_updated_time_ms: int, skip: int) -> Dict[str, Any]:
     """Build the get-message-sessions request body with transport-neutral value
     factories.
 
@@ -140,8 +141,8 @@ class _SessionBrowser(BaseHandler):
         deadline = get_link_ready_deadline(timeout)
         if self._handler:
             self._handler.close()
-            check_link_ready_deadline(deadline)
 
+        check_link_ready_deadline(deadline)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
@@ -156,7 +157,10 @@ class _SessionBrowser(BaseHandler):
             check_link_ready_deadline(deadline)
             self._running = True
         except:
-            self._close_handler()
+            try:
+                self._close_handler()
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.warning("Handler cleanup failed; preserving the original error.", exc_info=True)
             raise
 
     def list_sessions(
@@ -207,9 +211,7 @@ class _SessionBrowser(BaseHandler):
                     raise OperationTimeoutError(
                         message="Listing sessions did not complete within the specified timeout."
                     )
-            message = _page_request_body(
-                self._amqp_transport, last_updated_time_ms, skip
-            )
+            message = _page_request_body(self._amqp_transport, last_updated_time_ms, skip)
             result = self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
                 message,

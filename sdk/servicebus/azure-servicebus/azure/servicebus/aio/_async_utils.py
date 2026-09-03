@@ -109,3 +109,23 @@ async def close_handler_with_deadline(handler, deadline):
         await asyncio.wait_for(handler.close_async(), timeout=get_time_until_deadline(deadline))
     except (asyncio.TimeoutError, TimeoutError):
         raise OperationTimeoutError(message="Timed out closing the previous AMQP link.") from None
+
+
+async def close_handler_for_cleanup(close_coro, deadline):
+    """Run handler cleanup on an error path, bounded and without hiding the original error.
+
+    The receiver override drains the link before closing, and both steps do network I/O, so
+    unbounded cleanup can hold an attempt open long past its budget. Cleanup also runs while
+    another exception is propagating: a stall or failure here must not become the error the
+    caller sees, so anything raised is logged and dropped.
+
+    :param coroutine close_coro: The cleanup coroutine to await.
+    :param float or None deadline: The absolute deadline, or None when unbounded.
+    """
+    try:
+        if deadline is None:
+            await close_coro
+        else:
+            await asyncio.wait_for(close_coro, timeout=get_time_until_deadline(deadline))
+    except Exception:  # pylint: disable=broad-except
+        _log.warning("Handler cleanup did not complete; preserving the original error.", exc_info=True)

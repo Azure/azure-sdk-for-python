@@ -56,7 +56,12 @@ from .._common.tracing import (
     SPAN_NAME_RECEIVE_DEFERRED,
     SPAN_NAME_PEEK,
 )
-from ._async_utils import create_authentication, close_handler_with_deadline, open_handler_with_deadline
+from ._async_utils import (
+    close_handler_for_cleanup,
+    close_handler_with_deadline,
+    create_authentication,
+    open_handler_with_deadline,
+)
 
 if TYPE_CHECKING:
     try:
@@ -357,8 +362,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         deadline = get_link_ready_deadline(timeout)
         if self._handler and not self._handler._shutdown:
             await close_handler_with_deadline(self._handler, deadline)
-            check_link_ready_deadline(deadline)
 
+        check_link_ready_deadline(deadline)
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         try:
@@ -374,7 +379,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             check_link_ready_deadline(deadline)
             self._running = True
         except:
-            await self._close_handler()
+            await close_handler_for_cleanup(self._close_handler(), deadline)
             raise
 
         if self._auto_lock_renewer and self._session:

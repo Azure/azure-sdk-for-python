@@ -42,7 +42,12 @@ from .._common.tracing import (
     SPAN_NAME_SCHEDULE,
     TraceAttributes,
 )
-from ._async_utils import create_authentication, close_handler_with_deadline, open_handler_with_deadline
+from ._async_utils import (
+    close_handler_for_cleanup,
+    close_handler_with_deadline,
+    create_authentication,
+    open_handler_with_deadline,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -212,8 +217,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         deadline = get_link_ready_deadline(timeout)
         if self._handler:
             await close_handler_with_deadline(self._handler, deadline)
-            check_link_ready_deadline(deadline)
 
+        check_link_ready_deadline(deadline)
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         try:
@@ -243,7 +248,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             else:
                 self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
         except:
-            await self._close_handler()
+            await close_handler_for_cleanup(self._close_handler(), deadline)
             raise
 
     async def _send(

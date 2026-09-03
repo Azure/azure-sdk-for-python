@@ -18,7 +18,12 @@ from .._common import mgmt_handlers
 from .._common.utils import get_link_ready_deadline, check_link_ready_deadline
 from .._session_browser import _to_last_updated_ms, _page_request_body, _PAGE_SIZE
 from ..exceptions import OperationTimeoutError
-from ._async_utils import create_authentication, close_handler_with_deadline, open_handler_with_deadline
+from ._async_utils import (
+    close_handler_for_cleanup,
+    close_handler_with_deadline,
+    create_authentication,
+    open_handler_with_deadline,
+)
 
 if TYPE_CHECKING:
     try:
@@ -65,8 +70,8 @@ class _SessionBrowserAsync(AsyncBaseHandler):
         deadline = get_link_ready_deadline(timeout)
         if self._handler:
             await close_handler_with_deadline(self._handler, deadline)
-            check_link_ready_deadline(deadline)
 
+        check_link_ready_deadline(deadline)
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         try:
@@ -82,7 +87,7 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             check_link_ready_deadline(deadline)
             self._running = True
         except:
-            await self._close_handler()
+            await close_handler_for_cleanup(self._close_handler(), deadline)
             raise
 
     def list_sessions(
