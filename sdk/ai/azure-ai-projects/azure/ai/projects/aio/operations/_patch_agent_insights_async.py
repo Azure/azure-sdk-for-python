@@ -35,6 +35,7 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
         monitor_id: str,
         run: _models.AgentInsightRunCreate,
         *,
+        operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> AsyncAgentInsightRunLROPoller: ...
@@ -45,6 +46,7 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
         monitor_id: str,
         run: JSON,
         *,
+        operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> AsyncAgentInsightRunLROPoller: ...
@@ -55,6 +57,7 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
         monitor_id: str,
         run: IO[bytes],
         *,
+        operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> AsyncAgentInsightRunLROPoller: ...
@@ -64,6 +67,8 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
         self,
         monitor_id: str,
         run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AsyncAgentInsightRunLROPoller:
         """Start an Agent Insights run for a monitor.
@@ -73,6 +78,9 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
         :param run: Run inputs. Send an empty object to use the default 168-hour lookback window. Is
          one of the following types: AgentInsightRunCreate, JSON, IO[bytes] Required.
         :type run: ~azure.ai.projects.models.AgentInsightRunCreate or JSON or IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the run unconditionally. Default value is None.
+        :paramtype operation_id: str
         :return: A poller that returns AgentInsightRunResult and exposes the run ID in ``details``.
         :rtype: ~azure.ai.projects.models.AsyncAgentInsightRunLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -90,6 +98,7 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
             raw_result = await self._create_run_initial(
                 monitor_id=monitor_id,
                 run=run,
+                operation_id=operation_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=headers,
