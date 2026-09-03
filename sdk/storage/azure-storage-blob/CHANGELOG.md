@@ -9,6 +9,7 @@
 - Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
 - Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning
   an empty list.
+- Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
 
 ### Other Changes
 - Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`

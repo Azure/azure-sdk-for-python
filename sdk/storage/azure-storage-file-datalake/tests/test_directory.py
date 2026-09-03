@@ -1576,6 +1576,42 @@ class TestDirectory(StorageRecordedTestCase):
         with pytest.raises(HttpResponseError):
             directory_client.delete_directory()
 
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    def test_using_directory_sas_with_backslash(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # SAS URL is calculated from storage key, so this test runs live only
+
+        directory_name = self._get_directory_reference() + "\\sub"
+        client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        client.create_directory()
+
+        string_to_sign = []
+        token = generate_directory_sas(
+            self.dsc.account_name,
+            self.file_system_name,
+            directory_name,
+            self.dsc.credential.account_key,
+            permission=DirectorySasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            sts_hook=string_to_sign.append,
+        )
+
+        # sdd must match the depth of the canonicalized resource, not the raw name
+        assert "sdd=2" in token
+        assert f"/blob/{self.dsc.account_name}/{self.file_system_name}/" in string_to_sign[0]
+        assert "\\" not in string_to_sign[0]
+
+        directory_client = DataLakeDirectoryClient(
+            self.dsc.url, self.file_system_name, directory_name, credential=token
+        )
+        access_control = directory_client.get_access_control()
+
+        assert access_control is not None
+
     @DataLakePreparer()
     @recorded_by_proxy
     def test_storage_account_audience_dir_client(self, **kwargs):

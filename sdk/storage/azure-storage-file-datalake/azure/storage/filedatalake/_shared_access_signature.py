@@ -339,7 +339,7 @@ def generate_directory_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
-    depth = len(directory_name.strip("/").split("/"))
+    depth = len(directory_name.replace("\\", "/").strip("/").split("/"))
     return generate_blob_sas(
         account_name=account_name,
         container_name=file_system_name,
