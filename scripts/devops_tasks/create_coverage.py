@@ -144,8 +144,7 @@ def fix_coverage_xml(coverage_file):
         # replace relative paths in python import pattern
         out = re.sub(r"\.?\.tox[\s\S\.\d]*?\.site-packages", "", out)
 
-        # azpysdk uses repo-level virtual environments, so restore the package
-        # directory that tox paths retained when their environment was removed.
+        # azpysdk uses repo-level virtual environments
         out = normalize_venv_paths(out)
 
     if out:

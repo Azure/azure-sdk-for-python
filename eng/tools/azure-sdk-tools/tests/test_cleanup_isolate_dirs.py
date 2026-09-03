@@ -1,5 +1,10 @@
 import os
+import sys
 from unittest.mock import patch
+
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
 
 from eng.scripts.cleanup_isolate_dirs import cleanup_isolate_dirs, find_isolate_dirs
 
