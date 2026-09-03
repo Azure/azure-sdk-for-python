@@ -21,6 +21,7 @@ from ._configuration import RelationshipsMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     ContainsRelationshipsOperations,
+    DependencyOfRelationshipsByServiceGroupOperations,
     DependencyOfRelationshipsOperations,
     Operations,
     ServiceGroupMemberRelationshipsOperations,
@@ -44,6 +45,10 @@ class RelationshipsMgmtClient:  # pylint: disable=docstring-keyword-should-match
     :ivar dependency_of_relationships: DependencyOfRelationshipsOperations operations
     :vartype dependency_of_relationships:
      azure.mgmt.relationships.operations.DependencyOfRelationshipsOperations
+    :ivar dependency_of_relationships_by_service_group:
+     DependencyOfRelationshipsByServiceGroupOperations operations
+    :vartype dependency_of_relationships_by_service_group:
+     azure.mgmt.relationships.operations.DependencyOfRelationshipsByServiceGroupOperations
     :ivar service_group_member_relationships: ServiceGroupMemberRelationshipsOperations operations
     :vartype service_group_member_relationships:
      azure.mgmt.relationships.operations.ServiceGroupMemberRelationshipsOperations
@@ -59,10 +64,9 @@ class RelationshipsMgmtClient:  # pylint: disable=docstring-keyword-should-match
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-03-01-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-08-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -117,6 +121,9 @@ class RelationshipsMgmtClient:  # pylint: disable=docstring-keyword-should-match
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.dependency_of_relationships = DependencyOfRelationshipsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.dependency_of_relationships_by_service_group = DependencyOfRelationshipsByServiceGroupOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.service_group_member_relationships = ServiceGroupMemberRelationshipsOperations(

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_dependency_of_relationships_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +101,7 @@ def build_dependency_of_relationships_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -127,7 +127,7 @@ def build_dependency_of_relationships_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
     # Construct URL
     _url = "/{resourceUri}/providers/Microsoft.Relationships/dependencyOf/{name}"
     path_format_arguments = {
@@ -149,13 +149,117 @@ def build_dependency_of_relationships_list_by_parent_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/{resourceUri}/providers/Microsoft.Relationships/dependencyOf"
     path_format_arguments = {
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_dependency_of_relationships_by_service_group_get_request(  # pylint: disable=name-too-long
+    service_group_name: str, name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.Relationships/dependencyOf/{name}"
+    path_format_arguments = {
+        "serviceGroupName": _SERIALIZER.url("service_group_name", service_group_name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_dependency_of_relationships_by_service_group_create_or_update_request(  # pylint: disable=name-too-long
+    service_group_name: str, name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.Relationships/dependencyOf/{name}"
+    path_format_arguments = {
+        "serviceGroupName": _SERIALIZER.url("service_group_name", service_group_name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_dependency_of_relationships_by_service_group_delete_request(  # pylint: disable=name-too-long
+    service_group_name: str, name: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
+    # Construct URL
+    _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.Relationships/dependencyOf/{name}"
+    path_format_arguments = {
+        "serviceGroupName": _SERIALIZER.url("service_group_name", service_group_name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_dependency_of_relationships_by_service_group_list_request(  # pylint: disable=name-too-long
+    service_group_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.Relationships/dependencyOf"
+    path_format_arguments = {
+        "serviceGroupName": _SERIALIZER.url("service_group_name", service_group_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -176,7 +280,7 @@ def build_service_group_member_relationships_create_or_update_request(  # pylint
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -205,7 +309,7 @@ def build_service_group_member_relationships_get_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -231,7 +335,7 @@ def build_service_group_member_relationships_delete_request(  # pylint: disable=
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
     # Construct URL
     _url = "/{resourceUri}/providers/Microsoft.Relationships/serviceGroupMember/{name}"
     path_format_arguments = {
@@ -253,7 +357,7 @@ def build_service_group_member_relationships_list_by_parent_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -279,7 +383,7 @@ def build_contains_relationships_list_by_subscription_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -307,7 +411,7 @@ def build_contains_relationships_list_by_resource_group_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -883,7 +987,7 @@ class DependencyOfRelationshipsOperations:  # pylint: disable=docstring-missing-
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-08-01"],
     )
     def list_by_parent(self, resource_uri: str, **kwargs: Any) -> ItemPaged["_models.DependencyOfRelationship"]:
         """List DependencyOfRelationship resources by parent.
@@ -913,6 +1017,568 @@ class DependencyOfRelationshipsOperations:  # pylint: disable=docstring-missing-
 
                 _request = build_dependency_of_relationships_list_by_parent_request(
                     resource_uri=resource_uri,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.DependencyOfRelationship],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class DependencyOfRelationshipsByServiceGroupOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.relationships.RelationshipsMgmtClient`'s
+        :attr:`dependency_of_relationships_by_service_group` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: RelationshipsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "service_group_name", "name", "accept"]},
+        api_versions_list=["2026-03-01-preview", "2026-08-01"],
+    )
+    def get(self, service_group_name: str, name: str, **kwargs: Any) -> _models.DependencyOfRelationship:
+        """Get a DependencyOfRelationship.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param name: Name of dependencyOf relationship. Required.
+        :type name: str
+        :return: DependencyOfRelationship. The DependencyOfRelationship is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.relationships.models.DependencyOfRelationship
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DependencyOfRelationship] = kwargs.pop("cls", None)
+
+        _request = build_dependency_of_relationships_by_service_group_get_request(
+            service_group_name=service_group_name,
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DependencyOfRelationship, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "service_group_name", "name", "content_type", "accept"]},
+        api_versions_list=["2026-03-01-preview", "2026-08-01"],
+    )
+    def _create_or_update_initial(
+        self,
+        service_group_name: str,
+        name: str,
+        resource: Union[_models.DependencyOfRelationship, _types.DependencyOfRelationship, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_dependency_of_relationships_by_service_group_create_or_update_request(
+            service_group_name=service_group_name,
+            name=name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        service_group_name: str,
+        name: str,
+        resource: _models.DependencyOfRelationship,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.DependencyOfRelationship]:
+        """Create a DependencyOfRelationship.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param name: Name of dependencyOf relationship. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.relationships.models.DependencyOfRelationship
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DependencyOfRelationship. The
+         DependencyOfRelationship is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.relationships.models.DependencyOfRelationship]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        service_group_name: str,
+        name: str,
+        resource: _types.DependencyOfRelationship,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.DependencyOfRelationship]:
+        """Create a DependencyOfRelationship.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param name: Name of dependencyOf relationship. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.relationships.types.DependencyOfRelationship
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DependencyOfRelationship. The
+         DependencyOfRelationship is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.relationships.models.DependencyOfRelationship]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        service_group_name: str,
+        name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.DependencyOfRelationship]:
+        """Create a DependencyOfRelationship.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param name: Name of dependencyOf relationship. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns DependencyOfRelationship. The
+         DependencyOfRelationship is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.relationships.models.DependencyOfRelationship]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "service_group_name", "name", "content_type", "accept"]},
+        api_versions_list=["2026-03-01-preview", "2026-08-01"],
+    )
+    def begin_create_or_update(
+        self,
+        service_group_name: str,
+        name: str,
+        resource: Union[_models.DependencyOfRelationship, _types.DependencyOfRelationship, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.DependencyOfRelationship]:
+        """Create a DependencyOfRelationship.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param name: Name of dependencyOf relationship. Required.
+        :type name: str
+        :param resource: Resource create parameters. Is either a DependencyOfRelationship type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.relationships.models.DependencyOfRelationship or
+         ~azure.mgmt.relationships.types.DependencyOfRelationship or IO[bytes]
+        :return: An instance of LROPoller that returns DependencyOfRelationship. The
+         DependencyOfRelationship is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.relationships.models.DependencyOfRelationship]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DependencyOfRelationship] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                service_group_name=service_group_name,
+                name=name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.DependencyOfRelationship, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.DependencyOfRelationship].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.DependencyOfRelationship](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "service_group_name", "name"]},
+        api_versions_list=["2026-03-01-preview", "2026-08-01"],
+    )
+    def _delete_initial(self, service_group_name: str, name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_dependency_of_relationships_by_service_group_delete_request(
+            service_group_name=service_group_name,
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "service_group_name", "name"]},
+        api_versions_list=["2026-03-01-preview", "2026-08-01"],
+    )
+    def begin_delete(self, service_group_name: str, name: str, **kwargs: Any) -> LROPoller[None]:
+        """Delete a DependencyOfRelationship.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param name: Name of dependencyOf relationship. Required.
+        :type name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                service_group_name=service_group_name,
+                name=name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "service_group_name", "accept"]},
+        api_versions_list=["2026-03-01-preview", "2026-08-01"],
+    )
+    def list(self, service_group_name: str, **kwargs: Any) -> ItemPaged["_models.DependencyOfRelationship"]:
+        """List DependencyOfRelationship resources by scope.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :return: An iterator like instance of DependencyOfRelationship
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.relationships.models.DependencyOfRelationship]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.DependencyOfRelationship]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_dependency_of_relationships_by_service_group_list_request(
+                    service_group_name=service_group_name,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1422,7 +2088,7 @@ class ServiceGroupMemberRelationshipsOperations:  # pylint: disable=docstring-mi
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-08-01"],
     )
     def list_by_parent(self, resource_uri: str, **kwargs: Any) -> ItemPaged["_models.ServiceGroupMemberRelationship"]:
         """List ServiceGroupMemberRelationship resources by parent.
@@ -1542,7 +2208,7 @@ class ContainsRelationshipsOperations:  # pylint: disable=docstring-missing-para
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "filter", "accept"]},
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-08-01"],
     )
     def list_by_subscription(
         self, *, filter: Optional[str] = None, **kwargs: Any
@@ -1648,7 +2314,7 @@ class ContainsRelationshipsOperations:  # pylint: disable=docstring-missing-para
         params_added_on={
             "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "filter", "accept"]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-08-01"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, *, filter: Optional[str] = None, **kwargs: Any

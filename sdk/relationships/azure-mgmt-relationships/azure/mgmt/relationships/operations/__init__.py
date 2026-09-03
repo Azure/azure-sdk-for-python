@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import DependencyOfRelationshipsOperations  # type: ignore
+from ._operations import DependencyOfRelationshipsByServiceGroupOperations  # type: ignore
 from ._operations import ServiceGroupMemberRelationshipsOperations  # type: ignore
 from ._operations import ContainsRelationshipsOperations  # type: ignore
 
@@ -24,6 +25,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "DependencyOfRelationshipsOperations",
+    "DependencyOfRelationshipsByServiceGroupOperations",
     "ServiceGroupMemberRelationshipsOperations",
     "ContainsRelationshipsOperations",
 ]

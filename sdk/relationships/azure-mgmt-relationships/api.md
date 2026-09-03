@@ -4,6 +4,7 @@ namespace azure.mgmt.relationships
     class azure.mgmt.relationships.RelationshipsMgmtClient: implements ContextManager 
         contains_relationships: ContainsRelationshipsOperations
         dependency_of_relationships: DependencyOfRelationshipsOperations
+        dependency_of_relationships_by_service_group: DependencyOfRelationshipsByServiceGroupOperations
         operations: Operations
         service_group_member_relationships: ServiceGroupMemberRelationshipsOperations
 
@@ -35,6 +36,7 @@ namespace azure.mgmt.relationships.aio
     class azure.mgmt.relationships.aio.RelationshipsMgmtClient: implements AsyncContextManager 
         contains_relationships: ContainsRelationshipsOperations
         dependency_of_relationships: DependencyOfRelationshipsOperations
+        dependency_of_relationships_by_service_group: DependencyOfRelationshipsByServiceGroupOperations
         operations: Operations
         service_group_member_relationships: ServiceGroupMemberRelationshipsOperations
 
@@ -72,7 +74,7 @@ namespace azure.mgmt.relationships.aio.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'filter', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'filter', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -82,13 +84,81 @@ namespace azure.mgmt.relationships.aio.operations
             ) -> AsyncItemPaged[ContainsRelationship]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'filter', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'filter', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
         def list_by_subscription(
                 self, 
                 *, 
                 filter: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[ContainsRelationship]: ...
+
+
+    class azure.mgmt.relationships.aio.operations.DependencyOfRelationshipsByServiceGroupOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                name: str, 
+                resource: DependencyOfRelationship, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[DependencyOfRelationship]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                name: str, 
+                resource: DependencyOfRelationship, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[DependencyOfRelationship]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[DependencyOfRelationship]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'service_group_name', 'name']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
+        async def begin_delete(
+                self, 
+                service_group_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'service_group_name', 'name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
+        async def get(
+                self, 
+                service_group_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> DependencyOfRelationship: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'service_group_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
+        def list(
+                self, 
+                service_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[DependencyOfRelationship]: ...
 
 
     class azure.mgmt.relationships.aio.operations.DependencyOfRelationshipsOperations:
@@ -149,7 +219,7 @@ namespace azure.mgmt.relationships.aio.operations
             ) -> DependencyOfRelationship: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
         def list_by_parent(
                 self, 
                 resource_uri: str, 
@@ -227,7 +297,7 @@ namespace azure.mgmt.relationships.aio.operations
             ) -> ServiceGroupMemberRelationship: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
         def list_by_parent(
                 self, 
                 resource_uri: str, 
@@ -485,7 +555,7 @@ namespace azure.mgmt.relationships.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'filter', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'filter', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -495,13 +565,81 @@ namespace azure.mgmt.relationships.operations
             ) -> ItemPaged[ContainsRelationship]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'filter', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'filter', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
         def list_by_subscription(
                 self, 
                 *, 
                 filter: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[ContainsRelationship]: ...
+
+
+    class azure.mgmt.relationships.operations.DependencyOfRelationshipsByServiceGroupOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                name: str, 
+                resource: DependencyOfRelationship, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[DependencyOfRelationship]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                name: str, 
+                resource: DependencyOfRelationship, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[DependencyOfRelationship]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[DependencyOfRelationship]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'service_group_name', 'name']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
+        def begin_delete(
+                self, 
+                service_group_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'service_group_name', 'name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
+        def get(
+                self, 
+                service_group_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> DependencyOfRelationship: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'service_group_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
+        def list(
+                self, 
+                service_group_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[DependencyOfRelationship]: ...
 
 
     class azure.mgmt.relationships.operations.DependencyOfRelationshipsOperations:
@@ -562,7 +700,7 @@ namespace azure.mgmt.relationships.operations
             ) -> DependencyOfRelationship: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
         def list_by_parent(
                 self, 
                 resource_uri: str, 
@@ -640,7 +778,7 @@ namespace azure.mgmt.relationships.operations
             ) -> ServiceGroupMemberRelationship: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-08-01'])
         def list_by_parent(
                 self, 
                 resource_uri: str, 

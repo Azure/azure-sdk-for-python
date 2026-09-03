@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.relationships import RelationshipsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-relationships
 # USAGE
-    python contains_relationships_list_by_resource_group.py
+    python dependency_of_relationships_by_service_group_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +31,19 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.contains_relationships.list_by_resource_group(
-        resource_group_name="testrg",
-    )
-    for item in response:
-        print(item)
+    response = client.dependency_of_relationships_by_service_group.begin_create_or_update(
+        service_group_name="myServiceGroup",
+        name="relationshipOne",
+        resource={
+            "properties": {
+                "targetId": "/subscriptions/a925f2f7-5c63-4b7b-8799-25a5f97bc3b2/resourceGroups/testrg123/providers/Microsoft.Web/staticSites/test-site",
+                "targetTenant": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            }
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-08-01/ContainsRelationships_ListByResourceGroup.json
+# x-ms-original-file: 2026-08-01/DependencyOfRelationshipsByServiceGroup_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
