@@ -4,10 +4,10 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 141 unique public methods:
+There are a total of 154 unique public methods:
 - 5 stable methods on the client
 - 55 stable methods on top-level sub-clients
-- 81 beta methods on nested beta sub-clients
+- 94 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
@@ -26,6 +26,7 @@ There are a total of 141 unique public methods:
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
+| `beta.agent_insight_monitors` | BetaAgentInsightMonitorsOperations | 13 |
 | `beta.agents` | BetaAgentsOperations | 5 |
 | `beta.datasets` | BetaDatasetsOperations | 5 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
@@ -125,6 +126,20 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
 
 ```
+.beta.agent_insight_monitors.begin_create_run*
+.beta.agent_insight_monitors.cancel_run
+.beta.agent_insight_monitors.create
+.beta.agent_insight_monitors.delete
+.beta.agent_insight_monitors.get
+.beta.agent_insight_monitors.get_insight
+.beta.agent_insight_monitors.get_run
+.beta.agent_insight_monitors.list
+.beta.agent_insight_monitors.list_insights
+.beta.agent_insight_monitors.list_runs
+.beta.agent_insight_monitors.reset
+.beta.agent_insight_monitors.update
+.beta.agent_insight_monitors.update_insight
+
 .beta.agents.cancel_optimization_job
 .beta.agents.begin_create_optimization_job*
 .beta.agents.delete_optimization_job
