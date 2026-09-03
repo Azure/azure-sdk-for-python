@@ -60,7 +60,10 @@ class TestToWsUrl:
 
     def test_https_endpoint_becomes_wss(self):
         url = _to_ws_url(_ENDPOINT, "my-agent")
-        assert url == "wss://my-account.services.ai.azure.com/api/projects/my-project/agents/my-agent/endpoint/protocols/voice"
+        assert (
+            url
+            == "wss://my-account.services.ai.azure.com/api/projects/my-project/agents/my-agent/endpoint/protocols/voice"
+        )
 
     def test_http_endpoint_becomes_ws(self):
         url = _to_ws_url("http://localhost:8080", "my-agent")
@@ -68,7 +71,10 @@ class TestToWsUrl:
 
     def test_trailing_slash_is_stripped(self):
         url = _to_ws_url(_ENDPOINT + "/", "my-agent")
-        assert url == "wss://my-account.services.ai.azure.com/api/projects/my-project/agents/my-agent/endpoint/protocols/voice"
+        assert (
+            url
+            == "wss://my-account.services.ai.azure.com/api/projects/my-project/agents/my-agent/endpoint/protocols/voice"
+        )
 
 
 class TestAssertTrustedConnectionUrl:

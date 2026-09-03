@@ -79,7 +79,11 @@ namespace azure.ai.projects
                 reason: str = ""
             ) -> None: ...
 
-        def recv(self) -> ServerEvent: ...
+        def recv(
+                self, 
+                *, 
+                timeout: Optional[float] = ...
+            ) -> ServerEvent: ...
 
         def send(self, event: ClientEvent) -> None: ...
 
@@ -221,6 +225,33 @@ namespace azure.ai.projects.aio
 
 namespace azure.ai.projects.aio.operations
 
+    class azure.ai.projects.aio.operations.AgentEndpointConversationsOperations(GeneratedAgentEndpointConversationsOperations):
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_item_generated_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceGeneratedItemAudioResponse: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_item_generated_audio_content(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+
     class azure.ai.projects.aio.operations.AgentsOperations(GeneratedAgentsOperations):
 
         def __init__(
@@ -259,6 +290,36 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
+
+        @overload
+        async def create_telephony_binding(
+                self, 
+                agent_name: str, 
+                body: CreateTelephonyBindingRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @overload
+        async def create_telephony_binding(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @overload
+        async def create_telephony_binding(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
 
         @overload
         async def create_version(
@@ -369,6 +430,17 @@ namespace azure.ai.projects.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
+        async def delete_telephony_binding(
+                self, 
+                agent_name: str, 
+                binding_id: str, 
+                *, 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
         async def delete_version(
                 self, 
                 agent_name: str, 
@@ -410,6 +482,14 @@ namespace azure.ai.projects.aio.operations
                 agent_name: str, 
                 **kwargs: Any
             ) -> None: ...
+
+        @distributed_trace_async
+        async def end_telephony_call(
+                self, 
+                agent_name: str, 
+                call_id: str, 
+                **kwargs: Any
+            ) -> TelephonyCallRecord: ...
 
         @distributed_trace_async
         async def generate_agent(
@@ -497,6 +577,29 @@ namespace azure.ai.projects.aio.operations
             ) -> SessionLogEvent: ...
 
         @distributed_trace_async
+        async def get_telephony_binding(
+                self, 
+                agent_name: str, 
+                binding_id: str, 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @distributed_trace_async
+        async def get_telephony_call(
+                self, 
+                agent_name: str, 
+                call_id: str, 
+                **kwargs: Any
+            ) -> TelephonyCallRecord: ...
+
+        @distributed_trace_async
+        async def get_telephony_transfer_targets(
+                self, 
+                agent_name: str, 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
+        @distributed_trace_async
         async def get_version(
                 self, 
                 agent_name: str, 
@@ -538,6 +641,34 @@ namespace azure.ai.projects.aio.operations
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentSessionResource]: ...
+
+        @distributed_trace
+        def list_telephony_bindings(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                provider: Optional[Union[str, TelephonyProvider]] = ..., 
+                status: Optional[Union[str, TelephonyBindingStatus]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[TelephonyBindingListItem]: ...
+
+        @distributed_trace
+        def list_telephony_calls(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                provider: Optional[Union[str, TelephonyProvider]] = ..., 
+                started_after: Optional[datetime] = ..., 
+                started_before: Optional[datetime] = ..., 
+                status: Optional[Union[str, TelephonyCallStatus]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[TelephonyCallSummary]: ...
 
         @distributed_trace
         def list_versions(
@@ -596,6 +727,42 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> Microsoft365PublishResult: ...
 
+        @overload
+        async def replace_telephony_transfer_targets(
+                self, 
+                agent_name: str, 
+                *, 
+                content_type: str = "application/json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                transfer_targets: List[TelephonyTransferTarget], 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
+        @overload
+        async def replace_telephony_transfer_targets(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
+        @overload
+        async def replace_telephony_transfer_targets(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
         @distributed_trace_async
         async def stop_session(
                 self, 
@@ -603,6 +770,39 @@ namespace azure.ai.projects.aio.operations
                 session_id: str, 
                 **kwargs: Any
             ) -> None: ...
+
+        @overload
+        async def transfer_telephony_call(
+                self, 
+                agent_name: str, 
+                call_id: str, 
+                *, 
+                content_type: str = "application/json", 
+                target: str, 
+                **kwargs: Any
+            ) -> TelephonyCallRecord: ...
+
+        @overload
+        async def transfer_telephony_call(
+                self, 
+                agent_name: str, 
+                call_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TelephonyCallRecord: ...
+
+        @overload
+        async def transfer_telephony_call(
+                self, 
+                agent_name: str, 
+                call_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TelephonyCallRecord: ...
 
         @overload
         async def update_details(
@@ -636,6 +836,45 @@ namespace azure.ai.projects.aio.operations
             ) -> AgentDetails: ...
 
         @overload
+        async def update_telephony_binding(
+                self, 
+                agent_name: str, 
+                binding_id: str, 
+                body: UpdateTelephonyBindingRequest, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @overload
+        async def update_telephony_binding(
+                self, 
+                agent_name: str, 
+                binding_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @overload
+        async def update_telephony_binding(
+                self, 
+                agent_name: str, 
+                binding_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @overload
         async def upload_session_file(
                 self, 
                 agent_name: str, 
@@ -658,6 +897,346 @@ namespace azure.ai.projects.aio.operations
                 path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
+
+
+    class azure.ai.projects.aio.operations.BetaAgentEndpointConversationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def delete_agent_conversation(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceConversation: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceRecordingResponse: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_audio_content(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> RealtimeConversationItem: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_item_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceItemAudioResponse: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_item_audio_content(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_response(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                response_id: str, 
+                **kwargs: Any
+            ) -> VoiceResponse: ...
+
+        @distributed_trace
+        def list_agent_conversation_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RealtimeConversationItem]: ...
+
+        @distributed_trace
+        def list_agent_conversation_response_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                response_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RealtimeConversationItem]: ...
+
+        @distributed_trace
+        def list_agent_conversation_responses(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VoiceResponse]: ...
+
+        @distributed_trace
+        def list_agent_conversations(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VoiceConversation]: ...
+
+
+    class azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: AgentInsightRunCreate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AgentInsightRunResult]: ...
+
+        @overload
+        async def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AgentInsightRunResult]: ...
+
+        @overload
+        async def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AgentInsightRunResult]: ...
+
+        @distributed_trace_async
+        async def cancel_run(
+                self, 
+                monitor_id: str, 
+                run_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightRun: ...
+
+        @overload
+        async def create(
+                self, 
+                monitor: AgentInsightMonitorCreate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        async def create(
+                self, 
+                monitor: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        async def create(
+                self, 
+                monitor: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @distributed_trace_async
+        async def delete(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @distributed_trace_async
+        async def get_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                *, 
+                include_details: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @distributed_trace_async
+        async def get_run(
+                self, 
+                monitor_id: str, 
+                run_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightRun: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                *, 
+                agent_name: Optional[str] = ..., 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AgentInsightMonitorListItem]: ...
+
+        @distributed_trace
+        def list_insights(
+                self, 
+                monitor_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                category: Optional[str] = ..., 
+                include_details: Optional[bool] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                severity: Optional[Union[str, AgentInsightSeverity]] = ..., 
+                status: Optional[Union[str, AgentInsightStatus]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AgentInsight]: ...
+
+        @distributed_trace
+        def list_runs(
+                self, 
+                monitor_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                status: Optional[Union[str, JobStatus]] = ..., 
+                trigger: Optional[Union[str, AgentInsightRunTrigger]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AgentInsightRun]: ...
+
+        @distributed_trace_async
+        async def reset(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @overload
+        async def update(
+                self, 
+                monitor_id: str, 
+                monitor: AgentInsightMonitorUpdate, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        async def update(
+                self, 
+                monitor_id: str, 
+                monitor: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        async def update(
+                self, 
+                monitor_id: str, 
+                monitor: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        async def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: AgentInsightUpdate, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @overload
+        async def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @overload
+        async def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
 
 
     class azure.ai.projects.aio.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
@@ -5018,6 +5597,45 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.CreateTeamsPhoneExtensionTelephonyBindingRequest(CreateTelephonyBindingRequest, discriminator='teams_phone_extension'):
+        connection: str
+        label: str
+        phone_number: Optional[str]
+        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION]
+        resource_account_object_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection: str, 
+                label: Optional[str] = ..., 
+                phone_number: Optional[str] = ..., 
+                resource_account_object_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CreateTelephonyBindingRequest(_Model):
+        connection: str
+        label: Optional[str]
+        provider: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection: str, 
+                label: Optional[str] = ..., 
+                provider: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.CreateTranscriptionResponseJsonUsage(_Model):
         type: str
 
@@ -5035,6 +5653,25 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.CreateTranscriptionResponseJsonUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DURATION = "duration"
         TOKENS = "tokens"
+
+
+    class azure.ai.projects.models.CreateTwilioTelephonyBindingRequest(CreateTelephonyBindingRequest, discriminator='twilio'):
+        connection: str
+        label: str
+        phone_number: str
+        provider: Literal[TelephonyProvider.TWILIO]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection: str, 
+                label: Optional[str] = ..., 
+                phone_number: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -8351,6 +8988,21 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.PSTNTelephonyTransferDestination(TelephonyTransferDestination, discriminator='pstn'):
+        kind: Literal[TelephonyTransferDestinationKind.PSTN]
+        value: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ASC = "asc"
         DESC = "desc"
@@ -8900,6 +9552,7 @@ namespace azure.ai.projects.models
         OUTPUT_AUDIO_BUFFER_CLEAR = "output_audio_buffer.clear"
         RESPONSE_CANCEL = "response.cancel"
         RESPONSE_CREATE = "response.create"
+        RTC_CALL_SDP_CREATE = "rtc.call.sdp.create"
         SESSION_AVATAR_CONNECT = "session.avatar.connect"
         SESSION_UPDATE = "session.update"
 
@@ -10508,10 +11161,15 @@ namespace azure.ai.projects.models
         RESPONSE_OUTPUT_TEXT_DELTA = "response.output_text.delta"
         RESPONSE_OUTPUT_TEXT_DONE = "response.output_text.done"
         RESPONSE_VIDEO_DELTA = "response.video.delta"
+        RTC_CALL_ERROR = "rtc.call.error"
+        RTC_CALL_SDP_CREATED = "rtc.call.sdp.created"
         SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
         SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
         SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
         SESSION_CREATED = "session.created"
+        SESSION_SUBAGENT_ABORTED = "session.subagent.aborted"
+        SESSION_SUBAGENT_COMPLETED = "session.subagent.completed"
+        SESSION_SUBAGENT_STARTED = "session.subagent.started"
         SESSION_UPDATED = "session.updated"
         WARNING = "warning"
 
@@ -11252,6 +11910,21 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.SipTelephonyTransferDestination(TelephonyTransferDestination, discriminator='sip'):
+        kind: Literal[TelephonyTransferDestinationKind.SIP]
+        value: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.SkillDetails(_Model):
         created_at: datetime
         default_version: str
@@ -11464,6 +12137,76 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.TeamsPhoneExtensionTelephonyBinding(TelephonyBinding, discriminator='teams_phone_extension'):
+        connection: str
+        id: str
+        incoming_call_url: str
+        label: str
+        phone_number: Optional[str]
+        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION]
+        resource_account_object_id: str
+        status: Union[str, TelephonyBindingStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection: str, 
+                id: str, 
+                incoming_call_url: str, 
+                label: Optional[str] = ..., 
+                phone_number: Optional[str] = ..., 
+                resource_account_object_id: str, 
+                status: Union[str, TelephonyBindingStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TeamsPhoneExtensionTelephonyBindingListItem(TelephonyBindingListItem, discriminator='teams_phone_extension'):
+        connection: str
+        etag: str
+        id: str
+        incoming_call_url: str
+        label: str
+        phone_number: Optional[str]
+        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION]
+        resource_account_object_id: str
+        status: Union[str, TelephonyBindingStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection: str, 
+                id: str, 
+                incoming_call_url: str, 
+                label: Optional[str] = ..., 
+                phone_number: Optional[str] = ..., 
+                resource_account_object_id: str, 
+                status: Union[str, TelephonyBindingStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TeamsTelephonyTransferDestination(TelephonyTransferDestination, discriminator='teams'):
+        kind: Literal[TelephonyTransferDestinationKind.TEAMS]
+        value: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.TelemetryConfig(_Model):
         endpoints: list[TelemetryEndpoint]
 
@@ -11527,6 +12270,386 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.TelemetryTransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         GRPC = "Grpc"
         HTTP = "Http"
+
+
+    class azure.ai.projects.models.TelephonyBinding(_Model):
+        connection: str
+        id: str
+        incoming_call_url: str
+        label: Optional[str]
+        provider: str
+        status: Union[str, TelephonyBindingStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection: str, 
+                id: str, 
+                incoming_call_url: str, 
+                label: Optional[str] = ..., 
+                provider: str, 
+                status: Union[str, TelephonyBindingStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyBindingListItem(_Model):
+        connection: str
+        etag: str
+        id: str
+        incoming_call_url: str
+        label: Optional[str]
+        provider: str
+        status: Union[str, TelephonyBindingStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection: str, 
+                id: str, 
+                incoming_call_url: str, 
+                label: Optional[str] = ..., 
+                provider: str, 
+                status: Union[str, TelephonyBindingStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyBindingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE = "active"
+        SUSPENDED = "suspended"
+
+
+    class azure.ai.projects.models.TelephonyCallDurationBasis(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ANSWERED = "answered"
+        RECEIVED = "received"
+
+
+    class azure.ai.projects.models.TelephonyCallLifecycleEvent(_Model):
+        name: Union[str, TelephonyCallLifecycleEventName]
+        observed_at: datetime
+        occurred_at: Optional[datetime]
+        outcome: Union[str, TelephonyCallLifecycleEventOutcome]
+        provider_event_id: Optional[str]
+        provider_sequence: Optional[int]
+        provider_status_code: Optional[int]
+        provider_sub_code: Optional[int]
+        reason: Optional[str]
+        sequence: int
+        source: Union[str, TelephonyCallLifecycleEventSource]
+        timestamp_source: Union[str, TelephonyCallTimestampSource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Union[str, TelephonyCallLifecycleEventName], 
+                observed_at: datetime, 
+                occurred_at: Optional[datetime] = ..., 
+                outcome: Union[str, TelephonyCallLifecycleEventOutcome], 
+                provider_event_id: Optional[str] = ..., 
+                provider_sequence: Optional[int] = ..., 
+                provider_status_code: Optional[int] = ..., 
+                provider_sub_code: Optional[int] = ..., 
+                reason: Optional[str] = ..., 
+                source: Union[str, TelephonyCallLifecycleEventSource], 
+                timestamp_source: Union[str, TelephonyCallTimestampSource]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyCallLifecycleEventName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENT_SESSION_CONNECT = "telephony.agent_session.connect"
+        BINDING_RESOLVE = "telephony.binding.resolve"
+        CALL_DISCONNECT = "telephony.call.disconnect"
+        CALL_HANGUP = "telephony.call.hangup"
+        CALL_TRANSFER = "telephony.call.transfer"
+        FIRST_AGENT_AUDIO = "telephony.media.first_agent_audio"
+        FIRST_CALLER_AUDIO = "telephony.media.first_caller_audio"
+        MEDIA_CONNECT = "telephony.media.connect"
+        PROVIDER_ANSWER = "telephony.provider.answer"
+        WEBHOOK_RECEIVED = "telephony.webhook.received"
+        WEBHOOK_VALIDATION = "telephony.webhook.validation"
+
+
+    class azure.ai.projects.models.TelephonyCallLifecycleEventOutcome(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELLED = "cancelled"
+        FAILED = "failed"
+        OBSERVED = "observed"
+        REJECTED = "rejected"
+        STARTED = "started"
+        SUCCEEDED = "succeeded"
+
+
+    class azure.ai.projects.models.TelephonyCallLifecycleEventSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        GATEWAY = "gateway"
+        TEAMS_PHONE_EXTENSION = "teams_phone_extension"
+        TWILIO = "twilio"
+        VOICE_AGENT = "voice_agent"
+
+
+    class azure.ai.projects.models.TelephonyCallPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ADMITTED = "admitted"
+        AGENT_SESSION_READY = "agent_session_ready"
+        ANSWERED = "answered"
+        ANSWERING = "answering"
+        BRIDGING = "bridging"
+        COMPLETED = "completed"
+        FAILED = "failed"
+        MANAGING = "managing"
+        MEDIA_CONNECTED = "media_connected"
+        RECEIVED = "received"
+        REJECTED = "rejected"
+        VALIDATED = "validated"
+
+
+    class azure.ai.projects.models.TelephonyCallRecord(_Model):
+        agent_session_ready_at: Optional[datetime]
+        answered_at: Optional[datetime]
+        caller_number: Optional[str]
+        duration_ms: Optional[timedelta]
+        end_reason: Optional[str]
+        ended_at: Optional[datetime]
+        events: list[TelephonyCallLifecycleEvent]
+        events_truncated: bool
+        id: str
+        media_connected_at: Optional[datetime]
+        phase: Union[str, TelephonyCallPhase]
+        provider: Union[str, TelephonyProvider]
+        provider_call_id: Optional[str]
+        provider_message: Optional[str]
+        provider_number: Optional[str]
+        provider_status_code: Optional[int]
+        provider_sub_code: Optional[int]
+        started_at: datetime
+        status: Union[str, TelephonyCallStatus]
+        timing: TelephonyCallTiming
+        trace: Optional[TelephonyCallTrace]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_session_ready_at: Optional[datetime] = ..., 
+                answered_at: Optional[datetime] = ..., 
+                caller_number: Optional[str] = ..., 
+                duration_ms: Optional[timedelta] = ..., 
+                end_reason: Optional[str] = ..., 
+                ended_at: Optional[datetime] = ..., 
+                events: list[TelephonyCallLifecycleEvent], 
+                events_truncated: bool, 
+                id: str, 
+                media_connected_at: Optional[datetime] = ..., 
+                phase: Union[str, TelephonyCallPhase], 
+                provider: Union[str, TelephonyProvider], 
+                provider_call_id: Optional[str] = ..., 
+                provider_message: Optional[str] = ..., 
+                provider_number: Optional[str] = ..., 
+                provider_status_code: Optional[int] = ..., 
+                provider_sub_code: Optional[int] = ..., 
+                started_at: datetime, 
+                status: Union[str, TelephonyCallStatus], 
+                timing: TelephonyCallTiming, 
+                trace: Optional[TelephonyCallTrace] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "failed"
+        IN_PROGRESS = "in_progress"
+        SUCCESS = "success"
+
+
+    class azure.ai.projects.models.TelephonyCallSummary(_Model):
+        agent_session_ready_at: Optional[datetime]
+        answered_at: Optional[datetime]
+        caller_number: Optional[str]
+        duration_ms: Optional[timedelta]
+        end_reason: Optional[str]
+        ended_at: Optional[datetime]
+        id: str
+        media_connected_at: Optional[datetime]
+        phase: Union[str, TelephonyCallPhase]
+        provider: Union[str, TelephonyProvider]
+        provider_call_id: Optional[str]
+        provider_message: Optional[str]
+        provider_number: Optional[str]
+        provider_status_code: Optional[int]
+        provider_sub_code: Optional[int]
+        started_at: datetime
+        status: Union[str, TelephonyCallStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_session_ready_at: Optional[datetime] = ..., 
+                answered_at: Optional[datetime] = ..., 
+                caller_number: Optional[str] = ..., 
+                duration_ms: Optional[timedelta] = ..., 
+                end_reason: Optional[str] = ..., 
+                ended_at: Optional[datetime] = ..., 
+                id: str, 
+                media_connected_at: Optional[datetime] = ..., 
+                phase: Union[str, TelephonyCallPhase], 
+                provider: Union[str, TelephonyProvider], 
+                provider_call_id: Optional[str] = ..., 
+                provider_message: Optional[str] = ..., 
+                provider_number: Optional[str] = ..., 
+                provider_status_code: Optional[int] = ..., 
+                provider_sub_code: Optional[int] = ..., 
+                started_at: datetime, 
+                status: Union[str, TelephonyCallStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyCallTimestampSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DERIVED = "derived"
+        GATEWAY = "gateway"
+        PROVIDER = "provider"
+
+
+    class azure.ai.projects.models.TelephonyCallTiming(_Model):
+        admitted_at: Optional[datetime]
+        agent_session_ready_at: Optional[datetime]
+        answer_requested_at: Optional[datetime]
+        answered_at: Optional[datetime]
+        duration_basis: Optional[Union[str, TelephonyCallDurationBasis]]
+        ended_at: Optional[datetime]
+        first_agent_audio_at: Optional[datetime]
+        first_caller_audio_at: Optional[datetime]
+        media_connected_at: Optional[datetime]
+        received_at: Optional[datetime]
+        timestamp_source: Union[str, TelephonyCallTimestampSource]
+        validated_at: Optional[datetime]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                admitted_at: Optional[datetime] = ..., 
+                agent_session_ready_at: Optional[datetime] = ..., 
+                answer_requested_at: Optional[datetime] = ..., 
+                answered_at: Optional[datetime] = ..., 
+                duration_basis: Optional[Union[str, TelephonyCallDurationBasis]] = ..., 
+                ended_at: Optional[datetime] = ..., 
+                first_agent_audio_at: Optional[datetime] = ..., 
+                first_caller_audio_at: Optional[datetime] = ..., 
+                media_connected_at: Optional[datetime] = ..., 
+                received_at: Optional[datetime] = ..., 
+                timestamp_source: Union[str, TelephonyCallTimestampSource], 
+                validated_at: Optional[datetime] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyCallTrace(_Model):
+        conversation_id: Optional[str]
+        mode: Optional[Union[str, TelephonyCallTraceMode]]
+        root_span_id: Optional[str]
+        status: Union[str, TelephonyCallTraceStatus]
+        trace_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                conversation_id: Optional[str] = ..., 
+                mode: Optional[Union[str, TelephonyCallTraceMode]] = ..., 
+                root_span_id: Optional[str] = ..., 
+                status: Union[str, TelephonyCallTraceStatus], 
+                trace_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyCallTraceMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LIVE = "live"
+        POST_CALL = "post_call"
+
+
+    class azure.ai.projects.models.TelephonyCallTraceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AVAILABLE = "available"
+        EMITTING = "emitting"
+        FAILED = "failed"
+        NOT_APPLICABLE = "not_applicable"
+        NOT_RECORDED = "not_recorded"
+        PENDING = "pending"
+
+
+    class azure.ai.projects.models.TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        TEAMS_PHONE_EXTENSION = "teams_phone_extension"
+        TWILIO = "twilio"
+
+
+    class azure.ai.projects.models.TelephonyTransferDestination(_Model):
+        kind: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                kind: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyTransferDestinationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PSTN = "pstn"
+        SIP = "sip"
+        TEAMS = "teams"
+
+
+    class azure.ai.projects.models.TelephonyTransferTarget(_Model):
+        description: str
+        destination: TelephonyTransferDestination
+        name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: str, 
+                destination: TelephonyTransferDestination, 
+                name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyTransferTargets(_Model):
+        transfer_targets: list[TelephonyTransferTarget]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                transfer_targets: list[TelephonyTransferTarget]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.TestingCriterionAzureAIEvaluator(TypedDict, total=False):
@@ -12359,6 +13482,57 @@ namespace azure.ai.projects.models
         RECURRENCE = "Recurrence"
 
 
+    class azure.ai.projects.models.TwilioTelephonyBinding(TelephonyBinding, discriminator='twilio'):
+        connection: str
+        id: str
+        incoming_call_url: str
+        label: str
+        phone_number: str
+        provider: Literal[TelephonyProvider.TWILIO]
+        status: Union[str, TelephonyBindingStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection: str, 
+                id: str, 
+                incoming_call_url: str, 
+                label: Optional[str] = ..., 
+                phone_number: str, 
+                status: Union[str, TelephonyBindingStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TwilioTelephonyBindingListItem(TelephonyBindingListItem, discriminator='twilio'):
+        connection: str
+        etag: str
+        id: str
+        incoming_call_url: str
+        label: str
+        phone_number: str
+        provider: Literal[TelephonyProvider.TWILIO]
+        status: Union[str, TelephonyBindingStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection: str, 
+                id: str, 
+                incoming_call_url: str, 
+                label: Optional[str] = ..., 
+                phone_number: str, 
+                status: Union[str, TelephonyBindingStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
         property superseded_by: Optional[str]    # Read-only
         property update_id: str    # Read-only
@@ -12382,6 +13556,26 @@ namespace azure.ai.projects.models
                 *, 
                 description: Optional[str] = ..., 
                 tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.UpdateTelephonyBindingRequest(_Model):
+        connection: Optional[str]
+        label: Optional[str]
+        phone_number: Optional[str]
+        status: Optional[Union[str, TelephonyBindingStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection: Optional[str] = ..., 
+                label: Optional[str] = ..., 
+                phone_number: Optional[str] = ..., 
+                status: Optional[Union[str, TelephonyBindingStatus]] = ...
             ) -> None: ...
 
         @overload
@@ -12853,6 +14047,25 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentClientEventRtcCallSdpCreate(RealtimeClientEvent, discriminator='rtc.call.sdp.create'):
+        event_id: Optional[str]
+        sdp_offer: str
+        session: Optional[VoiceAgentSessionUpdateConfig]
+        type: Literal[RealtimeClientEventType.RTC_CALL_SDP_CREATE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ..., 
+                sdp_offer: str, 
+                session: Optional[VoiceAgentSessionUpdateConfig] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentClientEventSessionAvatarConnect(RealtimeClientEvent, discriminator='session.avatar.connect'):
         client_sdp: str
         event_id: Optional[str]
@@ -12891,19 +14104,21 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentDefinition(AgentDefinition, discriminator='voice'):
         audio: Optional[VoiceAgentAudioConfig]
         avatar: Optional[VoiceAgentAvatarConfig]
+        conversation_engine: Optional[VoiceConversationEngine]
         greeting: Optional[VoiceAgentGreetingConfig]
         include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]]
         instructions: Optional[str]
         interim_response: Optional[VoiceAgentInterimResponseConfig]
         kind: Literal[AgentKind.VOICE]
         max_output_tokens: Optional[VoiceAgentMaxOutputTokens]
-        model: str
-        model_type: Union[str, VoiceModelType]
+        model: Optional[str]
+        model_type: Optional[Union[str, VoiceModelType]]
         output_modalities: Optional[list[Union[str, VoiceOutputModality]]]
         parallel_tool_calls: Optional[bool]
         rai_config: RaiConfig
         store: Optional[bool]
         structured_inputs: Optional[dict[str, StructuredInputDefinition]]
+        subagent_config: Optional[VoiceAgentSubAgentConfig]
         tool_choice: Optional[VoiceAgentToolChoice]
         tools: Optional[list[VoiceAgentTool]]
 
@@ -12913,18 +14128,20 @@ namespace azure.ai.projects.models
                 *, 
                 audio: Optional[VoiceAgentAudioConfig] = ..., 
                 avatar: Optional[VoiceAgentAvatarConfig] = ..., 
+                conversation_engine: Optional[VoiceConversationEngine] = ..., 
                 greeting: Optional[VoiceAgentGreetingConfig] = ..., 
                 include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]] = ..., 
                 instructions: Optional[str] = ..., 
                 interim_response: Optional[VoiceAgentInterimResponseConfig] = ..., 
                 max_output_tokens: Optional[VoiceAgentMaxOutputTokens] = ..., 
-                model: str, 
-                model_type: Union[str, VoiceModelType], 
+                model: Optional[str] = ..., 
+                model_type: Optional[Union[str, VoiceModelType]] = ..., 
                 output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
                 parallel_tool_calls: Optional[bool] = ..., 
                 rai_config: Optional[RaiConfig] = ..., 
                 store: Optional[bool] = ..., 
                 structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ..., 
+                subagent_config: Optional[VoiceAgentSubAgentConfig] = ..., 
                 tool_choice: Optional[VoiceAgentToolChoice] = ..., 
                 tools: Optional[list[VoiceAgentTool]] = ...
             ) -> None: ...
@@ -13282,6 +14499,24 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentRtcCallErrorDetails(_Model):
+        code: Optional[str]
+        message: str
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: Optional[str] = ..., 
+                message: str, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentSemanticVadTurnDetection(VoiceAgentTurnDetectionConfig, discriminator='semantic_vad'):
         auto_truncate: bool
         create_response: Optional[bool]
@@ -13475,6 +14710,46 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentServerEventRtcCallError(RealtimeServerEvent, discriminator='rtc.call.error'):
+        error: VoiceAgentRtcCallErrorDetails
+        event_id: Optional[str]
+        operation: Optional[str]
+        rtc_call_id: Optional[str]
+        type: Literal[RealtimeServerEventType.RTC_CALL_ERROR]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                error: VoiceAgentRtcCallErrorDetails, 
+                event_id: Optional[str] = ..., 
+                operation: Optional[str] = ..., 
+                rtc_call_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventRtcCallSdpCreated(RealtimeServerEvent, discriminator='rtc.call.sdp.created'):
+        event_id: str
+        rtc_call_id: str
+        sdp_answer: str
+        type: Literal[RealtimeServerEventType.RTC_CALL_SDP_CREATED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                rtc_call_id: str, 
+                sdp_answer: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentServerEventSessionAvatarConnecting(RealtimeServerEvent, discriminator='session.avatar.connecting'):
         event_id: str
         server_sdp: str
@@ -13520,6 +14795,71 @@ namespace azure.ai.projects.models
                 *, 
                 event_id: str, 
                 turn_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSessionSubagentAborted(RealtimeServerEvent, discriminator='session.subagent.aborted'):
+        call_id: str
+        consultation_id: str
+        event_id: str
+        reason: Union[str, VoiceAgentSubagentAbortReason]
+        subagent_name: str
+        type: Literal[RealtimeServerEventType.SESSION_SUBAGENT_ABORTED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                call_id: str, 
+                consultation_id: str, 
+                event_id: str, 
+                reason: Union[str, VoiceAgentSubagentAbortReason], 
+                subagent_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSessionSubagentCompleted(RealtimeServerEvent, discriminator='session.subagent.completed'):
+        call_id: str
+        consultation_id: str
+        event_id: str
+        subagent_name: str
+        type: Literal[RealtimeServerEventType.SESSION_SUBAGENT_COMPLETED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                call_id: str, 
+                consultation_id: str, 
+                event_id: str, 
+                subagent_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSessionSubagentStarted(RealtimeServerEvent, discriminator='session.subagent.started'):
+        call_id: str
+        consultation_id: str
+        event_id: str
+        subagent_name: str
+        type: Literal[RealtimeServerEventType.SESSION_SUBAGENT_STARTED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                call_id: str, 
+                consultation_id: str, 
+                event_id: str, 
+                subagent_name: str
             ) -> None: ...
 
         @overload
@@ -13742,6 +15082,77 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentSubAgent(_Model):
+        agent_capabilities: str
+        agent_name: str
+        agent_version: Optional[str]
+        invoke_timeout_seconds: Optional[timedelta]
+        response_policy: Optional[VoiceAgentSubagentResponsePolicy]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_capabilities: str, 
+                agent_name: str, 
+                agent_version: Optional[str] = ..., 
+                invoke_timeout_seconds: Optional[timedelta] = ..., 
+                response_policy: Optional[VoiceAgentSubagentResponsePolicy] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSubAgentConfig(_Model):
+        subagents: list[VoiceAgentSubAgent]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                subagents: list[VoiceAgentSubAgent]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSubagentAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELLED = "cancelled"
+        FAILED = "failed"
+        STOPPED_BY_USER = "stopped_by_user"
+        SUPERSEDED = "superseded"
+        TIMEOUT = "timeout"
+        UNKNOWN_TARGET = "unknown_target"
+
+
+    class azure.ai.projects.models.VoiceAgentSubagentResponsePolicy(_Model):
+        ack_instructions: Optional[str]
+        enable_delta_progress: Optional[bool]
+        gap_filling_instructions: Optional[str]
+        gap_filling_interval: Optional[timedelta]
+        immediate_ack: Optional[bool]
+        progress_instructions: Optional[str]
+        progress_update_interval: Optional[timedelta]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                ack_instructions: Optional[str] = ..., 
+                enable_delta_progress: Optional[bool] = ..., 
+                gap_filling_instructions: Optional[str] = ..., 
+                gap_filling_interval: Optional[timedelta] = ..., 
+                immediate_ack: Optional[bool] = ..., 
+                progress_instructions: Optional[str] = ..., 
+                progress_update_interval: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentSystemTool(VoiceAgentTool, discriminator='system'):
         description: Optional[str]
         name: Union[str, VoiceAgentSystemToolName]
@@ -13860,6 +15271,11 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        WEBRTC = "webrtc"
+        WEBSOCKET = "websocket"
+
+
     class azure.ai.projects.models.VoiceAgentTurnDetectionConfig(_Model):
         auto_truncate: Optional[bool]
         type: str
@@ -13930,10 +15346,73 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceConversationEngine(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         COMPLETED = "completed"
         FAILED = "failed"
         IN_PROGRESS = "in_progress"
+
+
+    class azure.ai.projects.models.VoiceGeneratedItemAudioResponse(_Model):
+        blob_uri: Optional[str]
+        channels: Optional[int]
+        codec: Optional[Union[str, VoiceAudioCodec]]
+        conversation_id: str
+        duration_ms: Optional[timedelta]
+        format: Optional[Union[str, VoiceAudioContainerFormat]]
+        item_id: str
+        role: Optional[Union[str, VoiceAudioRole]]
+        sample_rate: Optional[int]
+        start_offset_ms: Optional[timedelta]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                blob_uri: Optional[str] = ..., 
+                channels: Optional[int] = ..., 
+                codec: Optional[Union[str, VoiceAudioCodec]] = ..., 
+                conversation_id: str, 
+                duration_ms: Optional[timedelta] = ..., 
+                format: Optional[Union[str, VoiceAudioContainerFormat]] = ..., 
+                item_id: str, 
+                role: Optional[Union[str, VoiceAudioRole]] = ..., 
+                sample_rate: Optional[int] = ..., 
+                start_offset_ms: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceHostedAgentConversationEngine(VoiceConversationEngine, discriminator='hosted_agent'):
+        name: str
+        type: Literal["hosted_agent"]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.VoiceItemAudioResponse(_Model):
@@ -14370,6 +15849,33 @@ namespace azure.ai.projects.models
 
 namespace azure.ai.projects.operations
 
+    class azure.ai.projects.operations.AgentEndpointConversationsOperations(GeneratedAgentEndpointConversationsOperations):
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def get_agent_conversation_item_generated_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceGeneratedItemAudioResponse: ...
+
+        @distributed_trace
+        def get_agent_conversation_item_generated_audio_content(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+
     class azure.ai.projects.operations.AgentsOperations(GeneratedAgentsOperations):
 
         def __init__(
@@ -14408,6 +15914,36 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
+
+        @overload
+        def create_telephony_binding(
+                self, 
+                agent_name: str, 
+                body: CreateTelephonyBindingRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @overload
+        def create_telephony_binding(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @overload
+        def create_telephony_binding(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
 
         @overload
         def create_version(
@@ -14518,6 +16054,17 @@ namespace azure.ai.projects.operations
             ) -> None: ...
 
         @distributed_trace
+        def delete_telephony_binding(
+                self, 
+                agent_name: str, 
+                binding_id: str, 
+                *, 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
         def delete_version(
                 self, 
                 agent_name: str, 
@@ -14559,6 +16106,14 @@ namespace azure.ai.projects.operations
                 agent_name: str, 
                 **kwargs: Any
             ) -> None: ...
+
+        @distributed_trace
+        def end_telephony_call(
+                self, 
+                agent_name: str, 
+                call_id: str, 
+                **kwargs: Any
+            ) -> TelephonyCallRecord: ...
 
         @distributed_trace
         def generate_agent(
@@ -14646,6 +16201,29 @@ namespace azure.ai.projects.operations
             ) -> SessionLogEvent: ...
 
         @distributed_trace
+        def get_telephony_binding(
+                self, 
+                agent_name: str, 
+                binding_id: str, 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @distributed_trace
+        def get_telephony_call(
+                self, 
+                agent_name: str, 
+                call_id: str, 
+                **kwargs: Any
+            ) -> TelephonyCallRecord: ...
+
+        @distributed_trace
+        def get_telephony_transfer_targets(
+                self, 
+                agent_name: str, 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
+        @distributed_trace
         def get_version(
                 self, 
                 agent_name: str, 
@@ -14687,6 +16265,34 @@ namespace azure.ai.projects.operations
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[AgentSessionResource]: ...
+
+        @distributed_trace
+        def list_telephony_bindings(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                provider: Optional[Union[str, TelephonyProvider]] = ..., 
+                status: Optional[Union[str, TelephonyBindingStatus]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[TelephonyBindingListItem]: ...
+
+        @distributed_trace
+        def list_telephony_calls(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                provider: Optional[Union[str, TelephonyProvider]] = ..., 
+                started_after: Optional[datetime] = ..., 
+                started_before: Optional[datetime] = ..., 
+                status: Optional[Union[str, TelephonyCallStatus]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[TelephonyCallSummary]: ...
 
         @distributed_trace
         def list_versions(
@@ -14745,6 +16351,42 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> Microsoft365PublishResult: ...
 
+        @overload
+        def replace_telephony_transfer_targets(
+                self, 
+                agent_name: str, 
+                *, 
+                content_type: str = "application/json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                transfer_targets: List[TelephonyTransferTarget], 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
+        @overload
+        def replace_telephony_transfer_targets(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
+        @overload
+        def replace_telephony_transfer_targets(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
         @distributed_trace
         def stop_session(
                 self, 
@@ -14752,6 +16394,39 @@ namespace azure.ai.projects.operations
                 session_id: str, 
                 **kwargs: Any
             ) -> None: ...
+
+        @overload
+        def transfer_telephony_call(
+                self, 
+                agent_name: str, 
+                call_id: str, 
+                *, 
+                content_type: str = "application/json", 
+                target: str, 
+                **kwargs: Any
+            ) -> TelephonyCallRecord: ...
+
+        @overload
+        def transfer_telephony_call(
+                self, 
+                agent_name: str, 
+                call_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TelephonyCallRecord: ...
+
+        @overload
+        def transfer_telephony_call(
+                self, 
+                agent_name: str, 
+                call_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> TelephonyCallRecord: ...
 
         @overload
         def update_details(
@@ -14785,6 +16460,45 @@ namespace azure.ai.projects.operations
             ) -> AgentDetails: ...
 
         @overload
+        def update_telephony_binding(
+                self, 
+                agent_name: str, 
+                binding_id: str, 
+                body: UpdateTelephonyBindingRequest, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @overload
+        def update_telephony_binding(
+                self, 
+                agent_name: str, 
+                binding_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @overload
+        def update_telephony_binding(
+                self, 
+                agent_name: str, 
+                binding_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyBinding: ...
+
+        @overload
         def upload_session_file(
                 self, 
                 agent_name: str, 
@@ -14807,6 +16521,346 @@ namespace azure.ai.projects.operations
                 path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
+
+
+    class azure.ai.projects.operations.BetaAgentEndpointConversationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def delete_agent_conversation(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get_agent_conversation(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceConversation: ...
+
+        @distributed_trace
+        def get_agent_conversation_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceRecordingResponse: ...
+
+        @distributed_trace
+        def get_agent_conversation_audio_content(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get_agent_conversation_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> RealtimeConversationItem: ...
+
+        @distributed_trace
+        def get_agent_conversation_item_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceItemAudioResponse: ...
+
+        @distributed_trace
+        def get_agent_conversation_item_audio_content(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get_agent_conversation_response(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                response_id: str, 
+                **kwargs: Any
+            ) -> VoiceResponse: ...
+
+        @distributed_trace
+        def list_agent_conversation_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RealtimeConversationItem]: ...
+
+        @distributed_trace
+        def list_agent_conversation_response_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                response_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RealtimeConversationItem]: ...
+
+        @distributed_trace
+        def list_agent_conversation_responses(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[VoiceResponse]: ...
+
+        @distributed_trace
+        def list_agent_conversations(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[VoiceConversation]: ...
+
+
+    class azure.ai.projects.operations.BetaAgentInsightMonitorsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: AgentInsightRunCreate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AgentInsightRunResult]: ...
+
+        @overload
+        def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AgentInsightRunResult]: ...
+
+        @overload
+        def begin_create_run(
+                self, 
+                monitor_id: str, 
+                run: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AgentInsightRunResult]: ...
+
+        @distributed_trace
+        def cancel_run(
+                self, 
+                monitor_id: str, 
+                run_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightRun: ...
+
+        @overload
+        def create(
+                self, 
+                monitor: AgentInsightMonitorCreate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        def create(
+                self, 
+                monitor: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        def create(
+                self, 
+                monitor: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @distributed_trace
+        def delete(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @distributed_trace
+        def get_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                *, 
+                include_details: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @distributed_trace
+        def get_run(
+                self, 
+                monitor_id: str, 
+                run_id: str, 
+                **kwargs: Any
+            ) -> AgentInsightRun: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                *, 
+                agent_name: Optional[str] = ..., 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[AgentInsightMonitorListItem]: ...
+
+        @distributed_trace
+        def list_insights(
+                self, 
+                monitor_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                category: Optional[str] = ..., 
+                include_details: Optional[bool] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                severity: Optional[Union[str, AgentInsightSeverity]] = ..., 
+                status: Optional[Union[str, AgentInsightStatus]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[AgentInsight]: ...
+
+        @distributed_trace
+        def list_runs(
+                self, 
+                monitor_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                status: Optional[Union[str, JobStatus]] = ..., 
+                trigger: Optional[Union[str, AgentInsightRunTrigger]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[AgentInsightRun]: ...
+
+        @distributed_trace
+        def reset(
+                self, 
+                monitor_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @overload
+        def update(
+                self, 
+                monitor_id: str, 
+                monitor: AgentInsightMonitorUpdate, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        def update(
+                self, 
+                monitor_id: str, 
+                monitor: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        def update(
+                self, 
+                monitor_id: str, 
+                monitor: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsightMonitor: ...
+
+        @overload
+        def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: AgentInsightUpdate, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @overload
+        def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
+
+        @overload
+        def update_insight(
+                self, 
+                monitor_id: str, 
+                insight_id: str, 
+                update: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> AgentInsight: ...
 
 
     class azure.ai.projects.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):

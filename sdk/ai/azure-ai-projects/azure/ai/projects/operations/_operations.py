@@ -14,11 +14,12 @@ from typing import Any, Callable, IO, Iterator, Literal, Optional, TYPE_CHECKING
 import urllib.parse
 import uuid
 
-from azure.core import PipelineClient
+from azure.core import MatchConditions, PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
+    ResourceModifiedError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
     StreamClosedError,
@@ -37,7 +38,7 @@ from .. import models as _models
 from .._configuration import AIProjectClientConfiguration
 from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
-from .._utils.utils import prepare_multipart_form_data
+from .._utils.utils import prep_if_match, prep_if_none_match, prepare_multipart_form_data
 from ..models._enums import _AgentDefinitionOptInKeys
 
 if TYPE_CHECKING:
@@ -676,6 +677,373 @@ def build_agents_get_microsoft365_publish_defaults_request(  # pylint: disable=n
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_create_telephony_binding_request(  # pylint: disable=name-too-long
+    agent_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_bindings"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if "Repeatability-Request-ID" not in _headers:
+        _headers["Repeatability-Request-ID"] = str(uuid.uuid4())
+    if "Repeatability-First-Sent" not in _headers:
+        _headers["Repeatability-First-Sent"] = _SERIALIZER.serialize_data(
+            datetime.datetime.now(datetime.timezone.utc), "rfc-1123"
+        )
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_list_telephony_bindings_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    *,
+    provider: Optional[Union[str, _models.TelephonyProvider]] = None,
+    status: Optional[Union[str, _models.TelephonyBindingStatus]] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_bindings"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if provider is not None:
+        _params["provider"] = _SERIALIZER.query("provider", provider, "str")
+    if status is not None:
+        _params["status"] = _SERIALIZER.query("status", status, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_get_telephony_binding_request(  # pylint: disable=name-too-long
+    agent_name: str, binding_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_bindings/{binding_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "binding_id": _SERIALIZER.url("binding_id", binding_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_update_telephony_binding_request(  # pylint: disable=name-too-long
+    agent_name: str, binding_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_bindings/{binding_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "binding_id": _SERIALIZER.url("binding_id", binding_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_delete_telephony_binding_request(  # pylint: disable=name-too-long
+    agent_name: str, binding_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_bindings/{binding_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "binding_id": _SERIALIZER.url("binding_id", binding_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_list_telephony_calls_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    *,
+    provider: Optional[Union[str, _models.TelephonyProvider]] = None,
+    status: Optional[Union[str, _models.TelephonyCallStatus]] = None,
+    started_after: Optional[datetime.datetime] = None,
+    started_before: Optional[datetime.datetime] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_calls"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if provider is not None:
+        _params["provider"] = _SERIALIZER.query("provider", provider, "str")
+    if status is not None:
+        _params["status"] = _SERIALIZER.query("status", status, "str")
+    if started_after is not None:
+        _params["started_after"] = _SERIALIZER.query("started_after", started_after, "unix-time")
+    if started_before is not None:
+        _params["started_before"] = _SERIALIZER.query("started_before", started_before, "unix-time")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_get_telephony_call_request(agent_name: str, call_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_calls/{call_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "call_id": _SERIALIZER.url("call_id", call_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_transfer_telephony_call_request(  # pylint: disable=name-too-long
+    agent_name: str, call_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_calls/{call_id}:transfer"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "call_id": _SERIALIZER.url("call_id", call_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_end_telephony_call_request(agent_name: str, call_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_calls/{call_id}:end"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "call_id": _SERIALIZER.url("call_id", call_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_get_telephony_transfer_targets_request(  # pylint: disable=name-too-long
+    agent_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_transfer_targets"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_replace_telephony_transfer_targets_request(  # pylint: disable=name-too-long
+    agent_name: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/telephony_transfer_targets"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_upload_session_file_request(
@@ -1324,6 +1692,64 @@ def build_indexes_create_or_update_request(name: str, version: str, **kwargs: An
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_agent_endpoint_conversations_get_agent_conversation_item_generated_audio_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/items/{item_id}/audio/generated"
+    )
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+        "item_id": _SERIALIZER.url("item_id", item_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_get_agent_conversation_item_generated_audio_content_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "audio/wav")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/items/{item_id}/audio/generated/content"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+        "item_id": _SERIALIZER.url("item_id", item_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_toolboxes_create_version_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1542,6 +1968,7 @@ def build_beta_voice_agent_web_socket_connect_voice_agent_request(  # pylint: di
     agent_name: str,
     *,
     foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = None,
+    transport: Optional[Union[str, _models.VoiceAgentTransport]] = None,
     store: Optional[bool] = None,
     agent_version_override: Optional[str] = None,
     websocket_subprotocol: Optional[Union[str, _models.VoiceAgentWebSocketSubprotocol]] = None,
@@ -1562,6 +1989,8 @@ def build_beta_voice_agent_web_socket_connect_voice_agent_request(  # pylint: di
     # Construct parameters
     if foundry_features_query is not None:
         _params["foundry_features"] = _SERIALIZER.query("foundry_features_query", foundry_features_query, "str")
+    if transport is not None:
+        _params["transport"] = _SERIALIZER.query("transport", transport, "str")
     if store is not None:
         _params["store"] = _SERIALIZER.query("store", store, "bool")
     if agent_version_override is not None:
@@ -7404,6 +7833,1314 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         return deserialized  # type: ignore
 
     @overload
+    def create_telephony_binding(
+        self,
+        agent_name: str,
+        body: _models.CreateTelephonyBindingRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Create an agent telephony binding.
+
+        Creates a telephony binding for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param body: The provider-specific binding to create. Required.
+        :type body: ~azure.ai.projects.models.CreateTelephonyBindingRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_telephony_binding(
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Create an agent telephony binding.
+
+        Creates a telephony binding for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param body: The provider-specific binding to create. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_telephony_binding(
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Create an agent telephony binding.
+
+        Creates a telephony binding for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param body: The provider-specific binding to create. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_telephony_binding(
+        self, agent_name: str, body: Union[_models.CreateTelephonyBindingRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Create an agent telephony binding.
+
+        Creates a telephony binding for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param body: The provider-specific binding to create. Is one of the following types:
+         CreateTelephonyBindingRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.CreateTelephonyBindingRequest or JSON or IO[bytes]
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyBinding] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_create_telephony_binding_request(
+            agent_name=agent_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyBinding, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_telephony_bindings(
+        self,
+        agent_name: str,
+        *,
+        provider: Optional[Union[str, _models.TelephonyProvider]] = None,
+        status: Optional[Union[str, _models.TelephonyBindingStatus]] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.TelephonyBindingListItem"]:
+        """List agent telephony bindings.
+
+        Returns the telephony bindings owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose bindings are listed. Required.
+        :type agent_name: str
+        :keyword provider: Filters bindings by provider. Known values are: "teams_phone_extension" and
+         "twilio". Default value is None.
+        :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
+        :keyword status: Filters bindings by lifecycle status. Known values are: "active" and
+         "suspended". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of TelephonyBindingListItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.TelephonyBindingListItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TelephonyBindingListItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agents_list_telephony_bindings_request(
+                agent_name=agent_name,
+                provider=provider,
+                status=status,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TelephonyBindingListItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_telephony_binding(self, agent_name: str, binding_id: str, **kwargs: Any) -> _models.TelephonyBinding:
+        """Get an agent telephony binding.
+
+        Retrieves a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyBinding] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_telephony_binding_request(
+            agent_name=agent_name,
+            binding_id=binding_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyBinding, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update_telephony_binding(
+        self,
+        agent_name: str,
+        binding_id: str,
+        body: _models.UpdateTelephonyBindingRequest,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Update an agent telephony binding.
+
+        Updates a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :param body: The binding properties to update. Required.
+        :type body: ~azure.ai.projects.models.UpdateTelephonyBindingRequest
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_telephony_binding(
+        self,
+        agent_name: str,
+        binding_id: str,
+        body: JSON,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Update an agent telephony binding.
+
+        Updates a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :param body: The binding properties to update. Required.
+        :type body: JSON
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_telephony_binding(
+        self,
+        agent_name: str,
+        binding_id: str,
+        body: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Update an agent telephony binding.
+
+        Updates a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :param body: The binding properties to update. Required.
+        :type body: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_telephony_binding(
+        self,
+        agent_name: str,
+        binding_id: str,
+        body: Union[_models.UpdateTelephonyBindingRequest, JSON, IO[bytes]],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Update an agent telephony binding.
+
+        Updates a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :param body: The binding properties to update. Is one of the following types:
+         UpdateTelephonyBindingRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.UpdateTelephonyBindingRequest or JSON or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyBinding] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_update_telephony_binding_request(
+            agent_name=agent_name,
+            binding_id=binding_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyBinding, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_telephony_binding(  # pylint: disable=inconsistent-return-statements
+        self, agent_name: str, binding_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
+    ) -> None:
+        """Delete an agent telephony binding.
+
+        Deletes a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_delete_telephony_binding_request(
+            agent_name=agent_name,
+            binding_id=binding_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list_telephony_calls(
+        self,
+        agent_name: str,
+        *,
+        provider: Optional[Union[str, _models.TelephonyProvider]] = None,
+        status: Optional[Union[str, _models.TelephonyCallStatus]] = None,
+        started_after: Optional[datetime.datetime] = None,
+        started_before: Optional[datetime.datetime] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.TelephonyCallSummary"]:
+        """List agent telephony calls.
+
+        Returns the durable inbound call history for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose calls are listed. Required.
+        :type agent_name: str
+        :keyword provider: Filters calls by provider. Known values are: "teams_phone_extension" and
+         "twilio". Default value is None.
+        :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
+        :keyword status: Filters calls by lifecycle status. Known values are: "in_progress", "success",
+         and "failed". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.TelephonyCallStatus
+        :keyword started_after: Includes calls that started at or after this Unix timestamp in seconds.
+         Default value is None.
+        :paramtype started_after: ~datetime.datetime
+        :keyword started_before: Includes calls that started at or before this Unix timestamp in
+         seconds. Default value is None.
+        :paramtype started_before: ~datetime.datetime
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of TelephonyCallSummary
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.TelephonyCallSummary]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TelephonyCallSummary]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agents_list_telephony_calls_request(
+                agent_name=agent_name,
+                provider=provider,
+                status=status,
+                started_after=started_after,
+                started_before=started_before,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TelephonyCallSummary],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_telephony_call(self, agent_name: str, call_id: str, **kwargs: Any) -> _models.TelephonyCallRecord:
+        """Get an agent telephony call.
+
+        Retrieves a durable inbound call record owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the call record. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCallRecord] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_telephony_call_request(
+            agent_name=agent_name,
+            call_id=call_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCallRecord, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def transfer_telephony_call(
+        self, agent_name: str, call_id: str, *, target: str, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyCallRecord:
+        """Transfer an active agent telephony call.
+
+        Transfers an active inbound call to a configured target for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the active call. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :keyword target: The name of a transfer target configured for the voice agent. Required.
+        :paramtype target: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def transfer_telephony_call(
+        self, agent_name: str, call_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyCallRecord:
+        """Transfer an active agent telephony call.
+
+        Transfers an active inbound call to a configured target for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the active call. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def transfer_telephony_call(
+        self, agent_name: str, call_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyCallRecord:
+        """Transfer an active agent telephony call.
+
+        Transfers an active inbound call to a configured target for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the active call. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def transfer_telephony_call(
+        self,
+        agent_name: str,
+        call_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        target: str = _Unset,
+        **kwargs: Any
+    ) -> _models.TelephonyCallRecord:
+        """Transfer an active agent telephony call.
+
+        Transfers an active inbound call to a configured target for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the active call. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword target: The name of a transfer target configured for the voice agent. Required.
+        :paramtype target: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyCallRecord] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if target is _Unset:
+                raise TypeError("missing required argument: target")
+            body = {"target": target}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_transfer_telephony_call_request(
+            agent_name=agent_name,
+            call_id=call_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCallRecord, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def end_telephony_call(self, agent_name: str, call_id: str, **kwargs: Any) -> _models.TelephonyCallRecord:
+        """End an active agent telephony call.
+
+        Ends an active inbound call owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the active call. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCallRecord] = kwargs.pop("cls", None)
+
+        _request = build_agents_end_telephony_call_request(
+            agent_name=agent_name,
+            call_id=call_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCallRecord, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_telephony_transfer_targets(self, agent_name: str, **kwargs: Any) -> _models.TelephonyTransferTargets:
+        """Get agent telephony transfer targets.
+
+        Returns all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are retrieved. Required.
+        :type agent_name: str
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyTransferTargets] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_telephony_transfer_targets_request(
+            agent_name=agent_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyTransferTargets, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def replace_telephony_transfer_targets(
+        self,
+        agent_name: str,
+        *,
+        transfer_targets: List[_models.TelephonyTransferTarget],
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyTransferTargets:
+        """Replace agent telephony transfer targets.
+
+        Replaces all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
+        :type agent_name: str
+        :keyword transfer_targets: The complete set of destinations to which the voice agent may
+         transfer calls. An empty array clears all targets when replacing the configuration. Required.
+        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def replace_telephony_transfer_targets(
+        self,
+        agent_name: str,
+        body: JSON,
+        *,
+        etag: List[_models.TelephonyTransferTarget],
+        match_condition: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyTransferTargets:
+        """Replace agent telephony transfer targets.
+
+        Replaces all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: list[~azure.ai.projects.models.TelephonyTransferTarget]
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def replace_telephony_transfer_targets(
+        self,
+        agent_name: str,
+        body: IO[bytes],
+        *,
+        etag: List[_models.TelephonyTransferTarget],
+        match_condition: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyTransferTargets:
+        """Replace agent telephony transfer targets.
+
+        Replaces all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: list[~azure.ai.projects.models.TelephonyTransferTarget]
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def replace_telephony_transfer_targets(
+        self,
+        agent_name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        transfer_targets: List[_models.TelephonyTransferTarget] = _Unset,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.TelephonyTransferTargets:
+        """Replace agent telephony transfer targets.
+
+        Replaces all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
+        :type agent_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword transfer_targets: The complete set of destinations to which the voice agent may
+         transfer calls. An empty array clears all targets when replacing the configuration. Required.
+        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyTransferTargets] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if transfer_targets is _Unset:
+                raise TypeError("missing required argument: transfer_targets")
+            body = {"transfer_targets": transfer_targets}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_replace_telephony_transfer_targets_request(
+            agent_name=agent_name,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyTransferTargets, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
     def upload_session_file(
         self,
         agent_name: str,
@@ -9839,6 +11576,186 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
+class AgentEndpointConversationsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`agent_endpoint_conversations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get_agent_conversation_item_generated_audio(  # pylint: disable=name-too-long
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> _models.VoiceGeneratedItemAudioResponse:
+        """Get a voice agent conversation item's generated audio metadata.
+
+        Returns metadata for a conversation item's generated audio. This subordinate artifact is
+        separate from the canonical heard-audio segment and exists only when playback was interrupted
+        and the service rendered more audio than the listener heard, including when the response ends
+        as cancelled. Returns ``404`` when the conversation or item was not persisted, or when no
+        generated audio exists beyond the heard segment.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item whose generated audio metadata is retrieved.
+         Required.
+        :type item_id: str
+        :return: VoiceGeneratedItemAudioResponse. The VoiceGeneratedItemAudioResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceGeneratedItemAudioResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceGeneratedItemAudioResponse] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_generated_audio_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceGeneratedItemAudioResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_agent_conversation_item_generated_audio_content(  # pylint: disable=name-too-long
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        """Stream a voice agent conversation item's generated audio.
+
+        Streams a conversation item's generated audio as a WAV (``audio/wav``) byte stream through the
+        service. This subordinate artifact exists only when playback was interrupted and the service
+        rendered more audio than the listener heard, including when the response ends as cancelled.
+        This route serves Foundry-managed storage only. For bring-your-own-storage (BYOS) recordings
+        the bytes are not proxied, so this route returns ``409 Conflict``. Returns ``404`` when the
+        conversation or item was not persisted, or when no generated audio exists beyond the heard
+        segment.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item whose generated audio is streamed. Required.
+        :type item_id: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_generated_audio_content_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+
 class ToolboxesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
@@ -10666,6 +12583,7 @@ class BetaVoiceAgentWebSocketOperations:  # pylint: disable=docstring-missing-pa
         agent_name: str,
         *,
         foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = None,
+        transport: Optional[Union[str, _models.VoiceAgentTransport]] = None,
         store: Optional[bool] = None,
         agent_version_override: Optional[str] = None,
         websocket_subprotocol: Optional[Union[str, _models.VoiceAgentWebSocketSubprotocol]] = None,
@@ -10681,11 +12599,28 @@ class BetaVoiceAgentWebSocketOperations:  # pylint: disable=docstring-missing-pa
         ``foundry_features``
         query parameter.
 
-        If the target agent is disabled, the HTTP WebSocket handshake fails before the ``101 Switching
-        Protocols``
-        upgrade. The service returns ``409 Conflict`` using the shared Foundry ``ApiErrorResponse``
-        shape with
-        ``error.code = agent_disabled``. This failure is terminal until the caller enables the agent.
+        Handshake failures are evaluated in the following order, independent of the requested
+        ``transport``:
+
+
+
+        1. Agent enablement (any transport): if the target agent is disabled, the handshake fails
+        before the
+        `101 Switching Protocols` upgrade with `409 Conflict`, using the shared Foundry
+        `ApiErrorResponse` shape
+        with `error.code = agent_disabled`. This failure is terminal until the caller enables the
+        agent, and it
+        takes precedence over the WebRTC-specific checks below.
+        2. WebRTC availability (only when `transport=webrtc`, and only once the agent itself is
+        enabled): the agent
+        must have the WebRTC transport capability configured. If the agent is enabled but WebRTC is not
+        available
+        for it, the handshake fails with `404 Not Found`. This is distinct from the `409
+        agent_disabled` case
+        above, which concerns the agent itself rather than its WebRTC capability.
+        3. WebRTC compatibility (only when `transport=webrtc`): WebRTC does not support
+        bring-your-own-model (BYOM)
+        or hosted-agent voice agents; those requests fail with `400 Bad Request`.
 
         :param agent_name: The name of the voice agent. Required.
         :type agent_name: str
@@ -10695,6 +12630,14 @@ class BetaVoiceAgentWebSocketOperations:  # pylint: disable=docstring-missing-pa
          header is
          required. VOICE_AGENTS_V1_PREVIEW. Default value is None.
         :paramtype foundry_features_query: str or ~azure.ai.projects.models.VOICE_AGENTS_V1_PREVIEW
+        :keyword transport: Selects the connection transport. Omit or send ``websocket`` for the
+         default, where signaling and audio are
+         exchanged as JSON events over this WebSocket. Send ``webrtc`` to negotiate a WebRTC
+         connection: the WebSocket
+         then carries only SDP signaling (``rtc.call.sdp.create`` / ``rtc.call.sdp.created``) while
+         media and the data
+         channel are peer-to-peer. Known values are: "websocket" and "webrtc". Default value is None.
+        :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport
         :keyword store: Whether to persist the conversation created by this WebSocket session. If
          omitted, the service honors the
          persisted voice agent definition's configured ``store`` value. If supplied, this value
@@ -10728,6 +12671,7 @@ class BetaVoiceAgentWebSocketOperations:  # pylint: disable=docstring-missing-pa
         _request = build_beta_voice_agent_web_socket_connect_voice_agent_request(
             agent_name=agent_name,
             foundry_features_query=foundry_features_query,
+            transport=transport,
             store=store,
             agent_version_override=agent_version_override,
             websocket_subprotocol=websocket_subprotocol,

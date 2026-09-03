@@ -95,18 +95,75 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
         "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
     ),
     pytest.param(
+        "agents.create_telephony_binding",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
+        "agents.list_telephony_bindings",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
+        "agents.get_telephony_binding",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
+        "agents.update_telephony_binding",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
+        "agents.delete_telephony_binding",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
+        "agents.list_telephony_calls",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
+        "agents.get_telephony_call",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
+        "agents.transfer_telephony_call",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
+        "agents.end_telephony_call",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
+        "agents.get_telephony_transfer_targets",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
+        "agents.replace_telephony_transfer_targets",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    ),
+    pytest.param(
         "evaluation_rules.create_or_update",
         "Evaluations=V1Preview",
+    ),
+    # `agent_endpoint_conversations` is a top-level client attribute (distinct from the nested
+    # `.beta.agent_endpoint_conversations` sub-client) exposing only the "generated audio" reads;
+    # like `agents.generate_agent`, it optionally sends the Foundry-Features header gated behind
+    # `allow_preview`, so it belongs here rather than in EXPECTED_FOUNDRY_FEATURES below.
+    pytest.param(
+        "agent_endpoint_conversations.get_agent_conversation_item_generated_audio",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.get_agent_conversation_item_generated_audio_content",
+        "VoiceAgents=V1Preview",
     ),
 ]
 
 # NOTE: `agent_endpoint_conversations` used to need its own dedicated test cases here (it was
 # wrapped with `_OperationMethodHeaderProxy` directly in `_patch.py`, unconditionally regardless
 # of `allow_preview`, since it lived as a top-level client attribute rather than a `.beta`
-# sub-client). It has since moved under `.beta` upstream and is now a normal entry in
-# EXPECTED_FOUNDRY_FEATURES above, using the exact same unconditional generic mechanism as every
-# other `.beta` sub-client -- so it's now covered automatically (and more thoroughly: all of its
-# methods, not just 4) by the dynamic discovery in test_foundry_features_header_on_beta_operations.py.
+# sub-client). It then moved under `.beta` upstream and was covered automatically by the dynamic
+# discovery in test_foundry_features_header_on_beta_operations.py. Upstream has since reintroduced
+# a top-level `agent_endpoint_conversations` attribute (exposing only "generated audio" reads,
+# distinct from the nested `.beta.agent_endpoint_conversations` sub-client, which still exists
+# unchanged) that once again needs dedicated `allow_preview`-gated test cases -- see above.
 
 # Both sentinel values – used by _make_fake_call to detect required parameters
 # whose defaults are the internal _Unset object (rather than inspect.Parameter.empty).

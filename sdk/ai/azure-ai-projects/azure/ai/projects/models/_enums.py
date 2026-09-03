@@ -1061,6 +1061,8 @@ class RealtimeClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SESSION_UPDATE."""
     SESSION_AVATAR_CONNECT = "session.avatar.connect"
     """SESSION_AVATAR_CONNECT."""
+    RTC_CALL_SDP_CREATE = "rtc.call.sdp.create"
+    """RTC_CALL_SDP_CREATE."""
 
 
 class RealtimeConversationItemMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1218,12 +1220,22 @@ class RealtimeServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSE_MCP_CALL_FAILED."""
     WARNING = "warning"
     """WARNING."""
+    SESSION_SUBAGENT_STARTED = "session.subagent.started"
+    """SESSION_SUBAGENT_STARTED."""
+    SESSION_SUBAGENT_COMPLETED = "session.subagent.completed"
+    """SESSION_SUBAGENT_COMPLETED."""
+    SESSION_SUBAGENT_ABORTED = "session.subagent.aborted"
+    """SESSION_SUBAGENT_ABORTED."""
     SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
     """SESSION_AVATAR_CONNECTING."""
     SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
     """SESSION_AVATAR_SWITCH_TO_SPEAKING."""
     SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
     """SESSION_AVATAR_SWITCH_TO_IDLE."""
+    RTC_CALL_SDP_CREATED = "rtc.call.sdp.created"
+    """RTC_CALL_SDP_CREATED."""
+    RTC_CALL_ERROR = "rtc.call.error"
+    """RTC_CALL_ERROR."""
     RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
     """RESPONSE_AUDIO_TIMESTAMP_DELTA."""
     RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
@@ -1535,6 +1547,186 @@ class TelemetryTransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HTTP transport protocol."""
     GRPC = "Grpc"
     """gRPC transport protocol."""
+
+
+class TelephonyBindingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle status of a telephony binding."""
+
+    ACTIVE = "active"
+    """The binding accepts new inbound calls."""
+    SUSPENDED = "suspended"
+    """The binding remains configured but rejects new inbound calls."""
+
+
+class TelephonyCallDurationBasis(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The timestamp used as the basis for call duration."""
+
+    ANSWERED = "answered"
+    """Duration starts when the provider reports the call as answered."""
+    RECEIVED = "received"
+    """Duration starts when the inbound webhook is received because no answered timestamp is
+    available."""
+
+
+class TelephonyCallLifecycleEventName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A provider-neutral lifecycle event name. Known values are stable; additional values may be
+    added over time.
+    """
+
+    WEBHOOK_RECEIVED = "telephony.webhook.received"
+    """The provider webhook was received."""
+    WEBHOOK_VALIDATION = "telephony.webhook.validation"
+    """The provider webhook was validated."""
+    BINDING_RESOLVE = "telephony.binding.resolve"
+    """The service attempted to resolve the agent binding."""
+    PROVIDER_ANSWER = "telephony.provider.answer"
+    """The service requested or observed provider answer state."""
+    MEDIA_CONNECT = "telephony.media.connect"
+    """The provider media channel changed connection state."""
+    AGENT_SESSION_CONNECT = "telephony.agent_session.connect"
+    """The voice-agent session changed connection state."""
+    FIRST_CALLER_AUDIO = "telephony.media.first_caller_audio"
+    """The first caller audio was observed."""
+    FIRST_AGENT_AUDIO = "telephony.media.first_agent_audio"
+    """The first agent audio was observed."""
+    CALL_TRANSFER = "telephony.call.transfer"
+    """A call transfer changed state."""
+    CALL_HANGUP = "telephony.call.hangup"
+    """A call hang-up changed state."""
+    CALL_DISCONNECT = "telephony.call.disconnect"
+    """The call disconnected."""
+
+
+class TelephonyCallLifecycleEventOutcome(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The outcome of one telephony lifecycle observation."""
+
+    OBSERVED = "observed"
+    """The event was observed without a success or failure result."""
+    STARTED = "started"
+    """The operation started."""
+    SUCCEEDED = "succeeded"
+    """The operation succeeded."""
+    FAILED = "failed"
+    """The operation failed."""
+    REJECTED = "rejected"
+    """The operation or call was rejected."""
+    CANCELLED = "cancelled"
+    """The operation was cancelled."""
+
+
+class TelephonyCallLifecycleEventSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The component that supplied a telephony lifecycle observation."""
+
+    GATEWAY = "gateway"
+    """The Foundry telephony gateway supplied the observation."""
+    TEAMS_PHONE_EXTENSION = "teams_phone_extension"
+    """Microsoft Teams Phone Extension supplied the observation."""
+    TWILIO = "twilio"
+    """Twilio supplied the observation."""
+    VOICE_AGENT = "voice_agent"
+    """The voice-agent runtime supplied the observation."""
+
+
+class TelephonyCallPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provider-neutral phase reached by an inbound telephony call."""
+
+    RECEIVED = "received"
+    """The provider webhook was received."""
+    VALIDATED = "validated"
+    """The provider webhook was validated."""
+    ADMITTED = "admitted"
+    """The call was admitted to a configured agent binding."""
+    ANSWERING = "answering"
+    """The provider was asked to answer the call."""
+    ANSWERED = "answered"
+    """The provider reported that the call was answered."""
+    MEDIA_CONNECTED = "media_connected"
+    """The provider media channel was connected."""
+    AGENT_SESSION_READY = "agent_session_ready"
+    """The voice-agent session was ready."""
+    BRIDGING = "bridging"
+    """Media was actively bridged between the caller and the voice agent."""
+    MANAGING = "managing"
+    """A mid-call management command was in progress."""
+    COMPLETED = "completed"
+    """The call completed."""
+    REJECTED = "rejected"
+    """The call was rejected before admission or answer."""
+    FAILED = "failed"
+    """The call failed."""
+
+
+class TelephonyCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle status of an inbound telephony call."""
+
+    IN_PROGRESS = "in_progress"
+    """The call has started and has not reached a terminal state."""
+    SUCCESS = "success"
+    """The call ended successfully."""
+    FAILED = "failed"
+    """The call ended because of a provider or management failure."""
+
+
+class TelephonyCallTimestampSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The source of a telephony lifecycle timestamp."""
+
+    PROVIDER = "provider"
+    """The telephony provider supplied the timestamp."""
+    GATEWAY = "gateway"
+    """The Foundry telephony gateway observed the event."""
+    DERIVED = "derived"
+    """The service derived the timestamp from another observation."""
+
+
+class TelephonyCallTraceMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode used to expose a telephony call as a customer-facing Foundry trace."""
+
+    LIVE = "live"
+    """The trace was created while the voice-agent conversation was live."""
+    POST_CALL = "post_call"
+    """The trace summarizes a validated, customer-owned call that ended before a live voice-agent
+    conversation was created."""
+
+
+class TelephonyCallTraceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The availability status of a customer-facing telephony call trace."""
+
+    PENDING = "pending"
+    """Trace creation has not completed."""
+    EMITTING = "emitting"
+    """Trace creation is in progress."""
+    AVAILABLE = "available"
+    """The trace is available."""
+    NOT_RECORDED = "not_recorded"
+    """Tracing was disabled or no trace listener recorded the call."""
+    NOT_APPLICABLE = "not_applicable"
+    """The call was not eligible for a customer-facing trace."""
+    FAILED = "failed"
+    """Trace creation failed."""
+
+
+class TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A telephony provider supported by an agent binding. Known values are stable; additional values
+    may be added over time.
+    """
+
+    TEAMS_PHONE_EXTENSION = "teams_phone_extension"
+    """Microsoft Teams Phone Extension."""
+    TWILIO = "twilio"
+    """Twilio Programmable Voice."""
+
+
+class TelephonyTransferDestinationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of telephony transfer destination. Known values are stable; additional values may be
+    added over time.
+    """
+
+    PSTN = "pstn"
+    """A public switched telephone network destination."""
+    TEAMS = "teams"
+    """A Microsoft Teams user or resource-account destination."""
+    SIP = "sip"
+    """A Session Initiation Protocol destination."""
 
 
 class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1880,6 +2072,23 @@ class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMet
     """FILE_SEARCH_CALL_RESULTS."""
 
 
+class VoiceAgentSubagentAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason a subagent consultation was aborted."""
+
+    UNKNOWN_TARGET = "unknown_target"
+    """The requested subagent was not configured for the voice agent."""
+    TIMEOUT = "timeout"
+    """The subagent invocation exceeded its configured timeout."""
+    CANCELLED = "cancelled"
+    """The consultation was cancelled because the voice session ended."""
+    STOPPED_BY_USER = "stopped_by_user"
+    """The consultation was stopped at the user's request."""
+    SUPERSEDED = "superseded"
+    """The consultation was replaced by a newer request."""
+    FAILED = "failed"
+    """The consultation failed."""
+
+
 class VoiceAgentSystemToolName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A service-managed voice-session control action. Known values are stable; additional values may
     be added over time.
@@ -1900,6 +2109,15 @@ class VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumM
     """Interrupt the active response and create a follow-up response."""
     SKIP_IF_BUSY = "skip_if_busy"
     """Create a follow-up response only when no response is active."""
+
+
+class VoiceAgentTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport used for a voice-agent connection."""
+
+    WEBSOCKET = "websocket"
+    """Signaling and audio are exchanged as JSON events over the WebSocket. This is the default."""
+    WEBRTC = "webrtc"
+    """WebRTC: the WebSocket carries only SDP signaling; media and the data channel are peer-to-peer."""
 
 
 class VoiceAgentTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
