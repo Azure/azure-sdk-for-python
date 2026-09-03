@@ -78,17 +78,25 @@ async def handle_invoke(request: Request) -> Response:
 
 @app.get_invocation_handler
 async def handle_get(request: Request) -> Response:
-    """Report whether the worker is running and its current iteration count."""
+    """Report whether the worker is running and its current iteration count.
+
+    Status is derived from the **durable stop marker**, not from process-local
+    run ownership: an indefinite worker keeps running (possibly on a *different*
+    replica) until it is explicitly stopped, so ``get_active_run()`` returning
+    ``None`` on the polled replica does not mean the worker has stopped. The stop
+    marker is written by the cancel handler and survives crashes and recovery, so
+    every replica agrees on the terminal state.
+    """
     invocation_id: str = request.state.invocation_id
 
-    run = await hello_forever.get_active_run(invocation_id)
     store = await FoundryStateStore.get_or_create(CHECKPOINT_STORE)
     try:
         item = await store.get_item(invocation_id)
+        stop_marker = await store.get_item(f"{invocation_id}{STOP_SUFFIX}")
     finally:
         await store.aclose()
 
-    if item is None and run is None:
+    if item is None and stop_marker is None:
         return JSONResponse(
             {"status": "not_found", "invocation_id": invocation_id}, status_code=404
         )
@@ -96,7 +104,7 @@ async def handle_get(request: Request) -> Response:
     iterations = int((item.value.get("iterations", 0) if item else 0) or 0)
     return JSONResponse(
         {
-            "status": "running" if run is not None else "stopped",
+            "status": "stopped" if stop_marker is not None else "running",
             "invocation_id": invocation_id,
             "iterations": iterations,
         }
