@@ -232,6 +232,7 @@ Always include `reason` with a concise explanation tied to the observed print ou
 # Keys intentionally mirror the folder names used by sample test discovery.
 # Use the most specific key possible (e.g. "agents/tools" should win over "agents").
 INSTRUCTIONS_BY_FOLDER: Final[dict[str, str]] = {
+    "agent_insights": resource_management_instructions,
     "agents/tools": agent_tools_instructions,
     "agents": agents_instructions,
     "hosted_agents": hosted_agents_instructions,

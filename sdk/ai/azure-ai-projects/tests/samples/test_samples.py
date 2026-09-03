@@ -100,6 +100,24 @@ class TestSamples(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
+            "agent_insights",
+            samples_to_skip=[
+                "sample_agent_insights_basic.py",  # Recording not yet available.
+            ],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    def test_agent_insights_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
             "connections",
             samples_to_skip=[],
         ),

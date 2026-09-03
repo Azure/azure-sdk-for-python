@@ -1,5 +1,11 @@
 # Release History
 
+## 2.6.1 (Unreleased)
+
+### Sample updates
+
+* Added `sample_agent_insights_basic.py` under `samples/agent_insights/` to demonstrate a repeatable Agent Insights monitor lifecycle.
+
 ## 2.6.0 (2026-09-04)
 
 ### Features Added
