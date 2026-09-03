@@ -1039,6 +1039,7 @@ namespace azure.ai.projects.aio.operations
                 run: AgentInsightRunCreate, 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncAgentInsightRunLROPoller: ...
 
@@ -1049,6 +1050,7 @@ namespace azure.ai.projects.aio.operations
                 run: JSON, 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncAgentInsightRunLROPoller: ...
 
@@ -1059,6 +1061,7 @@ namespace azure.ai.projects.aio.operations
                 run: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncAgentInsightRunLROPoller: ...
 
@@ -9306,13 +9309,66 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.RaiConfig(_Model):
+        invocations_moderation: Optional[RaiInvocationModeration]
         rai_policy_name: str
 
         @overload
         def __init__(
                 self, 
                 *, 
+                invocations_moderation: Optional[RaiInvocationModeration] = ..., 
                 rai_policy_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RaiInvocationContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        JSON = "json"
+        TEXT = "text"
+
+
+    class azure.ai.projects.models.RaiInvocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BOTH = "both"
+        NON_STREAMING = "non_streaming"
+        STREAMING = "streaming"
+
+
+    class azure.ai.projects.models.RaiInvocationModeration(_Model):
+        input_content_type: Optional[Union[str, RaiInvocationContentType]]
+        input_paths: Optional[list[str]]
+        output_content_type: Optional[Union[str, RaiInvocationContentType]]
+        output_paths: Optional[list[str]]
+        response_mode: Union[str, RaiInvocationMode]
+        stream_selectors: Optional[list[RaiSseTextSelector]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                input_content_type: Optional[Union[str, RaiInvocationContentType]] = ..., 
+                input_paths: Optional[list[str]] = ..., 
+                output_content_type: Optional[Union[str, RaiInvocationContentType]] = ..., 
+                output_paths: Optional[list[str]] = ..., 
+                response_mode: Union[str, RaiInvocationMode], 
+                stream_selectors: Optional[list[RaiSseTextSelector]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RaiSseTextSelector(_Model):
+        event_type: str
+        text_field: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_type: str, 
+                text_field: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -16703,6 +16759,7 @@ namespace azure.ai.projects.operations
                 run: AgentInsightRunCreate, 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentInsightRunLROPoller: ...
 
@@ -16713,6 +16770,7 @@ namespace azure.ai.projects.operations
                 run: JSON, 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentInsightRunLROPoller: ...
 
@@ -16723,6 +16781,7 @@ namespace azure.ai.projects.operations
                 run: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentInsightRunLROPoller: ...
 

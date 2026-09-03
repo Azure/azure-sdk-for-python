@@ -25,20 +25,24 @@
 * Added the `beta.agent_insight_monitors` operation group for creating and managing Agent Insights monitors and their runs (`create`/`get`/`update`/`delete`/`list`/`reset`, `begin_create_run`/`get_run`/`cancel_run`/`list_runs`, `get_insight`/`update_insight`/`list_insights`), along with the supporting `AgentInsightMonitor`, `AgentInsightMonitorCreate`, `AgentInsightMonitorUpdate`, `AgentInsightMonitorListItem`, `AgentInsightRun`, `AgentInsight`, and related models.
 * Added an optional `authorization` argument to `.beta.routines.create_or_update`, with `RoutineAuthorization` and `RoutineDispatchIdentity` for selecting the agent or routine creator identity.
 * Added optional Hosted Agent session defaults through `HostedAgentDefinition.session_configuration` and `SessionConfiguration`, including idle-timeout configuration.
+* Added content-safety moderation support for custom request, response, and streaming invocation body formats.
 * Added `ShellToolboxTool` and supporting container environment and network policy models, with the new `ToolboxToolType.SHELL` enum member.
 * Added `WebIQPreviewTool` and `WebIQPreviewToolboxTool`, with new `ToolType.WEB_IQ_PREVIEW` and `ToolboxToolType.WEB_IQ_PREVIEW` enum members.
+* Added the optional `external_web_access` property to `WebSearchTool` and `WebSearchToolboxTool` for disabling live internet access.
 
 ### Dependency update
 
 * Added an optional dependency on `websockets` (sync `client.realtime`) and `aiohttp` (async `async_client.realtime`), required only when using the new voice agent realtime streaming APIs.
 
+### Sample updates
+
+* Added `sample_toolbox_with_shell.py`, demonstrating a Prompt Agent invoking a `ShellToolboxTool`.
+* Added `sample_synthetic_multiturn_evaluation.py`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+
 ### Bugs Fixed
 
 * The hand-written `client.realtime`/`async_client.realtime` WebSocket clients now identify themselves to the service the same way the generated HTTP surface already does: a standard Azure SDK `User-Agent` header (for example `azsdk-python-ai-projects/2.6.0 ...`) and an `x-ms-client-sdk` query parameter carrying the same value, for paths where the header isn't forwarded. Previously these connections fell back to the underlying `websockets`/`aiohttp` library's generic default, preventing service telemetry from attributing this traffic to the SDK. A caller-supplied `User-Agent` in `extra_headers` still takes precedence.
-
-### Sample updates
-
-* Added `sample_synthetic_multiturn_evaluation.py`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+* Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
 
 ## 2.5.0 (2026-08-20)
 

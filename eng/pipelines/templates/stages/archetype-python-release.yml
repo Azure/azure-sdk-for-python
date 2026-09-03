@@ -255,11 +255,37 @@ stages:
                     ConfigFileDir: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo'
                     PackageArtifactName: ${{artifact.name}}
 
-                - template: /eng/common/pipelines/templates/steps/mark-package-released.yml
-                  parameters:
-                    PackageInfoFiles:
-                      - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{ artifact.name }}.json
-                    RepoOwner: Azure
+                # Management-plane-only workaround: skip marking packages that do not generate an APIView revision.
+                - pwsh: |
+                    $packageInfoPath = '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{ artifact.name }}.json'
+                    $packageInfo = Get-Content -Raw -Path $packageInfoPath | ConvertFrom-Json
+                    $isManagementPackage = $packageInfo.SdkType -eq 'mgmt'
+                    Write-Host "##vso[task.setvariable variable=IsManagementPackage]$isManagementPackage"
+                  displayName: Check package SDK type
+
+                - task: AzureCLI@2
+                  displayName: Mark Package Released
+                  condition: >-
+                    and(
+                      succeeded(),
+                      ne(variables['IsManagementPackage'], 'true'),
+                      not(
+                        and(
+                          eq(variables['Skip.MarkPackageReleased'], 'true'),
+                          eq(variables['IsRequesterAuthorizedToSkipApiReview'], 'true')
+                        )
+                      )
+                    )
+                  inputs:
+                    azureSubscription: "ADO to ARH Service Connection"
+                    scriptType: pscore
+                    scriptLocation: scriptPath
+                    scriptPath: $(Build.SourcesDirectory)/eng/common/scripts/Mark-PackageReleased.ps1
+                    arguments: >
+                      -PackageInfoFiles @('$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{ artifact.name }}.json')
+                      -RepoOwner 'Azure'
+                      -AzSdkExePath '$(AZSDK)'
+                    workingDirectory: $(Pipeline.Workspace)
 
             - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
                 - job: PublishGitHubIODocs

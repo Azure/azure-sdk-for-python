@@ -10,13 +10,14 @@ param (
     [string] $PackageInfoPathPrefix
 )
 
-$artifacts = @($ArtifactsJson | ConvertFrom-Json)
+$artifacts = $ArtifactsJson | ConvertFrom-Json
 $packageInfoFiles = @()
 
 foreach ($artifact in $artifacts) {
     $packageInfoPath = Join-Path $PackageInfoDirectory "$($artifact.name).json"
     if (!(Test-Path -Path $packageInfoPath -PathType Leaf)) {
-        throw "PackageInfo file was not found: $packageInfoPath"
+        Write-Host "PackageInfo file was not found; skipping: $packageInfoPath"
+        continue
     }
 
     $packageInfo = Get-Content -Raw -Path $packageInfoPath | ConvertFrom-Json

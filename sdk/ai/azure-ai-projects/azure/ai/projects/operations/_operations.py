@@ -2541,7 +2541,7 @@ def build_beta_agent_insight_monitors_reset_request(  # pylint: disable=name-too
 
 
 def build_beta_agent_insight_monitors_create_run_request(  # pylint: disable=name-too-long
-    monitor_id: str, **kwargs: Any
+    monitor_id: str, *, operation_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2562,6 +2562,8 @@ def build_beta_agent_insight_monitors_create_run_request(  # pylint: disable=nam
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if operation_id is not None:
+        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -14293,7 +14295,12 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
             return cls(pipeline_response, None, {})  # type: ignore
 
     def _create_run_initial(
-        self, monitor_id: str, run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]], **kwargs: Any
+        self,
+        monitor_id: str,
+        run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14318,6 +14325,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
 
         _request = build_beta_agent_insight_monitors_create_run_request(
             monitor_id=monitor_id,
+            operation_id=operation_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -14366,6 +14374,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         monitor_id: str,
         run: _models.AgentInsightRunCreate,
         *,
+        operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.AgentInsightRunResult]:
@@ -14376,6 +14385,9 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
          Required.
         :type run: ~azure.ai.projects.models.AgentInsightRunCreate
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14387,7 +14399,13 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
 
     @overload
     def begin_create_run(
-        self, monitor_id: str, run: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        monitor_id: str,
+        run: JSON,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.AgentInsightRunResult]:
         """Start an Agent Insights run for a monitor.
 
@@ -14396,6 +14414,9 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
          Required.
         :type run: JSON
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14407,7 +14428,13 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
 
     @overload
     def begin_create_run(
-        self, monitor_id: str, run: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        monitor_id: str,
+        run: IO[bytes],
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.AgentInsightRunResult]:
         """Start an Agent Insights run for a monitor.
 
@@ -14416,6 +14443,9 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
          Required.
         :type run: IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14427,7 +14457,12 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
 
     @distributed_trace
     def begin_create_run(
-        self, monitor_id: str, run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]], **kwargs: Any
+        self,
+        monitor_id: str,
+        run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
     ) -> LROPoller[_models.AgentInsightRunResult]:
         """Start an Agent Insights run for a monitor.
 
@@ -14436,6 +14471,9 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param run: Run inputs. Send an empty object to use the default 168-hour lookback window. Is
          one of the following types: AgentInsightRunCreate, JSON, IO[bytes] Required.
         :type run: ~azure.ai.projects.models.AgentInsightRunCreate or JSON or IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
         :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
@@ -14453,6 +14491,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
             raw_result = self._create_run_initial(
                 monitor_id=monitor_id,
                 run=run,
+                operation_id=operation_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,

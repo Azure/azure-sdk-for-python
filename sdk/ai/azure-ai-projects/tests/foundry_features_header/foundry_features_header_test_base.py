@@ -46,7 +46,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "schedules": "Schedules=V1Preview",
     "skills": "Skills=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     # agent_endpoint_conversations moved from a top-level client attribute to a nested `.beta`
     # sub-client upstream; it always requires the VoiceAgents=V1Preview opt-in (voice-agent
     # conversation reads), regardless of `allow_preview` -- same as every other entry here.
@@ -88,55 +88,55 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     #   The test id is derived automatically from method_name.
     pytest.param(
         "agents.create_version",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.generate_agent",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.create_telephony_binding",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.list_telephony_bindings",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.get_telephony_binding",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.update_telephony_binding",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.delete_telephony_binding",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.list_telephony_calls",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.get_telephony_call",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.transfer_telephony_call",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.end_telephony_call",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.get_telephony_transfer_targets",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "agents.replace_telephony_transfer_targets",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "evaluation_rules.create_or_update",
