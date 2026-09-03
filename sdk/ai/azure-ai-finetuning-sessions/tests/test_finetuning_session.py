@@ -6,11 +6,15 @@ import json
 import pytest
 
 from azure.ai.finetuning_sessions import FineTuningSession
+from azure.ai.finetuning_sessions.aio import _patch as aio_patch
+from azure.ai.finetuning_sessions._patch import _normalize_loom_result
+from azure.ai.finetuning_sessions._utils.model_base import SdkJSONEncoder, _deserialize
 from azure.ai.finetuning_sessions.models import (
     AdamParams,
     LoRAConfig,
     CreateSessionRequest,
     OperationResult,
+    SampleOperationResult,
     SamplingParams,
 )
 
@@ -143,6 +147,86 @@ class TestSample:
         )
         body = json.loads(transport.requests[0].body)
         assert body.get("promptLogprobs", False) is False
+
+    def test_request_can_return_prompt_token_ids(self, session, monkeypatch):
+        captured = {}
+
+        def fake_post_and_poll(subpath, body, extra_params=None, extra_result_fields=None):
+            captured["subpath"] = subpath
+            captured["body"] = body
+            captured["extra_params"] = extra_params
+            captured["extra_result_fields"] = extra_result_fields
+            return object()
+
+        monkeypatch.setattr(session, "_post_and_poll", fake_post_and_poll)
+        session.sample(
+            prompt_tokens=[1, 2],
+            sampling_params=SamplingParams(max_tokens=8, temperature=1.0, top_p=1.0, top_k=-1),
+            checkpoint_id="checkpoint-1",
+            return_prompt_token_ids=True,
+        )
+        assert captured["subpath"].endswith("/sample")
+        assert captured["body"].return_prompt_token_ids is True
+        body = json.loads(
+            json.dumps(captured["body"], cls=SdkJSONEncoder, exclude_readonly=True)
+        )
+        assert body["return_prompt_token_ids"] is True
+
+    def test_result_deserializes_prompt_token_ids(self):
+        result = _deserialize(
+            OperationResult,
+            _normalize_loom_result(
+                {
+                    "sequences": [],
+                    "prompt_token_ids": [1, 2, 3],
+                },
+                "sample",
+                "request-1",
+            ),
+        )
+
+        assert isinstance(result, SampleOperationResult)
+        assert result.prompt_token_ids == [1, 2, 3]
+
+        legacy_result = _deserialize(
+            OperationResult,
+            _normalize_loom_result(
+                {"sequences": []},
+                "sample",
+                "request-2",
+            ),
+        )
+        assert isinstance(legacy_result, SampleOperationResult)
+        assert legacy_result.prompt_token_ids is None
+
+    @pytest.mark.asyncio
+    async def test_async_request_can_return_prompt_token_ids(self, monkeypatch):
+        captured = {}
+
+        async def fake_post_and_poll(client, session_id, subpath, body, extra_params=None):
+            captured["client"] = client
+            captured["session_id"] = session_id
+            captured["subpath"] = subpath
+            captured["body"] = body
+            captured["extra_params"] = extra_params
+            return object()
+
+        monkeypatch.setattr(aio_patch, "_post_and_poll", fake_post_and_poll)
+        client = object()
+        await aio_patch.sample(
+            client,
+            "session_test",
+            [1, 2],
+            SamplingParams(max_tokens=8, temperature=1.0, top_p=1.0, top_k=-1),
+            checkpoint_id="checkpoint-1",
+            return_prompt_token_ids=True,
+        )
+
+        assert captured["client"] is client
+        assert captured["session_id"] == "session_test"
+        assert captured["subpath"].endswith("/sample")
+        assert captured["body"].return_prompt_token_ids is True
+        assert captured["extra_params"] == {"checkpoint_id": "checkpoint-1"}
 
 
 class TestHeartbeat:

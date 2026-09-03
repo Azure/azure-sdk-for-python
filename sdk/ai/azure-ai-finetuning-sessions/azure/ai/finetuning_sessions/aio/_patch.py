@@ -1337,6 +1337,7 @@ async def sample(
     sampling_session_id: Optional[str] = None,
     seq_id: Optional[int] = None,
     prompt_logprobs: bool = False,
+    return_prompt_token_ids: bool = False,
     topk_prompt_logprobs: int = 0,
 ) -> OperationResult:
     """Generate completions using current LoRA weights.
@@ -1346,6 +1347,7 @@ async def sample(
     :param sampling_params: Generation parameters.
     :param checkpoint_id: Sampler checkpoint ID from ``save_weights_for_sampler``.
     :param num_samples: Number of completions. Default 1.
+    :param return_prompt_token_ids: If True, return the exact prompt token IDs with the sample result.
     :return: OperationResult.
     """
     return await _post_and_poll(
@@ -1357,6 +1359,7 @@ async def sample(
             prompt=ModelInput(chunks=[ModelInputChunk(tokens=prompt_tokens)]),
             sampling_params=sampling_params,
             topk_prompt_logprobs=topk_prompt_logprobs,
+            return_prompt_token_ids=return_prompt_token_ids,
             sampling_session_id=sampling_session_id,
             seq_id=seq_id,
             prompt_logprobs=prompt_logprobs,

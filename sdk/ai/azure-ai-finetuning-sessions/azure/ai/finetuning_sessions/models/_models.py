@@ -901,18 +901,23 @@ class SampleOperationResult(OperationResult, discriminator="sample"):
     :vartype type: str or ~azure.ai.finetuning_sessions.models.SAMPLE
     :ivar sequences: Required.
     :vartype sequences: list[~azure.ai.finetuning_sessions.models.SampledSequence]
+    :ivar prompt_token_ids: Exact token IDs accepted as the input prompt, when requested.
+    :vartype prompt_token_ids: list[int]
     """
 
     type: Literal[OperationType.SAMPLE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. A sampling operation."""
     sequences: list["_models.SampledSequence"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
+    prompt_token_ids: Optional[list[int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Exact token IDs accepted as the input prompt, when requested."""
 
     @overload
     def __init__(
         self,
         *,
         sequences: list["_models.SampledSequence"],
+        prompt_token_ids: Optional[list[int]] = None,
     ) -> None: ...
 
     @overload
@@ -942,6 +947,8 @@ class SampleRequest(_Model):
     :vartype seq_id: int
     :ivar prompt_logprobs: If true, return per-token log-probabilities for the prompt tokens.
     :vartype prompt_logprobs: bool
+    :ivar return_prompt_token_ids: If true, return the exact input prompt token IDs with the sample result.
+    :vartype return_prompt_token_ids: bool
     :ivar topk_prompt_logprobs: Number of top-k log-probabilities to return per prompt token. 0 =
      none. Required.
     :vartype topk_prompt_logprobs: int
@@ -959,6 +966,8 @@ class SampleRequest(_Model):
     """Training step index; must match the seq_id used in save_sampler_weights."""
     prompt_logprobs: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If true, return per-token log-probabilities for the prompt tokens."""
+    return_prompt_token_ids: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If true, return the exact input prompt token IDs with the sample result."""
     topk_prompt_logprobs: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of top-k log-probabilities to return per prompt token. 0 = none. Required."""
 
@@ -973,6 +982,7 @@ class SampleRequest(_Model):
         sampling_session_id: Optional[str] = None,
         seq_id: Optional[int] = None,
         prompt_logprobs: Optional[bool] = None,
+        return_prompt_token_ids: Optional[bool] = None,
     ) -> None: ...
 
     @overload
