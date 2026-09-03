@@ -300,21 +300,21 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
         wps_chat_connection_string,
         wps_chat_disable_local_auth,
     ):
-        if wps_chat_disable_local_auth.lower() == "true":
-            pytest.skip("Local authentication is disabled")
-
         token_client = self.create_async_client(wps_chat_endpoint)
-        key_client = self.create_async_key_client(wps_chat_connection_string)
+        key_client = None
         try:
             token_access = await token_client.get_client_access_token(
                 user_id="python-async-e2e-token-access-user"
             )
             await self.assert_client_access_async(token_access, wps_chat_endpoint)
 
-            key_access = await key_client.get_client_access_token(
-                user_id="python-async-e2e-key-access-user"
-            )
-            await self.assert_client_access_async(key_access, wps_chat_endpoint)
+            if wps_chat_disable_local_auth.lower() != "true":
+                key_client = self.create_async_key_client(wps_chat_connection_string)
+                key_access = await key_client.get_client_access_token(
+                    user_id="python-async-e2e-key-access-user"
+                )
+                await self.assert_client_access_async(key_access, wps_chat_endpoint)
         finally:
             await token_client.close()
-            await key_client.close()
+            if key_client:
+                await key_client.close()
