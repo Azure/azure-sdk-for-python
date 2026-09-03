@@ -1,9 +1,23 @@
 # Release History
 
-## 1.6.0 (2026-09-09)
+## 1.6.0 (Unreleased)
 
-skip changelog generation for data-plane package and please add changelog manually.
+### Features Added
 
+- Added support for a new communication identifier `TeamsExtensionUserIdentifier`.
+    - New identifier maps rawIds with format `8:acs:{resourceId}_{tenantId}_{userId}`.
+    - With this version, rawId starting with `8:acs` may be either `CommunicationUserIdentifier` or new `TeamsExtensionUserIdentifier`.
+- Added `IsAnonymous` and `AssertedId` properties to the communication identifier `PhoneNumberIdentifier`.
+    - `IsAnonymous` is used for anonymous numbers with rawId equals to `4:anonymous`.
+    - `AssertedId` is used when the same number is used several times in the same call. It contains value after the last underscore `_` character in the phone number. It is null otherwise.
+
+### Other Changes
+
+- The service layer is now generated from TypeSpec instead of Swagger/AutoRest. There are no
+  changes to the public API surface: method names, parameters, and return types are unchanged,
+  and `AccessToken.expires_on` continues to carry the expiry string exactly as returned by the
+  service.
+- The default service API version is now `2025-06-30` (previously `2023-10-01`).
 ## 1.5.1 (Unreleased)
 
 ### Features Added
