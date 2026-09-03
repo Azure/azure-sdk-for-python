@@ -403,17 +403,35 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         # pylint: disable=protected-access
         if self._running:
             return
-        if self._handler and not self._handler._shutdown:
-            await self._handler.close_async()
-        auth = None if self._connection else (await create_authentication(self))
-        self._create_handler(auth)
+        deadline = None if timeout is None else time.monotonic() + timeout
+
+        def remaining_timeout() -> Optional[float]:
+            if deadline is None:
+                return None
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise OperationTimeoutError()
+            return remaining
+
+        async def wait_for_setup(awaitable):
+            remaining = remaining_timeout()
+            if remaining is None:
+                return await awaitable
+            try:
+                return await asyncio.wait_for(awaitable, timeout=remaining)
+            except asyncio.TimeoutError as exception:
+                raise OperationTimeoutError() from exception
+
         try:
-            deadline = None if timeout is None else time.monotonic() + timeout
-            await self._handler.open_async(connection=self._connection)
-            while not await self._handler.client_ready_async():
-                if deadline is not None and time.monotonic() >= deadline:
-                    raise OperationTimeoutError()
-                await asyncio.sleep(0.05)
+            if self._handler and not self._handler._shutdown:
+                await wait_for_setup(self._handler.close_async())
+            auth = None if self._connection else (await wait_for_setup(create_authentication(self)))
+            self._create_handler(auth)
+            remaining_timeout()
+            await wait_for_setup(self._handler.open_async(connection=self._connection))
+            while not await wait_for_setup(self._handler.client_ready_async()):
+                remaining = remaining_timeout()
+                await asyncio.sleep(0.05 if remaining is None else min(0.05, remaining))
             self._running = True
         except:
             await self._close_handler()

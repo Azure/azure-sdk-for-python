@@ -52,15 +52,17 @@ def test_batch_delete_request_keys_encode_as_amqp_strings():
     assert b"\xa0\x11enqueued-time-utc" not in encoded
 
 
-def test_batch_delete_handler_returns_actual_count_and_only_maps_204_to_zero():
+def test_batch_delete_handler_returns_actual_count_and_rejects_204():
     message = MagicMock()
     message.value = {b"message-count": 2}
     message.application_properties = {}
     transport = MagicMock()
 
     assert mgmt_handlers.batch_delete_op(200, message, None, transport, 10) == 2
-    assert mgmt_handlers.batch_delete_op(204, message, None, transport, 10) == 0
 
+    mgmt_handlers.batch_delete_op(204, message, "missing count", transport, 10)
+    transport.handle_amqp_mgmt_error.assert_called_once()
+    transport.reset_mock()
     mgmt_handlers.batch_delete_op(202, message, "unexpected", transport, 10)
     transport.handle_amqp_mgmt_error.assert_called_once()
 
@@ -366,6 +368,25 @@ class TestDeleteMessages:
             with pytest.raises(OperationTimeoutError):
                 receiver._open(timeout=0.5)
 
+    def test_open_authentication_consumes_timeout(self):
+        receiver = _receiver(ServiceBusReceiver)
+        receiver._running = False
+        receiver._connection = None
+        receiver._handler = None
+        receiver._create_handler = MagicMock()
+
+        with patch(
+            "azure.servicebus._servicebus_receiver.create_authentication",
+            return_value=None,
+        ), patch(
+            "azure.servicebus._servicebus_receiver.time.monotonic",
+            side_effect=[10.0, 11.0],
+        ):
+            with pytest.raises(OperationTimeoutError):
+                receiver._open(timeout=0.5)
+
+        receiver._create_handler.assert_not_called()
+
     def test_supports_premium_count(self):
         receiver = _receiver(ServiceBusReceiver)
         receiver._mgmt_request_response = MagicMock(return_value=4000)
@@ -629,6 +650,33 @@ class TestDeleteMessagesAsync:
         ):
             with pytest.raises(OperationTimeoutError):
                 await receiver._open(timeout=0.5)
+
+    @pytest.mark.asyncio
+    async def test_open_authentication_consumes_timeout(self):
+        receiver = _receiver(AsyncServiceBusReceiver)
+        receiver._running = False
+        receiver._connection = None
+        receiver._handler = None
+        receiver._create_handler = MagicMock()
+
+        async def wait_for_setup(awaitable, timeout):
+            del timeout
+            return await awaitable
+
+        with patch(
+            "azure.servicebus.aio._servicebus_receiver_async.create_authentication",
+            new=AsyncMock(return_value=None),
+        ), patch(
+            "azure.servicebus.aio._servicebus_receiver_async.asyncio.wait_for",
+            side_effect=wait_for_setup,
+        ), patch(
+            "azure.servicebus.aio._servicebus_receiver_async.time.monotonic",
+            side_effect=[10.0, 10.1, 11.0],
+        ):
+            with pytest.raises(OperationTimeoutError):
+                await receiver._open(timeout=0.5)
+
+        receiver._create_handler.assert_called_once_with(None)
 
     @pytest.mark.asyncio
     async def test_dispatch_failure_is_not_retried(self):

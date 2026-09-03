@@ -83,9 +83,6 @@ def batch_delete_op(  # pylint: disable=inconsistent-return-statements
         ):
             raise ValueError("Batch delete response did not contain a valid message-count.")
         return deleted_count
-    if status_code == 204:
-        return 0
-
     amqp_transport.handle_amqp_mgmt_error(
         _LOGGER, "Batch delete messages failed.", condition, description, status_code
     )

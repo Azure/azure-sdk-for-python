@@ -402,17 +402,25 @@ class ServiceBusReceiver(
         # pylint: disable=protected-access
         if self._running:
             return
+        deadline = None if timeout is None else time.monotonic() + timeout
+
+        def check_deadline() -> None:
+            if deadline is not None and time.monotonic() >= deadline:
+                raise OperationTimeoutError()
+
         if self._handler and not self._handler._shutdown:
             self._handler.close()
+            check_deadline()
 
         auth = None if self._connection else create_authentication(self)
+        check_deadline()
         self._create_handler(auth)
+        check_deadline()
         try:
-            deadline = None if timeout is None else time.monotonic() + timeout
             self._handler.open(connection=self._connection)
+            check_deadline()
             while not self._handler.client_ready():
-                if deadline is not None and time.monotonic() >= deadline:
-                    raise OperationTimeoutError()
+                check_deadline()
                 time.sleep(0.05)
             self._running = True
         except:
