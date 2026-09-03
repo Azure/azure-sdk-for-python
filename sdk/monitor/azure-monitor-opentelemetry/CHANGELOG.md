@@ -4,6 +4,7 @@
 
 ### Features Added
 - Add support for the `httpx2` OpenTelemetry instrumentation entry point
+  ([#48899](https://github.com/Azure/azure-sdk-for-python/pull/48899))
 - Add httpx instrumentation support
   ([#47953](https://github.com/Azure/azure-sdk-for-python/pull/47953))
 
