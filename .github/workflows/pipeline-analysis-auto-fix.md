@@ -78,7 +78,7 @@ on:
             return;
           }
           core.setOutput("body", matches[0].body);
-if: needs.pre_activation.outputs.fix_request_result == 'success'
+if: needs.pre_activation.outputs.fix_request_result == 'success' && needs.pre_activation.outputs.analysis_comment != ''
 engine: copilot
 
 concurrency:
@@ -101,29 +101,10 @@ checkout:
 
 post-steps:
   - name: Package fix
-    uses: actions/github-script@v9.0.0
-    with:
-      script: |
-        const fs = require("fs");
-        const chunks = [];
-        let exitCode = await exec.exec("git", ["add", "-N", "."]);
-        if (exitCode !== 0) {
-          throw new Error(`git add failed with exit code ${exitCode}.`);
-        }
-        exitCode = await exec.exec(
-          "git",
-          ["diff", "--binary", "--full-index", "HEAD"],
-          {
-            listeners: {
-              stdout: data => chunks.push(Buffer.from(data)),
-            },
-            silent: true,
-          }
-        );
-        if (exitCode !== 0) {
-          throw new Error(`git diff failed with exit code ${exitCode}.`);
-        }
-        fs.writeFileSync("/tmp/gh-aw/aw-fix.patch", Buffer.concat(chunks));
+    shell: bash
+    run: |
+      git add -N .
+      git diff --binary --full-index HEAD > /tmp/gh-aw/aw-fix.patch
 
 tools:
   edit:
@@ -328,18 +309,11 @@ safe-outputs:
               core.setOutput("publish_fix", "true");
         - name: Publish fix branch
           if: steps.revalidate.outputs.publish_fix == 'true'
-          uses: actions/github-script@v9.0.0
+          shell: bash
           env:
             FIX_BRANCH: pipeline-fix/pr-${{ github.event.inputs.pr_number }}-${{ github.event.inputs.ci_head_sha }}/run-${{ github.run_id }}
-          with:
-            script: |
-              const exitCode = await exec.exec(
-                "git",
-                ["push", "origin", `HEAD:refs/heads/${process.env.FIX_BRANCH}`]
-              );
-              if (exitCode !== 0) {
-                throw new Error(`git push failed with exit code ${exitCode}.`);
-              }
+          run: |
+            git push origin "HEAD:refs/heads/$FIX_BRANCH"
         - name: Update analysis comment
           if: steps.revalidate.outputs.publish_fix == 'true'
           uses: actions/github-script@v9.0.0
