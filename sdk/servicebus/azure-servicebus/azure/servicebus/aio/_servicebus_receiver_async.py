@@ -882,13 +882,19 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             ),
         }
         start_time = time.monotonic()
-        await self._open_with_retry(timeout=timeout)
+        await self._open_with_retry(
+            timeout=timeout,
+            suppress_next_session_timeout_message=True,
+        )
         remaining_timeout = (
             None if timeout is None else timeout - (time.monotonic() - start_time)
         )
         if remaining_timeout is not None and remaining_timeout <= 0:
             raise OperationTimeoutError()
-        await self._open_mgmt_link_with_retry(timeout=remaining_timeout)
+        await self._open_mgmt_link_with_retry(
+            timeout=remaining_timeout,
+            suppress_next_session_timeout_message=True,
+        )
         remaining_timeout = (
             None if timeout is None else timeout - (time.monotonic() - start_time)
         )

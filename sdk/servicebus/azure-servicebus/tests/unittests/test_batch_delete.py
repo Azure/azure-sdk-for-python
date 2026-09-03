@@ -118,11 +118,15 @@ def _receiver(receiver_type, session_id=None):
 
 class TestDeleteMessages:
     @pytest.mark.parametrize(
-        "session_id,expects_session_advice",
-        [(None, False), (NEXT_AVAILABLE_SESSION, True)],
+        "session_id,suppress_session_advice,expects_session_advice",
+        [
+            (None, False, False),
+            (NEXT_AVAILABLE_SESSION, False, True),
+            (NEXT_AVAILABLE_SESSION, True, False),
+        ],
     )
     def test_setup_timeout_advice_only_applies_to_next_available_session(
-        self, session_id, expects_session_advice
+        self, session_id, suppress_session_advice, expects_session_advice
     ):
         receiver = _receiver(ServiceBusReceiver, session_id=session_id)
         receiver._config = MagicMock(retry_total=0)
@@ -133,7 +137,10 @@ class TestDeleteMessages:
             raise OperationTimeoutError()
 
         with pytest.raises(OperationTimeoutError) as exc_info:
-            receiver._do_retryable_operation(time_out)
+            receiver._do_retryable_operation(
+                time_out,
+                suppress_next_session_timeout_message=suppress_session_advice,
+            )
 
         assert ("NEXT_AVAILABLE_SESSION" in str(exc_info.value)) is expects_session_advice
 
@@ -160,8 +167,13 @@ class TestDeleteMessages:
             cutoff.timestamp() * 1000
         )
         assert 0 < calls[0][3]["timeout"] <= 12
-        receiver._open_with_retry.assert_called_once_with(timeout=12)
+        receiver._open_with_retry.assert_called_once_with(
+            timeout=12, suppress_next_session_timeout_message=True
+        )
         receiver._open_mgmt_link_with_retry.assert_called_once()
+        setup_kwargs = receiver._open_mgmt_link_with_retry.call_args.kwargs
+        assert setup_kwargs["suppress_next_session_timeout_message"] is True
+        assert 0 < setup_kwargs["timeout"] <= 12
         receiver._mgmt_request_response_with_retry.assert_not_called()
 
     def test_setup_failure_does_not_dispatch(self):
@@ -193,7 +205,9 @@ class TestDeleteMessages:
         with pytest.raises(RuntimeError, match="dispatch failed"):
             receiver.delete_messages(1)
 
-        receiver._open_with_retry.assert_called_once_with(timeout=None)
+        receiver._open_with_retry.assert_called_once_with(
+            timeout=None, suppress_next_session_timeout_message=True
+        )
         receiver._mgmt_request_response.assert_called_once()
         receiver._mgmt_request_response_with_retry.assert_not_called()
 
@@ -223,6 +237,29 @@ class TestDeleteMessages:
                 receiver.delete_messages(1, timeout=0.5)
 
         receiver._mgmt_request_response.assert_not_called()
+
+    def test_management_setup_shares_timeout_with_receiver_reopen(self):
+        receiver = _receiver(ServiceBusReceiver)
+        receiver._config = MagicMock(retry_total=0, encoding="UTF-8")
+        receiver._container_id = "receiver"
+        receiver._mgmt_target = "$management"
+        receiver._open_with_timeout = MagicMock()
+        receiver._amqp_transport.mgmt_client_setup = MagicMock()
+
+        with patch(
+            "azure.servicebus._base_handler.time.monotonic",
+            side_effect=[10.0, 10.5],
+        ):
+            ServiceBusReceiver._open_mgmt_link_with_retry(receiver, timeout=2)
+
+        receiver._open_with_timeout.assert_called_once()
+        receiver_timeout = receiver._open_with_timeout.call_args.args[0]
+        assert 0 < receiver_timeout <= 2
+        receiver._amqp_transport.mgmt_client_setup.assert_called_once_with(
+            receiver._handler,
+            node=receiver._mgmt_target.encode("UTF-8"),
+            timeout=pytest.approx(receiver_timeout - 0.5),
+        )
 
     def test_forwards_session_id(self):
         receiver = _receiver(ServiceBusReceiver, session_id="session-a")
@@ -406,11 +443,15 @@ class TestPurgeMessages:
 class TestDeleteMessagesAsync:
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
-        "session_id,expects_session_advice",
-        [(None, False), (NEXT_AVAILABLE_SESSION, True)],
+        "session_id,suppress_session_advice,expects_session_advice",
+        [
+            (None, False, False),
+            (NEXT_AVAILABLE_SESSION, False, True),
+            (NEXT_AVAILABLE_SESSION, True, False),
+        ],
     )
     async def test_setup_timeout_advice_only_applies_to_next_available_session(
-        self, session_id, expects_session_advice
+        self, session_id, suppress_session_advice, expects_session_advice
     ):
         receiver = _receiver(AsyncServiceBusReceiver, session_id=session_id)
         receiver._config = MagicMock(retry_total=0)
@@ -424,7 +465,10 @@ class TestDeleteMessagesAsync:
 
         receiver._handle_exception = handle_exception
         with pytest.raises(OperationTimeoutError) as exc_info:
-            await receiver._do_retryable_operation(time_out)
+            await receiver._do_retryable_operation(
+                time_out,
+                suppress_next_session_timeout_message=suppress_session_advice,
+            )
 
         assert ("NEXT_AVAILABLE_SESSION" in str(exc_info.value)) is expects_session_advice
 
@@ -454,8 +498,13 @@ class TestDeleteMessagesAsync:
             cutoff.timestamp() * 1000
         )
         assert 0 < calls[0][3]["timeout"] <= 12
-        receiver._open_with_retry.assert_awaited_once_with(timeout=12)
+        receiver._open_with_retry.assert_awaited_once_with(
+            timeout=12, suppress_next_session_timeout_message=True
+        )
         receiver._open_mgmt_link_with_retry.assert_awaited_once()
+        setup_kwargs = receiver._open_mgmt_link_with_retry.await_args.kwargs
+        assert setup_kwargs["suppress_next_session_timeout_message"] is True
+        assert 0 < setup_kwargs["timeout"] <= 12
         receiver._mgmt_request_response_with_retry.assert_not_called()
 
     @pytest.mark.asyncio
@@ -534,7 +583,9 @@ class TestDeleteMessagesAsync:
         with pytest.raises(RuntimeError, match="dispatch failed"):
             await receiver.delete_messages(1)
 
-        receiver._open_with_retry.assert_awaited_once_with(timeout=None)
+        receiver._open_with_retry.assert_awaited_once_with(
+            timeout=None, suppress_next_session_timeout_message=True
+        )
         receiver._mgmt_request_response.assert_awaited_once()
         receiver._mgmt_request_response_with_retry.assert_not_called()
 
@@ -567,6 +618,32 @@ class TestDeleteMessagesAsync:
                 await receiver.delete_messages(1, timeout=0.5)
 
         receiver._mgmt_request_response.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_management_setup_shares_timeout_with_receiver_reopen(self):
+        receiver = _receiver(AsyncServiceBusReceiver)
+        receiver._config = MagicMock(retry_total=0, encoding="UTF-8")
+        receiver._container_id = "receiver"
+        receiver._mgmt_target = "$management"
+        receiver._open_with_timeout = AsyncMock()
+        receiver._amqp_transport.mgmt_client_setup_async = AsyncMock()
+
+        with patch(
+            "azure.servicebus.aio._base_handler_async.time.monotonic",
+            side_effect=[10.0, 10.5],
+        ):
+            await AsyncServiceBusReceiver._open_mgmt_link_with_retry(
+                receiver, timeout=2
+            )
+
+        receiver._open_with_timeout.assert_awaited_once()
+        receiver_timeout = receiver._open_with_timeout.await_args.args[0]
+        assert 0 < receiver_timeout <= 2
+        receiver._amqp_transport.mgmt_client_setup_async.assert_awaited_once_with(
+            receiver._handler,
+            node=receiver._mgmt_target.encode("UTF-8"),
+            timeout=pytest.approx(receiver_timeout - 0.5),
+        )
 
     @pytest.mark.asyncio
     async def test_keeps_one_cutoff_and_stops_only_on_zero(self):
