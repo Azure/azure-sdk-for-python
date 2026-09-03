@@ -90,6 +90,23 @@ async def handle_invoke(request: Request) -> Response:
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
     task_id = durable_task_id(session_id, invocation_id)
+
+    # Persist an initial durable status BEFORE starting the worker so the
+    # existence of the invocation is authoritative on every replica immediately.
+    # Without it, a poll/cancel routed to a different replica during the tiny
+    # pre-first-checkpoint window sees get_active_run()==None (which cannot
+    # distinguish "unknown" from "owned elsewhere") and would wrongly 404. Only
+    # seed when absent so a re-POST of an existing invocation never resets it; the
+    # worker then reads iterations=0 and continues normally.
+    store = await FoundryStateStore.get_or_create(
+        checkpoint_store_name(session_id), item_ttl_seconds=-1
+    )
+    try:
+        if await store.get_item(task_id) is None:
+            await store.set_item(task_id, {"name": name, "iterations": 0})
+    finally:
+        await store.aclose()
+
     await hello_forever.start(
         task_id=task_id, input={"name": name, "session_id": session_id}
     )
@@ -103,14 +120,14 @@ async def handle_invoke(request: Request) -> Response:
 async def handle_get(request: Request) -> Response:
     """Report whether the worker is running and its current iteration count.
 
-    Status is derived from the **durable stop marker**, not from process-local
-    run ownership: an indefinite worker keeps running (possibly on a *different*
-    replica) until it is explicitly stopped, so ``get_active_run()`` returning
-    ``None`` on the polled replica does not mean the worker has stopped. The stop
-    marker is written by the cancel handler and survives crashes and recovery, so
-    every replica agrees on the terminal state. ``get_active_run()`` is consulted
-    only to disambiguate the brief window *before the first checkpoint* (both the
-    checkpoint and marker are still absent) from a genuinely unknown invocation.
+    Status is derived from **durable state**, not process-local run ownership: an
+    indefinite worker keeps running (possibly on a *different* replica) until it
+    is explicitly stopped, so ``get_active_run()`` returning ``None`` on the
+    polled replica means nothing. The invoke handler seeds an initial durable
+    record, so a started invocation is visible on every replica immediately (no
+    pre-checkpoint 404 window); the stop marker (also durable) decides the
+    terminal state. Absence of both the record and the marker means the
+    invocation is genuinely unknown.
     """
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
@@ -126,17 +143,11 @@ async def handle_get(request: Request) -> Response:
         await store.aclose()
 
     if item is None and stop_marker is None:
-        # No checkpoint and no stop marker. The worker may have just started and
-        # not yet written its first checkpoint, so distinguish "running at zero"
-        # (this replica owns an active run) from a genuinely unknown invocation.
-        run = await hello_forever.get_active_run(task_id)
-        if run is None:
-            return JSONResponse(
-                {"status": "not_found", "invocation_id": invocation_id},
-                status_code=404,
-            )
+        # No durable record and no stop marker: genuinely unknown invocation.
+        # (A started invocation always has a record from the invoke handler.)
         return JSONResponse(
-            {"status": "running", "invocation_id": invocation_id, "iterations": 0}
+            {"status": "not_found", "invocation_id": invocation_id},
+            status_code=404,
         )
 
     iterations = int((item.value.get("iterations", 0) if item else 0) or 0)
@@ -156,23 +167,20 @@ async def handle_cancel(request: Request) -> Response:
     Refuses to persist a stop marker for an invocation that does not exist:
     otherwise cancelling an arbitrary caller-chosen id would make GET report it
     ``stopped`` and would poison a *later* legitimate start with the same
-    session/id (the worker would see the stale marker and exit immediately). An
-    invocation is considered to exist if it has an active run on this replica or
-    a durable checkpoint (written on any replica). Only then do we write the
-    marker and wake the running turn.
+    session/id (the worker would see the stale marker and exit immediately).
+    Existence is decided by the **durable record** seeded at invoke time (visible
+    on every replica), not the replica-local ``get_active_run()``. Only then do
+    we write the marker and wake the running turn.
     """
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
     task_id = durable_task_id(session_id, invocation_id)
 
-    run = await hello_forever.get_active_run(task_id)
-
     store = await FoundryStateStore.get_or_create(
         checkpoint_store_name(session_id), item_ttl_seconds=-1
     )
     try:
-        exists = await store.get_item(task_id) is not None
-        if not exists and run is None:
+        if await store.get_item(task_id) is None:
             return JSONResponse(
                 {"status": "not_found", "invocation_id": invocation_id},
                 status_code=404,

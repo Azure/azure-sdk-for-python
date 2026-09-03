@@ -81,9 +81,10 @@ def durable_task_id(session_id: str, invocation_id: str) -> str:
     prefix of the stop-marker key).
 
     A SHA-256 digest is used (rather than ``f"{session_id}/{invocation_id}"``)
-    for two reasons: task ids may only contain ``[a-zA-Z0-9\\-_.:]`` (a ``/`` is
-    rejected), and they are bounded to 128 characters — a digest is a fixed,
-    collision-resistant, always-valid encoding regardless of how long the two
+    for two reasons: the provider task-id contract is ``[A-Za-z0-9_-]{1,128}``
+    (a ``/`` — and ``.`` or ``:`` — is rejected), and it is bounded to 128
+    characters. The hex digest plus the ``hf-`` prefix uses only ``[a-z0-9-]``
+    and is a fixed 67 chars, so it is always valid regardless of how long the two
     protocol ids are. The ``\\x00`` separator keeps ``(a, bc)`` and ``(ab, c)``
     distinct.
     """

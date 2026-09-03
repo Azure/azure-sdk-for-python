@@ -120,13 +120,13 @@ def test_durable_task_id_is_accepted_by_task_manager() -> None:
     including long protocol ids that would blow the 128-char limit if not hashed.
     """
     _ensure_sample_importable()
-    from azure.ai.agentserver.core.tasks._decorator import (  # noqa: WPS433
-        _validate_task_id,
+    from azure.ai.agentserver.core.tasks._validation import (  # noqa: WPS433
+        validate_task_id,
     )
     from resilient_hello_forever import agent as hf  # noqa: WPS433
 
-    _validate_task_id(hf.durable_task_id("sess-1", "inv-1"))
-    _validate_task_id(hf.durable_task_id("s" * 200, "inv_" + "x" * 200))
+    validate_task_id(hf.durable_task_id("sess-1", "inv-1"))
+    validate_task_id(hf.durable_task_id("s" * 200, "inv_" + "x" * 200))
     assert hf.durable_task_id("a", "bc") != hf.durable_task_id("ab", "c")
 
 
