@@ -74,7 +74,6 @@ with (
             name=TOOLBOX_NAME,
             description="Toolbox with a shell tool running in an auto-provisioned container.",
             tools=[shell_tool],
-            headers={"Foundry-Features": "Toolboxes=V1Preview"},
         )
         print(f"Created toolbox `{TOOLBOX_NAME}` (version {toolbox_version.version}).")
 
