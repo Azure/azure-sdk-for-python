@@ -1,0 +1,12 @@
+trigger: none
+
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: 'azure-ai-projects'
+      ServiceDirectory: ai
+      TestResourceDirectories:
+      - ai/azure-ai-projects
+      EnvVars:
+        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_TEST_USE_CLI_AUTH: 'true'

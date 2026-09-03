@@ -14,6 +14,7 @@ can all be verified without a live service or a recorded transport.
 
 import json
 from unittest.mock import MagicMock, patch
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 from azure.core.credentials import AccessToken
@@ -22,7 +23,9 @@ from azure.ai.projects._realtime import (
     RealtimeConnectionManager,
     _assert_trusted_connection_url,
     _to_ws_url,
+    _USER_AGENT,
 )
+from azure.ai.projects._version import VERSION
 from azure.ai.projects.models import (
     RealtimeClientEventResponseCreate,
     RealtimeServerEventSessionCreated,
@@ -128,6 +131,51 @@ class TestRealtimeConnectionManagerEnter:
         assert "api-version=v1" in called_url
         assert kwargs["additional_headers"]["Authorization"] == "Bearer fake-token"
         assert kwargs["additional_headers"]["Foundry-Features"] == "VoiceAgents=V1Preview"
+
+    def test_enter_identifies_sdk_via_user_agent_and_query(self):
+        # The generated HTTP surface gets SDK identification for free from the core pipeline's
+        # UserAgentPolicy; this hand-written client builds its own request and must opt in
+        # explicitly, both as a User-Agent header and (since some proxies/paths don't forward
+        # WebSocket upgrade headers) as an x-ms-client-sdk query parameter.
+        fake_connection = MagicMock()
+        with patch("websockets.sync.client.connect", return_value=fake_connection) as mock_connect:
+            manager = _make_manager()
+            manager.enter()
+            manager.__exit__()
+
+        _args, kwargs = mock_connect.call_args
+        assert kwargs["additional_headers"]["User-Agent"] == _USER_AGENT
+        assert "azsdk-python-ai-projects" in _USER_AGENT
+        assert VERSION in _USER_AGENT
+
+        query = parse_qs(urlparse(_args[0]).query)
+        assert query["x-ms-client-sdk"] == [_USER_AGENT]
+
+    def test_enter_caller_user_agent_overrides_default(self):
+        fake_connection = MagicMock()
+        with patch("websockets.sync.client.connect", return_value=fake_connection) as mock_connect:
+            manager = _make_manager(extra_headers={"User-Agent": "custom-user-agent"})
+            manager.enter()
+            manager.__exit__()
+
+        _args, kwargs = mock_connect.call_args
+        assert kwargs["additional_headers"]["User-Agent"] == "custom-user-agent"
+
+    def test_enter_caller_user_agent_overrides_default_case_insensitive(self):
+        # Regression test: a plain dict merge of extra_headers would leave a differently-cased
+        # caller override (e.g. "user-agent") as a *separate* key alongside our own "User-Agent"
+        # default, since Python dict keys are case-sensitive but HTTP header names are not --
+        # sending two User-Agent-like headers instead of cleanly honoring the caller's override.
+        fake_connection = MagicMock()
+        with patch("websockets.sync.client.connect", return_value=fake_connection) as mock_connect:
+            manager = _make_manager(extra_headers={"user-agent": "custom-user-agent"})
+            manager.enter()
+            manager.__exit__()
+
+        _args, kwargs = mock_connect.call_args
+        headers = kwargs["additional_headers"]
+        assert "User-Agent" not in headers
+        assert headers["user-agent"] == "custom-user-agent"
 
     def test_enter_appends_extra_query_and_headers(self):
         fake_connection = MagicMock()

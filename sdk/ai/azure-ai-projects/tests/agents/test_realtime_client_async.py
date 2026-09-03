@@ -14,11 +14,13 @@ live service or a recorded transport.
 
 import json
 from unittest.mock import AsyncMock, MagicMock, patch
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 from azure.core.credentials import AccessToken
 
-from azure.ai.projects.aio._realtime import AsyncRealtimeConnectionManager
+from azure.ai.projects.aio._realtime import AsyncRealtimeConnectionManager, _USER_AGENT
+from azure.ai.projects._version import VERSION
 from azure.ai.projects.models import (
     RealtimeClientEventResponseCreate,
     RealtimeServerEventSessionCreated,
@@ -93,6 +95,52 @@ class TestAsyncRealtimeConnectionManagerEnter:
         assert kwargs["headers"]["Foundry-Features"] == "VoiceAgents=V1Preview"
         assert "Sec-WebSocket-Protocol" not in kwargs["headers"]
         assert kwargs["protocols"] == ("realtime",)
+
+    async def test_enter_identifies_sdk_via_user_agent_and_query(self):
+        # The generated HTTP surface gets SDK identification for free from the core pipeline's
+        # UserAgentPolicy; this hand-written client builds its own request and must opt in
+        # explicitly, both as a User-Agent header and (since some proxies/paths don't forward
+        # WebSocket upgrade headers) as an x-ms-client-sdk query parameter.
+        fake_ws = _make_fake_ws()
+        patcher, fake_session = _patch_client_session(fake_ws)
+        with patcher:
+            manager = _make_manager()
+            await manager.enter()
+            await manager.__aexit__()
+
+        _args, kwargs = fake_session.ws_connect.call_args
+        assert kwargs["headers"]["User-Agent"] == _USER_AGENT
+        assert "azsdk-python-ai-projects" in _USER_AGENT
+        assert VERSION in _USER_AGENT
+        assert kwargs["params"]["x-ms-client-sdk"] == _USER_AGENT
+
+    async def test_enter_caller_user_agent_overrides_default(self):
+        fake_ws = _make_fake_ws()
+        patcher, fake_session = _patch_client_session(fake_ws)
+        with patcher:
+            manager = _make_manager(extra_headers={"User-Agent": "custom-user-agent"})
+            await manager.enter()
+            await manager.__aexit__()
+
+        _args, kwargs = fake_session.ws_connect.call_args
+        assert kwargs["headers"]["User-Agent"] == "custom-user-agent"
+
+    async def test_enter_caller_user_agent_overrides_default_case_insensitive(self):
+        # Regression test: a plain dict merge of extra_headers would leave a differently-cased
+        # caller override (e.g. "user-agent") as a *separate* key alongside our own "User-Agent"
+        # default, since Python dict keys are case-sensitive but HTTP header names are not --
+        # sending two User-Agent-like headers instead of cleanly honoring the caller's override.
+        fake_ws = _make_fake_ws()
+        patcher, fake_session = _patch_client_session(fake_ws)
+        with patcher:
+            manager = _make_manager(extra_headers={"user-agent": "custom-user-agent"})
+            await manager.enter()
+            await manager.__aexit__()
+
+        _args, kwargs = fake_session.ws_connect.call_args
+        headers = kwargs["headers"]
+        assert "User-Agent" not in headers
+        assert headers["user-agent"] == "custom-user-agent"
 
     async def test_enter_rejects_untrusted_connection_url_host(self):
         manager = _make_manager(connection_url="wss://evil.example.com/steal-token")

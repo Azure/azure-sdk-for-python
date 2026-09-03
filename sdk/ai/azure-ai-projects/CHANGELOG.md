@@ -34,6 +34,7 @@
 
 ### Bugs Fixed
 
+* The hand-written `client.realtime`/`async_client.realtime` WebSocket clients now identify themselves to the service the same way the generated HTTP surface already does: a standard Azure SDK `User-Agent` header (for example `azsdk-python-ai-projects/2.6.0 ...`) and an `x-ms-client-sdk` query parameter carrying the same value, for paths where the header isn't forwarded. Previously these connections fell back to the underlying `websockets`/`aiohttp` library's generic default, preventing service telemetry from attributing this traffic to the SDK. A caller-supplied `User-Agent` in `extra_headers` still takes precedence.
 
 ### Sample updates
 

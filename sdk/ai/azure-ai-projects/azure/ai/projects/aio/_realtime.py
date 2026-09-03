@@ -50,12 +50,21 @@ from typing import (
 
 from .. import models as _models
 from ..models._enums import _AgentDefinitionOptInKeys
-from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME
+from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from .._utils.model_base import Model as _Model, SdkJSONEncoder
+from .._version import VERSION
+
+from azure.core.pipeline.policies import UserAgentPolicy
 
 # Scoped to just the voice-agent preview opt-in; callers connecting to other preview agent
 # kinds through this same route can pass a broader value explicitly via ``foundry_features``.
 _VOICE_AGENT_FEATURE_HEADER: str = _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value
+
+# Identifies the SDK to the service on the WebSocket handshake, which otherwise falls back to
+# the underlying `aiohttp` library's generic default (the generated HTTP surface gets this for
+# free from the pipeline's own UserAgentPolicy; this hand-written client builds its own request
+# instead, so it needs to opt in explicitly the same way).
+_USER_AGENT: str = UserAgentPolicy(sdk_moniker=f"ai-projects/{VERSION}").user_agent
 
 if TYPE_CHECKING:
     from aiohttp import ClientSession, ClientWebSocketResponse
@@ -724,7 +733,7 @@ class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attri
         if not url.startswith("wss://"):
             raise ValueError("The realtime WebSocket URL must use wss:// to protect credentials in transit.")
 
-        params: Dict[str, str] = {"api-version": self._api_version}
+        params: Dict[str, str] = {"api-version": self._api_version, "x-ms-client-sdk": _USER_AGENT}
         if self._agent_session_id is not None:
             params["agent_session_id"] = self._agent_session_id
         if self._agent_version_override is not None:
@@ -739,6 +748,12 @@ class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attri
         if self._structured_inputs is not None:
             headers["x-ms-voice-structured-inputs"] = self._structured_inputs
         headers.update(self._extra_headers)
+        if not _has_header_case_insensitive(headers, "User-Agent"):
+            # Only set our default if the caller didn't supply their own (in any casing) --
+            # a plain dict merge would otherwise leave both as separate keys (HTTP header names
+            # are case-insensitive, but Python dict keys are not), sending two User-Agent-like
+            # headers instead of cleanly honoring the caller's override.
+            headers["User-Agent"] = _USER_AGENT
 
         session = aiohttp.ClientSession()
         try:
