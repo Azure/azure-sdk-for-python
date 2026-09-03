@@ -11,6 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, List
 from ._patch_agents_async import AgentsOperations, BetaAgentsOperations
 from ._patch_agent_endpoint_conversations_async import AgentEndpointConversationsOperations
+from ._patch_agent_insights_async import BetaAgentInsightMonitorsOperations
 from ._patch_datasets_async import BetaDatasetsOperations, DatasetsOperations
 from ._patch_evaluators_async import BetaEvaluatorsOperations
 from ._patch_evaluation_rules_async import EvaluationRulesOperations
@@ -21,7 +22,6 @@ from ._patch_models_async import BetaModelsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (
     BetaAgentEndpointConversationsOperations,
-    BetaAgentInsightMonitorsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
@@ -81,6 +81,10 @@ class BetaOperations(GeneratedBetaOperations):
         self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that returns AsyncDatasetGenerationLROPoller
         self.datasets = BetaDatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that returns AsyncAgentInsightRunLROPoller
+        self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(

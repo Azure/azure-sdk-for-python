@@ -14,6 +14,7 @@ from typing import Any, Callable, List
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _BETA_OPERATION_FEATURE_HEADERS, _has_header_case_insensitive
 from ._patch_agents import AgentsOperations, BetaAgentsOperations
 from ._patch_agent_endpoint_conversations import AgentEndpointConversationsOperations
+from ._patch_agent_insights import BetaAgentInsightMonitorsOperations
 from ._patch_datasets import BetaDatasetsOperations, DatasetsOperations
 from ._patch_evaluators import BetaEvaluatorsOperations
 from ._patch_evaluation_rules import EvaluationRulesOperations
@@ -23,7 +24,6 @@ from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
 from ._operations import (
     BetaAgentEndpointConversationsOperations,
-    BetaAgentInsightMonitorsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
@@ -136,6 +136,10 @@ class BetaOperations(GeneratedBetaOperations):
         self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that returns DatasetGenerationLROPoller
         self.datasets = BetaDatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that returns AgentInsightRunLROPoller
+        self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(

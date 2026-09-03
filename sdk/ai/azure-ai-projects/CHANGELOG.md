@@ -23,7 +23,10 @@
   * `project_client.agents.get_microsoft365_package(agent_name)` downloads the Microsoft 365 app package for an agent.
   * Added the supporting `Microsoft365PublishScope`, `Microsoft365PermissionScopes`, `ActivityProtocolAccessBoundary`, `PublishApprovalStatus`, and `DigitalWorkerType` enums.
 * Added the `beta.agent_insight_monitors` operation group for creating and managing Agent Insights monitors and their runs (`create`/`get`/`update`/`delete`/`list`/`reset`, `begin_create_run`/`get_run`/`cancel_run`/`list_runs`, `get_insight`/`update_insight`/`list_insights`), along with the supporting `AgentInsightMonitor`, `AgentInsightMonitorCreate`, `AgentInsightMonitorUpdate`, `AgentInsightMonitorListItem`, `AgentInsightRun`, `AgentInsight`, and related models.
-* Added an optional `authorization` parameter (`RoutineAuthorization`, `RoutineDispatchIdentity`) to `beta.routines.dispatch`.
+* Added an optional `authorization` argument to `.beta.routines.create_or_update`, with `RoutineAuthorization` and `RoutineDispatchIdentity` for selecting the agent or routine creator identity.
+* Added optional Hosted Agent session defaults through `HostedAgentDefinition.session_configuration` and `SessionConfiguration`, including idle-timeout configuration.
+* Added `ShellToolboxTool` and supporting container environment and network policy models, with the new `ToolboxToolType.SHELL` enum member.
+* Added `WebIQPreviewTool` and `WebIQPreviewToolboxTool`, with new `ToolType.WEB_IQ_PREVIEW` and `ToolboxToolType.WEB_IQ_PREVIEW` enum members.
 
 ### Dependency update
 
@@ -31,7 +34,6 @@
 
 ### Bugs Fixed
 
-* Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
 
 ### Sample updates
 
