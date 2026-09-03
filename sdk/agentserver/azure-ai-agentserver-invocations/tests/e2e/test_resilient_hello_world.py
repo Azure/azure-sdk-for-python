@@ -30,8 +30,6 @@ from pathlib import Path
 import pytest
 import pytest_asyncio
 
-from azure.ai.agentserver.core.storage import FoundryStateStore
-
 # Force the local-file resilient provider so the test is fully isolated
 # from any hosted env vars in the shell.
 os.environ.pop("FOUNDRY_HOSTING_ENVIRONMENT", None)
@@ -82,32 +80,35 @@ def _ensure_sample_importable() -> None:
         sys.path.insert(0, sp)
 
 
-async def _load_item(store_name: str, key: str):
-    store = await FoundryStateStore.get_or_create(store_name)
+async def _load_item(hw, key: str):
+    store = await hw.open_checkpoint_store(_SESSION, _USER)
     async with store:
         return await store.get_item(key)
 
 
-async def _seed_item(store_name: str, key: str, value: dict):
+async def _seed_item(hw, key: str, value: dict):
     """Write an initial checkpoint and return its ETag."""
-    store = await FoundryStateStore.get_or_create(store_name)
+    store = await hw.open_checkpoint_store(_SESSION, _USER)
     async with store:
         ref = await store.set_item(key, value)
         return ref.etag
 
 
-# A fixed session id so the tests read the same session-scoped store the task
-# writes to (the host injects this from ``?agent_session_id=`` at runtime).
+# A fixed session + user id so the tests read the same session-scoped,
+# user-isolated store the task writes to (the host injects both from request
+# state at runtime).
 _SESSION = "test-hw-session"
+_USER = "test-hw-user"
 
 
 def test_durable_task_id_is_accepted_by_task_manager() -> None:
     """``durable_task_id`` must produce an id the TaskManager accepts.
 
-    Regression guard: a ``/`` separator (or an over-long id) is rejected by
-    ``start()`` — a bug the task-level tests miss because they pass their own
-    slash-free ids. Validate the helper's output with the real SDK validator,
-    including long protocol ids that would blow the 128-char limit if not hashed.
+    Regression guard: a ``/`` separator (or an over-long id) is rejected by the
+    provider validator — a bug the task-level tests miss because they pass their
+    own slash-free ids. Validate the helper's output with the real provider
+    validator, including long protocol ids that would blow the 128-char limit if
+    not hashed.
     """
     _ensure_sample_importable()
     from azure.ai.agentserver.core.tasks._validation import (  # noqa: WPS433
@@ -115,10 +116,11 @@ def test_durable_task_id_is_accepted_by_task_manager() -> None:
     )
     from resilient_hello_world import agent as hw  # noqa: WPS433
 
-    validate_task_id(hw.durable_task_id("sess-1", "inv-1"))
-    validate_task_id(hw.durable_task_id("s" * 200, "inv_" + "x" * 200))
-    # Distinct inputs must not collide, and the boundary must be unambiguous.
-    assert hw.durable_task_id("a", "bc") != hw.durable_task_id("ab", "c")
+    validate_task_id(hw.durable_task_id("sess-1", "inv-1", "user-1"))
+    validate_task_id(hw.durable_task_id("s" * 200, "inv_" + "x" * 200, "u" * 200))
+    # Distinct inputs must not collide across any of the three fields.
+    assert hw.durable_task_id("a", "bc", "d") != hw.durable_task_id("ab", "c", "d")
+    assert hw.durable_task_id("s", "i", "u1") != hw.durable_task_id("s", "i", "u2")
 
 
 @pytest.mark.asyncio
@@ -135,13 +137,13 @@ async def test_runs_to_completion_and_checkpoints_every_step(
     task_id = "hw-complete"
     run = await hw.hello_world.start(
         task_id=task_id,
-        input={"name": "alice", "steps": 3, "session_id": _SESSION},
+        input={"name": "alice", "steps": 3, "session_id": _SESSION, "user_id": _USER},
     )
     result = await run.result()
 
     assert result == {"name": "alice", "steps": 3, "status": "complete"}
 
-    item = await _load_item(hw.checkpoint_store_name(_SESSION), task_id)
+    item = await _load_item(hw, task_id)
     assert item is not None
     assert item.value.get("completed_steps") == 3
     assert item.value.get("steps") == 3
@@ -163,22 +165,21 @@ async def test_completed_checkpoint_skips_all_work(
     monkeypatch.setattr(hw, "_STEP_DELAY", 0.0)
 
     task_id = "hw-already-done"
-    store_name = hw.checkpoint_store_name(_SESSION)
     seeded_etag = await _seed_item(
-        store_name,
+        hw,
         task_id,
         {"name": "bob", "steps": 3, "completed_steps": 3},
     )
 
     run = await hw.hello_world.start(
         task_id=task_id,
-        input={"name": "bob", "steps": 3, "session_id": _SESSION},
+        input={"name": "bob", "steps": 3, "session_id": _SESSION, "user_id": _USER},
     )
     result = await run.result()
 
     assert result["status"] == "complete"
 
-    item = await _load_item(store_name, task_id)
+    item = await _load_item(hw, task_id)
     assert item is not None
     assert item.value.get("completed_steps") == 3
     # No step ran, so no checkpoint write happened → ETag is unchanged.
@@ -197,22 +198,21 @@ async def test_partial_checkpoint_resumes_at_next_step(
     monkeypatch.setattr(hw, "_STEP_DELAY", 0.0)
 
     task_id = "hw-partial"
-    store_name = hw.checkpoint_store_name(_SESSION)
     seeded_etag = await _seed_item(
-        store_name,
+        hw,
         task_id,
         {"name": "carol", "steps": 4, "completed_steps": 2},
     )
 
     run = await hw.hello_world.start(
         task_id=task_id,
-        input={"name": "carol", "steps": 4, "session_id": _SESSION},
+        input={"name": "carol", "steps": 4, "session_id": _SESSION, "user_id": _USER},
     )
     result = await run.result()
 
     assert result == {"name": "carol", "steps": 4, "status": "complete"}
 
-    item = await _load_item(store_name, task_id)
+    item = await _load_item(hw, task_id)
     assert item is not None
     assert item.value.get("completed_steps") == 4
     # Work continued from the seed, so the checkpoint was rewritten.

@@ -30,11 +30,20 @@ class _Req:
     """Minimal stand-in for the Starlette request the handlers consume."""
 
     def __init__(
-        self, *, body: bytes = b"", invocation_id: str = "", session_id: str = ""
+        self,
+        *,
+        body: bytes = b"",
+        invocation_id: str = "",
+        session_id: str = "",
+        user_id: str = "u",
+        call_id: str = "c",
     ) -> None:
         self._body = body
         self.state = types.SimpleNamespace(
-            invocation_id=invocation_id, session_id=session_id
+            invocation_id=invocation_id,
+            session_id=session_id,
+            user_id=user_id,
+            call_id=call_id,
         )
 
     async def body(self) -> bytes:
@@ -59,10 +68,19 @@ async def task_manager(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
     monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
 
+    from azure.ai.agentserver.core.tasks import (  # noqa: WPS433
+        resilient_tasks_enabled,
+        set_resilient_tasks_enabled,
+    )
     from azure.ai.agentserver.core.tasks._manager import (  # noqa: WPS433
         TaskManager,
         set_task_manager,
     )
+
+    # Importing the sample app modules flips the process-global opt-in flag to
+    # True. Save and restore it so the flag does not leak into later tests and
+    # make their behavior test-order dependent.
+    prev_enabled = resilient_tasks_enabled()
 
     config = type(
         "C",
@@ -82,6 +100,7 @@ async def task_manager(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     finally:
         await mgr.shutdown()
         set_task_manager(None)
+        set_resilient_tasks_enabled(prev_enabled)
 
 
 def _status(response) -> tuple[int, dict]:

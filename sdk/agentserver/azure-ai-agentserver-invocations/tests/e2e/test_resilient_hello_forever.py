@@ -27,8 +27,6 @@ from pathlib import Path
 import pytest
 import pytest_asyncio
 
-from azure.ai.agentserver.core.storage import FoundryStateStore
-
 # Force the local-file resilient provider so the test is fully isolated
 # from any hosted env vars in the shell.
 os.environ.pop("FOUNDRY_HOSTING_ENVIRONMENT", None)
@@ -78,24 +76,24 @@ def _ensure_sample_importable() -> None:
         sys.path.insert(0, sp)
 
 
-async def _load_item(store_name: str, key: str):
-    store = await FoundryStateStore.get_or_create(store_name)
+async def _load_item(hf, key: str):
+    store = await hf.open_checkpoint_store(_SESSION, _USER)
     async with store:
         return await store.get_item(key)
 
 
-async def _seed_item(store_name: str, key: str, value: dict) -> None:
-    store = await FoundryStateStore.get_or_create(store_name)
+async def _seed_item(hf, key: str, value: dict) -> None:
+    store = await hf.open_checkpoint_store(_SESSION, _USER)
     async with store:
         await store.set_item(key, value)
 
 
-async def _wait_for_iterations(store_name: str, key: str, minimum: int, timeout: float = 5.0) -> int:
+async def _wait_for_iterations(hf, key: str, minimum: int, timeout: float = 5.0) -> int:
     """Poll the durable checkpoint until ``iterations`` reaches ``minimum``."""
     loop = asyncio.get_event_loop()
     deadline = loop.time() + timeout
     while loop.time() < deadline:
-        item = await _load_item(store_name, key)
+        item = await _load_item(hf, key)
         if item is not None:
             iters = int(item.value.get("iterations", 0) or 0)
             if iters >= minimum:
@@ -106,9 +104,11 @@ async def _wait_for_iterations(store_name: str, key: str, minimum: int, timeout:
     )
 
 
-# A fixed session id so the tests read the same session-scoped store the worker
-# writes to (the host injects this from ``?agent_session_id=`` at runtime).
+# A fixed session + user id so the tests read the same session-scoped,
+# user-isolated store the worker writes to (the host injects both from request
+# state at runtime).
 _SESSION = "test-hf-session"
+_USER = "test-hf-user"
 
 
 def test_durable_task_id_is_accepted_by_task_manager() -> None:
@@ -125,9 +125,10 @@ def test_durable_task_id_is_accepted_by_task_manager() -> None:
     )
     from resilient_hello_forever import agent as hf  # noqa: WPS433
 
-    validate_task_id(hf.durable_task_id("sess-1", "inv-1"))
-    validate_task_id(hf.durable_task_id("s" * 200, "inv_" + "x" * 200))
-    assert hf.durable_task_id("a", "bc") != hf.durable_task_id("ab", "c")
+    validate_task_id(hf.durable_task_id("sess-1", "inv-1", "user-1"))
+    validate_task_id(hf.durable_task_id("s" * 200, "inv_" + "x" * 200, "u" * 200))
+    assert hf.durable_task_id("a", "bc", "d") != hf.durable_task_id("ab", "c", "d")
+    assert hf.durable_task_id("s", "i", "u1") != hf.durable_task_id("s", "i", "u2")
 
 
 @pytest.mark.asyncio
@@ -142,17 +143,17 @@ async def test_ticks_then_stops_on_cancel_with_marker(
     monkeypatch.setattr(hf, "_TICK", 0.01)
 
     task_id = "hf-stop"
-    store_name = hf.checkpoint_store_name(_SESSION)
     run = await hf.hello_forever.start(
-        task_id=task_id, input={"name": "alice", "session_id": _SESSION}
+        task_id=task_id,
+        input={"name": "alice", "session_id": _SESSION, "user_id": _USER},
     )
 
     # Let it tick a few times so there is real progress to stop.
-    reached = await _wait_for_iterations(store_name, task_id, minimum=2)
+    reached = await _wait_for_iterations(hf, task_id, minimum=2)
 
     # Request a stop: write the durable marker, then signal cancel. The worker
     # only treats cancel as a real stop when the marker is present.
-    await _seed_item(store_name, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
+    await _seed_item(hf, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
     await run.cancel()
 
     result = await asyncio.wait_for(run.result(), timeout=5.0)
@@ -179,15 +180,15 @@ async def test_stops_on_marker_without_local_cancel(
     monkeypatch.setattr(hf, "_TICK", 0.01)
 
     task_id = "hf-marker-only"
-    store_name = hf.checkpoint_store_name(_SESSION)
     run = await hf.hello_forever.start(
-        task_id=task_id, input={"name": "carol", "session_id": _SESSION}
+        task_id=task_id,
+        input={"name": "carol", "session_id": _SESSION, "user_id": _USER},
     )
 
-    await _wait_for_iterations(store_name, task_id, minimum=2)
+    await _wait_for_iterations(hf, task_id, minimum=2)
 
     # Write ONLY the durable stop marker — do not call run.cancel().
-    await _seed_item(store_name, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
+    await _seed_item(hf, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
 
     result = await asyncio.wait_for(run.result(), timeout=5.0)
     assert result["stopped"] is True
@@ -206,18 +207,18 @@ async def test_resumes_from_existing_checkpoint(
     monkeypatch.setattr(hf, "_TICK", 0.01)
 
     task_id = "hf-resume"
-    store_name = hf.checkpoint_store_name(_SESSION)
-    await _seed_item(store_name, task_id, {"name": "bob", "iterations": 5})
+    await _seed_item(hf, task_id, {"name": "bob", "iterations": 5})
 
     run = await hf.hello_forever.start(
-        task_id=task_id, input={"name": "bob", "session_id": _SESSION}
+        task_id=task_id,
+        input={"name": "bob", "session_id": _SESSION, "user_id": _USER},
     )
 
     # It must continue past the seeded cursor rather than counting up from 1.
-    reached = await _wait_for_iterations(store_name, task_id, minimum=6)
+    reached = await _wait_for_iterations(hf, task_id, minimum=6)
     assert reached >= 6
 
-    await _seed_item(store_name, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
+    await _seed_item(hf, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
     await run.cancel()
 
     result = await asyncio.wait_for(run.result(), timeout=5.0)

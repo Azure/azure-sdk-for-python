@@ -37,7 +37,7 @@ import json
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core.storage import FoundryStateStore
+from azure.ai.agentserver.core.storage import FoundryStorageConflictError
 from azure.ai.agentserver.core.tasks import (
     TaskConflictError,
     set_resilient_tasks_enabled,
@@ -45,9 +45,9 @@ from azure.ai.agentserver.core.tasks import (
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import checkpoint_store_name, durable_task_id, hello_world
+    from .agent import durable_task_id, hello_world, open_checkpoint_store
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import checkpoint_store_name, durable_task_id, hello_world
+    from agent import durable_task_id, hello_world, open_checkpoint_store
 
 # Resilient tasks (durable execution + crash recovery) are strictly opt-in as of
 # azure-ai-agentserver-core 2.2.0b1: ``AgentServerHost`` builds the
@@ -86,25 +86,33 @@ async def handle_invoke(request: Request) -> Response:
             {"error": "steps must be a positive integer"}, status_code=400
         )
 
-    # The invocations protocol addresses the run by the {invocation_id} path, but
-    # that id is caller-supplied and can repeat across sessions; compose it with
-    # the session id for the durable task id so runs cannot collide. The session
-    # id is also carried in the input so recovery uses the same store scope.
+    # Identity for this run. The invocation id is caller-supplied and a session
+    # may serve multiple users, so compose the durable task id from user +
+    # session + invocation (see durable_task_id) so runs cannot collide or be
+    # cross-accessed. session_id/user_id are carried in the input so recovery
+    # reopens the same store scope + user partition; call_id is carried so the
+    # TaskManager can restore the Foundry call identity for hosted store calls
+    # after a crash (recovered tasks have no inbound request).
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
-    task_id = durable_task_id(session_id, invocation_id)
+    user_id: str = request.state.user_id
+    call_id: str = request.state.call_id
+    task_id = durable_task_id(session_id, invocation_id, user_id)
 
     # Persist an initial durable checkpoint BEFORE starting the task so the
     # invocation is visible on every replica immediately. Without it a poll routed
     # to a different replica during the pre-first-checkpoint window sees
     # get_active_run()==None (the live lease may be owned elsewhere) and would
-    # wrongly 404. Only seed when absent so a retry never resets progress.
-    store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
+    # wrongly 404. Use create_item (atomic create) rather than a non-atomic
+    # get-then-set: concurrent retries otherwise both see "absent" and a delayed
+    # set_item could clobber a checkpoint the worker has already advanced.
+    store = await open_checkpoint_store(session_id, user_id)
     try:
-        if await store.get_item(task_id) is None:
-            await store.set_item(
-                task_id, {"name": name, "steps": steps, "completed_steps": 0}
-            )
+        await store.create_item(
+            task_id, {"name": name, "steps": steps, "completed_steps": 0}
+        )
+    except FoundryStorageConflictError:
+        pass  # already seeded by a concurrent request or a previous attempt
     finally:
         await store.aclose()
 
@@ -113,7 +121,13 @@ async def handle_invoke(request: Request) -> Response:
     try:
         await hello_world.start(
             task_id=task_id,
-            input={"name": name, "steps": steps, "session_id": session_id},
+            input={
+                "name": name,
+                "steps": steps,
+                "session_id": session_id,
+                "user_id": user_id,
+                "call_id": call_id,
+            },
         )
     except TaskConflictError:
         # The invocation id is caller-supplied and may be retried; a task already
@@ -134,14 +148,14 @@ async def handle_invoke(request: Request) -> Response:
 async def handle_get(request: Request) -> Response:
     """Return a JSON status snapshot from the durable checkpoint (poll this)."""
     # The invocations protocol addresses the run by the {invocation_id} path
-    # segment, surfaced here as request.state.invocation_id. The session id
-    # selects the same session-scoped checkpoint store the task wrote to and, with
-    # the invocation id, forms the composite durable task id used for lookup.
+    # segment; the durable task id is composed from user + session + invocation so
+    # a poll only ever resolves this user's own run in this session.
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
-    task_id = durable_task_id(session_id, invocation_id)
+    user_id: str = request.state.user_id
+    task_id = durable_task_id(session_id, invocation_id, user_id)
 
-    store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
+    store = await open_checkpoint_store(session_id, user_id)
     try:
         item = await store.get_item(task_id)
     finally:

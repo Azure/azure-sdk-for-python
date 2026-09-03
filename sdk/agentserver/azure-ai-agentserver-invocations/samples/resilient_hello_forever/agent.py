@@ -68,30 +68,49 @@ def checkpoint_store_name(session_id: str) -> str:
     return f"resilient-hello-forever/{session_id}"
 
 
-def durable_task_id(session_id: str, invocation_id: str) -> str:
-    """Return the TaskManager task id derived from BOTH ids.
+def durable_task_id(session_id: str, invocation_id: str, user_id: str) -> str:
+    """Return the TaskManager task id derived from the user, session and invocation.
 
-    The invocations protocol accepts a *caller-supplied* invocation id, so the
-    same id can appear in two different sessions. The TaskManager record is keyed
-    only by task id, so keying it on the invocation id alone would let the second
-    session collide with the first on ``start()`` and let
-    ``get_active_run(invocation_id)`` resolve the wrong session's worker.
-    Composing the id with the session keeps every start/poll/cancel path
-    isolated. It is also used as the durable checkpoint item key (and thus the
-    prefix of the stop-marker key).
+    The invocations protocol accepts a *caller-supplied* invocation id, and a
+    single agent session can serve multiple users, so the invocation id alone (or
+    even session+invocation) is not a safe identity: two users — or two sessions —
+    reusing an id would collide on the TaskManager record and let one caller poll
+    or cancel another's worker. Composing the id from ``user_id`` + ``session_id``
+    + ``invocation_id`` keeps every start/poll/cancel path isolated. It is also
+    used as the durable checkpoint item key (and thus the prefix of the
+    stop-marker key).
 
-    A SHA-256 digest is used (rather than ``f"{session_id}/{invocation_id}"``)
+    A SHA-256 digest is used (rather than ``f"{user}/{session}/{invocation}"``)
     for two reasons: the provider task-id contract is ``[A-Za-z0-9_-]{1,128}``
     (a ``/`` — and ``.`` or ``:`` — is rejected), and it is bounded to 128
     characters. The hex digest plus the ``hf-`` prefix uses only ``[a-z0-9-]``
-    and is a fixed 67 chars, so it is always valid regardless of how long the two
-    protocol ids are. The ``\\x00`` separator keeps ``(a, bc)`` and ``(ab, c)``
-    distinct.
+    and is a fixed 67 chars, so it is always valid regardless of how long the
+    protocol ids are. The ``\\x00`` separators keep the three fields unambiguous.
     """
     digest = hashlib.sha256(
-        f"{session_id}\x00{invocation_id}".encode("utf-8")
+        f"{user_id}\x00{session_id}\x00{invocation_id}".encode("utf-8")
     ).hexdigest()
     return f"hf-{digest}"
+
+
+async def open_checkpoint_store(session_id: str, user_id: str) -> FoundryStateStore:
+    """Open the session-scoped, **user-isolated**, non-expiring checkpoint store.
+
+    A single agent session can serve multiple users, so on top of the
+    session-scoped store name the store is created with ``user_isolation=True``
+    and the explicit ``user_id`` — the platform partitions items per user, so one
+    user cannot read or stop another's worker even within the same session.
+    ``item_ttl_seconds=-1`` keeps the checkpoint and stop marker from expiring for
+    an indefinitely-running worker. Every start/poll/cancel/recover path opens it
+    the same way (and the worker carries ``user_id`` in its durable input so
+    recovery reopens the same partition).
+    """
+    return await FoundryStateStore.get_or_create(
+        checkpoint_store_name(session_id),
+        user_isolation=True,
+        user_id=user_id or None,
+        item_ttl_seconds=-1,
+    )
 
 
 # Suffix for the durable "stop" marker key. The cancel endpoint (app.py) writes
@@ -110,19 +129,13 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
     """
 
     name = str((ctx.input or {}).get("name", "world"))
-    # ``session_id`` is carried in the durable input so recovery re-enters with
-    # the same store scope as the original run.
+    # ``session_id`` and ``user_id`` are carried in the durable input so recovery
+    # re-enters with the same store scope / user partition as the original run.
     session_id = str((ctx.input or {}).get("session_id", ""))
+    user_id = str((ctx.input or {}).get("user_id", ""))
     stop_key = f"{ctx.task_id}{STOP_SUFFIX}"
 
-    # item_ttl_seconds=-1 => items never expire. An indefinite worker may run (or
-    # be stopped and later polled) far past the 30-day default item TTL; letting
-    # the checkpoint or stop marker expire would drop the recovery cursor and make
-    # a stopped worker read back as "not_found". The TTL is fixed at store
-    # creation, so every get_or_create for this store passes the same value.
-    store = await FoundryStateStore.get_or_create(
-        checkpoint_store_name(session_id), item_ttl_seconds=-1
-    )
+    store = await open_checkpoint_store(session_id, user_id)
     try:
         item = await store.get_item(ctx.task_id)
         n = int((item.value.get("iterations", 0) if item else 0) or 0)
@@ -164,4 +177,10 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
         await store.aclose()
 
 
-__all__ = ["hello_forever", "checkpoint_store_name", "durable_task_id", "STOP_SUFFIX"]
+__all__ = [
+    "hello_forever",
+    "checkpoint_store_name",
+    "durable_task_id",
+    "open_checkpoint_store",
+    "STOP_SUFFIX",
+]
