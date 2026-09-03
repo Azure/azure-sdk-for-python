@@ -59,8 +59,8 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
 
 ```
-.agent_endpoint_conversations.get_agent_conversation_item_generated_audio
-.agent_endpoint_conversations.get_agent_conversation_item_generated_audio_content
+.agent_endpoint_conversations.get_agent_conversation_item_generated_audio*
+.agent_endpoint_conversations.get_agent_conversation_item_generated_audio_content*
 
 .agents.create_session
 .agents.create_telephony_binding*
@@ -159,7 +159,7 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .beta.agent_endpoint_conversations.list_agent_conversation_responses
 .beta.agent_endpoint_conversations.list_agent_conversations
 
-.beta.agent_insight_monitors.begin_create_run
+.beta.agent_insight_monitors.begin_create_run*
 .beta.agent_insight_monitors.cancel_run
 .beta.agent_insight_monitors.create
 .beta.agent_insight_monitors.delete
@@ -173,14 +173,14 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .beta.agent_insight_monitors.update
 .beta.agent_insight_monitors.update_insight
 
-.beta.agents.cancel_optimization_job
 .beta.agents.begin_create_optimization_job*
+.beta.agents.cancel_optimization_job
 .beta.agents.delete_optimization_job
 .beta.agents.get_optimization_job
 .beta.agents.list_optimization_jobs
 
-.beta.datasets.cancel_generation_job
 .beta.datasets.begin_create_generation_job*
+.beta.datasets.cancel_generation_job
 .beta.datasets.delete_generation_job
 .beta.datasets.get_generation_job
 .beta.datasets.list_generation_jobs
@@ -191,8 +191,8 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .beta.evaluation_taxonomies.list
 .beta.evaluation_taxonomies.update
 
-.beta.evaluators.cancel_generation_job
 .beta.evaluators.begin_create_generation_job*
+.beta.evaluators.cancel_generation_job
 .beta.evaluators.create_version
 .beta.evaluators.delete_generation_job
 .beta.evaluators.delete_version
