@@ -63,9 +63,24 @@ async def handle_invoke(request: Request) -> Response:
     try:
         data = json.loads(await request.body() or b"{}")
     except json.JSONDecodeError:
-        data = {}
+        return JSONResponse({"error": "invalid JSON body"}, status_code=400)
+    if not isinstance(data, dict):
+        return JSONResponse(
+            {"error": "request body must be a JSON object"}, status_code=400
+        )
     name = str(data.get("name", "world"))
-    steps = int(data.get("steps", 10))
+    # ``steps`` must be a positive integer: a non-positive count writes no
+    # checkpoint, so the accepted invocation would then poll as 404.
+    try:
+        steps = int(data.get("steps", 10))
+    except (TypeError, ValueError):
+        return JSONResponse(
+            {"error": "steps must be an integer"}, status_code=400
+        )
+    if steps <= 0:
+        return JSONResponse(
+            {"error": "steps must be a positive integer"}, status_code=400
+        )
 
     # Key the durable task by this turn's invocation id (the platform-defined
     # identity that GET /invocations/{invocation_id} addresses). The session id

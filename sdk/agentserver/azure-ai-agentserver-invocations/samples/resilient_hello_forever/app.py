@@ -66,7 +66,11 @@ async def handle_invoke(request: Request) -> Response:
     try:
         data = json.loads(await request.body() or b"{}")
     except json.JSONDecodeError:
-        data = {}
+        return JSONResponse({"error": "invalid JSON body"}, status_code=400)
+    if not isinstance(data, dict):
+        return JSONResponse(
+            {"error": "request body must be a JSON object"}, status_code=400
+        )
     name = str(data.get("name", "world"))
 
     # Key the worker by this turn's invocation id (the platform-defined identity
@@ -94,12 +98,16 @@ async def handle_get(request: Request) -> Response:
     replica) until it is explicitly stopped, so ``get_active_run()`` returning
     ``None`` on the polled replica does not mean the worker has stopped. The stop
     marker is written by the cancel handler and survives crashes and recovery, so
-    every replica agrees on the terminal state.
+    every replica agrees on the terminal state. ``get_active_run()`` is consulted
+    only to disambiguate the brief window *before the first checkpoint* (both the
+    checkpoint and marker are still absent) from a genuinely unknown invocation.
     """
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
 
-    store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
+    store = await FoundryStateStore.get_or_create(
+        checkpoint_store_name(session_id), item_ttl_seconds=-1
+    )
     try:
         item = await store.get_item(invocation_id)
         stop_marker = await store.get_item(f"{invocation_id}{STOP_SUFFIX}")
@@ -107,8 +115,17 @@ async def handle_get(request: Request) -> Response:
         await store.aclose()
 
     if item is None and stop_marker is None:
+        # No checkpoint and no stop marker. The worker may have just started and
+        # not yet written its first checkpoint, so distinguish "running at zero"
+        # (this replica owns an active run) from a genuinely unknown invocation.
+        run = await hello_forever.get_active_run(invocation_id)
+        if run is None:
+            return JSONResponse(
+                {"status": "not_found", "invocation_id": invocation_id},
+                status_code=404,
+            )
         return JSONResponse(
-            {"status": "not_found", "invocation_id": invocation_id}, status_code=404
+            {"status": "running", "invocation_id": invocation_id, "iterations": 0}
         )
 
     iterations = int((item.value.get("iterations", 0) if item else 0) or 0)
@@ -132,7 +149,9 @@ async def handle_cancel(request: Request) -> Response:
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
 
-    store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
+    store = await FoundryStateStore.get_or_create(
+        checkpoint_store_name(session_id), item_ttl_seconds=-1
+    )
     try:
         await store.set_item(f"{invocation_id}{STOP_SUFFIX}", {"stop": True})
     finally:

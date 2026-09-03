@@ -88,7 +88,14 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
     session_id = str((ctx.input or {}).get("session_id", ""))
     stop_key = f"{ctx.task_id}{STOP_SUFFIX}"
 
-    store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
+    # item_ttl_seconds=-1 => items never expire. An indefinite worker may run (or
+    # be stopped and later polled) far past the 30-day default item TTL; letting
+    # the checkpoint or stop marker expire would drop the recovery cursor and make
+    # a stopped worker read back as "not_found". The TTL is fixed at store
+    # creation, so every get_or_create for this store passes the same value.
+    store = await FoundryStateStore.get_or_create(
+        checkpoint_store_name(session_id), item_ttl_seconds=-1
+    )
     try:
         item = await store.get_item(ctx.task_id)
         n = int((item.value.get("iterations", 0) if item else 0) or 0)
