@@ -78,7 +78,8 @@ def _finalize_isolate_dirs(coverage_enabled: bool) -> None:
     if coverage_enabled and in_ci() == 1:
         if ISOLATE_DIRS_TO_CLEAN:
             logger.info(
-                "Preserving isolate directories until the coverage report is generated."
+                "Preserving isolate directories for coverage report generation; "
+                "the CI cleanup step removes them afterward."
             )
         ISOLATE_DIRS_TO_CLEAN.clear()
         return
