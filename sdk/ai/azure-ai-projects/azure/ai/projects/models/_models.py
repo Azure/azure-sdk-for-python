@@ -17904,6 +17904,10 @@ class WebSearchTool(Tool, discriminator="web_search"):  # pylint: disable=docstr
     :ivar type: The type of the web search tool. One of ``web_search`` or
      ``web_search_2025_08_26``. Required. WEB_SEARCH.
     :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH
+    :ivar external_web_access: Allow live internet access for web search. Defaults to true when
+     omitted. When false, the web search tool runs in offline/cache-only mode and will not fetch new
+     external content.
+    :vartype external_web_access: bool
     :ivar filters:
     :vartype filters: ~azure.ai.projects.models.WebSearchToolFilters
     :ivar user_location:
@@ -17928,6 +17932,9 @@ class WebSearchTool(Tool, discriminator="web_search"):  # pylint: disable=docstr
     type: Literal[ToolType.WEB_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the web search tool. One of ``web_search`` or ``web_search_2025_08_26``. Required.
      WEB_SEARCH."""
+    external_web_access: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Allow live internet access for web search. Defaults to true when omitted. When false, the web
+     search tool runs in offline/cache-only mode and will not fetch new external content."""
     filters: Optional["_models.WebSearchToolFilters"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17958,6 +17965,7 @@ class WebSearchTool(Tool, discriminator="web_search"):  # pylint: disable=docstr
     def __init__(
         self,
         *,
+        external_web_access: Optional[bool] = None,
         filters: Optional["_models.WebSearchToolFilters"] = None,
         user_location: Optional["_models.WebSearchApproximateLocation"] = None,
         search_context_size: Optional[Literal["low", "medium", "high"]] = None,
@@ -17994,6 +18002,10 @@ class WebSearchToolboxTool(
     :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar type: Required. WEB_SEARCH.
     :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH
+    :ivar external_web_access: Allow live internet access for web search. Defaults to true when
+     omitted. When false, the web search tool runs in offline/cache-only mode and will not fetch new
+     external content.
+    :vartype external_web_access: bool
     :ivar filters:
     :vartype filters: ~azure.ai.projects.models.WebSearchToolFilters
     :ivar user_location:
@@ -18009,6 +18021,9 @@ class WebSearchToolboxTool(
 
     type: Literal[ToolboxToolType.WEB_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. WEB_SEARCH."""
+    external_web_access: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Allow live internet access for web search. Defaults to true when omitted. When false, the web
+     search tool runs in offline/cache-only mode and will not fetch new external content."""
     filters: Optional["_models.WebSearchToolFilters"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -18034,6 +18049,7 @@ class WebSearchToolboxTool(
         name: Optional[str] = None,
         description: Optional[str] = None,
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        external_web_access: Optional[bool] = None,
         filters: Optional["_models.WebSearchToolFilters"] = None,
         user_location: Optional["_models.WebSearchApproximateLocation"] = None,
         search_context_size: Optional[Literal["low", "medium", "high"]] = None,
