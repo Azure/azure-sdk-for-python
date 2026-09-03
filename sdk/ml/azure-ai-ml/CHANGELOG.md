@@ -1,8 +1,6 @@
 # Release History
 
-## 1.35.0 (unreleased)
-
-### Features Added
+## 1.35.0 (2026-09-08)
 
 ### Bugs Fixed
 - Simplified schedule validation errors so invalid local job paths report the relevant file error instead of errors from every supported job schema.
