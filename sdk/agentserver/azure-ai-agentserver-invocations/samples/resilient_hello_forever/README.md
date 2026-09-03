@@ -41,18 +41,18 @@ python app.py
 ```
 
 ```bash
-# start the forever worker
+# start the forever worker (note the invocation_id in the response)
 curl -s -XPOST -H "Content-Type: application/json" \
     -d '{"name": "Ada"}' http://localhost:8088/invocations
-# -> {"status": "started", "task_id": "forever-<session>"}
+# -> {"status": "started", "invocation_id": "<inv>"}
 
 # poll — iterations keep climbing, status stays "running"
-curl -s "http://localhost:8088/invocations/x?task_id=forever-<session>"
+curl -s "http://localhost:8088/invocations/<inv>"
 # -> {"status": "running", "iterations": 12}
 
 # stop it
-curl -s -XPOST "http://localhost:8088/invocations/x/cancel?task_id=forever-<session>"
-# -> {"status": "cancelling", "task_id": "forever-<session>"}
+curl -s -XPOST "http://localhost:8088/invocations/<inv>/cancel"
+# -> {"status": "cancelling", "invocation_id": "<inv>"}
 ```
 
 ## The key line: enable resilient tasks

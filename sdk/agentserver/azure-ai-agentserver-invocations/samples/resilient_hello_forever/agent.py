@@ -50,17 +50,24 @@ _TICK = float(os.environ.get("TICK_SECONDS", "2"))
 # so the poll endpoint can read the same progress.
 CHECKPOINT_STORE = "hello_forever_checkpoints"
 
+# Suffix for the durable "stop" marker key. The cancel endpoint (app.py) writes
+# this key; the worker checks it to decide whether an observed cancel signal is a
+# real stop request. Keeping it in a SEPARATE key means the cancel write never
+# races the checkpoint's ETag.
+STOP_SUFFIX = "/stop"
+
 
 @task(name="hello_forever", timeout=timedelta(days=7))
 async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Tick forever, checkpointing the ``iterations`` cursor after each tick.
 
-    Runs until cancelled. Survives crashes (resumes from the checkpoint) and
-    redeploys (yields cleanly via ``exit_for_recovery`` and resumes on the next
-    instance).
+    Runs until an explicit cancel. Survives crashes (resumes from the checkpoint)
+    and redeploys (yields cleanly via ``exit_for_recovery`` and resumes on the
+    next instance).
     """
 
     name = str((ctx.input or {}).get("name", "world"))
+    stop_key = f"{ctx.task_id}{STOP_SUFFIX}"
 
     store = await FoundryStateStore.get_or_create(CHECKPOINT_STORE)
     try:
@@ -78,14 +85,20 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
                 logger.info("shutdown — yielding for recovery at iteration %d", n)
                 return await ctx.exit_for_recovery()
 
-            # 2) Explicit cancel (someone stopped it): go terminal for good.
-            #    A cancel sets ``ctx.cancel`` without ``timeout_exceeded``; the
-            #    per-turn watchdog also sets ``ctx.cancel`` but WITH
-            #    ``timeout_exceeded`` — in that case we do NOT stop, so the
-            #    framework re-enters (recovered) and the loop keeps going.
-            if ctx.cancel.is_set() and not ctx.timeout_exceeded:
-                logger.info("cancel requested — stopping at iteration %d", n)
-                return {"name": name, "iterations": n, "stopped": True}
+            # 2) Distinguish an explicit stop from the per-turn watchdog.
+            #    Both set ``ctx.cancel``. We rely on a DURABLE stop marker rather
+            #    than the cause booleans: ``cancel_requested`` is not set by the
+            #    cancel path used here, and after the per-turn timeout fires
+            #    ``timeout_exceeded`` stays true — so neither boolean reliably
+            #    identifies an explicit stop. The stop marker is unambiguous and
+            #    survives both the timeout and a crash/recovery.
+            if ctx.cancel.is_set():
+                if await store.get_item(stop_key) is not None:
+                    logger.info("stop requested — stopping at iteration %d", n)
+                    return {"name": name, "iterations": n, "stopped": True}
+                # Otherwise it's the per-turn watchdog, not a stop: keep working.
+                # The framework ends/re-enters the turn as needed and the loop
+                # continues from its checkpoint.
 
             # 3) One unit of ongoing work, then CHECKPOINT the durable cursor.
             n += 1
@@ -100,4 +113,4 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
         await store.aclose()
 
 
-__all__ = ["hello_forever", "CHECKPOINT_STORE"]
+__all__ = ["hello_forever", "CHECKPOINT_STORE", "STOP_SUFFIX"]

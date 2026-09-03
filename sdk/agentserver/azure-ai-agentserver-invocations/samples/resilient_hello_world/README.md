@@ -27,28 +27,31 @@ Start a run (returns immediately — the task keeps running in the background):
 ```bash
 curl -s -XPOST -H "Content-Type: application/json" \
     -d '{"name": "Ada", "steps": 10}' http://localhost:8088/invocations
-# -> {"status": "started", "task_id": "hello-<session>", "total_steps": 10}
+# -> {"status": "started", "invocation_id": "<inv>", "total_steps": 10}
 ```
 
-Poll it (repeat every couple of seconds):
+Poll it by that invocation id (repeat every couple of seconds):
 
 ```bash
-curl -s "http://localhost:8088/invocations/x?task_id=hello-<session>"
-# -> {"status": "in_progress", "completed_steps": 3, ...}
+curl -s "http://localhost:8088/invocations/<inv>"
+# -> {"status": "in_progress", "completed_steps": 3, "total_steps": 10}
 # ... while running you see completed_steps climb.
-# Once finished, the one-shot task is cleaned up:
-# -> {"status": "not_found", ...}   (HTTP 404 = the run completed and was removed)
+# When it finishes:
+# -> {"status": "completed", "completed_steps": 10, "total_steps": 10}
 ```
+
+> The one-shot `@task` record is cleaned up on completion, but this sample's
+> durable **checkpoint** persists, so the poll keeps reporting `completed`.
 
 ## How an *invocation* becomes *long-running*
 
-1. `POST /invocations` calls `hello_world.start(task_id=...)`, which **schedules
-   the task on the TaskManager and returns immediately**. The work is *not* tied
-   to the HTTP request — the handler returns `202` while the task runs on.
-2. The task loops, sleeping between steps and calling `ctx.metadata.flush()`
-   after each — a **durable checkpoint**.
-3. `GET /invocations/{id}?task_id=...` reads that durable state, so any client
-   can poll progress long after the original call returned.
+1. `POST /invocations` calls `hello_world.start(task_id=<invocation_id>)`, which
+   **schedules the task on the TaskManager and returns immediately**. The work is
+   *not* tied to the HTTP request — the handler returns `202` while the task runs on.
+2. The task loops, sleeping between steps and writing a durable **checkpoint**
+   to the state store after each.
+3. `GET /invocations/{invocation_id}` reads that durable state, so any client can
+   poll progress long after the original call returned.
 
 ## The key line: enable resilient tasks
 
@@ -70,9 +73,9 @@ no crash recovery. Declaring a `@task` alone does **not** turn it on.
 2. Poll until `completed_steps` is a few in, then **kill the process** (Ctrl-C).
 3. Restart `python app.py`. On startup the recovery scan re-enters `hello_world`
    with `ctx.entry_mode == "recovered"` (see the `Recovered — resuming …` log),
-   reads `completed_steps` from `ctx.metadata`, and continues from the next
-   step — it does **not** restart from step 1. Poll again to watch
-   `completed_steps` climb past where it crashed (then `404` when it finishes).
+   reads `completed_steps` from the durable checkpoint, and continues from the
+   next step — it does **not** restart from step 1. Poll again to watch
+   `completed_steps` climb past where it crashed, ending at `completed`.
 
 ## Environment
 
