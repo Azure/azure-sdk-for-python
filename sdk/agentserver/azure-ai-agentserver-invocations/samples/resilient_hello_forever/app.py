@@ -153,23 +153,34 @@ async def handle_get(request: Request) -> Response:
 async def handle_cancel(request: Request) -> Response:
     """Stop the forever worker.
 
-    Writes a durable stop marker (which the worker checks — robust even after the
-    per-turn watchdog fires and across recovery), then signals the running turn
-    to wake promptly from its sleep.
+    Refuses to persist a stop marker for an invocation that does not exist:
+    otherwise cancelling an arbitrary caller-chosen id would make GET report it
+    ``stopped`` and would poison a *later* legitimate start with the same
+    session/id (the worker would see the stale marker and exit immediately). An
+    invocation is considered to exist if it has an active run on this replica or
+    a durable checkpoint (written on any replica). Only then do we write the
+    marker and wake the running turn.
     """
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
     task_id = durable_task_id(session_id, invocation_id)
 
+    run = await hello_forever.get_active_run(task_id)
+
     store = await FoundryStateStore.get_or_create(
         checkpoint_store_name(session_id), item_ttl_seconds=-1
     )
     try:
+        exists = await store.get_item(task_id) is not None
+        if not exists and run is None:
+            return JSONResponse(
+                {"status": "not_found", "invocation_id": invocation_id},
+                status_code=404,
+            )
         await store.set_item(f"{task_id}{STOP_SUFFIX}", {"stop": True})
     finally:
         await store.aclose()
 
-    run = await hello_forever.get_active_run(task_id)
     if run is not None:
         await run.cancel()  # wake the worker so it notices the stop marker promptly
     return JSONResponse({"status": "cancelling", "invocation_id": invocation_id})

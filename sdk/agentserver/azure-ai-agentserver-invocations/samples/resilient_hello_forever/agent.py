@@ -41,6 +41,7 @@ Environment:
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import logging
 import os
 from datetime import timedelta
@@ -78,8 +79,18 @@ def durable_task_id(session_id: str, invocation_id: str) -> str:
     Composing the id with the session keeps every start/poll/cancel path
     isolated. It is also used as the durable checkpoint item key (and thus the
     prefix of the stop-marker key).
+
+    A SHA-256 digest is used (rather than ``f"{session_id}/{invocation_id}"``)
+    for two reasons: task ids may only contain ``[a-zA-Z0-9\\-_.:]`` (a ``/`` is
+    rejected), and they are bounded to 128 characters — a digest is a fixed,
+    collision-resistant, always-valid encoding regardless of how long the two
+    protocol ids are. The ``\\x00`` separator keeps ``(a, bc)`` and ``(ab, c)``
+    distinct.
     """
-    return f"{session_id}/{invocation_id}"
+    digest = hashlib.sha256(
+        f"{session_id}\x00{invocation_id}".encode("utf-8")
+    ).hexdigest()
+    return f"hf-{digest}"
 
 
 # Suffix for the durable "stop" marker key. The cancel endpoint (app.py) writes

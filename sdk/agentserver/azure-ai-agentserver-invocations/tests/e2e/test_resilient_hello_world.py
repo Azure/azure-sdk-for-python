@@ -101,6 +101,26 @@ async def _seed_item(store_name: str, key: str, value: dict):
 _SESSION = "test-hw-session"
 
 
+def test_durable_task_id_is_accepted_by_task_manager() -> None:
+    """``durable_task_id`` must produce an id the TaskManager accepts.
+
+    Regression guard: a ``/`` separator (or an over-long id) is rejected by
+    ``start()`` — a bug the task-level tests miss because they pass their own
+    slash-free ids. Validate the helper's output with the real SDK validator,
+    including long protocol ids that would blow the 128-char limit if not hashed.
+    """
+    _ensure_sample_importable()
+    from azure.ai.agentserver.core.tasks._decorator import (  # noqa: WPS433
+        _validate_task_id,
+    )
+    from resilient_hello_world import agent as hw  # noqa: WPS433
+
+    _validate_task_id(hw.durable_task_id("sess-1", "inv-1"))
+    _validate_task_id(hw.durable_task_id("s" * 200, "inv_" + "x" * 200))
+    # Distinct inputs must not collide, and the boundary must be unambiguous.
+    assert hw.durable_task_id("a", "bc") != hw.durable_task_id("ab", "c")
+
+
 @pytest.mark.asyncio
 async def test_runs_to_completion_and_checkpoints_every_step(
     task_manager,
