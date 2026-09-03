@@ -400,7 +400,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             else:
                 wait_time = DEFAULT_RECEIVE_WAIT_TIME_SECS
 
-            receive_started = time.time()
+            receive_started = time.monotonic()
             # Acquisition is capped by try_timeout when enabled, and never exceeds the budget.
             self._open(get_attempt_timeout(wait_time, self._config.try_timeout))
 
@@ -408,7 +408,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
             # Poll with what is left of the one budget, not a fresh copy of it.
-            remaining = wait_time - (time.time() - receive_started)
+            remaining = wait_time - (time.monotonic() - receive_started)
             if remaining <= 0 and received_messages_queue.empty():
                 return []
             timeout_time = self._amqp_transport.TIMEOUT_FACTOR * remaining

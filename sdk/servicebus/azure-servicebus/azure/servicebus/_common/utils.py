@@ -138,7 +138,7 @@ def get_link_ready_deadline(timeout: Optional[float]) -> Optional[float]:
     :rtype: float or None
     :returns: The absolute deadline, or None when the wait is unbounded.
     """
-    return (time.time() + timeout) if timeout is not None else None
+    return (time.monotonic() + timeout) if timeout is not None else None
 
 
 def get_remaining_timeout(timeout: Optional[float], started: float) -> Optional[float]:
@@ -155,7 +155,7 @@ def get_remaining_timeout(timeout: Optional[float], started: float) -> Optional[
     """
     if timeout is None:
         return None
-    remaining = timeout - (time.time() - started)
+    remaining = timeout - (time.monotonic() - started)
     if remaining <= 0:
         raise OperationTimeoutError(message="No time left for the operation after acquiring the AMQP link.")
     return remaining
@@ -171,7 +171,7 @@ def get_time_until_deadline(deadline: float) -> float:
     :rtype: float
     :returns: The seconds left, negative once the deadline has passed.
     """
-    return deadline - time.time()
+    return deadline - time.monotonic()
 
 
 def check_link_ready_deadline(deadline: Optional[float]) -> None:
@@ -182,7 +182,7 @@ def check_link_ready_deadline(deadline: Optional[float]) -> None:
 
     :param float or None deadline: The absolute deadline, or None when unbounded.
     """
-    if deadline is not None and time.time() >= deadline:
+    if deadline is not None and time.monotonic() >= deadline:
         raise OperationTimeoutError(message="Timed out waiting for the AMQP link to open.")
 
 

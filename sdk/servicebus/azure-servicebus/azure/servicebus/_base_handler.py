@@ -390,12 +390,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         retried_times = 0
         max_retries = self._config.retry_total
 
-        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
+        abs_timeout_time = (time.monotonic() + timeout) if (operation_requires_timeout and timeout) else None
 
         while retried_times <= max_retries:
             try:
                 if operation_requires_timeout:
-                    remaining_timeout = (abs_timeout_time - time.time()) if abs_timeout_time else None
+                    remaining_timeout = (abs_timeout_time - time.monotonic()) if abs_timeout_time else None
                     attempt_timeout = get_attempt_timeout(remaining_timeout, try_timeout)
                     if attempt_timeout is not None:
                         kwargs["timeout"] = attempt_timeout
@@ -451,7 +451,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             retried_times,
         )
         if backoff <= self._config.retry_backoff_max and (
-            abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
+            abs_timeout_time is None or (backoff + time.monotonic()) <= abs_timeout_time
         ):
             time.sleep(backoff)
             _LOGGER.info(
@@ -506,7 +506,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         :return: The message response.
         :rtype: Message
         """
-        attempt_started = time.time()
+        attempt_started = time.monotonic()
         self._open(timeout)
         # Open and request share one attempt budget, so the request gets what is left.
         timeout = get_remaining_timeout(timeout, attempt_started)

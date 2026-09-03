@@ -62,6 +62,9 @@ class VirtualClock:
             self.now += self._stall
         return value
 
+    # Deadlines use a monotonic clock, so the fake must answer both.
+    monotonic = time
+
     def sleep(self, seconds):
         self.now += seconds
 
@@ -300,7 +303,7 @@ class TestRetryLoopAppliesAttemptTimeout:
         handler._handle_exception = lambda exc: exc
         handler._backoff = lambda **kwargs: None
 
-        with patch("azure.servicebus._base_handler.time.time", lambda: clock["now"]):
+        with patch("azure.servicebus._base_handler.time.monotonic", lambda: clock["now"]):
             result = handler._do_retryable_operation(
                 operation,
                 timeout=30,
@@ -330,7 +333,7 @@ class TestRetryLoopAppliesAttemptTimeout:
         handler._handle_exception = lambda exc: exc
         handler._backoff = lambda **kwargs: None
 
-        with patch("azure.servicebus._base_handler.time.time", lambda: clock["now"]):
+        with patch("azure.servicebus._base_handler.time.monotonic", lambda: clock["now"]):
             handler._do_retryable_operation(
                 operation,
                 timeout=30,
@@ -699,12 +702,12 @@ class TestExhaustedBudgetDoesNotBecomeUnbounded:
     """A used-up budget must raise: both transports read a zero timeout as "wait forever"."""
 
     def test_raises_when_no_time_is_left(self):
-        started = time.time() - 5  # the whole 5s budget already spent
+        started = time.monotonic() - 5  # the whole 5s budget already spent
         with pytest.raises(OperationTimeoutError):
             get_remaining_timeout(5, started)
 
     def test_raises_when_the_budget_is_overrun(self):
-        started = time.time() - 30
+        started = time.monotonic() - 30
         with pytest.raises(OperationTimeoutError):
             get_remaining_timeout(5, started)
 
@@ -712,16 +715,16 @@ class TestExhaustedBudgetDoesNotBecomeUnbounded:
         # The dangerous value specifically: 0 means unbounded downstream.
         for spent in (0.999999, 1.0, 1.000001):
             try:
-                left = get_remaining_timeout(1.0, time.time() - spent)
+                left = get_remaining_timeout(1.0, time.monotonic() - spent)
             except OperationTimeoutError:
                 continue
             assert left > 0
 
     def test_unbounded_stays_unbounded(self):
-        assert get_remaining_timeout(None, time.time() - 100) is None
+        assert get_remaining_timeout(None, time.monotonic() - 100) is None
 
     def test_returns_what_is_left(self):
-        left = get_remaining_timeout(10, time.time() - 2)
+        left = get_remaining_timeout(10, time.monotonic() - 2)
         assert left == pytest.approx(8, abs=0.5)
 
 
@@ -745,7 +748,7 @@ class TestDeadlineSentinels:
         check_link_ready_deadline(None)  # must not raise
 
     def test_future_deadline_does_not_raise(self):
-        check_link_ready_deadline(time.time() + 30)
+        check_link_ready_deadline(time.monotonic() + 30)
 
     def test_open_with_zero_timeout_raises(self):
         from azure.servicebus import ServiceBusClient

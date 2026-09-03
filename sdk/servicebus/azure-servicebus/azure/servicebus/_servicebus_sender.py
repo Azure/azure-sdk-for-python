@@ -303,7 +303,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         last_exception: Optional[Exception] = None,
     ) -> None:
         # The transport opens the link before sending; bound it and give the send the rest.
-        attempt_started = time.time()
+        attempt_started = time.monotonic()
         self._open(timeout)
         self._amqp_transport.send_messages(
             self,
