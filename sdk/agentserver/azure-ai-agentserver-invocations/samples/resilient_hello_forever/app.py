@@ -45,9 +45,19 @@ from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import STOP_SUFFIX, checkpoint_store_name, hello_forever
+    from .agent import (
+        STOP_SUFFIX,
+        checkpoint_store_name,
+        durable_task_id,
+        hello_forever,
+    )
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import STOP_SUFFIX, checkpoint_store_name, hello_forever
+    from agent import (
+        STOP_SUFFIX,
+        checkpoint_store_name,
+        durable_task_id,
+        hello_forever,
+    )
 
 # Resilient tasks (durable execution + crash recovery) are strictly opt-in as of
 # azure-ai-agentserver-core 2.2.0b1: ``AgentServerHost`` builds the
@@ -73,15 +83,15 @@ async def handle_invoke(request: Request) -> Response:
         )
     name = str(data.get("name", "world"))
 
-    # Key the worker by this turn's invocation id (the platform-defined identity
-    # that GET/cancel address via the {invocation_id} path). The session id
-    # scopes the checkpoint store so workers in different sessions cannot collide
-    # on a reused invocation id; carry it in the input so recovery uses the same
-    # scope.
+    # The invocations protocol addresses the run by the {invocation_id} path, but
+    # that id is caller-supplied and can repeat across sessions; compose it with
+    # the session id for the durable task id so workers cannot collide. The
+    # session id is also carried in the input so recovery uses the same scope.
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
+    task_id = durable_task_id(session_id, invocation_id)
     await hello_forever.start(
-        task_id=invocation_id, input={"name": name, "session_id": session_id}
+        task_id=task_id, input={"name": name, "session_id": session_id}
     )
 
     return JSONResponse(
@@ -104,13 +114,14 @@ async def handle_get(request: Request) -> Response:
     """
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
+    task_id = durable_task_id(session_id, invocation_id)
 
     store = await FoundryStateStore.get_or_create(
         checkpoint_store_name(session_id), item_ttl_seconds=-1
     )
     try:
-        item = await store.get_item(invocation_id)
-        stop_marker = await store.get_item(f"{invocation_id}{STOP_SUFFIX}")
+        item = await store.get_item(task_id)
+        stop_marker = await store.get_item(f"{task_id}{STOP_SUFFIX}")
     finally:
         await store.aclose()
 
@@ -118,7 +129,7 @@ async def handle_get(request: Request) -> Response:
         # No checkpoint and no stop marker. The worker may have just started and
         # not yet written its first checkpoint, so distinguish "running at zero"
         # (this replica owns an active run) from a genuinely unknown invocation.
-        run = await hello_forever.get_active_run(invocation_id)
+        run = await hello_forever.get_active_run(task_id)
         if run is None:
             return JSONResponse(
                 {"status": "not_found", "invocation_id": invocation_id},
@@ -148,16 +159,17 @@ async def handle_cancel(request: Request) -> Response:
     """
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
+    task_id = durable_task_id(session_id, invocation_id)
 
     store = await FoundryStateStore.get_or_create(
         checkpoint_store_name(session_id), item_ttl_seconds=-1
     )
     try:
-        await store.set_item(f"{invocation_id}{STOP_SUFFIX}", {"stop": True})
+        await store.set_item(f"{task_id}{STOP_SUFFIX}", {"stop": True})
     finally:
         await store.aclose()
 
-    run = await hello_forever.get_active_run(invocation_id)
+    run = await hello_forever.get_active_run(task_id)
     if run is not None:
         await run.cancel()  # wake the worker so it notices the stop marker promptly
     return JSONResponse({"status": "cancelling", "invocation_id": invocation_id})

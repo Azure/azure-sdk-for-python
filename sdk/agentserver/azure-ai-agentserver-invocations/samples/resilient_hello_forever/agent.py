@@ -67,6 +67,21 @@ def checkpoint_store_name(session_id: str) -> str:
     return f"resilient-hello-forever/{session_id}"
 
 
+def durable_task_id(session_id: str, invocation_id: str) -> str:
+    """Return the TaskManager task id derived from BOTH ids.
+
+    The invocations protocol accepts a *caller-supplied* invocation id, so the
+    same id can appear in two different sessions. The TaskManager record is keyed
+    only by task id, so keying it on the invocation id alone would let the second
+    session collide with the first on ``start()`` and let
+    ``get_active_run(invocation_id)`` resolve the wrong session's worker.
+    Composing the id with the session keeps every start/poll/cancel path
+    isolated. It is also used as the durable checkpoint item key (and thus the
+    prefix of the stop-marker key).
+    """
+    return f"{session_id}/{invocation_id}"
+
+
 # Suffix for the durable "stop" marker key. The cancel endpoint (app.py) writes
 # this key; the worker checks it to decide whether to stop. Keeping it in a
 # SEPARATE key means the cancel write never races the checkpoint's ETag.
@@ -141,4 +156,4 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
         await store.aclose()
 
 
-__all__ = ["hello_forever", "checkpoint_store_name", "STOP_SUFFIX"]
+__all__ = ["hello_forever", "checkpoint_store_name", "durable_task_id", "STOP_SUFFIX"]

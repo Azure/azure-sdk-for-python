@@ -42,9 +42,9 @@ from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import checkpoint_store_name, hello_world
+    from .agent import checkpoint_store_name, durable_task_id, hello_world
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import checkpoint_store_name, hello_world
+    from agent import checkpoint_store_name, durable_task_id, hello_world
 
 # Resilient tasks (durable execution + crash recovery) are strictly opt-in as of
 # azure-ai-agentserver-core 2.2.0b1: ``AgentServerHost`` builds the
@@ -69,11 +69,12 @@ async def handle_invoke(request: Request) -> Response:
             {"error": "request body must be a JSON object"}, status_code=400
         )
     name = str(data.get("name", "world"))
-    # ``steps`` must be a positive integer: a non-positive count writes no
-    # checkpoint, so the accepted invocation would then poll as 404.
-    try:
-        steps = int(data.get("steps", 10))
-    except (TypeError, ValueError):
+    # ``steps`` must be a positive integer. Validate the *decoded JSON type* (not
+    # via ``int(...)``, which would accept ``True`` or silently truncate ``2.9``).
+    # A non-positive count writes no checkpoint, so the accepted invocation would
+    # then poll as 404.
+    steps = data.get("steps", 10)
+    if isinstance(steps, bool) or not isinstance(steps, int):
         return JSONResponse(
             {"error": "steps must be an integer"}, status_code=400
         )
@@ -82,18 +83,18 @@ async def handle_invoke(request: Request) -> Response:
             {"error": "steps must be a positive integer"}, status_code=400
         )
 
-    # Key the durable task by this turn's invocation id (the platform-defined
-    # identity that GET /invocations/{invocation_id} addresses). The session id
-    # scopes the checkpoint store so runs in different sessions cannot collide on
-    # a reused invocation id; carry it in the input so recovery uses the same
-    # scope.
+    # The invocations protocol addresses the run by the {invocation_id} path, but
+    # that id is caller-supplied and can repeat across sessions; compose it with
+    # the session id for the durable task id so runs cannot collide. The session
+    # id is also carried in the input so recovery uses the same store scope.
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
+    task_id = durable_task_id(session_id, invocation_id)
 
     # start() schedules the task on the TaskManager and returns right away — the
     # work is NOT tied to this HTTP request's lifetime.
     await hello_world.start(
-        task_id=invocation_id,
+        task_id=task_id,
         input={"name": name, "steps": steps, "session_id": session_id},
     )
 
@@ -108,13 +109,15 @@ async def handle_get(request: Request) -> Response:
     """Return a JSON status snapshot from the durable checkpoint (poll this)."""
     # The invocations protocol addresses the run by the {invocation_id} path
     # segment, surfaced here as request.state.invocation_id. The session id
-    # selects the same session-scoped checkpoint store the task wrote to.
+    # selects the same session-scoped checkpoint store the task wrote to and, with
+    # the invocation id, forms the composite durable task id used for lookup.
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
+    task_id = durable_task_id(session_id, invocation_id)
 
     store = await FoundryStateStore.get_or_create(checkpoint_store_name(session_id))
     try:
-        item = await store.get_item(invocation_id)
+        item = await store.get_item(task_id)
     finally:
         await store.aclose()
 
@@ -122,7 +125,7 @@ async def handle_get(request: Request) -> Response:
         # No checkpoint yet. The task may be active but still on its first step
         # (it sleeps before the first checkpoint), so distinguish "running with
         # zero completed steps" from "unknown invocation".
-        run = await hello_world.get_active_run(invocation_id)
+        run = await hello_world.get_active_run(task_id)
         if run is not None:
             return JSONResponse(
                 {"status": "in_progress", "invocation_id": invocation_id, "completed_steps": 0}
