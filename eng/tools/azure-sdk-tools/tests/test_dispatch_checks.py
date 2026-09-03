@@ -53,9 +53,22 @@ def test_finalize_isolate_dirs_preserves_coverage_sources(tmp_path):
     isolate_dir.mkdir()
     dispatch_checks.ISOLATE_DIRS_TO_CLEAN.append(os.fspath(isolate_dir))
 
-    dispatch_checks._finalize_isolate_dirs(coverage_enabled=True)
+    with patch("eng.scripts.dispatch_checks.in_ci", return_value=1):
+        dispatch_checks._finalize_isolate_dirs(coverage_enabled=True)
 
     assert isolate_dir.exists()
+    assert not dispatch_checks.ISOLATE_DIRS_TO_CLEAN
+
+
+def test_finalize_isolate_dirs_removes_github_actions_venvs(tmp_path):
+    isolate_dir = tmp_path / ".venv_whl"
+    isolate_dir.mkdir()
+    dispatch_checks.ISOLATE_DIRS_TO_CLEAN.append(os.fspath(isolate_dir))
+
+    with patch("eng.scripts.dispatch_checks.in_ci", return_value=2):
+        dispatch_checks._finalize_isolate_dirs(coverage_enabled=True)
+
+    assert not isolate_dir.exists()
     assert not dispatch_checks.ISOLATE_DIRS_TO_CLEAN
 
 

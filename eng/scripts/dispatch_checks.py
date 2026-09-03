@@ -74,7 +74,8 @@ def _cleanup_isolate_dirs() -> None:
 
 
 def _finalize_isolate_dirs(coverage_enabled: bool) -> None:
-    if coverage_enabled:
+    # Azure Pipelines generates the combined coverage report after dispatch completes.
+    if coverage_enabled and in_ci() == 1:
         if ISOLATE_DIRS_TO_CLEAN:
             logger.info(
                 "Preserving isolate directories until the coverage report is generated."
