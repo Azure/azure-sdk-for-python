@@ -31,6 +31,7 @@ What this gate enforces:
 
 from __future__ import annotations
 
+import ast
 from pathlib import Path
 
 import pytest
@@ -239,18 +240,76 @@ def test_minimal_sample_has_no_retired_name_references(sample_name: str) -> None
 # crash-recovery behaviour the sample advertises silently does not work.
 
 
+def _call_name(node: ast.Call) -> str | None:
+    """Return the (possibly dotted-tail) function name of a call node."""
+    fn = node.func
+    if isinstance(fn, ast.Attribute):
+        return fn.attr
+    if isinstance(fn, ast.Name):
+        return fn.id
+    return None
+
+
+def _first_enable_and_host_lines(source: str) -> tuple[int | None, int | None]:
+    """Locate the real opt-in call and the host construction in source order.
+
+    Returns ``(enable_line, host_line)`` where ``enable_line`` is the earliest
+    line of a genuine ``set_resilient_tasks_enabled(True)`` **call** (a literal
+    ``True`` argument — not a comment or a call with a different value) and
+    ``host_line`` is the earliest line constructing an
+    ``InvocationAgentServerHost``. ``None`` means "not found".
+    """
+    tree = ast.parse(source)
+    enable_line: int | None = None
+    host_line: int | None = None
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        name = _call_name(node)
+        if name == "set_resilient_tasks_enabled":
+            enables_true = any(
+                isinstance(a, ast.Constant) and a.value is True for a in node.args
+            )
+            if enables_true and (enable_line is None or node.lineno < enable_line):
+                enable_line = node.lineno
+        elif name == "InvocationAgentServerHost":
+            if host_line is None or node.lineno < host_line:
+                host_line = node.lineno
+    return enable_line, host_line
+
+
 @pytest.mark.parametrize(
     "sample_name", _REQUIRED_RESILIENT_SAMPLES + _MINIMAL_RESILIENT_SAMPLES
 )
 def test_resilient_sample_enables_resilient_tasks(sample_name: str) -> None:
-    """Every resilient sample's ``app.py`` MUST opt in to durable tasks."""
+    """Every resilient sample's ``app.py`` MUST opt in to durable tasks first.
+
+    Parses the module AST (rather than matching a substring, which a comment or
+    a late call would satisfy) and asserts that a real
+    ``set_resilient_tasks_enabled(True)`` call executes *before* the host is
+    constructed — the switch is read at ``AgentServerHost`` construction, so a
+    call placed after it is too late.
+    """
 
     app_py = _sample_path(sample_name) / "app.py"
     assert app_py.is_file(), f"Missing app.py for sample {sample_name} ({app_py})."
-    text = app_py.read_text(encoding="utf-8")
-    assert "set_resilient_tasks_enabled(True)" in text, (
+    enable_line, host_line = _first_enable_and_host_lines(
+        app_py.read_text(encoding="utf-8")
+    )
+
+    assert enable_line is not None, (
         f"Sample {sample_name} does not call set_resilient_tasks_enabled(True) in "
         "app.py. Durable tasks are strictly opt-in since core 2.1.0b1; without this "
         "call get_task_manager() raises TaskManagerNotInitialized and long-running "
         "recovery is silently disabled."
+    )
+    assert host_line is not None, (
+        f"Sample {sample_name}'s app.py does not construct an "
+        "InvocationAgentServerHost; cannot verify the opt-in ordering."
+    )
+    assert enable_line < host_line, (
+        f"Sample {sample_name} calls set_resilient_tasks_enabled(True) at line "
+        f"{enable_line}, which is not before InvocationAgentServerHost() at line "
+        f"{host_line}. The switch is read when the host is constructed, so it must "
+        "be enabled first."
     )

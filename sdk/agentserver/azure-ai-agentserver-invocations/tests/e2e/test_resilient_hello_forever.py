@@ -136,6 +136,35 @@ async def test_ticks_then_stops_on_cancel_with_marker(
 
 
 @pytest.mark.asyncio
+async def test_stops_on_marker_without_local_cancel(
+    task_manager,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The durable stop marker alone stops the worker (cross-replica case).
+
+    A cancel routed to a different replica writes the marker but cannot set this
+    process's ``ctx.cancel``. The worker must still stop, because it re-checks
+    the marker every iteration independently of ``ctx.cancel``.
+    """
+    _ensure_sample_importable()
+    from resilient_hello_forever import agent as hf  # noqa: WPS433
+
+    monkeypatch.setattr(hf, "_TICK", 0.01)
+
+    task_id = "hf-marker-only"
+    run = await hf.hello_forever.start(task_id=task_id, input={"name": "carol"})
+
+    await _wait_for_iterations(hf.CHECKPOINT_STORE, task_id, minimum=2)
+
+    # Write ONLY the durable stop marker — do not call run.cancel().
+    await _seed_item(hf.CHECKPOINT_STORE, f"{task_id}{hf.STOP_SUFFIX}", {"stop": True})
+
+    result = await asyncio.wait_for(run.result(), timeout=5.0)
+    assert result["stopped"] is True
+    assert result["name"] == "carol"
+
+
+@pytest.mark.asyncio
 async def test_resumes_from_existing_checkpoint(
     task_manager,
     monkeypatch: pytest.MonkeyPatch,

@@ -11,9 +11,10 @@ loop needs to be a well-behaved LRA:
 2. **Graceful shutdown**: on redeploy / SIGTERM the framework sets
    ``ctx.shutdown``; the loop calls ``return await ctx.exit_for_recovery()`` to
    release the lease cleanly so the next instance re-enters and continues.
-3. **A stop path**: an explicit cancel sets ``ctx.cancel`` with
-   ``ctx.cancel_requested``; the loop returns terminally so the worker can
-   actually be stopped on demand.
+3. **A stop path**: an explicit cancel writes a durable *stop marker* to the
+   checkpoint store; the loop checks that marker every iteration and returns
+   terminally, so the worker can actually be stopped on demand — even when the
+   cancel request lands on a different replica than the one running the loop.
 
 It also sets ``timeout=timedelta(days=7)`` — the maximum per-turn budget — so the
 per-turn watchdog (default 1 day) rarely interrupts it; when any interruption
@@ -85,20 +86,19 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
                 logger.info("shutdown — yielding for recovery at iteration %d", n)
                 return await ctx.exit_for_recovery()
 
-            # 2) Distinguish an explicit stop from the per-turn watchdog.
-            #    Both set ``ctx.cancel``. We rely on a DURABLE stop marker rather
-            #    than the cause booleans: ``cancel_requested`` is not set by the
-            #    cancel path used here, and after the per-turn timeout fires
-            #    ``timeout_exceeded`` stays true — so neither boolean reliably
-            #    identifies an explicit stop. The stop marker is unambiguous and
-            #    survives both the timeout and a crash/recovery.
-            if ctx.cancel.is_set():
-                if await store.get_item(stop_key) is not None:
-                    logger.info("stop requested — stopping at iteration %d", n)
-                    return {"name": name, "iterations": n, "stopped": True}
-                # Otherwise it's the per-turn watchdog, not a stop: keep working.
-                # The framework ends/re-enters the turn as needed and the loop
-                # continues from its checkpoint.
+            # 2) Explicit stop. The DURABLE stop marker is the single source of
+            #    truth and is checked EVERY iteration, independently of
+            #    ``ctx.cancel``. A cancel routed to a *different* replica cannot
+            #    set this process's ``ctx.cancel`` event, but it writes the marker
+            #    — so the replica that actually owns the run still observes it here
+            #    and stops. (On the owning replica, ``run.cancel()`` additionally
+            #    wakes the tick sleep below so the stop is noticed within a tick
+            #    rather than after a full interval.) The marker also survives the
+            #    per-turn watchdog and crash/recovery, so it never races the
+            #    checkpoint's ETag.
+            if await store.get_item(stop_key) is not None:
+                logger.info("stop requested — stopping at iteration %d", n)
+                return {"name": name, "iterations": n, "stopped": True}
 
             # 3) One unit of ongoing work, then CHECKPOINT the durable cursor.
             n += 1
@@ -108,7 +108,10 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
             )
             etag = ref.etag
 
-            await asyncio.sleep(_TICK)  # heartbeat / interval between ticks
+            await asyncio.sleep(_TICK)  # heartbeat / interval between ticks; the
+            # stop marker is re-checked at the top of every iteration, so an
+            # explicit stop is honoured within one tick regardless of which replica
+            # received the cancel.
     finally:
         await store.aclose()
 
