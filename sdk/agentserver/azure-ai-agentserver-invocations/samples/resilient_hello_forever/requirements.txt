@@ -1,0 +1,8 @@
+# azure-ai-agentserver-invocations
+# azure-ai-agentserver-core
+#
+# Deliberately minimal: this sample needs ONLY the two agentserver packages —
+# no LLM, no azure-ai-projects, no langgraph — so it runs with the smallest
+# possible dependency and memory footprint.
+azure-ai-agentserver-core
+azure-ai-agentserver-invocations

@@ -37,13 +37,22 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.core.storage import FoundryStateStore
-from azure.ai.agentserver.core.tasks import TaskConflictError
+from azure.ai.agentserver.core.tasks import TaskConflictError, set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
     from .agent import invocation_state_store_name, session_workflow
 except ImportError:  # allows `python app.py` from inside this directory
     from agent import invocation_state_store_name, session_workflow
+
+# Resilient tasks (durable execution + crash recovery) are strictly opt-in as of
+# azure-ai-agentserver-core 2.2.0b1: ``AgentServerHost`` constructs the
+# ``TaskManager`` ONLY when this switch is on, and it must be set before host
+# startup (i.e. at module-import time). Without it, ``get_task_manager()`` /
+# ``session_workflow.start()`` raise ``TaskManagerNotInitialized`` and the agent
+# runs non-durably with no crash recovery — defeating the purpose of a resilient
+# long-running agent.
+set_resilient_tasks_enabled(True)
 
 app = InvocationAgentServerHost()
 
