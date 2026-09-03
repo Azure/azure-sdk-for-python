@@ -1090,7 +1090,10 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :keyword str node: Management target.
         :keyword int timeout: Timeout in seconds.
         """
-        mgmt_client.open_mgmt_link(node=node, timeout=timeout or 0)
+        try:
+            mgmt_client.open_mgmt_link(node=node, timeout=timeout or 0)
+        except TimeoutError as exception:
+            raise OperationTimeoutError(error=exception) from exception
 
     @staticmethod
     def _handle_amqp_exception_with_condition(

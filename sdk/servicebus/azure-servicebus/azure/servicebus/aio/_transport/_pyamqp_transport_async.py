@@ -537,4 +537,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword str node: Management target.
         :keyword int timeout: Timeout in seconds.
         """
-        await mgmt_client.open_mgmt_link_async(node=node, timeout=timeout or 0)
+        try:
+            await mgmt_client.open_mgmt_link_async(node=node, timeout=timeout or 0)
+        except TimeoutError as exception:
+            raise OperationTimeoutError(error=exception) from exception

@@ -27,6 +27,7 @@ from azure.servicebus._pyamqp._encode import encode_payload
 from azure.servicebus._pyamqp.client import AMQPClient
 from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
+from azure.servicebus.aio._transport._pyamqp_transport_async import PyamqpTransportAsync
 from azure.servicebus.exceptions import OperationTimeoutError
 
 
@@ -147,6 +148,14 @@ def test_failed_management_link_open_is_evicted_before_retry():
     assert operation_type.call_count == 2
 
 
+def test_management_link_setup_converts_timeout_error():
+    client = MagicMock()
+    client.open_mgmt_link.side_effect = TimeoutError("setup timed out")
+
+    with pytest.raises(OperationTimeoutError):
+        PyamqpTransport.mgmt_client_setup(client, node="$management", timeout=1)
+
+
 @pytest.mark.asyncio
 async def test_cancelled_management_link_open_is_evicted_before_retry():
     client = object.__new__(AMQPClientAsync)
@@ -173,6 +182,17 @@ async def test_cancelled_management_link_open_is_evicted_before_retry():
         assert await client.open_mgmt_link_async() is ready_link
 
     assert operation_type.call_count == 2
+
+
+@pytest.mark.asyncio
+async def test_async_management_link_setup_converts_timeout_error():
+    client = MagicMock()
+    client.open_mgmt_link_async = AsyncMock(side_effect=TimeoutError("setup timed out"))
+
+    with pytest.raises(OperationTimeoutError):
+        await PyamqpTransportAsync.mgmt_client_setup_async(
+            client, node="$management", timeout=1
+        )
 
 
 class TestDeleteMessages:
