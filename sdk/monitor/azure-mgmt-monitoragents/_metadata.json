@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-05-01-preview",
+  "apiVersions": {
+    "Microsoft.Monitor": "2026-05-01-preview"
+  },
+  "commit": "cd9789e9cfdb4cd052f4dbe14ee0c4139ada6c7b",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/monitoringservice/resource-manager/Microsoft.Monitor/Agents",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
+}
