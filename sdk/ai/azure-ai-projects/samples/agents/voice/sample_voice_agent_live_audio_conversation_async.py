@@ -45,6 +45,7 @@ USAGE:
 """
 
 import asyncio
+import concurrent.futures
 import os
 import queue
 from typing import Any, Final, Optional
@@ -64,6 +65,7 @@ from azure.ai.projects.models import (
     RealtimeServerEventInputAudioBufferSpeechStarted,
     RealtimeServerEventResponseAudioDelta,
     RealtimeServerEventResponseAudioTranscriptDone,
+    RealtimeServerEventResponseCreated,
     RealtimeServerEventResponseDone,
     RealtimeServerEventSessionCreated,
     RealtimeServerEventError,
@@ -105,6 +107,10 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
         self._next_seq = 0
         self._bytes = 0
 
+        # Bounds capture backpressure to a single in-flight send (see start_capture).
+        self._pending_send: "Optional[concurrent.futures.Future[None]]" = None
+        self._dropped_frames = 0
+
         self._input_stream = None
         self._output_stream = None
 
@@ -117,9 +123,19 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
         self._loop = asyncio.get_running_loop()
 
         def _capture_callback(in_data, _frame_count, _time_info, _status):
-            # Runs on a pyaudio thread: hand the frame to the event loop to append.
+            # Runs on a pyaudio thread: hand the frame to the event loop to append. Each call
+            # schedules a coroutine on the loop via a thread-safe handoff; if sending falls
+            # behind real-time capture (for example, network backpressure on the WebSocket),
+            # unconditionally scheduling a new one every callback would let pending sends
+            # accumulate without bound. Instead, only keep at most one in flight and drop
+            # (skip sending) this frame if the previous send hasn't completed yet.
             assert self._loop is not None
-            asyncio.run_coroutine_threadsafe(self._conn.input_audio_buffer.append(audio=in_data), self._loop)
+            if self._pending_send is not None and not self._pending_send.done():
+                self._dropped_frames += 1
+                return (None, pyaudio.paContinue)
+            self._pending_send = asyncio.run_coroutine_threadsafe(
+                self._conn.input_audio_buffer.append(audio=in_data), self._loop
+            )
             return (None, pyaudio.paContinue)
 
         self._input_stream = self._audio.open(
@@ -158,7 +174,10 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
                     out = out + bytes(wanted - len(out))  # pad with silence
                     continue
                 if not data:
-                    break  # end-of-stream marker
+                    # end-of-stream marker: pad up to the exact frame size pyaudio asked for
+                    # instead of returning a short buffer, which would corrupt playback on close.
+                    out = out + bytes(wanted - len(out))
+                    break
                 if seq < self._playback_base:
                     remaining = b""  # skipped by a barge-in
                     continue
@@ -202,6 +221,8 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
             self._input_stream.stop_stream()
             self._input_stream.close()
             self._input_stream = None
+            if self._dropped_frames:
+                print(f"(dropped {self._dropped_frames} mic frame(s) while a send was still in flight)")
         if self._output_stream is not None:
             self.skip_pending_audio()
             self._playback_queue.put((self._next_seq_num(), None))
@@ -234,6 +255,7 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
         return None
 
     conversation_id: Optional[str] = None
+    response_active = False
 
     # Open the realtime session on the voice agent's dedicated route.
     async with client.realtime.connect(agent_name=agent_name) as conn:
@@ -253,24 +275,27 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
                     # persistence is enabled) is set here, not on response.done.
                     conversation_id = event.conversation_id or conversation_id
                 elif isinstance(event, RealtimeServerEventInputAudioBufferSpeechStarted):
-                    # Barge-in: stop the active response and drop whatever reply
-                    # audio is still queued locally. The service only supports
-                    # output_audio_buffer.clear in avatar mode.
-                    await conn.response.cancel()
-                    ap.skip_pending_audio()
-                    print("(listening...)")
+                    # speech_started fires for every user turn, including the very first one,
+                    # when no response is active yet. Only cancel (barge-in) if a response is
+                    # actually in flight; canceling with none active is a service error.
+                    if response_active:
+                        await conn.response.cancel()
+                        ap.skip_pending_audio()
+                        print("(listening...)")
                 elif isinstance(event, RealtimeServerEventConversationItemInputAudioTranscriptionCompleted):
                     print(f"You:  {event.transcript.strip()}")
                 elif isinstance(event, RealtimeServerEventError):
                     # Non-fatal errors are reported; a fatal one closes the socket.
                     print(f"Session error: {event.error.message}")
+                elif isinstance(event, RealtimeServerEventResponseCreated):
+                    response_active = True
                 elif isinstance(event, RealtimeServerEventResponseAudioDelta):
                     # Each delta is a decoded PCM16 chunk; queue it.
                     ap.queue_audio(event.delta)
                 elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDone):
                     print(f"Agent: {event.transcript}")
                 elif isinstance(event, RealtimeServerEventResponseDone):
-                    pass
+                    response_active = False
         except (KeyboardInterrupt, asyncio.CancelledError):
             # Ctrl-C ends the session; read back whatever was persisted so far.
             print("\n(ending session...)")

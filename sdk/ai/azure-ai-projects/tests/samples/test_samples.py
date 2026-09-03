@@ -383,3 +383,39 @@ class TestSamples(AzureRecordedTestCase):
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "agents/voice",
+            samples_to_skip=[
+                # These use client.realtime, a persistent WebSocket connection. recorded_by_proxy
+                # only supports the AZURE_CORE/HTTPX2 HTTP(S) transports used elsewhere in this
+                # file, so a WebSocket session can't be captured/replayed through this mechanism.
+                "sample_voice_agent_live_text_conversation.py",
+                "sample_voice_agent_live_text_conversation_async.py",
+                "sample_voice_agent_live_function_tool.py",
+                "sample_voice_agent_live_audio_conversation_async.py",
+                # These read back a conversation transcript/audio from a *pre-existing*,
+                # already-persisted voice session (FOUNDRY_VOICE_CONVERSATION_ID), which none of
+                # the runnable samples above create (they all use the skipped WebSocket path to
+                # do so). Needs a recorded conversation fixture before it can run here.
+                "sample_voice_agent_read_conversation.py",
+                "sample_voice_agent_read_conversation_audio.py",
+                # PR #48484: recording not yet available for these REST-only samples.
+                "sample_voice_agent_basic.py",
+                "sample_voice_agent_generate.py",
+                "sample_voice_agent_versions.py",
+                "sample_voice_agent_with_tools.py",
+            ],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    def test_voice_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()
+

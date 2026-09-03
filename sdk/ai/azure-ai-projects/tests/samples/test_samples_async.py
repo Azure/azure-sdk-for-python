@@ -312,3 +312,28 @@ class TestSamplesAsync(AzureRecordedTestCase):
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "agents/voice",
+            samples_to_skip=[
+                # These use async_client.realtime, a persistent WebSocket connection.
+                # recorded_by_proxy_async only supports the AZURE_CORE/HTTPX2 HTTP(S) transports
+                # used elsewhere in this file, so a WebSocket session can't be captured/replayed
+                # through this mechanism.
+                "sample_voice_agent_live_text_conversation_async.py",
+                "sample_voice_agent_live_audio_conversation_async.py",
+                # PR #48484: recording not yet available for this REST-only sample.
+                "sample_voice_agent_basic_async.py",
+            ],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    async def test_voice_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async()

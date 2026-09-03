@@ -89,6 +89,9 @@ IGNORED_SAMPLES = {
         # runner executes the file non-interactively.
         "sample_voice_agent_live_text_conversation.py",
         "sample_voice_agent_live_text_conversation_async.py",
+        # Runs until Ctrl-C (continuous microphone capture/playback); would hang indefinitely
+        # under this non-interactive runner whenever PyAudio and live credentials are available.
+        "sample_voice_agent_live_audio_conversation_async.py",
     ],
     "azure-eventgrid": [
         "__init__.py",

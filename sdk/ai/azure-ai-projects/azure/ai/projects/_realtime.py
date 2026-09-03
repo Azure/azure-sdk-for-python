@@ -27,6 +27,7 @@ from typing import (
     List,
     Mapping,
     Optional,
+    Tuple,
     Type,
     TYPE_CHECKING,
     Union,
@@ -228,19 +229,45 @@ ServerEvent = Union[
 
 
 def _to_ws_url(endpoint: str, agent_name: str) -> str:
-    """Build the realtime WebSocket URL from the HTTP project endpoint.
+    """Build the realtime WebSocket URL from the HTTPS project endpoint.
+
+    Only the ``https://`` scheme is translated (to ``wss://``); any other scheme is left
+    unchanged so that :meth:`RealtimeConnectionManager.enter`'s ``wss://``-only check rejects
+    it with a clear error instead of silently producing an unencrypted ``ws://`` URL that would
+    also send the live Authorization token in plain text.
 
     :param str endpoint: The Foundry project endpoint (``https://.../api/projects/...``).
     :param str agent_name: The name of the voice agent to connect to.
-    :return: A ``wss://``/``ws://`` URL targeting the realtime route.
+    :return: A ``wss://`` URL targeting the realtime route.
     :rtype: str
     """
     base = endpoint.rstrip("/")
     if base.startswith("https://"):
         base = "wss://" + base[len("https://") :]
-    elif base.startswith("http://"):
-        base = "ws://" + base[len("http://") :]
     return f"{base}/agents/{agent_name}/endpoint/protocols/voice"
+
+
+_DEFAULT_PORT_BY_SCHEME = {"http": 80, "https": 443, "ws": 80, "wss": 443}
+
+
+def _normalized_authority(url: str) -> Tuple[str, Optional[int]]:
+    """Return a ``(hostname, port)`` tuple with the scheme's default port filled in.
+
+    ``urlparse(...).port`` is ``None`` when a URL omits an explicit port, which would make
+    ``https://host/...`` and ``https://host:8443/...`` compare as equal on hostname alone.
+    Resolving the scheme's default port here lets callers compare authorities (not just
+    hostnames) so a same-host override on a different, non-default port is correctly rejected.
+
+    :param str url: The URL to parse.
+    :return: A tuple of the lower-cased hostname (or empty string) and the resolved port
+     (or ``None`` if the scheme has no known default and none was specified).
+    :rtype: tuple[str, Optional[int]]
+    """
+    parsed = urlparse(url)
+    port = parsed.port
+    if port is None:
+        port = _DEFAULT_PORT_BY_SCHEME.get((parsed.scheme or "").lower())
+    return (parsed.hostname or "").lower(), port
 
 
 def _assert_trusted_connection_url(connection_url: str, endpoint: str) -> None:
@@ -250,19 +277,22 @@ def _assert_trusted_connection_url(connection_url: str, endpoint: str) -> None:
     scheme/host/path, but the Authorization header carrying the live credential's
     token must never be sent to a host other than the configured Foundry project
     endpoint: a caller-controlled or compromised URL could otherwise be used to
-    exfiltrate the token to an arbitrary host.
+    exfiltrate the token to an arbitrary host or port.
 
     :param str connection_url: The caller-supplied override URL.
     :param str endpoint: The configured, trusted Foundry project endpoint.
-    :raises ValueError: If the override URL's host does not match the endpoint's host.
+    :raises ValueError: If the override URL's host or port does not match the endpoint's.
     """
-    override_host = (urlparse(connection_url).hostname or "").lower()
-    trusted_host = (urlparse(endpoint).hostname or "").lower()
-    if not override_host or override_host != trusted_host:
+    override_host, override_port = _normalized_authority(connection_url)
+    trusted_host, trusted_port = _normalized_authority(endpoint)
+    if not override_host or (override_host, override_port) != (trusted_host, trusted_port):
+        got = override_host or connection_url
+        if override_host and override_port:
+            got = f"{override_host}:{override_port}"
         raise ValueError(
-            "The 'connection_url' override must target the same host as the configured Foundry "
-            f"project endpoint ('{trusted_host}') to avoid sending the Authorization token to an "
-            f"untrusted host; got host '{override_host or connection_url}'."
+            "The 'connection_url' override must target the same host and port as the configured "
+            f"Foundry project endpoint ('{trusted_host}:{trusted_port}') to avoid sending the "
+            f"Authorization token to an untrusted host; got '{got}'."
         )
 
 
@@ -782,7 +812,7 @@ class Realtime:  # pylint: disable=too-few-public-methods
         :keyword structured_inputs: A JSON object that maps structured-input names to their
          values for this session. Default value is None.
         :paramtype structured_inputs: str or None
-        :keyword connection_url: Full ``wss://``/``ws://`` URL that overrides the route computed
+        :keyword connection_url: Full ``wss://`` URL that overrides the route computed
          from the client endpoint. Query parameters are still appended. Default value is None.
         :paramtype connection_url: str or None
         :keyword api_version: Overrides the client's API version for the handshake. Default

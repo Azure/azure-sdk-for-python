@@ -91,12 +91,28 @@ class TestAsyncRealtimeConnectionManagerEnter:
         assert kwargs["params"]["api-version"] == "v1"
         assert kwargs["headers"]["Authorization"] == "Bearer fake-token"
         assert kwargs["headers"]["Foundry-Features"] == "VoiceAgents=V1Preview"
-        assert kwargs["headers"]["Sec-WebSocket-Protocol"] == "realtime"
+        assert "Sec-WebSocket-Protocol" not in kwargs["headers"]
+        assert kwargs["protocols"] == ("realtime",)
 
     async def test_enter_rejects_untrusted_connection_url_host(self):
         manager = _make_manager(connection_url="wss://evil.example.com/steal-token")
         with pytest.raises(ValueError):
             await manager.enter()
+
+    async def test_enter_overrides_caller_supplied_protocols_kwarg(self):
+        # Regression test: protocols=("realtime",) is now passed explicitly to ws_connect, so a
+        # caller-supplied protocols override forwarded through **kwargs would otherwise collide
+        # ("got multiple values for keyword argument 'protocols'"). The service requires the
+        # "realtime" subprotocol, so the override is dropped rather than honored.
+        fake_ws = _make_fake_ws()
+        patcher, fake_session = _patch_client_session(fake_ws)
+        with patcher:
+            manager = _make_manager(protocols=("other",))
+            await manager.enter()
+            await manager.__aexit__()
+
+        _args, kwargs = fake_session.ws_connect.call_args
+        assert kwargs["protocols"] == ("realtime",)
 
     async def test_enter_rejects_non_wss_url(self):
         manager = _make_manager(endpoint="ftp://not-http-or-https")

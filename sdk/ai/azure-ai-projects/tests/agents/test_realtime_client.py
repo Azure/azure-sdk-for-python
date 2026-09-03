@@ -25,7 +25,6 @@ from azure.ai.projects._realtime import (
 )
 from azure.ai.projects.models import (
     RealtimeClientEventResponseCreate,
-    RealtimeServerEventError,
     RealtimeServerEventSessionCreated,
 )
 
@@ -65,9 +64,14 @@ class TestToWsUrl:
             == "wss://my-account.services.ai.azure.com/api/projects/my-project/agents/my-agent/endpoint/protocols/voice"
         )
 
-    def test_http_endpoint_becomes_ws(self):
+    def test_non_https_endpoint_scheme_is_left_unchanged(self):
+        # Regression test: _to_ws_url used to translate "http://" to "ws://", but
+        # RealtimeConnectionManager.enter() unconditionally rejects any non-"wss://" URL to
+        # protect the live Authorization token in transit, so that translated "ws://" URL could
+        # never actually be used to connect. Leaving the scheme untouched here means the
+        # downstream "wss://" check surfaces a clear error instead of an unreachable "ws://" path.
         url = _to_ws_url("http://localhost:8080", "my-agent")
-        assert url == "ws://localhost:8080/agents/my-agent/endpoint/protocols/voice"
+        assert url == "http://localhost:8080/agents/my-agent/endpoint/protocols/voice"
 
     def test_trailing_slash_is_stripped(self):
         url = _to_ws_url(_ENDPOINT + "/", "my-agent")
@@ -90,6 +94,18 @@ class TestAssertTrustedConnectionUrl:
     def test_empty_host_raises_value_error(self):
         with pytest.raises(ValueError):
             _assert_trusted_connection_url("not-a-url", _ENDPOINT)
+
+    def test_matching_host_explicit_default_port_does_not_raise(self):
+        # An explicit ":443" is the wss/https default, so this is the same origin as _ENDPOINT
+        # (which omits the port) and must be accepted.
+        _assert_trusted_connection_url("wss://my-account.services.ai.azure.com:443/custom/path", _ENDPOINT)
+
+    def test_mismatched_port_raises_value_error(self):
+        # Regression test (security fix): comparing hostname alone let an override targeting the
+        # same host on a different, non-default port (a different origin) slip through and
+        # receive the live bearer token.
+        with pytest.raises(ValueError):
+            _assert_trusted_connection_url("wss://my-account.services.ai.azure.com:8443/steal-token", _ENDPOINT)
 
 
 class TestRealtimeConnectionManagerEnter:
