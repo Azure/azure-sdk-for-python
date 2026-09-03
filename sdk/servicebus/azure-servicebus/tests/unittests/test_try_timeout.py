@@ -115,6 +115,18 @@ class TestConfigurationTryTimeout:
                 )
             assert "try_timeout" in str(exc.value)
 
+    def test_non_finite_values_are_rejected(self):
+        # NaN and infinity pass a `<= 0` check but yield a deadline that never expires,
+        # so they would disable the bound rather than reject it.
+        for bad in (float("nan"), float("inf")):
+            with pytest.raises(ValueError) as exc:
+                Configuration(
+                    hostname="fake.servicebus.windows.net",
+                    amqp_transport=MagicMock(),
+                    try_timeout=bad,
+                )
+            assert "try_timeout" in str(exc.value)
+
     def test_positive_value_is_preserved(self):
         config = Configuration(
             hostname="fake.servicebus.windows.net",
