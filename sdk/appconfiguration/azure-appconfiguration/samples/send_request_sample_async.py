@@ -16,24 +16,27 @@ USAGE:
     python send_request_sample_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+    1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL used to access the Azure App Configuration.
 """
 
 import os
 import asyncio
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.core.rest import HttpRequest
+from azure.identity.aio import DefaultAzureCredential
 
 
 async def main():
-    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-    async with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
+    endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+    credential = DefaultAzureCredential()
+    async with AzureAppConfigurationClient(endpoint, credential) as client:
         request = HttpRequest(
             method="GET",
             url="/kv?api-version=2023-10-01",
         )
         response = await client.send_request(request)
         print(response.status_code)
+    await credential.close()
 
 
 if __name__ == "__main__":

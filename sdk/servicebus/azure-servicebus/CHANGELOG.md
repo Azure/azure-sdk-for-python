@@ -1,12 +1,22 @@
 # Release History
 
-## 7.15.0b1 (Unreleased)
+## 7.15.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 7.15.0b2 (2026-08-21)
 
 ### Features Added
 
 - Added sync and async `ServiceBusReceiver.delete_messages()` and `purge_messages()` methods. Basic and Standard support up to 500 messages per request, Premium supports up to 4,000, and purge handles smaller batches caused by large messages.
 - Added `ServiceBusReceivedMessage.from_bytes()` classmethod to construct a `ServiceBusReceivedMessage` from raw AMQP payload bytes without requiring the deprecated `uamqp` library. ([#43979](https://github.com/Azure/azure-sdk-for-python/issues/43979))
-- Added `ServiceBusClient.list_queue_sessions()` and `ServiceBusClient.list_subscription_sessions()` (sync and async) to list session IDs for entities with active messages, with optional filtering by session-state update timestamp. The methods return an `ItemPaged[str]` (`AsyncItemPaged[str]` on the async client) so callers can iterate every session transparently or page with `by_page()`. Implements the `com.microsoft:get-message-sessions` management operation. ([#46575](https://github.com/Azure/azure-sdk-for-python/pull/46575))
+- Added `ServiceBusClient.list_queue_sessions()` and `ServiceBusClient.list_subscription_sessions()` (sync and async) to list session IDs for entities with active messages or stored session state, with optional filtering by session-state update timestamp. The methods return an `ItemPaged[str]` (`AsyncItemPaged[str]` on the async client) so callers can iterate every session transparently or page with `by_page()`. Implements the `com.microsoft:get-message-sessions` management operation. ([#46575](https://github.com/Azure/azure-sdk-for-python/pull/46575))
 - Added `sql_filter_count` and `correlation_filter_count` properties to `TopicRuntimeProperties`, exposing the total number of SQL filters and correlation filters across all of a topic's subscriptions.
 - Added API version `2024-05` and made it the default for the management client, which is required for the topic filter counts above.
 
@@ -21,9 +31,11 @@
 - Fixed a bug where passing a `fully_qualified_namespace` that included a port and/or trailing path (for example the `https://<namespace>.servicebus.windows.net:443/` form that Azure returns when provisioning a namespace) raised `ServiceBusAuthenticationError`. The namespace is now normalized to its bare host, matching the .NET and JavaScript SDKs. ([#44034](https://github.com/Azure/azure-sdk-for-python/issues/44034))
 - Fixed a bug where iterating over a `ServiceBusReceiver` suppressed automatic HTTP instrumentation (e.g. from `opentelemetry-instrumentation-httpx`/`requests`) while user code processed a received message, causing the user's own outbound HTTP spans to be dropped. The receive tracing span is now closed before the message is yielded to the caller, so suppression no longer leaks into message processing. ([#42755](https://github.com/Azure/azure-sdk-for-python/issues/42755))
 - Fixed a bug in the pyAMQP transport where decoding an incoming performative whose trailing null fields were omitted by the sender (permitted by AMQP 1.0 section 1.4) raised `IndexError`/`TypeError`. The decoded field list is now padded to the performative's full field count so omitted trailing fields read back as their AMQP-defined default, including the compact `list0` encoding where every field is omitted. A field encoded as an explicit null but whose declared default is non-null (for example a `max_frame_size` set to null so the connection would compare `None < 512`) now also reads back as that default.
+- Fixed a bug where `PEEK_LOCK` settlements on the pure-Python AMQP transport were sent pre-settled even though the receiver link negotiates `rcv-settle-mode=second`, so the service's terminal outcome (including `com.microsoft:message-lock-lost` rejections) was discarded and a settlement the service never applied was indistinguishable from success — surfacing only as the message being redelivered at lock expiry. Settlements now wait for the service to confirm the outcome and raise when it is rejected, matching the .NET, Java, JavaScript, and Go SDKs, which all await the disposition unconditionally. **This is a behavior change:** confirming costs one service round trip per settlement, so settle many messages concurrently rather than one at a time (for example `await asyncio.gather(*(receiver.complete_message(m) for m in messages))`). Unaffected where outcomes cannot be observed: `RECEIVE_AND_DELETE` mode and `uamqp_transport=True`.
 
 ### Other Changes
 
+- Clarified in the `application_properties` documentation (the `ServiceBusMessage` constructor, the `application_properties` property, and the README) that when a message is received, its keys and any string values are returned as `bytes`, not `str`, along with the recommended bytes-key access and decoding pattern. ([#45082](https://github.com/Azure/azure-sdk-for-python/issues/45082))
 - When using the async `AmqpOverWebsocket` transport on Python 3.10 or later, `aiohttp>=3.14.0` is now recommended. Earlier `aiohttp` versions have a WebSocket heartbeat bug ([aio-libs/aiohttp#12030](https://github.com/aio-libs/aiohttp/pull/12030)) that can cause the connection to be dropped during long message processing, surfacing as a `SocketError` ("Cannot write to closing transport"). Python 3.9 users must upgrade Python to install an `aiohttp` release containing this fix. ([#44028](https://github.com/Azure/azure-sdk-for-python/issues/44028))
 - Management operations (peek, deferred receive, message settlement over the management link, lock renewal, session state, session listing, schedule/cancel) now send `com.microsoft:server-timeout`: the caller's remaining time less one second, or 60 seconds when none was given. Previously no bound was sent, so a stalled service held the call until the AMQP link failed; it now raises a retryable `OperationTimeoutError`, so a persistently stalled service surfaces after roughly four minutes at default retry settings. Matches the .NET, Java and Go SDKs.
 

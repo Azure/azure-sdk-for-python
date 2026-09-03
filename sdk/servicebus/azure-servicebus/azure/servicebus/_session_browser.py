@@ -18,7 +18,8 @@ from ._common import mgmt_handlers
 from .exceptions import OperationTimeoutError
 
 # The service checks `lastUpdatedTime != DateTime.MaxValue` (exact equality) to switch
-# between "active messages" mode and "updated since" mode. The .NET AMQP library encodes
+# between default listing mode and updated-since mode. Default listing mode returns sessions
+# with active messages or stored session state. The .NET AMQP library encodes
 # DateTime.MaxValue as 253402300800000 ms (10000-01-01T00:00:00Z) due to double-to-long
 # rounding in TimeSpan.TotalMilliseconds, and its decoder clamps values beyond
 # DateTime.MaxValue.Ticks back to DateTime.MaxValue. This matches Track 1 Java's
@@ -31,7 +32,7 @@ _EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 def _to_last_updated_ms(state_updated_after: Optional[datetime]) -> int:
     """Convert an optional filter datetime to the wire millisecond value.
 
-    Returns the DateTime.MaxValue sentinel (active-messages mode) when no filter
+    Returns the DateTime.MaxValue sentinel (default listing mode) when no filter
     is given; otherwise the UTC-normalized millisecond timestamp.
 
     :param state_updated_after: The optional filter datetime.
@@ -40,7 +41,7 @@ def _to_last_updated_ms(state_updated_after: Optional[datetime]) -> int:
     :rtype: int
     """
     if state_updated_after is None:
-        # DateTime.MaxValue triggers "active messages" mode on the service side.
+        # DateTime.MaxValue triggers default listing mode on the service side.
         return _MAX_DATETIME_MS
     # Normalize naive datetimes to UTC. Python's datetime.timestamp() interprets
     # naive values as local time, which would make the wire value depend on the
@@ -54,13 +55,15 @@ def _to_last_updated_ms(state_updated_after: Optional[datetime]) -> int:
     # Compute milliseconds with integer timedelta arithmetic rather than float
     # `timestamp() * 1000`. The float path rounds the maximum representable
     # datetime up to _MAX_DATETIME_MS, which would silently switch an explicit
-    # filter into active-messages mode, and truncates pre-epoch fractional
+    # filter into default listing mode, and truncates pre-epoch fractional
     # milliseconds toward zero. Floor division keeps datetime.max at
     # 253402300799999 and rounds consistently downward.
     return (normalized - _EPOCH) // timedelta(milliseconds=1)
 
 
-def _page_request_body(amqp_transport: Any, last_updated_time_ms: int, skip: int) -> Dict[str, Any]:
+def _page_request_body(
+    amqp_transport: Any, last_updated_time_ms: int, skip: int
+) -> Dict[str, Any]:
     """Build the get-message-sessions request body with transport-neutral value
     factories.
 
@@ -146,7 +149,8 @@ class _SessionBrowser(BaseHandler):
 
         :keyword ~datetime.datetime state_updated_after: If specified, only sessions whose
             session state was set or updated after this time are returned. If not specified,
-            returns sessions with active messages in the entity.
+            returns sessions with active messages or stored session state in the entity. Sessions
+            with neither are excluded.
         :keyword float timeout: The total operation timeout in seconds, spent across
             every page of the enumeration.
         :keyword _now: Monotonic clock function, injectable for tests. Internal.
@@ -182,7 +186,9 @@ class _SessionBrowser(BaseHandler):
                     raise OperationTimeoutError(
                         message="Listing sessions did not complete within the specified timeout."
                     )
-            message = _page_request_body(self._amqp_transport, last_updated_time_ms, skip)
+            message = _page_request_body(
+                self._amqp_transport, last_updated_time_ms, skip
+            )
             result = self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
                 message,

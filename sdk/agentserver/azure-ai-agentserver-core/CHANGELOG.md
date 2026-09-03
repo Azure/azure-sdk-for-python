@@ -1,5 +1,24 @@
 # Release History
 
+## 2.2.0b1 (2026-09-03)
+
+### Features Added
+
+- Added `AgentConfig.session_guid`, populated from the platform-owned
+  `FOUNDRY_AGENT_SESSION_GUID` environment variable for hosted session
+  incarnation identity.
+
+### Other Changes
+
+- Changed the default Azure Monitor trace sampling rate to 100%. Explicit OpenTelemetry sampler environment variables continue to take precedence.
+- Disabled Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation by default. Pass `instrumentation_options` to `configure_observability` to enable individual libraries.
+
+## 2.1.0 (2026-08-24)
+
+### Other Changes
+
+- Added compatibility bounds to runtime and development dependencies so installation cannot silently resolve to incompatible releases.
+
 ## 2.1.0b2 (2026-08-18)
 
 ### Other Changes

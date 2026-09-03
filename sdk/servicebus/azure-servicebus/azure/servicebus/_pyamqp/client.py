@@ -1046,7 +1046,9 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         delivery_tag: bytes,
         outcome: Literal["accepted"],
         *,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -1056,7 +1058,9 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         delivery_tag: bytes,
         outcome: Literal["released"],
         *,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -1067,7 +1071,9 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         outcome: Literal["rejected"],
         *,
         error: Optional[AMQPError] = None,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -1080,7 +1086,9 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         delivery_failed: Optional[bool] = None,
         undeliverable_here: Optional[bool] = None,
         message_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     @overload
@@ -1092,11 +1100,15 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         *,
         section_number: int,
         section_offset: int,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        await_outcome: bool = False,
+        outcome_timeout: Optional[float] = None
     ): ...
 
     def settle_messages(self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs):
         batchable = kwargs.pop("batchable", None)
+        await_outcome = kwargs.pop("await_outcome", False)
+        outcome_timeout = kwargs.pop("outcome_timeout", None)
         if outcome.lower() == "accepted":
             state: Outcomes = Accepted()
         elif outcome.lower() == "released":
@@ -1118,8 +1130,10 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
             first_delivery_id=first,
             last_delivery_id=last,
             delivery_tag=delivery_tag,
-            settled=True,
+            settled=not await_outcome,
             delivery_state=state,
             batchable=batchable,
             wait=True,
+            await_outcome=await_outcome,
+            outcome_timeout=outcome_timeout,
         )

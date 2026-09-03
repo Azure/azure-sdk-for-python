@@ -27,8 +27,10 @@ hashed). The digest fills the native "entropy" slot; because ``agent_name``
 cannot contain the ``\\x1f`` separator, the ``(agent, session)`` pair encodes
 injectively even when ``session_id`` contains arbitrary bytes.
 
-``task_id == conversation_chain_id`` in all three cases, so the resilient task
-and the handler-facing chain identity can never drift.
+When no private task session scope is available,
+``task_id == conversation_chain_id``. Hosted deployments may instead scope the
+physical task ID with a system-generated session GUID while preserving this
+public chain identity.
 
 Known limitation: the chain identity is derived from framework-generated ids. A
 client that supplies its own ``response_id`` / ``conversation_id`` carrying a
@@ -125,11 +127,12 @@ def derive_conversation_chain_id(
     session_id: str,
     steerable: bool = True,
 ) -> str:
-    """Derive the stable conversation chain id (== the resilient ``task_id``).
+    """Derive the stable public conversation chain identity.
 
     The id is the same for every turn of a chain and reconstructable on recovery
     (a pure function of the persisted inputs). See the module docstring for the
-    per-case id shapes.
+    per-case id shapes. A hosted physical task ID can use a private session-GUID
+    scope and therefore differ from this handler-facing identity.
 
     :keyword conversation_id: Explicit conversation scope (highest priority).
     :paramtype conversation_id: str | None
