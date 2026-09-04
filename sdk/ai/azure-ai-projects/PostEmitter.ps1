@@ -408,6 +408,53 @@ $c = $c.Replace('"_unions.VoiceAgentSessionResponse"', '"_models.VoiceAgentSessi
 $c = $c.Replace('"_unions.VoiceAgentSessionUpdate"', '"_models.VoiceAgentSessionUpdateConfig"')
 Set-Content $f $c -NoNewline
 
+# `replace_telephony_transfer_targets`'s JSON-body and IO[bytes]-body @overload stubs mistype
+# `etag`/`match_condition`: they declare `etag: List[_models.TelephonyTransferTarget]` and
+# `match_condition: str`, but the real implementation (and the keyword-only overload) correctly
+# type them as `etag: str` / `match_condition: MatchConditions` -- an internally-inconsistent
+# emitter bug (mypy: "Overloaded function implementation does not accept all possible arguments of
+# signature 2/3"; pyright: "Overloaded implementation is not consistent with signature of overload
+# 2/3"). This also breaks the hand-written call in _patch_agents.py/_patch_agents_async.py, whose
+# call no longer matches any overload once the impl's real parameter types are considered (pyright:
+# "Argument of type ... cannot be assigned to parameter 'body'/'etag'"). Fix both overloads'
+# signatures and docstrings in both sync and async _operations.py.
+$files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
+foreach ($f in $files) {
+    $c = Get-Content $f -Raw
+    $c = $c -replace 'etag: List\[_models\.TelephonyTransferTarget\],(\r?\n\s+)match_condition: str,', 'etag: str,$1match_condition: MatchConditions,'
+    $c = $c -replace ':paramtype etag: list\[~azure\.ai\.projects\.models\.TelephonyTransferTarget\]', ':paramtype etag: str'
+    $c = $c -replace ':paramtype match_condition: str', ':paramtype match_condition: ~azure.core.MatchConditions'
+    Set-Content $f $c -NoNewline
+}
+
+# Regression guard: `_realtime.py` and `aio\_realtime.py` are hand-written files that are NOT
+# `_patch.py`-named, so they aren't covered by the emitter's own "never touch _patch.py" guarantee --
+# nothing in the TypeSpec emitter is aware these files exist. They carry the SDK client-identification
+# fix ported from the azure-ai-voicelive PR #48848 (a User-Agent header and x-ms-client-sdk query
+# parameter, both derived from `_USER_AGENT = UserAgentPolicy(sdk_moniker=...)`, with a case-insensitive
+# guard so a caller-supplied extra_headers User-Agent of any casing is honored instead of duplicated).
+# If a future `tsp-client update` ever starts generating (and thus silently overwriting) a file at either
+# of these paths, this fix would be lost with no other signal until someone happens to run the realtime
+# test suite. Fail the emit step immediately instead, right after regeneration, rather than relying on
+# that eventual test run.
+$realtimeFiles = @('azure\ai\projects\_realtime.py', 'azure\ai\projects\aio\_realtime.py')
+foreach ($f in $realtimeFiles) {
+    if (-not (Test-Path $f)) {
+        throw "PostEmitter safety check failed: '$f' is missing. This hand-written file (not tracked by the TypeSpec emitter) carries the SDK client-identification fix from PR #48848; if the emitter deleted or renamed it, restore it from git history before continuing."
+    }
+    $c = Get-Content $f -Raw
+    if ($c -notmatch 'UserAgentPolicy\(sdk_moniker=') {
+        throw "PostEmitter safety check failed: '$f' no longer defines _USER_AGENT via UserAgentPolicy(sdk_moniker=...). The SDK client-identification fix from PR #48848 appears to have been overwritten -- reinstate the User-Agent header + x-ms-client-sdk query param wiring."
+    }
+    if ($c -notmatch '_has_header_case_insensitive') {
+        throw "PostEmitter safety check failed: '$f' no longer guards the User-Agent header with _has_header_case_insensitive. A caller-supplied extra_headers User-Agent (in any casing) would be duplicated instead of honored -- reinstate the case-insensitive check."
+    }
+    if ($c -notmatch 'x-ms-client-sdk') {
+        throw "PostEmitter safety check failed: '$f' no longer sends the x-ms-client-sdk query parameter alongside the User-Agent header -- reinstate it so service telemetry can still attribute traffic on paths that don't forward the header."
+    }
+}
+Write-Host "PostEmitter safety check passed: SDK client-identification fix (PR #48848) is intact in both _realtime.py files."
+
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .

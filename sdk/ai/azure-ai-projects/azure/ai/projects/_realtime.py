@@ -34,13 +34,13 @@ from typing import (
     cast,
 )
 
+from azure.core.pipeline.policies import UserAgentPolicy
+
 from . import models as _models
 from .models._enums import _AgentDefinitionOptInKeys
 from .models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from ._utils.model_base import Model as _Model, SdkJSONEncoder
 from ._version import VERSION
-
-from azure.core.pipeline.policies import UserAgentPolicy
 
 # Scoped to just the voice-agent preview opt-in; callers connecting to other preview agent
 # kinds through this same route can pass a broader value explicitly via ``foundry_features``.
@@ -748,11 +748,22 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
             headers["User-Agent"] = _USER_AGENT
 
         try:
+            # Force the "realtime" WebSocket subprotocol regardless of any caller-supplied
+            # override in ``self._kwargs``: the service requires this exact subprotocol, so
+            # silently accepting a different one here would just move the failure to a less
+            # clear error inside the handshake. Also disable ``websockets``' own
+            # ``user_agent_header`` default: unlike aiohttp, it is a wholly separate mechanism
+            # from ``additional_headers`` -- passing our own "User-Agent" there does not
+            # override it, so without this the connection would carry two distinct
+            # User-Agent-like values.
+            ws_connect_kwargs = dict(self._kwargs)
+            ws_connect_kwargs.pop("subprotocols", None)
             connection = _ws_connect(
                 full_url,
                 additional_headers=headers,
                 subprotocols=[Subprotocol("realtime")],
-                **self._kwargs,
+                user_agent_header=None,
+                **ws_connect_kwargs,
             )
         except BaseException as exc:
             if not isinstance(exc, Exception) or isinstance(exc, (ValueError, RuntimeError)):

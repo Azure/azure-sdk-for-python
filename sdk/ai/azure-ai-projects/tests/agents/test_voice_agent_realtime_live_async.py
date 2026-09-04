@@ -60,6 +60,7 @@ def _get_weather(city: str) -> str:
     return json.dumps({"city": city, "condition": "sunny", "temperature_f": 72})
 
 
+@pytest.mark.live_test_only
 @pytest.mark.skipif(
     not is_live(),
     reason="Live-only: opens a real WebSocket connection to the realtime service, which cannot "
@@ -195,6 +196,8 @@ class TestVoiceAgentRealtimeLiveAsync(TestBase):
         assertion-based test.
         """
         print("\n")
+        model = kwargs.get("foundry_voice_model_name")
+        assert model is not None
         project_client = self.create_async_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("tool-call")
 
@@ -216,7 +219,7 @@ class TestVoiceAgentRealtimeLiveAsync(TestBase):
                 agent_name=agent_name,
                 definition=VoiceAgentDefinition(
                     model_type=VoiceModelType.MANAGED,
-                    model="gpt-realtime",
+                    model=model,
                     instructions=(
                         "You are a helpful voice assistant. Use the get_weather tool when the "
                         "caller asks about the weather, then answer using its result."

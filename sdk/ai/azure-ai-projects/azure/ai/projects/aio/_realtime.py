@@ -48,13 +48,13 @@ from typing import (
     Union,
 )
 
+from azure.core.pipeline.policies import UserAgentPolicy
+
 from .. import models as _models
 from ..models._enums import _AgentDefinitionOptInKeys
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from .._utils.model_base import Model as _Model, SdkJSONEncoder
 from .._version import VERSION
-
-from azure.core.pipeline.policies import UserAgentPolicy
 
 # Scoped to just the voice-agent preview opt-in; callers connecting to other preview agent
 # kinds through this same route can pass a broader value explicitly via ``foundry_features``.

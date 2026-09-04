@@ -10,3 +10,4 @@ extends:
       EnvVars:
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_TEST_USE_CLI_AUTH: 'true'
+      TestMarkArgument: 'live_test_only'

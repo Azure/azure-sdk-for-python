@@ -174,7 +174,8 @@ if ($deployed) {
         -PollIntervalSeconds 30
 
     if (-not $ready) {
-        Write-Warning "The '$deploymentName' deployment did not finish provisioning in time. Live voice-agent tests may fail until it finishes."
+        Write-Error "The '$deploymentName' deployment did not finish provisioning in time. Live voice-agent tests would fail against a not-ready model." -ErrorAction Continue
+        exit 1
     }
 }
 else {

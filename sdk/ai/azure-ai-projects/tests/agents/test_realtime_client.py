@@ -13,11 +13,13 @@ can all be verified without a live service or a recorded transport.
 """
 
 import json
+import inspect
 from unittest.mock import MagicMock, patch
 from urllib.parse import parse_qs, urlparse
 
 import pytest
 from azure.core.credentials import AccessToken
+from websockets.typing import Subprotocol
 
 from azure.ai.projects._realtime import (
     RealtimeConnectionManager,
@@ -176,6 +178,53 @@ class TestRealtimeConnectionManagerEnter:
         headers = kwargs["additional_headers"]
         assert "User-Agent" not in headers
         assert headers["user-agent"] == "custom-user-agent"
+
+    def test_enter_source_retains_client_identification_wiring(self):
+        # Regression guard for the SDK client-identification fix (ported from azure-ai-voicelive
+        # PR #48848) surviving a future TypeSpec regeneration. `_realtime.py` is a hand-written
+        # file that is NOT `_patch.py`-named, so it isn't covered by the code generator's own
+        # "never touch _patch.py" guarantee -- nothing in the TypeSpec emitter is aware this file
+        # exists. The tests above already fail on a *behavioral* regression (wrong header/query
+        # value), but they exercise the code through mocks and could, in principle, still pass
+        # against a rewritten implementation that happens to produce the same observable values by
+        # a different (less safe) path. This inspects the actual source of `enter()` so a partial
+        # revert -- one that drops the case-insensitive guard, say, while keeping the header value
+        # correct for the common case -- is caught directly, independent of the tests above.
+        source = inspect.getsource(RealtimeConnectionManager.enter)
+        assert "_USER_AGENT" in source
+        assert "_has_header_case_insensitive" in source
+        assert "x-ms-client-sdk" in source
+
+    def test_enter_disables_library_default_user_agent_header(self):
+        # Regression test: unlike aiohttp (where an explicit "User-Agent" in `headers` already
+        # takes precedence over its own default), `websockets.sync.client.connect`'s
+        # `user_agent_header` is a wholly separate mechanism from `additional_headers` -- passing
+        # our own "User-Agent" there does not suppress it. Without explicitly disabling it, the
+        # connection would carry two distinct User-Agent-like values.
+        fake_connection = MagicMock()
+        with patch("websockets.sync.client.connect", return_value=fake_connection) as mock_connect:
+            manager = _make_manager()
+            manager.enter()
+            manager.__exit__()
+
+        _args, kwargs = mock_connect.call_args
+        assert kwargs["user_agent_header"] is None
+
+    def test_enter_overrides_caller_supplied_subprotocols_kwarg(self):
+        # Regression test: subprotocols=[Subprotocol("realtime")] is passed explicitly to
+        # _ws_connect, so a caller-supplied subprotocols override forwarded through **kwargs would
+        # otherwise collide ("got multiple values for keyword argument 'subprotocols'"). The
+        # service requires the "realtime" subprotocol, so the override is dropped rather than
+        # honored -- matching the async implementation's handling of its equivalent `protocols`
+        # kwarg.
+        fake_connection = MagicMock()
+        with patch("websockets.sync.client.connect", return_value=fake_connection) as mock_connect:
+            manager = _make_manager(subprotocols=["other"])
+            manager.enter()
+            manager.__exit__()
+
+        _args, kwargs = mock_connect.call_args
+        assert kwargs["subprotocols"] == [Subprotocol("realtime")]
 
     def test_enter_appends_extra_query_and_headers(self):
         fake_connection = MagicMock()

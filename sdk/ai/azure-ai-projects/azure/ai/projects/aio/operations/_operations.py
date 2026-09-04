@@ -4245,8 +4245,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         agent_name: str,
         body: JSON,
         *,
-        etag: List[_models.TelephonyTransferTarget],
-        match_condition: str,
+        etag: str,
+        match_condition: MatchConditions,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -4259,9 +4259,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: JSON
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
-        :paramtype etag: list[~azure.ai.projects.models.TelephonyTransferTarget]
+        :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
-        :paramtype match_condition: str
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4277,8 +4277,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         agent_name: str,
         body: IO[bytes],
         *,
-        etag: List[_models.TelephonyTransferTarget],
-        match_condition: str,
+        etag: str,
+        match_condition: MatchConditions,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -4291,9 +4291,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
-        :paramtype etag: list[~azure.ai.projects.models.TelephonyTransferTarget]
+        :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
-        :paramtype match_condition: str
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str

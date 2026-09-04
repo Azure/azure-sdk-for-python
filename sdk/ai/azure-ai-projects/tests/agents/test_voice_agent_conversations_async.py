@@ -195,46 +195,48 @@ class TestVoiceAgentConversationsAsync(TestBase):
                 )
                 assert fetched_item.get("id") == first_item_id
 
-                # The merged whole-call recording, if the session had time to finalize.
-                if str(conversation.status) == "completed" or conversation.status == "completed":
-                    recording = await conversations.get_agent_conversation_audio(_AGENT_NAME, conversation_id)
-                    assert recording.format is not None
-                    if not recording.blob_uri:
-                        audio_chunks = [
-                            chunk
-                            async for chunk in await conversations.get_agent_conversation_audio_content(
-                                _AGENT_NAME, conversation_id
-                            )
-                        ]
-                        assert len(b"".join(audio_chunks)) > 0
+                # The merged whole-call recording and per-item audio. Completion is a hard
+                # requirement here (not a soft skip): a cassette recorded before the conversation
+                # finalized would otherwise let this test pass while silently never exercising any
+                # of the four audio methods below, hiding a regression in all of them (including
+                # permanently, if such a response were ever re-recorded).
+                assert (
+                    conversation.status == "completed"
+                ), f"Expected a completed conversation to exercise audio assertions, got {conversation.status!r}"
+                recording = await conversations.get_agent_conversation_audio(_AGENT_NAME, conversation_id)
+                assert recording.format is not None
+                if not recording.blob_uri:
+                    audio_chunks = [
+                        chunk
+                        async for chunk in await conversations.get_agent_conversation_audio_content(
+                            _AGENT_NAME, conversation_id
+                        )
+                    ]
+                    assert len(b"".join(audio_chunks)) > 0
 
-                    # A single item's audio, if any item has one.
-                    for item in items:
-                        item_id = item.get("id")
-                        if not item_id:
+                # A single item's audio, if any item has one.
+                for item in items:
+                    item_id = item.get("id")
+                    if not item_id:
+                        continue
+                    try:
+                        item_audio = await conversations.get_agent_conversation_item_audio(
+                            _AGENT_NAME, conversation_id, item_id
+                        )
+                    except HttpResponseError as e:
+                        if e.status_code == 404:
                             continue
-                        try:
-                            item_audio = await conversations.get_agent_conversation_item_audio(
+                        raise
+                    assert item_audio.role is not None
+                    if not item_audio.blob_uri:
+                        item_audio_chunks = [
+                            chunk
+                            async for chunk in await conversations.get_agent_conversation_item_audio_content(
                                 _AGENT_NAME, conversation_id, item_id
                             )
-                        except HttpResponseError as e:
-                            if e.status_code == 404:
-                                continue
-                            raise
-                        assert item_audio.role is not None
-                        if not item_audio.blob_uri:
-                            item_audio_chunks = [
-                                chunk
-                                async for chunk in await conversations.get_agent_conversation_item_audio_content(
-                                    _AGENT_NAME, conversation_id, item_id
-                                )
-                            ]
-                            assert len(b"".join(item_audio_chunks)) > 0
-                        break
-                else:
-                    print(
-                        f"Conversation did not finalize in time (status={conversation.status}); skipping audio checks."
-                    )
+                        ]
+                        assert len(b"".join(item_audio_chunks)) > 0
+                    break
             finally:
                 # Deleting a conversation removes it and all of its responses, items, and audio.
                 await conversations.delete_agent_conversation(_AGENT_NAME, conversation_id)

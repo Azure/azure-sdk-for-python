@@ -96,6 +96,13 @@ IGNORED_SAMPLES = {
         # Runs until Ctrl-C (continuous microphone capture/playback); would hang indefinitely
         # under this non-interactive runner whenever PyAudio and live credentials are available.
         "sample_voice_agent_live_audio_conversation_async.py",
+        # These read back a conversation transcript/audio from a *pre-existing*, already-persisted
+        # voice session via FOUNDRY_VOICE_CONVERSATION_ID, which no automation here provides (the
+        # package's own recorded sample suite skips them for the same reason -- see
+        # samples_to_skip in tests/samples/test_samples.py); running them raises a KeyError before
+        # exercising anything.
+        "sample_voice_agent_read_conversation.py",
+        "sample_voice_agent_read_conversation_audio.py",
     ],
     "azure-eventgrid": [
         "__init__.py",
