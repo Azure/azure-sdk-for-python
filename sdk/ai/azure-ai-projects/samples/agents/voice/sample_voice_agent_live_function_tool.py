@@ -40,7 +40,6 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    RealtimeConversationItemFunctionCall,
     RealtimeConversationItemFunctionCallOutput,
     RealtimeConversationItemMessageUser,
     RealtimeConversationItemMessageUserContent,
@@ -134,8 +133,12 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
                 _safe_print(f"Agent: {event.text}")
             elif isinstance(event, RealtimeServerEventResponseDone):
                 # A response.done that isn't a function call is the final answer for this turn.
+                # Output items are typed models in the tested scenarios here, but the underlying
+                # union is open (forward-compatible with item kinds this SDK doesn't map yet), so
+                # an unrecognized kind could still surface as a plain mapping; check both.
                 if not any(
-                    isinstance(item, RealtimeConversationItemFunctionCall) for item in (event.response.output or [])
+                    (item.get("type") if isinstance(item, dict) else getattr(item, "type", None)) == "function_call"
+                    for item in (event.response.output or [])
                 ):
                     return
             elif isinstance(event, RealtimeServerEventError):
