@@ -26,12 +26,30 @@ USAGE:
 """
 
 import os
+import sys
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import AgentKind, GenerateVoiceAgentRequest
 
 load_dotenv()
+
+
+def _safe_print(text: str) -> None:
+    """Print text that may contain characters the current console can't display.
+
+    The instructions below are model-generated and can contain characters (curly
+    quotes, em-dashes, etc.) outside some legacy, non-Unicode console encodings
+    (for example when stdout is piped/redirected on Windows). Rather than crashing
+    with UnicodeEncodeError, fall back to replacing just the unsupported characters;
+    a real interactive UTF-8 console prints unaffected.
+    """
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        encoding = sys.stdout.encoding or "ascii"
+        print(text.encode(encoding, errors="replace").decode(encoding))
+
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "MyGeneratedVoiceAgent"
@@ -42,7 +60,7 @@ with (
 ):
     agent = project_client.agents.generate_agent(GenerateVoiceAgentRequest(kind=AgentKind.VOICE, name=agent_name))
     print(f"Generated voice agent: {agent.name}")
-    print(f"Instructions:\n{agent.versions.latest.definition.instructions}")  # type: ignore[attr-defined]
+    _safe_print(f"Instructions:\n{agent.versions.latest.definition.instructions}")  # type: ignore[attr-defined]
 
     project_client.agents.delete(agent_name=agent.name)
     print(f"Deleted voice agent: {agent.name}")

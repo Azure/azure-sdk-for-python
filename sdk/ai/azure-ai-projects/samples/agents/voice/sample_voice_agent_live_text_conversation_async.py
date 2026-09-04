@@ -40,6 +40,7 @@ USAGE:
 
 import asyncio
 import os
+import sys
 from typing import Final, Optional
 
 from dotenv import load_dotenv
@@ -61,6 +62,23 @@ from azure.ai.projects.models import (
 )
 
 load_dotenv()
+
+
+def _safe_print(text: str) -> None:
+    """Print text that may contain characters the current console can't display.
+
+    The agent's replies below are model-generated and can contain characters (curly
+    quotes, em-dashes, etc.) outside some legacy, non-Unicode console encodings
+    (for example when stdout is piped/redirected on Windows). Rather than crashing
+    with UnicodeEncodeError, fall back to replacing just the unsupported characters;
+    a real interactive UTF-8 console prints unaffected.
+    """
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        encoding = sys.stdout.encoding or "ascii"
+        print(text.encode(encoding, errors="replace").decode(encoding))
+
 
 # Seconds to wait for the agent to finish its reply.
 _RESPONSE_TIMEOUT: Final = 45
@@ -163,7 +181,7 @@ async def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Op
                         audio_delta_count += 1
                         player.play(event.delta)
                     elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDone):
-                        print(f"Agent: {event.transcript}")
+                        _safe_print(f"Agent: {event.transcript}")
 
             while True:
                 # input() blocks, so read it off the loop in a worker thread.
@@ -223,7 +241,7 @@ async def _read_conversation(client: AIProjectClient, agent_name: str, conversat
         transcript = " ".join(p for p in parts if p)
         print(f"  - {role} id={item.get('id')}")
         if transcript:
-            print(f"      {transcript}")
+            _safe_print(f"      {transcript}")
 
 
 async def text_conversation() -> None:

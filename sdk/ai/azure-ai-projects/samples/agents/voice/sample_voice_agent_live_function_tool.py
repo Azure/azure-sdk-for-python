@@ -31,6 +31,7 @@ USAGE:
 
 import json
 import os
+import sys
 from typing import Any, Final, cast
 
 from dotenv import load_dotenv
@@ -66,6 +67,22 @@ def get_weather(city: str) -> str:
     :rtype: str
     """
     return json.dumps({"city": city, "condition": "sunny", "temperature_f": 72})
+
+
+def _safe_print(text: str) -> None:
+    """Print text that may contain characters the current console can't display.
+
+    The agent's reply below is model-generated and can contain characters (curly
+    quotes, em-dashes, etc.) outside some legacy, non-Unicode console encodings
+    (for example when stdout is piped/redirected on Windows). Rather than crashing
+    with UnicodeEncodeError, fall back to replacing just the unsupported characters;
+    a real interactive UTF-8 console prints unaffected.
+    """
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        encoding = sys.stdout.encoding or "ascii"
+        print(text.encode(encoding, errors="replace").decode(encoding))
 
 
 def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt: str) -> None:
@@ -111,7 +128,7 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
             elif isinstance(event, RealtimeServerEventResponseTextDone):
                 # The sample agent uses a text-only output modality, so the
                 # reply arrives as output text rather than an audio transcript.
-                print(f"Agent: {event.text}")
+                _safe_print(f"Agent: {event.text}")
             elif isinstance(event, RealtimeServerEventResponseDone):
                 # A response.done that isn't a function call is the final answer for this turn.
                 # Output items surface as plain mappings (open union), so use dict-style access.
