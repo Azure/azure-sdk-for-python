@@ -21,7 +21,7 @@ class DummyHttpResponse:
     def text(self):
         if self._expires_on:
             return '{"accessToken": {"expiresOn": "%s"}}' % self._expires_on
-        return '{}'
+        return "{}"
 
 
 class DummyPipelineResponse:

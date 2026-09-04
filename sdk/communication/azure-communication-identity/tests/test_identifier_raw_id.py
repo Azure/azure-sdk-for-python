@@ -9,6 +9,7 @@ import pytest
 import unittest
 from azure.communication.identity import *
 
+
 class IdentifierRawIdTest(unittest.TestCase):
     def test_raw_id(self):
         _assert_raw_id(
@@ -98,42 +99,42 @@ class IdentifierRawIdTest(unittest.TestCase):
         )
         _assert_raw_id(
             TeamsExtensionUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            tenant_id="tenant123",
-            resource_id="resource123",
-            cloud="PUBLIC"
+                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+                tenant_id="tenant123",
+                resource_id="resource123",
+                cloud="PUBLIC",
             ),
             "8:acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
             TeamsExtensionUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            tenant_id="tenant123",
-            resource_id="resource123",
-            cloud="DOD"
+                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+                tenant_id="tenant123",
+                resource_id="resource123",
+                cloud="DOD",
             ),
             "8:dod-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
             TeamsExtensionUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            tenant_id="tenant123",
-            resource_id="resource123",
-            cloud="GCCH"
+                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+                tenant_id="tenant123",
+                resource_id="resource123",
+                cloud="GCCH",
             ),
             "8:gcch-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
             TeamsExtensionUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            tenant_id="tenant123",
-            resource_id="resource123",
-            cloud="PUBLIC",
-            raw_id="8:extension:legacyFormat"
+                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+                tenant_id="tenant123",
+                resource_id="resource123",
+                cloud="PUBLIC",
+                raw_id="8:extension:legacyFormat",
             ),
             "8:extension:legacyFormat",
         )
-        
+
     def test_identifier_from_raw_id(self):
         _assert_communication_identifier(
             "8:acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130",
@@ -213,70 +214,64 @@ class IdentifierRawIdTest(unittest.TestCase):
             MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"),
         )
         _assert_phonenumber_identifier(
-            "4:+112345556789",
-            PhoneNumberIdentifier(value="+112345556789"),
-            withIsAnonymous=False,
-            withAssertedId=False)
+            "4:+112345556789", PhoneNumberIdentifier(value="+112345556789"), withIsAnonymous=False, withAssertedId=False
+        )
         _assert_phonenumber_identifier(
-            "4:112345556789",
-            PhoneNumberIdentifier(value="112345556789"),
-            withIsAnonymous=False,
-            withAssertedId=False)
+            "4:112345556789", PhoneNumberIdentifier(value="112345556789"), withIsAnonymous=False, withAssertedId=False
+        )
         _assert_phonenumber_identifier(
-            "4:otherFormat",
-            PhoneNumberIdentifier(value="otherFormat"),
-            withIsAnonymous=False,
-            withAssertedId=False)
+            "4:otherFormat", PhoneNumberIdentifier(value="otherFormat"), withIsAnonymous=False, withAssertedId=False
+        )
         _assert_phonenumber_identifier(
             "4:207ffef6-9444-41fb-92ab-20eacaae2768",
             PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768"),
             withIsAnonymous=False,
-            withAssertedId=False
+            withAssertedId=False,
         )
         # cspell:disable
         _assert_phonenumber_identifier(
             "4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
-            PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
-                                  raw_id="4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768"),
+            PhoneNumberIdentifier(
+                value="207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
+                raw_id="4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
+            ),
             withIsAnonymous=False,
-            withAssertedId=True
+            withAssertedId=True,
         )
         _assert_phonenumber_identifier(
             "4:anonymous",
             PhoneNumberIdentifier(value="anonymous", raw_id="4:anonymous"),
-            withIsAnonymous=True, withAssertedId=False
+            withIsAnonymous=True,
+            withAssertedId=False,
         )
         _assert_phonenumber_identifier(
-            "4:+112345556789",
-            PhoneNumberIdentifier(value="+112345556789"),
-            withIsAnonymous=False,
-            withAssertedId=False
+            "4:+112345556789", PhoneNumberIdentifier(value="+112345556789"), withIsAnonymous=False, withAssertedId=False
         )
         _assert_communication_identifier(
             "8:acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
             TeamsExtensionUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            tenant_id="tenant123",
-            resource_id="resource123",
-            cloud="PUBLIC",
+                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+                tenant_id="tenant123",
+                resource_id="resource123",
+                cloud="PUBLIC",
             ),
         )
         _assert_communication_identifier(
             "8:dod-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
             TeamsExtensionUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            tenant_id="tenant123",
-            resource_id="resource123",
-            cloud="DOD",
+                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+                tenant_id="tenant123",
+                resource_id="resource123",
+                cloud="DOD",
             ),
         )
         _assert_communication_identifier(
             "8:gcch-acs:resource123_tenant123_45ab2481-1c1c-4005-be24-0ffb879b1130",
             TeamsExtensionUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            tenant_id="tenant123",
-            resource_id="resource123",
-            cloud="GCCH",
+                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+                tenant_id="tenant123",
+                resource_id="resource123",
+                cloud="GCCH",
             ),
         )
         # cspell:enable
@@ -424,36 +419,36 @@ class IdentifierRawIdTest(unittest.TestCase):
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="PUBLIC"
+            cloud="PUBLIC",
         ) == TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="PUBLIC"
+            cloud="PUBLIC",
         )
 
         assert TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="DOD"
+            cloud="DOD",
         ) == TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="DOD"
+            cloud="DOD",
         )
 
         assert TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="GCCH"
+            cloud="GCCH",
         ) == TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="GCCH"
+            cloud="GCCH",
         )
 
         # TeamsExtensionUserIdentifiers are not equal.
@@ -461,50 +456,50 @@ class IdentifierRawIdTest(unittest.TestCase):
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="PUBLIC"
+            cloud="PUBLIC",
         ) != TeamsExtensionUserIdentifier(
             user_id="55ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="PUBLIC"
+            cloud="PUBLIC",
         )
 
         assert TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="PUBLIC"
+            cloud="PUBLIC",
         ) != TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant456",
             resource_id="resource123",
-            cloud="PUBLIC"
+            cloud="PUBLIC",
         )
 
         assert TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="PUBLIC"
+            cloud="PUBLIC",
         ) != TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource456",
-            cloud="PUBLIC"
+            cloud="PUBLIC",
         )
 
         assert TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="PUBLIC"
+            cloud="PUBLIC",
         ) != TeamsExtensionUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             tenant_id="tenant123",
             resource_id="resource123",
-            cloud="DOD"
+            cloud="DOD",
         )
-        
+
         # UnknownIdentifiers are equal.
         assert UnknownIdentifier(identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef") == UnknownIdentifier(
             identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
@@ -530,6 +525,7 @@ def _assert_communication_identifier(raw_id, want):
     for key in want.properties:
         assert key in got.properties
         assert got.properties[key] == want.properties[key]
+
 
 def _assert_phonenumber_identifier(raw_id, want, withIsAnonymous=False, withAssertedId=False):
     # type: (str, PhoneNumberIdentifier, Optional[dict]) -> None
