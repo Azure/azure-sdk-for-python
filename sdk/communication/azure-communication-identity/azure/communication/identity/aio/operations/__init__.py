@@ -12,18 +12,18 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._client import IdentityClient  # type: ignore
+from ._operations import IdentityOperationsOperations  # type: ignore
+from ._operations import TeamsUserOperationsOperations  # type: ignore
+from ._operations import TeamsExtensionOperationsOperations  # type: ignore
 
-try:
-    from ._patch import __all__ as _patch_all
-    from ._patch import *
-except ImportError:
-    _patch_all = []
+from ._patch import __all__ as _patch_all
+from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "IdentityClient",
+    "IdentityOperationsOperations",
+    "TeamsUserOperationsOperations",
+    "TeamsExtensionOperationsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
-
 _patch_sdk()
