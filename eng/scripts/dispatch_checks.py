@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import re
 from dataclasses import dataclass
-from typing import IO, List, Optional
+from typing import IO, List, Optional, Sequence
 
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.variables import in_ci
@@ -55,6 +55,17 @@ INSTALL_AND_TEST_CHECKS = {
     "latestdependency",
     "mindependency",
 }
+# Checks that actually emit package coverage data consumed by the post-dispatch
+# coverage report. Only these justify preserving isolate directories; other checks
+# (e.g. pylint, pyright, samples) produce no coverage, so their environments must be
+# cleaned up immediately even when coverage is not explicitly disabled.
+COVERAGE_PRODUCING_CHECKS = {
+    "whl",
+    "whl_no_aio",
+    "sdist",
+    "devtest",
+    "optional",
+}
 SHARED_RESTORE_ENV = "__shared_restore__"
 
 
@@ -73,9 +84,13 @@ def _cleanup_isolate_dirs() -> None:
     ISOLATE_DIRS_TO_CLEAN.clear()
 
 
-def _finalize_isolate_dirs(coverage_enabled: bool) -> None:
+def _finalize_isolate_dirs(checks: Sequence[str], coverage_enabled: bool) -> None:
     # Azure Pipelines generates the combined coverage report after dispatch completes.
-    if coverage_enabled and in_ci() == 1:
+    # Only preserve isolate directories when the selected checks actually produce
+    # coverage; otherwise (e.g. pylint/pyright/samples runs) clean them up immediately
+    # so they do not accumulate for the remainder of the job.
+    produces_coverage = bool(set(checks) & COVERAGE_PRODUCING_CHECKS)
+    if coverage_enabled and produces_coverage and in_ci() == 1:
         if ISOLATE_DIRS_TO_CLEAN:
             logger.info(
                 "Preserving isolate directories for coverage report generation; "
@@ -765,5 +780,5 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         logger.error("Aborted by user.")
         exit_code = 130
     finally:
-        _finalize_isolate_dirs(coverage_enabled=not args.disablecov)
+        _finalize_isolate_dirs(checks, coverage_enabled=not args.disablecov)
     sys.exit(exit_code)

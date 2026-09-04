@@ -41,33 +41,43 @@ def test_find_coverage_files_reads_package_data_files(tmp_path, monkeypatch):
     )
 
 
-def test_collect_coverage_files_combines_package_data_files(tmp_path, monkeypatch):
-    first_coverage = tmp_path / "sdk" / "alpha" / ".coverage"
-    second_coverage = tmp_path / "sdk" / "beta" / ".coverage"
-    run = mock.Mock()
+def test_collect_coverage_files_relocates_duplicate_package_names(
+    tmp_path, monkeypatch
+):
+    sdk_dir = tmp_path / "sdk"
+    first_coverage = (
+        sdk_dir / "textanalytics" / "azure-ai-textanalytics" / ".coverage.whl"
+    )
+    second_coverage = (
+        sdk_dir / "cognitivelanguage" / "azure-ai-textanalytics" / ".coverage.whl"
+    )
+    # Both packages share an identically named isolate path, so the recorded string is
+    # the same for each; only the originating data file disambiguates them.
+    shared_isolate_path = (
+        ".venv/azure-ai-textanalytics/.venv_whl/lib/python3.11/"
+        "site-packages/azure/ai/textanalytics/_client.py"
+    )
+
+    for coverage_file in (first_coverage, second_coverage):
+        coverage_file.parent.mkdir(parents=True, exist_ok=True)
+        coverage_data = CoverageData(basename=os.fspath(coverage_file))
+        coverage_data.add_lines({shared_isolate_path: {1}})
+        coverage_data.write()
 
     monkeypatch.setattr(create_coverage, "root_dir", os.fspath(tmp_path))
+    monkeypatch.setattr(create_coverage, "sdk_dir", os.fspath(sdk_dir))
     monkeypatch.setattr(
-        create_coverage,
-        "find_coverage_files",
-        lambda: [os.fspath(first_coverage), os.fspath(second_coverage)],
+        create_coverage, "coverage_data_file", os.fspath(tmp_path / ".coverage")
     )
-    monkeypatch.setattr(create_coverage, "run", run)
 
     assert create_coverage.collect_coverage_files()
-    assert run.call_args_list[1] == mock.call(
-        [
-            create_coverage.sys.executable,
-            "-m",
-            "coverage",
-            "combine",
-            "--keep",
-            os.fspath(first_coverage),
-            os.fspath(second_coverage),
-        ],
-        cwd=os.fspath(tmp_path),
-        check=True,
-    )
+
+    combined_coverage = CoverageData(basename=os.fspath(tmp_path / ".coverage"))
+    combined_coverage.read()
+    assert set(combined_coverage.measured_files()) == {
+        "sdk/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_client.py",
+        "sdk/cognitivelanguage/azure-ai-textanalytics/azure/ai/textanalytics/_client.py",
+    }
 
 
 def test_collect_coverage_files_creates_combined_data_file(tmp_path, monkeypatch):
@@ -88,6 +98,9 @@ def test_collect_coverage_files_creates_combined_data_file(tmp_path, monkeypatch
 
     monkeypatch.setattr(create_coverage, "root_dir", os.fspath(tmp_path))
     monkeypatch.setattr(create_coverage, "sdk_dir", os.fspath(sdk_dir))
+    monkeypatch.setattr(
+        create_coverage, "coverage_data_file", os.fspath(tmp_path / ".coverage")
+    )
 
     assert create_coverage.collect_coverage_files()
 

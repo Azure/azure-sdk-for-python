@@ -12,6 +12,8 @@ import re
 
 from subprocess import run
 
+from coverage import CoverageData
+
 from code_cov_report import create_coverage_report
 from common_tasks import run_check_call
 
@@ -22,34 +24,40 @@ sdk_dir = os.path.join(root_dir, "sdk")
 coverage_data_file = os.path.join(root_dir, ".coverage")
 coveragerc = os.path.join(root_dir, ".coveragerc")
 
-# Maps a package name to the package directory that produced its coverage data,
-# recorded as each .coverage file is discovered (see find_coverage_files below). This
-# is populated from the actual originating directory of each coverage file, so it
-# stays unambiguous even when the same package name exists under multiple service
-# directories (e.g. "azure-ai-textanalytics" under both "textanalytics" and
-# "cognitivelanguage").
-package_directories = {}
+# Matches an installed-package location inside an isolate/tox environment. Everything
+# captured after "site-packages/" is the module path relative to the package root.
+_SITE_PACKAGES_MARKER = "/site-packages/"
 
 
 def find_coverage_files():
     coverage_files = []
     for root, _, files in os.walk(sdk_dir):
-        for coverage_file in files:
-            if coverage_file == ".coverage" or coverage_file.startswith(".coverage."):
-                coverage_files.append(os.path.join(root, coverage_file))
-                package_name = os.path.basename(root)
-                existing_directory = package_directories.get(package_name)
-                if existing_directory and existing_directory != root:
-                    logging.warning(
-                        "Multiple package directories produced coverage for %s: %s and %s. "
-                        "Coverage paths for this package may not map back to repository sources.",
-                        package_name,
-                        existing_directory,
-                        root,
-                    )
-                else:
-                    package_directories[package_name] = root
+        coverage_files.extend(
+            os.path.join(root, coverage_file)
+            for coverage_file in files
+            if coverage_file == ".coverage" or coverage_file.startswith(".coverage.")
+        )
     return sorted(coverage_files)
+
+
+def relocate_measured_path(measured_path, origin_dir):
+    """Rewrite an installed-package path recorded in a per-package coverage data file
+    back to the repository source directory that produced it.
+
+    ``origin_dir`` is the package directory that owns the data file being combined, so
+    the mapping stays unambiguous even when the same package name is installed under
+    identically named isolate environments for two different service directories (e.g.
+    ``azure-ai-textanalytics`` under both ``textanalytics`` and ``cognitivelanguage``).
+    Paths that do not point into an isolate environment are returned unchanged.
+    """
+    normalized = measured_path.replace(os.sep, "/")
+    marker_index = normalized.find(_SITE_PACKAGES_MARKER)
+    if marker_index == -1:
+        return measured_path
+
+    module_subpath = normalized[marker_index + len(_SITE_PACKAGES_MARKER) :]
+    relative_origin = os.path.relpath(origin_dir, root_dir).replace(os.sep, "/")
+    return "{}/{}".format(relative_origin, module_subpath)
 
 
 def collect_coverage_files():
@@ -65,16 +73,27 @@ def collect_coverage_files():
         logging.error("No package coverage files found under {}".format(sdk_dir))
         return False
 
-    cov_cmd_array = [sys.executable, "-m", "coverage", "combine", "--keep"]
-    cov_cmd_array.extend(coverage_files)
+    # Combine per-package data files ourselves so each file's paths can be relocated
+    # using its originating package directory before the data is merged. Relying on
+    # "coverage combine" alone would collapse identically named isolate paths from
+    # different service directories into a single, mis-attributed entry.
+    if os.path.exists(coverage_data_file):
+        os.remove(coverage_data_file)
 
-    run(cov_cmd_array, cwd=root_dir, check=True)
+    combined_data = CoverageData(basename=coverage_data_file)
+    for coverage_file in coverage_files:
+        origin_dir = os.path.dirname(coverage_file)
+        package_data = CoverageData(basename=coverage_file)
+        package_data.read()
+        combined_data.update(
+            package_data,
+            map_path=lambda measured_path, origin=origin_dir: relocate_measured_path(
+                measured_path, origin
+            ),
+        )
+    combined_data.write()
 
-    logging.info("after running coverage combine")
-    for root, _, files in os.walk(root_dir):
-        for f in files:
-            if re.match(".coverage*", f):
-                print(os.path.join(root, f))
+    logging.info("after combining coverage data into {}".format(coverage_data_file))
     return True
 
 
@@ -93,12 +112,10 @@ def generate_coverage_xml():
 
 
 def find_package_directory(package_name):
-    package_directory = package_directories.get(package_name)
-    if package_directory:
-        return package_directory
-
-    # Fall back to a filesystem search for callers that never ran
-    # find_coverage_files() (e.g. normalize_venv_paths invoked directly).
+    # Safety-net lookup for the post-XML normalization below. Real runs relocate
+    # isolate paths per data file before combining (see collect_coverage_files), so
+    # this only handles residual paths and intentionally returns None on ambiguity
+    # rather than guessing a service directory by basename.
     matches = []
     for service_name in os.listdir(sdk_dir):
         candidate_directory = os.path.join(sdk_dir, service_name, package_name)

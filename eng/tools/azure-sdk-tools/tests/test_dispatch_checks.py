@@ -3,7 +3,9 @@ import sys
 from types import SimpleNamespace
 from unittest.mock import patch
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+REPO_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..", "..")
+)
 TOOLS_ROOT = os.path.join(REPO_ROOT, "eng", "tools", "azure-sdk-tools")
 if TOOLS_ROOT not in sys.path:
     sys.path.insert(0, TOOLS_ROOT)
@@ -54,9 +56,23 @@ def test_finalize_isolate_dirs_preserves_coverage_sources(tmp_path):
     dispatch_checks.ISOLATE_DIRS_TO_CLEAN.append(os.fspath(isolate_dir))
 
     with patch("eng.scripts.dispatch_checks.in_ci", return_value=1):
-        dispatch_checks._finalize_isolate_dirs(coverage_enabled=True)
+        dispatch_checks._finalize_isolate_dirs(["whl"], coverage_enabled=True)
 
     assert isolate_dir.exists()
+    assert not dispatch_checks.ISOLATE_DIRS_TO_CLEAN
+
+
+def test_finalize_isolate_dirs_removes_sources_for_non_coverage_checks(tmp_path):
+    isolate_dir = tmp_path / ".venv_pylint"
+    isolate_dir.mkdir()
+    dispatch_checks.ISOLATE_DIRS_TO_CLEAN.append(os.fspath(isolate_dir))
+
+    with patch("eng.scripts.dispatch_checks.in_ci", return_value=1):
+        dispatch_checks._finalize_isolate_dirs(
+            ["pylint", "samples"], coverage_enabled=True
+        )
+
+    assert not isolate_dir.exists()
     assert not dispatch_checks.ISOLATE_DIRS_TO_CLEAN
 
 
@@ -66,7 +82,7 @@ def test_finalize_isolate_dirs_removes_github_actions_venvs(tmp_path):
     dispatch_checks.ISOLATE_DIRS_TO_CLEAN.append(os.fspath(isolate_dir))
 
     with patch("eng.scripts.dispatch_checks.in_ci", return_value=2):
-        dispatch_checks._finalize_isolate_dirs(coverage_enabled=True)
+        dispatch_checks._finalize_isolate_dirs(["whl"], coverage_enabled=True)
 
     assert not isolate_dir.exists()
     assert not dispatch_checks.ISOLATE_DIRS_TO_CLEAN
@@ -77,7 +93,7 @@ def test_finalize_isolate_dirs_removes_non_coverage_sources(tmp_path):
     isolate_dir.mkdir()
     dispatch_checks.ISOLATE_DIRS_TO_CLEAN.append(os.fspath(isolate_dir))
 
-    dispatch_checks._finalize_isolate_dirs(coverage_enabled=False)
+    dispatch_checks._finalize_isolate_dirs(["whl"], coverage_enabled=False)
 
     assert not isolate_dir.exists()
     assert not dispatch_checks.ISOLATE_DIRS_TO_CLEAN

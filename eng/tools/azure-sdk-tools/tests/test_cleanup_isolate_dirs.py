@@ -18,9 +18,7 @@ def test_find_isolate_dirs_returns_only_azpysdk_environments(tmp_path):
     for directory in (whl_dir, versioned_dir, unrelated_dir, root_environment):
         directory.mkdir(parents=True)
 
-    assert find_isolate_dirs(os.fspath(tmp_path)) == sorted(
-        [os.fspath(whl_dir), os.fspath(versioned_dir)]
-    )
+    assert find_isolate_dirs(os.fspath(tmp_path)) == sorted([os.fspath(whl_dir), os.fspath(versioned_dir)])
 
 
 def test_cleanup_isolate_dirs_removes_isolates_and_preserves_other_directories(
