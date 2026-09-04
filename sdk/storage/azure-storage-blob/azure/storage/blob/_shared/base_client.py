@@ -57,12 +57,14 @@ from .policies import (
     StorageRequestHook,
     StorageResponseHook,
     StorageSensitiveHeaderCleanupPolicy,
+    StorageSessionPolicy,
 )
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .shared_access_signature import QueryStringConstants
 from .._version import VERSION
 from .._shared_access_signature import _is_credential_sastoken
+from .session import ContainerSessionProvider
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -295,12 +297,13 @@ class StorageAccountHostsMixin(object):
         **kwargs: Any,
     ) -> Tuple[StorageConfiguration, Pipeline]:
         self._credential_policy: Any = None
+        audience = kwargs.pop("audience", None)
         if hasattr(credential, "get_token"):
-            if kwargs.get("audience"):
-                audience = str(kwargs.pop("audience")).rstrip("/") + DEFAULT_OAUTH_SCOPE
+            if audience:
+                scope = str(audience).rstrip("/") + DEFAULT_OAUTH_SCOPE
             else:
-                audience = STORAGE_OAUTH_SCOPE
-            self._credential_policy = StorageBearerTokenCredentialPolicy(cast(TokenCredential, credential), audience)
+                scope = STORAGE_OAUTH_SCOPE
+            self._credential_policy = StorageBearerTokenCredentialPolicy(cast(TokenCredential, credential), scope)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -330,12 +333,38 @@ class StorageAccountHostsMixin(object):
             config.headers_policy,
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            config.logging_policy,
-            StorageResponseHook(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
             StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
+        use_session = bool(kwargs.pop("use_session", False))
+        session_provider = kwargs.pop("session_provider", None)
+        session_account_name = kwargs.pop("session_account_name", None)
+        if use_session:
+            if session_provider is None:
+                sub_kwargs = dict(kwargs)
+                sub_kwargs.pop("_configuration", None)
+                sub_kwargs.pop("pipeline", None)
+                sub_kwargs["transport"] = transport
+                session_provider = ContainerSessionProvider(
+                    f"{self.scheme}://{self.primary_hostname}",
+                    cast(TokenCredential, credential),
+                    audience=audience,
+                    **sub_kwargs,
+                )
+
+            policies.append(
+                StorageSessionPolicy(
+                    account_name=session_account_name or self.account_name,
+                    session_provider=session_provider,
+                )
+            )
+        policies.extend(
+            [
+                config.logging_policy,
+                StorageResponseHook(**kwargs),
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs),
+            ]
+        )
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         config.transport = transport  # type: ignore

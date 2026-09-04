@@ -26,6 +26,7 @@ from ._shared.models import (
     UserDelegationKey,
     Services,
 )
+from ._shared.session import ContainerSessionProvider, Session, SessionProvider
 from ._generated.models import RehydratePriority
 from ._models import (
     BlobType,
@@ -267,4 +268,7 @@ __all__ = [
     "ObjectReplicationPolicy",
     "ObjectReplicationRule",
     "Services",
+    "Session",
+    "SessionProvider",
+    "ContainerSessionProvider",
 ]
