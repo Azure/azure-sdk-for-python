@@ -24,7 +24,9 @@ USAGE:
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the sample voice agent
+    2) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name.
+       Defaults to "gpt-realtime".
+    3) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the sample voice agent
        created and deleted by this script. Defaults to
        "sample-voice-agent-function-tool".
 """
@@ -38,6 +40,7 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    RealtimeConversationItemFunctionCall,
     RealtimeConversationItemFunctionCallOutput,
     RealtimeConversationItemMessageUser,
     RealtimeConversationItemMessageUserContent,
@@ -131,10 +134,8 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
                 _safe_print(f"Agent: {event.text}")
             elif isinstance(event, RealtimeServerEventResponseDone):
                 # A response.done that isn't a function call is the final answer for this turn.
-                # Output items surface as plain mappings (open union), so use dict-style access.
                 if not any(
-                    (item.get("type") if isinstance(item, dict) else getattr(item, "type", None)) == "function_call"
-                    for item in (event.response.output or [])
+                    isinstance(item, RealtimeConversationItemFunctionCall) for item in (event.response.output or [])
                 ):
                     return
             elif isinstance(event, RealtimeServerEventError):
@@ -144,6 +145,7 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
 
 def main() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+    model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
     agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-voice-agent-function-tool"
 
     get_weather_tool = VoiceAgentFunctionTool(
@@ -168,7 +170,7 @@ def main() -> None:
                 agent_name=agent_name,
                 definition=VoiceAgentDefinition(
                     model_type=VoiceModelType.MANAGED,
-                    model="gpt-realtime",
+                    model=model,
                     instructions=(
                         "You are a helpful voice assistant. Use the get_weather tool when the "
                         "caller asks about the weather, then answer using its result."

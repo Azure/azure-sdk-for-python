@@ -30,6 +30,8 @@ USAGE:
        Foundry deployment name (BYOM). Defaults to "gpt-realtime".
     3) FOUNDRY_VOICE_MODEL_TYPE - Optional. "managed" (default) for a
        service-hosted model, or "self_deployed" to bring your own deployment.
+    4) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of the voice agent. If not
+       set, defaults to "sample-voice-agent-with-tools".
 """
 
 import os
@@ -40,7 +42,6 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     RealtimeAudioFormatsAudioPcm,
-    ToolType,
     VoiceAgentDefinition,
     VoiceAgentFunctionTool,
     VoiceAgentMcpTool,
@@ -66,7 +67,7 @@ model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
 # Foundry deployment named by `model`. The service derives whether the model is
 # realtime or cascaded; you don't set that here.
 model_type = os.environ.get("FOUNDRY_VOICE_MODEL_TYPE") or VoiceModelType.MANAGED
-agent_name = "sample-voice-agent-with-tools"
+agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-voice-agent-with-tools"
 
 # A client-executed tool: the service forwards the function call to your app,
 # and your app returns the result over the live session.
@@ -90,11 +91,10 @@ end_call = VoiceAgentSystemTool(name=VoiceAgentSystemToolName.END_CONVERSATION)
 # It references an external server, so it is constructed here for illustration
 # and not attached below. Provide one of server_url, connector_id, or tunnel_id.
 _example_mcp_tool = VoiceAgentMcpTool(
-    type=ToolType.MCP,
     server_label="my-mcp-server",
     server_url="https://example.com/mcp",
     require_approval="never",
-)  # type: ignore[call-overload]
+)
 
 # A toolbox tool references a versioned Foundry toolbox you have created. It is
 # constructed here for illustration; attach it only if the toolbox exists.
@@ -139,9 +139,9 @@ with (
         tools = agent_version.definition.tools or []  # type: ignore[attr-defined]
         print(f"Configured {len(tools)} tool(s):")
         for tool in tools:
-            # Tools belong to an open union, so on read they surface as mappings
-            # keyed by their wire fields (``type`` and, for most kinds, ``name``).
-            print(f"  - {tool['type']}: {tool.get('name', '(unnamed)')}")
+            # `name` isn't declared on every tool kind (e.g. MCP tools have no `name`),
+            # so fall back to a placeholder for kinds that don't define it.
+            print(f"  - {tool.type}: {getattr(tool, 'name', '(unnamed)')}")
     finally:
         project_client.agents.delete(agent_name=agent_name)
         print(f"Deleted voice agent: {agent_name}")

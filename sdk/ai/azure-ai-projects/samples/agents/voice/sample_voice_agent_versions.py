@@ -22,6 +22,8 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
     2) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name.
        Defaults to "gpt-realtime".
+    3) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of the voice agent. If not
+       set, defaults to "sample-versioned-voice-agent".
 """
 
 import os
@@ -34,7 +36,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
-agent_name = "sample-versioned-voice-agent"
+agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-versioned-voice-agent"
 
 
 def make_definition(instructions: str) -> VoiceAgentDefinition:
