@@ -89,28 +89,22 @@ class TestProxyHttpxClientBase:
 
 class TestProxyHttpxClient(TestProxyHttpxClientBase, openai._base_client.SyncHttpxClientWrapper):
     @override
-    def send(self, request: httpx.Request, **kwargs) -> httpx.Response:
+    def _send_single_request(self, request: httpx.Request) -> httpx.Response:
+        # OpenAI auth and redirect-safety hooks must evaluate the original Azure URL before proxy routing.
         if self.is_recording():
             with self._reroute_to_proxy(request):
-                response = super().send(request, **kwargs)
-
-            response.request.url = request.url
-            return response
-        else:
-            return super().send(request, **kwargs)
+                return super()._send_single_request(request)
+        return super()._send_single_request(request)
 
 
 class TestProxyAsyncHttpxClient(TestProxyHttpxClientBase, openai._base_client.AsyncHttpxClientWrapper):
     @override
-    async def send(self, request: httpx.Request, **kwargs) -> httpx.Response:
+    async def _send_single_request(self, request: httpx.Request) -> httpx.Response:
+        # OpenAI auth and redirect-safety hooks must evaluate the original Azure URL before proxy routing.
         if self.is_recording():
             with self._reroute_to_proxy(request):
-                response = await super().send(request, **kwargs)
-
-            response.request.url = request.url
-            return response
-        else:
-            return await super().send(request, **kwargs)
+                return await super()._send_single_request(request)
+        return await super()._send_single_request(request)
 
 
 # OpenAI instantiates these aliases when no custom HTTP client is provided.
