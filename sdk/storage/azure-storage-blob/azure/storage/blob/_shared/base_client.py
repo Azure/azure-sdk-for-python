@@ -32,7 +32,6 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     RedirectPolicy,
     UserAgentPolicy,
-    StorageSessionPolicy,
 )
 
 from .authentication import SharedKeyCredentialPolicy
@@ -58,6 +57,7 @@ from .policies import (
     StorageRequestHook,
     StorageResponseHook,
     StorageSensitiveHeaderCleanupPolicy,
+    StorageSessionPolicy,
 )
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .response_handlers import PartialBatchErrorException, process_storage_error
@@ -136,30 +136,26 @@ class StorageAccountHostsMixin(object):
         self._hosts = kwargs.get("_hosts", {})
         self.scheme = parsed_url.scheme
         self._is_localhost = False
-        self.account_name = kwargs.pop("session_account_name", None)
 
         if service not in ["blob", "queue", "file-share", "dfs"]:
             raise ValueError(f"Invalid service: {service}")
         service_name = service.split("-")[0]
         account = parsed_url.netloc.split(f".{service_name}.core.")
 
-        if self.account_name is None:
-            self.account_name = account[0] if len(account) > 1 else None
+        self.account_name = account[0] if len(account) > 1 else None
         if (
             not self.account_name
             and parsed_url.netloc.startswith("localhost")
             or parsed_url.netloc.startswith("127.0.0.1")
         ):
             self._is_localhost = True
-            if self.account_name is None:
-                self.account_name = parsed_url.path.strip("/")
+            self.account_name = parsed_url.path.strip("/")
 
         secondary_hostname = ""
         if len(account) > 1:
-            derived_name, primary_hostname, secondary_hostname = _construct_endpoints(
+            self.account_name, primary_hostname, secondary_hostname = _construct_endpoints(
                 parsed_url.netloc, account[0]
             )
-            self.account_name = self.account_name or derived_name
         else:
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
 
@@ -301,12 +297,13 @@ class StorageAccountHostsMixin(object):
         **kwargs: Any,
     ) -> Tuple[StorageConfiguration, Pipeline]:
         self._credential_policy: Any = None
+        audience = kwargs.pop("audience", None)
         if hasattr(credential, "get_token"):
-            if kwargs.get("audience"):
-                audience = str(kwargs.pop("audience")).rstrip("/") + DEFAULT_OAUTH_SCOPE
+            if audience:
+                scope = str(audience).rstrip("/") + DEFAULT_OAUTH_SCOPE
             else:
-                audience = STORAGE_OAUTH_SCOPE
-            self._credential_policy = StorageBearerTokenCredentialPolicy(cast(TokenCredential, credential), audience)
+                scope = STORAGE_OAUTH_SCOPE
+            self._credential_policy = StorageBearerTokenCredentialPolicy(cast(TokenCredential, credential), scope)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -340,6 +337,7 @@ class StorageAccountHostsMixin(object):
         ]
         use_session = bool(kwargs.pop("use_session", False))
         session_provider = kwargs.pop("session_provider", None)
+        session_account_name = kwargs.pop("session_account_name", None)
         if use_session:
             if session_provider is None:
                 sub_kwargs = dict(kwargs)
@@ -349,12 +347,13 @@ class StorageAccountHostsMixin(object):
                 session_provider = ContainerSessionProvider(
                     f"{self.scheme}://{self.primary_hostname}",
                     cast(TokenCredential, credential),
+                    audience=audience,
                     **sub_kwargs,
                 )
 
             policies.append(
                 StorageSessionPolicy(
-                    account_name=self.account_name,
+                    account_name=session_account_name or self.account_name,
                     session_provider=session_provider,
                 )
             )

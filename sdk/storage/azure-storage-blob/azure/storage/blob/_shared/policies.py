@@ -59,7 +59,7 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
-_SIGNED_HEADERS = (
+_SESSION_SIGNED_HEADERS = (
     "content-encoding",
     "content-language",
     "content-length",
@@ -109,7 +109,7 @@ def _apply_session_auth(
     headers = {name.lower(): value for name, value in http_request.headers.items() if value}
     if headers.get("content-length") == "0":
         del headers["content-length"]
-    signed_headers = "\n".join(headers.get(h, "") for h in _SIGNED_HEADERS) + "\n"
+    signed_headers = "\n".join(headers.get(h, "") for h in _SESSION_SIGNED_HEADERS) + "\n"
 
     # 2) Canonicalized x-ms-* headers, sorted by the service-emulating comparator.
     x_ms_headers = _storage_header_sort(
@@ -1041,9 +1041,6 @@ class StorageSessionPolicy(HTTPPolicy):
         :return: The session that was applied, else None.
         :rtype: ~azure.storage.blob._shared.session.Session or None
         """
-        if not self._session_provider.is_request_eligible(request):
-            return None
-
         session = self._session_provider.get_session(request)
         if session is None or not session.session_token or not session.session_key:
             return None

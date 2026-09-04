@@ -2747,7 +2747,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert blobs == ["a/b/blob2", "a/b/blob3", "a/b/blob4", "a/blob1"]
 
 
-@BlobPreparer()
+    @BlobPreparer()
     @recorded_by_proxy
     def test_create_session(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
