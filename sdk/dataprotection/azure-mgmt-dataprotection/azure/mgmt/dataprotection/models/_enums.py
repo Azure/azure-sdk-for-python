@@ -223,6 +223,17 @@ class FeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DATA_SOURCE_TYPE."""
 
 
+class GranularityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of GranularityLevel."""
+
+    VAULT_LEVEL = "VaultLevel"
+    """VAULT_LEVEL."""
+    PROTECTED_ITEM_LEVEL = "ProtectedItemLevel"
+    """PROTECTED_ITEM_LEVEL."""
+    PROTECTED_ITEM_WITH_PARENT_TAG = "ProtectedItemWithParentTag"
+    """PROTECTED_ITEM_WITH_PARENT_TAG."""
+
+
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type. 'SystemAssigned' and 'UserAssigned' are mutually exclusive. 'SystemAssigned'
     will use implicitly created managed identity.
