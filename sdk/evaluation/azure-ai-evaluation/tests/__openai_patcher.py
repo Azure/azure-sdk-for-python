@@ -2,11 +2,9 @@
 
 .. note::
 
-    This module has side-effects!
-
-    Importing this module will replace the default httpx.Client used
-    by the openai package with one that can redirect it's traffic
-    to the Azure SDK test-proxy on demand.
+    Importing this module replaces OpenAI's default sync and async HTTP
+    wrapper classes with proxy-aware subclasses. The subclasses preserve
+    whichever underlying transport OpenAI selected, including httpx2.
 
 """
 
@@ -115,6 +113,6 @@ class TestProxyAsyncHttpxClient(TestProxyHttpxClientBase, openai._base_client.As
             return await super().send(request, **kwargs)
 
 
-# These wrappers are the default HTTP clients instantiated by OpenAI.
+# OpenAI instantiates these aliases when no custom HTTP client is provided.
 openai._base_client.SyncHttpxClientWrapper = TestProxyHttpxClient
 openai._base_client.AsyncHttpxClientWrapper = TestProxyAsyncHttpxClient

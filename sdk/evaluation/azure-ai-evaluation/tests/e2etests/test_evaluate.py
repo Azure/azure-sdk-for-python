@@ -548,9 +548,10 @@ class TestUserAgent:
 
         expected_user_agent = f"{base_user_agent} {added_useragent}"
 
-        from tests.__openai_patcher import TestProxyAsyncHttpxClient
+        from openai import _base_client as openai_base_client
 
-        with self._transparent_mock_method(TestProxyAsyncHttpxClient, "send") as mock:
+        # __openai_patcher replaces this alias at import time; patching the alias is transport-agnostic.
+        with self._transparent_mock_method(openai_base_client.AsyncHttpxClientWrapper, "send") as mock:
             evaluate(
                 data=data_file,
                 evaluators={"fluency": FluencyEvaluator(user_agent_model_config)},
