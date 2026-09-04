@@ -87,9 +87,7 @@ def collect_coverage_files():
         package_data.read()
         combined_data.update(
             package_data,
-            map_path=lambda measured_path, origin=origin_dir: relocate_measured_path(
-                measured_path, origin
-            ),
+            map_path=lambda measured_path, origin=origin_dir: relocate_measured_path(measured_path, origin),
         )
     combined_data.write()
 
@@ -103,11 +101,7 @@ def generate_coverage_xml():
         commands = ["coverage", "xml", "-i", "--rcfile", coveragerc]
         return run_check_call(commands, root_dir, always_exit=False) is None
 
-    logging.error(
-        "Coverage file is not available at {} to generate coverage XML".format(
-            coverage_data_file
-        )
-    )
+    logging.error("Coverage file is not available at {} to generate coverage XML".format(coverage_data_file))
     return False
 
 

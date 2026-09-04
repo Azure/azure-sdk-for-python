@@ -3,9 +3,7 @@ import sys
 from types import SimpleNamespace
 from unittest.mock import patch
 
-REPO_ROOT = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "..", "..", "..")
-)
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
 TOOLS_ROOT = os.path.join(REPO_ROOT, "eng", "tools", "azure-sdk-tools")
 if TOOLS_ROOT not in sys.path:
     sys.path.insert(0, TOOLS_ROOT)
@@ -68,9 +66,7 @@ def test_finalize_isolate_dirs_removes_sources_for_non_coverage_checks(tmp_path)
     dispatch_checks.ISOLATE_DIRS_TO_CLEAN.append(os.fspath(isolate_dir))
 
     with patch("eng.scripts.dispatch_checks.in_ci", return_value=1):
-        dispatch_checks._finalize_isolate_dirs(
-            ["pylint", "samples"], coverage_enabled=True
-        )
+        dispatch_checks._finalize_isolate_dirs(["pylint", "samples"], coverage_enabled=True)
 
     assert not isolate_dir.exists()
     assert not dispatch_checks.ISOLATE_DIRS_TO_CLEAN
