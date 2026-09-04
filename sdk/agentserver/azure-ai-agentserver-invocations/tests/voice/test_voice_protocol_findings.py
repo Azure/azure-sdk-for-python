@@ -17,6 +17,7 @@ from azure.ai.agentserver.invocations.voice import (
     ResponseCreated,
     SessionEnd,
     SessionReady,
+    SessionTermination,
     UserSpeechStarted,
     VoiceAgentServerHost,
 )
@@ -131,6 +132,7 @@ async def test_session_end_commits_terminal_and_stops_dispatch(register_session_
     assert later_events == []
     assert disconnect_events == []
     assert len(terminating_sessions) == 1
+    assert terminating_sessions[0].termination is SessionTermination.COMPLETED
     with pytest.raises(RuntimeError, match="Voice Session is terminating"):
         await terminating_sessions[0].send(SessionReady())
     assert websocket.send_text.await_count == int(register_session_end_callback)
@@ -143,6 +145,7 @@ async def test_session_end_commits_terminal_before_post_callback_cancellation_pr
     websocket.scope = {}
     websocket.receive.side_effect = [_voice_frame("session.end", "m_end", reason="completed")]
     callback_sessions = []
+    terminating_outcomes = []
     probe_entered = asyncio.Event()
     release_probe = asyncio.Event()
     probe_calls = 0
@@ -164,20 +167,22 @@ async def test_session_end_commits_terminal_before_post_callback_cancellation_pr
         assert isinstance(event, SessionEnd)
         callback_sessions.append(session)
 
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        terminating_outcomes.append(session.termination)
+
     handler = asyncio.create_task(app._handle_voice_connection(websocket))  # pylint: disable=protected-access
-    try:
-        await asyncio.wait_for(probe_entered.wait(), timeout=1)
-        assert len(callback_sessions) == 1
-        outcomes = await asyncio.gather(callback_sessions[0].send(SessionReady()), return_exceptions=True)
-        assert len(outcomes) == 1
-        assert isinstance(outcomes[0], RuntimeError)
-        assert str(outcomes[0]) == "Voice Session is terminating"
-        assert websocket.send_text.await_count == 0
-    finally:
-        release_probe.set()
-        await asyncio.wait_for(handler, timeout=1)
+    await asyncio.wait_for(probe_entered.wait(), timeout=1)
+    assert len(callback_sessions) == 1
+
+    handler.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await handler
 
     assert probe_calls == 2
+    assert callback_sessions[0].termination is SessionTermination.COMPLETED
+    assert terminating_outcomes == [SessionTermination.COMPLETED]
+    assert websocket.send_text.await_count == 0
 
 
 @pytest.mark.asyncio

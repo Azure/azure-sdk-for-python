@@ -442,9 +442,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
 
         # The following condition check is a hot fix for settling a message received for non-session queue after
         # lock expiration.
-        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
-        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
-        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
+        # Settlement success cannot be verified where the outcome is not awaited - uamqp never can
+        # (https://github.com/Azure/azure-uamqp-c/issues/274).
         if not self._session and message._lock_expired:
             raise MessageLockLostError(
                 message="The lock on the message lock has expired.",
@@ -480,6 +479,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
                         settle_operation,
                         dead_letter_reason=dead_letter_reason,
                         dead_letter_error_description=dead_letter_error_description,
+                        await_outcome=self._await_settlement_outcome,
+                        outcome_timeout=self._config.timeout,
                     )
                     return
                 except RuntimeError as exception:

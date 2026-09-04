@@ -160,6 +160,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+        blob_name = blob_name.replace("\\", "/")
         resource_path = container_name + "/" + blob_name
 
         sas = _BlobSharedAccessHelper()

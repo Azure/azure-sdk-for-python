@@ -86,81 +86,14 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
-# A block of code in the implementation of "list_memories", in both sync 
-# and async _operations.py files, needs to be moved up. It's emitted in the wrong place,
-# in the inline function named "prepare_request". Instead it should be moved up into the
-# main body of the "list_memories" method, right after the line `error_map.update(kwargs.pop("error_map", {}) or {})`.
-# If you don't do this, the PR pipeline will show failures in Pyright (`error: "body" is unbound (reportUnboundVariable)`)
-# and some tests will fail. This is the block of code that needs to move up:
-#            if body is _Unset:
-#                if scope is _Unset:
-#                    raise TypeError("missing required argument: scope")
-#                body = {"scope": scope}
-#                body = {k: v for k, v in body.items() if v is not None}
-# The block inside prepare_request has 12-space indentation; after moving to the main function body it needs 8-space indentation.
-# Strategy: Find the last list_memories method, then do a targeted string replacement that moves the block right after error_map.update.
-$oldPattern = @"
-        error_map.update(kwargs.pop("error_map", {}) or {})
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        def prepare_request(_continuation_token=None):
-            if body is _Unset:
-                if scope is _Unset:
-                    raise TypeError("missing required argument: scope")
-                body = {"scope": scope}
-                body = {k: v for k, v in body.items() if v is not None}
-
-            _request = build_beta_memory_stores_list_memories_request(
-"@
-$newPattern = @"
-        error_map.update(kwargs.pop("error_map", {}) or {})
-        if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
-            body = {"scope": scope}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        def prepare_request(_continuation_token=None):
-            _request = build_beta_memory_stores_list_memories_request(
-"@
-$files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
-foreach ($f in $files) {
-    $c = Get-Content $f -Raw
-    # Find all occurrences of "def list_memories(" and get the index of the last one
-    $methodMatches = [regex]::Matches($c, 'def list_memories\(')
-    if ($methodMatches.Count -eq 0) { continue }
-    $lastMethodStart = $methodMatches[$methodMatches.Count - 1].Index
-    
-    # Find the pattern to replace - first occurrence after the last list_memories method
-    $patternEscaped = [regex]::Escape($oldPattern)
-    $patternMatches = [regex]::Matches($c, $patternEscaped)
-    $matchToReplace = $null
-    foreach ($m in $patternMatches) {
-        if ($m.Index -gt $lastMethodStart) {
-            $matchToReplace = $m
-            break
-        }
-    }
-    if ($matchToReplace -eq $null) { continue }
-    
-    # Replace only that specific occurrence
-    $c = $c.Substring(0, $matchToReplace.Index) + $newPattern + $c.Substring($matchToReplace.Index + $matchToReplace.Length)
-    
-    Set-Content $f $c -NoNewline
-}
-
-
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .
+
+# Regenerate API review artifacts and the public method inventory.
+azpysdk apistub .
+$apiStubExitCode = $LASTEXITCODE
+.\GeneratePublicMethods.ps1
+if ($apiStubExitCode -ne 0) {
+    throw "API stub generation failed with exit code $apiStubExitCode."
+}

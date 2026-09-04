@@ -41,6 +41,7 @@ def _make_input(**overrides) -> ResilientResponseInput:
         disposition="re-invoke",
         agent_reference={"name": "a", "version": "1"},
         agent_session_id="sess_1",
+        agent_session_guid="11111111111111111111111111111111",
         user_id_key="user-key",
         call_id="call-key",
         client_headers={"client-trace-id": "t-1"},
@@ -63,6 +64,7 @@ def test_round_trip_preserves_all_fields() -> None:
     assert restored.response_id == "resp_abc"
     assert restored.disposition == "re-invoke"
     assert restored.agent_session_id == "sess_1"
+    assert restored.agent_session_guid == "11111111111111111111111111111111"
     assert restored.user_id_key == "user-key"
     assert restored.call_id == "call-key"
     assert restored.client_headers == {"client-trace-id": "t-1"}

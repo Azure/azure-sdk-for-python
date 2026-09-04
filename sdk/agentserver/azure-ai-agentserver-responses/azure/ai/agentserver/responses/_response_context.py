@@ -193,8 +193,9 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         # non-steerable chains each fork is its own identity (full response_id),
         # while steerable chains share the partition key of the sequential chain.
         self._steerable: bool = steerable
-        # Agent + session identity used to scope ``conversation_chain_id`` (and
-        # the resilient task id, which is the same hash with a fixed prefix).
+        # Agent + public session identity used to scope
+        # ``conversation_chain_id``. Hosted task orchestration may use a
+        # separate private session-incarnation scope for its physical task id.
         self._agent_name: str = agent_name
         self._session_id: str = session_id
 
@@ -239,8 +240,10 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         key embedded in the chain's response IDs (chained response IDs all carry
         the same embedded key), so it stays stable across turns and across crash
         recovery without any history walk. The resilient task backing the
-        conversation uses this same hash (with a fixed prefix), so the two never
-        drift apart.
+        conversation follows the same chain partition, but hosted deployments
+        may apply a private session-incarnation scope and therefore use a
+        different physical task id. Treat this value as the stable
+        handler-facing chain identity, not as the task-store record id.
 
         Priority for the underlying chain partition:
 
