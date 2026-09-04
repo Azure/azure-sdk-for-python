@@ -16732,10 +16732,11 @@ class RealtimeServerEventConversationItemAdded(
 
     * When the client sends a `conversation.item.create` event.
     * When the input audio buffer is committed. In this case the item will be a user message
-    containing the audio from the buffer.
+      containing the audio from the buffer.
     * When the model is generating a Response. In this case the `conversation.item.added` event
-    will be sent when the model starts generating a specific Item, and thus it will not yet have
-    any content (and `status` will be `in_progress`).
+      will be sent when the model starts generating a specific Item, and thus it will not yet have
+      any content (and `status` will be `in_progress`).
+
     The event will include the full content of the Item (except when model is generating a
     Response) except for audio data, which can be retrieved separately with a
     `conversation.item.retrieve` event if necessary.
@@ -16787,13 +16788,13 @@ class RealtimeServerEventConversationItemCreated(
     event:
 
     * The server is generating a Response, which if successful will produce
-    either one or two Items, which will be of type `message`
-    (role `assistant`) or type `function_call`.
+      either one or two Items, which will be of type `message`
+      (role `assistant`) or type `function_call`.
     * The input audio buffer has been committed, either by the client or the
-    server (in `server_vad` mode). The server will take the content of the
-    input audio buffer and add it to a new user message Item.
+      server (in `server_vad` mode). The server will take the content of the
+      input audio buffer and add it to a new user message Item.
     * The client has sent a `conversation.item.create` event to add a new Item
-    to the Conversation.
+      to the Conversation.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -19150,7 +19151,7 @@ class RealtimeServerEventSessionCreated(
     """The unique ID of the server event. Required."""
     type: Literal[RealtimeServerEventType.SESSION_CREATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The event type, must be ``session.created``. Required. SESSION_CREATED."""
-    session: "_unions.VoiceAgentSessionResponse" = rest_field(
+    session: "_models.VoiceAgentSessionResponseConfig" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The session configuration. Required. Is one of the following types:
@@ -19164,7 +19165,7 @@ class RealtimeServerEventSessionCreated(
         self,
         *,
         event_id: str,
-        session: "_unions.VoiceAgentSessionResponse",
+        session: "_models.VoiceAgentSessionResponseConfig",
         conversation_id: Optional[str] = None,
     ) -> None: ...
 
@@ -19198,7 +19199,7 @@ class RealtimeServerEventSessionUpdated(
     """The unique ID of the server event. Required."""
     type: Literal[RealtimeServerEventType.SESSION_UPDATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The event type, must be ``session.updated``. Required. SESSION_UPDATED."""
-    session: "_unions.VoiceAgentSessionResponse" = rest_field(
+    session: "_models.VoiceAgentSessionResponseConfig" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The session configuration. Required. Is one of the following types:
@@ -19209,7 +19210,7 @@ class RealtimeServerEventSessionUpdated(
         self,
         *,
         event_id: str,
-        session: "_unions.VoiceAgentSessionResponse",
+        session: "_models.VoiceAgentSessionResponseConfig",
     ) -> None: ...
 
     @overload
@@ -20282,12 +20283,10 @@ class SessionLogEvent(_Model):  # pylint: disable=docstring-keyword-should-match
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
-    on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
-    connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -24221,13 +24220,14 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
 
     * `openai`: `voice` and `speed`.
     * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
-    `custom_lexicon_url`,
-    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+      `custom_lexicon_url`,
+      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
     * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
-    `personal_voice_model`; the voice name is derived from the avatar.
+      `personal_voice_model`; the voice name is derived from the avatar.
     * `azure-realtime-native`: `voice` and `speed`.
+
     `format` and `output_audio_timestamp_types` apply to every voice type.
 
     :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
@@ -25116,7 +25116,9 @@ class VoiceAgentClientEventSessionUpdate(_Model):  # pylint: disable=docstring-k
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The event type, must be ``session.update``. Required. SESSION_UPDATE."""
-    session: "_unions.VoiceAgentSessionUpdate" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    session: "_models.VoiceAgentSessionUpdateConfig" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The voice-agent session settings to update. Required. Is one of the following types:
      VoiceAgentSessionUpdateConfig"""
 
@@ -25125,7 +25127,7 @@ class VoiceAgentClientEventSessionUpdate(_Model):  # pylint: disable=docstring-k
         self,
         *,
         type: Literal[RealtimeClientEventType.SESSION_UPDATE],
-        session: "_unions.VoiceAgentSessionUpdate",
+        session: "_models.VoiceAgentSessionUpdateConfig",
         event_id: Optional[str] = None,
     ) -> None: ...
 
@@ -28708,7 +28710,7 @@ class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-sho
     :vartype completed_at: ~datetime.datetime
     """
 
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])  # type: ignore[reportIncompatibleVariableOverride]
     """The unique id of the response. Required."""
     output: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -28717,7 +28719,7 @@ class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-sho
      response (GET .../responses/{response_id}) or use the paged response-items route (GET
      .../responses/{response_id}/items) for its output items. Each item's ``response_id`` also links
      it back to this response in the conversation-level items list."""
-    conversation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    conversation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])  # type: ignore[reportIncompatibleVariableOverride]
     """The id of the conversation this response belongs to. Required."""
     audio: Optional["_models.VoiceResponseAudio"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]

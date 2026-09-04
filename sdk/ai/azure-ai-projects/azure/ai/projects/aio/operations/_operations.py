@@ -346,27 +346,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
         return deserialized  # type: ignore
 
-    @overload
-    async def generate_agent(
-        self, body: _models.GenerateVoiceAgentRequest, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Generate an agent.
-
-        Generates and creates an agent from kind-specific high-level inputs. The generated definition
-        remains fully editable through the standard agent versioning operations.
-
-        :param body: The kind-specific inputs for generating and creating an agent. Required.
-        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
-    async def generate_agent(self, body: "_unions.GenerateAgentRequest", **kwargs: Any) -> _models.AgentDetails:
+    async def generate_agent(self, body: _models.GenerateVoiceAgentRequest, **kwargs: Any) -> _models.AgentDetails:
         """Generate an agent.
 
         Generates and creates an agent from kind-specific high-level inputs. The generated definition
@@ -2249,29 +2230,23 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         Each SSE frame contains:
 
         * `event`: always `"log"`
-        * `data`: a plain-text log line (currently JSON-formatted, but the schema
-        is not contractual and may include additional keys or change format
-        over time — clients should treat it as an opaque string)
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)
 
         Example SSE frames:
 
         .. code-block::
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting
-        FoundryCBAgent server on port 8088"}
+           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting FoundryCBAgent server on port 8088"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application
-        startup complete."}
+           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application startup complete."}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
-        connected to container"}
+           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since
-        last 60 seconds"}
+           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since last 60 seconds"}
 
         The stream remains open until the client disconnects or the server
         terminates the connection. Clients should handle reconnection as needed.
@@ -2313,7 +2288,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        kwargs.pop("stream", None)  # must always stream; discard any caller override
+        kwargs.pop("stream", None)  # must always stream; discard any caller override
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4266,8 +4243,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         agent_name: str,
         body: JSON,
         *,
-        etag: List[_models.TelephonyTransferTarget],
-        match_condition: str,
+        etag: str,
+        match_condition: MatchConditions,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -4280,9 +4257,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: JSON
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
-        :paramtype etag: list[~azure.ai.projects.models.TelephonyTransferTarget]
+        :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
-        :paramtype match_condition: str
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4298,8 +4275,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         agent_name: str,
         body: IO[bytes],
         *,
-        etag: List[_models.TelephonyTransferTarget],
-        match_condition: str,
+        etag: str,
+        match_condition: MatchConditions,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -4312,9 +4289,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
-        :paramtype etag: list[~azure.ai.projects.models.TelephonyTransferTarget]
+        :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
-        :paramtype match_condition: str
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
