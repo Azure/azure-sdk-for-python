@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from types import SimpleNamespace
 from typing import Any
 
@@ -68,8 +68,8 @@ def _batch() -> TraceBatch:
     return TraceBatch(
         marker="fixture-marker",
         trace_ids=("trace-1", "trace-2"),
-        window_start=datetime(2026, 9, 1, 1, tzinfo=UTC),
-        window_end=datetime(2026, 9, 1, 2, tzinfo=UTC),
+        window_start=datetime(2026, 9, 1, 1, tzinfo=timezone.utc),
+        window_end=datetime(2026, 9, 1, 2, tzinfo=timezone.utc),
     )
 
 
@@ -142,7 +142,7 @@ def test_emit_fixture_traces_builds_defects_and_controls() -> None:
             "conversation-3",
         ]
     )
-    fixed_time = datetime(2026, 9, 1, 12, tzinfo=UTC)
+    fixed_time = datetime(2026, 9, 1, 12, tzinfo=timezone.utc)
 
     batch = emit_fixture_traces(
         "unused-connection-string",

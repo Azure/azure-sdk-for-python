@@ -11,7 +11,7 @@ import time
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Protocol, cast
 
 from azure.ai.projects import AIProjectClient
@@ -240,7 +240,7 @@ def emit_fixture_traces(
     *,
     exporter_factory: Callable[[str], Any] | None = None,
     uuid_factory: Callable[[], str] = lambda: uuid.uuid4().hex,
-    now: Callable[[], datetime] = lambda: datetime.now(UTC),
+    now: Callable[[], datetime] = lambda: datetime.now(timezone.utc),
 ) -> TraceBatch:
     """Emit fictional destructive-tool defects and healthy control traces."""
     if defect_trace_count <= 0:
