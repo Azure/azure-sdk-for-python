@@ -2,23 +2,11 @@
 
 [comment]: # (Change log guidance: https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance)
 
-## 0.0.18b3 (Unreleased)
+## 1.0.0 (2026-09-03)
 
 ### Features Added
 
-- Some feature
-
-### Breaking Changes
-
-- Some breaking change
-
-### Bugs Fixed
-
-- Some bug fix
-
-### Other Changes
-
-- Some other change
+- GA release
 
 ## 0.0.18b2 (2020-09-04)
 
