@@ -16470,31 +16470,6 @@ class StaticRoutesConfig(TypedDict, total=False):
      spoke. Known values are: \"Contains\" and \"Equal\"."""
 
 
-class StopCircuitLinkFailoverTestParameterBody(TypedDict, total=False):
-    """StopCircuitLinkFailoverTestParameterBody.
-
-    :ivar stopParameters: Parameters supplied to stop the link failover simulation on the express
-     route circuit. Required.
-    :vartype stopParameters: "ExpressRouteLinkFailoverStopApiParameters"
-    """
-
-    stopParameters: Required["ExpressRouteLinkFailoverStopApiParameters"]
-    """Parameters supplied to stop the link failover simulation on the express route circuit.
-     Required."""
-
-
-class StopSiteFailoverTestParameterBody(TypedDict, total=False):
-    """StopSiteFailoverTestParameterBody.
-
-    :ivar stopParameters: Parameters supplied to stop the failover simulation on the express route
-     gateway. Required.
-    :vartype stopParameters: "ExpressRouteFailoverStopApiParameters"
-    """
-
-    stopParameters: Required["ExpressRouteFailoverStopApiParameters"]
-    """Parameters supplied to stop the failover simulation on the express route gateway. Required."""
-
-
 class StorageAccountSettings(TypedDict, total=False):
     """Storage account where the connection analyzer writes its output.
 
