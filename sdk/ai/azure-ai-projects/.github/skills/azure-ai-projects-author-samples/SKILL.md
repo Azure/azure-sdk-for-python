@@ -9,7 +9,7 @@ Run from `sdk\ai\azure-ai-projects`. This workflow handles both uncommitted emis
 
 ## 1. Establish the API delta
 
-Regenerate `api.md` with `azpysdk apistub .`. Choose the comparison base explicitly:
+Regenerate `api.md` and `api.metadata.yml` together with `azpysdk apistub .`; both generated files are required by the API consistency check. Choose the comparison base explicitly:
 
 ```powershell
 # Uncommitted emission/customization changes
