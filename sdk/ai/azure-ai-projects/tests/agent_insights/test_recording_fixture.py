@@ -29,9 +29,7 @@ class _AgentOperations:
         self.versions = versions or []
         self.created: list[dict[str, Any]] = []
 
-    def list_versions(
-        self, agent_name: str, *, order: str | None = None, **kwargs: Any
-    ) -> list[Any]:
+    def list_versions(self, agent_name: str, *, order: str | None = None, **kwargs: Any) -> list[Any]:
         del agent_name, kwargs
         assert order == "asc"
         return self.versions
@@ -56,9 +54,7 @@ class _AgentOperations:
         )
         created = SimpleNamespace(
             version="1",
-            definition=SimpleNamespace(
-                kind="external", otel_agent_id=definition.otel_agent_id
-            ),
+            definition=SimpleNamespace(kind="external", otel_agent_id=definition.otel_agent_id),
         )
         self.versions.append(created)
         return created
@@ -79,9 +75,7 @@ def test_reconcile_external_agent_creates_missing_version() -> None:
     agent = reconcile_external_agent(operations, "fixture-agent", "fixture-otel")
 
     assert agent == FixtureAgent("fixture-agent", "1", "fixture-otel")
-    assert operations.created[0]["metadata"] == {
-        "agent_insights_recording_fixture": "v1"
-    }
+    assert operations.created[0]["metadata"] == {"agent_insights_recording_fixture": "v1"}
     assert operations.created[0]["definition"].otel_agent_id == "fixture-otel"
 
 
@@ -104,32 +98,24 @@ def test_reconcile_external_agent_reuses_matching_version() -> None:
         [
             SimpleNamespace(
                 version="1",
-                definition=SimpleNamespace(
-                    kind="external", otel_agent_id="unexpected-otel"
-                ),
+                definition=SimpleNamespace(kind="external", otel_agent_id="unexpected-otel"),
             )
         ],
         [
             SimpleNamespace(
                 version="1",
-                definition=SimpleNamespace(
-                    kind="external", otel_agent_id="fixture-otel"
-                ),
+                definition=SimpleNamespace(kind="external", otel_agent_id="fixture-otel"),
             ),
             SimpleNamespace(
                 version="2",
-                definition=SimpleNamespace(
-                    kind="external", otel_agent_id="fixture-otel"
-                ),
+                definition=SimpleNamespace(kind="external", otel_agent_id="fixture-otel"),
             ),
         ],
     ],
 )
 def test_reconcile_external_agent_rejects_drift(versions: list[Any]) -> None:
     with pytest.raises(RecordingFixtureError):
-        reconcile_external_agent(
-            _AgentOperations(versions), "fixture-agent", "fixture-otel"
-        )
+        reconcile_external_agent(_AgentOperations(versions), "fixture-agent", "fixture-otel")
 
 
 def test_emit_fixture_traces_builds_defects_and_controls() -> None:
@@ -210,9 +196,7 @@ def test_wait_for_trace_ingestion_retries_role_propagation_failure() -> None:
                 error = HttpResponseError(message="Forbidden")
                 error.status_code = 403
                 raise error
-            table = SimpleNamespace(
-                columns=["trace_id"], rows=[["trace-1"], ["trace-2"]]
-            )
+            table = SimpleNamespace(columns=["trace_id"], rows=[["trace-1"], ["trace-2"]])
             return SimpleNamespace(status=LogsQueryStatus.SUCCESS, tables=[table])
 
         def close(self) -> None:

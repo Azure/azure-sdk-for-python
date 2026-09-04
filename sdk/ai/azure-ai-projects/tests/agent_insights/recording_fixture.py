@@ -58,9 +58,7 @@ class FixtureSettings:
             project_endpoint=_required_environment("FOUNDRY_PROJECT_ENDPOINT"),
             agent_name=_required_environment("FOUNDRY_AGENT_NAME"),
             otel_agent_id=_required_environment("AGENT_INSIGHTS_OTEL_AGENT_ID"),
-            application_insights_resource_id=_required_environment(
-                "AGENT_INSIGHTS_APPLICATION_INSIGHTS_RESOURCE_ID"
-            ),
+            application_insights_resource_id=_required_environment("AGENT_INSIGHTS_APPLICATION_INSIGHTS_RESOURCE_ID"),
         )
 
 
@@ -80,9 +78,7 @@ class TraceBatch:
 
 
 class _AgentOperations(Protocol):
-    def list_versions(
-        self, agent_name: str, *, order: str | None = None, **kwargs: Any
-    ) -> Any: ...
+    def list_versions(self, agent_name: str, *, order: str | None = None, **kwargs: Any) -> Any: ...
 
     def create_version(
         self,
@@ -128,9 +124,7 @@ LogsClientFactory = Callable[[TokenCredential], _LogsClient]
 TraceEmitter = Callable[[str, FixtureAgent, int, int], TraceBatch]
 
 
-def _default_project_client_factory(
-    endpoint: str, credential: TokenCredential
-) -> _ProjectClient:
+def _default_project_client_factory(endpoint: str, credential: TokenCredential) -> _ProjectClient:
     return cast(
         _ProjectClient,
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True),
@@ -226,9 +220,7 @@ def reconcile_external_agent(
         return _validate_agent_version(created, agent_name, otel_agent_id)
 
     if len(versions) != 1:
-        raise RecordingFixtureError(
-            "The recording fixture agent contains an unexpected number of immutable versions."
-        )
+        raise RecordingFixtureError("The recording fixture agent contains an unexpected number of immutable versions.")
     return _validate_agent_version(versions[0], agent_name, otel_agent_id)
 
 
@@ -324,12 +316,8 @@ def wait_for_trace_ingestion(
             )
         except HttpResponseError as error:
             status_code = getattr(error, "status_code", None)
-            if status_code not in (403, 408, 429) and not (
-                isinstance(status_code, int) and status_code >= 500
-            ):
-                raise RecordingFixtureError(
-                    "Application Insights rejected the recording-fixture query."
-                ) from error
+            if status_code not in (403, 408, 429) and not (isinstance(status_code, int) and status_code >= 500):
+                raise RecordingFixtureError("Application Insights rejected the recording-fixture query.") from error
         except (ServiceRequestError, ServiceResponseError):
             pass
         else:
@@ -348,9 +336,7 @@ def wait_for_trace_ingestion(
             break
         sleep(min(10.0, remaining))
 
-    raise RecordingFixtureError(
-        "Application Insights did not expose all recording-fixture traces before the timeout."
-    )
+    raise RecordingFixtureError("Application Insights did not expose all recording-fixture traces before the timeout.")
 
 
 def _wait_for_foundry_access(
@@ -366,13 +352,9 @@ def _wait_for_foundry_access(
     while True:
         try:
             agent = reconcile_external_agent(project.agents, agent_name, otel_agent_id)
-            connection_string = str(
-                project.telemetry.get_application_insights_connection_string() or ""
-            ).strip()
+            connection_string = str(project.telemetry.get_application_insights_connection_string() or "").strip()
             if not connection_string:
-                raise RecordingFixtureError(
-                    "The Foundry project returned no Application Insights connection string."
-                )
+                raise RecordingFixtureError("The Foundry project returned no Application Insights connection string.")
             return agent, connection_string
         except HttpResponseError as error:
             status_code = getattr(error, "status_code", None)
@@ -386,9 +368,7 @@ def _wait_for_foundry_access(
             sleep(min(10.0, remaining))
 
 
-def _validate_agent_version(
-    value: Any, agent_name: str, otel_agent_id: str
-) -> FixtureAgent:
+def _validate_agent_version(value: Any, agent_name: str, otel_agent_id: str) -> FixtureAgent:
     version = str(getattr(value, "version", "") or "").strip()
     definition = getattr(value, "definition", None)
     kind = _wire_value(getattr(definition, "kind", "")).casefold()
@@ -422,9 +402,7 @@ def _emit_conversation(
             kind=SpanKind.INTERNAL,
         ) as chat_span:
             _set_agent_attributes(chat_span, agent, conversation_id, marker, "chat")
-            chat_span.set_attribute(
-                "gen_ai.request.model", "external-recording-fixture"
-            )
+            chat_span.set_attribute("gen_ai.request.model", "external-recording-fixture")
             chat_span.set_attribute("gen_ai.usage.input_tokens", 24)
             chat_span.set_attribute("gen_ai.usage.output_tokens", 16)
             chat_span.set_attribute(
@@ -453,9 +431,7 @@ def _emit_conversation(
                     )
                     tool_span.set_attribute("gen_ai.tool.name", "delete_test_workspace")
                     tool_span.set_attribute("gen_ai.tool.type", "function")
-                    tool_span.set_attribute(
-                        "gen_ai.tool.call.id", f"call-delete-{index}"
-                    )
+                    tool_span.set_attribute("gen_ai.tool.call.id", f"call-delete-{index}")
                     tool_span.set_attribute(
                         "gen_ai.tool.call.arguments",
                         json.dumps(
@@ -473,9 +449,7 @@ def _emit_conversation(
                 output = f"Fictional workspace {alias} is active. No changes were made."
             else:
                 output = f"Fictional workspace {alias} is active."
-            chat_span.set_attribute(
-                "gen_ai.output.messages", _messages("assistant", output)
-            )
+            chat_span.set_attribute("gen_ai.output.messages", _messages("assistant", output))
             chat_span.set_attribute("gen_ai.response.finish_reasons", '["stop"]')
     return trace_id
 
@@ -546,9 +520,7 @@ union isfuzzy=true requests, dependencies
 def _extract_trace_ids(tables: list[Any]) -> set[str]:
     trace_ids: set[str] = set()
     for table in tables:
-        columns = [
-            str(getattr(column, "name", column) or "") for column in table.columns
-        ]
+        columns = [str(getattr(column, "name", column) or "") for column in table.columns]
         if "trace_id" not in columns:
             continue
         trace_id_index = columns.index("trace_id")
@@ -570,9 +542,7 @@ def _wire_value(value: Any) -> str:
 def _required_environment(name: str) -> str:
     value = os.environ.get(name, "").strip()
     if not value:
-        raise RecordingFixtureError(
-            f"Required environment variable '{name}' is not set."
-        )
+        raise RecordingFixtureError(f"Required environment variable '{name}' is not set.")
     return value
 
 
@@ -581,9 +551,7 @@ def main() -> None:
     settings = FixtureSettings.from_environment()
     agent, batch = provision_recording_fixture(settings)
     print(f"Reconciled external agent version {agent.version}.")
-    print(
-        f"Exported and verified {len(batch.trace_ids)} Agent Insights fixture traces."
-    )
+    print(f"Exported and verified {len(batch.trace_ids)} Agent Insights fixture traces.")
 
 
 if __name__ == "__main__":

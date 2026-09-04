@@ -64,9 +64,7 @@ def main() -> None:
         for existing_monitor in existing_monitors:
             try:
                 monitor_operations.delete(existing_monitor.id)
-                print(
-                    f"Deleted existing monitor `{existing_monitor.id}` for agent `{agent_name}`."
-                )
+                print(f"Deleted existing monitor `{existing_monitor.id}` for agent `{agent_name}`.")
             except ResourceNotFoundError:
                 print(f"Existing monitor `{existing_monitor.id}` was already deleted.")
 
@@ -122,18 +120,12 @@ def main() -> None:
             runs = list(monitor_operations.list_runs(monitor.id, limit=5))
             print(f"Listed runs: {len(runs)}")
 
-            insights = list(
-                monitor_operations.list_insights(monitor.id, include_details=True)
-            )
+            insights = list(monitor_operations.list_insights(monitor.id, include_details=True))
             print(f"Listed insights: {len(insights)}")
             for insight in insights:
                 severity = getattr(insight.severity, "value", insight.severity)
                 status = getattr(insight.status, "value", insight.status)
-                proposed_fix = (
-                    insight.details.recommended_actions.proposed_fix
-                    if insight.details is not None
-                    else None
-                )
+                proposed_fix = insight.details.recommended_actions.proposed_fix if insight.details is not None else None
                 fix_kind = (
                     getattr(proposed_fix.kind, "value", proposed_fix.kind)
                     if proposed_fix is not None

@@ -31,9 +31,7 @@ from test_fine_tuning_samples_helpers import get_fine_tuning_sample_env_vars
 def _assert_agent_insights_output(print_output_calls: list[str]) -> None:
     output = "\n".join(print_output_calls)
 
-    assert re.search(
-        r"^Run status: succeeded$", output, re.MULTILINE
-    ), "Agent Insights run did not succeed."
+    assert re.search(r"^Run status: succeeded$", output, re.MULTILINE), "Agent Insights run did not succeed."
 
     def read_count(label: str) -> int:
         match = re.search(rf"^{re.escape(label)}: (\d+)$", output, re.MULTILINE)
@@ -41,12 +39,7 @@ def _assert_agent_insights_output(print_output_calls: list[str]) -> None:
         return int(match.group(1))
 
     assert read_count("Traces analyzed") > 0
-    assert (
-        read_count("Insights created")
-        + read_count("Insights updated")
-        + read_count("Insights reopened")
-        > 0
-    )
+    assert read_count("Insights created") + read_count("Insights updated") + read_count("Insights reopened") > 0
     assert read_count("Listed insights") > 0
 
 
