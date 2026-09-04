@@ -181,7 +181,7 @@ For the on-demand sample, successful output must show all of the following:
 - The monitor was deleted during cleanup.
 
 For the scheduled sample, successful output must show all of the following:
-- A monitor was created or reused for the selected agent.
+- A scheduled monitor was created for the selected agent.
 - The retrieved monitor is enabled.
 - The run interval is a positive number of hours.
 - The service returned a next scheduled run time.
