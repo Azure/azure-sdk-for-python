@@ -66,15 +66,18 @@
     "resources": [
         {
             "type": "Microsoft.AppConfiguration/configurationStores",
-            "apiVersion": "2019-10-01",
+            "apiVersion": "2024-06-01",
             "name": "[variables('uniqueAzConfigName')]",
             "location": "[parameters('location')]",
             "sku": {
                 "name": "[parameters('sku')]"
             },
             "properties": {
-                "endpoint": "[variables('endpointValue')]",
-                "disableLocalAuth": true
+                "disableLocalAuth": true,
+                "dataPlaneProxy": {
+                    "authenticationMode": "Pass-through",
+                    "privateLinkDelegation": "Disabled"
+                }
             }
         },
         {
@@ -133,70 +136,9 @@
             "properties": {
                 "value": "Very secret value 2"
             }
-        },
-        {
-            "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
-            "apiVersion": "2020-07-01-preview",
-            "name": "[concat(variables('uniqueAzConfigName'), '/', 'message')]",
-            "dependsOn": [
-                "[variables('uniqueAzConfigName')]"
-            ],
-            "properties": {
-                "value": "hi"
-            }
-        },
-        {
-            "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
-            "apiVersion": "2020-07-01-preview",
-            "name": "[concat(variables('uniqueAzConfigName'), '/', 'message$dev')]",
-            "dependsOn": [
-                "[variables('uniqueAzConfigName')]"
-            ],
-            "properties": {
-                "value": "test"
-            }
-        },
-        {
-            "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
-            "apiVersion": "2020-07-01-preview",
-            "name": "[concat(variables('uniqueAzConfigName'), '/', 'my_json')]",
-            "dependsOn": [
-                "[variables('uniqueAzConfigName')]"
-            ],
-            "properties": {
-                "value": "{\"key\": \"value\"}",
-                "contentType": "application/json"
-            }
-        },
-        {
-            "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
-            "apiVersion": "2020-07-01-preview",
-            "name": "[concat(variables('uniqueAzConfigName'), '/', 'test.trimmed')]",
-            "dependsOn": [
-                "[variables('uniqueAzConfigName')]"
-            ],
-            "properties": {
-                "value": "key"
-            }
-        },
-        {
-            "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
-            "apiVersion": "2020-07-01-preview",
-            "name": "[concat(variables('uniqueAzConfigName'), '/', '.appconfig.featureflag~2FAlpha')]",
-            "dependsOn": [
-                "[variables('uniqueAzConfigName')]"
-            ],
-            "properties": {
-                "value": "{\"id\":\"Alpha\",\"description\":\"\",\"enabled\":false,\"conditions\":{\"client_filters\":[]}}",
-                "contentType": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
-            }
         }
     ],
     "outputs": {
-        "APPCONFIGURATION_CONNECTION_STRING": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.AppConfiguration/configurationStores',variables('uniqueAzConfigName')), '2019-02-01-preview').value[0].connectionString]"
-        },
         "APPCONFIGURATION_ENDPOINT_STRING": {
             "type": "string",
             "value": "[variables('endpointValue')]"

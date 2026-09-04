@@ -4,16 +4,16 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 154 unique public methods:
+There are a total of 157 unique public methods:
 - 5 stable methods on the client
-- 55 stable methods on top-level sub-clients
+- 58 stable methods on top-level sub-clients
 - 94 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
-| `agents` | AgentsOperations | 23 |
+| `agents` | AgentsOperations | 26 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 9 |
 | `deployments` | DeploymentsOperations | 2 |
@@ -70,6 +70,8 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .agents.download_session_file
 .agents.enable
 .agents.get
+.agents.get_microsoft365_package
+.agents.get_microsoft365_publish_defaults
 .agents.get_session
 .agents.get_session_log_stream
 .agents.get_version
@@ -77,6 +79,7 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .agents.list_session_files
 .agents.list_sessions
 .agents.list_versions
+.agents.publish_to_microsoft365
 .agents.stop_session
 .agents.update_details
 .agents.upload_session_file
@@ -140,14 +143,14 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .beta.agent_insight_monitors.update
 .beta.agent_insight_monitors.update_insight
 
-.beta.agents.cancel_optimization_job
 .beta.agents.begin_create_optimization_job*
+.beta.agents.cancel_optimization_job
 .beta.agents.delete_optimization_job
 .beta.agents.get_optimization_job
 .beta.agents.list_optimization_jobs
 
-.beta.datasets.cancel_generation_job
 .beta.datasets.begin_create_generation_job*
+.beta.datasets.cancel_generation_job
 .beta.datasets.delete_generation_job
 .beta.datasets.get_generation_job
 .beta.datasets.list_generation_jobs
@@ -158,8 +161,8 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .beta.evaluation_taxonomies.list
 .beta.evaluation_taxonomies.update
 
-.beta.evaluators.cancel_generation_job
 .beta.evaluators.begin_create_generation_job*
+.beta.evaluators.cancel_generation_job
 .beta.evaluators.create_version
 .beta.evaluators.delete_generation_job
 .beta.evaluators.delete_version

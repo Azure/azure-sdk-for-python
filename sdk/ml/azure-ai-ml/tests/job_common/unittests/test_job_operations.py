@@ -241,6 +241,28 @@ class TestJobOperations:
             with pytest.raises(Exception):
                 mock_job_operation.create_or_update(job=job)
 
+    def test_append_tid_to_studio_url_reuses_tenant_id_across_jobs(self, mock_job_operation: JobOperations) -> None:
+        # Regression test for issue #48415: the tenant id is decoded from the credential once per
+        # JobOperations instance and reused across subsequent jobs, so ``list()`` iteration no
+        # longer pays a ``get_token()`` cost per item.
+        tid = "11111111-1111-1111-1111-111111111111"
+        studio_a = Mock()
+        studio_a.endpoint = "https://ml.azure.com/runs/a?wsid=/subs/x/resourceGroups/y/workspaces/z&"
+        studio_b = Mock()
+        studio_b.endpoint = "https://ml.azure.com/runs/b?wsid=/subs/x/resourceGroups/y/workspaces/z&"
+        job_a = Mock(services={"Studio": studio_a})
+        job_b = Mock(services={"Studio": studio_b})
+
+        with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
+            mock_get_token.return_value = AccessToken(token=jwt.encode({"tid": tid}, key="utf-8"), expires_on=1234)
+            mock_job_operation._append_tid_to_studio_url(job_a)
+            mock_job_operation._append_tid_to_studio_url(job_b)
+
+            assert studio_a.endpoint.endswith(f"&tid={tid}")
+            assert studio_b.endpoint.endswith(f"&tid={tid}")
+            assert mock_job_operation._tenant_id == tid
+            mock_get_token.assert_called_once()
+
     @pytest.mark.skip(reason="Function under test no longer returns Job as output")
     def test_command_job_resolver_with_virtual_cluster(self, mock_job_operation: JobOperations) -> None:
         expected = "/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/virtualclusters/testvcinmaster"
