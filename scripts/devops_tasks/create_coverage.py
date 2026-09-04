@@ -22,15 +22,33 @@ sdk_dir = os.path.join(root_dir, "sdk")
 coverage_data_file = os.path.join(root_dir, ".coverage")
 coveragerc = os.path.join(root_dir, ".coveragerc")
 
+# Maps a package name to the package directory that produced its coverage data,
+# recorded as each .coverage file is discovered (see find_coverage_files below). This
+# is populated from the actual originating directory of each coverage file, so it
+# stays unambiguous even when the same package name exists under multiple service
+# directories (e.g. "azure-ai-textanalytics" under both "textanalytics" and
+# "cognitivelanguage").
+package_directories = {}
+
 
 def find_coverage_files():
     coverage_files = []
     for root, _, files in os.walk(sdk_dir):
-        coverage_files.extend(
-            os.path.join(root, coverage_file)
-            for coverage_file in files
-            if coverage_file == ".coverage" or coverage_file.startswith(".coverage.")
-        )
+        for coverage_file in files:
+            if coverage_file == ".coverage" or coverage_file.startswith(".coverage."):
+                coverage_files.append(os.path.join(root, coverage_file))
+                package_name = os.path.basename(root)
+                existing_directory = package_directories.get(package_name)
+                if existing_directory and existing_directory != root:
+                    logging.warning(
+                        "Multiple package directories produced coverage for %s: %s and %s. "
+                        "Coverage paths for this package may not map back to repository sources.",
+                        package_name,
+                        existing_directory,
+                        root,
+                    )
+                else:
+                    package_directories[package_name] = root
     return sorted(coverage_files)
 
 
@@ -75,11 +93,17 @@ def generate_coverage_xml():
 
 
 def find_package_directory(package_name):
+    package_directory = package_directories.get(package_name)
+    if package_directory:
+        return package_directory
+
+    # Fall back to a filesystem search for callers that never ran
+    # find_coverage_files() (e.g. normalize_venv_paths invoked directly).
     matches = []
     for service_name in os.listdir(sdk_dir):
-        package_directory = os.path.join(sdk_dir, service_name, package_name)
-        if os.path.isdir(package_directory):
-            matches.append(package_directory)
+        candidate_directory = os.path.join(sdk_dir, service_name, package_name)
+        if os.path.isdir(candidate_directory):
+            matches.append(candidate_directory)
 
     if len(matches) == 1:
         return matches[0]
@@ -93,15 +117,8 @@ def find_package_directory(package_name):
 
 
 def normalize_venv_paths(coverage_xml):
-    package_directories = {}
-
-    def get_package_directory(package_name):
-        if package_name not in package_directories:
-            package_directories[package_name] = find_package_directory(package_name)
-        return package_directories[package_name]
-
     def replace_file_path(match):
-        package_directory = get_package_directory(match.group("package"))
+        package_directory = find_package_directory(match.group("package"))
         if not package_directory:
             return match.group(0)
 
@@ -118,7 +135,7 @@ def normalize_venv_paths(coverage_xml):
     )
 
     def replace_import_path(match):
-        package_directory = get_package_directory(match.group("package"))
+        package_directory = find_package_directory(match.group("package"))
         if not package_directory:
             return match.group(0)
 
