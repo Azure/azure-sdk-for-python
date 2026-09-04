@@ -1,9 +1,11 @@
 # Release History
 
-## 1.6.0 (Unreleased)
+## 2.0.0 (Unreleased)
 
 ### Features Added
 
+- Added support for service API version `2026-09-23`, which is now the default. This version is
+  functionally equivalent to `2025-06-30`.
 - Added support for a new communication identifier `TeamsExtensionUserIdentifier`.
     - New identifier maps rawIds with format `8:acs:{resourceId}_{tenantId}_{userId}`.
     - With this version, rawId starting with `8:acs` may be either `CommunicationUserIdentifier` or new `TeamsExtensionUserIdentifier`.
@@ -17,7 +19,7 @@
   changes to the public API surface: method names, parameters, and return types are unchanged,
   and `AccessToken.expires_on` continues to carry the expiry string exactly as returned by the
   service.
-- The default service API version is now `2025-06-30` (previously `2023-10-01`).
+
 ## 1.5.1 (Unreleased)
 
 ### Features Added
