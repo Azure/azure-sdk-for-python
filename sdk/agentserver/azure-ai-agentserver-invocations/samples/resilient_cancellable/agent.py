@@ -63,8 +63,15 @@ def checkpoint_store_name(session_id: str) -> str:
     isolation, so the store is namespaced by the invocation's session id (as the
     other resilient samples do). Shared with app.py so the poll/cancel endpoints
     read the same scope.
+
+    The session component is **hashed**: a protocol session id can be up to 256
+    characters, and the local ``FoundryStateStore`` backend base64-encodes the
+    whole store name into a single filename, which would blow past the 255-byte
+    ``NAME_MAX`` and fail this no-cloud sample with ``ENAMETOOLONG``. A fixed-width
+    SHA-256 digest keeps the name bounded while remaining unique per session.
     """
-    return f"resilient-cancellable/{session_id}"
+    digest = hashlib.sha256(session_id.encode("utf-8")).hexdigest()
+    return f"resilient-cancellable/{digest}"
 
 
 def durable_task_id(session_id: str, invocation_id: str, user_id: str) -> str:
@@ -215,7 +222,11 @@ async def cancellable_job(ctx: TaskContext[dict]) -> dict[str, Any]:
             # backward to the entry-time value.
             logger.exception("cancellable_job failed for %s", name)
             try:
-                current = await store.get_item(ctx.task_id)
+                # Keep THIS execution's last-owned ETag. Re-reading the latest
+                # ETag would defeat the checkpoint CAS: if we lost a race to a
+                # recovered/new owner, our stale ``done`` must NOT clobber the
+                # winner's newer progress — the if_match then fails and we skip
+                # the failure write.
                 await store.set_item(
                     ctx.task_id,
                     {
@@ -225,7 +236,7 @@ async def cancellable_job(ctx: TaskContext[dict]) -> dict[str, Any]:
                         "status": "failed",
                         "error": str(exc),
                     },
-                    if_match=current.etag if current else None,
+                    if_match=etag,
                 )
             except Exception:  # noqa: BLE001 — never mask the original failure
                 logger.warning("could not persist failed status for %s", name)

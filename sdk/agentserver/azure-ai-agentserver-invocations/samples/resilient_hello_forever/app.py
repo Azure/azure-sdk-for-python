@@ -127,7 +127,8 @@ async def handle_invoke(request: Request) -> Response:
         except FoundryStorageConflictError:
             existing = await store.get_item(task_id)
             stop_marker = await store.get_item(f"{task_id}{STOP_SUFFIX}")
-            status = (existing.value.get("status") if existing else None) or "running"
+            evalue = existing.value if existing else {}
+            status = evalue.get("status") or "running"
             if stop_marker is not None:
                 status = "stopped"
             if stop_marker is not None or status == "failed":
@@ -140,6 +141,9 @@ async def handle_invoke(request: Request) -> Response:
                     status_code=409,
                 )
             # Nonterminal ("running"): fall through to (re-)schedule idempotently.
+            # Reuse the PERSISTED name, not this retry's body, so an orphan retry
+            # cannot mutate the identity recorded by the original invocation.
+            name = str(evalue.get("name", name))
     finally:
         await store.aclose()
 

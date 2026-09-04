@@ -200,23 +200,25 @@ async def test_hello_world_recovers_orphaned_seed(
     monkeypatch.setattr(hw, "_STEP_DELAY", 0.0)
     inv, sess = "inv-hw-orphan", "sess-hw"
 
-    # Seed an orphaned nonterminal record directly (no task started).
+    # Seed an orphaned nonterminal record directly (no task started) with real
+    # progress (3/5) so we can prove the retry does not roll it back.
     task_id = hw.durable_task_id(sess, inv, "u")
     store = await hw.open_checkpoint_store(sess, "u")
     async with store:
         await store.create_item(
-            task_id, {"name": "ada", "steps": 2, "completed_steps": 0, "status": "in_progress"}
+            task_id, {"name": "ada", "steps": 5, "completed_steps": 3, "status": "in_progress"}
         )
 
-    # POST must recover it: 202 started (not 409).
+    # POST with a DIFFERENT body (steps=99): must recover (202) but reuse the
+    # PERSISTED parameters, not the retry's — so it finishes at the original 5.
     code, body = _status(
         await app.handle_invoke(
-            _Req(body=b'{"name": "ada", "steps": 2}', invocation_id=inv, session_id=sess)
+            _Req(body=b'{"name": "eve", "steps": 99}', invocation_id=inv, session_id=sess)
         )
     )
     assert code == 202, f"expected orphan recovery (202), got {code}: {body}"
 
-    # And it runs to completion.
+    # And it runs to completion at the persisted total (5), preserving progress.
     for _ in range(200):
         code, body = _status(
             await app.handle_get(_Req(invocation_id=inv, session_id=sess))
@@ -225,6 +227,7 @@ async def test_hello_world_recovers_orphaned_seed(
             break
         await asyncio.sleep(0.01)
     assert body["status"] == "completed"
+    assert body["total_steps"] == 5 and body["completed_steps"] == 5
 
 
 @pytest.mark.asyncio

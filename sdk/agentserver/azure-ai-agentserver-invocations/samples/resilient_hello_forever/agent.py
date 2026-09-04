@@ -64,8 +64,15 @@ def checkpoint_store_name(session_id: str) -> str:
     or stopped by another — important because POST accepts a caller-supplied
     invocation id that a different session could otherwise reuse as a key. Shared
     with app.py so the poll/cancel endpoints read the same scope.
+
+    The session component is **hashed**: a protocol session id can be up to 256
+    characters, and the local ``FoundryStateStore`` backend base64-encodes the
+    whole store name into a single filename, which would blow past the 255-byte
+    ``NAME_MAX`` and fail this no-cloud sample with ``ENAMETOOLONG``. A fixed-width
+    SHA-256 digest keeps the name bounded while remaining unique per session.
     """
-    return f"resilient-hello-forever/{session_id}"
+    digest = hashlib.sha256(session_id.encode("utf-8")).hexdigest()
+    return f"resilient-hello-forever/{digest}"
 
 
 def durable_task_id(session_id: str, invocation_id: str, user_id: str) -> str:
@@ -182,11 +189,14 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
         except Exception as exc:  # noqa: BLE001 — record failure, then re-raise
             # A raised exception is terminal (the one-shot record is deleted), so
             # without this the durable checkpoint would keep reporting ``running``
-            # forever. Best-effort write of a terminal ``failed`` status; if the
-            # ETag moved we still re-raise so the framework marks the task failed.
+            # forever.
             logger.exception("hello_forever failed for %s", name)
             try:
-                current = await store.get_item(ctx.task_id)
+                # Keep THIS execution's last-owned ETag. Re-reading the latest
+                # ETag would defeat the checkpoint CAS: if we lost a race to a
+                # recovered/new owner, our stale ``n`` must NOT clobber the
+                # winner's newer progress — the if_match then fails and we skip
+                # the failure write.
                 await store.set_item(
                     ctx.task_id,
                     {
@@ -195,7 +205,7 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
                         "status": "failed",
                         "error": str(exc),
                     },
-                    if_match=current.etag if current else None,
+                    if_match=etag,
                 )
             except Exception:  # noqa: BLE001 — never mask the original failure
                 logger.warning("could not persist failed status for %s", name)

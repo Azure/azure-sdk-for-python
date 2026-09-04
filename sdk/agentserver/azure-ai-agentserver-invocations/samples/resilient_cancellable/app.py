@@ -140,7 +140,8 @@ async def handle_invoke(request: Request) -> Response:
             seeded_now = True
         except FoundryStorageConflictError:
             existing = await store.get_item(task_id)
-            status = (existing.value.get("status") if existing else None) or "in_progress"
+            evalue = existing.value if existing else {}
+            status = evalue.get("status") or "in_progress"
             if status in _TERMINAL:
                 return JSONResponse(
                     {
@@ -150,7 +151,12 @@ async def handle_invoke(request: Request) -> Response:
                     },
                     status_code=409,
                 )
-            # Nonterminal: fall through to (re-)schedule idempotently.
+            # Nonterminal: fall through to (re-)schedule idempotently. Reuse the
+            # PERSISTED parameters (name/steps), not this retry's body, so a retry
+            # reusing the invocation id with a different body cannot mutate or roll
+            # back the in-flight job.
+            name = str(evalue.get("name", name))
+            steps = int(evalue.get("steps", steps))
     finally:
         await store.aclose()
 
