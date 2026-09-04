@@ -334,7 +334,7 @@ async def _read_conversation(client: AIProjectClient, agent_name: str, conversat
     :type agent_name: str
     :type conversation_id: str
     """
-    conversations = client.beta.agent_endpoint_conversations
+    conversations = client.agent_endpoint_conversations
 
     conversation = await conversations.get_agent_conversation(agent_name, conversation_id)
     print(f"Conversation {conversation.id}: status={conversation.status}, created_at={conversation.created_at}")
@@ -389,7 +389,7 @@ async def audio_conversation() -> None:
                 except HttpResponseError as e:
                     print(f"Could not read conversation: {e.status_code} {e.reason}")
                 # To fetch this session's audio afterward, use
-                # `project_client.beta.agent_endpoint_conversations`:
+                # `project_client.agent_endpoint_conversations`:
                 #   - get_agent_conversation_audio(agent_name, conversation_id) for the merged
                 #     whole-call stereo recording's metadata, then
                 #     get_agent_conversation_audio_content(agent_name, conversation_id) to stream

@@ -6,14 +6,14 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 There are a total of 183 unique public methods:
 - 5 stable methods on the client
-- 72 stable methods on top-level sub-clients
-- 106 beta methods on nested beta sub-clients
+- 84 stable methods on top-level sub-clients
+- 94 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
-| `agent_endpoint_conversations` | AgentEndpointConversationsOperations | 2 |
+| `agent_endpoint_conversations` | AgentEndpointConversationsOperations | 14 |
 | `agents` | AgentsOperations | 38 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 9 |
@@ -27,7 +27,6 @@ There are a total of 183 unique public methods:
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
-| `beta.agent_endpoint_conversations` | BetaAgentEndpointConversationsOperations | 12 |
 | `beta.agent_insight_monitors` | BetaAgentInsightMonitorsOperations | 13 |
 | `beta.agents` | BetaAgentsOperations | 5 |
 | `beta.datasets` | BetaDatasetsOperations | 5 |
@@ -59,8 +58,20 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
 
 ```
+.agent_endpoint_conversations.delete_agent_conversation
+.agent_endpoint_conversations.get_agent_conversation
+.agent_endpoint_conversations.get_agent_conversation_audio
+.agent_endpoint_conversations.get_agent_conversation_audio_content
+.agent_endpoint_conversations.get_agent_conversation_item
+.agent_endpoint_conversations.get_agent_conversation_item_audio
+.agent_endpoint_conversations.get_agent_conversation_item_audio_content
 .agent_endpoint_conversations.get_agent_conversation_item_generated_audio*
 .agent_endpoint_conversations.get_agent_conversation_item_generated_audio_content*
+.agent_endpoint_conversations.get_agent_conversation_response
+.agent_endpoint_conversations.list_agent_conversation_items
+.agent_endpoint_conversations.list_agent_conversation_response_items
+.agent_endpoint_conversations.list_agent_conversation_responses
+.agent_endpoint_conversations.list_agent_conversations
 
 .agents.create_session
 .agents.create_telephony_binding*
@@ -146,19 +157,6 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
 
 ```
-.beta.agent_endpoint_conversations.delete_agent_conversation
-.beta.agent_endpoint_conversations.get_agent_conversation
-.beta.agent_endpoint_conversations.get_agent_conversation_audio
-.beta.agent_endpoint_conversations.get_agent_conversation_audio_content
-.beta.agent_endpoint_conversations.get_agent_conversation_item
-.beta.agent_endpoint_conversations.get_agent_conversation_item_audio
-.beta.agent_endpoint_conversations.get_agent_conversation_item_audio_content
-.beta.agent_endpoint_conversations.get_agent_conversation_response
-.beta.agent_endpoint_conversations.list_agent_conversation_items
-.beta.agent_endpoint_conversations.list_agent_conversation_response_items
-.beta.agent_endpoint_conversations.list_agent_conversation_responses
-.beta.agent_endpoint_conversations.list_agent_conversations
-
 .beta.agent_insight_monitors.begin_create_run*
 .beta.agent_insight_monitors.cancel_run
 .beta.agent_insight_monitors.create

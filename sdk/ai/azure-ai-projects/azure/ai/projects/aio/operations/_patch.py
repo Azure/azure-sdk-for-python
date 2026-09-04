@@ -21,7 +21,6 @@ from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (
-    BetaAgentEndpointConversationsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
@@ -44,8 +43,6 @@ class BetaOperations(GeneratedBetaOperations):
 
     agents: BetaAgentsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaAgentsOperations` operations"""
-    agent_endpoint_conversations: BetaAgentEndpointConversationsOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaAgentEndpointConversationsOperations` operations"""
     agent_insight_monitors: BetaAgentInsightMonitorsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
@@ -97,7 +94,6 @@ class BetaOperations(GeneratedBetaOperations):
 __all__: List[str] = [
     "AgentsOperations",
     "AgentEndpointConversationsOperations",
-    "BetaAgentEndpointConversationsOperations",
     "BetaAgentInsightMonitorsOperations",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",

@@ -182,21 +182,25 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
         self._realtime: Optional[AsyncRealtime] = None
-        # NOTE: voice-agent conversation reads (`agent_endpoint_conversations`) used to require
-        # hand-wiring the VoiceAgents=V1Preview opt-in header here, since that sub-client used to
-        # live directly on `self`. It has since moved under `self.beta` upstream, so its header
-        # injection is now handled generically by `_BETA_OPERATION_FEATURE_HEADERS` in
-        # `operations/_patch.py`'s `BetaOperations.__init__` -- see that file.
+        # NOTE: voice-agent conversation reads (`agent_endpoint_conversations`) have round-tripped
+        # between living directly on `self` (top-level) and being nested under `self.beta` across
+        # several upstream TypeSpec regenerations. It is currently back to being a top-level,
+        # stable client attribute again -- its VoiceAgents=V1Preview opt-in header injection is
+        # handled per-method (gated behind `allow_preview`) in
+        # `operations/_patch_agent_endpoint_conversations_async.py`, not by
+        # `_BETA_OPERATION_FEATURE_HEADERS`/`BetaOperations.__init__` (which only applies to
+        # `.beta`'s sub-clients). If this moves back under `.beta` in a future regeneration, update
+        # both that file and the `_AcceptEncodingIdentityProxy` wiring below together.
         # Work around a known async aiohttp transport issue (spurious UnicodeDecodeError caused by
         # compressed response bodies reaching text/JSON deserialization before decompression) by
         # disabling response compression for these two operation groups only.
         # Guarded with hasattr since some tests mock out the generated __init__ entirely, in which
-        # case none of the generated operation-group attributes (including `beta` itself) are set.
+        # case none of the generated operation-group attributes may be set.
         if hasattr(self, "agents"):
             self.agents = _AcceptEncodingIdentityProxy(self.agents)  # type: ignore
-        if hasattr(self, "beta") and hasattr(self.beta, "agent_endpoint_conversations"):
-            self.beta.agent_endpoint_conversations = _AcceptEncodingIdentityProxy(  # type: ignore
-                self.beta.agent_endpoint_conversations
+        if hasattr(self, "agent_endpoint_conversations"):
+            self.agent_endpoint_conversations = _AcceptEncodingIdentityProxy(  # type: ignore
+                self.agent_endpoint_conversations
             )
 
     @property

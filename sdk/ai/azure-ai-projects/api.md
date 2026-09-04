@@ -234,6 +234,65 @@ namespace azure.ai.projects.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
+        async def delete_agent_conversation(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceConversation: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceRecordingResponse: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_audio_content(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> RealtimeConversationItem: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_item_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceItemAudioResponse: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_item_audio_content(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
         async def get_agent_conversation_item_generated_audio(
                 self, 
                 agent_name: str, 
@@ -250,6 +309,63 @@ namespace azure.ai.projects.aio.operations
                 item_id: str, 
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get_agent_conversation_response(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                response_id: str, 
+                **kwargs: Any
+            ) -> VoiceResponse: ...
+
+        @distributed_trace
+        def list_agent_conversation_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RealtimeConversationItem]: ...
+
+        @distributed_trace
+        def list_agent_conversation_response_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                response_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RealtimeConversationItem]: ...
+
+        @distributed_trace
+        def list_agent_conversation_responses(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VoiceResponse]: ...
+
+        @distributed_trace
+        def list_agent_conversations(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VoiceConversation]: ...
 
 
     class azure.ai.projects.aio.operations.AgentsOperations(GeneratedAgentsOperations):
@@ -899,131 +1015,6 @@ namespace azure.ai.projects.aio.operations
             ) -> SessionFileWriteResult: ...
 
 
-    class azure.ai.projects.aio.operations.BetaAgentEndpointConversationsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def delete_agent_conversation(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def get_agent_conversation(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceConversation: ...
-
-        @distributed_trace_async
-        async def get_agent_conversation_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceRecordingResponse: ...
-
-        @distributed_trace_async
-        async def get_agent_conversation_audio_content(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def get_agent_conversation_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> RealtimeConversationItem: ...
-
-        @distributed_trace_async
-        async def get_agent_conversation_item_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> VoiceItemAudioResponse: ...
-
-        @distributed_trace_async
-        async def get_agent_conversation_item_audio_content(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def get_agent_conversation_response(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
-                **kwargs: Any
-            ) -> VoiceResponse: ...
-
-        @distributed_trace
-        def list_agent_conversation_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[RealtimeConversationItem]: ...
-
-        @distributed_trace
-        def list_agent_conversation_response_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[RealtimeConversationItem]: ...
-
-        @distributed_trace
-        def list_agent_conversation_responses(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[VoiceResponse]: ...
-
-        @distributed_trace
-        def list_agent_conversations(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[VoiceConversation]: ...
-
-
     class azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
 
         def __init__(
@@ -1039,6 +1030,7 @@ namespace azure.ai.projects.aio.operations
                 run: AgentInsightRunCreate, 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncAgentInsightRunLROPoller: ...
 
@@ -1049,6 +1041,7 @@ namespace azure.ai.projects.aio.operations
                 run: JSON, 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncAgentInsightRunLROPoller: ...
 
@@ -1059,6 +1052,7 @@ namespace azure.ai.projects.aio.operations
                 run: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncAgentInsightRunLROPoller: ...
 
@@ -2279,7 +2273,6 @@ namespace azure.ai.projects.aio.operations
 
 
     class azure.ai.projects.aio.operations.BetaOperations(GeneratedBetaOperations):
-        agent_endpoint_conversations: BetaAgentEndpointConversationsOperations
         agent_insight_monitors: BetaAgentInsightMonitorsOperations
         agents: BetaAgentsOperations
         datasets: BetaDatasetsOperations
@@ -3156,6 +3149,29 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ToolboxObject: ...
+
+
+    class azure.ai.projects.aio.operations.VoiceAgentWebSocketOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def connect_voice_agent(
+                self, 
+                agent_name: str, 
+                *, 
+                agent_version_override: Optional[str] = ..., 
+                foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = ..., 
+                store: Optional[bool] = ..., 
+                structured_input: Optional[str] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
+                websocket_subprotocol: Optional[Union[str, VoiceAgentWebSocketSubprotocol]] = ..., 
+                **kwargs: Any
+            ) -> None: ...
 
 
 namespace azure.ai.projects.models
@@ -9306,13 +9322,66 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.RaiConfig(_Model):
+        invocations_moderation: Optional[RaiInvocationModeration]
         rai_policy_name: str
 
         @overload
         def __init__(
                 self, 
                 *, 
+                invocations_moderation: Optional[RaiInvocationModeration] = ..., 
                 rai_policy_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RaiInvocationContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        JSON = "json"
+        TEXT = "text"
+
+
+    class azure.ai.projects.models.RaiInvocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BOTH = "both"
+        NON_STREAMING = "non_streaming"
+        STREAMING = "streaming"
+
+
+    class azure.ai.projects.models.RaiInvocationModeration(_Model):
+        input_content_type: Optional[Union[str, RaiInvocationContentType]]
+        input_paths: Optional[list[str]]
+        output_content_type: Optional[Union[str, RaiInvocationContentType]]
+        output_paths: Optional[list[str]]
+        response_mode: Union[str, RaiInvocationMode]
+        stream_selectors: Optional[list[RaiSseTextSelector]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                input_content_type: Optional[Union[str, RaiInvocationContentType]] = ..., 
+                input_paths: Optional[list[str]] = ..., 
+                output_content_type: Optional[Union[str, RaiInvocationContentType]] = ..., 
+                output_paths: Optional[list[str]] = ..., 
+                response_mode: Union[str, RaiInvocationMode], 
+                stream_selectors: Optional[list[RaiSseTextSelector]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RaiSseTextSelector(_Model):
+        event_type: str
+        text_field: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_type: str, 
+                text_field: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -13880,7 +13949,6 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentAvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         WEBRTC = "webrtc"
         WEBSOCKET = "websocket"
-        WEBSOCKET_BINARY = "websocket-binary"
 
 
     class azure.ai.projects.models.VoiceAgentAvatarScene(_Model):
@@ -14158,7 +14226,7 @@ namespace azure.ai.projects.models
         rai_config: RaiConfig
         store: Optional[bool]
         structured_inputs: Optional[dict[str, StructuredInputDefinition]]
-        subagent_config: Optional[VoiceAgentSubAgentConfig]
+        subagent_config: Optional[VoiceAgentSubagentConfig]
         tool_choice: Optional[VoiceAgentToolChoice]
         tools: Optional[list[VoiceAgentTool]]
 
@@ -14181,7 +14249,7 @@ namespace azure.ai.projects.models
                 rai_config: Optional[RaiConfig] = ..., 
                 store: Optional[bool] = ..., 
                 structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ..., 
-                subagent_config: Optional[VoiceAgentSubAgentConfig] = ..., 
+                subagent_config: Optional[VoiceAgentSubagentConfig] = ..., 
                 tool_choice: Optional[VoiceAgentToolChoice] = ..., 
                 tools: Optional[list[VoiceAgentTool]] = ...
             ) -> None: ...
@@ -15122,7 +15190,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.VoiceAgentSubAgent(_Model):
+    class azure.ai.projects.models.VoiceAgentSubagent(_Model):
         agent_capabilities: str
         agent_name: str
         agent_version: Optional[str]
@@ -15144,20 +15212,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.VoiceAgentSubAgentConfig(_Model):
-        subagents: list[VoiceAgentSubAgent]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                subagents: list[VoiceAgentSubAgent]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.VoiceAgentSubagentAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CANCELLED = "cancelled"
         FAILED = "failed"
@@ -15165,6 +15219,20 @@ namespace azure.ai.projects.models
         SUPERSEDED = "superseded"
         TIMEOUT = "timeout"
         UNKNOWN_TARGET = "unknown_target"
+
+
+    class azure.ai.projects.models.VoiceAgentSubagentConfig(_Model):
+        subagents: list[VoiceAgentSubagent]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                subagents: list[VoiceAgentSubagent]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.VoiceAgentSubagentResponsePolicy(_Model):
@@ -15898,6 +15966,65 @@ namespace azure.ai.projects.operations
             ) -> None: ...
 
         @distributed_trace
+        def delete_agent_conversation(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get_agent_conversation(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceConversation: ...
+
+        @distributed_trace
+        def get_agent_conversation_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceRecordingResponse: ...
+
+        @distributed_trace
+        def get_agent_conversation_audio_content(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get_agent_conversation_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> RealtimeConversationItem: ...
+
+        @distributed_trace
+        def get_agent_conversation_item_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceItemAudioResponse: ...
+
+        @distributed_trace
+        def get_agent_conversation_item_audio_content(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
         def get_agent_conversation_item_generated_audio(
                 self, 
                 agent_name: str, 
@@ -15914,6 +16041,63 @@ namespace azure.ai.projects.operations
                 item_id: str, 
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get_agent_conversation_response(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                response_id: str, 
+                **kwargs: Any
+            ) -> VoiceResponse: ...
+
+        @distributed_trace
+        def list_agent_conversation_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RealtimeConversationItem]: ...
+
+        @distributed_trace
+        def list_agent_conversation_response_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                response_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RealtimeConversationItem]: ...
+
+        @distributed_trace
+        def list_agent_conversation_responses(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[VoiceResponse]: ...
+
+        @distributed_trace
+        def list_agent_conversations(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[VoiceConversation]: ...
 
 
     class azure.ai.projects.operations.AgentsOperations(GeneratedAgentsOperations):
@@ -16563,131 +16747,6 @@ namespace azure.ai.projects.operations
             ) -> SessionFileWriteResult: ...
 
 
-    class azure.ai.projects.operations.BetaAgentEndpointConversationsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def delete_agent_conversation(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def get_agent_conversation(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceConversation: ...
-
-        @distributed_trace
-        def get_agent_conversation_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceRecordingResponse: ...
-
-        @distributed_trace
-        def get_agent_conversation_audio_content(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def get_agent_conversation_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> RealtimeConversationItem: ...
-
-        @distributed_trace
-        def get_agent_conversation_item_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> VoiceItemAudioResponse: ...
-
-        @distributed_trace
-        def get_agent_conversation_item_audio_content(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def get_agent_conversation_response(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
-                **kwargs: Any
-            ) -> VoiceResponse: ...
-
-        @distributed_trace
-        def list_agent_conversation_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[RealtimeConversationItem]: ...
-
-        @distributed_trace
-        def list_agent_conversation_response_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[RealtimeConversationItem]: ...
-
-        @distributed_trace
-        def list_agent_conversation_responses(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[VoiceResponse]: ...
-
-        @distributed_trace
-        def list_agent_conversations(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[VoiceConversation]: ...
-
-
     class azure.ai.projects.operations.BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
 
         def __init__(
@@ -16703,6 +16762,7 @@ namespace azure.ai.projects.operations
                 run: AgentInsightRunCreate, 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentInsightRunLROPoller: ...
 
@@ -16713,6 +16773,7 @@ namespace azure.ai.projects.operations
                 run: JSON, 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentInsightRunLROPoller: ...
 
@@ -16723,6 +16784,7 @@ namespace azure.ai.projects.operations
                 run: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentInsightRunLROPoller: ...
 
@@ -17945,7 +18007,6 @@ namespace azure.ai.projects.operations
 
 
     class azure.ai.projects.operations.BetaOperations(GeneratedBetaOperations):
-        agent_endpoint_conversations: BetaAgentEndpointConversationsOperations
         agent_insight_monitors: BetaAgentInsightMonitorsOperations
         agents: BetaAgentsOperations
         datasets: BetaDatasetsOperations
@@ -18822,6 +18883,29 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ToolboxObject: ...
+
+
+    class azure.ai.projects.operations.VoiceAgentWebSocketOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def connect_voice_agent(
+                self, 
+                agent_name: str, 
+                *, 
+                agent_version_override: Optional[str] = ..., 
+                foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = ..., 
+                store: Optional[bool] = ..., 
+                structured_input: Optional[str] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
+                websocket_subprotocol: Optional[Union[str, VoiceAgentWebSocketSubprotocol]] = ..., 
+                **kwargs: Any
+            ) -> None: ...
 
 
 namespace azure.ai.projects.telemetry

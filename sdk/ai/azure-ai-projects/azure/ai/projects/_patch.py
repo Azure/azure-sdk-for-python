@@ -248,11 +248,14 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
         self._realtime: Optional[Realtime] = None
-        # NOTE: voice-agent conversation reads (`agent_endpoint_conversations`) used to require
-        # hand-wiring the VoiceAgents=V1Preview opt-in header here, since that sub-client used to
-        # live directly on `self`. It has since moved under `self.beta` upstream, so its header
-        # injection is now handled generically by `_BETA_OPERATION_FEATURE_HEADERS` in
-        # `operations/_patch.py`'s `BetaOperations.__init__` -- see that file.
+        # NOTE: voice-agent conversation reads (`agent_endpoint_conversations`) have round-tripped
+        # between living directly on `self` (top-level) and being nested under `self.beta` across
+        # several upstream TypeSpec regenerations. It is currently back to being a top-level,
+        # stable client attribute again -- its VoiceAgents=V1Preview opt-in header injection is
+        # handled per-method (gated behind `allow_preview`) in
+        # `operations/_patch_agent_endpoint_conversations.py`, not by
+        # `_BETA_OPERATION_FEATURE_HEADERS`/`BetaOperations.__init__` (which only applies to
+        # `.beta`'s sub-clients).
 
     @property
     def realtime(self) -> Realtime:

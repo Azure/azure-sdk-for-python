@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates reading the persisted audio of a voice
-    conversation via `project_client.beta.agent_endpoint_conversations`, both the
+    conversation via `project_client.agent_endpoint_conversations`, both the
     merged whole-call recording and a single turn's audio segment. For each it
     reads the metadata first, then streams the WAV bytes to a local file. The
     merged recording is stereo: the caller on the left channel and the agent
@@ -60,7 +60,7 @@ def read_merged_recording(conversations, agent_name, conversation_id) -> None:
     :param conversations: The conversation operations client.
     :param agent_name: The voice agent name.
     :param conversation_id: The persisted conversation id.
-    :type conversations: azure.ai.projects.operations.BetaAgentEndpointConversationsOperations
+    :type conversations: azure.ai.projects.operations.AgentEndpointConversationsOperations
     :type agent_name: str
     :type conversation_id: str
     """
@@ -86,7 +86,7 @@ def read_first_item_audio(conversations, agent_name, conversation_id) -> None:
     :param conversations: The conversation operations client.
     :param agent_name: The voice agent name.
     :param conversation_id: The persisted conversation id.
-    :type conversations: azure.ai.projects.operations.BetaAgentEndpointConversationsOperations
+    :type conversations: azure.ai.projects.operations.AgentEndpointConversationsOperations
     :type agent_name: str
     :type conversation_id: str
     """
@@ -121,9 +121,9 @@ def main() -> None:
 
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
-        conversations = project_client.beta.agent_endpoint_conversations
+        conversations = project_client.agent_endpoint_conversations
         try:
             read_merged_recording(conversations, agent_name, conversation_id)
             read_first_item_audio(conversations, agent_name, conversation_id)

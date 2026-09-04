@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates reading a persisted voice conversation back over
-    the read-only conversation API exposed by `project_client.beta.agent_endpoint_conversations`:
+    the read-only conversation API exposed by `project_client.agent_endpoint_conversations`:
     the conversation envelope, its responses (model inference turns), and its
     ordered items (the transcript). Conversations are created and written by
     the voice orchestrator during a live session; this client can only read
@@ -43,9 +43,9 @@ conversation_id = os.environ["FOUNDRY_VOICE_CONVERSATION_ID"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
 ):
-    conversations = project_client.beta.agent_endpoint_conversations
+    conversations = project_client.agent_endpoint_conversations
     try:
         # The conversation envelope: status, timestamps, aggregate usage.
         conversation = conversations.get_agent_conversation(agent_name, conversation_id)

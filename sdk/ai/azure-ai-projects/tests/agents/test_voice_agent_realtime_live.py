@@ -17,7 +17,7 @@ generous per-event timeouts, and assert on event *types* and content presence/le
 exact audio bytes (the model's actual audio/text output is not deterministic).
 
 These tests do not use ``store=True`` / read back a persisted conversation -- that surface
-(``project_client.beta.agent_endpoint_conversations.*``) is covered by the separate recorded
+(``project_client.agent_endpoint_conversations.*``) is covered by the separate recorded
 tests in ``test_voice_agent_conversations.py``, which need a real conversation id but replay
 against a recorded cassette rather than opening a live WebSocket connection on every run.
 """
