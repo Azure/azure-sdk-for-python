@@ -1,3 +1,5 @@
+// cspell:ignore appi
+
 targetScope = 'resourceGroup'
 
 @description('The client object ID to grant access to the test resources.')

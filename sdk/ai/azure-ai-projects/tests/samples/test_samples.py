@@ -5,11 +5,14 @@
 # ------------------------------------
 import os
 import re
+from unittest.mock import patch
+
 import pytest
 from devtools_testutils import (
     recorded_by_proxy,
     AzureRecordedTestCase,
     RecordedTransport,
+    is_live,
 )
 from test_base import (
     agentInsightsServicePreparer,
@@ -158,7 +161,11 @@ class TestSamples(AzureRecordedTestCase):
     def test_agent_insights_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
-        executor.execute()
+        if is_live():
+            executor.execute()
+        else:
+            with patch("time.sleep", return_value=None):
+                executor.execute()
         _assert_agent_insights_output(sample_path, executor.print_output_calls)
         executor.validate_print_calls_by_llm()
 

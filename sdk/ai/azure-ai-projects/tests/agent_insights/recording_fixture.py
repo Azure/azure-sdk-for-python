@@ -508,6 +508,7 @@ def _tool_definitions() -> str:
 
 
 def _build_ingestion_query(marker: str, otel_agent_id: str) -> str:
+    # cspell:ignore isfuzzy
     return f"""
 union isfuzzy=true requests, dependencies
 | extend operation_name = tostring(customDimensions["gen_ai.operation.name"])
