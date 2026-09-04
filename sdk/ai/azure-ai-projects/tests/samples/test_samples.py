@@ -4,9 +4,19 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import re
 import pytest
-from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
-from test_base import servicePreparer, fineTuningServicePreparer, modelsServicePreparer
+from devtools_testutils import (
+    recorded_by_proxy,
+    AzureRecordedTestCase,
+    RecordedTransport,
+)
+from test_base import (
+    agentInsightsServicePreparer,
+    fineTuningServicePreparer,
+    modelsServicePreparer,
+    servicePreparer,
+)
 from sample_executor import (
     AdditionalSampleTestDetail,
     SyncSampleExecutor,
@@ -16,6 +26,28 @@ from sample_executor import (
 )
 from test_samples_helpers import get_sample_env_vars
 from test_fine_tuning_samples_helpers import get_fine_tuning_sample_env_vars
+
+
+def _assert_agent_insights_output(print_output_calls: list[str]) -> None:
+    output = "\n".join(print_output_calls)
+
+    assert re.search(
+        r"^Run status: succeeded$", output, re.MULTILINE
+    ), "Agent Insights run did not succeed."
+
+    def read_count(label: str) -> int:
+        match = re.search(rf"^{re.escape(label)}: (\d+)$", output, re.MULTILINE)
+        assert match is not None, f"Agent Insights sample did not print '{label}'."
+        return int(match.group(1))
+
+    assert read_count("Traces analyzed") > 0
+    assert (
+        read_count("Insights created")
+        + read_count("Insights updated")
+        + read_count("Insights reopened")
+        > 0
+    )
+    assert read_count("Listed insights") > 0
 
 
 class TestSamples(AzureRecordedTestCase):
@@ -101,18 +133,17 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "agent_insights",
-            samples_to_skip=[
-                "sample_agent_insights_basic.py",  # Recording not yet available.
-            ],
+            samples_to_skip=[],
         ),
     )
-    @servicePreparer()
+    @agentInsightsServicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_insights_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
+        _assert_agent_insights_output(executor.print_output_calls)
         executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(

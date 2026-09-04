@@ -154,6 +154,34 @@ Always include `reason` with a concise explanation tied to the observed print ou
 """.strip()
 
 
+agent_insights_instructions: Final[str] = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
+Validate whether the Agent Insights sample completed a useful on-demand analysis workflow.
+
+Successful output must show all of the following:
+- A monitor was created for the selected agent.
+- An on-demand run reached the `succeeded` status.
+- The run analyzed at least one trace.
+- The run created, updated, or reopened at least one insight.
+- Listing the monitor's insights returned at least one insight with a title, severity, status,
+  trace count, and proposed-fix kind.
+- The monitor was deleted during cleanup.
+
+Mark `correct = false` for:
+- Exceptions, stack traces, authentication, authorization, timeout, connection, or service errors.
+- A failed, cancelled, queued, or still-running Agent Insights run.
+- Zero analyzed traces.
+- Zero changed insights across created, updated, and reopened counts.
+- Zero listed insights or output that omits the insight summary.
+- Cleanup failure that leaves the sample-created monitor behind.
+
+The wording and number of generated insights can vary. Judge the explicit status and count fields,
+not the exact generated insight title or remediation text.
+
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
+
+
 fine_tuning_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a fine-tuning workflow.
@@ -232,7 +260,7 @@ Always include `reason` with a concise explanation tied to the observed print ou
 # Keys intentionally mirror the folder names used by sample test discovery.
 # Use the most specific key possible (e.g. "agents/tools" should win over "agents").
 INSTRUCTIONS_BY_FOLDER: Final[dict[str, str]] = {
-    "agent_insights": resource_management_instructions,
+    "agent_insights": agent_insights_instructions,
     "agents/tools": agent_tools_instructions,
     "agents": agents_instructions,
     "hosted_agents": hosted_agents_instructions,

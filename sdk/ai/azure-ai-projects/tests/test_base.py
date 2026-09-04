@@ -100,6 +100,17 @@ modelsServicePreparer = functools.partial(
     llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
 )
 
+# Agent Insights samples use a dedicated test project, external agent, and analysis model.
+agentInsightsServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    foundry_agent_name="sanitized-agent-name",
+    foundry_model_name="sanitized-model-deployment-name",
+    llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    llm_validation_model="sanitized-model-deployment-name",
+)
+
 # Fine-tuning job type constants
 SFT_JOB_TYPE: Final[str] = "sft"
 DPO_JOB_TYPE: Final[str] = "dpo"

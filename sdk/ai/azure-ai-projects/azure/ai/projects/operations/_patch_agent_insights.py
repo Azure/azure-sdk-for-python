@@ -88,10 +88,14 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
         headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", headers.pop("Content-Type", None)
+        )
         cls = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        lro_options = dict(kwargs.pop("lro_options", {}) or {})
+        lro_options["final-state-via"] = "operation-location"
         continuation_token: Optional[str] = kwargs.pop("continuation_token", None)
         raw_result = None
         if continuation_token is None:
@@ -114,21 +118,32 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
 
-            deserialized = _deserialize(_models.AgentInsightRunResult, response.json().get("result", {}))
+            deserialized = _deserialize(
+                _models.AgentInsightRunResult, response.json().get("result", {})
+            )
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                LROBasePolling(
+                    lro_delay,
+                    lro_options=lro_options,
+                    path_format_arguments=path_format_arguments,
+                    **kwargs,
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

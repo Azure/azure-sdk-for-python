@@ -4,7 +4,11 @@
 
 ### Sample updates
 
-* Added `sample_agent_insights_basic.py` under `samples/agent_insights/` to demonstrate a repeatable Agent Insights monitor lifecycle.
+* Added `sample_agent_insights_basic.py` under `samples/agent_insights/` to demonstrate a repeatable on-demand Agent Insights run, run statistics, and generated insight retrieval.
+
+### Bugs Fixed
+
+* Fixed Agent Insights run pollers to return the completed operation response without following the service's relative `Location` header.
 
 ## 2.6.0 (2026-09-04)
 

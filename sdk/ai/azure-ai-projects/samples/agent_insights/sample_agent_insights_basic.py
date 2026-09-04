@@ -6,8 +6,9 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create, retrieve, list, and delete an
-    Agent Insights monitor using the synchronous AIProjectClient.
+    This sample demonstrates how to create an Agent Insights monitor, run
+    on-demand trace analysis, inspect run statistics, list generated insights,
+    and delete the monitor using the synchronous AIProjectClient.
 
     Agent Insights is a preview feature. In the Python SDK, you access these
     operations through `project_client.beta.agent_insight_monitors`.
@@ -35,6 +36,7 @@ USAGE:
 """
 
 import os
+import uuid
 
 from dotenv import load_dotenv
 
@@ -42,7 +44,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentInsightMonitorCreate
+from azure.ai.projects.models import AgentInsightMonitorCreate, AgentInsightRunCreate
 
 
 def main() -> None:
@@ -62,7 +64,9 @@ def main() -> None:
         for existing_monitor in existing_monitors:
             try:
                 monitor_operations.delete(existing_monitor.id)
-                print(f"Deleted existing monitor `{existing_monitor.id}` for agent `{agent_name}`.")
+                print(
+                    f"Deleted existing monitor `{existing_monitor.id}` for agent `{agent_name}`."
+                )
             except ResourceNotFoundError:
                 print(f"Existing monitor `{existing_monitor.id}` was already deleted.")
 
@@ -86,8 +90,61 @@ def main() -> None:
                 f"`{retrieved_monitor.model_deployment_name}`."
             )
 
-            monitors = list(monitor_operations.list(agent_name=agent_name))
-            print(f"Found {len(monitors)} monitor(s) for agent `{agent_name}`.")
+            print(
+                f"Found {len(list(monitor_operations.list(agent_name=agent_name)))} "
+                f"monitor(s) for agent `{agent_name}`."
+            )
+
+            poller = monitor_operations.begin_create_run(
+                monitor.id,
+                AgentInsightRunCreate(lookback_hours=3),
+                operation_id=str(uuid.uuid4()),
+            )
+            run_id = poller.details["run_id"]
+            print(f"Started on-demand run `{run_id}`.")
+
+            run_result = poller.result()
+            completed_run = monitor_operations.get_run(monitor.id, run_id)
+            run_status = getattr(completed_run.status, "value", completed_run.status)
+            print(f"Run status: {run_status}")
+            print(f"Traces in window: {run_result.traces_in_window}")
+            print(f"Traces analyzed: {run_result.traces_analyzed}")
+            print(f"Insights created: {run_result.insights_created}")
+            print(f"Insights updated: {run_result.insights_updated}")
+            print(f"Insights reopened: {run_result.insights_reopened}")
+            print(
+                "Token usage: "
+                f"input={run_result.token_usage.input_tokens}, "
+                f"output={run_result.token_usage.output_tokens}, "
+                f"total={run_result.token_usage.total_tokens}"
+            )
+
+            runs = list(monitor_operations.list_runs(monitor.id, limit=5))
+            print(f"Listed runs: {len(runs)}")
+
+            insights = list(
+                monitor_operations.list_insights(monitor.id, include_details=True)
+            )
+            print(f"Listed insights: {len(insights)}")
+            for insight in insights:
+                severity = getattr(insight.severity, "value", insight.severity)
+                status = getattr(insight.status, "value", insight.status)
+                proposed_fix = (
+                    insight.details.recommended_actions.proposed_fix
+                    if insight.details is not None
+                    else None
+                )
+                fix_kind = (
+                    getattr(proposed_fix.kind, "value", proposed_fix.kind)
+                    if proposed_fix is not None
+                    else "not returned"
+                )
+                print(
+                    f"Insight `{insight.id}`: title=`{insight.title}`, severity={severity}, "
+                    f"status={status}, traces={insight.trace_count}, fix kind={fix_kind}."
+                )
+                if proposed_fix is not None:
+                    print(f"Recommended action: {proposed_fix.text}")
         finally:
             if monitor is not None:
                 try:
