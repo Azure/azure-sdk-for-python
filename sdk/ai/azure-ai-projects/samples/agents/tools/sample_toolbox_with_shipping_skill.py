@@ -16,7 +16,7 @@ DESCRIPTION:
     Skill proves that the agent applied those instructions.
 
 USAGE:
-    python sample_toolbox_with_skill.py
+    python sample_toolbox_with_shipping_skill.py
 
     Before running the sample:
 

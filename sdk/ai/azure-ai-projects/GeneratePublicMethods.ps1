@@ -84,10 +84,10 @@ def public_methods(instance: Any) -> dict[str, bool]:
 
 
 def client_methods(client: Any) -> dict[str, bool]:
-    included_dunders = {"__enter__", "__exit__"}
+    included_special_methods = {"__enter__", "__exit__"}
     methods: dict[str, bool] = {}
     for name, member in inspect.getmembers(type(client), predicate=callable):
-        if name.startswith("_") and name not in included_dunders:
+        if name.startswith("_") and name not in included_special_methods:
             continue
         methods[name] = is_handwritten_method(type(client), name)
     return methods
