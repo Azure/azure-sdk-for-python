@@ -9497,9 +9497,9 @@ class ContainerAppsFunctionsOperations:  # pylint: disable=docstring-missing-par
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-07-01",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-07-01": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9508,7 +9508,7 @@ class ContainerAppsFunctionsOperations:  # pylint: disable=docstring-missing-par
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def get(
         self, resource_group_name: str, container_app_name: str, function_name: str, **kwargs: Any
@@ -9588,11 +9588,17 @@ class ContainerAppsFunctionsOperations:  # pylint: disable=docstring-missing-par
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-07-01",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-07-01": ["api_version", "subscription_id", "resource_group_name", "container_app_name", "accept"]
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "accept",
+            ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def list(
         self, resource_group_name: str, container_app_name: str, **kwargs: Any
@@ -10705,9 +10711,9 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-07-01",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-07-01": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10716,7 +10722,7 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def get(self, resource_group_name: str, environment_name: str, name: str, **kwargs: Any) -> _models.DotNetComponent:
         """Get a .NET Component.
@@ -10793,9 +10799,9 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-07-01",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-07-01": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10805,7 +10811,7 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def _create_or_update_initial(
         self,
@@ -10987,9 +10993,9 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-07-01",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-07-01": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10999,7 +11005,7 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def begin_create_or_update(
         self,
@@ -11083,9 +11089,9 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
         )
 
     @api_version_validation(
-        method_added_on="2026-07-01",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-07-01": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11095,7 +11101,7 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def _update_initial(
         self,
@@ -11278,9 +11284,9 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-07-01",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-07-01": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11290,7 +11296,7 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def begin_update(
         self,
@@ -11374,11 +11380,11 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
         )
 
     @api_version_validation(
-        method_added_on="2026-07-01",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-07-01": ["api_version", "subscription_id", "resource_group_name", "environment_name", "name"]
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "environment_name", "name"]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, environment_name: str, name: str, **kwargs: Any
@@ -11447,11 +11453,11 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-07-01",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-07-01": ["api_version", "subscription_id", "resource_group_name", "environment_name", "name"]
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "environment_name", "name"]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def begin_delete(
         self, resource_group_name: str, environment_name: str, name: str, **kwargs: Any
@@ -11518,11 +11524,17 @@ class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-07-01",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-07-01": ["api_version", "subscription_id", "resource_group_name", "environment_name", "accept"]
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "accept",
+            ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def list(
         self, resource_group_name: str, environment_name: str, **kwargs: Any
@@ -12667,7 +12679,7 @@ class LogicAppsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01", "2026-07-01"],
+        api_versions_list=["2026-01-01", "2026-03-02-preview", "2026-07-01"],
     )
     def create_or_update(
         self,
@@ -22843,9 +22855,11 @@ class JobsOperations:  # pylint: disable=docstring-missing-param,too-many-public
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-07-01",
-        params_added_on={"2026-07-01": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]},
-        api_versions_list=["2026-07-01"],
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def _resume_initial(self, resource_group_name: str, job_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -22911,9 +22925,11 @@ class JobsOperations:  # pylint: disable=docstring-missing-param,too-many-public
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-07-01",
-        params_added_on={"2026-07-01": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]},
-        api_versions_list=["2026-07-01"],
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def begin_resume(self, resource_group_name: str, job_name: str, **kwargs: Any) -> LROPoller[_models.Job]:
         """Resumes a suspended job.
@@ -22977,9 +22993,11 @@ class JobsOperations:  # pylint: disable=docstring-missing-param,too-many-public
         return LROPoller[_models.Job](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-07-01",
-        params_added_on={"2026-07-01": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]},
-        api_versions_list=["2026-07-01"],
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def _suspend_initial(self, resource_group_name: str, job_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -23045,9 +23063,11 @@ class JobsOperations:  # pylint: disable=docstring-missing-param,too-many-public
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-07-01",
-        params_added_on={"2026-07-01": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]},
-        api_versions_list=["2026-07-01"],
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
     )
     def begin_suspend(self, resource_group_name: str, job_name: str, **kwargs: Any) -> LROPoller[_models.Job]:
         """Suspends a job.
