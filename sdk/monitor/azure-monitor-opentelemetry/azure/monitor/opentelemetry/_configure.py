@@ -97,6 +97,7 @@ from azure.monitor.opentelemetry._utils.configurations import (
     _get_sampler_from_name,
 )
 from azure.monitor.opentelemetry._utils.instrumentation import (
+    get_dependency_conflicts,
     get_dist_dependency_conflicts,
 )
 
@@ -374,8 +375,18 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
                 continue
             # Load the instrumentor via entrypoint
             instrumentor: Any = entry_point.load()
+            instrumentor_instance = instrumentor()
+            if lib_name in ("httpx", "httpx2"):
+                conflict = get_dependency_conflicts(instrumentor_instance.instrumentation_dependencies())
+                if conflict:
+                    _logger.debug(
+                        "Skipping instrumentation %s: %s",
+                        entry_point.name,
+                        conflict,
+                    )
+                    continue
             # tell instrumentation to not run dep checks again as we already did it above
-            instrumentor().instrument(skip_dep_check=True)
+            instrumentor_instance.instrument(skip_dep_check=True)
         except Exception as ex:  # pylint: disable=broad-except
             _logger.warning(
                 "Exception occurred when instrumenting: %s.",
