@@ -58,7 +58,7 @@ curl -s "http://localhost:8088/invocations/<inv>?agent_session_id=demo"
 
 ## The key line: enable resilient tasks
 
-As of `azure-ai-agentserver-core` **2.2.0b1** the durable-task subsystem is
+As of `azure-ai-agentserver-core` **2.1.0b1** the durable-task subsystem is
 **strictly opt-in**. `AgentServerHost` builds the `TaskManager` (and runs the
 crash-recovery scan) **only** when you call, before host startup:
 

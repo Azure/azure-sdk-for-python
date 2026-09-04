@@ -270,63 +270,44 @@ def _module_level_call_statements(source: str):
             yield stmt.lineno, value
 
 
-def _first_enable_and_host_lines(source: str) -> tuple[int | None, int | None]:
-    """Locate the real opt-in call and the host construction in source order.
+def _has_module_level_enable_true(source: str) -> bool:
+    """Whether a real module-level ``set_resilient_tasks_enabled(True)`` runs on import.
 
-    Returns ``(enable_line, host_line)`` where ``enable_line`` is the earliest
-    module-level ``set_resilient_tasks_enabled(True)`` **call** (a literal
-    ``True`` argument — not a comment or a call with a different value) and
-    ``host_line`` is the earliest module-level ``InvocationAgentServerHost``
-    construction. ``None`` means "not found at import time".
+    Scans direct module-level statements (a bare expression call, or the call on
+    the RHS of a module-level assignment) for a ``set_resilient_tasks_enabled``
+    call with a literal ``True`` argument. Nested calls (inside a
+    ``def``/``class``/``if``) are ignored because they do not necessarily execute
+    on import.
     """
-    enable_line: int | None = None
-    host_line: int | None = None
-    for lineno, call in _module_level_call_statements(source):
-        name = _call_name(call)
-        if name == "set_resilient_tasks_enabled":
-            enables_true = any(
-                isinstance(a, ast.Constant) and a.value is True for a in call.args
-            )
-            if enables_true and enable_line is None:
-                enable_line = lineno
-        elif name == "InvocationAgentServerHost":
-            if host_line is None:
-                host_line = lineno
-    return enable_line, host_line
+    for _lineno, call in _module_level_call_statements(source):
+        if _call_name(call) != "set_resilient_tasks_enabled":
+            continue
+        if any(isinstance(a, ast.Constant) and a.value is True for a in call.args):
+            return True
+    return False
 
 
 @pytest.mark.parametrize(
     "sample_name", _REQUIRED_RESILIENT_SAMPLES + _MINIMAL_RESILIENT_SAMPLES
 )
 def test_resilient_sample_enables_resilient_tasks(sample_name: str) -> None:
-    """Every resilient sample's ``app.py`` MUST opt in to durable tasks first.
+    """Every resilient sample's ``app.py`` MUST opt in to durable tasks at import.
 
-    Parses the module AST (rather than matching a substring, which a comment or
-    a late call would satisfy) and asserts that a real
-    ``set_resilient_tasks_enabled(True)`` call executes *before* the host is
-    constructed — the switch is read at ``AgentServerHost`` construction, so a
-    call placed after it is too late.
+    Parses the module AST (rather than matching a substring, which a comment or a
+    call nested in an uncalled helper would satisfy) and asserts a real
+    ``set_resilient_tasks_enabled(True)`` runs as a **module-level** statement, so
+    it executes on import — before the host's lifespan starts and reads the switch
+    (``core/_base.py`` reads it inside ``_lifespan``, not at
+    ``InvocationAgentServerHost()`` construction, so relative ordering versus the
+    host object is irrelevant; only import-time execution matters).
     """
 
     app_py = _sample_path(sample_name) / "app.py"
     assert app_py.is_file(), f"Missing app.py for sample {sample_name} ({app_py})."
-    enable_line, host_line = _first_enable_and_host_lines(
-        app_py.read_text(encoding="utf-8")
-    )
-
-    assert enable_line is not None, (
-        f"Sample {sample_name} does not call set_resilient_tasks_enabled(True) in "
-        "app.py. Durable tasks are strictly opt-in since core 2.1.0b1; without this "
-        "call get_task_manager() raises TaskManagerNotInitialized and long-running "
-        "recovery is silently disabled."
-    )
-    assert host_line is not None, (
-        f"Sample {sample_name}'s app.py does not construct an "
-        "InvocationAgentServerHost; cannot verify the opt-in ordering."
-    )
-    assert enable_line < host_line, (
-        f"Sample {sample_name} calls set_resilient_tasks_enabled(True) at line "
-        f"{enable_line}, which is not before InvocationAgentServerHost() at line "
-        f"{host_line}. The switch is read when the host is constructed, so it must "
-        "be enabled first."
+    assert _has_module_level_enable_true(app_py.read_text(encoding="utf-8")), (
+        f"Sample {sample_name} does not call set_resilient_tasks_enabled(True) as a "
+        "module-level statement in app.py. Durable tasks are strictly opt-in since "
+        "core 2.1.0b1; without an import-time call the host lifespan starts with the "
+        "switch off, get_task_manager() raises TaskManagerNotInitialized, and "
+        "long-running recovery is silently disabled."
     )

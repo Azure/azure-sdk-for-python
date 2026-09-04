@@ -63,7 +63,7 @@ except ImportError:  # allows `python app.py` from inside this directory
     )
 
 # Resilient tasks (durable execution + crash recovery) are strictly opt-in as of
-# azure-ai-agentserver-core 2.2.0b1: ``AgentServerHost`` builds the
+# azure-ai-agentserver-core 2.1.0b1: ``AgentServerHost`` builds the
 # ``TaskManager`` ONLY when this switch is on, and it must be set before host
 # startup (i.e. at module-import time). Without it, ``hello_forever.start()``
 # raises ``TaskManagerNotInitialized`` and there is no crash recovery — which
@@ -78,7 +78,9 @@ async def handle_invoke(request: Request) -> Response:
     """Start the forever worker and return immediately (it runs in the background)."""
     try:
         data = json.loads(await request.body() or b"{}")
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        # UnicodeDecodeError: request bytes are not valid UTF-8. Both are
+        # malformed-body cases and must be 400, not an internal 500.
         return JSONResponse({"error": "invalid JSON body"}, status_code=400)
     if not isinstance(data, dict):
         return JSONResponse(
@@ -99,19 +101,37 @@ async def handle_invoke(request: Request) -> Response:
     call_id: str = request.state.call_id
     task_id = durable_task_id(session_id, invocation_id, user_id)
 
-    # Persist an initial durable status BEFORE starting the worker so the
-    # existence of the invocation is authoritative on every replica immediately.
-    # Without it, a poll/cancel routed to a different replica during the tiny
-    # pre-first-checkpoint window sees get_active_run()==None (which cannot
-    # distinguish "unknown" from "owned elsewhere") and would wrongly 404. Use
-    # create_item (atomic create) rather than a non-atomic get-then-set: concurrent
-    # retries otherwise both see "absent" and a delayed set_item could clobber a
-    # checkpoint the worker has already advanced.
+    # The durable record is the authoritative existence gate — NOT start(). A
+    # one-shot task record is deleted on terminal exit (stop/failure), so once a
+    # worker has stopped, ``start()`` would NOT conflict and a reused invocation id
+    # would spin up a brand-new task that immediately sees the OLD stop marker and
+    # exits — while POST wrongly reported "started". So we gate on an atomic
+    # ``create_item``: success => genuinely new worker, so we start it; conflict =>
+    # the invocation already exists (running, stopped, or failed) and we return 409
+    # with its current status, never starting a second worker against a stale
+    # checkpoint/marker. Seeding before ``start()`` also makes the invocation
+    # visible on every replica immediately (no pre-checkpoint 404 window).
     store = await open_checkpoint_store(session_id, user_id)
     try:
-        await store.create_item(task_id, {"name": name, "iterations": 0})
-    except FoundryStorageConflictError:
-        pass  # already seeded by a concurrent request or a previous attempt
+        try:
+            await store.create_item(
+                task_id, {"name": name, "iterations": 0, "status": "running"}
+            )
+        except FoundryStorageConflictError:
+            existing = await store.get_item(task_id)
+            stop_marker = await store.get_item(f"{task_id}{STOP_SUFFIX}")
+            if stop_marker is not None:
+                status = "stopped"
+            else:
+                status = (existing.value.get("status") if existing else None) or "running"
+            return JSONResponse(
+                {
+                    "status": status,
+                    "invocation_id": invocation_id,
+                    "detail": "invocation already exists",
+                },
+                status_code=409,
+            )
     finally:
         await store.aclose()
 
@@ -126,9 +146,8 @@ async def handle_invoke(request: Request) -> Response:
             },
         )
     except TaskConflictError:
-        # The invocation id is caller-supplied and may be retried; a task that is
-        # already in progress (or completed) for this session+id is not an error
-        # to the caller — report the existing run rather than 500ing.
+        # We just created the record, so a conflict here is only a rare
+        # concurrent-start race; report it rather than 500ing.
         return JSONResponse(
             {"status": "already_running", "invocation_id": invocation_id},
             status_code=409,
@@ -141,16 +160,18 @@ async def handle_invoke(request: Request) -> Response:
 
 @app.get_invocation_handler
 async def handle_get(request: Request) -> Response:
-    """Report whether the worker is running and its current iteration count.
+    """Report whether the worker is running, stopped, or failed.
 
     Status is derived from **durable state**, not process-local run ownership: an
     indefinite worker keeps running (possibly on a *different* replica) until it
     is explicitly stopped, so ``get_active_run()`` returning ``None`` on the
     polled replica means nothing. The invoke handler seeds an initial durable
     record, so a started invocation is visible on every replica immediately (no
-    pre-checkpoint 404 window); the stop marker (also durable) decides the
-    terminal state. Absence of both the record and the marker means the
-    invocation is genuinely unknown.
+    pre-checkpoint 404 window). Terminal state is durable: the stop marker means
+    ``stopped``; the worker persists ``status: failed`` on an unhandled exception
+    (its one-shot record is deleted on terminal exit, so without that a crashed
+    worker would report ``running`` forever). Absence of both the record and the
+    marker means the invocation is genuinely unknown.
     """
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
@@ -172,14 +193,22 @@ async def handle_get(request: Request) -> Response:
             status_code=404,
         )
 
-    iterations = int((item.value.get("iterations", 0) if item else 0) or 0)
-    return JSONResponse(
-        {
-            "status": "stopped" if stop_marker is not None else "running",
-            "invocation_id": invocation_id,
-            "iterations": iterations,
-        }
-    )
+    value = item.value if item else {}
+    iterations = int(value.get("iterations", 0) or 0)
+    if stop_marker is not None:
+        status = "stopped"
+    elif value.get("status") == "failed":
+        status = "failed"
+    else:
+        status = "running"
+    body = {
+        "status": status,
+        "invocation_id": invocation_id,
+        "iterations": iterations,
+    }
+    if status == "failed" and value.get("error"):
+        body["error"] = value["error"]
+    return JSONResponse(body)
 
 
 @app.cancel_invocation_handler

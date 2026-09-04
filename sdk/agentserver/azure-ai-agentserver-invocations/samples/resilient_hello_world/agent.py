@@ -116,6 +116,7 @@ async def hello_world(ctx: TaskContext[dict]) -> dict[str, Any]:
     try:
         item = await store.get_item(ctx.task_id)
         completed = int((item.value.get("completed_steps", 0) if item else 0) or 0)
+        status_at_entry = (item.value.get("status") if item else None)
         etag = item.etag if item else None
 
         if ctx.entry_mode == "recovered":
@@ -123,21 +124,69 @@ async def hello_world(ctx: TaskContext[dict]) -> dict[str, Any]:
                 "Recovered — resuming '%s' at step %d/%d", name, completed + 1, steps
             )
 
-        for i in range(completed, steps):
-            await asyncio.sleep(_STEP_DELAY)  # stand-in for real long-running work
-            logger.info("step %d/%d done for %s", i + 1, steps, name)
+        # Already finalized (e.g. recovered after the terminal write): nothing to
+        # do, and re-writing would needlessly churn the ETag.
+        if completed >= steps and status_at_entry == "completed":
+            return {"name": name, "steps": steps, "status": "complete"}
 
-            # ── CHECKPOINT — the durable crash-recovery boundary ──
-            # After this write, a crash resumes at step (i + 2), not step 1.
-            ref = await store.set_item(
+        try:
+            for i in range(completed, steps):
+                await asyncio.sleep(_STEP_DELAY)  # stand-in for long-running work
+                logger.info("step %d/%d done for %s", i + 1, steps, name)
+
+                # ── CHECKPOINT — the durable crash-recovery boundary ──
+                # After this write, a crash resumes at step (i + 2), not step 1.
+                ref = await store.set_item(
+                    ctx.task_id,
+                    {
+                        "name": name,
+                        "steps": steps,
+                        "completed_steps": i + 1,
+                        "status": "in_progress",
+                    },
+                    if_match=etag,
+                )
+                etag = ref.etag
+
+            logger.info("Finished %d steps for %s", steps, name)
+            # ── TERMINAL SUCCESS ──
+            # The one-shot task record is deleted on terminal exit, so the poll
+            # endpoint has only this durable item to read. Persist an explicit
+            # terminal status so a completed (or failed) run is not indefinitely
+            # reported as ``in_progress``.
+            await store.set_item(
                 ctx.task_id,
-                {"name": name, "steps": steps, "completed_steps": i + 1},
+                {
+                    "name": name,
+                    "steps": steps,
+                    "completed_steps": steps,
+                    "status": "completed",
+                },
                 if_match=etag,
             )
-            etag = ref.etag
-
-        logger.info("Finished %d steps for %s", steps, name)
-        return {"name": name, "steps": steps, "status": "complete"}
+            return {"name": name, "steps": steps, "status": "complete"}
+        except Exception as exc:  # noqa: BLE001 — record failure, then re-raise
+            # A raised exception is terminal (the record is deleted), so without
+            # this the durable item would sit below ``steps`` forever and polling
+            # would report ``in_progress`` indefinitely. Best-effort write; if the
+            # ETag moved we still re-raise so the framework marks the task failed.
+            logger.exception("hello_world failed for %s", name)
+            try:
+                current = await store.get_item(ctx.task_id)
+                await store.set_item(
+                    ctx.task_id,
+                    {
+                        "name": name,
+                        "steps": steps,
+                        "completed_steps": completed,
+                        "status": "failed",
+                        "error": str(exc),
+                    },
+                    if_match=current.etag if current else None,
+                )
+            except Exception:  # noqa: BLE001 — never mask the original failure
+                logger.warning("could not persist failed status for %s", name)
+            raise
     finally:
         await store.aclose()
 

@@ -144,35 +144,62 @@ async def hello_forever(ctx: TaskContext[dict]) -> dict[str, Any]:
         if ctx.entry_mode == "recovered":
             logger.warning("Recovered '%s' at iteration %d", name, n)
 
-        while True:
-            # 1) Graceful redeploy / SIGTERM: release the lease so the recovery
-            #    scan re-enters this worker on the next instance and it continues.
-            if ctx.shutdown.is_set():
-                logger.info("shutdown — yielding for recovery at iteration %d", n)
-                return await ctx.exit_for_recovery()
+        try:
+            while True:
+                # 1) Graceful redeploy / SIGTERM: release the lease so the
+                #    recovery scan re-enters this worker on the next instance.
+                if ctx.shutdown.is_set():
+                    logger.info(
+                        "shutdown — yielding for recovery at iteration %d", n
+                    )
+                    return await ctx.exit_for_recovery()
 
-            # 2) Explicit stop. The DURABLE stop marker is the single source of
-            #    truth and is checked EVERY iteration. The cancel endpoint writes
-            #    the marker (it does NOT rely on an in-process signal), so a stop
-            #    is observed here regardless of which replica received the cancel
-            #    request. The marker also survives the per-turn watchdog and
-            #    crash/recovery, so it never races the checkpoint's ETag.
-            if await store.get_item(stop_key) is not None:
-                logger.info("stop requested — stopping at iteration %d", n)
-                return {"name": name, "iterations": n, "stopped": True}
+                # 2) Explicit stop. The DURABLE stop marker is the single source
+                #    of truth and is checked EVERY iteration. The cancel endpoint
+                #    writes the marker (it does NOT rely on an in-process signal),
+                #    so a stop is observed here regardless of which replica
+                #    received the cancel request. The marker also survives the
+                #    per-turn watchdog and crash/recovery, so it never races the
+                #    checkpoint's ETag.
+                if await store.get_item(stop_key) is not None:
+                    logger.info("stop requested — stopping at iteration %d", n)
+                    return {"name": name, "iterations": n, "stopped": True}
 
-            # 3) One unit of ongoing work, then CHECKPOINT the durable cursor.
-            n += 1
-            logger.info("iteration %d for %s", n, name)
-            ref = await store.set_item(
-                ctx.task_id, {"name": name, "iterations": n}, if_match=etag
-            )
-            etag = ref.etag
+                # 3) One unit of ongoing work, then CHECKPOINT the durable cursor.
+                n += 1
+                logger.info("iteration %d for %s", n, name)
+                ref = await store.set_item(
+                    ctx.task_id,
+                    {"name": name, "iterations": n, "status": "running"},
+                    if_match=etag,
+                )
+                etag = ref.etag
 
-            await asyncio.sleep(_TICK)  # heartbeat / interval between ticks; the
-            # stop marker is re-checked at the top of every iteration, so an
-            # explicit stop is honoured within one tick regardless of which replica
-            # received the cancel.
+                await asyncio.sleep(_TICK)  # heartbeat / interval between ticks;
+                # the stop marker is re-checked at the top of every iteration, so
+                # an explicit stop is honoured within one tick regardless of which
+                # replica received the cancel.
+        except Exception as exc:  # noqa: BLE001 — record failure, then re-raise
+            # A raised exception is terminal (the one-shot record is deleted), so
+            # without this the durable checkpoint would keep reporting ``running``
+            # forever. Best-effort write of a terminal ``failed`` status; if the
+            # ETag moved we still re-raise so the framework marks the task failed.
+            logger.exception("hello_forever failed for %s", name)
+            try:
+                current = await store.get_item(ctx.task_id)
+                await store.set_item(
+                    ctx.task_id,
+                    {
+                        "name": name,
+                        "iterations": n,
+                        "status": "failed",
+                        "error": str(exc),
+                    },
+                    if_match=current.etag if current else None,
+                )
+            except Exception:  # noqa: BLE001 — never mask the original failure
+                logger.warning("could not persist failed status for %s", name)
+            raise
     finally:
         await store.aclose()
 

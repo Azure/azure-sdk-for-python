@@ -16,14 +16,11 @@ the test's ``tmp_path``. No LLM, no cloud.
 from __future__ import annotations
 
 import json
-import os
 import types
 from pathlib import Path
 
 import pytest
 import pytest_asyncio
-
-os.environ.pop("FOUNDRY_HOSTING_ENVIRONMENT", None)
 
 
 class _Req:
@@ -142,6 +139,30 @@ async def test_hello_forever_handlers_lifecycle(
     )
     assert code == 200 and body["status"] == "stopped"
 
+    # Reusing the same invocation id after it stopped must NOT start a second
+    # worker against the stale checkpoint/marker — the durable record already
+    # exists, so invoke returns 409 with the terminal status.
+    code, body = _status(
+        await app.handle_invoke(
+            _Req(body=b'{"name": "ada"}', invocation_id=inv, session_id=sess)
+        )
+    )
+    assert code == 409 and body["status"] == "stopped"
+
+    # A failed worker (one-shot record deleted) is surfaced from the durable
+    # ``status: failed`` the worker persists — not reported as ``running`` forever.
+    fail_inv = "inv-hf-failed"
+    fail_tid = hf.durable_task_id(sess, fail_inv, "u")
+    fstore = await hf.open_checkpoint_store(sess, "u")
+    async with fstore:
+        await fstore.set_item(
+            fail_tid, {"name": "z", "iterations": 4, "status": "failed", "error": "boom"}
+        )
+    code, body = _status(
+        await app.handle_get(_Req(invocation_id=fail_inv, session_id=sess))
+    )
+    assert code == 200 and body["status"] == "failed" and body["error"] == "boom"
+
     # Unknown invocation: poll and cancel both 404, and cancel must NOT persist a
     # stop marker for it.
     code, _ = _status(await app.handle_get(_Req(invocation_id="nope", session_id=sess)))
@@ -151,9 +172,15 @@ async def test_hello_forever_handlers_lifecycle(
     )
     assert code == 404
 
-    # Malformed body shapes -> 400 (not 500).
+    # Malformed body shapes -> 400 (not 500): non-object JSON and invalid UTF-8.
     code, _ = _status(
         await app.handle_invoke(_Req(body=b"[]", invocation_id="inv-hf-2", session_id=sess))
+    )
+    assert code == 400
+    code, _ = _status(
+        await app.handle_invoke(
+            _Req(body=b"\xff\xfe", invocation_id="inv-hf-3", session_id=sess)
+        )
     )
     assert code == 400
 
@@ -182,11 +209,36 @@ async def test_hello_world_handlers(
     )
     assert code == 200 and body["status"] in ("in_progress", "completed")
 
+    # Reusing an existing invocation id must not start a second task against the
+    # existing checkpoint — invoke returns 409 with the current status.
+    code, body = _status(
+        await app.handle_invoke(
+            _Req(body=b'{"name": "ada", "steps": 3}', invocation_id=inv, session_id=sess)
+        )
+    )
+    assert code == 409 and body["status"] in ("in_progress", "completed")
+
+    # A failed run (one-shot record deleted) is surfaced from the durable
+    # ``status: failed`` the task persists — not stuck at ``in_progress`` forever.
+    fail_inv = "inv-hw-failed"
+    fail_tid = hw.durable_task_id(sess, fail_inv, "u")
+    fstore = await hw.open_checkpoint_store(sess, "u")
+    async with fstore:
+        await fstore.set_item(
+            fail_tid,
+            {"name": "z", "steps": 5, "completed_steps": 2, "status": "failed", "error": "boom"},
+        )
+    code, body = _status(
+        await app.handle_get(_Req(invocation_id=fail_inv, session_id=sess))
+    )
+    assert code == 200 and body["status"] == "failed" and body["error"] == "boom"
+
     code, _ = _status(await app.handle_get(_Req(invocation_id="nope", session_id=sess)))
     assert code == 404
 
-    # Malformed / invalid steps -> 400 (non-object body, non-positive, bool, float).
-    for raw in (b"[]", b'{"steps": 0}', b'{"steps": true}', b'{"steps": 2.9}'):
+    # Malformed / invalid steps -> 400 (non-object body, non-positive, bool,
+    # float, and invalid UTF-8 bytes).
+    for raw in (b"[]", b'{"steps": 0}', b'{"steps": true}', b'{"steps": 2.9}', b"\xff\xfe"):
         code, _ = _status(
             await app.handle_invoke(
                 _Req(body=raw, invocation_id="inv-hw-x", session_id=sess)

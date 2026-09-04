@@ -21,15 +21,10 @@ well-behaved LRA:
 from __future__ import annotations
 
 import asyncio
-import os
 from pathlib import Path
 
 import pytest
 import pytest_asyncio
-
-# Force the local-file resilient provider so the test is fully isolated
-# from any hosted env vars in the shell.
-os.environ.pop("FOUNDRY_HOSTING_ENVIRONMENT", None)
 
 
 @pytest_asyncio.fixture

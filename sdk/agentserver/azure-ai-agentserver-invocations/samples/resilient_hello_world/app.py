@@ -50,7 +50,7 @@ except ImportError:  # allows `python app.py` from inside this directory
     from agent import durable_task_id, hello_world, open_checkpoint_store
 
 # Resilient tasks (durable execution + crash recovery) are strictly opt-in as of
-# azure-ai-agentserver-core 2.2.0b1: ``AgentServerHost`` builds the
+# azure-ai-agentserver-core 2.1.0b1: ``AgentServerHost`` builds the
 # ``TaskManager`` ONLY when this switch is on, and it must be set before host
 # startup (i.e. at module-import time). Without it, ``hello_world.start()``
 # raises ``TaskManagerNotInitialized`` and there is no crash recovery — which
@@ -65,7 +65,9 @@ async def handle_invoke(request: Request) -> Response:
     """Start the durable task and return immediately (it runs in the background)."""
     try:
         data = json.loads(await request.body() or b"{}")
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        # UnicodeDecodeError: request bytes are not valid UTF-8. Both are
+        # malformed-body cases and must be 400, not an internal 500.
         return JSONResponse({"error": "invalid JSON body"}, status_code=400)
     if not isinstance(data, dict):
         return JSONResponse(
@@ -99,25 +101,44 @@ async def handle_invoke(request: Request) -> Response:
     call_id: str = request.state.call_id
     task_id = durable_task_id(session_id, invocation_id, user_id)
 
-    # Persist an initial durable checkpoint BEFORE starting the task so the
-    # invocation is visible on every replica immediately. Without it a poll routed
-    # to a different replica during the pre-first-checkpoint window sees
-    # get_active_run()==None (the live lease may be owned elsewhere) and would
-    # wrongly 404. Use create_item (atomic create) rather than a non-atomic
-    # get-then-set: concurrent retries otherwise both see "absent" and a delayed
-    # set_item could clobber a checkpoint the worker has already advanced.
+    # The durable checkpoint is the authoritative existence record — NOT start().
+    # A one-shot task record is deleted on terminal exit, so once a run has
+    # completed/failed, ``start()`` would NOT conflict and a reused invocation id
+    # would spin up a brand-new task against the old checkpoint. So we gate on an
+    # atomic ``create_item``: if it succeeds this is a genuinely new invocation
+    # and we start the task; if it conflicts the invocation already exists (in any
+    # state) and we return 409 with its current status — idempotent, and never a
+    # second task against a stale checkpoint. Seeding before ``start()`` also makes
+    # the invocation visible on every replica immediately (no pre-checkpoint 404).
     store = await open_checkpoint_store(session_id, user_id)
     try:
-        await store.create_item(
-            task_id, {"name": name, "steps": steps, "completed_steps": 0}
-        )
-    except FoundryStorageConflictError:
-        pass  # already seeded by a concurrent request or a previous attempt
+        try:
+            await store.create_item(
+                task_id,
+                {
+                    "name": name,
+                    "steps": steps,
+                    "completed_steps": 0,
+                    "status": "in_progress",
+                },
+            )
+        except FoundryStorageConflictError:
+            existing = await store.get_item(task_id)
+            status = (existing.value.get("status") if existing else None) or "unknown"
+            return JSONResponse(
+                {
+                    "status": status,
+                    "invocation_id": invocation_id,
+                    "detail": "invocation already exists",
+                },
+                status_code=409,
+            )
     finally:
         await store.aclose()
 
     # start() schedules the task on the TaskManager and returns right away — the
-    # work is NOT tied to this HTTP request's lifetime.
+    # work is NOT tied to this HTTP request's lifetime. We just created the record,
+    # so a conflict here is only a rare concurrent-start race; report it as 409.
     try:
         await hello_world.start(
             task_id=task_id,
@@ -130,9 +151,6 @@ async def handle_invoke(request: Request) -> Response:
             },
         )
     except TaskConflictError:
-        # The invocation id is caller-supplied and may be retried; a task already
-        # in progress (or completed) for this session+id is not an error — report
-        # the existing run rather than 500ing.
         return JSONResponse(
             {"status": "already_started", "invocation_id": invocation_id},
             status_code=409,
@@ -171,15 +189,21 @@ async def handle_get(request: Request) -> Response:
     value = item.value or {}
     done = int(value.get("completed_steps", 0) or 0)
     total = int(value.get("steps", 0) or 0)
-    status = "completed" if total and done >= total else "in_progress"
-    return JSONResponse(
-        {
-            "status": status,
-            "invocation_id": invocation_id,
-            "completed_steps": done,
-            "total_steps": total,
-        }
-    )
+    # Read the explicit terminal status the task persists. The one-shot task
+    # record is deleted on terminal exit, so this durable field — not
+    # ``completed_steps >= total`` — is what distinguishes a still-running task
+    # from a completed or failed one. A task that raised writes ``failed``; without
+    # that, a run that died below ``total`` would report ``in_progress`` forever.
+    status = str(value.get("status") or "in_progress")
+    body = {
+        "status": status,
+        "invocation_id": invocation_id,
+        "completed_steps": done,
+        "total_steps": total,
+    }
+    if status == "failed" and value.get("error"):
+        body["error"] = value["error"]
+    return JSONResponse(body)
 
 
 if __name__ == "__main__":

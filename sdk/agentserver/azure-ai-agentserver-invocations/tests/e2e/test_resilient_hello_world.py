@@ -24,15 +24,10 @@ Coverage:
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 import pytest
 import pytest_asyncio
-
-# Force the local-file resilient provider so the test is fully isolated
-# from any hosted env vars in the shell.
-os.environ.pop("FOUNDRY_HOSTING_ENVIRONMENT", None)
 
 
 @pytest_asyncio.fixture
@@ -156,8 +151,8 @@ async def test_completed_checkpoint_skips_all_work(
 ) -> None:
     """A checkpoint already at ``steps`` finishes without rewriting it.
 
-    An unchanged ETag proves the handler resumed from the checkpoint and ran
-    zero steps instead of starting over.
+    An unchanged ETag proves the handler resumed from the finalized checkpoint and
+    ran zero steps instead of starting over.
     """
     _ensure_sample_importable()
     from resilient_hello_world import agent as hw  # noqa: WPS433
@@ -168,7 +163,7 @@ async def test_completed_checkpoint_skips_all_work(
     seeded_etag = await _seed_item(
         hw,
         task_id,
-        {"name": "bob", "steps": 3, "completed_steps": 3},
+        {"name": "bob", "steps": 3, "completed_steps": 3, "status": "completed"},
     )
 
     run = await hw.hello_world.start(
@@ -182,7 +177,8 @@ async def test_completed_checkpoint_skips_all_work(
     item = await _load_item(hw, task_id)
     assert item is not None
     assert item.value.get("completed_steps") == 3
-    # No step ran, so no checkpoint write happened → ETag is unchanged.
+    assert item.value.get("status") == "completed"
+    # Already finalized, so no write happened → ETag is unchanged.
     assert item.etag == seeded_etag
 
 

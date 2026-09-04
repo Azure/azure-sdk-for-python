@@ -83,7 +83,7 @@ logger = logging.getLogger(__name__)
 streams.use_in_memory_replay(ttl_seconds=600)
 
 # Resilient tasks (durable execution + crash recovery) are strictly opt-in as of
-# azure-ai-agentserver-core 2.2.0b1: ``AgentServerHost`` constructs the
+# azure-ai-agentserver-core 2.1.0b1: ``AgentServerHost`` constructs the
 # ``TaskManager`` ONLY when this switch is on, and it must be set before host
 # startup (i.e. at module-import time). Without it, ``get_task_manager()`` /
 # ``langgraph_session.start()`` raise ``TaskManagerNotInitialized`` and the agent

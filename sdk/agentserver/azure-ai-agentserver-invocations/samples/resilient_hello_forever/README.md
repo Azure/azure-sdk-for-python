@@ -64,7 +64,7 @@ curl -s -XPOST "http://localhost:8088/invocations/<inv>/cancel?agent_session_id=
 
 ## The key line: enable resilient tasks
 
-As of `azure-ai-agentserver-core` **2.2.0b1** the durable-task subsystem is
+As of `azure-ai-agentserver-core` **2.1.0b1** the durable-task subsystem is
 **strictly opt-in**. Before host startup:
 
 ```python
