@@ -37,7 +37,7 @@ Bucket work beside the closest existing feature. Read the neighboring sync/async
 
 ## 4. Keep recorded sample tests green
 
-Check `tests\samples\test_samples.py` and `test_samples_async.py`. Existing folders are often auto-discovered by `get_sample_paths` or `get_async_sample_paths`; when no recording exists, add each new filename to that test's `samples_to_skip` with a concrete recording-needed reason. For a new sample folder, add matching sync/async harness coverage but keep the new cases excluded until recordings are supplied.
+Check `tests\samples\test_samples.py`, `test_samples_async.py`, and `test_samples_evaluations.py`. Existing folders are often auto-discovered by `get_sample_paths` or `get_async_sample_paths`; when no recording exists, add each new filename to that test's `samples_to_skip` with a concrete recording-needed reason. For a new sample folder, add matching sync/async harness coverage but keep the new cases excluded until recordings are supplied.
 
 Do not create recordings or modify `assets.json`.
 
