@@ -167,27 +167,36 @@ Always include `reason` with a concise explanation tied to the observed print ou
 agent_insights_instructions: Final[str] = (
     """
 We just ran Python code and captured print/log output in an attached log file (TXT).
-Validate whether the Agent Insights sample completed a useful on-demand analysis workflow.
+Validate whether the Agent Insights sample completed either an on-demand analysis workflow or
+scheduled-monitor setup.
 
-Successful output must show all of the following:
+For the on-demand sample, successful output must show all of the following:
 - A monitor was created for the selected agent.
 - An on-demand run reached the `succeeded` status.
 - The run analyzed at least one trace.
 - The run created, updated, or reopened at least one insight.
 - Listing the monitor's insights returned at least one insight with a title, severity, status,
   trace count, and proposed-fix kind.
+- One insight was updated to `resolved` and then reopened as `active`.
 - The monitor was deleted during cleanup.
+
+For the scheduled sample, successful output must show all of the following:
+- A monitor was created or reused for the selected agent.
+- The retrieved monitor is enabled.
+- The run interval is a positive number of hours.
+- The service returned a next scheduled run time.
+- The sample states that the scheduled monitor remains enabled.
 
 Mark `correct = false` for:
 - Exceptions, stack traces, authentication, authorization, timeout, connection, or service errors.
+- Output that does not complete either workflow described above.
 - A failed, cancelled, queued, or still-running Agent Insights run.
-- Zero analyzed traces.
-- Zero changed insights across created, updated, and reopened counts.
-- Zero listed insights or output that omits the insight summary.
-- Cleanup failure that leaves the sample-created monitor behind.
+- Zero analyzed traces or zero changed insights in the on-demand workflow.
+- An on-demand insight that is not resolved and reopened.
+- A disabled scheduled monitor or a missing next scheduled run.
 
-The wording and number of generated insights can vary. Judge the explicit status and count fields,
-not the exact generated insight title or remediation text.
+The wording, generated insight titles, remediation text, and scheduled time can vary. Judge the
+explicit status and count fields, not exact generated text.
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()

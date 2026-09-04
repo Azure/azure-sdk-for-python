@@ -8,7 +8,8 @@
 DESCRIPTION:
     This sample demonstrates how to create an Agent Insights monitor, run
     on-demand trace analysis, inspect run statistics, list generated insights,
-    and delete the monitor using the synchronous AIProjectClient.
+    update an insight's lifecycle status, and delete the monitor using the
+    synchronous AIProjectClient.
 
     Agent Insights is a preview feature. In the Python SDK, you access these
     operations through `project_client.beta.agent_insight_monitors`.
@@ -21,7 +22,7 @@ DESCRIPTION:
     agent that does not have Agent Insights data that you need to keep.
 
 USAGE:
-    python sample_agent_insights_basic.py
+    python sample_agent_insights_on_demand.py
 
     Before running the sample:
 
@@ -44,7 +45,12 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentInsightMonitorCreate, AgentInsightRunCreate
+from azure.ai.projects.models import (
+    AgentInsightMonitorCreate,
+    AgentInsightRunCreate,
+    AgentInsightStatus,
+    AgentInsightUpdate,
+)
 
 
 def main() -> None:
@@ -60,6 +66,7 @@ def main() -> None:
     ):
         monitor_operations = project_client.beta.agent_insight_monitors
 
+        # Agent Insights supports only one monitor for each agent.
         existing_monitors = list(monitor_operations.list(agent_name=agent_name))
         for existing_monitor in existing_monitors:
             try:
@@ -70,6 +77,7 @@ def main() -> None:
 
         monitor = None
         try:
+            # Keep scheduling disabled because this sample starts one explicit run.
             monitor = monitor_operations.create(
                 AgentInsightMonitorCreate(
                     agent_name=agent_name,
@@ -137,6 +145,42 @@ def main() -> None:
                 )
                 if proposed_fix is not None:
                     print(f"Recommended action: {proposed_fix.text}")
+
+            if insights:
+                selected_insight = monitor_operations.get_insight(
+                    monitor.id,
+                    insights[0].id,
+                    include_details=True,
+                )
+                selected_status = getattr(selected_insight.status, "value", selected_insight.status)
+                print(f"Retrieved insight `{selected_insight.id}` with status {selected_status}.")
+
+                # Resolve the insight, then reopen it so the lifecycle change is visible.
+                monitor_operations.update_insight(
+                    monitor.id,
+                    selected_insight.id,
+                    AgentInsightUpdate(status=AgentInsightStatus.RESOLVED),
+                )
+                resolved_insight = monitor_operations.get_insight(
+                    monitor.id,
+                    selected_insight.id,
+                )
+                resolved_status = getattr(resolved_insight.status, "value", resolved_insight.status)
+                print(f"Insight status after update: {resolved_status}")
+
+                monitor_operations.update_insight(
+                    monitor.id,
+                    selected_insight.id,
+                    AgentInsightUpdate(status=AgentInsightStatus.ACTIVE),
+                )
+                reopened_insight = monitor_operations.get_insight(
+                    monitor.id,
+                    selected_insight.id,
+                )
+                reopened_status = getattr(reopened_insight.status, "value", reopened_insight.status)
+                print(f"Insight status after reopening: {reopened_status}")
+            else:
+                print("No insights were available to demonstrate lifecycle updates.")
         finally:
             if monitor is not None:
                 try:

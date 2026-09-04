@@ -28,9 +28,26 @@ from test_samples_helpers import get_sample_env_vars
 from test_fine_tuning_samples_helpers import get_fine_tuning_sample_env_vars
 
 
-def _assert_agent_insights_output(print_output_calls: list[str]) -> None:
+def _assert_agent_insights_output(sample_path: str, print_output_calls: list[str]) -> None:
     output = "\n".join(print_output_calls)
+    sample_name = os.path.basename(sample_path)
 
+    if sample_name == "sample_agent_insights_scheduled.py":
+        assert re.search(
+            r"^Scheduled monitor enabled: True$", output, re.MULTILINE
+        ), "Agent Insights scheduled monitor was not enabled."
+        interval_match = re.search(r"^Run interval hours: ([0-9]+(?:\.[0-9]+)?)$", output, re.MULTILINE)
+        assert interval_match is not None, "Agent Insights sample did not print its run interval."
+        assert float(interval_match.group(1)) > 0
+        assert re.search(
+            r"^Next scheduled run: (?!None$).+$", output, re.MULTILINE
+        ), "Agent Insights sample did not return the next scheduled run."
+        assert re.search(
+            r"^The scheduled monitor remains enabled\.$", output, re.MULTILINE
+        ), "Agent Insights scheduled monitor was not left enabled."
+        return
+
+    assert sample_name == "sample_agent_insights_on_demand.py", f"Unexpected Agent Insights sample: {sample_name}"
     assert re.search(r"^Run status: succeeded$", output, re.MULTILINE), "Agent Insights run did not succeed."
 
     def read_count(label: str) -> int:
@@ -41,6 +58,12 @@ def _assert_agent_insights_output(print_output_calls: list[str]) -> None:
     assert read_count("Traces analyzed") > 0
     assert read_count("Insights created") + read_count("Insights updated") + read_count("Insights reopened") > 0
     assert read_count("Listed insights") > 0
+    assert re.search(
+        r"^Insight status after update: resolved$", output, re.MULTILINE
+    ), "Agent Insights sample did not resolve an insight."
+    assert re.search(
+        r"^Insight status after reopening: active$", output, re.MULTILINE
+    ), "Agent Insights sample did not reopen the insight."
 
 
 class TestSamples(AzureRecordedTestCase):
@@ -136,7 +159,7 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        _assert_agent_insights_output(executor.print_output_calls)
+        _assert_agent_insights_output(sample_path, executor.print_output_calls)
         executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(

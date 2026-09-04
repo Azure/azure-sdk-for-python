@@ -4,7 +4,7 @@
 
 ### Sample updates
 
-* Added `sample_agent_insights_basic.py` under `samples/agent_insights/` to demonstrate a repeatable on-demand Agent Insights run, run statistics, and generated insight retrieval.
+* Added `sample_agent_insights_on_demand.py` and `sample_agent_insights_scheduled.py` under `samples/agent_insights/` to demonstrate repeatable on-demand analysis, insight lifecycle updates, and scheduled monitor setup.
 
 ### Bugs Fixed
 

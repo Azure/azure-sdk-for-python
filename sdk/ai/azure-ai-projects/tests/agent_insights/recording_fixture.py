@@ -1,7 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""Create deterministic external-agent telemetry for Agent Insights sample recordings."""
+"""Create deterministic external-agent telemetry for Agent Insights sample recordings.
+
+Run this helper after test-resource deployment and package dependency installation.
+"""
 
 from __future__ import annotations
 
