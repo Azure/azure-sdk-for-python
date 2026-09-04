@@ -31,6 +31,7 @@
   - Added model `WeekendReschedulingConstraint`
   - Added model `WeekendSchedulingConstraint`
   - Added model `WindowsServerLicense`
+  - Operation group `HostsOperations` added method `update`
 
 ## 10.0.0 (2025-12-15)
 
