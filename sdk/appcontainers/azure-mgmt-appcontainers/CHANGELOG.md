@@ -1,5 +1,102 @@
 # Release History
 
+## 5.1.0 (2026-09-04)
+
+### Features Added
+
+  - Client `ContainerAppsAPIClient` added operation group `available_environment_modes`
+  - Client `ContainerAppsAPIClient` added operation group `container_app_private_endpoint_connections`
+  - Client `ContainerAppsAPIClient` added operation group `container_app_private_link_resources`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_functions`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_label_history`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_revision_functions`
+  - Client `ContainerAppsAPIClient` added operation group `dapr_component_resiliency_policies`
+  - Client `ContainerAppsAPIClient` added operation group `dot_net_components`
+  - Client `ContainerAppsAPIClient` added operation group `functions_extension`
+  - Client `ContainerAppsAPIClient` added operation group `sandbox_groups`
+  - Client `ContainerAppsAPIClient` added operation group `vnet_connections`
+  - Model `BlobStorageTokenStore` added property `blob_container_uri`
+  - Model `BlobStorageTokenStore` added property `client_id`
+  - Model `BlobStorageTokenStore` added property `managed_identity_resource_id`
+  - Model `ContainerAppProperties` added property `networking`
+  - Model `JobExecutionProperties` added property `detailed_status`
+  - Model `JobExecutionProperties` added property `message`
+  - Model `JobExecutionProperties` added property `reason`
+  - Model `JobProperties` added property `running_state`
+  - Model `ManagedEnvironmentProperties` added property `app_insights_configuration`
+  - Model `ManagedEnvironmentProperties` added property `environment_mode`
+  - Model `ManagedEnvironmentProperties` added property `open_telemetry_configuration`
+  - Model `ReplicaContainer` added property `debug_endpoint`
+  - Model `Scale` added property `allow_scaling_rule_override`
+  - Model `SessionContainer` added property `probes`
+  - Added model `AppInsightsConfiguration`
+  - Added model `AvailableEnvironmentMode`
+  - Added model `AvailableEnvironmentModeProperties`
+  - Added model `CheckMigrationEligibilityRequest`
+  - Added model `CheckMigrationEligibilityResponse`
+  - Added model `ContainerAppNetworkingConfiguration`
+  - Added model `ContainerAppsFunction`
+  - Added model `ContainerAppsFunctionProperties`
+  - Added enum `ContainerAppsFunctionState`
+  - Added model `ContainerExecutionStatus`
+  - Added model `DaprComponentResiliencyPolicy`
+  - Added model `DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration`
+  - Added model `DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyProperties`
+  - Added model `DaprComponentResiliencyPolicyTimeoutPolicyConfiguration`
+  - Added model `DataDogConfiguration`
+  - Added model `DestinationsConfiguration`
+  - Added model `DotNetComponent`
+  - Added model `DotNetComponentConfigurationProperty`
+  - Added model `DotNetComponentProperties`
+  - Added enum `DotNetComponentProvisioningState`
+  - Added model `DotNetComponentServiceBind`
+  - Added enum `DotNetComponentType`
+  - Added model `ExecutionStatus`
+  - Added model `Header`
+  - Added enum `JobRunningState`
+  - Added model `LabelHistory`
+  - Added model `LabelHistoryProperties`
+  - Added model `LabelHistoryRecordItem`
+  - Added model `LogsConfiguration`
+  - Added enum `ManagedEnvironmentMode`
+  - Added model `MetricsConfiguration`
+  - Added model `MigrationEligibilityFailureReason`
+  - Added model `OpenTelemetryConfiguration`
+  - Added model `OtlpConfiguration`
+  - Added model `ReplicaExecutionStatus`
+  - Added model `SandboxGroup`
+  - Added model `SandboxGroupPatch`
+  - Added model `SandboxGroupPatchProperties`
+  - Added model `SandboxGroupProperties`
+  - Added enum `SandboxGroupProvisioningState`
+  - Added model `SessionProbe`
+  - Added model `SessionProbeHttpGet`
+  - Added model `SessionProbeHttpGetHttpHeadersItem`
+  - Added model `SessionProbeTcpSocket`
+  - Added enum `SessionProbeType`
+  - Added enum `Status`
+  - Added model `TracesConfiguration`
+  - Added model `VnetConnection`
+  - Added model `VnetConnectionProperties`
+  - Added enum `VnetConnectionProvisioningState`
+  - Model `JobsOperations` added method `begin_resume`
+  - Model `JobsOperations` added method `begin_suspend`
+  - Model `ManagedEnvironmentsOperations` added method `check_migration_eligibility`
+  - Added operation group `AvailableEnvironmentModesOperations`
+  - Added operation group `ContainerAppPrivateEndpointConnectionsOperations`
+  - Added operation group `ContainerAppPrivateLinkResourcesOperations`
+  - Added operation group `ContainerAppsFunctionsOperations`
+  - Added operation group `ContainerAppsLabelHistoryOperations`
+  - Added operation group `ContainerAppsRevisionFunctionsOperations`
+  - Added operation group `DaprComponentResiliencyPoliciesOperations`
+  - Added operation group `DotNetComponentsOperations`
+  - Added operation group `FunctionsExtensionOperations`
+  - Added operation group `SandboxGroupsOperations`
+  - Added operation group `VnetConnectionsOperations`
+
 ## 5.0.0 (2026-07-08)
 
 ### Features Added

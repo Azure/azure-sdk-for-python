@@ -2,6 +2,7 @@
 namespace azure.mgmt.appcontainers
 
     class azure.mgmt.appcontainers.ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin): implements ContextManager 
+        available_environment_modes: AvailableEnvironmentModesOperations
         available_workload_profiles: AvailableWorkloadProfilesOperations
         billing_meters: BillingMetersOperations
         certificates: CertificatesOperations
@@ -9,14 +10,22 @@ namespace azure.mgmt.appcontainers
         connected_environments_certificates: ConnectedEnvironmentsCertificatesOperations
         connected_environments_dapr_components: ConnectedEnvironmentsDaprComponentsOperations
         connected_environments_storages: ConnectedEnvironmentsStoragesOperations
+        container_app_private_endpoint_connections: ContainerAppPrivateEndpointConnectionsOperations
+        container_app_private_link_resources: ContainerAppPrivateLinkResourcesOperations
         container_apps: ContainerAppsOperations
         container_apps_auth_configs: ContainerAppsAuthConfigsOperations
         container_apps_diagnostics: ContainerAppsDiagnosticsOperations
+        container_apps_functions: ContainerAppsFunctionsOperations
+        container_apps_label_history: ContainerAppsLabelHistoryOperations
+        container_apps_revision_functions: ContainerAppsRevisionFunctionsOperations
         container_apps_revision_replicas: ContainerAppsRevisionReplicasOperations
         container_apps_revisions: ContainerAppsRevisionsOperations
         container_apps_session_pools: ContainerAppsSessionPoolsOperations
         container_apps_source_controls: ContainerAppsSourceControlsOperations
+        dapr_component_resiliency_policies: DaprComponentResiliencyPoliciesOperations
         dapr_components: DaprComponentsOperations
+        dot_net_components: DotNetComponentsOperations
+        functions_extension: FunctionsExtensionOperations
         http_route_config: HttpRouteConfigOperations
         java_components: JavaComponentsOperations
         jobs: JobsOperations
@@ -33,7 +42,9 @@ namespace azure.mgmt.appcontainers
         managed_environments_storages: ManagedEnvironmentsStoragesOperations
         namespaces: NamespacesOperations
         operations: Operations
+        sandbox_groups: SandboxGroupsOperations
         usages: UsagesOperations
+        vnet_connections: VnetConnectionsOperations
 
         def __init__(
                 self, 
@@ -73,6 +84,7 @@ namespace azure.mgmt.appcontainers
 namespace azure.mgmt.appcontainers.aio
 
     class azure.mgmt.appcontainers.aio.ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin): implements AsyncContextManager 
+        available_environment_modes: AvailableEnvironmentModesOperations
         available_workload_profiles: AvailableWorkloadProfilesOperations
         billing_meters: BillingMetersOperations
         certificates: CertificatesOperations
@@ -80,14 +92,22 @@ namespace azure.mgmt.appcontainers.aio
         connected_environments_certificates: ConnectedEnvironmentsCertificatesOperations
         connected_environments_dapr_components: ConnectedEnvironmentsDaprComponentsOperations
         connected_environments_storages: ConnectedEnvironmentsStoragesOperations
+        container_app_private_endpoint_connections: ContainerAppPrivateEndpointConnectionsOperations
+        container_app_private_link_resources: ContainerAppPrivateLinkResourcesOperations
         container_apps: ContainerAppsOperations
         container_apps_auth_configs: ContainerAppsAuthConfigsOperations
         container_apps_diagnostics: ContainerAppsDiagnosticsOperations
+        container_apps_functions: ContainerAppsFunctionsOperations
+        container_apps_label_history: ContainerAppsLabelHistoryOperations
+        container_apps_revision_functions: ContainerAppsRevisionFunctionsOperations
         container_apps_revision_replicas: ContainerAppsRevisionReplicasOperations
         container_apps_revisions: ContainerAppsRevisionsOperations
         container_apps_session_pools: ContainerAppsSessionPoolsOperations
         container_apps_source_controls: ContainerAppsSourceControlsOperations
+        dapr_component_resiliency_policies: DaprComponentResiliencyPoliciesOperations
         dapr_components: DaprComponentsOperations
+        dot_net_components: DotNetComponentsOperations
+        functions_extension: FunctionsExtensionOperations
         http_route_config: HttpRouteConfigOperations
         java_components: JavaComponentsOperations
         jobs: JobsOperations
@@ -104,7 +124,9 @@ namespace azure.mgmt.appcontainers.aio
         managed_environments_storages: ManagedEnvironmentsStoragesOperations
         namespaces: NamespacesOperations
         operations: Operations
+        sandbox_groups: SandboxGroupsOperations
         usages: UsagesOperations
+        vnet_connections: VnetConnectionsOperations
 
         def __init__(
                 self, 
@@ -142,6 +164,22 @@ namespace azure.mgmt.appcontainers.aio
 
 
 namespace azure.mgmt.appcontainers.aio.operations
+
+    class azure.mgmt.appcontainers.aio.operations.AvailableEnvironmentModesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AvailableEnvironmentMode]: ...
+
 
     class azure.mgmt.appcontainers.aio.operations.AvailableWorkloadProfilesOperations:
 
@@ -674,6 +712,108 @@ namespace azure.mgmt.appcontainers.aio.operations
             ) -> ConnectedEnvironmentStoragesCollection: ...
 
 
+    class azure.mgmt.appcontainers.aio.operations.ContainerAppPrivateEndpointConnectionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_endpoint_connection_name: str, 
+                private_endpoint_connection_envelope: PrivateEndpointConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PrivateEndpointConnection]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_endpoint_connection_name: str, 
+                private_endpoint_connection_envelope: PrivateEndpointConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PrivateEndpointConnection]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_endpoint_connection_name: str, 
+                private_endpoint_connection_envelope: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PrivateEndpointConnection]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'private_endpoint_connection_name']}, api_versions_list=['2026-07-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_endpoint_connection_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'private_endpoint_connection_name', 'accept']}, api_versions_list=['2026-07-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_endpoint_connection_name: str, 
+                **kwargs: Any
+            ) -> PrivateEndpointConnection: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[PrivateEndpointConnection]: ...
+
+
+    class azure.mgmt.appcontainers.aio.operations.ContainerAppPrivateLinkResourcesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'private_link_resource_name', 'accept']}, api_versions_list=['2026-07-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_link_resource_name: str, 
+                **kwargs: Any
+            ) -> PrivateLinkResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[PrivateLinkResource]: ...
+
+
     class azure.mgmt.appcontainers.aio.operations.ContainerAppsAuthConfigsOperations:
 
         def __init__(
@@ -796,6 +936,74 @@ namespace azure.mgmt.appcontainers.aio.operations
                 filter: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[Revision]: ...
+
+
+    class azure.mgmt.appcontainers.aio.operations.ContainerAppsFunctionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'function_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                function_name: str, 
+                **kwargs: Any
+            ) -> ContainerAppsFunction: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ContainerAppsFunction]: ...
+
+
+    class azure.mgmt.appcontainers.aio.operations.ContainerAppsLabelHistoryOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'label_name']}, api_versions_list=['2026-07-01'])
+        async def delete_label_history(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                label_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'label_name', 'accept']}, api_versions_list=['2026-07-01'])
+        async def get_label_history(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                label_name: str, 
+                **kwargs: Any
+            ) -> LabelHistory: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'filter', 'accept']}, api_versions_list=['2026-07-01'])
+        def list_label_history(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[LabelHistory]: ...
 
 
     class azure.mgmt.appcontainers.aio.operations.ContainerAppsOperations:
@@ -939,6 +1147,34 @@ namespace azure.mgmt.appcontainers.aio.operations
                 container_app_name: str, 
                 **kwargs: Any
             ) -> SecretsCollection: ...
+
+
+    class azure.mgmt.appcontainers.aio.operations.ContainerAppsRevisionFunctionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                revision_name: str, 
+                function_name: str, 
+                **kwargs: Any
+            ) -> ContainerAppsFunction: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                revision_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ContainerAppsFunction]: ...
 
 
     class azure.mgmt.appcontainers.aio.operations.ContainerAppsRevisionReplicasOperations:
@@ -1196,6 +1432,86 @@ namespace azure.mgmt.appcontainers.aio.operations
             ) -> AsyncItemPaged[SourceControl]: ...
 
 
+    class azure.mgmt.appcontainers.aio.operations.DaprComponentResiliencyPoliciesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                name: str, 
+                dapr_component_resiliency_policy_envelope: DaprComponentResiliencyPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DaprComponentResiliencyPolicy: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                name: str, 
+                dapr_component_resiliency_policy_envelope: DaprComponentResiliencyPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DaprComponentResiliencyPolicy: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                name: str, 
+                dapr_component_resiliency_policy_envelope: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DaprComponentResiliencyPolicy: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'component_name', 'name']}, api_versions_list=['2026-07-01'])
+        async def delete(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'component_name', 'name', 'accept']}, api_versions_list=['2026-07-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> DaprComponentResiliencyPolicy: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'component_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[DaprComponentResiliencyPolicy]: ...
+
+
     class azure.mgmt.appcontainers.aio.operations.DaprComponentsOperations:
 
         def __init__(
@@ -1274,6 +1590,136 @@ namespace azure.mgmt.appcontainers.aio.operations
                 component_name: str, 
                 **kwargs: Any
             ) -> DaprSecretsCollection: ...
+
+
+    class azure.mgmt.appcontainers.aio.operations.DotNetComponentsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: DotNetComponent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[DotNetComponent]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: DotNetComponent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[DotNetComponent]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[DotNetComponent]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'name']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: DotNetComponent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[DotNetComponent]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: DotNetComponent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[DotNetComponent]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[DotNetComponent]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> DotNetComponent: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[DotNetComponent]: ...
+
+
+    class azure.mgmt.appcontainers.aio.operations.FunctionsExtensionOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'revision_name', 'function_app_name', 'accept']}, api_versions_list=['2026-07-01'])
+        async def invoke_functions_host(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                revision_name: str, 
+                function_app_name: str, 
+                **kwargs: Any
+            ) -> str: ...
 
 
     class azure.mgmt.appcontainers.aio.operations.HttpRouteConfigOperations:
@@ -1558,6 +2004,15 @@ namespace azure.mgmt.appcontainers.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'job_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        async def begin_resume(
+                self, 
+                resource_group_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[Job]: ...
+
         @overload
         async def begin_start(
                 self, 
@@ -1607,6 +2062,15 @@ namespace azure.mgmt.appcontainers.aio.operations
                 job_name: str, 
                 **kwargs: Any
             ) -> AsyncLROPoller[ContainerAppJobExecutions]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'job_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        async def begin_suspend(
+                self, 
+                resource_group_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[Job]: ...
 
         @overload
         async def begin_update(
@@ -2068,7 +2532,18 @@ namespace azure.mgmt.appcontainers.aio.operations
                 **kwargs
             ) -> None: ...
 
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'private_link_resource_name', 'accept']}, api_versions_list=['2026-07-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                private_link_resource_name: str, 
+                **kwargs: Any
+            ) -> PrivateLinkResource: ...
+
         @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'accept']}, api_versions_list=['2026-07-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -2192,6 +2667,39 @@ namespace azure.mgmt.appcontainers.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AsyncLROPoller[ManagedEnvironment]: ...
+
+        @overload
+        async def check_migration_eligibility(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                body: CheckMigrationEligibilityRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CheckMigrationEligibilityResponse: ...
+
+        @overload
+        async def check_migration_eligibility(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                body: CheckMigrationEligibilityRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CheckMigrationEligibilityResponse: ...
+
+        @overload
+        async def check_migration_eligibility(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CheckMigrationEligibilityResponse: ...
 
         @distributed_trace_async
         async def get(
@@ -2353,6 +2861,111 @@ namespace azure.mgmt.appcontainers.aio.operations
         def list(self, **kwargs: Any) -> AsyncItemPaged[OperationDetail]: ...
 
 
+    class azure.mgmt.appcontainers.aio.operations.SandboxGroupsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                resource: SandboxGroup, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[SandboxGroup]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                resource: SandboxGroup, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[SandboxGroup]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[SandboxGroup]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name']}, api_versions_list=['2026-07-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                properties: SandboxGroupPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                properties: SandboxGroupPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name', 'accept']}, api_versions_list=['2026-07-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                **kwargs: Any
+            ) -> SandboxGroup: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[SandboxGroup]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-01'])
+        def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[SandboxGroup]: ...
+
+
     class azure.mgmt.appcontainers.aio.operations.UsagesOperations:
 
         def __init__(
@@ -2367,6 +2980,80 @@ namespace azure.mgmt.appcontainers.aio.operations
                 location: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[Usage]: ...
+
+
+    class azure.mgmt.appcontainers.aio.operations.VnetConnectionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name', 'vnet_connection_name']}, api_versions_list=['2026-07-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                vnet_connection_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                vnet_connection_name: str, 
+                resource: VnetConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VnetConnection: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                vnet_connection_name: str, 
+                resource: VnetConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VnetConnection: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                vnet_connection_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VnetConnection: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name', 'vnet_connection_name', 'accept']}, api_versions_list=['2026-07-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                vnet_connection_name: str, 
+                **kwargs: Any
+            ) -> VnetConnection: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def list_by_sandbox_group(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VnetConnection]: ...
 
 
 namespace azure.mgmt.appcontainers.models
@@ -2415,6 +3102,20 @@ namespace azure.mgmt.appcontainers.models
                 *, 
                 groups: Optional[list[str]] = ..., 
                 identities: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.AppInsightsConfiguration(_Model):
+        connection_string: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_string: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -2561,6 +3262,31 @@ namespace azure.mgmt.appcontainers.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.AvailableEnvironmentMode(ProxyResource):
+        id: str
+        location: Optional[str]
+        name: str
+        properties: Optional[AvailableEnvironmentModeProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: Optional[str] = ..., 
+                properties: Optional[AvailableEnvironmentModeProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.AvailableEnvironmentModeProperties(_Model):
+        description: Optional[str]
+        display_name: Optional[str]
 
 
     class azure.mgmt.appcontainers.models.AvailableWorkloadProfile(ProxyResource):
@@ -2846,13 +3572,19 @@ namespace azure.mgmt.appcontainers.models
 
 
     class azure.mgmt.appcontainers.models.BlobStorageTokenStore(_Model):
-        sas_url_setting_name: str
+        blob_container_uri: Optional[str]
+        client_id: Optional[str]
+        managed_identity_resource_id: Optional[str]
+        sas_url_setting_name: Optional[str]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                sas_url_setting_name: str
+                blob_container_uri: Optional[str] = ..., 
+                client_id: Optional[str] = ..., 
+                managed_identity_resource_id: Optional[str] = ..., 
+                sas_url_setting_name: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -2946,6 +3678,42 @@ namespace azure.mgmt.appcontainers.models
         FAILED = "Failed"
         PENDING = "Pending"
         SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.appcontainers.models.CheckMigrationEligibilityRequest(_Model):
+        target_mode: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                target_mode: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.CheckMigrationEligibilityResponse(_Model):
+        current_mode: str
+        environment_name: str
+        failure_reasons: list[MigrationEligibilityFailureReason]
+        is_eligible: bool
+        target_mode: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                current_mode: str, 
+                environment_name: str, 
+                failure_reasons: list[MigrationEligibilityFailureReason], 
+                is_eligible: bool, 
+                target_mode: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.appcontainers.models.CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3290,6 +4058,20 @@ namespace azure.mgmt.appcontainers.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.appcontainers.models.ContainerAppNetworkingConfiguration(_Model):
+        outbound_vnet_subnet_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                outbound_vnet_subnet_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.appcontainers.models.ContainerAppProbe(_Model):
         failure_threshold: Optional[int]
         http_get: Optional[ContainerAppProbeHttpGet]
@@ -3383,6 +4165,7 @@ namespace azure.mgmt.appcontainers.models
         latest_revision_fqdn: Optional[str]
         latest_revision_name: Optional[str]
         managed_environment_id: Optional[str]
+        networking: Optional[ContainerAppNetworkingConfiguration]
         outbound_ip_addresses: Optional[list[str]]
         provisioning_state: Optional[Union[str, ContainerAppProvisioningState]]
         running_status: Optional[Union[str, ContainerAppRunningStatus]]
@@ -3396,6 +4179,7 @@ namespace azure.mgmt.appcontainers.models
                 configuration: Optional[Configuration] = ..., 
                 environment_id: Optional[str] = ..., 
                 managed_environment_id: Optional[str] = ..., 
+                networking: Optional[ContainerAppNetworkingConfiguration] = ..., 
                 template: Optional[Template] = ..., 
                 workload_profile_name: Optional[str] = ...
             ) -> None: ...
@@ -3431,6 +4215,65 @@ namespace azure.mgmt.appcontainers.models
         key_vault_url: Optional[str]
         name: Optional[str]
         value: Optional[str]
+
+
+    class azure.mgmt.appcontainers.models.ContainerAppsFunction(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[ContainerAppsFunctionProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[ContainerAppsFunctionProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.ContainerAppsFunctionProperties(_Model):
+        invoke_url_template: Optional[str]
+        is_disabled: Optional[bool]
+        language: Optional[str]
+        state: Optional[Union[str, ContainerAppsFunctionState]]
+        trigger_type: Optional[str]
+
+
+    class azure.mgmt.appcontainers.models.ContainerAppsFunctionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "Disabled"
+        ENABLED = "Enabled"
+
+
+    class azure.mgmt.appcontainers.models.ContainerExecutionStatus(_Model):
+        additional_information: Optional[str]
+        code: Optional[int]
+        name: Optional[str]
+        status: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                additional_information: Optional[str] = ..., 
+                code: Optional[int] = ..., 
+                name: Optional[str] = ..., 
+                status: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.appcontainers.models.ContainerResources(_Model):
@@ -3775,6 +4618,130 @@ namespace azure.mgmt.appcontainers.models
         SUCCEEDED = "Succeeded"
 
 
+    class azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicy(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[DaprComponentResiliencyPolicyProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[DaprComponentResiliencyPolicyProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration(_Model):
+        consecutive_errors: Optional[int]
+        interval_in_seconds: Optional[int]
+        timeout_in_seconds: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                consecutive_errors: Optional[int] = ..., 
+                interval_in_seconds: Optional[int] = ..., 
+                timeout_in_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyConfiguration(_Model):
+        circuit_breaker_policy: Optional[DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration]
+        http_retry_policy: Optional[DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration]
+        timeout_policy: Optional[DaprComponentResiliencyPolicyTimeoutPolicyConfiguration]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                circuit_breaker_policy: Optional[DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration] = ..., 
+                http_retry_policy: Optional[DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration] = ..., 
+                timeout_policy: Optional[DaprComponentResiliencyPolicyTimeoutPolicyConfiguration] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration(_Model):
+        initial_delay_in_milliseconds: Optional[int]
+        max_interval_in_milliseconds: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                initial_delay_in_milliseconds: Optional[int] = ..., 
+                max_interval_in_milliseconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration(_Model):
+        max_retries: Optional[int]
+        retry_back_off: Optional[DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_retries: Optional[int] = ..., 
+                retry_back_off: Optional[DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyProperties(_Model):
+        inbound_policy: Optional[DaprComponentResiliencyPolicyConfiguration]
+        outbound_policy: Optional[DaprComponentResiliencyPolicyConfiguration]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                inbound_policy: Optional[DaprComponentResiliencyPolicyConfiguration] = ..., 
+                outbound_policy: Optional[DaprComponentResiliencyPolicyConfiguration] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicyTimeoutPolicyConfiguration(_Model):
+        response_timeout_in_seconds: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                response_timeout_in_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.appcontainers.models.DaprConfiguration(_Model):
         version: Optional[str]
 
@@ -3810,6 +4777,22 @@ namespace azure.mgmt.appcontainers.models
                 self, 
                 *, 
                 value: list[DaprSecret]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.DataDogConfiguration(_Model):
+        key: Optional[str]
+        site: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key: Optional[str] = ..., 
+                site: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -3858,6 +4841,22 @@ namespace azure.mgmt.appcontainers.models
         code: Optional[str]
         message: Optional[str]
         target: Optional[str]
+
+
+    class azure.mgmt.appcontainers.models.DestinationsConfiguration(_Model):
+        data_dog_configuration: Optional[DataDogConfiguration]
+        otlp_configurations: Optional[list[OtlpConfiguration]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data_dog_configuration: Optional[DataDogConfiguration] = ..., 
+                otlp_configurations: Optional[list[OtlpConfiguration]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.appcontainers.models.DiagnosticDataProviderMetadata(_Model):
@@ -4068,6 +5067,95 @@ namespace azure.mgmt.appcontainers.models
         SKIPPED = "Skipped"
 
 
+    class azure.mgmt.appcontainers.models.DotNetComponent(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[DotNetComponentProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[DotNetComponentProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.DotNetComponentConfigurationProperty(_Model):
+        property_name: Optional[str]
+        value: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                property_name: Optional[str] = ..., 
+                value: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.DotNetComponentProperties(_Model):
+        component_type: Optional[Union[str, DotNetComponentType]]
+        configurations: Optional[list[DotNetComponentConfigurationProperty]]
+        provisioning_state: Optional[Union[str, DotNetComponentProvisioningState]]
+        service_binds: Optional[list[DotNetComponentServiceBind]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                component_type: Optional[Union[str, DotNetComponentType]] = ..., 
+                configurations: Optional[list[DotNetComponentConfigurationProperty]] = ..., 
+                service_binds: Optional[list[DotNetComponentServiceBind]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.DotNetComponentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELED = "Canceled"
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        IN_PROGRESS = "InProgress"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.appcontainers.models.DotNetComponentServiceBind(_Model):
+        name: Optional[str]
+        service_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Optional[str] = ..., 
+                service_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.DotNetComponentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ASPIRE_DASHBOARD = "AspireDashboard"
+
+
     class azure.mgmt.appcontainers.models.DynamicPoolConfiguration(_Model):
         lifecycle_configuration: Optional[LifecycleConfiguration]
 
@@ -4219,6 +5307,20 @@ namespace azure.mgmt.appcontainers.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.appcontainers.models.ExecutionStatus(_Model):
+        replicas: Optional[list[ReplicaExecutionStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                replicas: Optional[list[ReplicaExecutionStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.appcontainers.models.ExtendedLocation(_Model):
         name: Optional[str]
         type: Optional[Union[str, ExtendedLocationTypes]]
@@ -4363,6 +5465,22 @@ namespace azure.mgmt.appcontainers.models
                 login: Optional[LoginScopes] = ..., 
                 registration: Optional[ClientRegistration] = ..., 
                 validation: Optional[AllowedAudiencesValidation] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.Header(_Model):
+        key: Optional[str]
+        value: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key: Optional[str] = ..., 
+                value: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -5042,7 +6160,10 @@ namespace azure.mgmt.appcontainers.models
 
 
     class azure.mgmt.appcontainers.models.JobExecutionProperties(_Model):
+        detailed_status: Optional[ExecutionStatus]
         end_time: Optional[datetime]
+        message: Optional[str]
+        reason: Optional[str]
         start_time: Optional[datetime]
         status: Optional[Union[str, JobExecutionRunningState]]
         template: Optional[JobExecutionTemplate]
@@ -5051,6 +6172,7 @@ namespace azure.mgmt.appcontainers.models
         def __init__(
                 self, 
                 *, 
+                detailed_status: Optional[ExecutionStatus] = ..., 
                 end_time: Optional[datetime] = ..., 
                 start_time: Optional[datetime] = ..., 
                 template: Optional[JobExecutionTemplate] = ...
@@ -5132,6 +6254,7 @@ namespace azure.mgmt.appcontainers.models
         event_stream_endpoint: Optional[str]
         outbound_ip_addresses: Optional[list[str]]
         provisioning_state: Optional[Union[str, JobProvisioningState]]
+        running_state: Optional[Union[str, JobRunningState]]
         template: Optional[JobTemplate]
         workload_profile_name: Optional[str]
 
@@ -5155,6 +6278,12 @@ namespace azure.mgmt.appcontainers.models
         FAILED = "Failed"
         IN_PROGRESS = "InProgress"
         SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.appcontainers.models.JobRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PROGRESSING = "Progressing"
+        READY = "Ready"
+        SUSPENDED = "Suspended"
 
 
     class azure.mgmt.appcontainers.models.JobScale(_Model):
@@ -5256,6 +6385,35 @@ namespace azure.mgmt.appcontainers.models
         WORKFLOWAPP = "workflowapp"
 
 
+    class azure.mgmt.appcontainers.models.LabelHistory(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[LabelHistoryProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[LabelHistoryProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.LabelHistoryProperties(_Model):
+        records: Optional[list[LabelHistoryRecordItem]]
+
+
+    class azure.mgmt.appcontainers.models.LabelHistoryRecordItem(_Model):
+        revision: Optional[str]
+        start: Optional[datetime]
+        status: Optional[Union[str, Status]]
+        stop: Optional[datetime]
+
+
     class azure.mgmt.appcontainers.models.LifecycleConfiguration(_Model):
         cooldown_period_in_seconds: Optional[int]
         lifecycle_type: Optional[Union[str, LifecycleType]]
@@ -5355,6 +6513,20 @@ namespace azure.mgmt.appcontainers.models
                 self, 
                 *, 
                 scopes: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.LogsConfiguration(_Model):
+        destinations: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destinations: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -5482,7 +6654,15 @@ namespace azure.mgmt.appcontainers.models
             ) -> None: ...
 
 
+    class azure.mgmt.appcontainers.models.ManagedEnvironmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ARCHIVED = "Archived"
+        CONSUMPTION_ONLY = "ConsumptionOnly"
+        EXPRESS = "Express"
+        WORKLOAD_PROFILES = "WorkloadProfiles"
+
+
     class azure.mgmt.appcontainers.models.ManagedEnvironmentProperties(_Model):
+        app_insights_configuration: Optional[AppInsightsConfiguration]
         app_logs_configuration: Optional[AppLogsConfiguration]
         custom_domain_configuration: Optional[CustomDomainConfiguration]
         dapr_ai_connection_string: Optional[str]
@@ -5490,10 +6670,12 @@ namespace azure.mgmt.appcontainers.models
         dapr_configuration: Optional[DaprConfiguration]
         default_domain: Optional[str]
         deployment_errors: Optional[str]
+        environment_mode: Optional[Union[str, ManagedEnvironmentMode]]
         event_stream_endpoint: Optional[str]
         infrastructure_resource_group: Optional[str]
         ingress_configuration: Optional[IngressConfiguration]
         keda_configuration: Optional[KedaConfiguration]
+        open_telemetry_configuration: Optional[OpenTelemetryConfiguration]
         peer_authentication: Optional[ManagedEnvironmentPropertiesPeerAuthentication]
         peer_traffic_configuration: Optional[ManagedEnvironmentPropertiesPeerTrafficConfiguration]
         private_endpoint_connections: Optional[list[PrivateEndpointConnection]]
@@ -5508,14 +6690,17 @@ namespace azure.mgmt.appcontainers.models
         def __init__(
                 self, 
                 *, 
+                app_insights_configuration: Optional[AppInsightsConfiguration] = ..., 
                 app_logs_configuration: Optional[AppLogsConfiguration] = ..., 
                 custom_domain_configuration: Optional[CustomDomainConfiguration] = ..., 
                 dapr_ai_connection_string: Optional[str] = ..., 
                 dapr_ai_instrumentation_key: Optional[str] = ..., 
                 dapr_configuration: Optional[DaprConfiguration] = ..., 
+                environment_mode: Optional[Union[str, ManagedEnvironmentMode]] = ..., 
                 infrastructure_resource_group: Optional[str] = ..., 
                 ingress_configuration: Optional[IngressConfiguration] = ..., 
                 keda_configuration: Optional[KedaConfiguration] = ..., 
+                open_telemetry_configuration: Optional[OpenTelemetryConfiguration] = ..., 
                 peer_authentication: Optional[ManagedEnvironmentPropertiesPeerAuthentication] = ..., 
                 peer_traffic_configuration: Optional[ManagedEnvironmentPropertiesPeerTrafficConfiguration] = ..., 
                 public_network_access: Optional[Union[str, PublicNetworkAccess]] = ..., 
@@ -5659,6 +6844,38 @@ namespace azure.mgmt.appcontainers.models
         USER_ASSIGNED = "UserAssigned"
 
 
+    class azure.mgmt.appcontainers.models.MetricsConfiguration(_Model):
+        destinations: Optional[list[str]]
+        include_keda: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destinations: Optional[list[str]] = ..., 
+                include_keda: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.MigrationEligibilityFailureReason(_Model):
+        code: str
+        message: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: str, 
+                message: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.appcontainers.models.Mtls(_Model):
         enabled: Optional[bool]
 
@@ -5779,6 +6996,26 @@ namespace azure.mgmt.appcontainers.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.appcontainers.models.OpenTelemetryConfiguration(_Model):
+        destinations_configuration: Optional[DestinationsConfiguration]
+        logs_configuration: Optional[LogsConfiguration]
+        metrics_configuration: Optional[MetricsConfiguration]
+        traces_configuration: Optional[TracesConfiguration]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destinations_configuration: Optional[DestinationsConfiguration] = ..., 
+                logs_configuration: Optional[LogsConfiguration] = ..., 
+                metrics_configuration: Optional[MetricsConfiguration] = ..., 
+                traces_configuration: Optional[TracesConfiguration] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.appcontainers.models.OperationDetail(_Model):
         display: Optional[OperationDisplay]
         is_data_action: Optional[bool]
@@ -5813,6 +7050,26 @@ namespace azure.mgmt.appcontainers.models
                 operation: Optional[str] = ..., 
                 provider: Optional[str] = ..., 
                 resource: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.OtlpConfiguration(_Model):
+        endpoint: Optional[str]
+        headers: Optional[list[Header]]
+        insecure: Optional[bool]
+        name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                endpoint: Optional[str] = ..., 
+                headers: Optional[list[Header]] = ..., 
+                insecure: Optional[bool] = ..., 
+                name: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -6063,6 +7320,7 @@ namespace azure.mgmt.appcontainers.models
 
     class azure.mgmt.appcontainers.models.ReplicaContainer(_Model):
         container_id: Optional[str]
+        debug_endpoint: Optional[str]
         exec_endpoint: Optional[str]
         log_stream_endpoint: Optional[str]
         name: Optional[str]
@@ -6081,6 +7339,22 @@ namespace azure.mgmt.appcontainers.models
                 ready: Optional[bool] = ..., 
                 restart_count: Optional[int] = ..., 
                 started: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.ReplicaExecutionStatus(_Model):
+        containers: Optional[list[ContainerExecutionStatus]]
+        name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                containers: Optional[list[ContainerExecutionStatus]] = ..., 
+                name: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -6218,7 +7492,85 @@ namespace azure.mgmt.appcontainers.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.appcontainers.models.SandboxGroup(TrackedResource):
+        id: str
+        location: str
+        name: str
+        properties: Optional[SandboxGroupProperties]
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: str, 
+                properties: Optional[SandboxGroupProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.SandboxGroupPatch(_Model):
+        properties: Optional[SandboxGroupPatchProperties]
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[SandboxGroupPatchProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.SandboxGroupPatchProperties(_Model):
+        environment_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                environment_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.SandboxGroupProperties(_Model):
+        default_domain: Optional[str]
+        environment_id: Optional[str]
+        provisioning_state: Optional[Union[str, SandboxGroupProvisioningState]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                environment_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.SandboxGroupProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELED = "Canceled"
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        IN_PROGRESS = "InProgress"
+        SUCCEEDED = "Succeeded"
+        UPDATING = "Updating"
+
+
     class azure.mgmt.appcontainers.models.Scale(_Model):
+        allow_scaling_rule_override: Optional[bool]
         cooldown_period: Optional[int]
         max_replicas: Optional[int]
         min_replicas: Optional[int]
@@ -6229,6 +7581,7 @@ namespace azure.mgmt.appcontainers.models
         def __init__(
                 self, 
                 *, 
+                allow_scaling_rule_override: Optional[bool] = ..., 
                 cooldown_period: Optional[int] = ..., 
                 max_replicas: Optional[int] = ..., 
                 min_replicas: Optional[int] = ..., 
@@ -6433,6 +7786,7 @@ namespace azure.mgmt.appcontainers.models
         env: Optional[list[EnvironmentVar]]
         image: Optional[str]
         name: Optional[str]
+        probes: Optional[list[SessionProbe]]
         resources: Optional[SessionContainerResources]
 
         @overload
@@ -6444,6 +7798,7 @@ namespace azure.mgmt.appcontainers.models
                 env: Optional[list[EnvironmentVar]] = ..., 
                 image: Optional[str] = ..., 
                 name: Optional[str] = ..., 
+                probes: Optional[list[SessionProbe]] = ..., 
                 resources: Optional[SessionContainerResources] = ...
             ) -> None: ...
 
@@ -6642,6 +7997,95 @@ namespace azure.mgmt.appcontainers.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.appcontainers.models.SessionProbe(_Model):
+        failure_threshold: Optional[int]
+        http_get: Optional[SessionProbeHttpGet]
+        initial_delay_seconds: Optional[int]
+        period_seconds: Optional[int]
+        success_threshold: Optional[int]
+        tcp_socket: Optional[SessionProbeTcpSocket]
+        termination_grace_period_seconds: Optional[int]
+        timeout_seconds: Optional[int]
+        type: Optional[Union[str, SessionProbeType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                failure_threshold: Optional[int] = ..., 
+                http_get: Optional[SessionProbeHttpGet] = ..., 
+                initial_delay_seconds: Optional[int] = ..., 
+                period_seconds: Optional[int] = ..., 
+                success_threshold: Optional[int] = ..., 
+                tcp_socket: Optional[SessionProbeTcpSocket] = ..., 
+                termination_grace_period_seconds: Optional[int] = ..., 
+                timeout_seconds: Optional[int] = ..., 
+                type: Optional[Union[str, SessionProbeType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.SessionProbeHttpGet(_Model):
+        host: Optional[str]
+        http_headers: Optional[list[SessionProbeHttpGetHttpHeadersItem]]
+        path: Optional[str]
+        port: int
+        scheme: Optional[Union[str, Scheme]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                host: Optional[str] = ..., 
+                http_headers: Optional[list[SessionProbeHttpGetHttpHeadersItem]] = ..., 
+                path: Optional[str] = ..., 
+                port: int, 
+                scheme: Optional[Union[str, Scheme]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.SessionProbeHttpGetHttpHeadersItem(_Model):
+        name: str
+        value: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.SessionProbeTcpSocket(_Model):
+        host: Optional[str]
+        port: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                host: Optional[str] = ..., 
+                port: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.SessionProbeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LIVENESS = "Liveness"
+        STARTUP = "Startup"
+
+
     class azure.mgmt.appcontainers.models.SessionRegistryCredentials(_Model):
         identity: Optional[str]
         password_secret_ref: Optional[str]
@@ -6778,6 +8222,12 @@ namespace azure.mgmt.appcontainers.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.appcontainers.models.Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        STARTING = "Starting"
+        SUCCEEDED = "Succeeded"
+
+
     class azure.mgmt.appcontainers.models.StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_FILE = "AzureFile"
         EMPTY_DIR = "EmptyDir"
@@ -6865,6 +8315,22 @@ namespace azure.mgmt.appcontainers.models
                 azure_blob_storage: Optional[BlobStorageTokenStore] = ..., 
                 enabled: Optional[bool] = ..., 
                 token_refresh_extension_hours: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.TracesConfiguration(_Model):
+        destinations: Optional[list[str]]
+        include_dapr: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destinations: Optional[list[str]] = ..., 
+                include_dapr: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -7022,6 +8488,48 @@ namespace azure.mgmt.appcontainers.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.VnetConnection(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[VnetConnectionProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[VnetConnectionProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.VnetConnectionProperties(_Model):
+        provisioning_state: Optional[Union[str, VnetConnectionProvisioningState]]
+        subnet_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                subnet_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.appcontainers.models.VnetConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELED = "Canceled"
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        IN_PROGRESS = "InProgress"
+        SUCCEEDED = "Succeeded"
+        UPDATING = "Updating"
 
 
     class azure.mgmt.appcontainers.models.Volume(_Model):
@@ -7207,6 +8715,22 @@ namespace azure.mgmt.appcontainers.models
 
 
 namespace azure.mgmt.appcontainers.operations
+
+    class azure.mgmt.appcontainers.operations.AvailableEnvironmentModesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> ItemPaged[AvailableEnvironmentMode]: ...
+
 
     class azure.mgmt.appcontainers.operations.AvailableWorkloadProfilesOperations:
 
@@ -7739,6 +9263,108 @@ namespace azure.mgmt.appcontainers.operations
             ) -> ConnectedEnvironmentStoragesCollection: ...
 
 
+    class azure.mgmt.appcontainers.operations.ContainerAppPrivateEndpointConnectionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_endpoint_connection_name: str, 
+                private_endpoint_connection_envelope: PrivateEndpointConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PrivateEndpointConnection]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_endpoint_connection_name: str, 
+                private_endpoint_connection_envelope: PrivateEndpointConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PrivateEndpointConnection]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_endpoint_connection_name: str, 
+                private_endpoint_connection_envelope: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PrivateEndpointConnection]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'private_endpoint_connection_name']}, api_versions_list=['2026-07-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_endpoint_connection_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'private_endpoint_connection_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_endpoint_connection_name: str, 
+                **kwargs: Any
+            ) -> PrivateEndpointConnection: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[PrivateEndpointConnection]: ...
+
+
+    class azure.mgmt.appcontainers.operations.ContainerAppPrivateLinkResourcesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'private_link_resource_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                private_link_resource_name: str, 
+                **kwargs: Any
+            ) -> PrivateLinkResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[PrivateLinkResource]: ...
+
+
     class azure.mgmt.appcontainers.operations.ContainerAppsAuthConfigsOperations:
 
         def __init__(
@@ -7861,6 +9487,74 @@ namespace azure.mgmt.appcontainers.operations
                 filter: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[Revision]: ...
+
+
+    class azure.mgmt.appcontainers.operations.ContainerAppsFunctionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'function_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                function_name: str, 
+                **kwargs: Any
+            ) -> ContainerAppsFunction: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[ContainerAppsFunction]: ...
+
+
+    class azure.mgmt.appcontainers.operations.ContainerAppsLabelHistoryOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'label_name']}, api_versions_list=['2026-07-01'])
+        def delete_label_history(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                label_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'label_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def get_label_history(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                label_name: str, 
+                **kwargs: Any
+            ) -> LabelHistory: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'filter', 'accept']}, api_versions_list=['2026-07-01'])
+        def list_label_history(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[LabelHistory]: ...
 
 
     class azure.mgmt.appcontainers.operations.ContainerAppsOperations:
@@ -8004,6 +9698,34 @@ namespace azure.mgmt.appcontainers.operations
                 container_app_name: str, 
                 **kwargs: Any
             ) -> SecretsCollection: ...
+
+
+    class azure.mgmt.appcontainers.operations.ContainerAppsRevisionFunctionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                revision_name: str, 
+                function_name: str, 
+                **kwargs: Any
+            ) -> ContainerAppsFunction: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                revision_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[ContainerAppsFunction]: ...
 
 
     class azure.mgmt.appcontainers.operations.ContainerAppsRevisionReplicasOperations:
@@ -8261,6 +9983,86 @@ namespace azure.mgmt.appcontainers.operations
             ) -> ItemPaged[SourceControl]: ...
 
 
+    class azure.mgmt.appcontainers.operations.DaprComponentResiliencyPoliciesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                name: str, 
+                dapr_component_resiliency_policy_envelope: DaprComponentResiliencyPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DaprComponentResiliencyPolicy: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                name: str, 
+                dapr_component_resiliency_policy_envelope: DaprComponentResiliencyPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DaprComponentResiliencyPolicy: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                name: str, 
+                dapr_component_resiliency_policy_envelope: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DaprComponentResiliencyPolicy: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'component_name', 'name']}, api_versions_list=['2026-07-01'])
+        def delete(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'component_name', 'name', 'accept']}, api_versions_list=['2026-07-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> DaprComponentResiliencyPolicy: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'component_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                component_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[DaprComponentResiliencyPolicy]: ...
+
+
     class azure.mgmt.appcontainers.operations.DaprComponentsOperations:
 
         def __init__(
@@ -8339,6 +10141,136 @@ namespace azure.mgmt.appcontainers.operations
                 component_name: str, 
                 **kwargs: Any
             ) -> DaprSecretsCollection: ...
+
+
+    class azure.mgmt.appcontainers.operations.DotNetComponentsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: DotNetComponent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[DotNetComponent]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: DotNetComponent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[DotNetComponent]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[DotNetComponent]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'name']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: DotNetComponent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[DotNetComponent]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: DotNetComponent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[DotNetComponent]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                dot_net_component_envelope: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[DotNetComponent]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                name: str, 
+                **kwargs: Any
+            ) -> DotNetComponent: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[DotNetComponent]: ...
+
+
+    class azure.mgmt.appcontainers.operations.FunctionsExtensionOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'container_app_name', 'revision_name', 'function_app_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def invoke_functions_host(
+                self, 
+                resource_group_name: str, 
+                container_app_name: str, 
+                revision_name: str, 
+                function_app_name: str, 
+                **kwargs: Any
+            ) -> str: ...
 
 
     class azure.mgmt.appcontainers.operations.HttpRouteConfigOperations:
@@ -8623,6 +10555,15 @@ namespace azure.mgmt.appcontainers.operations
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'job_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        def begin_resume(
+                self, 
+                resource_group_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[Job]: ...
+
         @overload
         def begin_start(
                 self, 
@@ -8672,6 +10613,15 @@ namespace azure.mgmt.appcontainers.operations
                 job_name: str, 
                 **kwargs: Any
             ) -> LROPoller[ContainerAppJobExecutions]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'job_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-07-01'])
+        def begin_suspend(
+                self, 
+                resource_group_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[Job]: ...
 
         @overload
         def begin_update(
@@ -9134,6 +11084,17 @@ namespace azure.mgmt.appcontainers.operations
             ) -> None: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'private_link_resource_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                private_link_resource_name: str, 
+                **kwargs: Any
+            ) -> PrivateLinkResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'environment_name', 'accept']}, api_versions_list=['2026-07-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -9257,6 +11218,39 @@ namespace azure.mgmt.appcontainers.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> LROPoller[ManagedEnvironment]: ...
+
+        @overload
+        def check_migration_eligibility(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                body: CheckMigrationEligibilityRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CheckMigrationEligibilityResponse: ...
+
+        @overload
+        def check_migration_eligibility(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                body: CheckMigrationEligibilityRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CheckMigrationEligibilityResponse: ...
+
+        @overload
+        def check_migration_eligibility(
+                self, 
+                resource_group_name: str, 
+                environment_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CheckMigrationEligibilityResponse: ...
 
         @distributed_trace
         def get(
@@ -9418,6 +11412,111 @@ namespace azure.mgmt.appcontainers.operations
         def list(self, **kwargs: Any) -> ItemPaged[OperationDetail]: ...
 
 
+    class azure.mgmt.appcontainers.operations.SandboxGroupsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                resource: SandboxGroup, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[SandboxGroup]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                resource: SandboxGroup, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[SandboxGroup]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[SandboxGroup]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name']}, api_versions_list=['2026-07-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                properties: SandboxGroupPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                properties: SandboxGroupPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                **kwargs: Any
+            ) -> SandboxGroup: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[SandboxGroup]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-01'])
+        def list_by_subscription(self, **kwargs: Any) -> ItemPaged[SandboxGroup]: ...
+
+
     class azure.mgmt.appcontainers.operations.UsagesOperations:
 
         def __init__(
@@ -9434,11 +11533,84 @@ namespace azure.mgmt.appcontainers.operations
             ) -> ItemPaged[Usage]: ...
 
 
+    class azure.mgmt.appcontainers.operations.VnetConnectionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name', 'vnet_connection_name']}, api_versions_list=['2026-07-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                vnet_connection_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                vnet_connection_name: str, 
+                resource: VnetConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VnetConnection: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                vnet_connection_name: str, 
+                resource: VnetConnection, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VnetConnection: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                vnet_connection_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> VnetConnection: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name', 'vnet_connection_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                vnet_connection_name: str, 
+                **kwargs: Any
+            ) -> VnetConnection: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name', 'accept']}, api_versions_list=['2026-07-01'])
+        def list_by_sandbox_group(
+                self, 
+                resource_group_name: str, 
+                sandbox_group_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[VnetConnection]: ...
+
+
 namespace azure.mgmt.appcontainers.types
 
     class azure.mgmt.appcontainers.types.AllowedAudiencesValidation(TypedDict, total=False):
         allowedAudiences: list[str]
-        allowed_audiences: list[str]
 
 
     class azure.mgmt.appcontainers.types.AllowedPrincipals(TypedDict, total=False):
@@ -9446,18 +11618,23 @@ namespace azure.mgmt.appcontainers.types
         identities: list[str]
 
 
+    class azure.mgmt.appcontainers.types.AppInsightsConfiguration(TypedDict, total=False):
+        key "connectionString": str
+        connectionString: str
+
+
     class azure.mgmt.appcontainers.types.AppLogsConfiguration(TypedDict, total=False):
         key "destination": str
         key "logAnalyticsConfiguration": ForwardRef('LogAnalyticsConfiguration', module='types')
         destination: str
-        log_analytics_configuration: LogAnalyticsConfiguration
+        logAnalyticsConfiguration: LogAnalyticsConfiguration
 
 
     class azure.mgmt.appcontainers.types.AppRegistration(TypedDict, total=False):
         key "appId": str
         key "appSecretSettingName": str
-        app_id: str
-        app_secret_setting_name: str
+        appId: str
+        appSecretSettingName: str
 
 
     class azure.mgmt.appcontainers.types.Apple(TypedDict, total=False):
@@ -9472,8 +11649,8 @@ namespace azure.mgmt.appcontainers.types
     class azure.mgmt.appcontainers.types.AppleRegistration(TypedDict, total=False):
         key "clientId": str
         key "clientSecretSettingName": str
-        client_id: str
-        client_secret_setting_name: str
+        clientId: str
+        clientSecretSettingName: str
 
 
     class azure.mgmt.appcontainers.types.AuthConfig(ProxyResource):
@@ -9485,7 +11662,7 @@ namespace azure.mgmt.appcontainers.types
         id: str
         name: str
         properties: AuthConfigProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -9496,10 +11673,10 @@ namespace azure.mgmt.appcontainers.types
         key "identityProviders": ForwardRef('IdentityProviders', module='types')
         key "login": ForwardRef('Login', module='types')
         key "platform": ForwardRef('AuthPlatform', module='types')
-        encryption_settings: EncryptionSettings
-        global_validation: GlobalValidation
-        http_settings: HttpSettings
-        identity_providers: IdentityProviders
+        encryptionSettings: EncryptionSettings
+        globalValidation: GlobalValidation
+        httpSettings: HttpSettings
+        identityProviders: IdentityProviders
         login: Login
         platform: AuthPlatform
 
@@ -9508,7 +11685,7 @@ namespace azure.mgmt.appcontainers.types
         key "enabled": bool
         key "runtimeVersion": str
         enabled: bool
-        runtime_version: str
+        runtimeVersion: str
 
 
     class azure.mgmt.appcontainers.types.AzureActiveDirectory(TypedDict, total=False):
@@ -9518,7 +11695,7 @@ namespace azure.mgmt.appcontainers.types
         key "registration": ForwardRef('AzureActiveDirectoryRegistration', module='types')
         key "validation": ForwardRef('AzureActiveDirectoryValidation', module='types')
         enabled: bool
-        is_auto_provisioned: bool
+        isAutoProvisioned: bool
         login: AzureActiveDirectoryLogin
         registration: AzureActiveDirectoryRegistration
         validation: AzureActiveDirectoryValidation
@@ -9526,9 +11703,8 @@ namespace azure.mgmt.appcontainers.types
 
     class azure.mgmt.appcontainers.types.AzureActiveDirectoryLogin(TypedDict, total=False):
         key "disableWWWAuthenticate": bool
-        disable_www_authenticate: bool
+        disableWWWAuthenticate: bool
         loginParameters: list[str]
-        login_parameters: list[str]
 
 
     class azure.mgmt.appcontainers.types.AzureActiveDirectoryRegistration(TypedDict, total=False):
@@ -9538,21 +11714,20 @@ namespace azure.mgmt.appcontainers.types
         key "clientSecretCertificateThumbprint": str
         key "clientSecretSettingName": str
         key "openIdIssuer": str
-        client_id: str
-        client_secret_certificate_issuer: str
-        client_secret_certificate_subject_alternative_name: str
-        client_secret_certificate_thumbprint: str
-        client_secret_setting_name: str
-        open_id_issuer: str
+        clientId: str
+        clientSecretCertificateIssuer: str
+        clientSecretCertificateSubjectAlternativeName: str
+        clientSecretCertificateThumbprint: str
+        clientSecretSettingName: str
+        openIdIssuer: str
 
 
     class azure.mgmt.appcontainers.types.AzureActiveDirectoryValidation(TypedDict, total=False):
         key "defaultAuthorizationPolicy": ForwardRef('DefaultAuthorizationPolicy', module='types')
         key "jwtClaimChecks": ForwardRef('JwtClaimChecks', module='types')
         allowedAudiences: list[str]
-        allowed_audiences: list[str]
-        default_authorization_policy: DefaultAuthorizationPolicy
-        jwt_claim_checks: JwtClaimChecks
+        defaultAuthorizationPolicy: DefaultAuthorizationPolicy
+        jwtClaimChecks: JwtClaimChecks
 
 
     class azure.mgmt.appcontainers.types.AzureCredentials(TypedDict, total=False):
@@ -9561,11 +11736,11 @@ namespace azure.mgmt.appcontainers.types
         key "kind": str
         key "subscriptionId": str
         key "tenantId": str
-        client_id: str
-        client_secret: str
+        clientId: str
+        clientSecret: str
         kind: str
-        subscription_id: str
-        tenant_id: str
+        subscriptionId: str
+        tenantId: str
 
 
     class azure.mgmt.appcontainers.types.AzureFileProperties(TypedDict, total=False):
@@ -9574,11 +11749,11 @@ namespace azure.mgmt.appcontainers.types
         key "accountKeyVaultProperties": ForwardRef('SecretKeyVaultProperties', module='types')
         key "accountName": str
         key "shareName": str
-        access_mode: Union[str, AccessMode]
-        account_key: str
-        account_key_vault_properties: SecretKeyVaultProperties
-        account_name: str
-        share_name: str
+        accessMode: Union[str, AccessMode]
+        accountKey: str
+        accountKeyVaultProperties: SecretKeyVaultProperties
+        accountName: str
+        shareName: str
 
 
     class azure.mgmt.appcontainers.types.AzureStaticWebApps(TypedDict, total=False):
@@ -9590,7 +11765,7 @@ namespace azure.mgmt.appcontainers.types
 
     class azure.mgmt.appcontainers.types.AzureStaticWebAppsRegistration(TypedDict, total=False):
         key "clientId": str
-        client_id: str
+        clientId: str
 
 
     class azure.mgmt.appcontainers.types.BaseContainer(TypedDict, total=False):
@@ -9604,12 +11779,17 @@ namespace azure.mgmt.appcontainers.types
         name: str
         resources: ContainerResources
         volumeMounts: list[VolumeMount]
-        volume_mounts: list[VolumeMount]
 
 
     class azure.mgmt.appcontainers.types.BlobStorageTokenStore(TypedDict, total=False):
-        key "sasUrlSettingName": Required[str]
-        sas_url_setting_name: str
+        key "blobContainerUri": str
+        key "clientId": str
+        key "managedIdentityResourceId": str
+        key "sasUrlSettingName": str
+        blobContainerUri: str
+        clientId: str
+        managedIdentityResourceId: str
+        sasUrlSettingName: str
 
 
     class azure.mgmt.appcontainers.types.Certificate(TrackedResource):
@@ -9623,7 +11803,7 @@ namespace azure.mgmt.appcontainers.types
         location: str
         name: str
         properties: CertificateProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -9632,7 +11812,7 @@ namespace azure.mgmt.appcontainers.types
         key "identity": str
         key "keyVaultUrl": str
         identity: str
-        key_vault_url: str
+        keyVaultUrl: str
 
 
     class azure.mgmt.appcontainers.types.CertificatePatch(TypedDict, total=False):
@@ -9652,20 +11832,24 @@ namespace azure.mgmt.appcontainers.types
         key "thumbprint": str
         key "valid": bool
         key "value": str
-        certificate_key_vault_properties: CertificateKeyVaultProperties
-        deployment_errors: str
-        expiration_date: str
-        issue_date: str
+        certificateKeyVaultProperties: CertificateKeyVaultProperties
+        deploymentErrors: str
+        expirationDate: str
+        issueDate: str
         issuer: str
         password: str
-        provisioning_state: Union[str, CertificateProvisioningState]
-        public_key_hash: str
+        provisioningState: Union[str, CertificateProvisioningState]
+        publicKeyHash: str
         subjectAlternativeNames: list[str]
-        subject_alternative_names: list[str]
-        subject_name: str
+        subjectName: str
         thumbprint: str
         valid: bool
         value: str
+
+
+    class azure.mgmt.appcontainers.types.CheckMigrationEligibilityRequest(TypedDict, total=False):
+        key "targetMode": Required[str]
+        targetMode: str
 
 
     class azure.mgmt.appcontainers.types.CheckNameAvailabilityRequest(TypedDict, total=False):
@@ -9678,8 +11862,8 @@ namespace azure.mgmt.appcontainers.types
     class azure.mgmt.appcontainers.types.ClientRegistration(TypedDict, total=False):
         key "clientId": str
         key "clientSecretSettingName": str
-        client_id: str
-        client_secret_setting_name: str
+        clientId: str
+        clientSecretSettingName: str
 
 
     class azure.mgmt.appcontainers.types.Configuration(TypedDict, total=False):
@@ -9689,12 +11873,11 @@ namespace azure.mgmt.appcontainers.types
         key "maxInactiveRevisions": int
         key "runtime": ForwardRef('Runtime', module='types')
         key "service": ForwardRef('Service', module='types')
-        active_revisions_mode: Union[str, ActiveRevisionsMode]
+        activeRevisionsMode: Union[str, ActiveRevisionsMode]
         dapr: Dapr
         identitySettings: list[IdentitySettings]
-        identity_settings: list[IdentitySettings]
         ingress: Ingress
-        max_inactive_revisions: int
+        maxInactiveRevisions: int
         registries: list[RegistryCredentials]
         runtime: Runtime
         secrets: list[Secret]
@@ -9709,12 +11892,12 @@ namespace azure.mgmt.appcontainers.types
         key "properties": ForwardRef('ConnectedEnvironmentProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         location: str
         name: str
         properties: ConnectedEnvironmentProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -9730,12 +11913,12 @@ namespace azure.mgmt.appcontainers.types
         key "deploymentErrors": str
         key "provisioningState": Union[str, ConnectedEnvironmentProvisioningState]
         key "staticIp": str
-        custom_domain_configuration: CustomDomainConfiguration
-        dapr_ai_connection_string: str
-        default_domain: str
-        deployment_errors: str
-        provisioning_state: Union[str, ConnectedEnvironmentProvisioningState]
-        static_ip: str
+        customDomainConfiguration: CustomDomainConfiguration
+        daprAIConnectionString: str
+        defaultDomain: str
+        deploymentErrors: str
+        provisioningState: Union[str, ConnectedEnvironmentProvisioningState]
+        staticIp: str
 
 
     class azure.mgmt.appcontainers.types.ConnectedEnvironmentStorage(ProxyResource):
@@ -9747,7 +11930,7 @@ namespace azure.mgmt.appcontainers.types
         id: str
         name: str
         properties: ConnectedEnvironmentStorageProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -9755,9 +11938,9 @@ namespace azure.mgmt.appcontainers.types
         key "azureFile": ForwardRef('AzureFileProperties', module='types')
         key "deploymentErrors": str
         key "provisioningState": Union[str, ConnectedEnvironmentStorageProvisioningState]
-        azure_file: AzureFileProperties
-        deployment_errors: str
-        provisioning_state: Union[str, ConnectedEnvironmentStorageProvisioningState]
+        azureFile: AzureFileProperties
+        deploymentErrors: str
+        provisioningState: Union[str, ConnectedEnvironmentStorageProvisioningState]
 
 
     class azure.mgmt.appcontainers.types.Container(BaseContainer):
@@ -9772,7 +11955,6 @@ namespace azure.mgmt.appcontainers.types
         probes: list[ContainerAppProbe]
         resources: ContainerResources
         volumeMounts: list[VolumeMount]
-        volume_mounts: list[VolumeMount]
 
 
     class azure.mgmt.appcontainers.types.ContainerApp(TrackedResource):
@@ -9786,17 +11968,22 @@ namespace azure.mgmt.appcontainers.types
         key "properties": ForwardRef('ContainerAppProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         identity: ManagedServiceIdentity
         kind: Union[str, Kind]
         location: str
-        managed_by: str
+        managedBy: str
         name: str
         properties: ContainerAppProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
+
+
+    class azure.mgmt.appcontainers.types.ContainerAppNetworkingConfiguration(TypedDict, total=False):
+        key "outboundVnetSubnetId": str
+        outboundVnetSubnetId: str
 
 
     class azure.mgmt.appcontainers.types.ContainerAppProbe(TypedDict, total=False):
@@ -9809,14 +11996,14 @@ namespace azure.mgmt.appcontainers.types
         key "terminationGracePeriodSeconds": int
         key "timeoutSeconds": int
         key "type": Union[str, Type]
-        failure_threshold: int
-        http_get: ContainerAppProbeHttpGet
-        initial_delay_seconds: int
-        period_seconds: int
-        success_threshold: int
-        tcp_socket: ContainerAppProbeTcpSocket
-        termination_grace_period_seconds: int
-        timeout_seconds: int
+        failureThreshold: int
+        httpGet: ContainerAppProbeHttpGet
+        initialDelaySeconds: int
+        periodSeconds: int
+        successThreshold: int
+        tcpSocket: ContainerAppProbeTcpSocket
+        terminationGracePeriodSeconds: int
+        timeoutSeconds: int
         type: Union[str, Type]
 
 
@@ -9827,7 +12014,6 @@ namespace azure.mgmt.appcontainers.types
         key "scheme": Union[str, Scheme]
         host: str
         httpHeaders: list[ContainerAppProbeHttpGetHttpHeadersItem]
-        http_headers: list[ContainerAppProbeHttpGetHttpHeadersItem]
         path: str
         port: int
         scheme: Union[str, Scheme]
@@ -9856,24 +12042,25 @@ namespace azure.mgmt.appcontainers.types
         key "latestRevisionFqdn": str
         key "latestRevisionName": str
         key "managedEnvironmentId": str
+        key "networking": ForwardRef('ContainerAppNetworkingConfiguration', module='types')
         key "provisioningState": Union[str, ContainerAppProvisioningState]
         key "runningStatus": Union[str, ContainerAppRunningStatus]
         key "template": ForwardRef('Template', module='types')
         key "workloadProfileName": str
         configuration: Configuration
-        custom_domain_verification_id: str
-        environment_id: str
-        event_stream_endpoint: str
-        latest_ready_revision_name: str
-        latest_revision_fqdn: str
-        latest_revision_name: str
-        managed_environment_id: str
+        customDomainVerificationId: str
+        environmentId: str
+        eventStreamEndpoint: str
+        latestReadyRevisionName: str
+        latestRevisionFqdn: str
+        latestRevisionName: str
+        managedEnvironmentId: str
+        networking: ContainerAppNetworkingConfiguration
         outboundIpAddresses: list[str]
-        outbound_ip_addresses: list[str]
-        provisioning_state: Union[str, ContainerAppProvisioningState]
-        running_status: Union[str, ContainerAppRunningStatus]
+        provisioningState: Union[str, ContainerAppProvisioningState]
+        runningStatus: Union[str, ContainerAppRunningStatus]
         template: Template
-        workload_profile_name: str
+        workloadProfileName: str
 
 
     class azure.mgmt.appcontainers.types.ContainerResources(TypedDict, total=False):
@@ -9881,7 +12068,7 @@ namespace azure.mgmt.appcontainers.types
         key "ephemeralStorage": str
         key "memory": str
         cpu: float
-        ephemeral_storage: str
+        ephemeralStorage: str
         memory: str
 
 
@@ -9889,22 +12076,19 @@ namespace azure.mgmt.appcontainers.types
         key "convention": Union[str, CookieExpirationConvention]
         key "timeToExpiration": str
         convention: Union[str, CookieExpirationConvention]
-        time_to_expiration: str
+        timeToExpiration: str
 
 
     class azure.mgmt.appcontainers.types.CorsPolicy(TypedDict, total=False):
         key "allowCredentials": bool
         key "allowedOrigins": Required[list[str]]
         key "maxAge": int
-        allow_credentials: bool
+        allowCredentials: bool
         allowedHeaders: list[str]
         allowedMethods: list[str]
-        allowed_headers: list[str]
-        allowed_methods: list[str]
-        allowed_origins: list[str]
+        allowedOrigins: list[str]
         exposeHeaders: list[str]
-        expose_headers: list[str]
-        max_age: int
+        maxAge: int
 
 
     class azure.mgmt.appcontainers.types.CustomContainerTemplate(TypedDict, total=False):
@@ -9912,15 +12096,15 @@ namespace azure.mgmt.appcontainers.types
         key "registryCredentials": ForwardRef('SessionRegistryCredentials', module='types')
         containers: list[SessionContainer]
         ingress: SessionIngress
-        registry_credentials: SessionRegistryCredentials
+        registryCredentials: SessionRegistryCredentials
 
 
     class azure.mgmt.appcontainers.types.CustomDomain(TypedDict, total=False):
         key "bindingType": Union[str, BindingType]
         key "certificateId": str
         key "name": Required[str]
-        binding_type: Union[str, BindingType]
-        certificate_id: str
+        bindingType: Union[str, BindingType]
+        certificateId: str
         name: str
 
 
@@ -9933,13 +12117,13 @@ namespace azure.mgmt.appcontainers.types
         key "expirationDate": str
         key "subjectName": str
         key "thumbprint": str
-        certificate_key_vault_properties: CertificateKeyVaultProperties
-        certificate_password: str
-        certificate_value: str
-        custom_domain_verification_id: str
-        dns_suffix: str
-        expiration_date: str
-        subject_name: str
+        certificateKeyVaultProperties: CertificateKeyVaultProperties
+        certificatePassword: str
+        certificateValue: str
+        customDomainVerificationId: str
+        dnsSuffix: str
+        expirationDate: str
+        subjectName: str
         thumbprint: str
 
 
@@ -9972,16 +12156,16 @@ namespace azure.mgmt.appcontainers.types
         key "httpReadBufferSize": int
         key "logLevel": Union[str, LogLevel]
         key "maxConcurrency": int
-        app_health: DaprAppHealth
-        app_id: str
-        app_port: int
-        app_protocol: Union[str, AppProtocol]
-        enable_api_logging: bool
+        appHealth: DaprAppHealth
+        appId: str
+        appPort: int
+        appProtocol: Union[str, AppProtocol]
+        enableApiLogging: bool
         enabled: bool
-        http_max_request_size: int
-        http_read_buffer_size: int
-        log_level: Union[str, LogLevel]
-        max_concurrency: int
+        httpMaxRequestSize: int
+        httpReadBufferSize: int
+        logLevel: Union[str, LogLevel]
+        maxConcurrency: int
 
 
     class azure.mgmt.appcontainers.types.DaprAppHealth(TypedDict, total=False):
@@ -9992,8 +12176,8 @@ namespace azure.mgmt.appcontainers.types
         key "threshold": int
         enabled: bool
         path: str
-        probe_interval_seconds: int
-        probe_timeout_milliseconds: int
+        probeIntervalSeconds: int
+        probeTimeoutMilliseconds: int
         threshold: int
 
 
@@ -10006,7 +12190,7 @@ namespace azure.mgmt.appcontainers.types
         id: str
         name: str
         properties: DaprComponentProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -10018,16 +12202,73 @@ namespace azure.mgmt.appcontainers.types
         key "provisioningState": Union[str, DaprComponentProvisioningState]
         key "secretStoreComponent": str
         key "version": str
-        component_type: str
-        deployment_errors: str
-        ignore_errors: bool
-        init_timeout: str
+        componentType: str
+        deploymentErrors: str
+        ignoreErrors: bool
+        initTimeout: str
         metadata: list[DaprMetadata]
-        provisioning_state: Union[str, DaprComponentProvisioningState]
+        provisioningState: Union[str, DaprComponentProvisioningState]
         scopes: list[str]
-        secret_store_component: str
+        secretStoreComponent: str
         secrets: list[Secret]
         version: str
+
+
+    class azure.mgmt.appcontainers.types.DaprComponentResiliencyPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DaprComponentResiliencyPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: DaprComponentResiliencyPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.appcontainers.types.DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration(TypedDict, total=False):
+        key "consecutiveErrors": int
+        key "intervalInSeconds": int
+        key "timeoutInSeconds": int
+        consecutiveErrors: int
+        intervalInSeconds: int
+        timeoutInSeconds: int
+
+
+    class azure.mgmt.appcontainers.types.DaprComponentResiliencyPolicyConfiguration(TypedDict, total=False):
+        key "circuitBreakerPolicy": ForwardRef('DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration', module='types')
+        key "httpRetryPolicy": ForwardRef('DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration', module='types')
+        key "timeoutPolicy": ForwardRef('DaprComponentResiliencyPolicyTimeoutPolicyConfiguration', module='types')
+        circuitBreakerPolicy: DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration
+        httpRetryPolicy: DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration
+        timeoutPolicy: DaprComponentResiliencyPolicyTimeoutPolicyConfiguration
+
+
+    class azure.mgmt.appcontainers.types.DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration(TypedDict, total=False):
+        key "initialDelayInMilliseconds": int
+        key "maxIntervalInMilliseconds": int
+        initialDelayInMilliseconds: int
+        maxIntervalInMilliseconds: int
+
+
+    class azure.mgmt.appcontainers.types.DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration(TypedDict, total=False):
+        key "maxRetries": int
+        key "retryBackOff": ForwardRef('DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration', module='types')
+        maxRetries: int
+        retryBackOff: DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration
+
+
+    class azure.mgmt.appcontainers.types.DaprComponentResiliencyPolicyProperties(TypedDict, total=False):
+        key "inboundPolicy": ForwardRef('DaprComponentResiliencyPolicyConfiguration', module='types')
+        key "outboundPolicy": ForwardRef('DaprComponentResiliencyPolicyConfiguration', module='types')
+        inboundPolicy: DaprComponentResiliencyPolicyConfiguration
+        outboundPolicy: DaprComponentResiliencyPolicyConfiguration
+
+
+    class azure.mgmt.appcontainers.types.DaprComponentResiliencyPolicyTimeoutPolicyConfiguration(TypedDict, total=False):
+        key "responseTimeoutInSeconds": int
+        responseTimeoutInSeconds: int
 
 
     class azure.mgmt.appcontainers.types.DaprConfiguration(TypedDict, total=False):
@@ -10040,27 +12281,75 @@ namespace azure.mgmt.appcontainers.types
         key "secretRef": str
         key "value": str
         name: str
-        secret_ref: str
+        secretRef: str
         value: str
+
+
+    class azure.mgmt.appcontainers.types.DataDogConfiguration(TypedDict, total=False):
+        key "key": str
+        key "site": str
+        key: str
+        site: str
 
 
     class azure.mgmt.appcontainers.types.DefaultAuthorizationPolicy(TypedDict, total=False):
         key "allowedPrincipals": ForwardRef('AllowedPrincipals', module='types')
         allowedApplications: list[str]
-        allowed_applications: list[str]
-        allowed_principals: AllowedPrincipals
+        allowedPrincipals: AllowedPrincipals
+
+
+    class azure.mgmt.appcontainers.types.DestinationsConfiguration(TypedDict, total=False):
+        key "dataDogConfiguration": ForwardRef('DataDogConfiguration', module='types')
+        dataDogConfiguration: DataDogConfiguration
+        otlpConfigurations: list[OtlpConfiguration]
+
+
+    class azure.mgmt.appcontainers.types.DotNetComponent(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DotNetComponentProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: DotNetComponentProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.appcontainers.types.DotNetComponentConfigurationProperty(TypedDict, total=False):
+        key "propertyName": str
+        key "value": str
+        propertyName: str
+        value: str
+
+
+    class azure.mgmt.appcontainers.types.DotNetComponentProperties(TypedDict, total=False):
+        key "componentType": Union[str, DotNetComponentType]
+        key "provisioningState": Union[str, DotNetComponentProvisioningState]
+        componentType: Union[str, DotNetComponentType]
+        configurations: list[DotNetComponentConfigurationProperty]
+        provisioningState: Union[str, DotNetComponentProvisioningState]
+        serviceBinds: list[DotNetComponentServiceBind]
+
+
+    class azure.mgmt.appcontainers.types.DotNetComponentServiceBind(TypedDict, total=False):
+        key "name": str
+        key "serviceId": str
+        name: str
+        serviceId: str
 
 
     class azure.mgmt.appcontainers.types.DynamicPoolConfiguration(TypedDict, total=False):
         key "lifecycleConfiguration": ForwardRef('LifecycleConfiguration', module='types')
-        lifecycle_configuration: LifecycleConfiguration
+        lifecycleConfiguration: LifecycleConfiguration
 
 
     class azure.mgmt.appcontainers.types.EncryptionSettings(TypedDict, total=False):
         key "containerAppAuthEncryptionSecretName": str
         key "containerAppAuthSigningSecretName": str
-        container_app_auth_encryption_secret_name: str
-        container_app_auth_signing_secret_name: str
+        containerAppAuthEncryptionSecretName: str
+        containerAppAuthSigningSecretName: str
 
 
     class azure.mgmt.appcontainers.types.EnvironmentVar(TypedDict, total=False):
@@ -10068,7 +12357,7 @@ namespace azure.mgmt.appcontainers.types
         key "secretRef": str
         key "value": str
         name: str
-        secret_ref: str
+        secretRef: str
         value: str
 
 
@@ -10085,7 +12374,7 @@ namespace azure.mgmt.appcontainers.types
         key "login": ForwardRef('LoginScopes', module='types')
         key "registration": ForwardRef('AppRegistration', module='types')
         enabled: bool
-        graph_api_version: str
+        graphApiVersion: str
         login: LoginScopes
         registration: AppRegistration
 
@@ -10095,8 +12384,8 @@ namespace azure.mgmt.appcontainers.types
         key "customHostHeaderName": str
         key "customProtoHeaderName": str
         convention: Union[str, ForwardProxyConvention]
-        custom_host_header_name: str
-        custom_proto_header_name: str
+        customHostHeaderName: str
+        customProtoHeaderName: str
 
 
     class azure.mgmt.appcontainers.types.GitHub(TypedDict, total=False):
@@ -10118,24 +12407,23 @@ namespace azure.mgmt.appcontainers.types
         key "registryInfo": ForwardRef('RegistryInfo', module='types')
         key "runtimeStack": str
         key "runtimeVersion": str
-        azure_credentials: AzureCredentials
-        context_path: str
-        github_personal_access_token: str
+        azureCredentials: AzureCredentials
+        contextPath: str
+        githubPersonalAccessToken: str
         image: str
         os: str
-        publish_type: str
-        registry_info: RegistryInfo
-        runtime_stack: str
-        runtime_version: str
+        publishType: str
+        registryInfo: RegistryInfo
+        runtimeStack: str
+        runtimeVersion: str
 
 
     class azure.mgmt.appcontainers.types.GlobalValidation(TypedDict, total=False):
         key "redirectToProvider": str
         key "unauthenticatedClientAction": Union[str, UnauthenticatedClientActionV2]
         excludedPaths: list[str]
-        excluded_paths: list[str]
-        redirect_to_provider: str
-        unauthenticated_client_action: Union[str, UnauthenticatedClientActionV2]
+        redirectToProvider: str
+        unauthenticatedClientAction: Union[str, UnauthenticatedClientActionV2]
 
 
     class azure.mgmt.appcontainers.types.Google(TypedDict, total=False):
@@ -10149,6 +12437,13 @@ namespace azure.mgmt.appcontainers.types
         validation: AllowedAudiencesValidation
 
 
+    class azure.mgmt.appcontainers.types.Header(TypedDict, total=False):
+        key "key": str
+        key "value": str
+        key: str
+        value: str
+
+
     class azure.mgmt.appcontainers.types.HttpRoute(TypedDict, total=False):
         key "action": ForwardRef('HttpRouteAction', module='types')
         key "match": ForwardRef('HttpRouteMatch', module='types')
@@ -10158,7 +12453,7 @@ namespace azure.mgmt.appcontainers.types
 
     class azure.mgmt.appcontainers.types.HttpRouteAction(TypedDict, total=False):
         key "prefixRewrite": str
-        prefix_rewrite: str
+        prefixRewrite: str
 
 
     class azure.mgmt.appcontainers.types.HttpRouteConfig(ProxyResource):
@@ -10170,7 +12465,7 @@ namespace azure.mgmt.appcontainers.types
         id: str
         name: str
         properties: HttpRouteConfigProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -10178,11 +12473,9 @@ namespace azure.mgmt.appcontainers.types
         key "fqdn": str
         key "provisioningState": Union[str, HttpRouteProvisioningState]
         customDomains: list[CustomDomain]
-        custom_domains: list[CustomDomain]
         fqdn: str
         provisioningErrors: list[HttpRouteProvisioningErrors]
-        provisioning_errors: list[HttpRouteProvisioningErrors]
-        provisioning_state: Union[str, HttpRouteProvisioningState]
+        provisioningState: Union[str, HttpRouteProvisioningState]
         rules: list[HttpRouteRule]
 
 
@@ -10191,9 +12484,9 @@ namespace azure.mgmt.appcontainers.types
         key "path": str
         key "pathSeparatedPrefix": str
         key "prefix": str
-        case_sensitive: bool
+        caseSensitive: bool
         path: str
-        path_separated_prefix: str
+        pathSeparatedPrefix: str
         prefix: str
 
 
@@ -10215,7 +12508,7 @@ namespace azure.mgmt.appcontainers.types
         key "containerApp": Required[str]
         key "label": str
         key "revision": str
-        container_app: str
+        containerApp: str
         label: str
         revision: str
 
@@ -10231,14 +12524,14 @@ namespace azure.mgmt.appcontainers.types
         key "forwardProxy": ForwardRef('ForwardProxy', module='types')
         key "requireHttps": bool
         key "routes": ForwardRef('HttpSettingsRoutes', module='types')
-        forward_proxy: ForwardProxy
-        require_https: bool
+        forwardProxy: ForwardProxy
+        requireHttps: bool
         routes: HttpSettingsRoutes
 
 
     class azure.mgmt.appcontainers.types.HttpSettingsRoutes(TypedDict, total=False):
         key "apiPrefix": str
-        api_prefix: str
+        apiPrefix: str
 
 
     class azure.mgmt.appcontainers.types.IdentityProviders(TypedDict, total=False):
@@ -10250,12 +12543,11 @@ namespace azure.mgmt.appcontainers.types
         key "google": ForwardRef('Google', module='types')
         key "twitter": ForwardRef('Twitter', module='types')
         apple: Apple
-        azure_active_directory: AzureActiveDirectory
-        azure_static_web_apps: AzureStaticWebApps
+        azureActiveDirectory: AzureActiveDirectory
+        azureStaticWebApps: AzureStaticWebApps
         customOpenIdConnectProviders: dict[str, CustomOpenIdConnectProvider]
-        custom_open_id_connect_providers: dict[str, CustomOpenIdConnectProvider]
         facebook: Facebook
-        git_hub: GitHub
+        gitHub: GitHub
         google: Google
         twitter: Twitter
 
@@ -10278,19 +12570,16 @@ namespace azure.mgmt.appcontainers.types
         key "targetPort": int
         key "transport": Union[str, IngressTransportMethod]
         additionalPortMappings: list[IngressPortMapping]
-        additional_port_mappings: list[IngressPortMapping]
-        allow_insecure: bool
-        client_certificate_mode: Union[str, IngressClientCertificateMode]
-        cors_policy: CorsPolicy
+        allowInsecure: bool
+        clientCertificateMode: Union[str, IngressClientCertificateMode]
+        corsPolicy: CorsPolicy
         customDomains: list[CustomDomain]
-        custom_domains: list[CustomDomain]
-        exposed_port: int
+        exposedPort: int
         external: bool
         fqdn: str
         ipSecurityRestrictions: list[IpSecurityRestrictionRule]
-        ip_security_restrictions: list[IpSecurityRestrictionRule]
-        sticky_sessions: IngressStickySessions
-        target_port: int
+        stickySessions: IngressStickySessions
+        targetPort: int
         traffic: list[TrafficWeight]
         transport: Union[str, IngressTransportMethod]
 
@@ -10300,19 +12589,19 @@ namespace azure.mgmt.appcontainers.types
         key "requestIdleTimeout": int
         key "terminationGracePeriodSeconds": int
         key "workloadProfileName": str
-        header_count_limit: int
-        request_idle_timeout: int
-        termination_grace_period_seconds: int
-        workload_profile_name: str
+        headerCountLimit: int
+        requestIdleTimeout: int
+        terminationGracePeriodSeconds: int
+        workloadProfileName: str
 
 
     class azure.mgmt.appcontainers.types.IngressPortMapping(TypedDict, total=False):
         key "exposedPort": int
         key "external": Required[bool]
         key "targetPort": Required[int]
-        exposed_port: int
+        exposedPort: int
         external: bool
-        target_port: int
+        targetPort: int
 
 
     class azure.mgmt.appcontainers.types.IngressStickySessions(TypedDict, total=False):
@@ -10331,7 +12620,6 @@ namespace azure.mgmt.appcontainers.types
         name: str
         resources: ContainerResources
         volumeMounts: list[VolumeMount]
-        volume_mounts: list[VolumeMount]
 
 
     class azure.mgmt.appcontainers.types.IpSecurityRestrictionRule(TypedDict, total=False):
@@ -10341,7 +12629,7 @@ namespace azure.mgmt.appcontainers.types
         key "name": Required[str]
         action: Union[str, Action]
         description: str
-        ip_address_range: str
+        ipAddressRange: str
         name: str
 
 
@@ -10354,14 +12642,14 @@ namespace azure.mgmt.appcontainers.types
         id: str
         name: str
         properties: JavaComponentProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.appcontainers.types.JavaComponentConfigurationProperty(TypedDict, total=False):
         key "propertyName": str
         key "value": str
-        property_name: str
+        propertyName: str
         value: str
 
 
@@ -10373,15 +12661,15 @@ namespace azure.mgmt.appcontainers.types
     class azure.mgmt.appcontainers.types.JavaComponentPropertiesScale(TypedDict, total=False):
         key "maxReplicas": int
         key "minReplicas": int
-        max_replicas: int
-        min_replicas: int
+        maxReplicas: int
+        minReplicas: int
 
 
     class azure.mgmt.appcontainers.types.JavaComponentServiceBind(TypedDict, total=False):
         key "name": str
         key "serviceId": str
         name: str
-        service_id: str
+        serviceId: str
 
 
     class azure.mgmt.appcontainers.types.JavaComponentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -10403,7 +12691,7 @@ namespace azure.mgmt.appcontainers.types
         location: str
         name: str
         properties: JobProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -10415,16 +12703,15 @@ namespace azure.mgmt.appcontainers.types
         key "replicaTimeout": Required[int]
         key "scheduleTriggerConfig": ForwardRef('JobConfigurationScheduleTriggerConfig', module='types')
         key "triggerType": Required[Union[str, TriggerType]]
-        event_trigger_config: JobConfigurationEventTriggerConfig
+        eventTriggerConfig: JobConfigurationEventTriggerConfig
         identitySettings: list[IdentitySettings]
-        identity_settings: list[IdentitySettings]
-        manual_trigger_config: JobConfigurationManualTriggerConfig
+        manualTriggerConfig: JobConfigurationManualTriggerConfig
         registries: list[RegistryCredentials]
-        replica_retry_limit: int
-        replica_timeout: int
-        schedule_trigger_config: JobConfigurationScheduleTriggerConfig
+        replicaRetryLimit: int
+        replicaTimeout: int
+        scheduleTriggerConfig: JobConfigurationScheduleTriggerConfig
         secrets: list[Secret]
-        trigger_type: Union[str, TriggerType]
+        triggerType: Union[str, TriggerType]
 
 
     class azure.mgmt.appcontainers.types.JobConfigurationEventTriggerConfig(TypedDict, total=False):
@@ -10432,7 +12719,7 @@ namespace azure.mgmt.appcontainers.types
         key "replicaCompletionCount": int
         key "scale": ForwardRef('JobScale', module='types')
         parallelism: int
-        replica_completion_count: int
+        replicaCompletionCount: int
         scale: JobScale
 
 
@@ -10440,16 +12727,16 @@ namespace azure.mgmt.appcontainers.types
         key "parallelism": int
         key "replicaCompletionCount": int
         parallelism: int
-        replica_completion_count: int
+        replicaCompletionCount: int
 
 
     class azure.mgmt.appcontainers.types.JobConfigurationScheduleTriggerConfig(TypedDict, total=False):
         key "cronExpression": Required[str]
         key "parallelism": int
         key "replicaCompletionCount": int
-        cron_expression: str
+        cronExpression: str
         parallelism: int
-        replica_completion_count: int
+        replicaCompletionCount: int
 
 
     class azure.mgmt.appcontainers.types.JobExecutionContainer(TypedDict, total=False):
@@ -10467,7 +12754,6 @@ namespace azure.mgmt.appcontainers.types
     class azure.mgmt.appcontainers.types.JobExecutionTemplate(TypedDict, total=False):
         containers: list[JobExecutionContainer]
         initContainers: list[JobExecutionContainer]
-        init_containers: list[JobExecutionContainer]
 
 
     class azure.mgmt.appcontainers.types.JobPatchProperties(TypedDict, total=False):
@@ -10484,10 +12770,9 @@ namespace azure.mgmt.appcontainers.types
         key "eventStreamEndpoint": str
         key "template": ForwardRef('JobTemplate', module='types')
         configuration: JobConfiguration
-        environment_id: str
-        event_stream_endpoint: str
+        environmentId: str
+        eventStreamEndpoint: str
         outboundIpAddresses: list[str]
-        outbound_ip_addresses: list[str]
         template: JobTemplate
 
 
@@ -10496,25 +12781,26 @@ namespace azure.mgmt.appcontainers.types
         key "environmentId": str
         key "eventStreamEndpoint": str
         key "provisioningState": Union[str, JobProvisioningState]
+        key "runningState": Union[str, JobRunningState]
         key "template": ForwardRef('JobTemplate', module='types')
         key "workloadProfileName": str
         configuration: JobConfiguration
-        environment_id: str
-        event_stream_endpoint: str
+        environmentId: str
+        eventStreamEndpoint: str
         outboundIpAddresses: list[str]
-        outbound_ip_addresses: list[str]
-        provisioning_state: Union[str, JobProvisioningState]
+        provisioningState: Union[str, JobProvisioningState]
+        runningState: Union[str, JobRunningState]
         template: JobTemplate
-        workload_profile_name: str
+        workloadProfileName: str
 
 
     class azure.mgmt.appcontainers.types.JobScale(TypedDict, total=False):
         key "maxExecutions": int
         key "minExecutions": int
         key "pollingInterval": int
-        max_executions: int
-        min_executions: int
-        polling_interval: int
+        maxExecutions: int
+        minExecutions: int
+        pollingInterval: int
         rules: list[JobScaleRule]
 
 
@@ -10533,15 +12819,12 @@ namespace azure.mgmt.appcontainers.types
     class azure.mgmt.appcontainers.types.JobTemplate(TypedDict, total=False):
         containers: list[Container]
         initContainers: list[InitContainer]
-        init_containers: list[InitContainer]
         volumes: list[Volume]
 
 
     class azure.mgmt.appcontainers.types.JwtClaimChecks(TypedDict, total=False):
         allowedClientApplications: list[str]
         allowedGroups: list[str]
-        allowed_client_applications: list[str]
-        allowed_groups: list[str]
 
 
     class azure.mgmt.appcontainers.types.KedaConfiguration(TypedDict, total=False):
@@ -10553,16 +12836,16 @@ namespace azure.mgmt.appcontainers.types
         key "cooldownPeriodInSeconds": int
         key "lifecycleType": Union[str, LifecycleType]
         key "maxAlivePeriodInSeconds": int
-        cooldown_period_in_seconds: int
-        lifecycle_type: Union[str, LifecycleType]
-        max_alive_period_in_seconds: int
+        cooldownPeriodInSeconds: int
+        lifecycleType: Union[str, LifecycleType]
+        maxAlivePeriodInSeconds: int
 
 
     class azure.mgmt.appcontainers.types.LogAnalyticsConfiguration(TypedDict, total=False):
         key "customerId": str
         key "sharedKey": str
-        customer_id: str
-        shared_key: str
+        customerId: str
+        sharedKey: str
 
 
     class azure.mgmt.appcontainers.types.LogicApp(ProxyResource):
@@ -10572,7 +12855,7 @@ namespace azure.mgmt.appcontainers.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -10583,21 +12866,24 @@ namespace azure.mgmt.appcontainers.types
         key "routes": ForwardRef('LoginRoutes', module='types')
         key "tokenStore": ForwardRef('TokenStore', module='types')
         allowedExternalRedirectUrls: list[str]
-        allowed_external_redirect_urls: list[str]
-        cookie_expiration: CookieExpiration
+        cookieExpiration: CookieExpiration
         nonce: Nonce
-        preserve_url_fragments_for_logins: bool
+        preserveUrlFragmentsForLogins: bool
         routes: LoginRoutes
-        token_store: TokenStore
+        tokenStore: TokenStore
 
 
     class azure.mgmt.appcontainers.types.LoginRoutes(TypedDict, total=False):
         key "logoutEndpoint": str
-        logout_endpoint: str
+        logoutEndpoint: str
 
 
     class azure.mgmt.appcontainers.types.LoginScopes(TypedDict, total=False):
         scopes: list[str]
+
+
+    class azure.mgmt.appcontainers.types.LogsConfiguration(TypedDict, total=False):
+        destinations: list[str]
 
 
     class azure.mgmt.appcontainers.types.MaintenanceConfigurationResource(ProxyResource):
@@ -10609,7 +12895,7 @@ namespace azure.mgmt.appcontainers.types
         id: str
         name: str
         properties: ScheduledEntries
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -10624,7 +12910,7 @@ namespace azure.mgmt.appcontainers.types
         location: str
         name: str
         properties: ManagedCertificateProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -10639,11 +12925,11 @@ namespace azure.mgmt.appcontainers.types
         key "provisioningState": Union[str, CertificateProvisioningState]
         key "subjectName": str
         key "validationToken": str
-        domain_control_validation: Union[str, ManagedCertificateDomainControlValidation]
+        domainControlValidation: Union[str, ManagedCertificateDomainControlValidation]
         error: str
-        provisioning_state: Union[str, CertificateProvisioningState]
-        subject_name: str
-        validation_token: str
+        provisioningState: Union[str, CertificateProvisioningState]
+        subjectName: str
+        validationToken: str
 
 
     class azure.mgmt.appcontainers.types.ManagedEnvironment(TrackedResource):
@@ -10661,12 +12947,13 @@ namespace azure.mgmt.appcontainers.types
         location: str
         name: str
         properties: ManagedEnvironmentProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.appcontainers.types.ManagedEnvironmentProperties(TypedDict, total=False):
+        key "appInsightsConfiguration": ForwardRef('AppInsightsConfiguration', module='types')
         key "appLogsConfiguration": ForwardRef('AppLogsConfiguration', module='types')
         key "customDomainConfiguration": ForwardRef('CustomDomainConfiguration', module='types')
         key "daprAIConnectionString": str
@@ -10674,10 +12961,12 @@ namespace azure.mgmt.appcontainers.types
         key "daprConfiguration": ForwardRef('DaprConfiguration', module='types')
         key "defaultDomain": str
         key "deploymentErrors": str
+        key "environmentMode": Union[str, ManagedEnvironmentMode]
         key "eventStreamEndpoint": str
         key "infrastructureResourceGroup": str
         key "ingressConfiguration": ForwardRef('IngressConfiguration', module='types')
         key "kedaConfiguration": ForwardRef('KedaConfiguration', module='types')
+        key "openTelemetryConfiguration": ForwardRef('OpenTelemetryConfiguration', module='types')
         key "peerAuthentication": ForwardRef('ManagedEnvironmentPropertiesPeerAuthentication', module='types')
         key "peerTrafficConfiguration": ForwardRef('ManagedEnvironmentPropertiesPeerTrafficConfiguration', module='types')
         key "provisioningState": Union[str, EnvironmentProvisioningState]
@@ -10685,28 +12974,29 @@ namespace azure.mgmt.appcontainers.types
         key "staticIp": str
         key "vnetConfiguration": ForwardRef('VnetConfiguration', module='types')
         key "zoneRedundant": bool
-        app_logs_configuration: AppLogsConfiguration
-        custom_domain_configuration: CustomDomainConfiguration
-        dapr_ai_connection_string: str
-        dapr_ai_instrumentation_key: str
-        dapr_configuration: DaprConfiguration
-        default_domain: str
-        deployment_errors: str
-        event_stream_endpoint: str
-        infrastructure_resource_group: str
-        ingress_configuration: IngressConfiguration
-        keda_configuration: KedaConfiguration
-        peer_authentication: ManagedEnvironmentPropertiesPeerAuthentication
-        peer_traffic_configuration: ManagedEnvironmentPropertiesPeerTrafficConfiguration
+        appInsightsConfiguration: AppInsightsConfiguration
+        appLogsConfiguration: AppLogsConfiguration
+        customDomainConfiguration: CustomDomainConfiguration
+        daprAIConnectionString: str
+        daprAIInstrumentationKey: str
+        daprConfiguration: DaprConfiguration
+        defaultDomain: str
+        deploymentErrors: str
+        environmentMode: Union[str, ManagedEnvironmentMode]
+        eventStreamEndpoint: str
+        infrastructureResourceGroup: str
+        ingressConfiguration: IngressConfiguration
+        kedaConfiguration: KedaConfiguration
+        openTelemetryConfiguration: OpenTelemetryConfiguration
+        peerAuthentication: ManagedEnvironmentPropertiesPeerAuthentication
+        peerTrafficConfiguration: ManagedEnvironmentPropertiesPeerTrafficConfiguration
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: Union[str, EnvironmentProvisioningState]
-        public_network_access: Union[str, PublicNetworkAccess]
-        static_ip: str
-        vnet_configuration: VnetConfiguration
+        provisioningState: Union[str, EnvironmentProvisioningState]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        staticIp: str
+        vnetConfiguration: VnetConfiguration
         workloadProfiles: list[WorkloadProfile]
-        workload_profiles: list[WorkloadProfile]
-        zone_redundant: bool
+        zoneRedundant: bool
 
 
     class azure.mgmt.appcontainers.types.ManagedEnvironmentPropertiesPeerAuthentication(TypedDict, total=False):
@@ -10733,15 +13023,15 @@ namespace azure.mgmt.appcontainers.types
         id: str
         name: str
         properties: ManagedEnvironmentStorageProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.appcontainers.types.ManagedEnvironmentStorageProperties(TypedDict, total=False):
         key "azureFile": ForwardRef('AzureFileProperties', module='types')
         key "nfsAzureFile": ForwardRef('NfsAzureFileProperties', module='types')
-        azure_file: AzureFileProperties
-        nfs_azure_file: NfsAzureFileProperties
+        azureFile: AzureFileProperties
+        nfsAzureFile: NfsAzureFileProperties
 
 
     class azure.mgmt.appcontainers.types.ManagedIdentitySetting(TypedDict, total=False):
@@ -10755,11 +13045,16 @@ namespace azure.mgmt.appcontainers.types
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.appcontainers.types.MetricsConfiguration(TypedDict, total=False):
+        key "includeKeda": bool
+        destinations: list[str]
+        includeKeda: bool
 
 
     class azure.mgmt.appcontainers.types.Mtls(TypedDict, total=False):
@@ -10771,22 +13066,22 @@ namespace azure.mgmt.appcontainers.types
         key "accessMode": Union[str, AccessMode]
         key "server": str
         key "shareName": str
-        access_mode: Union[str, AccessMode]
+        accessMode: Union[str, AccessMode]
         server: str
-        share_name: str
+        shareName: str
 
 
     class azure.mgmt.appcontainers.types.Nonce(TypedDict, total=False):
         key "nonceExpirationInterval": str
         key "validateNonce": bool
-        nonce_expiration_interval: str
-        validate_nonce: bool
+        nonceExpirationInterval: str
+        validateNonce: bool
 
 
     class azure.mgmt.appcontainers.types.OpenIdConnectClientCredential(TypedDict, total=False):
         key "clientSecretSettingName": str
         key "method": Literal["ClientSecretPost"]
-        client_secret_setting_name: str
+        clientSecretSettingName: str
         method: Literal[ClientSecretPost]
 
 
@@ -10796,16 +13091,16 @@ namespace azure.mgmt.appcontainers.types
         key "issuer": str
         key "tokenEndpoint": str
         key "wellKnownOpenIdConfiguration": str
-        authorization_endpoint: str
-        certification_uri: str
+        authorizationEndpoint: str
+        certificationUri: str
         issuer: str
-        token_endpoint: str
-        well_known_open_id_configuration: str
+        tokenEndpoint: str
+        wellKnownOpenIdConfiguration: str
 
 
     class azure.mgmt.appcontainers.types.OpenIdConnectLogin(TypedDict, total=False):
         key "nameClaimType": str
-        name_claim_type: str
+        nameClaimType: str
         scopes: list[str]
 
 
@@ -10813,9 +13108,30 @@ namespace azure.mgmt.appcontainers.types
         key "clientCredential": ForwardRef('OpenIdConnectClientCredential', module='types')
         key "clientId": str
         key "openIdConnectConfiguration": ForwardRef('OpenIdConnectConfig', module='types')
-        client_credential: OpenIdConnectClientCredential
-        client_id: str
-        open_id_connect_configuration: OpenIdConnectConfig
+        clientCredential: OpenIdConnectClientCredential
+        clientId: str
+        openIdConnectConfiguration: OpenIdConnectConfig
+
+
+    class azure.mgmt.appcontainers.types.OpenTelemetryConfiguration(TypedDict, total=False):
+        key "destinationsConfiguration": ForwardRef('DestinationsConfiguration', module='types')
+        key "logsConfiguration": ForwardRef('LogsConfiguration', module='types')
+        key "metricsConfiguration": ForwardRef('MetricsConfiguration', module='types')
+        key "tracesConfiguration": ForwardRef('TracesConfiguration', module='types')
+        destinationsConfiguration: DestinationsConfiguration
+        logsConfiguration: LogsConfiguration
+        metricsConfiguration: MetricsConfiguration
+        tracesConfiguration: TracesConfiguration
+
+
+    class azure.mgmt.appcontainers.types.OtlpConfiguration(TypedDict, total=False):
+        key "endpoint": str
+        key "insecure": bool
+        key "name": str
+        endpoint: str
+        headers: list[Header]
+        insecure: bool
+        name: str
 
 
     class azure.mgmt.appcontainers.types.PrivateEndpoint(TypedDict, total=False):
@@ -10832,7 +13148,7 @@ namespace azure.mgmt.appcontainers.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -10841,17 +13157,16 @@ namespace azure.mgmt.appcontainers.types
         key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
         key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
         groupIds: list[str]
-        group_ids: list[str]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, PrivateEndpointConnectionProvisioningState]
 
 
     class azure.mgmt.appcontainers.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
         key "actionsRequired": str
         key "description": str
         key "status": Union[str, PrivateEndpointServiceConnectionStatus]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: Union[str, PrivateEndpointServiceConnectionStatus]
 
@@ -10863,7 +13178,7 @@ namespace azure.mgmt.appcontainers.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -10872,11 +13187,11 @@ namespace azure.mgmt.appcontainers.types
         key "identity": str
         key "queueLength": int
         key "queueName": str
-        account_name: str
+        accountName: str
         auth: list[ScaleRuleAuth]
         identity: str
-        queue_length: int
-        queue_name: str
+        queueLength: int
+        queueName: str
 
 
     class azure.mgmt.appcontainers.types.RegistryCredentials(TypedDict, total=False):
@@ -10885,7 +13200,7 @@ namespace azure.mgmt.appcontainers.types
         key "server": str
         key "username": str
         identity: str
-        password_secret_ref: str
+        passwordSecretRef: str
         server: str
         username: str
 
@@ -10894,9 +13209,9 @@ namespace azure.mgmt.appcontainers.types
         key "registryPassword": str
         key "registryUrl": str
         key "registryUserName": str
-        registry_password: str
-        registry_url: str
-        registry_user_name: str
+        registryPassword: str
+        registryUrl: str
+        registryUserName: str
 
 
     class azure.mgmt.appcontainers.types.Resource(TypedDict, total=False):
@@ -10906,7 +13221,7 @@ namespace azure.mgmt.appcontainers.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -10921,26 +13236,64 @@ namespace azure.mgmt.appcontainers.types
 
     class azure.mgmt.appcontainers.types.RuntimeJava(TypedDict, total=False):
         key "enableMetrics": bool
-        enable_metrics: bool
+        enableMetrics: bool
+
+
+    class azure.mgmt.appcontainers.types.SandboxGroup(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('SandboxGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: SandboxGroupProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.appcontainers.types.SandboxGroupPatch(TypedDict, total=False):
+        key "properties": ForwardRef('SandboxGroupPatchProperties', module='types')
+        properties: SandboxGroupPatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.appcontainers.types.SandboxGroupPatchProperties(TypedDict, total=False):
+        key "environmentId": str
+        environmentId: str
+
+
+    class azure.mgmt.appcontainers.types.SandboxGroupProperties(TypedDict, total=False):
+        key "defaultDomain": str
+        key "environmentId": str
+        key "provisioningState": Union[str, SandboxGroupProvisioningState]
+        defaultDomain: str
+        environmentId: str
+        provisioningState: Union[str, SandboxGroupProvisioningState]
 
 
     class azure.mgmt.appcontainers.types.Scale(TypedDict, total=False):
+        key "allowScalingRuleOverride": bool
         key "cooldownPeriod": int
         key "maxReplicas": int
         key "minReplicas": int
         key "pollingInterval": int
-        cooldown_period: int
-        max_replicas: int
-        min_replicas: int
-        polling_interval: int
+        allowScalingRuleOverride: bool
+        cooldownPeriod: int
+        maxReplicas: int
+        minReplicas: int
+        pollingInterval: int
         rules: list[ScaleRule]
 
 
     class azure.mgmt.appcontainers.types.ScaleConfiguration(TypedDict, total=False):
         key "maxConcurrentSessions": int
         key "readySessionInstances": int
-        max_concurrent_sessions: int
-        ready_session_instances: int
+        maxConcurrentSessions: int
+        readySessionInstances: int
 
 
     class azure.mgmt.appcontainers.types.ScaleRule(TypedDict, total=False):
@@ -10949,7 +13302,7 @@ namespace azure.mgmt.appcontainers.types
         key "http": ForwardRef('HttpScaleRule', module='types')
         key "name": str
         key "tcp": ForwardRef('TcpScaleRule', module='types')
-        azure_queue: QueueScaleRule
+        azureQueue: QueueScaleRule
         custom: CustomScaleRule
         http: HttpScaleRule
         name: str
@@ -10959,22 +13312,22 @@ namespace azure.mgmt.appcontainers.types
     class azure.mgmt.appcontainers.types.ScaleRuleAuth(TypedDict, total=False):
         key "secretRef": str
         key "triggerParameter": str
-        secret_ref: str
-        trigger_parameter: str
+        secretRef: str
+        triggerParameter: str
 
 
     class azure.mgmt.appcontainers.types.ScheduledEntries(TypedDict, total=False):
         key "scheduledEntries": Required[list[ScheduledEntry]]
-        scheduled_entries: list[ScheduledEntry]
+        scheduledEntries: list[ScheduledEntry]
 
 
     class azure.mgmt.appcontainers.types.ScheduledEntry(TypedDict, total=False):
         key "durationHours": Required[int]
         key "startHourUtc": Required[int]
         key "weekDay": Required[Union[str, WeekDay]]
-        duration_hours: int
-        start_hour_utc: int
-        week_day: Union[str, WeekDay]
+        durationHours: int
+        startHourUtc: int
+        weekDay: Union[str, WeekDay]
 
 
     class azure.mgmt.appcontainers.types.Secret(TypedDict, total=False):
@@ -10983,7 +13336,7 @@ namespace azure.mgmt.appcontainers.types
         key "name": str
         key "value": str
         identity: str
-        key_vault_url: str
+        keyVaultUrl: str
         name: str
         value: str
 
@@ -10992,14 +13345,14 @@ namespace azure.mgmt.appcontainers.types
         key "identity": str
         key "keyVaultUrl": str
         identity: str
-        key_vault_url: str
+        keyVaultUrl: str
 
 
     class azure.mgmt.appcontainers.types.SecretVolumeItem(TypedDict, total=False):
         key "path": str
         key "secretRef": str
         path: str
-        secret_ref: str
+        secretRef: str
 
 
     class azure.mgmt.appcontainers.types.Service(TypedDict, total=False):
@@ -11011,7 +13364,7 @@ namespace azure.mgmt.appcontainers.types
         key "name": str
         key "serviceId": str
         name: str
-        service_id: str
+        serviceId: str
 
 
     class azure.mgmt.appcontainers.types.SessionContainer(TypedDict, total=False):
@@ -11023,6 +13376,7 @@ namespace azure.mgmt.appcontainers.types
         env: list[EnvironmentVar]
         image: str
         name: str
+        probes: list[SessionProbe]
         resources: SessionContainerResources
 
 
@@ -11035,7 +13389,7 @@ namespace azure.mgmt.appcontainers.types
 
     class azure.mgmt.appcontainers.types.SessionIngress(TypedDict, total=False):
         key "targetPort": int
-        target_port: int
+        targetPort: int
 
 
     class azure.mgmt.appcontainers.types.SessionNetworkConfiguration(TypedDict, total=False):
@@ -11056,7 +13410,7 @@ namespace azure.mgmt.appcontainers.types
         location: str
         name: str
         properties: SessionPoolProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -11072,19 +13426,18 @@ namespace azure.mgmt.appcontainers.types
         key "provisioningState": Union[str, SessionPoolProvisioningState]
         key "scaleConfiguration": ForwardRef('ScaleConfiguration', module='types')
         key "sessionNetworkConfiguration": ForwardRef('SessionNetworkConfiguration', module='types')
-        container_type: Union[str, ContainerType]
-        custom_container_template: CustomContainerTemplate
-        dynamic_pool_configuration: DynamicPoolConfiguration
-        environment_id: str
+        containerType: Union[str, ContainerType]
+        customContainerTemplate: CustomContainerTemplate
+        dynamicPoolConfiguration: DynamicPoolConfiguration
+        environmentId: str
         managedIdentitySettings: list[ManagedIdentitySetting]
-        managed_identity_settings: list[ManagedIdentitySetting]
-        node_count: int
-        pool_management_endpoint: str
-        pool_management_type: Union[str, PoolManagementType]
-        provisioning_state: Union[str, SessionPoolProvisioningState]
-        scale_configuration: ScaleConfiguration
+        nodeCount: int
+        poolManagementEndpoint: str
+        poolManagementType: Union[str, PoolManagementType]
+        provisioningState: Union[str, SessionPoolProvisioningState]
+        scaleConfiguration: ScaleConfiguration
         secrets: list[SessionPoolSecret]
-        session_network_configuration: SessionNetworkConfiguration
+        sessionNetworkConfiguration: SessionNetworkConfiguration
 
 
     class azure.mgmt.appcontainers.types.SessionPoolSecret(TypedDict, total=False):
@@ -11107,11 +13460,58 @@ namespace azure.mgmt.appcontainers.types
         key "dynamicPoolConfiguration": ForwardRef('DynamicPoolConfiguration', module='types')
         key "scaleConfiguration": ForwardRef('ScaleConfiguration', module='types')
         key "sessionNetworkConfiguration": ForwardRef('SessionNetworkConfiguration', module='types')
-        custom_container_template: CustomContainerTemplate
-        dynamic_pool_configuration: DynamicPoolConfiguration
-        scale_configuration: ScaleConfiguration
+        customContainerTemplate: CustomContainerTemplate
+        dynamicPoolConfiguration: DynamicPoolConfiguration
+        scaleConfiguration: ScaleConfiguration
         secrets: list[SessionPoolSecret]
-        session_network_configuration: SessionNetworkConfiguration
+        sessionNetworkConfiguration: SessionNetworkConfiguration
+
+
+    class azure.mgmt.appcontainers.types.SessionProbe(TypedDict, total=False):
+        key "failureThreshold": int
+        key "httpGet": ForwardRef('SessionProbeHttpGet', module='types')
+        key "initialDelaySeconds": int
+        key "periodSeconds": int
+        key "successThreshold": int
+        key "tcpSocket": ForwardRef('SessionProbeTcpSocket', module='types')
+        key "terminationGracePeriodSeconds": int
+        key "timeoutSeconds": int
+        key "type": Union[str, SessionProbeType]
+        failureThreshold: int
+        httpGet: SessionProbeHttpGet
+        initialDelaySeconds: int
+        periodSeconds: int
+        successThreshold: int
+        tcpSocket: SessionProbeTcpSocket
+        terminationGracePeriodSeconds: int
+        timeoutSeconds: int
+        type: Union[str, SessionProbeType]
+
+
+    class azure.mgmt.appcontainers.types.SessionProbeHttpGet(TypedDict, total=False):
+        key "host": str
+        key "path": str
+        key "port": Required[int]
+        key "scheme": Union[str, Scheme]
+        host: str
+        httpHeaders: list[SessionProbeHttpGetHttpHeadersItem]
+        path: str
+        port: int
+        scheme: Union[str, Scheme]
+
+
+    class azure.mgmt.appcontainers.types.SessionProbeHttpGetHttpHeadersItem(TypedDict, total=False):
+        key "name": Required[str]
+        key "value": Required[str]
+        name: str
+        value: str
+
+
+    class azure.mgmt.appcontainers.types.SessionProbeTcpSocket(TypedDict, total=False):
+        key "host": str
+        key "port": Required[int]
+        host: str
+        port: int
 
 
     class azure.mgmt.appcontainers.types.SessionRegistryCredentials(TypedDict, total=False):
@@ -11120,7 +13520,7 @@ namespace azure.mgmt.appcontainers.types
         key "server": str
         key "username": str
         identity: str
-        password_secret_ref: str
+        passwordSecretRef: str
         server: str
         username: str
 
@@ -11134,7 +13534,7 @@ namespace azure.mgmt.appcontainers.types
         id: str
         name: str
         properties: SourceControlProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -11144,9 +13544,9 @@ namespace azure.mgmt.appcontainers.types
         key "operationState": Union[str, SourceControlOperationState]
         key "repoUrl": str
         branch: str
-        github_action_configuration: GithubActionConfiguration
-        operation_state: Union[str, SourceControlOperationState]
-        repo_url: str
+        githubActionConfiguration: GithubActionConfiguration
+        operationState: Union[str, SourceControlOperationState]
+        repoUrl: str
 
 
     class azure.mgmt.appcontainers.types.SpringBootAdminComponent(TypedDict, total=False):
@@ -11154,25 +13554,23 @@ namespace azure.mgmt.appcontainers.types
         key "ingress": ForwardRef('JavaComponentIngress', module='types')
         key "provisioningState": Union[str, JavaComponentProvisioningState]
         key "scale": ForwardRef('JavaComponentPropertiesScale', module='types')
-        component_type: Literal[JavaComponentType.SPRING_BOOT_ADMIN]
+        componentType: Literal[JavaComponentType.SPRING_BOOT_ADMIN]
         configurations: list[JavaComponentConfigurationProperty]
         ingress: JavaComponentIngress
-        provisioning_state: Union[str, JavaComponentProvisioningState]
+        provisioningState: Union[str, JavaComponentProvisioningState]
         scale: JavaComponentPropertiesScale
         serviceBinds: list[JavaComponentServiceBind]
-        service_binds: list[JavaComponentServiceBind]
 
 
     class azure.mgmt.appcontainers.types.SpringCloudConfigComponent(TypedDict, total=False):
         key "componentType": Required[Literal[JavaComponentType.SPRING_CLOUD_CONFIG]]
         key "provisioningState": Union[str, JavaComponentProvisioningState]
         key "scale": ForwardRef('JavaComponentPropertiesScale', module='types')
-        component_type: Literal[JavaComponentType.SPRING_CLOUD_CONFIG]
+        componentType: Literal[JavaComponentType.SPRING_CLOUD_CONFIG]
         configurations: list[JavaComponentConfigurationProperty]
-        provisioning_state: Union[str, JavaComponentProvisioningState]
+        provisioningState: Union[str, JavaComponentProvisioningState]
         scale: JavaComponentPropertiesScale
         serviceBinds: list[JavaComponentServiceBind]
-        service_binds: list[JavaComponentServiceBind]
 
 
     class azure.mgmt.appcontainers.types.SpringCloudEurekaComponent(TypedDict, total=False):
@@ -11180,13 +13578,12 @@ namespace azure.mgmt.appcontainers.types
         key "ingress": ForwardRef('JavaComponentIngress', module='types')
         key "provisioningState": Union[str, JavaComponentProvisioningState]
         key "scale": ForwardRef('JavaComponentPropertiesScale', module='types')
-        component_type: Literal[JavaComponentType.SPRING_CLOUD_EUREKA]
+        componentType: Literal[JavaComponentType.SPRING_CLOUD_EUREKA]
         configurations: list[JavaComponentConfigurationProperty]
         ingress: JavaComponentIngress
-        provisioning_state: Union[str, JavaComponentProvisioningState]
+        provisioningState: Union[str, JavaComponentProvisioningState]
         scale: JavaComponentPropertiesScale
         serviceBinds: list[JavaComponentServiceBind]
-        service_binds: list[JavaComponentServiceBind]
 
 
     class azure.mgmt.appcontainers.types.SystemData(TypedDict, total=False):
@@ -11196,12 +13593,12 @@ namespace azure.mgmt.appcontainers.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.appcontainers.types.TcpScaleRule(TypedDict, total=False):
@@ -11217,12 +13614,10 @@ namespace azure.mgmt.appcontainers.types
         key "terminationGracePeriodSeconds": int
         containers: list[Container]
         initContainers: list[InitContainer]
-        init_containers: list[InitContainer]
-        revision_suffix: str
+        revisionSuffix: str
         scale: Scale
         serviceBinds: list[ServiceBind]
-        service_binds: list[ServiceBind]
-        termination_grace_period_seconds: int
+        terminationGracePeriodSeconds: int
         volumes: list[Volume]
 
 
@@ -11230,9 +13625,15 @@ namespace azure.mgmt.appcontainers.types
         key "azureBlobStorage": ForwardRef('BlobStorageTokenStore', module='types')
         key "enabled": bool
         key "tokenRefreshExtensionHours": float
-        azure_blob_storage: BlobStorageTokenStore
+        azureBlobStorage: BlobStorageTokenStore
         enabled: bool
-        token_refresh_extension_hours: float
+        tokenRefreshExtensionHours: float
+
+
+    class azure.mgmt.appcontainers.types.TracesConfiguration(TypedDict, total=False):
+        key "includeDapr": bool
+        destinations: list[str]
+        includeDapr: bool
 
 
     class azure.mgmt.appcontainers.types.TrackedResource(Resource):
@@ -11244,7 +13645,7 @@ namespace azure.mgmt.appcontainers.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -11255,8 +13656,8 @@ namespace azure.mgmt.appcontainers.types
         key "revisionName": str
         key "weight": int
         label: str
-        latest_revision: bool
-        revision_name: str
+        latestRevision: bool
+        revisionName: str
         weight: int
 
 
@@ -11270,15 +13671,15 @@ namespace azure.mgmt.appcontainers.types
     class azure.mgmt.appcontainers.types.TwitterRegistration(TypedDict, total=False):
         key "consumerKey": str
         key "consumerSecretSettingName": str
-        consumer_key: str
-        consumer_secret_setting_name: str
+        consumerKey: str
+        consumerSecretSettingName: str
 
 
     class azure.mgmt.appcontainers.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.appcontainers.types.VnetConfiguration(TypedDict, total=False):
@@ -11287,11 +13688,31 @@ namespace azure.mgmt.appcontainers.types
         key "internal": bool
         key "platformReservedCidr": str
         key "platformReservedDnsIP": str
-        docker_bridge_cidr: str
-        infrastructure_subnet_id: str
+        dockerBridgeCidr: str
+        infrastructureSubnetId: str
         internal: bool
-        platform_reserved_cidr: str
-        platform_reserved_dns_ip: str
+        platformReservedCidr: str
+        platformReservedDnsIP: str
+
+
+    class azure.mgmt.appcontainers.types.VnetConnection(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VnetConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: VnetConnectionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.appcontainers.types.VnetConnectionProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, VnetConnectionProvisioningState]
+        key "subnetId": str
+        provisioningState: Union[str, VnetConnectionProvisioningState]
+        subnetId: str
 
 
     class azure.mgmt.appcontainers.types.Volume(TypedDict, total=False):
@@ -11299,20 +13720,20 @@ namespace azure.mgmt.appcontainers.types
         key "name": str
         key "storageName": str
         key "storageType": Union[str, StorageType]
-        mount_options: str
+        mountOptions: str
         name: str
         secrets: list[SecretVolumeItem]
-        storage_name: str
-        storage_type: Union[str, StorageType]
+        storageName: str
+        storageType: Union[str, StorageType]
 
 
     class azure.mgmt.appcontainers.types.VolumeMount(TypedDict, total=False):
         key "mountPath": str
         key "subPath": str
         key "volumeName": str
-        mount_path: str
-        sub_path: str
-        volume_name: str
+        mountPath: str
+        subPath: str
+        volumeName: str
 
 
     class azure.mgmt.appcontainers.types.WorkloadProfile(TypedDict, total=False):
@@ -11320,10 +13741,10 @@ namespace azure.mgmt.appcontainers.types
         key "minimumCount": int
         key "name": Required[str]
         key "workloadProfileType": Required[str]
-        maximum_count: int
-        minimum_count: int
+        maximumCount: int
+        minimumCount: int
         name: str
-        workload_profile_type: str
+        workloadProfileType: str
 
 
 ```

@@ -47,6 +47,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                 "kind": "str",
                 "name": "str",
                 "properties": {
+                    "appInsightsConfiguration": {"connectionString": "str"},
                     "appLogsConfiguration": {
                         "destination": "str",
                         "logAnalyticsConfiguration": {"customerId": "str", "sharedKey": "str"},
@@ -66,6 +67,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                     "daprConfiguration": {"version": "str"},
                     "defaultDomain": "str",
                     "deploymentErrors": "str",
+                    "environmentMode": "str",
                     "eventStreamEndpoint": "str",
                     "infrastructureResourceGroup": "str",
                     "ingressConfiguration": {
@@ -75,6 +77,22 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                         "workloadProfileName": "str",
                     },
                     "kedaConfiguration": {"version": "str"},
+                    "openTelemetryConfiguration": {
+                        "destinationsConfiguration": {
+                            "dataDogConfiguration": {"key": "str", "site": "str"},
+                            "otlpConfigurations": [
+                                {
+                                    "endpoint": "str",
+                                    "headers": [{"key": "str", "value": "str"}],
+                                    "insecure": bool,
+                                    "name": "str",
+                                }
+                            ],
+                        },
+                        "logsConfiguration": {"destinations": ["str"]},
+                        "metricsConfiguration": {"destinations": ["str"], "includeKeda": bool},
+                        "tracesConfiguration": {"destinations": ["str"], "includeDapr": bool},
+                    },
                     "peerAuthentication": {"mtls": {"enabled": bool}},
                     "peerTrafficConfiguration": {"encryption": {"enabled": bool}},
                     "privateEndpointConnections": [
@@ -151,6 +169,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                 "kind": "str",
                 "name": "str",
                 "properties": {
+                    "appInsightsConfiguration": {"connectionString": "str"},
                     "appLogsConfiguration": {
                         "destination": "str",
                         "logAnalyticsConfiguration": {"customerId": "str", "sharedKey": "str"},
@@ -170,6 +189,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                     "daprConfiguration": {"version": "str"},
                     "defaultDomain": "str",
                     "deploymentErrors": "str",
+                    "environmentMode": "str",
                     "eventStreamEndpoint": "str",
                     "infrastructureResourceGroup": "str",
                     "ingressConfiguration": {
@@ -179,6 +199,22 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                         "workloadProfileName": "str",
                     },
                     "kedaConfiguration": {"version": "str"},
+                    "openTelemetryConfiguration": {
+                        "destinationsConfiguration": {
+                            "dataDogConfiguration": {"key": "str", "site": "str"},
+                            "otlpConfigurations": [
+                                {
+                                    "endpoint": "str",
+                                    "headers": [{"key": "str", "value": "str"}],
+                                    "insecure": bool,
+                                    "name": "str",
+                                }
+                            ],
+                        },
+                        "logsConfiguration": {"destinations": ["str"]},
+                        "metricsConfiguration": {"destinations": ["str"], "includeKeda": bool},
+                        "tracesConfiguration": {"destinations": ["str"], "includeDapr": bool},
+                    },
                     "peerAuthentication": {"mtls": {"enabled": bool}},
                     "peerTrafficConfiguration": {"encryption": {"enabled": bool}},
                     "privateEndpointConnections": [
@@ -285,5 +321,17 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
             environment_name="str",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_environments_check_migration_eligibility(self, resource_group):
+        response = self.client.managed_environments.check_migration_eligibility(
+            resource_group_name=resource_group.name,
+            environment_name="str",
+            body={"targetMode": "str"},
+        )
+
         # please add some check logic here by yourself
         # ...
