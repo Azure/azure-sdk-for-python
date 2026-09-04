@@ -17,10 +17,10 @@
 ### Sample updates
 
 * Added `sample_toolbox_with_shell.py` under `samples/agents/tools/`, demonstrating a Prompt Agent invoking a `ShellToolboxTool`.
-* Added `sample_toolbox_with_shipping_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using a persisted inline Skill through a Toolbox MCP endpoint.
-* Added `sample_toolbox_with_shell_and_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using an inline Skill with a `ShellToolboxTool` through a Toolbox MCP endpoint.
+* Added `sample_toolbox_with_shipping_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using a skill through a Toolbox MCP endpoint.
+* Added `sample_toolbox_with_shell_and_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using a skill with a `ShellToolboxTool` through a Toolbox MCP endpoint.
 * Added `sample_synthetic_multiturn_evaluation.py` under `samples/evaluations/`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
-* Added `sample_responses_model_router.py` under `samples/responses/`, demonstrating Responses API calls to a Model Router deployment and inspection of the selected models for each inference turn.
+* Added `sample_responses_model_router.py` under `samples/responses/`, demonstrating a Responses API request to a model router deployment and selection of a model by the router.
 
 ### Bugs Fixed
 
