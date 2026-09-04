@@ -33,6 +33,10 @@
   - Added model `WindowsServerLicense`
   - Operation group `HostsOperations` added method `update`
 
+### Breaking Changes
+
+  - Minimum Python version raised to 3.10 (previously 3.9); Python 3.9 is no longer supported.
+
 ## 10.0.0 (2025-12-15)
 
 ### Features Added
