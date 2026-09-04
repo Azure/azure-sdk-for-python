@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.redhatopenshifthcp
 
-    class azure.mgmt.redhatopenshifthcp.RedHatOpenShiftClient: implements ContextManager 
+    class azure.mgmt.redhatopenshifthcp.RedHatOpenShiftHcpMgmtClient: implements ContextManager 
         external_auths: ExternalAuthsOperations
         hcp_open_shift_clusters: HcpOpenShiftClustersOperations
         hcp_open_shift_versions: HcpOpenShiftVersionsOperations
@@ -34,7 +34,7 @@ namespace azure.mgmt.redhatopenshifthcp
 
 namespace azure.mgmt.redhatopenshifthcp.aio
 
-    class azure.mgmt.redhatopenshifthcp.aio.RedHatOpenShiftClient: implements AsyncContextManager 
+    class azure.mgmt.redhatopenshifthcp.aio.RedHatOpenShiftHcpMgmtClient: implements AsyncContextManager 
         external_auths: ExternalAuthsOperations
         hcp_open_shift_clusters: HcpOpenShiftClustersOperations
         hcp_open_shift_versions: HcpOpenShiftVersionsOperations

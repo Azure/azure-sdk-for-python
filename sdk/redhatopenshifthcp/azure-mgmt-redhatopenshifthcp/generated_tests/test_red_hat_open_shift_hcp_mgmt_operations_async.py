@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.redhatopenshifthcp.aio import RedHatOpenShiftClient
+from azure.mgmt.redhatopenshifthcp.aio import RedHatOpenShiftHcpMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,27 +15,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestRedHatOpenShiftHcpOpenShiftVersionsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestRedHatOpenShiftHcpMgmtOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(RedHatOpenShiftClient, is_async=True)
+        self.client = self.create_mgmt_client(RedHatOpenShiftHcpMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_hcp_open_shift_versions_get(self, resource_group):
-        response = await self.client.hcp_open_shift_versions.get(
-            location="str",
-            hcp_open_shift_version_name="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_hcp_open_shift_versions_list(self, resource_group):
-        response = self.client.hcp_open_shift_versions.list(
-            location="str",
-        )
+    async def test_operations_list(self, resource_group):
+        response = self.client.operations.list()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

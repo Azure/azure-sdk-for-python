@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.redhatopenshifthcp import RedHatOpenShiftClient
+from azure.mgmt.redhatopenshifthcp import RedHatOpenShiftHcpMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestRedHatOpenShiftExternalAuthsOperations(AzureMgmtRecordedTestCase):
+class TestRedHatOpenShiftHcpMgmtNodePoolsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(RedHatOpenShiftClient)
+        self.client = self.create_mgmt_client(RedHatOpenShiftHcpMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_external_auths_get(self, resource_group):
-        response = self.client.external_auths.get(
+    def test_node_pools_get(self, resource_group):
+        response = self.client.node_pools.get(
             resource_group_name=resource_group.name,
             hcp_open_shift_cluster_name="str",
-            external_auth_name="str",
+            node_pool_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,32 +32,40 @@ class TestRedHatOpenShiftExternalAuthsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_external_auths_begin_create_or_update(self, resource_group):
-        response = self.client.external_auths.begin_create_or_update(
+    def test_node_pools_begin_create_or_update(self, resource_group):
+        response = self.client.node_pools.begin_create_or_update(
             resource_group_name=resource_group.name,
             hcp_open_shift_cluster_name="str",
-            external_auth_name="str",
+            node_pool_name="str",
             resource={
+                "location": "str",
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
-                    "claim": {
-                        "mappings": {
-                            "username": {"claim": "str", "prefix": "str", "prefixPolicy": "str"},
-                            "groups": {"claim": "str", "prefix": "str"},
+                    "platform": {
+                        "vmSize": "str",
+                        "availabilityZone": "str",
+                        "enableEncryptionAtHost": bool,
+                        "osDisk": {
+                            "diskStorageAccountType": "str",
+                            "diskType": "str",
+                            "encryptionSetId": "str",
+                            "sizeGiB": 0,
                         },
-                        "validationRules": [{"requiredClaim": {"claim": "str", "requiredValue": "str"}, "type": "str"}],
+                        "subnetId": "str",
                     },
-                    "issuer": {"audiences": ["str"], "url": "str", "ca": "str"},
-                    "clients": [
-                        {
-                            "clientId": "str",
-                            "component": {"authClientNamespace": "str", "name": "str"},
-                            "type": "str",
-                            "extraScopes": ["str"],
-                        }
-                    ],
+                    "autoRepair": bool,
+                    "autoScaling": {"max": 0, "min": 0},
+                    "labels": [{"key": "str", "value": "str"}],
+                    "nodeDrainTimeoutMinutes": 0,
                     "provisioningState": "str",
+                    "replicas": 0,
                     "status": {
                         "conditions": [
                             {
@@ -69,6 +77,8 @@ class TestRedHatOpenShiftExternalAuthsOperations(AzureMgmtRecordedTestCase):
                             }
                         ]
                     },
+                    "taints": [{"effect": "str", "key": "str", "value": "str"}],
+                    "version": {"id": "str", "channelGroup": "str"},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -78,6 +88,7 @@ class TestRedHatOpenShiftExternalAuthsOperations(AzureMgmtRecordedTestCase):
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
+                "tags": {"str": "str"},
                 "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
@@ -87,32 +98,40 @@ class TestRedHatOpenShiftExternalAuthsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_external_auths_begin_update(self, resource_group):
-        response = self.client.external_auths.begin_update(
+    def test_node_pools_begin_update(self, resource_group):
+        response = self.client.node_pools.begin_update(
             resource_group_name=resource_group.name,
             hcp_open_shift_cluster_name="str",
-            external_auth_name="str",
+            node_pool_name="str",
             properties={
+                "location": "str",
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
-                    "claim": {
-                        "mappings": {
-                            "username": {"claim": "str", "prefix": "str", "prefixPolicy": "str"},
-                            "groups": {"claim": "str", "prefix": "str"},
+                    "platform": {
+                        "vmSize": "str",
+                        "availabilityZone": "str",
+                        "enableEncryptionAtHost": bool,
+                        "osDisk": {
+                            "diskStorageAccountType": "str",
+                            "diskType": "str",
+                            "encryptionSetId": "str",
+                            "sizeGiB": 0,
                         },
-                        "validationRules": [{"requiredClaim": {"claim": "str", "requiredValue": "str"}, "type": "str"}],
+                        "subnetId": "str",
                     },
-                    "issuer": {"audiences": ["str"], "url": "str", "ca": "str"},
-                    "clients": [
-                        {
-                            "clientId": "str",
-                            "component": {"authClientNamespace": "str", "name": "str"},
-                            "type": "str",
-                            "extraScopes": ["str"],
-                        }
-                    ],
+                    "autoRepair": bool,
+                    "autoScaling": {"max": 0, "min": 0},
+                    "labels": [{"key": "str", "value": "str"}],
+                    "nodeDrainTimeoutMinutes": 0,
                     "provisioningState": "str",
+                    "replicas": 0,
                     "status": {
                         "conditions": [
                             {
@@ -124,6 +143,8 @@ class TestRedHatOpenShiftExternalAuthsOperations(AzureMgmtRecordedTestCase):
                             }
                         ]
                     },
+                    "taints": [{"effect": "str", "key": "str", "value": "str"}],
+                    "version": {"id": "str", "channelGroup": "str"},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -133,6 +154,7 @@ class TestRedHatOpenShiftExternalAuthsOperations(AzureMgmtRecordedTestCase):
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
+                "tags": {"str": "str"},
                 "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
@@ -142,11 +164,11 @@ class TestRedHatOpenShiftExternalAuthsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_external_auths_begin_delete(self, resource_group):
-        response = self.client.external_auths.begin_delete(
+    def test_node_pools_begin_delete(self, resource_group):
+        response = self.client.node_pools.begin_delete(
             resource_group_name=resource_group.name,
             hcp_open_shift_cluster_name="str",
-            external_auth_name="str",
+            node_pool_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -154,8 +176,8 @@ class TestRedHatOpenShiftExternalAuthsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_external_auths_list_by_parent(self, resource_group):
-        response = self.client.external_auths.list_by_parent(
+    def test_node_pools_list_by_parent(self, resource_group):
+        response = self.client.node_pools.list_by_parent(
             resource_group_name=resource_group.name,
             hcp_open_shift_cluster_name="str",
         )

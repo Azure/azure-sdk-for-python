@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.redhatopenshifthcp import RedHatOpenShiftClient
+from azure.mgmt.redhatopenshifthcp import RedHatOpenShiftHcpMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.redhatopenshifthcp import RedHatOpenShiftClient
 
 
 def main():
-    client = RedHatOpenShiftClient(
+    client = RedHatOpenShiftHcpMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

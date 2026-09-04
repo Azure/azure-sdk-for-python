@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.redhatopenshifthcp import RedHatOpenShiftClient
+from azure.mgmt.redhatopenshifthcp import RedHatOpenShiftHcpMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,9 +14,9 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestRedHatOpenShiftHcpOpenShiftVersionsOperations(AzureMgmtRecordedTestCase):
+class TestRedHatOpenShiftHcpMgmtHcpOpenShiftVersionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(RedHatOpenShiftClient)
+        self.client = self.create_mgmt_client(RedHatOpenShiftHcpMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy

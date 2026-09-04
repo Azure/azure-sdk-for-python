@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models, types as _types
-from .._configuration import RedHatOpenShiftClientConfiguration
+from .._configuration import RedHatOpenShiftHcpMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._validation import api_version_validation
@@ -707,14 +707,16 @@ class Operations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftClient`'s
+        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftHcpMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: RedHatOpenShiftClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: RedHatOpenShiftHcpMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -817,14 +819,16 @@ class HcpOpenShiftClustersOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftClient`'s
+        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftHcpMgmtClient`'s
         :attr:`hcp_open_shift_clusters` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: RedHatOpenShiftClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: RedHatOpenShiftHcpMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2093,14 +2097,16 @@ class NodePoolsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftClient`'s
+        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftHcpMgmtClient`'s
         :attr:`node_pools` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: RedHatOpenShiftClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: RedHatOpenShiftHcpMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2914,14 +2920,16 @@ class ExternalAuthsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftClient`'s
+        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftHcpMgmtClient`'s
         :attr:`external_auths` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: RedHatOpenShiftClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: RedHatOpenShiftHcpMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3735,14 +3743,16 @@ class HcpOpenShiftVersionsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftClient`'s
+        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftHcpMgmtClient`'s
         :attr:`hcp_open_shift_versions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: RedHatOpenShiftClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: RedHatOpenShiftHcpMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3918,14 +3928,16 @@ class HcpOperatorIdentityRoleSetsOperations:  # pylint: disable=docstring-missin
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftClient`'s
+        :class:`~azure.mgmt.redhatopenshifthcp.RedHatOpenShiftHcpMgmtClient`'s
         :attr:`hcp_operator_identity_role_sets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: RedHatOpenShiftClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: RedHatOpenShiftHcpMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
