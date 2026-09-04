@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01-preview/OperationStatus_Get_MinimumSet_Gen.json
+# x-ms-original-file: 2026-08-01-preview/OperationStatus_Get_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

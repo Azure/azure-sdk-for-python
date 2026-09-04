@@ -88,10 +88,6 @@
         "azure.mgmt.platformvalidation.aio.operations.ExecutionPlanRunsOperations.list_by_execution_plan": "Microsoft.PlatformValidation.ExecutionPlanRuns.listByExecutionPlan",
         "azure.mgmt.platformvalidation.operations.ValidationTestRunsOperations.get": "Microsoft.PlatformValidation.ValidationTestRuns.get",
         "azure.mgmt.platformvalidation.aio.operations.ValidationTestRunsOperations.get": "Microsoft.PlatformValidation.ValidationTestRuns.get",
-        "azure.mgmt.platformvalidation.operations.ValidationTestRunsOperations.begin_create_or_update": "Microsoft.PlatformValidation.ValidationTestRuns.createOrUpdate",
-        "azure.mgmt.platformvalidation.aio.operations.ValidationTestRunsOperations.begin_create_or_update": "Microsoft.PlatformValidation.ValidationTestRuns.createOrUpdate",
-        "azure.mgmt.platformvalidation.operations.ValidationTestRunsOperations.begin_delete": "Microsoft.PlatformValidation.ValidationTestRuns.delete",
-        "azure.mgmt.platformvalidation.aio.operations.ValidationTestRunsOperations.begin_delete": "Microsoft.PlatformValidation.ValidationTestRuns.delete",
         "azure.mgmt.platformvalidation.operations.ValidationTestRunsOperations.list_by_execution_plan_run": "Microsoft.PlatformValidation.ValidationTestRuns.listByExecutionPlanRun",
         "azure.mgmt.platformvalidation.aio.operations.ValidationTestRunsOperations.list_by_execution_plan_run": "Microsoft.PlatformValidation.ValidationTestRuns.listByExecutionPlanRun",
         "azure.mgmt.platformvalidation.operations.ValidationTestsOperations.get": "Microsoft.PlatformValidation.ValidationTests.get",
@@ -107,5 +103,5 @@
         "azure.mgmt.platformvalidation.operations.ValidationTestCategoriesOperations.list_by_subscription": "Microsoft.PlatformValidation.ValidationTestCategories.listBySubscription",
         "azure.mgmt.platformvalidation.aio.operations.ValidationTestCategoriesOperations.list_by_subscription": "Microsoft.PlatformValidation.ValidationTestCategories.listBySubscription"
     },
-    "CrossLanguageVersion": "74a2ff1f2099"
+    "CrossLanguageVersion": "06c49d3f584a"
 }

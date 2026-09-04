@@ -430,59 +430,6 @@ namespace azure.mgmt.platformvalidation.aio.operations
                 **kwargs
             ) -> None: ...
 
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cloud_validation_name: str, 
-                validation_execution_plan_name: str, 
-                execution_plan_run_name: str, 
-                validation_test_run_name: str, 
-                resource: ValidationTestRun, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ValidationTestRun]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cloud_validation_name: str, 
-                validation_execution_plan_name: str, 
-                execution_plan_run_name: str, 
-                validation_test_run_name: str, 
-                resource: ValidationTestRun, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ValidationTestRun]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cloud_validation_name: str, 
-                validation_execution_plan_name: str, 
-                execution_plan_run_name: str, 
-                validation_test_run_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ValidationTestRun]: ...
-
-        @distributed_trace_async
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                cloud_validation_name: str, 
-                validation_execution_plan_name: str, 
-                execution_plan_run_name: str, 
-                validation_test_run_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
         @distributed_trace_async
         async def get(
                 self, 
@@ -1203,7 +1150,6 @@ namespace azure.mgmt.platformvalidation.models
         reported_at: Optional[datetime]
         started_at: Optional[datetime]
         status: Optional[Union[str, ValidationTestRunStatus]]
-        test_category_ids: Optional[list[str]]
         test_id: Optional[str]
 
         @overload
@@ -1211,7 +1157,6 @@ namespace azure.mgmt.platformvalidation.models
                 self, 
                 *, 
                 inputs_json: Optional[str] = ..., 
-                test_category_ids: Optional[list[str]] = ..., 
                 test_id: Optional[str] = ...
             ) -> None: ...
 
@@ -1642,59 +1587,6 @@ namespace azure.mgmt.platformvalidation.operations
                 **kwargs
             ) -> None: ...
 
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cloud_validation_name: str, 
-                validation_execution_plan_name: str, 
-                execution_plan_run_name: str, 
-                validation_test_run_name: str, 
-                resource: ValidationTestRun, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ValidationTestRun]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cloud_validation_name: str, 
-                validation_execution_plan_name: str, 
-                execution_plan_run_name: str, 
-                validation_test_run_name: str, 
-                resource: ValidationTestRun, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ValidationTestRun]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cloud_validation_name: str, 
-                validation_execution_plan_name: str, 
-                execution_plan_run_name: str, 
-                validation_test_run_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ValidationTestRun]: ...
-
-        @distributed_trace
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                cloud_validation_name: str, 
-                validation_execution_plan_name: str, 
-                execution_plan_run_name: str, 
-                validation_test_run_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
         @distributed_trace
         def get(
                 self, 
@@ -1985,62 +1877,6 @@ namespace azure.mgmt.platformvalidation.types
         overallState: Union[str, ValidationExecutionPlanOverallState]
         planConfigurationJson: str
         planConfigurationUri: str
-
-
-    class azure.mgmt.platformvalidation.types.ValidationTestFailureDetails(TypedDict, total=False):
-        key "details": str
-        key "diagnosticInfo": str
-        key "errorCode": str
-        key "errorMessage": str
-        details: str
-        diagnosticInfo: str
-        errorCode: str
-        errorMessage: str
-        recommendedActions: list[str]
-
-
-    class azure.mgmt.platformvalidation.types.ValidationTestPassDetails(TypedDict, total=False):
-        key "resultCode": str
-        key "resultDetails": str
-        key "testName": str
-        resultCode: str
-        resultDetails: str
-        testName: str
-
-
-    class azure.mgmt.platformvalidation.types.ValidationTestRun(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('ValidationTestRunProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: ValidationTestRunProperties
-        systemData: SystemData
-        type: str
-
-
-    class azure.mgmt.platformvalidation.types.ValidationTestRunProperties(TypedDict, total=False):
-        key "completedAt": str
-        key "error": ForwardRef('ErrorDetail', module='types')
-        key "inputsJson": str
-        key "provisioningState": Union[str, ValidationTestRunProvisioningState]
-        key "reportedAt": str
-        key "startedAt": str
-        key "status": Union[str, ValidationTestRunStatus]
-        key "testId": str
-        completedAt: str
-        error: ErrorDetail
-        failureDetails: list[ValidationTestFailureDetails]
-        inputsJson: str
-        passDetails: list[ValidationTestPassDetails]
-        provisioningState: Union[str, ValidationTestRunProvisioningState]
-        reportedAt: str
-        startedAt: str
-        status: Union[str, ValidationTestRunStatus]
-        testCategoryIds: list[str]
-        testId: str
 
 
 ```

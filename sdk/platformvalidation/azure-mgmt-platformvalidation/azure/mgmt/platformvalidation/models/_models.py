@@ -1495,9 +1495,6 @@ class ValidationTestRunProperties(_Model):  # pylint: disable=docstring-keyword-
     :ivar test_id: The name of the validation test (ValidationTest resource name, not an ARM
      resource ID) in the validation test catalog.
     :vartype test_id: str
-    :ivar test_category_ids: The names of the validation test categories (ValidationTestCategory
-     resource names, not ARM resource IDs) associated with this test run.
-    :vartype test_category_ids: list[str]
     :ivar inputs_json: Validation test run inputs json, conforming to the input contract declared
      by ``ValidationTestInput`` on the corresponding validation test. This value is returned as-is
      in get responses, so it must not contain credentials or other secrets.
@@ -1528,11 +1525,6 @@ class ValidationTestRunProperties(_Model):  # pylint: disable=docstring-keyword-
     test_id: Optional[str] = rest_field(name="testId", visibility=["read", "create", "update", "delete", "query"])
     """The name of the validation test (ValidationTest resource name, not an ARM resource ID) in the
      validation test catalog."""
-    test_category_ids: Optional[list[str]] = rest_field(
-        name="testCategoryIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The names of the validation test categories (ValidationTestCategory resource names, not ARM
-     resource IDs) associated with this test run."""
     inputs_json: Optional[str] = rest_field(
         name="inputsJson", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1553,7 +1545,6 @@ class ValidationTestRunProperties(_Model):  # pylint: disable=docstring-keyword-
         self,
         *,
         test_id: Optional[str] = None,
-        test_category_ids: Optional[list[str]] = None,
         inputs_json: Optional[str] = None,
     ) -> None: ...
 
