@@ -53,6 +53,7 @@ _REQUIRED_RESILIENT_SAMPLES: tuple[str, ...] = (
 _MINIMAL_RESILIENT_SAMPLES: tuple[str, ...] = (
     "resilient_hello_world",
     "resilient_hello_forever",
+    "resilient_cancellable",
 )
 
 _DROPPED_SAMPLES: tuple[str, ...] = ("resilient_claude", "resilient_copilot")

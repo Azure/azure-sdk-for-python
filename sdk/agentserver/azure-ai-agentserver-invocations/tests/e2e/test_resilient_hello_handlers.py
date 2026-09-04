@@ -15,6 +15,7 @@ the test's ``tmp_path``. No LLM, no cloud.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import types
 from pathlib import Path
@@ -204,19 +205,28 @@ async def test_hello_world_handlers(
     )
     assert code == 202 and body["total_steps"] == 3
 
-    code, body = _status(
-        await app.handle_get(_Req(invocation_id=inv, session_id=sess))
-    )
-    assert code == 200 and body["status"] in ("in_progress", "completed")
+    # Drain the (near-instant) background job to a terminal state so subsequent
+    # assertions are deterministic rather than racing the task's writes.
+    final = None
+    for _ in range(200):
+        code, body = _status(
+            await app.handle_get(_Req(invocation_id=inv, session_id=sess))
+        )
+        assert code == 200 and body["status"] in ("in_progress", "completed")
+        if body["status"] == "completed":
+            final = body
+            break
+        await asyncio.sleep(0.01)
+    assert final is not None and final["completed_steps"] == 3
 
     # Reusing an existing invocation id must not start a second task against the
-    # existing checkpoint — invoke returns 409 with the current status.
+    # existing checkpoint — invoke returns 409 with the current (terminal) status.
     code, body = _status(
         await app.handle_invoke(
             _Req(body=b'{"name": "ada", "steps": 3}', invocation_id=inv, session_id=sess)
         )
     )
-    assert code == 409 and body["status"] in ("in_progress", "completed")
+    assert code == 409 and body["status"] == "completed"
 
     # A failed run (one-shot record deleted) is surfaced from the durable
     # ``status: failed`` the task persists — not stuck at ``in_progress`` forever.
@@ -242,6 +252,73 @@ async def test_hello_world_handlers(
         code, _ = _status(
             await app.handle_invoke(
                 _Req(body=raw, invocation_id="inv-hw-x", session_id=sess)
+            )
+        )
+        assert code == 400, f"expected 400 for body {raw!r}, got {code}"
+
+
+@pytest.mark.asyncio
+async def test_cancellable_handlers_lifecycle(
+    task_manager, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """invoke -> cancel -> cancelling -> cancelled, plus reuse 409 / 404 / 400."""
+    _ensure_apps_importable()
+    from resilient_cancellable import agent as cj  # noqa: WPS433
+    import resilient_cancellable.app as app  # noqa: WPS433
+
+    # Nonzero step delay so the job is still running when we cancel it.
+    monkeypatch.setattr(cj, "_STEP_DELAY", 0.05)
+    inv, sess = "inv-cj-1", "sess-cj"
+
+    code, body = _status(
+        await app.handle_invoke(
+            _Req(body=b'{"name": "ada", "steps": 50}', invocation_id=inv, session_id=sess)
+        )
+    )
+    assert code == 202 and body["total_steps"] == 50
+
+    # Request cancel — writes the durable marker.
+    code, body = _status(
+        await app.handle_cancel(_Req(invocation_id=inv, session_id=sess))
+    )
+    assert code == 200 and body["status"] == "cancelling"
+
+    # Poll until the job observes the marker and finalizes as ``cancelled`` (it
+    # may briefly report ``cancelling`` first).
+    final = None
+    for _ in range(200):
+        code, body = _status(
+            await app.handle_get(_Req(invocation_id=inv, session_id=sess))
+        )
+        assert code == 200 and body["status"] in ("cancelling", "cancelled")
+        if body["status"] == "cancelled":
+            final = body
+            break
+        await asyncio.sleep(0.02)
+    assert final is not None, "job did not reach 'cancelled'"
+    assert final["completed_steps"] < 50
+
+    # Reusing the invocation id after cancel must not start a second job.
+    code, body = _status(
+        await app.handle_invoke(
+            _Req(body=b'{"name": "ada", "steps": 50}', invocation_id=inv, session_id=sess)
+        )
+    )
+    assert code == 409 and body["status"] == "cancelled"
+
+    # Unknown invocation: poll and cancel both 404 (cancel must not seed a marker).
+    code, _ = _status(await app.handle_get(_Req(invocation_id="nope", session_id=sess)))
+    assert code == 404
+    code, _ = _status(
+        await app.handle_cancel(_Req(invocation_id="nope2", session_id=sess))
+    )
+    assert code == 404
+
+    # Malformed bodies -> 400 (non-object, non-positive steps, invalid UTF-8).
+    for raw in (b"[]", b'{"steps": 0}', b"\xff\xfe"):
+        code, _ = _status(
+            await app.handle_invoke(
+                _Req(body=raw, invocation_id="inv-cj-x", session_id=sess)
             )
         )
         assert code == 400, f"expected 400 for body {raw!r}, got {code}"
