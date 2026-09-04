@@ -24,6 +24,6 @@ Python samples intentionally include preview features; state preview status in t
 
 ## Recorded sample harness
 
-[`test_samples.py`](../../../../tests/samples/test_samples.py) and [`test_samples_async.py`](../../../../tests/samples/test_samples_async.py) auto-discover many folders. Add unrecorded files to the appropriate `samples_to_skip` list with a specific reason. Whitelist-based `samples_to_test` blocks require explicit opt-in instead.
+[`test_samples.py`](../../../../tests/samples/test_samples.py), [`test_samples_async.py`](../../../../tests/samples/test_samples_async.py), and [`test_samples_evaluations.py`](../../../../tests/samples/test_samples_evaluations.py) auto-discover many folders. Add unrecorded files to the owning harness's `samples_to_skip` list with a specific reason. Whitelist-based `samples_to_test` blocks require explicit opt-in instead.
 
 If a new folder needs output validation, also update [`llm_instructions.py`](../../../../tests/samples/llm_instructions.py) and its folder mapping. Add required sanitized environment defaults through the narrowest preparer and mapping helper; never put live values in source.
