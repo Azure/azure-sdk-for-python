@@ -48,13 +48,20 @@ curl -s "http://localhost:8088/invocations/<inv>?agent_session_id=demo"
 
 ## How an *invocation* becomes *long-running*
 
-1. `POST /invocations` calls `hello_world.start(task_id=<invocation_id>)`, which
-   **schedules the task on the TaskManager and returns immediately**. The work is
-   *not* tied to the HTTP request — the handler returns `202` while the task runs on.
+1. `POST /invocations` derives a durable task id — `durable_task_id(session_id,
+   invocation_id, user_id)`, a SHA-256 digest, **not** the raw invocation id —
+   and calls `hello_world.start(task_id=<that digest>)`, which **schedules the
+   task on the TaskManager and returns immediately**. The work is *not* tied to
+   the HTTP request — the handler returns `202` while the task runs on. (The
+   digest keeps the id within the provider's `[A-Za-z0-9_-]{1,128}` contract and
+   isolates it per user + session; it is also the durable **checkpoint** key.)
 2. The task loops, sleeping between steps and writing a durable **checkpoint**
-   to the state store after each.
-3. `GET /invocations/{invocation_id}` reads that durable state, so any client can
-   poll progress long after the original call returned.
+   to the state store after each, keyed by that same derived task id.
+3. `GET /invocations/{invocation_id}` re-derives the same task id from the
+   request's identity and reads that durable state, so any client can poll
+   progress long after the original call returned. When correlating logs or
+   checkpoints, note they are keyed by the derived task id, not the invocation
+   id.
 
 ## The key line: enable resilient tasks
 

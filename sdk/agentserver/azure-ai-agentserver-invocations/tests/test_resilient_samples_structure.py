@@ -276,14 +276,17 @@ def _has_module_level_enable_true(source: str) -> bool:
 
     Scans direct module-level statements (a bare expression call, or the call on
     the RHS of a module-level assignment) for a ``set_resilient_tasks_enabled``
-    call with a literal ``True`` argument. Nested calls (inside a
+    call with a literal ``True`` argument — passed either positionally
+    (``set_resilient_tasks_enabled(True)``) or by keyword
+    (``set_resilient_tasks_enabled(enabled=True)``). Nested calls (inside a
     ``def``/``class``/``if``) are ignored because they do not necessarily execute
     on import.
     """
     for _lineno, call in _module_level_call_statements(source):
         if _call_name(call) != "set_resilient_tasks_enabled":
             continue
-        if any(isinstance(a, ast.Constant) and a.value is True for a in call.args):
+        args_and_kwargs = list(call.args) + [kw.value for kw in call.keywords]
+        if any(isinstance(a, ast.Constant) and a.value is True for a in args_and_kwargs):
             return True
     return False
 

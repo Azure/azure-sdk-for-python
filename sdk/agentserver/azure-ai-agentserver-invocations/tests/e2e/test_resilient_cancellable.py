@@ -51,13 +51,11 @@ async def task_manager(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         set_task_manager(None)
 
 
-def _ensure_sample_importable() -> None:
-    import sys
-
+@pytest.fixture(autouse=True)
+def _samples_on_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Prepend the samples dir to ``sys.path`` (auto-restored after each test)."""
     samples = Path(__file__).resolve().parent.parent.parent / "samples"
-    sp = str(samples)
-    if sp not in sys.path:
-        sys.path.insert(0, sp)
+    monkeypatch.syspath_prepend(str(samples))
 
 
 _SESSION = "test-cj-session"
@@ -97,7 +95,6 @@ async def test_runs_to_completion_when_not_cancelled(
     task_manager, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Without a cancel marker the job finishes all steps."""
-    _ensure_sample_importable()
     from resilient_cancellable import agent as cj  # noqa: WPS433
 
     monkeypatch.setattr(cj, "_STEP_DELAY", 0.0)
@@ -120,7 +117,6 @@ async def test_cancel_marker_before_start_stops_immediately(
     task_manager, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """A cancel marker present before the first step stops the job at step 0."""
-    _ensure_sample_importable()
     from resilient_cancellable import agent as cj  # noqa: WPS433
 
     monkeypatch.setattr(cj, "_STEP_DELAY", 0.0)
@@ -145,7 +141,6 @@ async def test_cancel_mid_run_stops_early(
     task_manager, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """A cancel marker written mid-run stops the job before it finishes."""
-    _ensure_sample_importable()
     from resilient_cancellable import agent as cj  # noqa: WPS433
 
     monkeypatch.setattr(cj, "_STEP_DELAY", 0.02)
@@ -173,7 +168,6 @@ async def test_recovered_run_honours_pending_cancel(
     task_manager, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """A partially-done job with a pending cancel marker cancels on resume."""
-    _ensure_sample_importable()
     from resilient_cancellable import agent as cj  # noqa: WPS433
 
     monkeypatch.setattr(cj, "_STEP_DELAY", 0.0)

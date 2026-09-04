@@ -114,10 +114,17 @@ async def handle_invoke(request: Request) -> Response:
     # one-shot task record is deleted on terminal exit (completed/cancelled/
     # failed), so once a job has ended, ``start()`` would NOT conflict and a reused
     # invocation id would spin up a new task against the stale checkpoint/marker.
-    # So we gate on an atomic ``create_item``: success => genuinely new job, start
-    # it; conflict => the invocation already exists and we return 409 with its
-    # current status. Seeding before ``start()`` also makes the invocation visible
-    # on every replica immediately (no pre-checkpoint 404 window).
+    # So we gate on an atomic ``create_item``:
+    #   * success  -> genuinely new job; schedule it.
+    #   * conflict + TERMINAL status -> idempotent; return 409 (never re-run).
+    #   * conflict + NONTERMINAL status -> the record exists but may be an
+    #     ORPHAN (an earlier attempt seeded it then crashed before the task was
+    #     durably scheduled). Fall through and (re-)schedule idempotently —
+    #     ``start()`` recovers the orphan; ``TaskConflictError`` means a job is
+    #     already running. Seeding before ``start()`` also makes the invocation
+    #     visible on every replica immediately (no pre-checkpoint 404 window).
+    _TERMINAL = ("completed", "cancelled", "failed")
+    seeded_now = False
     store = await open_checkpoint_store(session_id, user_id)
     try:
         try:
@@ -130,17 +137,20 @@ async def handle_invoke(request: Request) -> Response:
                     "status": "in_progress",
                 },
             )
+            seeded_now = True
         except FoundryStorageConflictError:
             existing = await store.get_item(task_id)
-            status = (existing.value.get("status") if existing else None) or "unknown"
-            return JSONResponse(
-                {
-                    "status": status,
-                    "invocation_id": invocation_id,
-                    "detail": "invocation already exists",
-                },
-                status_code=409,
-            )
+            status = (existing.value.get("status") if existing else None) or "in_progress"
+            if status in _TERMINAL:
+                return JSONResponse(
+                    {
+                        "status": status,
+                        "invocation_id": invocation_id,
+                        "detail": "invocation already exists",
+                    },
+                    status_code=409,
+                )
+            # Nonterminal: fall through to (re-)schedule idempotently.
     finally:
         await store.aclose()
 
@@ -156,12 +166,27 @@ async def handle_invoke(request: Request) -> Response:
             },
         )
     except TaskConflictError:
-        # We just created the record, so a conflict here is only a rare
-        # concurrent-start race; report it rather than 500ing.
+        # A job is already scheduled/running for this id — idempotent.
         return JSONResponse(
             {"status": "already_started", "invocation_id": invocation_id},
             status_code=409,
         )
+    except Exception:
+        # Non-conflict scheduling failure. If we seeded the record this request,
+        # remove it so a retry can start cleanly rather than being wedged behind a
+        # permanent ``in_progress`` record with no job to recover. (An ambiguous
+        # remote accept is still safe: a retry re-seeds and ``start()`` raises
+        # TaskConflictError, handled as "already running".)
+        if seeded_now:
+            try:
+                cleanup = await open_checkpoint_store(session_id, user_id)
+                try:
+                    await cleanup.delete_item(task_id)
+                finally:
+                    await cleanup.aclose()
+            except Exception:  # noqa: BLE001 — best-effort compensation
+                pass
+        raise
 
     return JSONResponse(
         {"status": "started", "invocation_id": invocation_id, "total_steps": steps},

@@ -65,14 +65,11 @@ async def task_manager(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         set_task_manager(None)
 
 
-def _ensure_sample_importable() -> None:
-    """Add the samples directory to sys.path so ``resilient_hello_world`` resolves."""
-    import sys
-
+@pytest.fixture(autouse=True)
+def _samples_on_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Prepend the samples dir to ``sys.path`` (auto-restored after each test)."""
     samples = Path(__file__).resolve().parent.parent.parent / "samples"
-    sp = str(samples)
-    if sp not in sys.path:
-        sys.path.insert(0, sp)
+    monkeypatch.syspath_prepend(str(samples))
 
 
 async def _load_item(hw, key: str):
@@ -105,7 +102,6 @@ def test_durable_task_id_is_accepted_by_task_manager() -> None:
     validator, including long protocol ids that would blow the 128-char limit if
     not hashed.
     """
-    _ensure_sample_importable()
     from azure.ai.agentserver.core.tasks._validation import (  # noqa: WPS433
         validate_task_id,
     )
@@ -124,7 +120,6 @@ async def test_runs_to_completion_and_checkpoints_every_step(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """A fresh run finishes ``complete`` with the final step checkpointed."""
-    _ensure_sample_importable()
     from resilient_hello_world import agent as hw  # noqa: WPS433
 
     monkeypatch.setattr(hw, "_STEP_DELAY", 0.0)
@@ -154,7 +149,6 @@ async def test_completed_checkpoint_skips_all_work(
     An unchanged ETag proves the handler resumed from the finalized checkpoint and
     ran zero steps instead of starting over.
     """
-    _ensure_sample_importable()
     from resilient_hello_world import agent as hw  # noqa: WPS433
 
     monkeypatch.setattr(hw, "_STEP_DELAY", 0.0)
@@ -188,7 +182,6 @@ async def test_partial_checkpoint_resumes_at_next_step(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """A partial checkpoint continues to completion instead of restarting."""
-    _ensure_sample_importable()
     from resilient_hello_world import agent as hw  # noqa: WPS433
 
     monkeypatch.setattr(hw, "_STEP_DELAY", 0.0)

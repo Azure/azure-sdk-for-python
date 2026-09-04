@@ -149,6 +149,7 @@ async def cancellable_job(ctx: TaskContext[dict]) -> dict[str, Any]:
             }
 
         try:
+            done = completed
             for i in range(completed, steps):
                 # ── COOPERATIVE CANCEL CHECK ──
                 # Durable + cross-replica-safe + crash-durable. Checked BEFORE the
@@ -189,6 +190,7 @@ async def cancellable_job(ctx: TaskContext[dict]) -> dict[str, Any]:
                     if_match=etag,
                 )
                 etag = ref.etag
+                done = i + 1  # advance so a later failure records real progress
 
             logger.info("Finished %d steps for %s", steps, name)
             # ── TERMINAL SUCCESS ──
@@ -208,6 +210,9 @@ async def cancellable_job(ctx: TaskContext[dict]) -> dict[str, Any]:
             )
             return {"name": name, "steps": steps, "status": "completed"}
         except Exception as exc:  # noqa: BLE001 — record failure, then re-raise
+            # Record the *actual* progress (``done``, advanced after each
+            # successful checkpoint) so failure never rolls ``completed_steps``
+            # backward to the entry-time value.
             logger.exception("cancellable_job failed for %s", name)
             try:
                 current = await store.get_item(ctx.task_id)
@@ -216,7 +221,7 @@ async def cancellable_job(ctx: TaskContext[dict]) -> dict[str, Any]:
                     {
                         "name": name,
                         "steps": steps,
-                        "completed_steps": completed,
+                        "completed_steps": done,
                         "status": "failed",
                         "error": str(exc),
                     },

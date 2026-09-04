@@ -130,6 +130,7 @@ async def hello_world(ctx: TaskContext[dict]) -> dict[str, Any]:
             return {"name": name, "steps": steps, "status": "complete"}
 
         try:
+            done = completed
             for i in range(completed, steps):
                 await asyncio.sleep(_STEP_DELAY)  # stand-in for long-running work
                 logger.info("step %d/%d done for %s", i + 1, steps, name)
@@ -147,6 +148,7 @@ async def hello_world(ctx: TaskContext[dict]) -> dict[str, Any]:
                     if_match=etag,
                 )
                 etag = ref.etag
+                done = i + 1  # advance so a later failure records real progress
 
             logger.info("Finished %d steps for %s", steps, name)
             # ── TERMINAL SUCCESS ──
@@ -168,8 +170,11 @@ async def hello_world(ctx: TaskContext[dict]) -> dict[str, Any]:
         except Exception as exc:  # noqa: BLE001 — record failure, then re-raise
             # A raised exception is terminal (the record is deleted), so without
             # this the durable item would sit below ``steps`` forever and polling
-            # would report ``in_progress`` indefinitely. Best-effort write; if the
-            # ETag moved we still re-raise so the framework marks the task failed.
+            # would report ``in_progress`` indefinitely. Record the *actual*
+            # progress (``done``, advanced after each successful checkpoint) so
+            # failure never rolls ``completed_steps`` backward. Best-effort write;
+            # if the ETag moved we still re-raise so the framework marks the task
+            # failed.
             logger.exception("hello_world failed for %s", name)
             try:
                 current = await store.get_item(ctx.task_id)
@@ -178,7 +183,7 @@ async def hello_world(ctx: TaskContext[dict]) -> dict[str, Any]:
                     {
                         "name": name,
                         "steps": steps,
-                        "completed_steps": completed,
+                        "completed_steps": done,
                         "status": "failed",
                         "error": str(exc),
                     },

@@ -106,32 +106,40 @@ async def handle_invoke(request: Request) -> Response:
     # worker has stopped, ``start()`` would NOT conflict and a reused invocation id
     # would spin up a brand-new task that immediately sees the OLD stop marker and
     # exits — while POST wrongly reported "started". So we gate on an atomic
-    # ``create_item``: success => genuinely new worker, so we start it; conflict =>
-    # the invocation already exists (running, stopped, or failed) and we return 409
-    # with its current status, never starting a second worker against a stale
-    # checkpoint/marker. Seeding before ``start()`` also makes the invocation
-    # visible on every replica immediately (no pre-checkpoint 404 window).
+    # ``create_item``:
+    #   * success -> genuinely new worker; schedule it.
+    #   * conflict + TERMINAL (stop marker present, or status == "failed") ->
+    #     idempotent; return 409 (never re-run).
+    #   * conflict + NONTERMINAL ("running") -> the record exists but may be an
+    #     ORPHAN (an earlier attempt seeded it then crashed before the worker was
+    #     durably scheduled). Fall through and (re-)schedule idempotently —
+    #     ``start()`` recovers the orphan; ``TaskConflictError`` means a worker is
+    #     already running. Seeding before ``start()`` also makes the invocation
+    #     visible on every replica immediately (no pre-checkpoint 404 window).
+    seeded_now = False
     store = await open_checkpoint_store(session_id, user_id)
     try:
         try:
             await store.create_item(
                 task_id, {"name": name, "iterations": 0, "status": "running"}
             )
+            seeded_now = True
         except FoundryStorageConflictError:
             existing = await store.get_item(task_id)
             stop_marker = await store.get_item(f"{task_id}{STOP_SUFFIX}")
+            status = (existing.value.get("status") if existing else None) or "running"
             if stop_marker is not None:
                 status = "stopped"
-            else:
-                status = (existing.value.get("status") if existing else None) or "running"
-            return JSONResponse(
-                {
-                    "status": status,
-                    "invocation_id": invocation_id,
-                    "detail": "invocation already exists",
-                },
-                status_code=409,
-            )
+            if stop_marker is not None or status == "failed":
+                return JSONResponse(
+                    {
+                        "status": status,
+                        "invocation_id": invocation_id,
+                        "detail": "invocation already exists",
+                    },
+                    status_code=409,
+                )
+            # Nonterminal ("running"): fall through to (re-)schedule idempotently.
     finally:
         await store.aclose()
 
@@ -146,12 +154,27 @@ async def handle_invoke(request: Request) -> Response:
             },
         )
     except TaskConflictError:
-        # We just created the record, so a conflict here is only a rare
-        # concurrent-start race; report it rather than 500ing.
+        # A worker is already scheduled/running for this id — idempotent.
         return JSONResponse(
             {"status": "already_running", "invocation_id": invocation_id},
             status_code=409,
         )
+    except Exception:
+        # Non-conflict scheduling failure. If we seeded the record this request,
+        # remove it so a retry can start cleanly rather than being wedged behind a
+        # permanent ``running`` record with no worker to recover. (An ambiguous
+        # remote accept is still safe: a retry re-seeds and ``start()`` raises
+        # TaskConflictError, handled as "already running".)
+        if seeded_now:
+            try:
+                cleanup = await open_checkpoint_store(session_id, user_id)
+                try:
+                    await cleanup.delete_item(task_id)
+                finally:
+                    await cleanup.aclose()
+            except Exception:  # noqa: BLE001 — best-effort compensation
+                pass
+        raise
 
     return JSONResponse(
         {"status": "started", "invocation_id": invocation_id}, status_code=202

@@ -79,7 +79,11 @@ there is no crash recovery.
 ## Cancel survives a crash
 
 1. Start a 30-step job and request cancel while it is a few steps in.
-2. Before the job observes the marker, **kill the process** (Ctrl-C).
+2. Before the job observes the marker, **hard-kill the process** — an *ungraceful*
+   termination such as `kill -9 <pid>` (SIGKILL). Do **not** use Ctrl-C: that
+   triggers the host's graceful shutdown, which gives the running task up to ~25s
+   to finish, during which it observes the marker and exits terminally on its own
+   — leaving nothing to recover.
 3. Restart `python app.py`. The recovery scan re-enters the job with
    `ctx.entry_mode == "recovered"`; it reads the still-present cancel marker on
    its next step and stops with `status: "cancelled"` — the cancel is not lost.

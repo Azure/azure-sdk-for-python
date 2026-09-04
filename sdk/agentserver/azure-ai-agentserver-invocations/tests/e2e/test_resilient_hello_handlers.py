@@ -48,13 +48,11 @@ class _Req:
         return self._body
 
 
-def _ensure_apps_importable() -> None:
-    import sys
-
+@pytest.fixture(autouse=True)
+def _samples_on_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Prepend the samples dir to ``sys.path`` (auto-restored after each test)."""
     samples = Path(__file__).resolve().parent.parent.parent / "samples"
-    sp = str(samples)
-    if sp not in sys.path:
-        sys.path.insert(0, sp)
+    monkeypatch.syspath_prepend(str(samples))
 
 
 @pytest_asyncio.fixture
@@ -110,7 +108,6 @@ async def test_hello_forever_handlers_lifecycle(
     task_manager, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """invoke -> running -> cancel -> stopped, plus 404 and 400 paths."""
-    _ensure_apps_importable()
     from resilient_hello_forever import agent as hf  # noqa: WPS433
     import resilient_hello_forever.app as app  # noqa: WPS433
 
@@ -154,9 +151,9 @@ async def test_hello_forever_handlers_lifecycle(
     # ``status: failed`` the worker persists — not reported as ``running`` forever.
     fail_inv = "inv-hf-failed"
     fail_tid = hf.durable_task_id(sess, fail_inv, "u")
-    fstore = await hf.open_checkpoint_store(sess, "u")
-    async with fstore:
-        await fstore.set_item(
+    failed_store = await hf.open_checkpoint_store(sess, "u")
+    async with failed_store:
+        await failed_store.set_item(
             fail_tid, {"name": "z", "iterations": 4, "status": "failed", "error": "boom"}
         )
     code, body = _status(
@@ -187,11 +184,54 @@ async def test_hello_forever_handlers_lifecycle(
 
 
 @pytest.mark.asyncio
+async def test_hello_world_recovers_orphaned_seed(
+    task_manager, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A nonterminal durable record with no live task is re-scheduled, not 409'd.
+
+    Simulates the orphan window: an earlier attempt seeded ``in_progress`` then
+    crashed before the TaskManager record became durable. A later POST must
+    (re-)schedule the task idempotently and run it to completion rather than
+    wedging behind a permanent ``in_progress`` record with nothing to recover.
+    """
+    from resilient_hello_world import agent as hw  # noqa: WPS433
+    import resilient_hello_world.app as app  # noqa: WPS433
+
+    monkeypatch.setattr(hw, "_STEP_DELAY", 0.0)
+    inv, sess = "inv-hw-orphan", "sess-hw"
+
+    # Seed an orphaned nonterminal record directly (no task started).
+    task_id = hw.durable_task_id(sess, inv, "u")
+    store = await hw.open_checkpoint_store(sess, "u")
+    async with store:
+        await store.create_item(
+            task_id, {"name": "ada", "steps": 2, "completed_steps": 0, "status": "in_progress"}
+        )
+
+    # POST must recover it: 202 started (not 409).
+    code, body = _status(
+        await app.handle_invoke(
+            _Req(body=b'{"name": "ada", "steps": 2}', invocation_id=inv, session_id=sess)
+        )
+    )
+    assert code == 202, f"expected orphan recovery (202), got {code}: {body}"
+
+    # And it runs to completion.
+    for _ in range(200):
+        code, body = _status(
+            await app.handle_get(_Req(invocation_id=inv, session_id=sess))
+        )
+        if body["status"] == "completed":
+            break
+        await asyncio.sleep(0.01)
+    assert body["status"] == "completed"
+
+
+@pytest.mark.asyncio
 async def test_hello_world_handlers(
     task_manager, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """invoke -> poll (never 404 for a started run), plus 400/404 paths."""
-    _ensure_apps_importable()
     from resilient_hello_world import agent as hw  # noqa: WPS433
     import resilient_hello_world.app as app  # noqa: WPS433
 
@@ -232,9 +272,9 @@ async def test_hello_world_handlers(
     # ``status: failed`` the task persists — not stuck at ``in_progress`` forever.
     fail_inv = "inv-hw-failed"
     fail_tid = hw.durable_task_id(sess, fail_inv, "u")
-    fstore = await hw.open_checkpoint_store(sess, "u")
-    async with fstore:
-        await fstore.set_item(
+    failed_store = await hw.open_checkpoint_store(sess, "u")
+    async with failed_store:
+        await failed_store.set_item(
             fail_tid,
             {"name": "z", "steps": 5, "completed_steps": 2, "status": "failed", "error": "boom"},
         )
@@ -262,7 +302,6 @@ async def test_cancellable_handlers_lifecycle(
     task_manager, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """invoke -> cancel -> cancelling -> cancelled, plus reuse 409 / 404 / 400."""
-    _ensure_apps_importable()
     from resilient_cancellable import agent as cj  # noqa: WPS433
     import resilient_cancellable.app as app  # noqa: WPS433
 

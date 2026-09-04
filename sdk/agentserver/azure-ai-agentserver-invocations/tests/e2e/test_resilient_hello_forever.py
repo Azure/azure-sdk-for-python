@@ -61,14 +61,11 @@ async def task_manager(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         set_task_manager(None)
 
 
-def _ensure_sample_importable() -> None:
-    """Add the samples directory to sys.path so ``resilient_hello_forever`` resolves."""
-    import sys
-
+@pytest.fixture(autouse=True)
+def _samples_on_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Prepend the samples dir to ``sys.path`` (auto-restored after each test)."""
     samples = Path(__file__).resolve().parent.parent.parent / "samples"
-    sp = str(samples)
-    if sp not in sys.path:
-        sys.path.insert(0, sp)
+    monkeypatch.syspath_prepend(str(samples))
 
 
 async def _load_item(hf, key: str):
@@ -114,7 +111,6 @@ def test_durable_task_id_is_accepted_by_task_manager() -> None:
     slash-free ids. Validate the helper's output with the real SDK validator,
     including long protocol ids that would blow the 128-char limit if not hashed.
     """
-    _ensure_sample_importable()
     from azure.ai.agentserver.core.tasks._validation import (  # noqa: WPS433
         validate_task_id,
     )
@@ -132,7 +128,6 @@ async def test_ticks_then_stops_on_cancel_with_marker(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """The worker ticks, then an explicit cancel + stop marker stops it."""
-    _ensure_sample_importable()
     from resilient_hello_forever import agent as hf  # noqa: WPS433
 
     monkeypatch.setattr(hf, "_TICK", 0.01)
@@ -169,7 +164,6 @@ async def test_stops_on_marker_without_local_cancel(
     process's ``ctx.cancel``. The worker must still stop, because it re-checks
     the marker every iteration independently of ``ctx.cancel``.
     """
-    _ensure_sample_importable()
     from resilient_hello_forever import agent as hf  # noqa: WPS433
 
     monkeypatch.setattr(hf, "_TICK", 0.01)
@@ -196,7 +190,6 @@ async def test_resumes_from_existing_checkpoint(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """A pre-existing checkpoint makes the worker resume, not restart at 0."""
-    _ensure_sample_importable()
     from resilient_hello_forever import agent as hf  # noqa: WPS433
 
     monkeypatch.setattr(hf, "_TICK", 0.01)
