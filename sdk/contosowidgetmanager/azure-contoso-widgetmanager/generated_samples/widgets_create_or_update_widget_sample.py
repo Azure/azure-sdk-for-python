@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2022-11-01-preview/Widgets_CreateOrUpdateWidgetSample.json
+# x-ms-original-file: 2022-12-01/Widgets_CreateOrUpdateWidgetSample.json
 if __name__ == "__main__":
     main()

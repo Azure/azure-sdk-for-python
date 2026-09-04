@@ -46,7 +46,7 @@ def build_widgets_get_widget_request(widget_name: str, **kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_widgets_get_widget_operation_status_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_widgets_create_or_update_widget_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -126,7 +126,7 @@ def build_widgets_delete_widget_request(widget_name: str, **kwargs: Any) -> Http
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -150,7 +150,7 @@ def build_widgets_list_widgets_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
