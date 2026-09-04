@@ -5,9 +5,9 @@
 # -------------------------------------------------------------------------
 """Serialize a request body into the exact bytes that go on the wire.
 
-Produces the bytes once, in one place, so both the core-python (kept for
-testing and comparison only) and Rust (the production path going forward)
-backends ship the identical request body. Accepted inputs:
+Produces the bytes once, in one place, so the current core-Python and Rust
+backends ship the identical request body during migration. The intended final
+architecture keeps only the Rust path. Accepted inputs:
 
 - ``None`` -> empty bytes (no-body operations).
 - ``str`` -> UTF-8 bytes (caller must already have valid JSON).

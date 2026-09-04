@@ -20,25 +20,20 @@ every ``list_*`` / ``query_*`` (and read-many) is an ``execute_pages`` feed; and
 a transactional batch is ``execute_batch``. Adding an operation is a new
 operation-kind value and a branch, not a new method.
 
-``execute`` is wired for the point item operations and the feed-range / offer
-operations; ``execute_pages`` is wired for ``query_items`` / ``read_all_items``.
-``execute_batch`` is defined but raises ``NotImplementedError`` until the batch
-operation is added.
+``execute`` and ``execute_pages`` are wired according to the operation tables in
+``operations.py``. ``execute_batch`` is defined but raises
+``NotImplementedError`` until transactional batch is migrated.
 
 Two backends exist, and both are concrete ``CosmosBackend`` objects that run
 through ``CosmosBackend.run_operation``. The rust backend forwards each operation
-to the compiled Rust driver; it is the path going forward and the only one meant
-for production. The core-python backend (``LegacyBackend``, see
+to the compiled Rust driver. The core-python backend (``LegacyBackend``, see
 ``azure.cosmos._backend.legacy``) runs the SDK's original in-place code and is
-kept for testing and comparison; its ``run_operation`` just runs that original
-call.
+still a selectable backend on the current branch. On a Rust-selected client it
+also provides temporary fallback for unmigrated request shapes. The intended
+final architecture keeps only the Rust execution path.
 
-The backend a client stores is ``Optional``: the factory returns a ``RustBackend``
-for rust and ``None`` for core-python. Each family coordinator (``DatabaseHelper``,
-``ItemHelper``, the throughput functions, the feed-range functions) turns that selection
-into a concrete backend at its own boundary -- ``None`` becomes ``LegacyBackend``
--- and then holds that one backend by interface, so no coordinator branches on
-``None`` (see ``azure.cosmos._backend.legacy.coerce_backend``).
+The backend a client stores is always concrete: the factory returns a
+``RustBackend`` for rust or the shared ``LegacyBackend`` for core-python.
 
 The modules here are arranged so that a caller depends only on what it actually
 uses. In dependency order, lowest first:

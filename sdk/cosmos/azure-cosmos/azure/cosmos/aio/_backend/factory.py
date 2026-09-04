@@ -19,9 +19,9 @@ and validation logic itself is in
 ``azure.cosmos._backend.factory.resolve_backend_name`` so the sync and
 async factories cannot drift apart.
 
-When ``core-python`` is selected the factory returns ``None``; the async
-helper treats absence of a backend as the signal to use the legacy
-``client_connection.CreateItem`` path.
+When ``core-python`` is selected the factory returns the shared
+``AsyncLegacyBackend``. Every client therefore stores one concrete backend
+object regardless of which implementation was selected.
 """
 from __future__ import annotations
 
@@ -37,6 +37,7 @@ from azure.cosmos._backend.factory import (
 from azure.cosmos._backend.transport_settings import reject_unsupported_transport_settings
 
 from .base import AsyncCosmosBackend
+from .legacy import ASYNC_LEGACY_BACKEND
 from .rust import AsyncRustBackend
 
 
@@ -55,6 +56,7 @@ def make_async_backend(
     proxy_allowed: Optional[bool] = None,
     connection_timeout_seconds: Optional[float] = None,
     read_timeout_seconds: Optional[float] = None,
+    fault_injection_rules: Any = None,
     strict_isolation: Optional[bool] = None,
     proxy_config: Any = None,
     proxies: Any = None,
@@ -62,11 +64,12 @@ def make_async_backend(
     connection_cert: Any = None,
     ssl_config: Any = None,
     transport: Any = None,
-) -> Optional[AsyncCosmosBackend]:
+) -> AsyncCosmosBackend:
     """The one public entry point that builds the backend instance an async
     ``CosmosClient`` will hold -- the async twin of :func:`make_backend`.
 
-    Returns an :class:`AsyncRustBackend` when Rust is selected, or ``None`` when
+    Returns an :class:`AsyncRustBackend` when Rust is selected, or the shared
+    :class:`~azure.cosmos.aio._backend.legacy.AsyncLegacyBackend` when
     core-python is selected. If Rust: it requires the endpoint URL, rejects
     unsupported transport settings, sorts the credential, folds the tuning into a
     config, resolves the isolation switch, and hands back the backend. The keyword
@@ -115,7 +118,8 @@ def make_async_backend(
                     proxy_allowed=proxy_allowed,
                     connection_timeout_seconds=connection_timeout_seconds,
                     read_timeout_seconds=read_timeout_seconds,
+                    fault_injection_rules=fault_injection_rules,
                 ),
                 strict_isolation=resolve_strict_isolation(strict_isolation),
             )
-    return None
+    return ASYNC_LEGACY_BACKEND

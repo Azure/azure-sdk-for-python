@@ -13,10 +13,9 @@ alternative. Every concrete backend implements the :class:`CosmosBackend` ABC
 defined here.
 
 Backends expose three dispatch methods, one per reply shape. ``execute`` and
-``execute_pages`` are implemented today (the latter only for ``query_items`` /
-``read_all_items``); ``execute_batch`` raises ``NotImplementedError`` until the
-batch operation is added. Defining it now means adding that operation does not
-change this file.
+``execute_pages`` are implemented today for the operations registered in
+``OP_TO_BINDING_METHOD`` and ``QUERY_TO_BINDING_METHOD``; ``execute_batch``
+raises ``NotImplementedError`` until transactional batch is migrated.
 
 * ``execute`` -- one request, one reply (``BackendResponse``), for every
   single-reply operation (database create, item CRUD, feed-range, offer).
@@ -138,7 +137,8 @@ class CosmosBackend(abc.ABC):
         * ``parse_response`` turns a rust ``BackendResponse`` into the final
           result (it binds the client connection and response hook).
 
-        Falling back to the legacy path is usually the right answer: the request
+        Legacy fallback is temporary parity scaffolding while the Rust path is
+        incomplete. During migration it is usually the right answer: the request
         still succeeds and the customer sees no difference. For a few requests it
         is the wrong answer, because the fallback would change something the
         customer asked for. A customer who selected the Rust backend and passed a

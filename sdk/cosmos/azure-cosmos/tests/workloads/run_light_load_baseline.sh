@@ -8,8 +8,8 @@
 # should land near p99 10 ms in-region; if it does not, throughput/latency numbers
 # from the loaded phases are not meaningful as an SLA reference.
 #
-# Backend is selectable so the same probe runs both engines:
-#   source ./profiling_activate.sh                              # required first
+# Backend is selectable so the same probe runs both engines. The script loads
+# the newest complete profiling session when the current shell has no active one:
 #   ./run_light_load_baseline.sh 480                         # core-python + rust
 #   BASELINE_BACKENDS=rust ./run_light_load_baseline.sh 480  # rust only
 # Override the verified default only when intentionally testing a different rate:
@@ -24,10 +24,17 @@
 set -uo pipefail
 cd "$(dirname "$0")"
 source ./profiling_common.sh
-profiling_load_env || exit 2
-: "${RUN_ID:?source ./profiling_activate.sh before running the baseline}"
-: "${ARTIFACTS:?source ./profiling_activate.sh before running the baseline}"
-profiling_load_session "${ARTIFACTS}" || exit 2
+if [[ -n "${RUN_ID:-}" && -n "${ARTIFACTS:-}" ]]; then
+  profiling_load_env || exit 2
+  profiling_load_session "${ARTIFACTS}" || exit 2
+else
+  # Load the same environment and newest complete session that an operator would
+  # get by sourcing profiling_activate.sh, but keep it local to this command.
+  # shellcheck disable=SC1091
+  source ./profiling_activate.sh || exit 2
+fi
+: "${RUN_ID:?no complete profiling session found; run profiling_start_session.sh first}"
+: "${ARTIFACTS:?no complete profiling session found; run profiling_start_session.sh first}"
 
 DURATION="${1:-480}"
 OPERATIONS=(${BASELINE_OPERATIONS:-read})
@@ -46,6 +53,9 @@ fi
 
 LOG_DIR="${ARTIFACTS}/light-load-baseline-${RUN_ID}"
 mkdir -p "$LOG_DIR"
+RUN_LOG="${LOG_DIR}/baseline-run.log"
+REPORT_FILE="${LOG_DIR}/latency-report.txt"
+exec > >(tee "${RUN_LOG}") 2>&1
 
 # The isolated probe container keeps this off the loaded phases' data, and its
 # 400-RU/s budget is what the default 250 reads/s is sized against. Seed it once
@@ -80,6 +90,7 @@ export WORKLOAD_NUM_CLIENTS=1
 export WORKLOAD_USE_SYNC=false
 export WORKLOAD_ARRIVAL_RATE="${BASELINE_READ_RPS}"
 export WORKLOAD_USE_PROXY=false
+export COSMOS_MAX_ITEM_INDEX=1000
 export COSMOS_REQUEST_TIMEOUT=30
 export PERF_REPORT_INTERVAL=60
 
@@ -138,10 +149,12 @@ echo "=== Checking the point-read p99 gate ==="
 if python3 latency_report.py --prefix "baseline-" --run-id "${RUN_ID}" \
   --point-read-gate --expected-rps "${BASELINE_READ_RPS}" --max-p99-ms 10 \
   --gate-backends "${BACKEND_CSV}" \
-  | tee "${LOG_DIR}/latency-report.txt"; then
+  | tee "${REPORT_FILE}"; then
   echo "=== point-read p99 gate PASSED ==="
 else
   echo "!! point-read p99 gate FAILED -- do not use this run as the low-load baseline." >&2
   overall_rc=1
 fi
+echo "=== Baseline log: ${RUN_LOG} ==="
+echo "=== Baseline report: ${REPORT_FILE} ==="
 exit "${overall_rc}"

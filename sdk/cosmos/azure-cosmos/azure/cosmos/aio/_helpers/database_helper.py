@@ -17,9 +17,7 @@ tenant or app. Creating one is an account-level write, so there is no container
 and no partition key involved.
 
 Why this module exists (public methods must not know which engine runs): the
-public methods coerce the client's backend selection to a concrete backend
-(``coerce_async_backend`` -> the rust backend or the explicit async
-``LegacyBackend``, never ``None``) and drive the create through
+public methods use the concrete backend stored by the client and drive the create through
 :meth:`~azure.cosmos.aio._backend.base.AsyncCosmosBackend.run_operation`, so a
 public method names no engine. Without this module that branching would live in
 the public methods.
@@ -49,16 +47,15 @@ from ..._helpers._request_database import (
 )
 from ..._helpers._response_parse import parse_backend_response
 from .._backend.base import AsyncCosmosBackend
-from .._backend.legacy import coerce_async_backend
 
 
 class AsyncDatabaseHelper:
     """Route async database operations through the selected backend boundary."""
 
-    def __init__(self, client_connection: Any, backend: Optional[AsyncCosmosBackend]) -> None:
+    def __init__(self, client_connection: Any, backend: AsyncCosmosBackend) -> None:
         """Store the client connection and selected implementation."""
         self._client_connection = client_connection
-        self._backend = coerce_async_backend(backend)
+        self._backend = backend
 
     async def create_database(
         self,
@@ -70,15 +67,18 @@ class AsyncDatabaseHelper:
     ) -> CosmosDict:
         """Async twin of :meth:`azure.cosmos._helpers.database_helper.DatabaseHelper.create_database`.
 
-        Same engine-selection and ``read_timeout`` fallback behavior.
-        ``response_hook`` is invoked once on success with the response headers and
-        created database, matching the legacy async connection contract.
+        Per-call ``read_timeout`` is not supported; callers configure the read
+        timeout when constructing ``CosmosClient``. ``response_hook`` is invoked
+        once on success with the response headers and created database, matching
+        the legacy async connection contract.
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
-        read_timeout = request_options.get(Constants.Kwargs.READ_TIMEOUT)
-        if read_timeout is None:
-            read_timeout = operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT)
+        if (
+            request_options.get(Constants.Kwargs.READ_TIMEOUT) is not None
+            or operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT) is not None
+        ):
+            raise TypeError("create_database() does not support the 'read_timeout' keyword argument")
 
         async def build_prepared():
             return build_create_database_prepared(
@@ -101,7 +101,6 @@ class AsyncDatabaseHelper:
                 response,
                 client_connection=self._client_connection,
             ),
-            rust_eligible=read_timeout is None,
         )
         if response_hook is not None:
             response_hook(self._client_connection.last_response_headers, result)

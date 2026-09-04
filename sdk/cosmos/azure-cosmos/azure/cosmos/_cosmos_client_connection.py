@@ -73,7 +73,7 @@ from ._backend.operations import (
 )
 from ._backend.contracts import LegacyOperation, PreparedQuery
 from ._backend.errors import PageNotSupportedByBackendError
-from ._backend.legacy import coerce_backend
+from ._backend.legacy import LEGACY_BACKEND
 from ._base import _build_properties_cache
 from ._change_feed.change_feed_iterable import ChangeFeedIterable
 from ._change_feed.change_feed_state import ChangeFeedState
@@ -216,7 +216,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: dict[str, RangePartitionResolver] = {}
         self.__container_properties_cache: dict[str, dict[str, Any]] = {}
-        self._backend: Optional[CosmosBackend] = None
+        self._backend: CosmosBackend = LEGACY_BACKEND
         self.default_headers: dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -3487,7 +3487,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 )
                 return __GetBodiesFromQueryResult(parsed_page.body), parsed_page.headers
 
-            return coerce_backend(self._backend).run_page_operation(
+            return self._backend.run_page_operation(
                 build_prepared=build_prepared_page,
                 legacy_operation=LegacyOperation(op=page_op, invoke=_run_legacy_read_feed),
                 parse_response=_parse_rust_page,
@@ -3982,7 +3982,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
             return __GetBodiesFromQueryResult(parsed_page.body), parsed_page.headers
 
-        return coerce_backend(self._backend).run_page_operation(
+        return self._backend.run_page_operation(
             build_prepared=_build_query_page,
             legacy_operation=LegacyOperation(op=page_op, invoke=_run_legacy_query_page),
             parse_response=_parse_rust_query_page,

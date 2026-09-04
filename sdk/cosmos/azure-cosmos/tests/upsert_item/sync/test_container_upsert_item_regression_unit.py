@@ -13,7 +13,7 @@ moved the last three steps into ``ItemHelper`` (the same path
 backends share the prep code.
 
 These tests pin the **core-python fall-through path**: with no rust
-backend wired (``_backend = None``), the helper builds the
+backend wired (``_backend = LEGACY_BACKEND``), the helper builds the
 options, stamps the rid, and calls ``client_connection.UpsertItem`` --
 exactly the path the default (v4) client takes. The rust backend now
 has its own ``upsert_item`` entry point; that dispatch path is covered
@@ -42,6 +42,7 @@ from azure.core import MatchConditions
 
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
 def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
@@ -64,7 +65,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
 
     # No rust backend wired -- absence of ``_backend`` makes the
     # dispatch fall through to ``client_connection.UpsertItem``.
-    cc._backend = None
+    cc._backend = LEGACY_BACKEND
     cc.UpsertItem = MagicMock(return_value={"id": "x", "_rid": rid})
 
     proxy = ContainerProxy(cc, "dbs/db", "c")
@@ -188,4 +189,3 @@ class TestContainerUpsertItemPreservesLegacyBehaviour(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

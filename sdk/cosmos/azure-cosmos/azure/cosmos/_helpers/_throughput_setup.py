@@ -52,7 +52,7 @@ def gather_rust_call_inputs(
     together so each public function reads ``client_connection._backend``
     exactly once, in one place.
     """
-    backend = getattr(client_connection, "_backend", None)
+    backend = client_connection._backend
     rust_kwargs = dict(kwargs)
     options = build_options(rust_kwargs)
     if container_rid is not None:

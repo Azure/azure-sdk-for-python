@@ -86,13 +86,13 @@ pub(crate) fn run_item_operation<'py>(
 /// connection released, no further work or RU spent) instead of detached. On
 /// normal completion the task is already finished, so `abort()` is a harmless
 /// Async sibling of `run_item_operation`: same inputs and identical driver work,
-/// but instead of blocking a worker thread it spawns the driver future on the
+/// but instead of blocking the calling Python thread it spawns the driver future on the
 /// shared Tokio runtime (the same runtime the driver was built on, so its
 /// connection pool and timers stay put) and hands the asyncio event loop an
-/// awaitable that resolves to the `BackendResponse` tuple. Awaiting it uses no
-/// Python thread per in-flight call. The awaitable owns an `AbortOnDrop` guard
-/// (see above) so a cancelled `await` actually cancels the driver operation
-/// rather than detaching it.
+/// awaitable that resolves to the `BackendResponse` tuple. The pending operation
+/// does not reserve a dedicated Python worker thread. The awaitable owns an
+/// `AbortOnDrop` guard (see above) so a cancelled `await` actually cancels the
+/// driver operation rather than detaching it.
 pub(crate) fn run_item_operation_async<'py>(
     py: Python<'py>,
     handle: &str,

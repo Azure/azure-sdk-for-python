@@ -35,6 +35,7 @@ from . import _base as base
 from . import _runtime_constants as runtime_constants
 from . import documents
 from . import http_constants
+from ._backend.constants import is_rust_backend
 from ._backend.operations import OP_READ_OFFER, OP_REPLACE_OFFER
 from ._backend.contracts import PreparedRequest
 from ._constants import _Constants as Constants
@@ -63,7 +64,7 @@ def can_use_rust_backend_for_read_offer(
     temporary migration code: it shrinks as options are supported and goes away once the
     whole operation is supported on Rust.
 
-    :param backend: The client's Rust backend, or ``None`` for core-python.
+    :param backend: The client's concrete selected backend.
     :type backend: Any
     :param options: Normalized request options for this call.
     :type options: Mapping[str, Any]
@@ -72,7 +73,7 @@ def can_use_rust_backend_for_read_offer(
     :type kwargs: Mapping[str, Any]
     :rtype: bool
     """
-    if backend is None:
+    if not is_rust_backend(backend):
         return False
     # Rust offer path does not yet support the socket read timeout or the
     # client-side availability strategy that legacy QueryOffers applies.
@@ -297,7 +298,7 @@ def can_use_rust_backend_for_replace_throughput(
     option keeps the whole call on legacy so nothing a customer passed is silently
     dropped.
 
-    :param backend: The client's Rust backend, or ``None`` for core-python.
+    :param backend: The client's concrete selected backend.
     :type backend: Any
     :param options: Normalized request options for this call.
     :type options: Mapping[str, Any]

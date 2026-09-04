@@ -15,9 +15,11 @@ only in a slow emulator run.
 from __future__ import annotations
 
 import json
+from types import SimpleNamespace
 
 import pytest
 
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.operations import OP_IS_FEED_RANGE_SUBSET
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
@@ -26,6 +28,8 @@ from azure.cosmos._feed_ranges_rust_routing import (
     can_use_rust_backend_for_is_feed_range_subset,
     parse_is_feed_range_subset_payload,
 )
+
+RUST_BACKEND = SimpleNamespace(name="rust")
 
 
 def _feed_range(range_min, range_max, is_min_inclusive=True, is_max_inclusive=False):
@@ -41,12 +45,12 @@ def _feed_range(range_min, range_max, is_min_inclusive=True, is_max_inclusive=Fa
 
 def test_gate_requires_backend():
     """Python handles the check when Rust is unavailable."""
-    assert can_use_rust_backend_for_is_feed_range_subset(backend=None) is False
+    assert can_use_rust_backend_for_is_feed_range_subset(backend=LEGACY_BACKEND) is False
 
 
 def test_gate_allows_backend():
     """Rust handles a supported subset check."""
-    assert can_use_rust_backend_for_is_feed_range_subset(backend=object()) is True
+    assert can_use_rust_backend_for_is_feed_range_subset(backend=RUST_BACKEND) is True
 
 
 # ---------------------------------------------------------------------------

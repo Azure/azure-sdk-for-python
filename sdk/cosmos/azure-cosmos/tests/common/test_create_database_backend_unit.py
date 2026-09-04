@@ -64,6 +64,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import _base as base
 from azure.cosmos._backend.base import CosmosBackend
 from azure.cosmos._backend.contracts import BackendResponse
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.operations import (
     OP_CREATE_DATABASE,
     OP_DELETE_DATABASE,
@@ -83,6 +84,7 @@ from azure.cosmos._helpers._request_database import (
 )
 from azure.cosmos._helpers.database_helper import DatabaseHelper
 from azure.cosmos.aio._backend.base import AsyncCosmosBackend
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._cosmos_client_connection_async import (
     CosmosClientConnection as AsyncClientConnection,
 )
@@ -508,7 +510,7 @@ def test_sync_helper_keeps_legacy_create_database_behind_boundary():
         last_response_headers={"x-ms-request-charge": "4.0"},
     )
     hook_calls = []
-    result = DatabaseHelper(connection, None).create_database(
+    result = DatabaseHelper(connection, LEGACY_BACKEND).create_database(
         {"id": "db1"},
         {"offerThroughput": 400},
         response_hook=lambda headers, body: hook_calls.append((headers, body)),
@@ -526,26 +528,24 @@ def test_sync_helper_keeps_legacy_create_database_behind_boundary():
     ]
 
 
-def test_sync_helper_uses_legacy_when_read_timeout_is_requested():
-    """When the caller sets a per-call ``read_timeout``, the create skips the rust
-    path (which can't honor that timeout yet) and runs the legacy call instead, which
-    does honor it -- so the customer's ``read_timeout`` is never silently dropped. The
-    rust backend is never touched (its recorded request stays ``None``)."""
+def test_sync_create_database_rejects_per_call_read_timeout():
+    """Create-database uses the configured backend and does not support overriding
+    the client's read timeout for one call."""
     connection = SimpleNamespace(
         CreateDatabase=MagicMock(return_value={"id": "db1"}),
         last_response_headers={},
     )
     backend = _RustBackend()
 
-    result = DatabaseHelper(connection, backend).create_database(
-        {"id": "db1"},
-        {Constants.Kwargs.READ_TIMEOUT: 2},
-        kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
-    )
+    with pytest.raises(TypeError, match="does not support the 'read_timeout'"):
+        DatabaseHelper(connection, backend).create_database(
+            {"id": "db1"},
+            {Constants.Kwargs.READ_TIMEOUT: 2},
+            kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
+        )
 
-    assert result == {"id": "db1"}
     assert backend.prepared is None
-    connection.CreateDatabase.assert_called_once()
+    connection.CreateDatabase.assert_not_called()
 
 
 def test_sync_helper_maps_conflict_to_resource_exists():
@@ -711,7 +711,7 @@ def test_sync_if_not_exists_legacy_returns_existing_without_create_headers():
         last_response_headers={"x-ms-request-charge": "1.0"},
     )
 
-    result = DatabaseHelper(connection, None).create_database_if_not_exists(
+    result = DatabaseHelper(connection, LEGACY_BACKEND).create_database_if_not_exists(
         {"id": "db1"},
         {
             "offerThroughput": 400,
@@ -748,7 +748,7 @@ def test_sync_if_not_exists_legacy_creates_only_after_404_and_propagates_409():
     )
 
     with pytest.raises(CosmosResourceExistsError):
-        DatabaseHelper(connection, None).create_database_if_not_exists(
+        DatabaseHelper(connection, LEGACY_BACKEND).create_database_if_not_exists(
             {"id": "db1"},
             {"offerThroughput": 400},
         )
@@ -775,7 +775,7 @@ def test_sync_if_not_exists_legacy_preserves_read_timeout_on_both_legs():
         last_response_headers={},
     )
 
-    result = DatabaseHelper(connection, None).create_database_if_not_exists(
+    result = DatabaseHelper(connection, LEGACY_BACKEND).create_database_if_not_exists(
         {"id": "db1"},
         {},
         kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
@@ -1286,7 +1286,7 @@ def test_async_helper_keeps_legacy_create_database_behind_boundary():
             last_response_headers={"x-ms-request-charge": "4.0"},
         )
         hook_calls = []
-        result = await AsyncDatabaseHelper(connection, None).create_database(
+        result = await AsyncDatabaseHelper(connection, ASYNC_LEGACY_BACKEND).create_database(
             {"id": "db1"},
             {},
             response_hook=lambda headers, body: hook_calls.append((headers, body)),
@@ -1305,12 +1305,11 @@ def test_async_helper_keeps_legacy_create_database_behind_boundary():
     asyncio.run(run())
 
 
-def test_async_helper_uses_legacy_when_read_timeout_is_requested():
-    """Async twin of the read_timeout test: a per-call ``read_timeout`` forces the
-    legacy call (which honors it), the rust backend is never touched, and the
-    ``response_hook`` still fires with the response headers and database body."""
+def test_async_create_database_rejects_per_call_read_timeout():
+    """Async create-database does not support overriding the client's read timeout
+    for one call."""
     async def run():
-        """Create with a ``read_timeout`` option and confirm the Rust backend is bypassed and the hook fires."""
+        """Confirm the unsupported option fails before either backend is invoked."""
         connection = SimpleNamespace(
             CreateDatabase=AsyncMock(return_value={"id": "db1"}),
             last_response_headers={"x-ms-request-charge": "4.25"},
@@ -1318,19 +1317,17 @@ def test_async_helper_uses_legacy_when_read_timeout_is_requested():
         backend = _AsyncRustBackend()
         hook_calls = []
 
-        result = await AsyncDatabaseHelper(connection, backend).create_database(
-            {"id": "db1"},
-            {Constants.Kwargs.READ_TIMEOUT: 2},
-            response_hook=lambda headers, body: hook_calls.append((headers, body)),
-            kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
-        )
+        with pytest.raises(TypeError, match="does not support the 'read_timeout'"):
+            await AsyncDatabaseHelper(connection, backend).create_database(
+                {"id": "db1"},
+                {Constants.Kwargs.READ_TIMEOUT: 2},
+                response_hook=lambda headers, body: hook_calls.append((headers, body)),
+                kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
+            )
 
-        assert result == {"id": "db1"}
         assert backend.prepared is None
-        assert hook_calls == [
-            ({"x-ms-request-charge": "4.25"}, {"id": "db1"})
-        ]
-        connection.CreateDatabase.assert_awaited_once()
+        assert hook_calls == []
+        connection.CreateDatabase.assert_not_awaited()
 
     asyncio.run(run())
 
@@ -1350,7 +1347,7 @@ def test_async_if_not_exists_legacy_reads_then_creates_only_on_404():
         )
         hook_calls = []
 
-        result = await AsyncDatabaseHelper(connection, None).create_database_if_not_exists(
+        result = await AsyncDatabaseHelper(connection, ASYNC_LEGACY_BACKEND).create_database_if_not_exists(
             {"id": "db1"},
             {"offerThroughput": 400},
             response_hook=lambda headers, body: hook_calls.append((headers, body)),
@@ -1756,7 +1753,7 @@ def test_async_if_not_exists_legacy_existing_skips_create_and_strips_create_only
             last_response_headers={"x-ms-request-charge": "1.0"},
         )
 
-        result = await AsyncDatabaseHelper(connection, None).create_database_if_not_exists(
+        result = await AsyncDatabaseHelper(connection, ASYNC_LEGACY_BACKEND).create_database_if_not_exists(
             {"id": "db1"},
             {
                 "offerThroughput": 400,
@@ -1798,7 +1795,7 @@ def test_async_if_not_exists_legacy_preserves_read_timeout_on_both_legs():
 
         result = await AsyncDatabaseHelper(
             connection,
-            None,
+            ASYNC_LEGACY_BACKEND,
         ).create_database_if_not_exists(
             {"id": "db1"},
             {},
@@ -1871,7 +1868,7 @@ def test_sync_if_not_exists_non_404_read_error_propagates_without_create():
     )
 
     with pytest.raises(CosmosResourceExistsError):
-        DatabaseHelper(connection, None).create_database_if_not_exists(
+        DatabaseHelper(connection, LEGACY_BACKEND).create_database_if_not_exists(
             {"id": "db1"},
             {"offerThroughput": 400},
         )
@@ -1892,7 +1889,7 @@ def test_async_if_not_exists_non_404_read_error_propagates_without_create():
         )
 
         with pytest.raises(CosmosResourceExistsError):
-            await AsyncDatabaseHelper(connection, None).create_database_if_not_exists(
+            await AsyncDatabaseHelper(connection, ASYNC_LEGACY_BACKEND).create_database_if_not_exists(
                 {"id": "db1"},
                 {"offerThroughput": 400},
             )

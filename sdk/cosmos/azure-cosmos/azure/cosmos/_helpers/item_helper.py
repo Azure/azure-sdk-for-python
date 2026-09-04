@@ -9,8 +9,12 @@ upsert, replace, patch.
 A container method gathers its arguments and calls the matching method
 here. Each method builds the request options, looks up the container's
 resource id, then drives the operation through the configured backend
-(rust, or the explicit core-python ``LegacyBackend``) via
+(Rust, or the current core-Python ``LegacyBackend``) via
 :meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`.
+
+On a Rust-selected client, ``LegacyBackend`` is also the temporary fallback
+for request shapes that have not been migrated yet. That fallback is migration
+debt and is not part of the intended Rust-only architecture.
 """
 from __future__ import annotations
 
@@ -27,7 +31,6 @@ from .._backend.operations import (
     OP_REPLACE_ITEM,
     OP_UPSERT_ITEM,
 )
-from .._backend.legacy import coerce_backend
 from .._constants import _Constants as Constants
 from ..partition_key import _Empty
 from ._item_dispatch import (
@@ -60,25 +63,24 @@ class ItemHelper:
 
     def __init__(
         self,
-        backend: Optional[CosmosBackend],
+        backend: CosmosBackend,
         client_connection: Any,
         ensure_container_cached: Optional[Callable[[Dict[str, Any]], Any]] = None,
     ) -> None:
         """Store the backend and connection this helper will use.
 
-        :param backend: The selected backend, or ``None`` for core-python.
-            Coerced to an explicit backend (never ``None``) via
-            :func:`~azure.cosmos._backend.legacy.coerce_backend`, so each op
-            below runs through one interface and never branches on ``None``.
-        :type backend: Optional[CosmosBackend]
+        :param backend: The selected concrete backend.
+        :type backend: CosmosBackend
         :param client_connection: The connection used for the cache,
-            partition-key extraction, and the legacy path.
+            partition-key extraction, response compatibility, and the
+            core-Python path used either as the selected backend or as a
+            temporary fallback during migration.
         :type client_connection: Any
         :param ensure_container_cached: Optional callable from the
             container that fills the cache under the container's lock.
         :type ensure_container_cached: Optional[Callable]
         """
-        self._backend = coerce_backend(backend)
+        self._backend = backend
         self.client_connection = client_connection
         # Reads the two container facts the request prep needs (the rid and the
         # partition-key definition) off one container read, instead of calling
@@ -105,9 +107,11 @@ class ItemHelper:
         Wraps :meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`
         with the one piece that is common to every op: turning a rust
         ``BackendResponse`` into the value the public method returns. The rust
-        path is taken only when this backend is the rust engine and
-        ``rust_eligible`` is true; otherwise the legacy operation runs. Either
-        way this helper never inspects the backend type or a ``None`` sentinel.
+        path is taken only when this backend is the Rust engine and
+        ``rust_eligible`` is true. During migration, other requests use the
+        temporary legacy parity operation. This fallback is migration debt, not
+        part of the intended Rust-only architecture. Either way this helper
+        never inspects the backend type or a ``None`` sentinel.
 
         ``run_legacy`` is wrapped in a :class:`~azure.cosmos._backend.base.LegacyOperation`
         here -- a small, named, typed request/context, not a bare callable --
@@ -124,8 +128,9 @@ class ItemHelper:
             path by ``parse_backend_response`` (the legacy path invokes its own).
         :keyword discard_result: When ``True`` (delete), parse the rust response
             for its side effects but return ``None``, matching the legacy delete.
-        :keyword rust_eligible: ``False`` forces the legacy call even on a rust
-            client (a filtered / guarded patch the rust prep cannot represent).
+        :keyword rust_eligible: During migration, ``False`` forces the temporary
+            legacy call even on a Rust client (for example, a filtered or guarded
+            patch the Rust preparation code cannot yet represent).
         :returns: The value the public method returns to the caller.
         :rtype: Any
         """
@@ -518,10 +523,10 @@ class ItemHelper:
 
         container_rid = self._resolve_container_rid(container_link, request_options)
 
-        # Use the rust path only for a plain patch. A filter or an
-        # etag / match-condition guard cannot be represented by the rust prep,
-        # so those force the legacy client -- which is the only path that
-        # applies them -- even on a rust-backed client.
+        # Rust currently supports only a plain patch. A filter or an
+        # etag / match-condition guard cannot yet be represented by the Rust
+        # preparation code, so migration parity temporarily routes those
+        # requests through the legacy client.
         rust_eligible = (
             filter_predicate is None
             and "accessCondition" not in request_options

@@ -22,6 +22,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from .constants import is_rust_backend
+
 
 class PageNotSupportedByBackendError(RuntimeError):
     """Raised before dispatch when a backend cannot execute a paged operation.
@@ -62,12 +64,11 @@ def raise_account_read_unsupported(backend: Any) -> None:
     """Raise ``NotImplementedError`` for ``get_database_account`` on a Rust-backed
     client; do nothing on the core-python selection.
 
-    :param backend: The client's chosen backend, or ``None`` for core-python.
-        A non-``None`` backend means the Rust path is active, and this call has no
-        Rust-path implementation yet, so it raises instead of falling back to the
-        legacy connection. ``None`` is a no-op, so core-python keeps working unchanged.
+    :param backend: The client's concrete chosen backend. The Rust backend raises
+        because this call has no Rust implementation yet; the explicit legacy
+        backend is a no-op so core-python keeps working unchanged.
     """
-    if backend is None:
+    if not is_rust_backend(backend):
         return
     raise NotImplementedError(
         "get_database_account() is not yet available on the Rust backend "

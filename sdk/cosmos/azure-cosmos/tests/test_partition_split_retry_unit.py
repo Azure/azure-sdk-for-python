@@ -16,6 +16,7 @@ from azure.core.exceptions import ServiceRequestError
 from azure.cosmos import exceptions
 from azure.cosmos import _retry_utility
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._routing.feed_range_continuation import _FIELD_VERSION, _TOKEN_VERSION, _decode_token
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
@@ -120,10 +121,8 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         client.availability_strategy = None
         client.availability_strategy_executor = None
         client.availability_strategy_max_concurrency = None
-        # ``__QueryFeed`` dispatches through ``coerce_backend(self._backend)``.
-        # ``None`` is the core-python selection, which is what these tests
-        # exercise; without the attribute the dispatch raises before it runs.
-        client._backend = None
+        # These tests exercise the explicit core-Python backend.
+        client._backend = LEGACY_BACKEND
         return client
 
     def test_queryfeed_internal_capture_uses_options_dict(self):
@@ -1187,9 +1186,8 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         conn._routing_map_provider = MockRoutingMapProvider()
         conn.session = None
         conn.connection_policy = MagicMock()
-        # Core-python selection: ``coerce_backend`` maps ``None`` to the legacy
-        # backend, which is the path this test exercises.
-        conn._backend = None
+        # Explicit core-Python backend, which is the path this test exercises.
+        conn._backend = LEGACY_BACKEND
 
         capture_dict = {}
         options = {

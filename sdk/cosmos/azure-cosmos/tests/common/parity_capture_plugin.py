@@ -777,7 +777,7 @@ _STATE = _CaptureState()
 def _infer_backend_label(container_self: Any) -> str:
     """Read ``_backend`` off the live client_connection.
 
-    ``None`` → ``"core-python"``, anything else → ``"rust"``. If the
+    The concrete backend's ``name`` identifies ``"core-python"`` or ``"rust"``. If the
     env-var override is set, it wins (used by integration tests of the
     plugin itself where there is no real SDK client involved)."""
     override = os.environ.get(ENV_BACKEND_LABEL_OVERRIDE)
@@ -787,8 +787,8 @@ def _infer_backend_label(container_self: Any) -> str:
         cc = getattr(container_self, "client_connection", None)
         if cc is None:
             return "unknown"
-        backend = getattr(cc, "_backend", None)
-        return "rust" if backend is not None else "core-python"
+        backend = cc._backend
+        return backend.name
     except Exception:  # pylint: disable=broad-except
         return "unknown"
 

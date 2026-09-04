@@ -101,7 +101,7 @@ from .._query_rust_routing import (
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
 from ._backend.base import AsyncCosmosBackend
-from ._backend.legacy import coerce_async_backend
+from ._backend.legacy import ASYNC_LEGACY_BACKEND
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object
 from . import _asynchronous_request as asynchronous_request
@@ -207,7 +207,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: dict[str, RangePartitionResolver] = {}
         self.__container_properties_cache: dict[str, dict[str, Any]] = {}
-        self._backend: Optional[AsyncCosmosBackend] = None
+        self._backend: AsyncCosmosBackend = ASYNC_LEGACY_BACKEND
         self.default_headers: dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -3295,7 +3295,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 )
                 return __GetBodiesFromQueryResult(parsed_page.body)
 
-            return await coerce_async_backend(self._backend).run_page_operation(
+            return await self._backend.run_page_operation(
                 build_prepared=build_prepared_page,
                 legacy_operation=LegacyOperation(op=page_op, invoke=_run_legacy_read_feed),
                 parse_response=_parse_rust_page,
@@ -3784,7 +3784,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
             return __GetBodiesFromQueryResult(parsed_page.body)
 
-        return await coerce_async_backend(self._backend).run_page_operation(
+        return await self._backend.run_page_operation(
             build_prepared=_build_query_page,
             legacy_operation=LegacyOperation(op=page_op, invoke=_run_legacy_query_page),
             parse_response=_parse_rust_query_page,

@@ -10,11 +10,13 @@ delete and patch -- which are the calls that carry a partition key and, for the
 writes, a serialized body.
 
 These differ from the database and container builders in that the caller has
-already done the side-effectful work (cache lookups, extracting the partition
-key out of the document). What is left here is pure: mint an id if the operation
-needs one, serialize the body, serialize the partition key to its header form,
-and flatten the options. Being pure is what lets both engines consume the same
-``PreparedRequest`` and put identical bytes on the wire.
+already resolved the container metadata and extracted the partition key from
+the document. What is left here is pure: mint an id if the operation needs one,
+serialize the body, serialize the partition key to its header form, and flatten
+the options. The Rust backend consumes the resulting ``PreparedRequest``; the
+core-Python backend receives a separate ``LegacyOperation``. On a
+Rust-selected client, that legacy operation is also the temporary fallback for
+request shapes that have not been migrated yet.
 """
 from __future__ import annotations
 
@@ -52,9 +54,8 @@ def build_create_item_prepared(
 ) -> Tuple[PreparedRequest, str]:
     """Build a ``PreparedRequest`` for a single ``create_item`` call.
 
-    Pure: does not read caches, does not trigger refreshes, does not
-    extract the partition-key from the body. The caller has done those
-    because they require a ``CosmosClientConnection``.
+    Pure: does not resolve container metadata, trigger refreshes, or extract the
+    partition key from the body. The caller supplies those resolved values.
 
     :param container_link: Container self-link, e.g.
         ``"dbs/{db}/colls/{coll}"``.
@@ -161,9 +162,8 @@ def build_delete_item_prepared(
 ) -> PreparedRequest:
     """Build a ``PreparedRequest`` for a single ``delete_item`` call.
 
-    Pure: does not read caches, does not extract the partition-key
-    from a body (delete has no body to inspect). The caller has done
-    those because they require a ``CosmosClientConnection``.
+    Pure: does not resolve container metadata or extract the partition key from
+    a body (delete has no body to inspect). The caller supplies those values.
 
     :param container_link: Container self-link, e.g.
         ``"dbs/{db}/colls/{coll}"``.
@@ -340,9 +340,8 @@ def _build_write_with_body_prepared(
     resolved document link); the body still carries its own id for the
     payload.
 
-    Pure: does not read caches, does not extract the partition key from the
-    body. The caller has done those because they require a
-    ``CosmosClientConnection``.
+    Pure: does not resolve container metadata or extract the partition key from
+    the body. The caller supplies those values.
 
     :param op: The ``OP_*`` discriminator (``OP_UPSERT_ITEM`` or
         ``OP_REPLACE_ITEM``).

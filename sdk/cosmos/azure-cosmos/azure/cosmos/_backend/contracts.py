@@ -47,8 +47,11 @@ from azure.core.utils import CaseInsensitiveDict
 class PreparedRequest:
     """A single Cosmos operation, fully prepared and ready to send.
 
-    Both backends receive the *same* instance so neither re-derives the
-    wire format from the original kwargs.
+    The Rust backend receives this object. The current core-Python backend
+    receives a separate :class:`LegacyOperation` built from the original Python
+    arguments because those arguments cannot always be reconstructed from this
+    wire-shaped record. On a Rust-selected client, that operation is also the
+    temporary fallback for request shapes that have not been migrated yet.
     """
 
     #: One of the ``OP_*`` constants in :mod:`~azure.cosmos._backend.operations`.
@@ -73,9 +76,10 @@ class PreparedRequest:
     #: other value with ``str()``, so non-str values are tolerated by design.
     headers: Mapping[str, Any] = field(default_factory=dict)
 
-    #: Target document id for ops where the id is not carried in
-    #: ``body_bytes`` (``delete_item`` has no body). ``None`` for ops
-    #: that derive the id from the body (``create_item``).
+    #: Target document id. Bodiless and target-specific operations require it.
+    #: Create and upsert also carry the already-resolved body id when it is a
+    #: non-empty string, avoiding another JSON parse in the binding; older
+    #: callers may leave it unset and let the binding read the body.
     item_id: Optional[str] = None
 
 
@@ -111,6 +115,22 @@ class LegacyOperation:
     #: final result (a sync coordinator's ``invoke`` returns it directly; an
     #: async coordinator's returns an awaitable of it).
     invoke: Callable[[], Any]
+
+
+@dataclass(frozen=True)
+class PreparedFaultInjectionRule:
+    """Validated internal fault rule carried across the Python/Rust boundary."""
+
+    id: str
+    operation_type: str
+    status_code: int
+    sub_status: int = 0
+    container_id: Optional[str] = None
+    region: Optional[str] = None
+    delay_ms: int = 0
+    probability: float = 1.0
+    hit_limit: Optional[int] = None
+    enabled: bool = True
 
 
 @dataclass(frozen=True)
@@ -212,6 +232,10 @@ class PreparedClientConfig:
     #: for one complete HTTP attempt (connect, send, and receive) on both the
     #: data-plane and metadata transports. ``None`` leaves driver defaults unchanged.
     read_timeout_seconds: Optional[float] = None
+
+    #: Internal test-only Rust fault rules. Each rule is immutable so it safely
+    #: participates in the binding's driver-cache identity.
+    fault_injection_rules: tuple[PreparedFaultInjectionRule, ...] = ()
 
 
 

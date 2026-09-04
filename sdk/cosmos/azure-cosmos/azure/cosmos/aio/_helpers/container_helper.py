@@ -18,16 +18,15 @@ from ..._helpers._request_container import (
 )
 from ..._helpers._response_parse import parse_backend_response
 from .._backend.base import AsyncCosmosBackend
-from .._backend.legacy import coerce_async_backend
 
 
 class AsyncContainerHelper:
     """Prepare and run asynchronous container operations."""
 
-    def __init__(self, client_connection: Any, backend: Optional[AsyncCosmosBackend]) -> None:
+    def __init__(self, client_connection: Any, backend: AsyncCosmosBackend) -> None:
         """Store the client connection and selected implementation."""
         self._client_connection = client_connection
-        self._backend = coerce_async_backend(backend)
+        self._backend = backend
 
     async def create_container(
         self,

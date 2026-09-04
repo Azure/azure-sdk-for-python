@@ -97,10 +97,11 @@ fn extract_item_inputs(
     Ok((container_link, partition_key_header, modifiers, item_id))
 }
 
-/// Common fields plus the document body, then read the item id *out of the body*.
-/// Used by create and upsert, where the customer's document carries its own id.
-/// Without it, create/upsert would each have to dig the id out of raw JSON bytes
-/// themselves and could disagree on how.
+/// Common fields plus the document body, then use the item id Python already
+/// resolved on `PreparedRequest.item_id`. Older callers may leave that field
+/// unset, in which case `extract_create_item_id` reads the id from the body.
+/// Without this shared extractor, create and upsert could disagree on that
+/// preference and fallback behavior.
 fn extract_create_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ItemBodyInputs> {
     let (container_link, partition_key_header, modifiers): CommonInputs =
         extract_common_prepared_inputs(prepared)?;

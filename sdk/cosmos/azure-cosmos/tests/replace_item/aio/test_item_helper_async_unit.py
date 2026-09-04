@@ -11,8 +11,7 @@ behaviour is already pinned by the sync tests in
 ``tests/replace_item/sync/``. This file covers the async-specific
 touchpoints replace adds:
 
-1. ``ReplaceItem`` is awaited on the core-python path (``backend=None``,
-   routed through the explicit ``AsyncLegacyBackend``) with the
+1. ``ReplaceItem`` is awaited through the explicit ``AsyncLegacyBackend`` with the
    ``document_link`` the caller resolved from ``item`` and the ``body``
    forwarded unchanged.
 2. A wired backend's ``BackendResponse`` is parsed into a ``CosmosDict``
@@ -33,6 +32,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.aio._backend.base import AsyncCosmosBackend
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
 
 
@@ -64,10 +64,10 @@ def _connection_with_cache(rid="rid"):
 
 
 class TestAsyncReplaceItem(unittest.TestCase):
-    """The core-python (``backend=None``) path is the async fall-through replace path."""
+    """The explicit core-Python backend is the async fallback replace path."""
 
     def test_async_dispatch_falls_through_to_replace_item(self):
-        """Core-python (``backend=None``) awaits ``ReplaceItem`` and returns
+        """The explicit core-Python backend awaits ``ReplaceItem`` and returns
         its value; the resolved ``document_link`` and the new ``body`` are
         forwarded unchanged and id generation is disabled (a replace never
         mints)."""
@@ -75,7 +75,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         body = {"id": "order-42", "pk": "customerA", "total": 129.0}
 
         async def _run():
-            return await AsyncItemHelper(None, cc).replace_item(
+            return await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).replace_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/order-42",
                 item_id="order-42",
@@ -122,7 +122,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         cc = _connection_with_cache()
 
         async def _run():
-            await AsyncItemHelper(None, cc).replace_item(
+            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).replace_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/order-42",
                 item_id="order-42",
@@ -152,7 +152,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         cc.ReplaceItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncItemHelper(None, cc).replace_item(
+            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).replace_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/x",
                 item_id="x",
@@ -167,4 +167,3 @@ class TestAsyncReplaceItem(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

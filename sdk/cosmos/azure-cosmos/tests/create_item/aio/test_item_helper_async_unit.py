@@ -9,14 +9,14 @@ The async helper does the same work as the sync one, which is covered in
 ``tests/create_item/sync/test_item_helper_unit.py``. These two tests check
 only the parts that are awaited on the async side: the call to the
 existing client, and the cache refresh when the container is not cached
-yet. ``backend=None`` (core-python) routes through the explicit
-``AsyncLegacyBackend`` so the existing client is what actually runs.
+yet. The explicit ``AsyncLegacyBackend`` routes through the existing client.
 """
 import asyncio
 import unittest
 from unittest.mock import MagicMock, AsyncMock
 
 from azure.cosmos._constants import _Constants as Constants
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
 
 
@@ -39,7 +39,7 @@ class TestAsyncItemHelper(unittest.TestCase):
         cc.CreateItem = AsyncMock(return_value="async-result")
 
         async def _run():
-            return await AsyncItemHelper(None, cc).create_item(
+            return await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).create_item(
                 container_link="dbs/db/colls/c",
                 body={"id": "x"},
             )
@@ -65,7 +65,7 @@ class TestAsyncItemHelper(unittest.TestCase):
         cc.CreateItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncItemHelper(None, cc).create_item(
+            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).create_item(
                 container_link="dbs/db/colls/c",
                 body={"id": "x"},
             )
@@ -78,4 +78,3 @@ class TestAsyncItemHelper(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

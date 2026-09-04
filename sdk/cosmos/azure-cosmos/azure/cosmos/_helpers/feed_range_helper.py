@@ -19,9 +19,8 @@ range on its own. The functions here back the public ``ContainerProxy`` methods
 Why this module exists (public methods must not know which engine runs): without
 it, these calls would read ``client_connection._backend`` and branch -- try the
 rust engine, else run the legacy routing-map code -- inside the customer-facing
-proxy method. Instead each function coerces the client's selection to a concrete
-backend (``coerce_backend`` -> the rust backend or the explicit ``LegacyBackend``,
-never ``None``) and drives the work through
+proxy method. Instead each function uses the concrete backend stored by the
+client and drives the work through
 :meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`, so the proxy
 method is a thin delegate that names no engine. This mirrors
 :class:`~azure.cosmos._helpers.item_helper.ItemHelper` and the throughput
@@ -34,7 +33,6 @@ from typing import Any, AsyncIterable, Awaitable, Callable, Dict, Iterable, Mapp
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 
 from .._backend.contracts import LegacyOperation
-from .._backend.legacy import coerce_backend
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosItemPaged
 from .._feed_ranges_rust_routing import (
@@ -76,8 +74,8 @@ def read_feed_ranges(
     kwargs: Mapping[str, Any],
 ) -> Iterable[dict[str, Any]]:
     """Return feed ranges while keeping engine selection outside the public proxy."""
-    selected_backend = getattr(client_connection, "_backend", None)
-    backend = coerce_backend(selected_backend)
+    selected_backend = client_connection._backend
+    backend = selected_backend
     rust_eligible = can_use_rust_backend_for_read_feed_ranges(
         backend=selected_backend, kwargs=kwargs
     )
@@ -137,8 +135,8 @@ def feed_range_from_partition_key(
     get_legacy_epk_range: Callable[[Any], Range],
 ) -> dict[str, Any]:
     """Calculate one partition key's feed range through the selected engine."""
-    selected_backend = getattr(client_connection, "_backend", None)
-    backend = coerce_backend(selected_backend)
+    selected_backend = client_connection._backend
+    backend = selected_backend
     return backend.run_operation(
         build_prepared=lambda: build_feed_range_from_partition_key_prepared_request(
             container_link=container_link,
@@ -170,8 +168,8 @@ def is_feed_range_subset(
     child_feed_range: dict[str, Any],
 ) -> bool:
     """Compare feed ranges through the selected engine."""
-    selected_backend = getattr(client_connection, "_backend", None)
-    backend = coerce_backend(selected_backend)
+    selected_backend = client_connection._backend
+    backend = selected_backend
 
     def run_legacy() -> bool:
         parent = FeedRangeInternalEpk.from_json(parent_feed_range)
@@ -207,10 +205,8 @@ def read_feed_ranges_async(
     kwargs: Mapping[str, Any],
 ) -> AsyncIterable[dict[str, Any]]:
     """Async twin of :func:`read_feed_ranges`."""
-    from ..aio._backend.legacy import coerce_async_backend
-
-    selected_backend = getattr(client_connection, "_backend", None)
-    backend = coerce_async_backend(selected_backend)
+    selected_backend = client_connection._backend
+    backend = selected_backend
     rust_eligible = can_use_rust_backend_for_read_feed_ranges(
         backend=selected_backend, kwargs=kwargs
     )
@@ -272,10 +268,8 @@ async def feed_range_from_partition_key_async(
     get_legacy_epk_range: Callable[[Any], Awaitable[Range]],
 ) -> dict[str, Any]:
     """Async twin of :func:`feed_range_from_partition_key`."""
-    from ..aio._backend.legacy import coerce_async_backend
-
-    selected_backend = getattr(client_connection, "_backend", None)
-    backend = coerce_async_backend(selected_backend)
+    selected_backend = client_connection._backend
+    backend = selected_backend
 
     async def build_prepared():
         return build_feed_range_from_partition_key_prepared_request(
@@ -313,10 +307,8 @@ async def is_feed_range_subset_async(
     child_feed_range: dict[str, Any],
 ) -> bool:
     """Async twin of :func:`is_feed_range_subset`."""
-    from ..aio._backend.legacy import coerce_async_backend
-
-    selected_backend = getattr(client_connection, "_backend", None)
-    backend = coerce_async_backend(selected_backend)
+    selected_backend = client_connection._backend
+    backend = selected_backend
 
     async def build_prepared():
         return build_is_feed_range_subset_prepared_request(

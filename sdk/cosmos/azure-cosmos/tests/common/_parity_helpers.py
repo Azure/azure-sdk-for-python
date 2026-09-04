@@ -989,11 +989,9 @@ def _observed_backend_name(client: Any) -> str:
     connection = getattr(client, "client_connection", None)
     if connection is None:
         raise AssertionError("parity client has no client_connection")
-    backend = getattr(connection, "_backend", None)
-    if backend is None:
-        return "core-python"
+    backend = connection._backend
     name = getattr(backend, "name", None)
-    if name != "rust":
+    if name not in ("core-python", "rust"):
         raise AssertionError(
             "parity client has an unexpected backend object: {!r}".format(name)
         )

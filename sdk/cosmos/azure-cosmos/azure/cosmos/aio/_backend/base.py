@@ -6,11 +6,10 @@
 """The abstract async backend that every concrete async backend implements.
 
 Same as the sync :class:`~azure.cosmos._backend.base.CosmosBackend`, except
-``execute`` is a coroutine so the async container can ``await`` it without
-bridging threads. ``execute_pages`` is implemented for ``query_items`` /
-``read_all_items`` (see :class:`~azure.cosmos.aio._backend.rust.AsyncRustBackend`)
-as an async iterator; ``execute_batch`` is reserved here too and raises
-``NotImplementedError`` until the batch operation is added.
+``execute`` is a coroutine so async callers can await it without blocking the
+event-loop thread. ``execute_pages`` is implemented for the operations registered
+in ``QUERY_TO_BINDING_METHOD``; ``execute_batch`` is reserved and raises
+``NotImplementedError`` until transactional batch is migrated.
 
 The request and reply objects this class takes and returns are not redefined
 here. They carry pure data with no I/O, so both engines share the single
@@ -59,6 +58,9 @@ class AsyncCosmosBackend(abc.ABC):
     ``PreparedRequest``-driven, so it does not implement ``execute`` and instead
     overrides :meth:`run_operation` and :meth:`run_page_operation` to await the
     legacy operation.
+
+    The legacy implementation and compatibility fallback are temporary parity
+    scaffolding; the migration target is complete Rust coverage.
     """
 
     #: Short identifier surfaced in the startup INFO log and the

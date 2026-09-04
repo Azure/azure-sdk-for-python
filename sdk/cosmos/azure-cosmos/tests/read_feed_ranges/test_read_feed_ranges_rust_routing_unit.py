@@ -22,8 +22,11 @@ production as a silently mismatched feed-range value.
 """
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import pytest
 
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._backend.operations import OP_FEED_RANGE_FROM_PARTITION_KEY
 from azure.cosmos._feed_ranges_rust_routing import (
@@ -33,6 +36,8 @@ from azure.cosmos._feed_ranges_rust_routing import (
     parse_feed_range_from_partition_key_payload,
     parse_read_feed_ranges_payload,
 )
+
+RUST_BACKEND = SimpleNamespace(name="rust")
 
 from azure.cosmos._routing.routing_range import PartitionKeyRange, Range
 
@@ -117,12 +122,12 @@ def test_rust_parser_rejects_non_string_bounds():
 
 def test_gate_requires_backend():
     """Python handles the call when Rust is unavailable."""
-    assert can_use_rust_backend_for_read_feed_ranges(backend=None, kwargs={}) is False
+    assert can_use_rust_backend_for_read_feed_ranges(backend=LEGACY_BACKEND, kwargs={}) is False
 
 
 def test_gate_allows_backend_with_no_kwargs():
     """Rust handles a supported read-feed-ranges call."""
-    assert can_use_rust_backend_for_read_feed_ranges(backend=object(), kwargs={}) is True
+    assert can_use_rust_backend_for_read_feed_ranges(backend=RUST_BACKEND, kwargs={}) is True
 
 
 def test_gate_falls_back_to_legacy_when_kwargs_present():
@@ -130,7 +135,7 @@ def test_gate_falls_back_to_legacy_when_kwargs_present():
     # stay off until each knob is mirrored, so any kwarg forces legacy.
     assert (
         can_use_rust_backend_for_read_feed_ranges(
-            backend=object(), kwargs={"partition_key": "x"}
+            backend=RUST_BACKEND, kwargs={"partition_key": "x"}
         )
         is False
     )
@@ -138,12 +143,12 @@ def test_gate_falls_back_to_legacy_when_kwargs_present():
 
 def test_feed_range_from_partition_key_gate_requires_backend():
     """Python handles partition-key conversion when Rust is unavailable."""
-    assert can_use_rust_backend_for_feed_range_from_partition_key(backend=None) is False
+    assert can_use_rust_backend_for_feed_range_from_partition_key(backend=LEGACY_BACKEND) is False
 
 
 def test_feed_range_from_partition_key_gate_allows_backend():
     """Rust handles supported partition-key conversion."""
-    assert can_use_rust_backend_for_feed_range_from_partition_key(backend=object()) is True
+    assert can_use_rust_backend_for_feed_range_from_partition_key(backend=RUST_BACKEND) is True
 
 
 def test_feed_range_from_partition_key_builds_prepared_request():

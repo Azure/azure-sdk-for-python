@@ -34,12 +34,15 @@
 //!         `CosmosOperation::create_item`, runs it on the Tokio
 //!         runtime with the GIL released, and converts the
 //!         `CosmosResponse` into a tuple matching the Python
-//!         `BackendResponse` dataclass.
+//!         `BackendResponse` dataclass. Python normally carries the
+//!         already-resolved document id in `PreparedRequest.item_id`; the
+//!         binding reads `body_bytes` only as a compatibility fallback.
 //!
 //!   * `upsert_item(handle, prepared) -> (status, sub_status,
 //!                                         headers, body, diagnostics)`
-//!         Same input/output shape as `create_item` (write-with-body:
-//!         the document id is carried inside `body_bytes`). The only
+//!         Same input/output shape as `create_item`: Python normally carries
+//!         the document id in `PreparedRequest.item_id`, with `body_bytes`
+//!         retained as the compatibility fallback. The only
 //!         difference is the operation kind —
 //!         `CosmosOperation::upsert_item` — which makes the driver
 //!         pipeline stamp `x-ms-documentdb-is-upsert: true` and POST to
@@ -172,6 +175,7 @@ macro_rules! add_pyfn {
 fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, runtime::init_client);
     add_pyfn!(m, runtime::close_client);
+    add_pyfn!(m, runtime::fault_injection_rule_hit_count);
     add_pyfn!(m, documents::create_item);
     add_pyfn!(m, documents::upsert_item);
     add_pyfn!(m, documents::replace_item);

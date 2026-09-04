@@ -27,6 +27,7 @@ from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_PATCH_ITEM
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
 _OPERATIONS = [
@@ -52,7 +53,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc.container_properties_cache = cache  # the container also reads the cache under this name
 
     # No Rust backend, so the patch goes to the existing client.
-    cc._backend = None
+    cc._backend = LEGACY_BACKEND
     cc.PatchItem = MagicMock(return_value={"id": "patch_item", "_rid": rid})
 
     proxy = ContainerProxy(cc, "dbs/db", "c")
@@ -282,4 +283,3 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

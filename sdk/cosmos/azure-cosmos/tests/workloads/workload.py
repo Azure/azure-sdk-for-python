@@ -107,24 +107,24 @@ def _wrap_backend_for_counting(client, is_async, client_logger):
     A row tagged "rust" that actually ran core-python would mislabel every number,
     so derive the truth from the live client:
 
-      1. Read the backend object the client built (None for core-python, a
-         RustBackend for Rust). Fail loudly if it does not match the COSMOS_BACKEND
+      1. Read the concrete backend object the client built. Fail loudly if it
+         does not match the COSMOS_BACKEND
          label, and record its class name as ``runtime_backend`` on every row.
       2. Wrap its ``execute`` to count how many operations the Rust driver actually
          handled (returned a non-None response). The item helpers fall back to
          core-python when ``execute`` returns None, so this count is per-row proof
-         the Rust path did the work. core-python has no backend object, so nothing
-         is wrapped and the count stays 0.
+         the Rust path did the work. The temporary legacy backend is not wrapped,
+         so its count stays 0.
     """
 
-    backend = getattr(client, "_backend", None)
-    runtime_name = "core-python" if backend is None else type(backend).__name__
+    backend = client._backend
+    runtime_name = type(backend).__name__
     backend_counters.set_runtime_backend(runtime_name)
 
     labeled = os.environ.get("COSMOS_BACKEND", "core-python").strip().lower()
     if labeled in ("", "core_python", "core-python", "python"):
         labeled = "core-python"
-    actual = "core-python" if backend is None else "rust"
+    actual = backend.name
     if labeled != actual:
         raise RuntimeError(
             "backend mismatch: COSMOS_BACKEND="
@@ -136,8 +136,8 @@ def _wrap_backend_for_counting(client, is_async, client_logger):
     client_logger.info(
         "backend check: label=%s runtime_backend=%s", labeled, runtime_name
     )
-    if backend is None:
-        return  # core-python: no backend object to wrap; counter stays 0.
+    if actual == "core-python":
+        return
 
     orig_execute = backend.execute
     if is_async:

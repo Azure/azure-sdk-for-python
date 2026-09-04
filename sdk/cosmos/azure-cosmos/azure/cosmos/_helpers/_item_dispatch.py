@@ -13,10 +13,9 @@ the two helpers cannot drift. Nothing here performs I/O.
 from __future__ import annotations
 
 import warnings
-from typing import Any, Dict, Optional, cast
+from typing import Any, Dict, Optional
 
 from .._availability_strategy_config import _validate_request_hedging_strategy
-from .._backend.base import CosmosBackend
 from .._base import build_options
 from .._constants import _Constants as Constants
 
@@ -66,25 +65,25 @@ def merge_create_item_explicit_kwargs(
         kwargs['response_hook'] = response_hook
 
 
-def pick_backend(client_connection: Any) -> Optional[CosmosBackend]:
-    """Return the stored backend selection: a rust backend, or ``None``.
+def pick_backend(client_connection: Any) -> Any:
+    """Return the concrete backend stored on the client connection.
 
-    ``None`` means core-python was selected. This is the raw, ``Optional``
-    selection stored at client construction. Every family coordinator coerces
-    this selection to an explicit
-    :class:`~azure.cosmos._backend.legacy.LegacyBackend` (via
-    :func:`~azure.cosmos._backend.legacy.coerce_backend`) so it holds one backend
-    by interface and never branches on ``None``. The selection is made once at
-    construction and never reconsidered per call.
+    Production client connections always store a Rust or legacy backend object.
+    A missing or ``None`` value violates the backend invariant and raises rather
+    than silently changing the selected engine.
 
     :param client_connection: The connection that owns the ``_backend``
         attribute. A missing attribute is tolerated.
-    :returns: The rust backend instance, or ``None`` for core-python.
+    :returns: The stored concrete backend.
     """
     connection_dict = getattr(client_connection, "__dict__", None)
     if isinstance(connection_dict, dict):
-        return cast(Optional[CosmosBackend], connection_dict.get("_backend"))
-    return cast(Optional[CosmosBackend], getattr(client_connection, "_backend", None))
+        backend = connection_dict.get("_backend")
+    else:
+        backend = getattr(client_connection, "_backend", None)
+    if backend is None:
+        raise RuntimeError("client_connection does not contain a concrete Cosmos backend")
+    return backend
 
 
 def build_create_item_request_options(

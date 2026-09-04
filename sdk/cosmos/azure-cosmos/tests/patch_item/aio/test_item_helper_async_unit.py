@@ -10,8 +10,7 @@ with the sync ``ItemHelper``, so the wire shape is already pinned by the sync
 tests in ``tests/patch_item/sync/``. This file covers the async-specific
 points:
 
-1. ``PatchItem`` is awaited on the core-python path (``backend=None``,
-   routed through the explicit ``AsyncLegacyBackend``), with the resolved
+1. ``PatchItem`` is awaited through the explicit ``AsyncLegacyBackend``, with the resolved
    ``document_link``, the operations forwarded unchanged, and id generation
    disabled.
 2. A wired backend's ``BackendResponse`` is parsed into a ``CosmosDict`` and
@@ -32,6 +31,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.aio._backend.base import AsyncCosmosBackend
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
 
 
@@ -76,14 +76,14 @@ class TestAsyncPatchItem(unittest.TestCase):
     """The core-python and rust-dispatch paths for async patch."""
 
     def test_async_dispatch_falls_through_to_patch_item(self):
-        """Core-python (``backend=None``) awaits ``PatchItem`` and returns
+        """The explicit core-Python backend awaits ``PatchItem`` and returns
         its value; the resolved ``document_link`` and the ``operations`` are
         forwarded unchanged and id generation is disabled (a patch never
         mints)."""
         cc = _connection_with_cache()
 
         async def _run():
-            return await AsyncItemHelper(None, cc).patch_item(
+            return await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).patch_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/patch_item",
                 item_id="patch_item",
@@ -195,7 +195,7 @@ class TestAsyncPatchItem(unittest.TestCase):
         cc.PatchItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncItemHelper(None, cc).patch_item(
+            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).patch_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/x",
                 item_id="x",
@@ -211,4 +211,3 @@ class TestAsyncPatchItem(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

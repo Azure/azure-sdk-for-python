@@ -25,6 +25,7 @@ from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_READ_ITEM
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
 def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
@@ -44,7 +45,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc.container_properties_cache = cache  # the container also reads the cache under this name
 
     # No Rust backend, so the read goes to the existing client.
-    cc._backend = None
+    cc._backend = LEGACY_BACKEND
     cc.ReadItem = MagicMock(return_value={"id": "read_item", "_rid": rid})
 
     proxy = ContainerProxy(cc, "dbs/db", "c")
@@ -196,4 +197,3 @@ class TestContainerReadItemBackendRouting(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

@@ -11,8 +11,7 @@ behaviour is already pinned by the sync tests in
 ``tests/upsert_item/sync/``. This file covers only the async-specific
 touchpoints upsert adds:
 
-1. ``UpsertItem`` is awaited on the core-python path (``backend=None``,
-   routed through the explicit ``AsyncLegacyBackend``).
+1. ``UpsertItem`` is awaited through the explicit ``AsyncLegacyBackend``.
 2. The partition key is awaited out of the body (write-with-body), and
    ``etag`` / ``match_condition`` still reach the legacy options as the
    ``accessCondition`` an upsert honours.
@@ -26,6 +25,7 @@ from unittest.mock import AsyncMock, MagicMock
 from azure.core import MatchConditions
 
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 
 
 def _connection_with_cache(rid="rid"):
@@ -41,17 +41,17 @@ def _connection_with_cache(rid="rid"):
 
 
 class TestAsyncUpsertItem(unittest.TestCase):
-    """The core-python (``backend=None``) path is the async fall-through upsert path."""
+    """The explicit core-Python backend is the async fallback upsert path."""
 
     def test_async_dispatch_falls_through_to_upsert_item(self):
-        """Core-python (``backend=None``) awaits ``UpsertItem`` and returns
+        """The explicit core-Python backend awaits ``UpsertItem`` and returns
         its value; the body and link are forwarded unchanged and id
         generation is disabled (an upsert never mints an id)."""
         cc = _connection_with_cache()
         body = {"id": "order-42", "pk": "customerA"}
 
         async def _run():
-            return await AsyncItemHelper(None, cc).upsert_item(
+            return await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).upsert_item(
                 container_link="dbs/db/colls/c",
                 body=body,
             )
@@ -71,7 +71,7 @@ class TestAsyncUpsertItem(unittest.TestCase):
         cc = _connection_with_cache()
 
         async def _run():
-            await AsyncItemHelper(None, cc).upsert_item(
+            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).upsert_item(
                 container_link="dbs/db/colls/c",
                 body={"id": "x", "pk": "customerA"},
                 match_condition=MatchConditions.IfMissing,
@@ -98,7 +98,7 @@ class TestAsyncUpsertItem(unittest.TestCase):
         cc.UpsertItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncItemHelper(None, cc).upsert_item(
+            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).upsert_item(
                 container_link="dbs/db/colls/c",
                 body={"id": "x", "pk": "a"},
             )
@@ -112,4 +112,3 @@ class TestAsyncUpsertItem(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

@@ -105,6 +105,44 @@ class TestFaultInjectionTransport:
             if cosmosError.status_code != 502:
                 raise cosmosError
 
+    def test_throws_injected_error_rust(self: "TestFaultInjectionTransport"):
+        """Recreate the 502 transport fault through the Rust driver's fault layer."""
+        rule_id = "python-create-item-502"
+        client = CosmosClient(
+            self.host,
+            self.master_key,
+            consistency_level="Session",
+            _backend="rust",
+            _fault_injection_rules=[
+                {
+                    "id": rule_id,
+                    "operation_type": "CreateItem",
+                    "container_id": self.single_partition_container_name,
+                    "status_code": 502,
+                }
+            ],
+        )
+        container = client.get_database_client(
+            self.database_id
+        ).get_container_client(self.single_partition_container_name)
+        item_id = str(uuid.uuid4())
+
+        try:
+            with pytest.raises(CosmosHttpResponseError) as error:
+                container.create_item(
+                    {
+                        "id": item_id,
+                        "pk": item_id,
+                        "name": "sample document",
+                        "key": "value",
+                    }
+                )
+
+            assert error.value.status_code == 502
+            assert client._backend.fault_injection_rule_hit_count(rule_id) > 0
+        finally:
+            client.close()
+
     def test_swr_mrr_succeeds(self: "TestFaultInjectionTransport"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")

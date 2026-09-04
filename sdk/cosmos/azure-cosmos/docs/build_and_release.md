@@ -115,11 +115,15 @@ Before the v5 release can be produced:
    supported build targets. Maturin is the build tool that combines the Python
    files with the compiled Python extension and creates the wheel.
 
-3. Select one Rust compiler version for default local and CI builds.
+3. Select the approved Rust toolchain policy for default local and CI builds.
 
-   Record that exact version in
-   `sdk/cosmos/azure-cosmos/rust-toolchain.toml`. The selected version must not
-   be older than the minimum version required by either Rust crate.
+   Record the approved toolchain channel or version in
+   `sdk/cosmos/azure-cosmos/rust-toolchain.toml`. The Central Engineering
+   System prototype in PR #48867 uses the internal Microsoft
+   `ms-prod-1.97` channel through `msrustup`. This proves that the prototype
+   pipeline can compile the extension; it does not by itself approve that
+   channel for the public release. The selected compiler must not be older
+   than the minimum version required by either Rust crate.
 
 4. Supply the correct QueryPlanInterop files to each build target.
 
@@ -160,7 +164,7 @@ The following decisions are intentionally unresolved:
 | Identify the person or group acting as release approver | Cosmos SDK team |
 | Approved v5 release version | Release approver |
 | Published Rust driver crate version | Rust driver team, Cosmos SDK team, and release approver |
-| Minimum Rust version and exact default build toolchain | Cosmos SDK team, based on the selected driver crate |
+| Minimum Rust version and approved default toolchain channel or version | Cosmos SDK team and shared Azure SDK pipeline team, based on the selected driver crate and build environment |
 | QueryPlanInterop-producing team and storage location | Cosmos SDK team and release approver identify the owner; the selected QueryPlanInterop-producing team confirms the storage location |
 | Matching QueryPlanInterop and Rust driver versions | QueryPlanInterop-producing team, Rust driver team, and release approver |
 | Minimum supported Windows version, Linux compatibility level, and macOS version | Release approver |
@@ -269,6 +273,19 @@ azure_cosmos-4.16.2.tar.gz
 It contains source files and build instructions rather than already compiled
 and installable files. The current sdist is created through `setup.py`,
 with `MANIFEST.in` helping determine which repository files are included.
+
+The current CI pipeline validates the completed sdist rather than only checking
+the source checkout. The Linux build job runs `twine check` against the
+generated `.tar.gz`. The later Analyze job downloads the build artifacts and
+runs the `verifysdist` check, which installs the generated sdist and verifies
+its included directories, package metadata, compatibility with the prior
+release metadata, and `py.typed` packaging configuration.
+
+The Cosmos emulator test matrix also requests the `sdist` functional check.
+That check installs the generated source distribution into an isolated Python
+environment and runs the selected pytest tests against the installed package.
+This is separate from `verifysdist`: the emulator job tests package behavior,
+while the Analyze job inspects source-distribution contents and metadata.
 
 The current sdist does not need Rust source. A v5 sdist would also
 need the Rust binding source, Cargo files, and enough build configuration to
@@ -421,15 +438,14 @@ build uses. `rustc` is the installed Rust compiler program.
 | `sdk/cosmos/azure-cosmos/azure_cosmos_rust/Cargo.toml` | Defines the Rust binding crate, the library Cargo must create, and the Rust crates it depends on |
 | `sdk/cosmos/azure-cosmos/Cargo.lock` | Records the exact direct and indirect Rust crate versions selected by Cargo |
 | `rust-version` in the root `Cargo.toml` | States the oldest Rust compiler version the project promises to support |
-| Proposed `sdk/cosmos/azure-cosmos/rust-toolchain.toml` | Selects the exact Cargo and `rustc` version used for default local and CI builds |
+| Proposed `sdk/cosmos/azure-cosmos/rust-toolchain.toml` | Selects the Rust toolchain channel or version used for default local and CI builds |
 
 Cargo calls a `Cargo.toml` file a **manifest**. In this document, it is called a
 Cargo configuration file because that states its purpose more directly.
 
 ### The two Python-repository `Cargo.toml` files
 
-The root `Cargo.toml` defines the local Rust workspace. A workspace groups
-related crates so they can share configuration and dependency versions:
+The root `Cargo.toml` defines the local Rust workspace:
 
 ```toml
 [workspace]
@@ -437,10 +453,16 @@ members = ["azure_cosmos_rust"]
 resolver = "2"
 ```
 
+This workspace currently has only one member crate. Cargo does not require a
+workspace merely because a project contains one crate; the binding could
+instead keep all of its settings in its own `Cargo.toml`. The current design
+uses the root workspace as the package-level location for settings inherited
+by the binding crate and for the shared `Cargo.lock`.
+
 `resolver = "2"` selects Cargo's second-generation rules for combining
 dependency features.
 
-It also provides values that the Rust binding crate can reuse:
+The root file provides values that the binding crate reuses:
 
 ```toml
 [workspace.package]
@@ -459,7 +481,15 @@ tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
 ```
 
 means that the binding uses the `tokio` version declared in the root
-`Cargo.toml`. The two files are therefore not duplicates.
+`Cargo.toml`. Other inherited values include the Rust edition, minimum Rust
+version, authors, license, and repository. The two files are therefore not
+duplicates: the root file holds package-level shared settings, while the
+nested file defines the actual binding crate and the library it builds.
+
+If more Rust crates are added to this Python package later, they can be added
+as additional workspace members and reuse the same package-level settings and
+lock file. That future possibility is a benefit of the structure, not the
+reason Cargo needs a workspace today.
 
 ### `Cargo.lock` is already checked in
 
@@ -503,21 +533,36 @@ This is the minimum supported Rust version: the oldest compiler the Rust
 binding crate claims can build the source. It must be updated if the approved
 published driver requires a newer compiler.
 
-The proposed `rust-toolchain.toml` has a different purpose. It selects one
-exact toolchain for default local and CI builds:
+The current working branch does not contain `rust-toolchain.toml`. The Central
+Engineering System prototype in PR #48867 adds:
 
 ```toml
 [toolchain]
-channel = "<approved exact Rust version>"
+channel = "ms-prod-1.97"
 profile = "minimal"
 ```
 
-Although the setting is named `channel`, it can contain an exact version such
-as `1.88.0` instead of the moving name `stable`.
+`ms-prod-1.97` is an internal Microsoft Rust toolchain channel. It identifies
+the Microsoft production 1.97 toolchain line: a coordinated bundle containing
+`rustc`, Cargo, and the Rust standard library. The minor-only channel can pick
+up approved point releases when the toolchain is updated, so it is not the
+same as pinning one immutable compiler patch version.
 
-`profile = "minimal"` tells Rustup, the Rust toolchain manager, to install the
-basic tools needed for compilation: Cargo, `rustc`, and the Rust standard
+`msrustup` is Microsoft's internal toolchain manager. It installs and selects
+internal `ms-*` toolchain channels. Standard public `rustup` cannot resolve
+`ms-prod-1.97`. The prototype therefore requires `msrustup`; its internal
+installation guidance is available through `https://aka.ms/msrustup` to
+authenticated Microsoft users.
+
+`profile = "minimal"` tells the toolchain manager to install the basic
+components needed for compilation: Cargo, `rustc`, and the Rust standard
 library. It does not choose between a debug build and a release build.
+
+The final release still requires an approved toolchain policy. If it retains
+the internal Microsoft channel, the shared pipeline and documented developer
+environment must install `msrustup`. If it changes to a public Rust toolchain,
+the file and instructions must instead identify a channel or exact version
+that public `rustup` can resolve.
 
 `Cargo.lock` and `rust-toolchain.toml` therefore control different inputs:
 
@@ -526,7 +571,7 @@ Cargo.lock
     exact Rust crate versions
 
 rust-toolchain.toml
-    exact Cargo and rustc toolchain version
+    selected Cargo and rustc toolchain channel or version
 ```
 
 The next section explains how Cargo uses these files to compile the binding and
@@ -608,11 +653,13 @@ Before running the command:
 
 - both repositories must remain checked out beside each other while the Rust
   binding crate still uses the neighboring driver path;
-- after the proposed `rust-toolchain.toml` is added, Rustup must be installed
-  so that file can select the exact Cargo and `rustc` version automatically.
+- when using the PR #48867 prototype configuration, `msrustup` must be
+  installed so it can resolve and select the internal `ms-prod-1.97`
+  toolchain declared by `rust-toolchain.toml`.
 
-Rustup is the Rust toolchain manager that reads `rust-toolchain.toml` and
-installs or selects the requested Cargo and `rustc` version.
+`msrustup` prepares the Rust tools; it does not compile the SDK or create the
+wheel. Cargo and `rustc` from the selected toolchain perform the Rust build,
+and Maturin later packages the compiled extension with the Python files.
 
 ### Activate a Python virtual environment and install Maturin
 
@@ -1725,7 +1772,7 @@ The Rust binding crate does not use `azure_identity`. Remove this entry from
 the release configuration. The clean-build test must prove that no active
 Cargo dependency requires a neighboring repository.
 
-### Update the two Rust compiler version settings
+### Update the minimum compiler and selected toolchain settings
 
 The minimum compiler version belongs in:
 
@@ -1739,13 +1786,14 @@ rust-version = "<minimum supported Rust version>"
 This is the oldest Rust compiler the binding and selected driver promise they
 can use.
 
-The exact toolchain used for default local and CI builds belongs in:
+The toolchain channel or version used for default local and CI builds belongs
+in:
 
 ```toml
 # sdk/cosmos/azure-cosmos/rust-toolchain.toml
 
 [toolchain]
-channel = "<approved exact Rust version>"
+channel = "<approved toolchain channel or version>"
 profile = "minimal"
 ```
 
@@ -1755,26 +1803,26 @@ These values do not have to be identical. The rule is:
 selected build toolchain >= minimum supported Rust version
 ```
 
-For example:
+The verified Central Engineering System prototype uses:
 
 ```toml
 # sdk/cosmos/azure-cosmos/Cargo.toml
 
 [workspace.package]
-rust-version = "1.88"
+rust-version = "1.75"
 ```
 
 ```toml
 # sdk/cosmos/azure-cosmos/rust-toolchain.toml
 
 [toolchain]
-channel = "1.90.0"
+channel = "ms-prod-1.97"
 profile = "minimal"
 ```
 
-The values above are examples, not approved release values. The minimum must
-be confirmed after selecting the published driver, and the exact build
-toolchain must be the same version or newer.
+These are prototype values, not approved release values. The minimum must be
+confirmed after selecting the published driver. The compiler supplied by the
+selected toolchain must be the same version as the minimum or newer.
 
 If customer source builds are supported, CI should also test the declared
 minimum compiler separately. Building default wheels with a newer toolchain
@@ -2024,7 +2072,7 @@ The shared Azure SDK pipeline must:
 |---|---|
 | Configure the driver dependency for development and release, and remove neighboring-repository Cargo paths from release configuration | `sdk/cosmos/azure-cosmos/Cargo.toml` and `sdk/cosmos/azure-cosmos/azure_cosmos_rust/Cargo.toml` |
 | Declare the minimum Rust compiler | `sdk/cosmos/azure-cosmos/Cargo.toml` |
-| Select the exact default build toolchain | `sdk/cosmos/azure-cosmos/rust-toolchain.toml` |
+| Select the approved default build toolchain channel or version | `sdk/cosmos/azure-cosmos/rust-toolchain.toml` |
 | Record and enforce exact Rust crate versions | `sdk/cosmos/azure-cosmos/Cargo.lock` and `locked = true` in `sdk/cosmos/azure-cosmos/pyproject.toml` |
 | Define `azure-cosmos` project metadata | `sdk/cosmos/azure-cosmos/pyproject.toml` |
 | Preserve the `_rust` module configuration | `sdk/cosmos/azure-cosmos/pyproject.toml` and `sdk/cosmos/azure-cosmos/azure_cosmos_rust/src/lib.rs` |
@@ -2275,6 +2323,7 @@ If no matching wheel exists, the result depends on the approved sdist policy:
 | **Linker** | The operating-system program that combines compiled code into one loadable file |
 | **Maturin** | The build tool that combines a Rust extension with Python files and creates Python wheels or sdists |
 | **PyO3** | The Rust library that exposes Rust functions and types to CPython |
-| **Rustup** | The Rust toolchain manager that installs and selects Cargo and `rustc` versions |
+| **msrustup** | Microsoft's internal Rust toolchain manager; it installs and selects internal `ms-*` toolchain channels such as the prototype's `ms-prod-1.97` |
+| **Rustup** | The public Rust toolchain manager; it installs and selects public Rust channels and versions but cannot resolve the prototype's internal `ms-prod-1.97` channel |
 | **Test matrix** | The declared CPython versions and build targets on which tests must run |
 | **Wheel repair** | Operating-system-specific processing that checks a compiled wheel, copies permitted dependent libraries when needed, and updates the wheel's compatibility information; whether the shared Azure SDK pipeline requires it must be confirmed there |

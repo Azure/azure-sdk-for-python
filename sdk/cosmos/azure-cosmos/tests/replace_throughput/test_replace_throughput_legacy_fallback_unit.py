@@ -16,6 +16,8 @@ from typing import Any, Dict, Iterable, List
 
 import pytest
 
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.container import ContainerProxy as SyncContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 
@@ -31,7 +33,7 @@ def _make_offer() -> Dict[str, Any]:
 
 
 def test_sync_fallback_replace_offer_uses_mutated_offer_object(monkeypatch):
-    """Legacy path (sync, ``_backend=None``): ReplaceOffer must receive the mutated
+    """Legacy path: ReplaceOffer must receive the mutated
     offer copy that _replace_throughput produced, and the original queried offer must
     stay untouched. A marker set only on the mutated copy proves the right object was
     sent; without this a fallback regression could PUT back the old throughput.
@@ -50,7 +52,7 @@ def test_sync_fallback_replace_offer_uses_mutated_offer_object(monkeypatch):
         return kwargs["offer"]
 
     container.client_connection = SimpleNamespace(
-        _backend=None,
+        _backend=LEGACY_BACKEND,
         QueryOffers=_query_offers,
         ReplaceOffer=_replace_offer,
     )
@@ -113,7 +115,7 @@ async def test_async_fallback_replace_offer_uses_mutated_offer_object(monkeypatc
         return kwargs["offer"]
 
     container.client_connection = SimpleNamespace(
-        _backend=None,
+        _backend=ASYNC_LEGACY_BACKEND,
         QueryOffers=_query_offers,
         ReplaceOffer=_replace_offer,
     )

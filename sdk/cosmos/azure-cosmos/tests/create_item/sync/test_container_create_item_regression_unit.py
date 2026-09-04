@@ -40,6 +40,7 @@ from unittest.mock import MagicMock, patch
 
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
 def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
@@ -67,7 +68,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     # No rust backend wired in this test fixture — the absence of
     # ``_backend`` is the signal for the dispatch site to fall
     # through to ``client_connection.CreateItem`` directly.
-    cc._backend = None
+    cc._backend = LEGACY_BACKEND
     cc.CreateItem = MagicMock(return_value={"id": "x", "_rid": rid})
 
     proxy = ContainerProxy(cc, "dbs/db", "c")
@@ -160,4 +161,3 @@ class TestContainerCreateItemPreservesLegacyCacheBehaviour(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

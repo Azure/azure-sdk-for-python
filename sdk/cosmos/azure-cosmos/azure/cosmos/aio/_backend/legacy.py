@@ -101,25 +101,3 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
 #: Process-wide shared core-python async backend. ``AsyncLegacyBackend`` holds no
 #: per-client state, so one instance is enough.
 ASYNC_LEGACY_BACKEND = AsyncLegacyBackend()
-
-
-def coerce_async_backend(
-    backend: Optional[AsyncCosmosBackend],
-) -> AsyncCosmosBackend:
-    """Map an async family coordinator's backend selection to a never-``None`` backend.
-
-    Async twin of :func:`azure.cosmos._backend.legacy.coerce_backend`:
-    ``None`` (core-python) or an already-chosen legacy backend becomes
-    :data:`ASYNC_LEGACY_BACKEND`; a rust backend passes through unchanged. The
-    stored ``client_connection._backend`` stays ``Optional`` for ``pick_backend``;
-    this is the single boundary where a coordinator coerces it. Current
-    coordinators include ``AsyncDatabaseHelper``, ``AsyncItemHelper``,
-    ``AsyncThroughputHelper``, and ``AsyncFeedRangeHelper``.
-
-    :param backend: The selected async backend, or ``None`` for core-python.
-    :returns: A concrete async backend (never ``None``).
-    :rtype: ~azure.cosmos.aio._backend.base.AsyncCosmosBackend
-    """
-    if backend is None:
-        return ASYNC_LEGACY_BACKEND
-    return backend

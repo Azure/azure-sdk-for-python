@@ -366,8 +366,8 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         )
         # The *_item_async function returns an awaitable that finishes on the binding's
         # shared Tokio runtime (one process-wide thread pool, not a per-driver runtime),
-        # so awaiting it uses no Python thread. Only the one-time
-        # init_client in _ensure_handle still runs on a background thread.
+        # so the pending request does not reserve a dedicated Python worker thread.
+        # Only the one-time init_client in _ensure_handle runs on a background thread.
         # A response-less driver failure (transport error, client-side validation,
         # pre-HTTP timeout) surfaces as the binding's DriverTransportError;
         # translate it to azure-core's ServiceResponseError so customer handlers

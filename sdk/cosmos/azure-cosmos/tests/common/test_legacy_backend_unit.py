@@ -26,12 +26,11 @@ from dataclasses import FrozenInstanceError
 from azure.cosmos._backend.base import CosmosBackend
 from azure.cosmos._backend.contracts import LegacyOperation
 from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
-from azure.cosmos._backend.legacy import LEGACY_BACKEND, LegacyBackend, coerce_backend
+from azure.cosmos._backend.legacy import LEGACY_BACKEND, LegacyBackend
 from azure.cosmos.aio._backend.base import AsyncCosmosBackend
 from azure.cosmos.aio._backend.legacy import (
     ASYNC_LEGACY_BACKEND,
     AsyncLegacyBackend,
-    coerce_async_backend,
 )
 
 
@@ -103,31 +102,8 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
             op.op = "delete_item"  # type: ignore[misc]
 
 
-class TestCoerceBackendNeverReturnsNone(unittest.TestCase):
-    """``coerce_backend`` is the single place a coordinator maps the client's
-    ``Optional[CosmosBackend]`` selection to an explicit, never-``None`` backend."""
-
-    def test_none_selection_coerces_to_the_shared_legacy_backend(self):
-        """Prove an unset selection resolves to the shared Python backend."""
-        self.assertIs(coerce_backend(None), LEGACY_BACKEND)
-
-    def test_a_real_backend_passes_through_unchanged(self):
-        """Prove an explicit backend remains selected."""
-
-        class _FakeRustBackend(CosmosBackend):
-            """Provide a concrete backend for selection testing."""
-            name = "rust"
-
-            def execute(self, prepared):
-                return None
-
-        backend = _FakeRustBackend()
-        self.assertIs(coerce_backend(backend), backend)
-
-    def test_coercion_result_is_never_none(self):
-        """Prove backend selection always returns a usable object."""
-        for selection in (None, LEGACY_BACKEND):
-            self.assertIsNotNone(coerce_backend(selection))
+class TestBackendCompatibilityFallback(unittest.TestCase):
+    """The backend boundary owns temporary parity fallback."""
 
     def test_backend_boundary_owns_explicit_compatibility_fallback(self):
         """Prove a supported Rust rejection can run the Python operation."""
@@ -215,23 +191,6 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
             self.assertEqual(result, "async-legacy-page")
 
         asyncio.run(_run())
-
-    def test_none_selection_coerces_to_the_shared_async_legacy_backend(self):
-        """Prove an unset async selection resolves to the Python backend."""
-        self.assertIs(coerce_async_backend(None), ASYNC_LEGACY_BACKEND)
-
-    def test_a_real_async_backend_passes_through_unchanged(self):
-        """Prove an explicit async backend remains selected."""
-
-        class _FakeAsyncRustBackend(AsyncCosmosBackend):
-            """Provide an async backend for selection testing."""
-            name = "rust"
-
-            async def execute(self, prepared):
-                return None
-
-        backend = _FakeAsyncRustBackend()
-        self.assertIs(coerce_async_backend(backend), backend)
 
     def test_async_backend_boundary_owns_explicit_compatibility_fallback(self):
         """Prove an async Rust rejection can run the Python operation."""

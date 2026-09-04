@@ -9,6 +9,7 @@ from __future__ import annotations
 import pytest
 
 from common import _parity_helpers
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
 class _Connection:
@@ -35,7 +36,7 @@ def test_runner_rejects_factory_that_returns_core_python_for_rust():
     with pytest.raises(AssertionError, match="requested 'rust'"):
         _parity_helpers.run_on_both_backends(
             lambda _client: {"value": 1},
-            client_factory=lambda _requested: _Client(None),
+            client_factory=lambda _requested: _Client(LEGACY_BACKEND),
         )
 
 
@@ -43,7 +44,7 @@ def test_runner_accepts_clients_with_the_requested_backends():
     """The backend identity check accepts one real label per column."""
 
     def factory(requested):
-        return _Client(None if requested == "core-python" else _RustBackend())
+        return _Client(LEGACY_BACKEND if requested == "core-python" else _RustBackend())
 
     comparison = _parity_helpers.run_on_both_backends(
         lambda _client: {"value": 1},
@@ -63,7 +64,7 @@ def test_runner_does_not_swallow_process_control_exceptions():
         _parity_helpers.run_on_both_backends(
             call,
             client_factory=lambda requested: _Client(
-                None if requested == "core-python" else _RustBackend()
+                LEGACY_BACKEND if requested == "core-python" else _RustBackend()
             ),
         )
 

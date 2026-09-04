@@ -58,6 +58,10 @@ use pyo3::types::PyStringMethods;
 
 use azure_data_cosmos_driver::{
     driver::{CosmosDriver, CosmosDriverRuntime},
+    fault_injection::{
+        CustomResponseBuilder, FaultInjectionConditionBuilder, FaultInjectionResultBuilder,
+        FaultInjectionRule, FaultInjectionRuleBuilder, FaultOperationType,
+    },
     models::AccountReference,
     options::{
         AvailabilityStrategy, ConnectionPoolOptions, DriverOptions, ExcludedRegions,
@@ -73,29 +77,9 @@ use crate::credential::PyTokenCredential;
 // ---------------------------------------------------------------------------
 // Per-process singletons
 // ---------------------------------------------------------------------------
-//
-// What is process-wide vs per-key, precisely:
-//   * PROCESS-WIDE (one each, built once, live for the whole Python process):
-//     the shared Tokio runtime and the driver runtime, bundled in RuntimeContext
-//     behind the RUNTIME_CONTEXT OnceLock; plus the DRIVERS cache map itself.
-//   * PER (endpoint, credential, config): the rust drivers stored *inside* that
-//     cache. Many can exist; each is reference-counted and dropped when its last
-//     client closes.
-// All of these are lazily initialised on the first init_client call.
 
-/// The two process-wide runtimes, bundled so one `OnceLock` builds both together.
-///
-/// Both fields are one-per-process and built once (see `runtime_context`):
-///   * `tokio_rt` -- the shared Tokio runtime (the thread pool that runs async
-///     work). Not Cosmos-specific.
-///   * `driver_runtime` -- the driver runtime (`CosmosDriverRuntime`): the factory
-///     that builds rust drivers and carries the process-wide connection-pool
-///     config. Built *on* `tokio_rt`.
-///
-/// Neither is a rust driver: a rust driver (`CosmosDriver`) is per
-/// `(endpoint, credential, config)` and lives in the `DRIVERS` cache, not here.
-/// The connection-pool settings are recorded because they are process-global and
-/// can only be set once (see `runtime_settings_conflict`).
+/// Bundles the process-wide Tokio runtime, driver factory, and the runtime
+/// settings that later clients must match. Built once by `runtime_context`.
 pub(crate) struct RuntimeContext {
     pub(crate) tokio_rt: TokioRuntime,
     pub(crate) driver_runtime: Arc<CosmosDriverRuntime>,
@@ -137,6 +121,7 @@ struct RuntimeSettings {
 /// closing one of two sharers would evict the driver the other still needs.
 pub(crate) struct DriverEntry {
     pub(crate) driver: Arc<CosmosDriver>,
+    fault_rules: HashMap<String, Arc<FaultInjectionRule>>,
     refcount: usize,
 }
 
@@ -165,8 +150,9 @@ fn apply_close(refcount: usize) -> (usize, bool) {
 //
 // No secret goes into the key:
 //
-// * A master key becomes a salted, non-reversible 64-bit hash, safe to put in the
-//   handle and logs. Equal keys hash equal; different keys do not.
+// * A master key becomes a salted, non-reversible 64-bit hash, so the plaintext
+//   secret is never stored in the handle. The handle still identifies a specific
+//   endpoint, credential, and config and should not be logged.
 // * A token credential is keyed by its Python object identity. The cache holds a
 //   reference to it, so its address can't be reused by another live credential while
 //   cached. The token value is never read.
@@ -189,7 +175,9 @@ fn salted_hash(value: &str) -> u64 {
     hasher.finish()
 }
 
-/// Fingerprint a master-key credential: a `mk:`-tagged salted hash, safe to log.
+/// Fingerprint a master-key credential as an `mk:`-tagged salted hash so the
+/// plaintext key is not stored. The fingerprint is still part of the internal
+/// driver identity and should not be logged.
 fn master_key_fingerprint(master_key: &str) -> String {
     format!("mk:{:016x}", salted_hash(master_key))
 }
@@ -383,9 +371,9 @@ pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static Runtim
 // init_client
 // ---------------------------------------------------------------------------
 //
-// The entry point, called once when a customer constructs a `CosmosClient` on the
-// rust backend. It returns the driver handle -- the `(endpoint, credential,
-// config)` cache key -- and makes sure a rust driver for that key exists:
+// The entry point, called once on a rust-backed client's first Rust operation.
+// It returns the driver handle -- the `(endpoint, credential, config)` cache key
+// -- and makes sure a rust driver for that key exists:
 //   * Fast path: a driver for this key already exists (another client with the
 //     same endpoint, credential, and config), so just add one reference and reuse
 //     it. This is what makes same-settings clients share one rust driver.
@@ -450,13 +438,14 @@ pub(crate) fn init_client(
     // is a Python object). An absent config leaves both routing and the
     // per-account operation options unset, so the driver is built with only the
     // account and otherwise keeps its defaults.
-    let (preferred_regions, operation_options, user_agent_suffix) = match config {
+    let (preferred_regions, operation_options, user_agent_suffix, fault_rules) = match config {
         Some(client_config) => (
             preferred_regions_from_config(client_config)?,
             operation_options_from_config(client_config)?,
             user_agent_suffix_from_config(client_config)?,
+            fault_rules_from_config(client_config)?,
         ),
-        None => (Vec::new(), None, None),
+        None => (Vec::new(), None, None, Vec::new()),
     };
 
     // Slow path: build the driver. Held without any of our locks because
@@ -492,6 +481,11 @@ pub(crate) fn init_client(
         }
         if let Some(user_agent_suffix) = user_agent_suffix {
             builder = builder.with_user_agent_suffix(user_agent_suffix);
+        }
+        if !fault_rules.is_empty() {
+            builder = builder
+                .with_fault_injection_rules(fault_rules.clone())
+                .map_err(|e| PyValueError::new_err(format!("invalid fault rules: {e}")))?;
         }
         builder.build()
     };
@@ -532,6 +526,10 @@ pub(crate) fn init_client(
                     handle.clone(),
                     DriverEntry {
                         driver,
+                        fault_rules: fault_rules
+                            .into_iter()
+                            .map(|rule| (rule.id().to_string(), rule))
+                            .collect(),
                         refcount: 1,
                     },
                 );
@@ -622,6 +620,71 @@ fn user_agent_suffix_from_config(config: &Bound<'_, PyAny>) -> PyResult<Option<U
             UserAgentSuffix::MAX_LENGTH
         ))),
     }
+}
+
+fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultInjectionRule>>> {
+    let value = match config.getattr("fault_injection_rules") {
+        Ok(value) => value,
+        Err(err) => {
+            if err.is_instance_of::<PyAttributeError>(config.py()) {
+                return Ok(Vec::new());
+            }
+            return Err(err);
+        }
+    };
+    if value.is_none() {
+        return Ok(Vec::new());
+    }
+
+    let mut rules = Vec::new();
+    for item in value.iter()? {
+        let item = item?;
+        let id: String = item.getattr("id")?.extract()?;
+        let operation_name: String = item.getattr("operation_type")?.extract()?;
+        let operation_type = operation_name.parse::<FaultOperationType>().map_err(|e| {
+            PyValueError::new_err(format!(
+                "fault rule {id:?} has invalid operation_type {operation_name:?}: {e}"
+            ))
+        })?;
+
+        let mut condition =
+            FaultInjectionConditionBuilder::new().with_operation_type(operation_type);
+        if let Some(container_id) = item.getattr("container_id")?.extract::<Option<String>>()? {
+            condition = condition.with_container_id(container_id);
+        }
+        if let Some(region) = item.getattr("region")?.extract::<Option<String>>()? {
+            condition = condition.with_region(Region::from(region));
+        }
+
+        let status_code: u16 = item.getattr("status_code")?.extract()?;
+        let sub_status: u16 = item.getattr("sub_status")?.extract()?;
+        let mut response =
+            CustomResponseBuilder::new(azure_core::http::StatusCode::from(status_code));
+        if sub_status != 0 {
+            response = response.with_sub_status(sub_status);
+        }
+
+        let delay_ms: u64 = item.getattr("delay_ms")?.extract()?;
+        let probability: f32 = item.getattr("probability")?.extract()?;
+        let mut result = FaultInjectionResultBuilder::new()
+            .with_custom_response(response.build())
+            .with_probability(probability);
+        if delay_ms != 0 {
+            result = result.with_delay(Duration::from_millis(delay_ms));
+        }
+
+        let mut rule_builder =
+            FaultInjectionRuleBuilder::new(id, result.build()).with_condition(condition.build());
+        if let Some(hit_limit) = item.getattr("hit_limit")?.extract::<Option<u32>>()? {
+            rule_builder = rule_builder.with_hit_limit(hit_limit);
+        }
+        let rule = Arc::new(rule_builder.build());
+        if !item.getattr("enabled")?.extract::<bool>()? {
+            rule.disable();
+        }
+        rules.push(rule);
+    }
+    Ok(rules)
 }
 
 /// Build a driver-level `OperationOptions` from the prepared client config's
@@ -773,6 +836,18 @@ pub(crate) fn close_client(handle: &str) -> PyResult<()> {
     };
     drop(evicted);
     Ok(())
+}
+
+#[pyfunction]
+pub(crate) fn fault_injection_rule_hit_count(handle: &str, rule_id: &str) -> PyResult<u32> {
+    let cache = drivers().read();
+    let entry = cache
+        .get(handle)
+        .ok_or_else(|| PyValueError::new_err("unknown or closed Rust client handle"))?;
+    let rule = entry.fault_rules.get(rule_id).ok_or_else(|| {
+        PyValueError::new_err(format!("unknown fault injection rule id: {rule_id:?}"))
+    })?;
+    Ok(rule.hit_count())
 }
 
 #[cfg(test)]

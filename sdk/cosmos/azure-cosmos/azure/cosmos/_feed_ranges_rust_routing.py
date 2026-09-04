@@ -15,6 +15,7 @@ from __future__ import annotations
 from typing import Any, Mapping, Optional, cast
 
 from . import _base as base
+from ._backend.constants import is_rust_backend
 from ._backend.operations import OP_FEED_RANGE_FROM_PARTITION_KEY, OP_IS_FEED_RANGE_SUBSET, OP_READ_FEED_RANGES
 from ._backend.contracts import PreparedRequest
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
@@ -30,7 +31,7 @@ def can_use_rust_backend_for_read_feed_ranges(
     kwargs: Mapping[str, Any],
 ) -> bool:
     """Return True when ``read_feed_ranges`` can use the Rust backend."""
-    if backend is None:
+    if not is_rust_backend(backend):
         return False
     # Legacy read_feed_ranges forwards unknown kwargs into routing-map reads.
     # Keep those calls on legacy until each option is explicitly supported on Rust.
@@ -96,7 +97,7 @@ def can_use_rust_backend_for_feed_range_from_partition_key(
     backend: Any,
 ) -> bool:
     """Return True when ``feed_range_from_partition_key`` can use the Rust backend."""
-    return backend is not None
+    return is_rust_backend(backend)
 
 
 def build_feed_range_from_partition_key_prepared_request(
@@ -169,7 +170,7 @@ def can_use_rust_backend_for_is_feed_range_subset(
     backend: Any,
 ) -> bool:
     """Return True when ``is_feed_range_subset`` can use the Rust backend."""
-    return backend is not None
+    return is_rust_backend(backend)
 
 
 def build_is_feed_range_subset_prepared_request(
@@ -213,8 +214,8 @@ def try_read_feed_ranges_with_rust_backend(
     force_refresh: bool,
 ) -> Optional[list[dict[str, Any]]]:
     """Execute ``read_feed_ranges`` through Rust, or return None to use legacy fallback."""
-    backend = getattr(client_connection, "_backend", None)
-    if backend is None:
+    backend = client_connection._backend
+    if not is_rust_backend(backend):
         return None
     prepared = build_read_feed_ranges_prepared_request(
         container_link=container_link,
@@ -238,8 +239,8 @@ def try_feed_range_from_partition_key_with_rust_backend(
     partition_key_value: Any,
 ) -> Optional[dict[str, Any]]:
     """Execute ``feed_range_from_partition_key`` through Rust, or return None to use legacy fallback."""
-    backend = getattr(client_connection, "_backend", None)
-    if backend is None:
+    backend = client_connection._backend
+    if not is_rust_backend(backend):
         return None
     prepared = build_feed_range_from_partition_key_prepared_request(
         container_link=container_link,
@@ -263,8 +264,8 @@ def try_is_feed_range_subset_with_rust_backend(
     child_feed_range: dict[str, Any],
 ) -> Optional[bool]:
     """Execute ``is_feed_range_subset`` through Rust, or return None to use legacy fallback."""
-    backend = getattr(client_connection, "_backend", None)
-    if backend is None:
+    backend = client_connection._backend
+    if not is_rust_backend(backend):
         return None
     prepared = build_is_feed_range_subset_prepared_request(
         parent_feed_range=parent_feed_range,
@@ -300,8 +301,8 @@ async def try_read_feed_ranges_with_rust_backend_async(
     force_refresh: bool,
 ) -> Optional[list[dict[str, Any]]]:
     """Async sibling of ``try_read_feed_ranges_with_rust_backend``."""
-    backend = getattr(client_connection, "_backend", None)
-    if backend is None:
+    backend = client_connection._backend
+    if not is_rust_backend(backend):
         return None
     prepared = build_read_feed_ranges_prepared_request(
         container_link=container_link,
@@ -325,8 +326,8 @@ async def try_feed_range_from_partition_key_with_rust_backend_async(
     partition_key_value: Any,
 ) -> Optional[dict[str, Any]]:
     """Async sibling of ``try_feed_range_from_partition_key_with_rust_backend``."""
-    backend = getattr(client_connection, "_backend", None)
-    if backend is None:
+    backend = client_connection._backend
+    if not is_rust_backend(backend):
         return None
     prepared = build_feed_range_from_partition_key_prepared_request(
         container_link=container_link,
@@ -350,8 +351,8 @@ async def try_is_feed_range_subset_with_rust_backend_async(
     child_feed_range: dict[str, Any],
 ) -> Optional[bool]:
     """Async sibling of ``try_is_feed_range_subset_with_rust_backend``."""
-    backend = getattr(client_connection, "_backend", None)
-    if backend is None:
+    backend = client_connection._backend
+    if not is_rust_backend(backend):
         return None
     prepared = build_is_feed_range_subset_prepared_request(
         parent_feed_range=parent_feed_range,

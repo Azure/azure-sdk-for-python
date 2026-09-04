@@ -49,6 +49,9 @@ Run with::
 """
 from __future__ import annotations
 
+from types import SimpleNamespace
+
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 import json
 from types import SimpleNamespace
 
@@ -66,6 +69,8 @@ from azure.cosmos._offer_rust_routing import (
     prepare_read_offer_request_async,
 )
 
+RUST_BACKEND = SimpleNamespace(name="rust")
+
 _OFFER_QUERY = {
     "query": "SELECT * FROM root r WHERE r.resource=@link",
     "parameters": [{"name": "@link", "value": "dbs/db/colls/coll/"}],
@@ -74,14 +79,14 @@ _OFFER_QUERY = {
 
 def test_gate_is_off_without_backend():
     """A Python client does not attempt the Rust throughput-read path."""
-    assert can_use_rust_backend_for_read_offer(backend=None, options={}, kwargs={}) is False
+    assert can_use_rust_backend_for_read_offer(    backend=LEGACY_BACKEND, options={}, kwargs={}) is False
 
 
 def test_gate_is_on_with_backend_and_no_kwargs():
     """A Rust-backed client with no extra kwargs routes its throughput read through Rust."""
     # The binding now exposes an offer entry point, so a Rust-backed client with no
     # extra kwargs routes its throughput read through Rust.
-    assert can_use_rust_backend_for_read_offer(backend=object(), options={}, kwargs={}) is True
+    assert can_use_rust_backend_for_read_offer(backend=RUST_BACKEND, options={}, kwargs={}) is True
 
 
 def test_gate_is_off_with_kwargs():
@@ -90,7 +95,7 @@ def test_gate_is_off_with_kwargs():
     # knob is mirrored on the Rust path.
     assert (
         can_use_rust_backend_for_read_offer(
-            backend=object(), options={}, kwargs={"response_continuation_token_limit_in_kb": 8}
+            backend=RUST_BACKEND, options={}, kwargs={"response_continuation_token_limit_in_kb": 8}
         )
         is False
     )
@@ -100,7 +105,7 @@ def test_gate_is_off_with_read_timeout():
     """A per-call socket timeout keeps the throughput read on Python."""
     assert (
         can_use_rust_backend_for_read_offer(
-            backend=object(),
+            backend=RUST_BACKEND,
             options={Constants.Kwargs.READ_TIMEOUT: 5},
             kwargs={},
         )
@@ -112,7 +117,7 @@ def test_gate_is_off_with_availability_strategy():
     """A per-call availability strategy keeps the throughput read on Python."""
     assert (
         can_use_rust_backend_for_read_offer(
-            backend=object(),
+            backend=RUST_BACKEND,
             options={Constants.Kwargs.AVAILABILITY_STRATEGY: True},
             kwargs={},
         )

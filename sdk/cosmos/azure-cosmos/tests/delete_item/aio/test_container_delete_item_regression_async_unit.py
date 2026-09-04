@@ -18,6 +18,7 @@ from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_DELETE_ITEM
 from azure.cosmos.aio._backend.base import AsyncCosmosBackend
 from azure.cosmos.aio._container import ContainerProxy
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 
 
 def _make_async_proxy(rid="rid-cached"):
@@ -29,7 +30,7 @@ def _make_async_proxy(rid="rid-cached"):
     cc._container_properties_cache = cache
     cc.container_properties_cache = cache
 
-    cc._backend = None
+    cc._backend = ASYNC_LEGACY_BACKEND
     cc.DeleteItem = AsyncMock(return_value=None)
 
     proxy = ContainerProxy(cc, "dbs/db", "c")
@@ -103,4 +104,3 @@ class TestAsyncContainerDeleteItemRouting(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

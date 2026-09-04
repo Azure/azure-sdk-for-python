@@ -29,9 +29,9 @@ something has to (1) decide which engine that client will use, and (2) if it is
 the Rust engine, check that everything the customer passed is something the Rust
 engine can actually handle, and repackage it into the shape the driver expects.
 That is this file's whole job. The client calls :func:`make_backend` once, at
-construction, and stores what it returns: a :class:`RustBackend` object if Rust
-was chosen, or ``None`` if core-python was chosen (the rest of the SDK reads
-"no backend object" as "use the original Python path").
+construction, and stores the concrete backend it returns: a
+:class:`RustBackend` when Rust was chosen, or the shared
+:class:`~azure.cosmos._backend.legacy.LegacyBackend` when core-python was chosen.
 
 If this file didn't exist: that decide-and-check-and-repackage logic would have
 to live inside ``CosmosClient`` itself -- and be duplicated in both the sync and
@@ -72,6 +72,7 @@ from .constants import (
     VALID_BACKEND_NAMES,
 )
 from .credentials import resolved_credential
+from .legacy import LEGACY_BACKEND
 from .rust import RustBackend
 from .transport_settings import reject_unsupported_transport_settings
 
@@ -183,6 +184,7 @@ def make_backend(
     proxy_allowed: Optional[bool] = None,
     connection_timeout_seconds: Optional[float] = None,
     read_timeout_seconds: Optional[float] = None,
+    fault_injection_rules: Any = None,
     strict_isolation: Optional[bool] = None,
     proxy_config: Any = None,
     proxies: Any = None,
@@ -190,7 +192,7 @@ def make_backend(
     connection_cert: Any = None,
     ssl_config: Any = None,
     transport: Any = None,
-) -> Optional[CosmosBackend]:
+) -> CosmosBackend:
     """The one public entry point that combines the rest of this file: build
     the backend instance a sync ``CosmosClient`` will hold.
 
@@ -199,7 +201,8 @@ def make_backend(
     copies diverge. So this resolves the name; if Rust, requires the endpoint URL,
     rejects unsupported transport settings, sorts the credential, combines the
     tuning into a config, resolves the isolation switch, and returns a
-    :class:`RustBackend`. If core-python, it returns ``None``.
+    :class:`RustBackend`. If core-python, it returns the shared
+    :class:`~azure.cosmos._backend.legacy.LegacyBackend`.
 
     The keyword settings are only consulted for the Rust branch, where they are
     combined into the client config the backend carries to the driver.
@@ -247,7 +250,8 @@ def make_backend(
                     proxy_allowed=proxy_allowed,
                     connection_timeout_seconds=connection_timeout_seconds,
                     read_timeout_seconds=read_timeout_seconds,
+                    fault_injection_rules=fault_injection_rules,
                 ),
                 strict_isolation=resolve_strict_isolation(strict_isolation),
             )
-    return None
+    return LEGACY_BACKEND

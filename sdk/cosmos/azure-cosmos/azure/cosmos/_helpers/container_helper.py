@@ -9,7 +9,7 @@ from typing import Any, Callable, Mapping, Optional
 
 from .._backend.contracts import LegacyOperation
 from .._backend.operations import OP_CREATE_CONTAINER, OP_READ_CONTAINER
-from .._backend.legacy import coerce_backend
+from .._backend.base import CosmosBackend
 from .._cosmos_responses import CosmosDict
 from .._helpers._request_container import (
     build_create_container_prepared,
@@ -23,10 +23,10 @@ from .._helpers._response_parse import parse_backend_response
 class ContainerHelper:
     """Prepare and run synchronous container operations."""
 
-    def __init__(self, client_connection: Any, backend: Optional[Any]) -> None:
+    def __init__(self, client_connection: Any, backend: CosmosBackend) -> None:
         """Store the client connection and selected implementation."""
         self._client_connection = client_connection
-        self._backend = coerce_backend(backend)
+        self._backend = backend
 
     def create_container(
         self,

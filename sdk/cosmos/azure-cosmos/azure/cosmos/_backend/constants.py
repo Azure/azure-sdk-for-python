@@ -10,6 +10,7 @@ The backend names, the set of valid names, the default, and the
 module that needs them so the strings cannot drift. (The operation-kind
 constants and the dispatch types live with the contract in ``base``.)
 """
+from typing import Any
 
 #: Default backend; routes through the existing azure-core pipeline.
 BACKEND_NAME_CORE_PYTHON = "core-python"
@@ -29,6 +30,12 @@ DEFAULT_BACKEND_NAME = BACKEND_NAME_CORE_PYTHON
 #: constructor kwarg > env var > ``DEFAULT_BACKEND_NAME``.
 BACKEND_ENV_VAR = "COSMOS_BACKEND"
 
+
+def is_rust_backend(backend: Any) -> bool:
+    """Return whether ``backend`` is the concrete Rust implementation."""
+    return getattr(backend, "name", None) == BACKEND_NAME_RUST
+
+
 #: Env var that opts into strict per-account engine isolation on the Rust backend.
 #: When truthy, building a second ``CosmosClient`` to an account whose
 #: client-construction config differs from the first live client's raises
@@ -47,5 +54,3 @@ STRICT_ISOLATION_TRUE_VALUES = ("1", "true", "yes", "on")
 #: value outside either set is rejected with ``ValueError`` so a typo (e.g.
 #: ``treu``) can't silently disable the safety toggle.
 STRICT_ISOLATION_FALSE_VALUES = ("0", "false", "no", "off")
-
-

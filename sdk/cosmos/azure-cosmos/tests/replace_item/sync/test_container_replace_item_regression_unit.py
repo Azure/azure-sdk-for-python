@@ -13,7 +13,7 @@ moved the last three steps into ``ItemHelper`` (the same path
 already use) so both backends share the prep code.
 
 These tests pin the **core-python fall-through path**: with no rust
-backend wired (``_backend = None``), the helper builds the options,
+backend wired (``_backend = LEGACY_BACKEND``), the helper builds the options,
 stamps the rid, and calls ``client_connection.ReplaceItem`` -- exactly
 the path the default (v4) client takes. The rust backend's own
 ``replace_item`` dispatch is covered separately by
@@ -46,6 +46,7 @@ from azure.core import MatchConditions
 
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
 def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
@@ -68,7 +69,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
 
     # No rust backend wired -- absence of ``_backend`` makes the
     # dispatch fall through to ``client_connection.ReplaceItem``.
-    cc._backend = None
+    cc._backend = LEGACY_BACKEND
     cc.ReplaceItem = MagicMock(return_value={"id": "order-42", "_rid": rid})
 
     proxy = ContainerProxy(cc, "dbs/db", "c")
@@ -241,4 +242,3 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

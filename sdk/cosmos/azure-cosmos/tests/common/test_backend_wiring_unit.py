@@ -90,6 +90,7 @@ from azure.cosmos._backend.factory import (
     resolve_backend_name,
     resolve_strict_isolation,
 )
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.transport_settings import (
     reject_unsupported_transport_settings,
     resolve_client_transport_timeouts,
@@ -102,6 +103,7 @@ from azure.cosmos._backend.rust import RustBackend
 from azure.cosmos._helpers._item_dispatch import pick_backend
 from azure.cosmos._helpers.item_helper import ItemHelper
 from azure.cosmos.aio._backend.factory import make_async_backend
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._backend.rust import AsyncRustBackend
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
@@ -377,12 +379,11 @@ def test_import_guard(guarded_name, allowed_files):
 # "core-python" or "rust"; anything else fails at construction so a typo does
 # not quietly fall back to the default.
 
-def test_factory_default_returns_none(monkeypatch):
-    """With nothing set, the factory picks the default, which is shown as
-    ``None`` (there is no backend object for it)."""
+def test_factory_default_returns_legacy_backend(monkeypatch):
+    """With nothing set, the factory returns the concrete default backend."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     backend = make_backend(None)
-    assert backend is None
+    assert backend is LEGACY_BACKEND
 
 
 def test_factory_env_var_picks_rust(monkeypatch):
@@ -400,7 +401,7 @@ def test_factory_kwarg_overrides_env(monkeypatch):
     """The constructor argument wins over the environment variable."""
     monkeypatch.setenv(BACKEND_ENV_VAR, BACKEND_NAME_RUST)
     backend = make_backend(BACKEND_NAME_CORE_PYTHON)
-    assert backend is None
+    assert backend is LEGACY_BACKEND
 
 
 def test_factory_invalid_value_fails_loud(monkeypatch):
@@ -426,10 +427,9 @@ def test_factory_rust_without_master_key_fails_loud(monkeypatch):
 
 
 def test_async_factory_returns_async_backends(monkeypatch):
-    """The async factory returns ``None`` for the default and an async Rust
-    backend when Rust is asked for."""
+    """The async factory returns concrete legacy and Rust backends."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    assert make_async_backend(None) is None
+    assert make_async_backend(None) is ASYNC_LEGACY_BACKEND
     assert isinstance(
         make_async_backend(
             BACKEND_NAME_RUST,
@@ -2279,13 +2279,14 @@ def test_async_factory_carries_all_startup_settings_into_rust_backend(monkeypatc
 
 
 def test_account_read_guard_is_noop_for_core_python():
-    """No backend (core-python) -> the guard does nothing, legacy path runs."""
-    assert raise_account_read_unsupported(None) is None
+    """The explicit legacy backend leaves the core-python path unchanged."""
+    assert raise_account_read_unsupported(LEGACY_BACKEND) is None
 
 
 def test_account_read_guard_raises_for_rust_backend():
-    """Any non-None backend (the Rust path) -> a clear not-yet-available error."""
-    backend = object()  # stands in for a RustBackend / AsyncRustBackend
+    """The Rust backend gets a clear not-yet-available error."""
+    backend = MagicMock(name=BACKEND_NAME_RUST)
+    backend.name = BACKEND_NAME_RUST
     with pytest.raises(NotImplementedError, match="not yet available on the Rust backend"):
         raise_account_read_unsupported(backend)
 
@@ -2734,21 +2735,17 @@ def test_async_rust_backend_passes_token_credential_to_init_client(monkeypatch):
 # How a container call picks its backend
 # ---------------------------------------------------------------------------
 #
-# The client puts a Rust backend on the connection only when Rust was chosen;
-# otherwise there is none. A container call uses the Rust backend if it is set
-# and the existing client otherwise. The choice is made once per client.
+# The client always puts a concrete backend on the connection. A container call
+# uses that backend, and the choice is made once per client.
 
-def _make_sync_container_with_backends(rust_backend, core_python_backend):
+def _make_sync_container_with_backend(backend):
     """Build a container without running its constructor (which would open a
     network connection).
 
-    Pass ``rust_backend=None`` for a client with no backend; pass a Rust
-    backend for a Rust client. ``core_python_backend`` is kept for older test
-    signatures and is always ``None``.
+    Pass the concrete selected backend.
     """
     mock_cc = MagicMock()
-    mock_cc._backend = rust_backend
-    mock_cc._core_python_backend = core_python_backend
+    mock_cc._backend = backend
     container = ContainerProxy.__new__(ContainerProxy)
     container.client_connection = mock_cc
     container.id = "test"
@@ -2776,7 +2773,7 @@ def test_container_dispatch_routes_to_rust_backend(monkeypatch):
     fake_module.create_item.return_value = (201, 0, {}, b"{}")
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
-    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container = _make_sync_container_with_backend(_new_rust_backend())
     try:
         container.create_item(body={"id": "x", "pk": "a"})
     except Exception:
@@ -2786,21 +2783,16 @@ def test_container_dispatch_routes_to_rust_backend(monkeypatch):
     assert fake_module.create_item.called, "Rust path should have been taken"
 
 
-def test_container_dispatch_skipped_when_backend_attrs_absent():
-    """A container built over a connection with no backend set at all skips
-    the backend and does not fail."""
+def test_container_dispatch_rejects_missing_backend():
+    """A connection without the required concrete backend fails explicitly."""
     bare_cc = MagicMock(spec=[])  # a connection with no backend set at all
     container = ContainerProxy.__new__(ContainerProxy)
     container.client_connection = bare_cc
     container.id = "test"
     container.database_link = "dbs/test"
     container.container_link = "dbs/test/colls/test"
-    try:
+    with pytest.raises(RuntimeError, match="concrete Cosmos backend"):
         container.create_item(body={"id": "x", "pk": "a"})
-    except NotImplementedError:
-        pytest.fail("dispatch should have been skipped on a bare client_connection")
-    except Exception:
-        pass
 
 
 def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
@@ -2812,7 +2804,6 @@ def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    mock_cc._core_python_backend = None
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     container.client_connection = mock_cc
     container.id = "test"
@@ -2848,7 +2839,7 @@ def test_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
     )
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
-    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container = _make_sync_container_with_backend(_new_rust_backend())
     container.client_connection._routing_map_provider = MagicMock()
 
     feed_ranges = list(container.read_feed_ranges(force_refresh=True))
@@ -2875,7 +2866,7 @@ def test_container_read_feed_ranges_with_kwargs_falls_back_to_legacy(monkeypatch
     )
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
-    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container = _make_sync_container_with_backend(_new_rust_backend())
     container.client_connection._routing_map_provider = MagicMock()
     container.client_connection._routing_map_provider.get_overlapping_ranges.return_value = [
         {"id": "0", "minInclusive": "", "maxExclusive": "FF"}
@@ -2901,7 +2892,7 @@ def test_container_read_feed_ranges_rust_payload_must_include_partition_key_rang
     fake_module.read_feed_ranges.return_value = (200, 0, {}, b'{"unexpected":[]}')
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
-    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container = _make_sync_container_with_backend(_new_rust_backend())
     with pytest.raises(ValueError, match="PartitionKeyRanges"):
         list(container.read_feed_ranges())
 
@@ -2922,7 +2913,6 @@ def test_async_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    mock_cc._core_python_backend = None
     mock_cc._routing_map_provider = MagicMock()
     mock_cc.refresh_routing_map_provider = AsyncMock()
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
@@ -2962,7 +2952,6 @@ def test_async_container_read_feed_ranges_with_kwargs_falls_back_to_legacy(monke
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    mock_cc._core_python_backend = None
     mock_cc._routing_map_provider = MagicMock()
     mock_cc._routing_map_provider.get_overlapping_ranges = AsyncMock(
         return_value=[{"id": "0", "minInclusive": "", "maxExclusive": "FF"}]
@@ -3004,7 +2993,6 @@ def test_async_container_read_feed_ranges_rust_payload_must_include_partition_ke
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    mock_cc._core_python_backend = None
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     container.client_connection = mock_cc
     container.id = "test"
@@ -3030,7 +3018,7 @@ def test_container_feed_range_from_partition_key_routes_to_rust_backend(monkeypa
     )
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
-    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container = _make_sync_container_with_backend(_new_rust_backend())
     container._get_properties = MagicMock(side_effect=AssertionError("legacy fallback should not run"))
 
     feed_range = container.feed_range_from_partition_key("pk-a")
@@ -3053,7 +3041,7 @@ def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload(
     fake_module.feed_range_from_partition_key.return_value = (200, 0, {}, b'{"unexpected":{}}')
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
-    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container = _make_sync_container_with_backend(_new_rust_backend())
     with pytest.raises(ValueError, match="Range"):
         container.feed_range_from_partition_key("pk-a")
 
@@ -3072,7 +3060,7 @@ def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_b
     )
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
-    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container = _make_sync_container_with_backend(_new_rust_backend())
     container._is_system_key = True
     container._get_properties = MagicMock(
         return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2}}
@@ -3102,7 +3090,7 @@ def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_b
     )
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
-    container = _make_sync_container_with_backends(_new_rust_backend(), None)
+    container = _make_sync_container_with_backend(_new_rust_backend())
     container._get_properties = MagicMock(
         return_value={
             "partitionKey": {"paths": ["/tenant", "/region"], "kind": "MultiHash", "version": 2}
@@ -3136,7 +3124,6 @@ def test_async_container_feed_range_from_partition_key_routes_to_rust_backend(mo
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    mock_cc._core_python_backend = None
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     container.client_connection = mock_cc
     container.id = "test"
@@ -3169,7 +3156,6 @@ def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_pa
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    mock_cc._core_python_backend = None
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     container.client_connection = mock_cc
     container.id = "test"
@@ -3200,7 +3186,6 @@ def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    mock_cc._core_python_backend = None
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     container.client_connection = mock_cc
     container.id = "test"
@@ -3241,7 +3226,6 @@ def test_async_container_feed_range_from_partition_key_empty_sequence_routes_to_
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    mock_cc._core_python_backend = None
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     container.client_connection = mock_cc
     container.id = "test"
@@ -3296,16 +3280,10 @@ def test_pick_backend_returns_backend_when_set():
     assert pick_backend(conn) is backend
 
 
-def test_pick_backend_returns_none_when_backend_is_none():
-    """An explicit ``_backend = None`` (core-python) yields ``None``."""
-    conn = _PlainConnection()
-    conn._backend = None
-    assert pick_backend(conn) is None
-
-
-def test_pick_backend_returns_none_when_unset():
-    """No ``_backend`` attribute at all -> ``None`` (use the legacy path)."""
-    assert pick_backend(_PlainConnection()) is None
+def test_pick_backend_rejects_unset_backend():
+    """A connection without ``_backend`` violates the invariant."""
+    with pytest.raises(RuntimeError, match="concrete Cosmos backend"):
+        pick_backend(_PlainConnection())
 
 
 def test_pick_backend_uses_getattr_fallback_for_slots_connection():
@@ -3508,20 +3486,17 @@ def test_reject_unsupported_transport_settings_no_op_when_unset():
 
 
 def test_make_backend_core_python_ignores_transport_settings(monkeypatch):
-    """core-python honors these settings as before; the factory returns None and
-    never raises for them, even when several are set."""
+    """Core Python honors these settings through the explicit legacy backend
+    without applying Rust-only validation."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    assert (
-        make_backend(
-            None,
-            url=_M15_URL,
-            credential="k",
-            transport=object(),
-            proxies={"https": "http://proxy:8080"},
-            connection_verify=False,
-        )
-        is None
-    )
+    assert make_backend(
+        None,
+        url=_M15_URL,
+        credential="k",
+        transport=object(),
+        proxies={"https": "http://proxy:8080"},
+        connection_verify=False,
+    ) is LEGACY_BACKEND
 
 
 def test_make_async_backend_rejects_transport_on_rust(monkeypatch):

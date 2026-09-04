@@ -31,8 +31,10 @@ from azure.cosmos._backend.errors import (
     PageNotSupportedByBackendError,
     QueryNotSupportedByBackendError,
 )
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.contracts import BackendResponse, LegacyOperation, PreparedQuery, QueryPage
 from azure.cosmos._backend.operations import OP_LIST_DATABASES, OP_QUERY_DATABASES, OP_QUERY_ITEMS, OP_READ_ALL_ITEMS
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._backend.rust import _binding_request_from_page as _sync_binding_request_from_page
 from azure.cosmos.aio._backend.rust import (
@@ -178,7 +180,7 @@ class _SequencedAsyncBackend(AsyncCosmosBackend):
 def _new_sync_connection() -> SyncConnection:
     """Create a synchronous connection for routing tests."""
     conn = SyncConnection.__new__(SyncConnection)
-    conn._backend = None
+    conn._backend = LEGACY_BACKEND
     conn._query_compatibility_mode = SyncConnection._QueryCompatibilityMode.Query
     conn.default_headers = {}
     conn.connection_policy = ConnectionPolicy()
@@ -201,7 +203,7 @@ def _new_sync_connection() -> SyncConnection:
 def _new_async_connection() -> AsyncConnection:
     """Create an asynchronous connection for routing tests."""
     conn = AsyncConnection.__new__(AsyncConnection)
-    conn._backend = None
+    conn._backend = ASYNC_LEGACY_BACKEND
     conn._query_compatibility_mode = AsyncConnection._QueryCompatibilityMode.Query
     conn.default_headers = {}
     conn.connection_policy = ConnectionPolicy()
@@ -1861,7 +1863,7 @@ def test_sync_read_all_legacy_fallback_updates_session(monkeypatch):
     advances the session bookmark exactly like before the migration.
     """
     conn = _new_sync_connection()
-    conn._backend = None
+    conn._backend = LEGACY_BACKEND
     update_calls = []
     monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
     monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
@@ -1909,7 +1911,7 @@ def test_async_read_all_legacy_fallback_updates_session(monkeypatch):
     """
     async def _run() -> None:
         conn = _new_async_connection()
-        conn._backend = None
+        conn._backend = ASYNC_LEGACY_BACKEND
         update_calls = []
         monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
 

@@ -22,17 +22,16 @@ that case explicitly (:func:`_require_offers`) and raise the public
 ``CosmosResourceNotFoundError`` with a message naming the database, rather than
 letting an empty result fail later as something more obscure.
 
-Engine selection is handled exactly as in the container module: the client's
-backend selection is coerced to a concrete backend and the work is driven
-through :meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`, so the
-public proxy method stays a thin delegate that names no engine.
+Engine selection is handled exactly as in the container module: the concrete
+backend stored by the client drives the work through
+:meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`, so the public
+proxy method stays a thin delegate that names no engine.
 """
 from __future__ import annotations
 
 from typing import Any, Awaitable, Callable, Mapping, Optional, Union
 
 from .._backend.contracts import LegacyOperation
-from .._backend.legacy import coerce_backend
 from .._base import _deserialize_throughput, _replace_throughput
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes as _StatusCodes
@@ -71,7 +70,7 @@ def get_database_throughput(
     properties = get_properties()
     query_spec = offer_query(properties["_self"])
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
-    backend = coerce_backend(selected_backend)
+    backend = selected_backend
     offers = backend.run_operation(
         build_prepared=lambda: prepare_read_offer_request(
             client_connection=client_connection,
@@ -110,12 +109,10 @@ async def get_database_throughput_async(
 ) -> ThroughputProperties:
     """Return a database's provisioned throughput asynchronously."""
     # Import here to avoid a circular import between the sync and async packages.
-    from ..aio._backend.legacy import coerce_async_backend
-
     properties = await get_properties()
     query_spec = offer_query(properties["_self"])
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
-    backend = coerce_async_backend(selected_backend)
+    backend = selected_backend
 
     async def run_legacy_read() -> list[dict[str, Any]]:
         """Drain the legacy offer query into a list.
@@ -167,7 +164,7 @@ def replace_database_throughput(
     query_spec = offer_query(properties["_self"])
     legacy_read_kwargs = dict(kwargs if read_kwargs is None else read_kwargs)
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
-    backend = coerce_backend(selected_backend)
+    backend = selected_backend
     rust_eligible = can_use_rust_backend_for_replace_throughput(
         backend=selected_backend,
         options=rust_options,
@@ -231,12 +228,10 @@ async def replace_database_throughput_async(
     # Deferred, not module-level: ``azure.cosmos.aio`` reaches back into
     # ``azure.cosmos`` for ``DatabaseAccount``, so importing it at the top of
     # this module closes a cycle and breaks plain ``import azure.cosmos``.
-    from ..aio._backend.legacy import coerce_async_backend
-
     properties = await get_properties()
     query_spec = offer_query(properties["_self"])
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
-    backend = coerce_async_backend(selected_backend)
+    backend = selected_backend
     rust_eligible = can_use_rust_backend_for_replace_throughput(
         backend=selected_backend,
         options=rust_options,

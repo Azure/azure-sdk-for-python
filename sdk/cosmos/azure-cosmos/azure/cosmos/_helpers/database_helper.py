@@ -18,9 +18,7 @@ unlike an item write there is no container and no partition key involved.
 
 Why this module exists (public methods must not know which engine runs):
 without it, that engine branching would live in the public client methods. Here
-it coerces the client's backend selection to a concrete backend
-(``coerce_backend`` -> the rust backend or the explicit ``LegacyBackend``, never
-``None``) and drives the create through
+it uses the concrete backend stored by the client and drives the create through
 :meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`, so the public
 method is a thin delegate that names no engine. This mirrors ``ItemHelper`` and
 the throughput and feed-range coordinators.
@@ -62,7 +60,6 @@ from .. import exceptions
 from .._backend.base import CosmosBackend
 from .._backend.contracts import LegacyOperation
 from .._backend.operations import OP_CREATE_DATABASE, OP_DELETE_DATABASE, OP_READ_DATABASE
-from .._backend.legacy import coerce_backend
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
 from .._helpers._request_database import (
@@ -79,10 +76,10 @@ from .._helpers._response_parse import parse_backend_response
 class DatabaseHelper:
     """Route database operations through the selected backend boundary."""
 
-    def __init__(self, client_connection: Any, backend: Optional[CosmosBackend]) -> None:
+    def __init__(self, client_connection: Any, backend: CosmosBackend) -> None:
         """Store the client connection and selected implementation."""
         self._client_connection = client_connection
-        self._backend = coerce_backend(backend)
+        self._backend = backend
 
     def create_database(
         self,
@@ -95,17 +92,18 @@ class DatabaseHelper:
         """Create one database, without exposing engine selection to the public method.
 
         Builds the account-level create request and drives it through the selected
-        backend. If the caller set a per-call ``read_timeout`` (a socket-level
-        timeout the rust path can't honor yet), the create runs on the legacy path,
-        which does honor it -- so a customer's ``read_timeout`` is never silently
-        dropped. ``response_hook`` is invoked once on success with the response
-        headers and the created database.
+        backend. ``create_database`` does not support a per-call ``read_timeout``;
+        callers configure the read timeout when constructing ``CosmosClient``.
+        ``response_hook`` is invoked once on success with the response headers and
+        the created database.
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
-        read_timeout = request_options.get(Constants.Kwargs.READ_TIMEOUT)
-        if read_timeout is None:
-            read_timeout = operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT)
+        if (
+            request_options.get(Constants.Kwargs.READ_TIMEOUT) is not None
+            or operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT) is not None
+        ):
+            raise TypeError("create_database() does not support the 'read_timeout' keyword argument")
         result = self._backend.run_operation(
             build_prepared=lambda: build_create_database_prepared(
                 database,
@@ -124,7 +122,6 @@ class DatabaseHelper:
                 response,
                 client_connection=self._client_connection,
             ),
-            rust_eligible=read_timeout is None,
         )
         if response_hook is not None:
             response_hook(self._client_connection.last_response_headers, result)

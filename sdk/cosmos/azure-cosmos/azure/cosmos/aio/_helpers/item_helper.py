@@ -7,7 +7,10 @@
 
 Same behaviour and arguments as the sync helper. The option building is
 shared with the sync side so the two cannot diverge; what is here is the
-per-call work done with ``await``.
+per-call work done with ``await``. Core-Python remains a selectable backend
+on the current branch. On a Rust-selected client, the legacy operation carried
+here is temporary migration-parity scaffolding and is not part of the intended
+Rust-only architecture.
 """
 from __future__ import annotations
 
@@ -42,7 +45,6 @@ from ..._helpers._response_parse import parse_backend_response
 from ...partition_key import _Empty
 from .._backend.base import AsyncCosmosBackend
 from ..._backend.contracts import BackendResponse, LegacyOperation, PreparedRequest
-from .._backend.legacy import coerce_async_backend
 from ._metadata_provider import AsyncContainerMetadataProvider
 
 _LOGGER = logging.getLogger(__name__)
@@ -56,26 +58,24 @@ class AsyncItemHelper:
 
     def __init__(
         self,
-        backend: Optional[AsyncCosmosBackend],
+        backend: AsyncCosmosBackend,
         client_connection: Any,
         ensure_container_cached: Optional[Callable[[Dict[str, Any]], Awaitable[Any]]] = None,
     ) -> None:
         """Store the backend and connection this helper will use.
 
-        :param backend: The selected async backend, or ``None`` for core-python.
-            Coerced to an explicit backend (never ``None``) via
-            :func:`~azure.cosmos.aio._backend.legacy.coerce_async_backend`,
-            so each op below runs through one interface and never branches on
-            ``None``.
-        :type backend: Optional[AsyncCosmosBackend]
+        :param backend: The selected concrete async backend.
+        :type backend: AsyncCosmosBackend
         :param client_connection: The async connection used for the cache,
-            partition-key extraction, and the legacy path.
+            partition-key extraction, response compatibility, and the
+            core-Python path used either as the selected backend or as a
+            temporary fallback during migration.
         :type client_connection: Any
         :param ensure_container_cached: Optional async callable from the
             container. See the sync helper for the details.
         :type ensure_container_cached: Optional[Callable]
         """
-        self._backend = coerce_async_backend(backend)
+        self._backend = backend
         self.client_connection = client_connection
         # Reads the container rid and partition-key definition off one container
         # read (async version of the sync provider), instead of calling the
@@ -107,7 +107,9 @@ class AsyncItemHelper:
         awaitable and awaited behind the interface. ``run_legacy`` is wrapped in
         a :class:`~azure.cosmos._backend.base.LegacyOperation` -- a small, named,
         typed request/context, not a bare callable -- before it crosses into the
-        backend; see the sync helper / that class for the full rationale.
+        backend. On a Rust-selected client, that operation exists only for
+        migration parity and must disappear when the item surface is fully
+        supported by Rust.
         """
         def parse_response(response: BackendResponse) -> Any:
             parsed = parse_backend_response(
@@ -433,9 +435,10 @@ class AsyncItemHelper:
 
         container_rid = await self._resolve_container_rid(container_link, request_options)
 
-        # Use the rust path only for a plain patch. A filter or an
-        # etag / match-condition guard cannot be represented by the rust prep,
-        # so those force the legacy client even on a rust-backed client.
+        # Rust currently supports only a plain patch. A filter or an
+        # etag / match-condition guard cannot yet be represented by the Rust
+        # preparation code, so migration parity temporarily routes those
+        # requests through the legacy client.
         rust_eligible = (
             filter_predicate is None
             and "accessCondition" not in request_options

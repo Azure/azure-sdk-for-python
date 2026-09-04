@@ -49,6 +49,7 @@ from azure.cosmos import _base as base
 from azure.cosmos import http_constants
 from azure.cosmos._backend.base import CosmosBackend
 from azure.cosmos._backend.contracts import BackendResponse, QueryPage
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.operations import (
     OP_CREATE_CONTAINER,
     OP_LIST_CONTAINERS,
@@ -312,7 +313,7 @@ def test_sync_create_container_falls_back_to_legacy_for_a_read_timeout():
     )
     hooks = []
 
-    result = ContainerHelper(connection, None).create_container(
+    result = ContainerHelper(connection, LEGACY_BACKEND).create_container(
         "dbs/db1",
         {"id": "c1"},
         {"offerThroughput": 400},
@@ -506,6 +507,7 @@ def test_create_container_warns_and_forwards_the_options_it_says_it_ignores():
         return {"id": "c1"}
 
     connection = SimpleNamespace(
+        _backend=LEGACY_BACKEND,
         _get_database_link=lambda proxy: "dbs/db1",
         _set_container_properties_cache=lambda link, properties: None,
         last_response_headers={},
@@ -550,6 +552,7 @@ def test_create_container_still_rejects_an_etag_without_a_match_condition():
     from azure.cosmos.partition_key import PartitionKey
 
     connection = SimpleNamespace(
+        _backend=LEGACY_BACKEND,
         _get_database_link=lambda proxy: "dbs/db1",
         _set_container_properties_cache=lambda link, properties: None,
         last_response_headers={},
@@ -620,7 +623,7 @@ class _CapturingAsyncPagedBackend(AsyncCosmosBackend):
 def _new_sync_connection() -> SyncConnection:
     """Build a minimal ``SyncConnection`` with no live transport, for dispatch tests."""
     conn = SyncConnection.__new__(SyncConnection)
-    conn._backend = None
+    conn._backend = LEGACY_BACKEND
     conn._query_compatibility_mode = SyncConnection._QueryCompatibilityMode.Query
     conn.default_headers = {}
     conn.connection_policy = ConnectionPolicy()
@@ -643,7 +646,7 @@ def _new_sync_connection() -> SyncConnection:
 def _new_async_connection() -> AsyncConnection:
     """Build a minimal ``AsyncConnection`` with no live transport, for dispatch tests."""
     conn = AsyncConnection.__new__(AsyncConnection)
-    conn._backend = None
+    conn._backend = LEGACY_BACKEND
     conn._query_compatibility_mode = AsyncConnection._QueryCompatibilityMode.Query
     conn.default_headers = {}
     conn.connection_policy = ConnectionPolicy()
@@ -861,7 +864,7 @@ def test_sync_read_container_falls_back_to_legacy_for_a_read_timeout():
     )
     hooks = []
 
-    result = ContainerHelper(connection, None).read_container(
+    result = ContainerHelper(connection, LEGACY_BACKEND).read_container(
         "dbs/db1/colls/c1",
         {},
         response_hook=lambda headers, body: hooks.append((headers, body)),
@@ -885,7 +888,7 @@ def test_read_container_does_not_pass_the_hook_to_the_legacy_call():
     )
     hooks = []
 
-    ContainerHelper(connection, None).read_container(
+    ContainerHelper(connection, LEGACY_BACKEND).read_container(
         "dbs/db1/colls/c1",
         {},
         response_hook=lambda headers, body: hooks.append(body),

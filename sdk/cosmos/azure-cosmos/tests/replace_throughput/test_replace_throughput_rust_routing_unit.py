@@ -43,6 +43,9 @@ Run with::
 """
 from __future__ import annotations
 
+from types import SimpleNamespace
+
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 import json
 from types import SimpleNamespace
 
@@ -58,6 +61,8 @@ from azure.cosmos._offer_rust_routing import (
     prepare_replace_offer_request_async,
 )
 
+RUST_BACKEND = SimpleNamespace(name="rust")
+
 # A manual (fixed-RU/s) offer record, shaped exactly like the service returns it.
 _OFFER = {
     "id": "off-1",
@@ -72,7 +77,7 @@ _OFFER = {
 def test_gate_is_off_without_backend():
     """A Python client does not attempt the Rust throughput-replacement path."""
     assert (
-        can_use_rust_backend_for_replace_throughput(backend=None, options={}, kwargs={})
+        can_use_rust_backend_for_replace_throughput(backend=LEGACY_BACKEND, options={}, kwargs={})
         is False
     )
 
@@ -80,7 +85,7 @@ def test_gate_is_off_without_backend():
 def test_gate_is_on_with_backend_and_no_kwargs():
     """A supported throughput replacement uses Rust."""
     assert (
-        can_use_rust_backend_for_replace_throughput(backend=object(), options={}, kwargs={})
+        can_use_rust_backend_for_replace_throughput(backend=RUST_BACKEND, options={}, kwargs={})
         is True
     )
 
@@ -89,7 +94,7 @@ def test_gate_is_off_with_kwargs():
     """Options unsupported by Rust keep the throughput replacement on Python."""
     assert (
         can_use_rust_backend_for_replace_throughput(
-            backend=object(), options={}, kwargs={"some_unmirrored_knob": 1}
+            backend=RUST_BACKEND, options={}, kwargs={"some_unmirrored_knob": 1}
         )
         is False
     )
@@ -100,7 +105,7 @@ def test_gate_is_off_with_read_timeout():
     # read_timeout (socket read timeout) is a known driver-side gap.
     assert (
         can_use_rust_backend_for_replace_throughput(
-            backend=object(),
+            backend=RUST_BACKEND,
             options={Constants.Kwargs.READ_TIMEOUT: 5},
             kwargs={},
         )
@@ -113,7 +118,7 @@ def test_gate_is_off_with_availability_strategy():
     # availability_strategy (cross-region hedging) is a known driver-side gap.
     assert (
         can_use_rust_backend_for_replace_throughput(
-            backend=object(),
+            backend=RUST_BACKEND,
             options={Constants.Kwargs.AVAILABILITY_STRATEGY: True},
             kwargs={},
         )

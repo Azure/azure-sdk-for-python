@@ -268,6 +268,19 @@ class RustBackend(RustBackendShared, CosmosBackend):
             raise ServiceResponseError(message=str(exc)) from exc
         return build_backend_response(*raw_response)
 
+    def fault_injection_rule_hit_count(self, rule_id: str) -> int:
+        """Return how many Rust transport attempts applied one configured rule."""
+        if _rust_module is None:
+            raise NotImplementedError(
+                "Rust fault injection requires the compiled azure.cosmos._rust module."
+            )
+        return int(
+            _rust_module.fault_injection_rule_hit_count(
+                self._ensure_handle(),
+                rule_id,
+            )
+        )
+
     def resolve_container_metadata(self, container_link: str) -> Optional[BackendResponse]:
         """Resolve and cache container metadata through the rust driver."""
         if _rust_module is None:

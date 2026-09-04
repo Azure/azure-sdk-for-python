@@ -23,9 +23,8 @@ it, ``get_throughput`` / ``replace_throughput`` on the proxy would read
 ``client_connection._backend`` and branch inline -- try the rust engine, else
 fall back to the legacy ``QueryOffers`` / ``ReplaceOffer`` calls -- inside the
 customer-facing method, putting engine-selection code in the public API surface.
-Instead, each function coerces the client's backend selection to a concrete
-backend (``coerce_backend`` -> the rust backend or the explicit ``LegacyBackend``,
-never ``None``) and drives the work through
+Instead, each function uses the concrete backend stored by the client and drives
+the work through
 :meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`, so the proxy
 method is a thin delegate that names no engine.
 """
@@ -34,7 +33,6 @@ from __future__ import annotations
 from typing import Any, Awaitable, Callable, Dict, Mapping, Optional, Union
 
 from .._backend.contracts import LegacyOperation
-from .._backend.legacy import coerce_backend
 from .._base import _deserialize_throughput, _replace_throughput
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
@@ -65,7 +63,7 @@ def get_container_throughput(
     container_rid = properties["_rid"]
     legacy_options: Dict[str, Any] = {Constants.ContainerRID: container_rid}
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, container_rid, kwargs)
-    backend = coerce_backend(selected_backend)
+    backend = selected_backend
     offers = backend.run_operation(
         build_prepared=lambda: prepare_read_offer_request(
             client_connection=client_connection,
@@ -101,14 +99,12 @@ async def get_container_throughput_async(
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
     """Async twin of :func:`get_throughput`."""
-    from ..aio._backend.legacy import coerce_async_backend
-
     properties = await get_properties()
     query_spec = offer_query(properties["_self"])
     container_rid = properties["_rid"]
     legacy_options: Dict[str, Any] = {Constants.ContainerRID: container_rid}
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, container_rid, kwargs)
-    backend = coerce_async_backend(selected_backend)
+    backend = selected_backend
 
     async def run_legacy_read() -> list[dict[str, Any]]:
         """Drain the legacy offer query into a list.
@@ -166,7 +162,7 @@ def replace_container_throughput(
     container_rid = properties["_rid"]
     legacy_options: Dict[str, Any] = {Constants.ContainerRID: container_rid}
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, container_rid, kwargs)
-    backend = coerce_backend(selected_backend)
+    backend = selected_backend
     rust_eligible = can_use_rust_backend_for_replace_throughput(
         backend=selected_backend,
         options=rust_options,
@@ -228,14 +224,12 @@ async def replace_container_throughput_async(
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
     """Async twin of :func:`replace_throughput`."""
-    from ..aio._backend.legacy import coerce_async_backend
-
     properties = await get_properties()
     query_spec = offer_query(properties["_self"])
     container_rid = properties["_rid"]
     legacy_options: Dict[str, Any] = {Constants.ContainerRID: container_rid}
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, container_rid, kwargs)
-    backend = coerce_async_backend(selected_backend)
+    backend = selected_backend
     rust_eligible = can_use_rust_backend_for_replace_throughput(
         backend=selected_backend,
         options=rust_options,

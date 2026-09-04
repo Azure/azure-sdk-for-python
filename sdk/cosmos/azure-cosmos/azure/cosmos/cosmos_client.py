@@ -245,10 +245,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         # Pick the backend for this client (precedence: ``_backend=``
         # kwarg > COSMOS_BACKEND env var > ``core-python``). The factory
-        # returns a ``RustBackend`` for the ``rust`` selection, or
-        # ``None`` for ``core-python`` -- ``None`` is the signal that
-        # container methods should use the legacy ``CreateItem`` path.
+        # returns a concrete ``RustBackend`` or ``LegacyBackend``.
         backend_choice = kwargs.pop("_backend", None)
+        fault_injection_rules = kwargs.pop("_fault_injection_rules", None)
         proxy_allowed = kwargs.pop("proxy_allowed", None)
         connection_timeout, read_timeout = resolve_client_transport_timeouts(kwargs)
         # Read (don't pop) the startup settings the Rust backend can carry to the
@@ -278,6 +277,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             proxy_allowed=proxy_allowed,
             connection_timeout_seconds=connection_timeout,
             read_timeout_seconds=read_timeout,
+            fault_injection_rules=fault_injection_rules,
             # Transport/TLS knobs the Rust path can't honor yet: read (don't pop)
             # so the legacy connection still consumes them on the core-python path,
             # while the Rust branch rejects them instead of silently ignoring them.
@@ -288,10 +288,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             ssl_config=kwargs.get("ssl_config"),
             transport=kwargs.get("transport"),
         )
-        self._backend: Optional[CosmosBackend] = chosen
+        self._backend: CosmosBackend = chosen
         logging.getLogger(__name__).info(
             "Cosmos client constructed with default backend=%s",
-            chosen.name if chosen is not None else "core-python",
+            chosen.name,
         )
 
         auth = _build_auth(credential)

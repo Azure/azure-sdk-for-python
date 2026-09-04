@@ -7,11 +7,11 @@
 
 Every Cosmos item needs a top-level ``id`` string. When the caller passes
 ``enable_automatic_id_generation=True`` and omits ``id``, the SDK mints a
-UUID4 in its place. The Rust path is the one going forward in production;
-the legacy core-python path is kept only for testing and comparison, never
-running alongside it in production. This helper centralises the id logic so
-that when the two paths are compared they mint identical ids and the
-comparison stays valid.
+UUID4 in its place. The current branch can run either the Rust backend or the
+core-Python backend, and a Rust-selected client can still fall back for
+unmigrated request shapes. This helper centralises the id logic so both paths
+mint ids consistently during migration. The intended final architecture keeps
+only the Rust path.
 """
 from __future__ import annotations
 

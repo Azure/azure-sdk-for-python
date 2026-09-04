@@ -8,8 +8,8 @@
 The create helper sits between the public create call and the backend. On
 each call it finds the container's resource id, builds the request, and
 then drives it through the configured backend: the real (or a rust-shaped
-test) backend builds+sends+parses a prepared request, while ``None``
-(core-python) runs the existing client via the explicit ``LegacyBackend``.
+test) backend builds+sends+parses a prepared request, while the explicit
+``LegacyBackend`` runs the existing client.
 These tests check each of those steps on its own.
 
 The async version is covered in
@@ -22,6 +22,7 @@ from unittest.mock import MagicMock
 
 from azure.cosmos._backend.base import CosmosBackend
 from azure.cosmos._backend.contracts import BackendResponse
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers.item_helper import ItemHelper
 
@@ -91,7 +92,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(None, cc).create_item(
+        ItemHelper(LEGACY_BACKEND, cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             enable_automatic_id_generation=False,
@@ -104,7 +105,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(None, cc).create_item(
+        ItemHelper(LEGACY_BACKEND, cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             enable_automatic_id_generation=True,
@@ -117,7 +118,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(None, cc).create_item(
+        ItemHelper(LEGACY_BACKEND, cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             indexing_directive=1,
@@ -131,7 +132,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit(rid="rid-from-cache")
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(None, cc).create_item(
+        ItemHelper(LEGACY_BACKEND, cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -154,7 +155,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         )
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(None, cc).create_item(
+        ItemHelper(LEGACY_BACKEND, cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -242,7 +243,7 @@ class TestItemHelperRidResolutionLogging(unittest.TestCase):
         # case a real connection would only hit on a genuine problem.
         cc._refresh_container_properties_cache = MagicMock()
 
-        helper = ItemHelper(None, cc)
+        helper = ItemHelper(LEGACY_BACKEND, cc)
 
         with self.assertLogs(
             "azure.cosmos._helpers.item_helper", level=logging.WARNING
@@ -258,4 +259,3 @@ class TestItemHelperRidResolutionLogging(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

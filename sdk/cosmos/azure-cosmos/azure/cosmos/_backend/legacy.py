@@ -111,26 +111,3 @@ class LegacyBackend(CosmosBackend):
 #: Process-wide shared core-python backend. ``LegacyBackend`` holds no per-client
 #: state (the legacy call is supplied per operation), so one instance is enough.
 LEGACY_BACKEND = LegacyBackend()
-
-
-def coerce_backend(backend: Optional[CosmosBackend]) -> CosmosBackend:
-    """Map a family coordinator's backend selection to a never-``None`` backend.
-
-    The stored client selection (``client_connection._backend``) is still
-    ``Optional``: ``None`` for core-python, a :class:`RustBackend` for rust. That
-    ``Optional`` contract is what ``pick_backend`` returns, so it is preserved at
-    the client-connection boundary. Every family coordinator (``DatabaseHelper``,
-    ``ItemHelper``, ``ThroughputHelper``, and ``FeedRangeHelper``), however,
-    holds one backend by interface, so it coerces the selection here at its own
-    boundary -- ``None`` (or an already-chosen legacy backend) becomes
-    :data:`LEGACY_BACKEND`, a rust backend passes through unchanged. This is the
-    single place a coordinator bridges the legacy ``Optional`` selection to the
-    explicit backend it then holds for the rest of its lifetime.
-
-    :param backend: The selected backend, or ``None`` for core-python.
-    :returns: A concrete backend (never ``None``).
-    :rtype: ~azure.cosmos._backend.base.CosmosBackend
-    """
-    if backend is None:
-        return LEGACY_BACKEND
-    return backend
