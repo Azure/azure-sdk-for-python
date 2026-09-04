@@ -1,6 +1,6 @@
 # Release History
 
-## 2.6.0 (Unreleased)
+## 2.7.0b1 (Unreleased)
 
 ### Features Added
 
@@ -17,31 +17,38 @@
   * Added the `agent_endpoint_conversations.get_agent_conversation_item_generated_audio`/`get_agent_conversation_item_generated_audio_content` methods for reading back a conversation item's *generated* audio, a subordinate artifact that can differ from what the listener heard when playback was interrupted, returning `VoiceGeneratedItemAudioResponse`.
   * Added sub-agent consultation, letting a voice agent consult sibling Foundry text agents as background specialists mid-conversation, through the new `subagent_config` property on `VoiceAgentDefinition` (`VoiceAgentSubagentConfig`, `VoiceAgentSubagent`, `VoiceAgentSubagentResponsePolicy`), and the new `session.subagent.started`/`session.subagent.completed`/`session.subagent.aborted` realtime server events.
   * Added an optional `conversation_engine` property on `VoiceAgentDefinition` (`VoiceConversationEngine`, `VoiceHostedAgentConversationEngine`) to delegate a voice agent's conversation handling to another hosted agent instead of configuring a model directly.
-* Added Microsoft 365 agent publishing:
-  * `project_client.agents.publish_to_microsoft365(agent_name, publish_scope=...)` publishes a Foundry agent to Microsoft 365 / Microsoft Teams and returns a `Microsoft365PublishResult`.
-  * `project_client.agents.get_microsoft365_publish_defaults(agent_name)` returns default and previously-published values (`Microsoft365PublishDefaults`) used to pre-populate a publish request.
-  * `project_client.agents.get_microsoft365_package(agent_name)` downloads the Microsoft 365 app package for an agent.
-  * Added the supporting `Microsoft365PublishScope`, `Microsoft365PermissionScopes`, `ActivityProtocolAccessBoundary`, `PublishApprovalStatus`, and `DigitalWorkerType` enums.
-* Added the `beta.agent_insight_monitors` operation group for creating and managing Agent Insights monitors and their runs (`create`/`get`/`update`/`delete`/`list`/`reset`, `begin_create_run`/`get_run`/`cancel_run`/`list_runs`, `get_insight`/`update_insight`/`list_insights`), along with the supporting `AgentInsightMonitor`, `AgentInsightMonitorCreate`, `AgentInsightMonitorUpdate`, `AgentInsightMonitorListItem`, `AgentInsightRun`, `AgentInsight`, and related models.
-* Added an optional `authorization` argument to `.beta.routines.create_or_update`, with `RoutineAuthorization` and `RoutineDispatchIdentity` for selecting the agent or routine creator identity.
-* Added optional Hosted Agent session defaults through `HostedAgentDefinition.session_configuration` and `SessionConfiguration`, including idle-timeout configuration.
-* Added content-safety moderation support for custom request, response, and streaming invocation body formats, including the `RaiInvocationModeration` and `RaiSseTextSelector` models and the `RaiInvocationContentType`/`RaiInvocationMode` enums for describing where in a streamed response moderated text is located.
-* Added `ShellToolboxTool` and supporting container environment and network policy models, with the new `ToolboxToolType.SHELL` enum member.
-* Added `WebIQPreviewTool` and `WebIQPreviewToolboxTool`, with new `ToolType.WEB_IQ_PREVIEW` and `ToolboxToolType.WEB_IQ_PREVIEW` enum members.
-* Added the optional `external_web_access` property to `WebSearchTool` and `WebSearchToolboxTool` for disabling live internet access.
 
 ### Dependency update
 
 * Added an optional dependency on `websockets` (sync `client.realtime`) and `aiohttp` (async `async_client.realtime`), required only when using the new voice agent realtime streaming APIs.
 
+### Bugs Fixed
+
+* The hand-written `client.realtime`/`async_client.realtime` WebSocket clients now identify themselves to the service the same way the generated HTTP surface already does: a standard Azure SDK `User-Agent` header (for example `azsdk-python-ai-projects/2.7.0b1 ...`) and an `x-ms-client-sdk` query parameter carrying the same value, for paths where the header isn't forwarded. Previously these connections fell back to the underlying `websockets`/`aiohttp` library's generic default, preventing service telemetry from attributing this traffic to the SDK. A caller-supplied `User-Agent` in `extra_headers` still takes precedence.
+
+## 2.6.0 (2026-09-04)
+
+### Features Added
+
+* Added supporting AgentInsight* models and enums covering monitors, runs, generated insights, proposed fixes, highlighted and linked traces, costs, token usage, severity, status, and run triggers.
+* Added Microsoft 365 agent publishing.
+* Added optional Hosted Agent session defaults through `HostedAgentDefinition.session_configuration` and `SessionConfiguration`, including idle-timeout configuration.
+* Added content-safety moderation support for custom request, response, and streaming invocation body formats.
+* Added the optional `authorization` argument to `.beta.routines.create_or_update`, with `RoutineAuthorization` and `RoutineDispatchIdentity` for selecting the agent or routine creator identity.
+* Added `ShellToolboxTool` and supporting container environment and network policy models, with the new `ToolboxToolType.SHELL` enum member.
+* Added `WebIQPreviewTool` and `WebIQPreviewToolboxTool`, with new `ToolType.WEB_IQ_PREVIEW` and `ToolboxToolType.WEB_IQ_PREVIEW` enum members.
+* Added the optional `external_web_access` property to `WebSearchTool` and `WebSearchToolboxTool` for disabling live internet access.
+
 ### Sample updates
 
-* Added `sample_toolbox_with_shell.py`, demonstrating a Prompt Agent invoking a `ShellToolboxTool`.
-* Added `sample_synthetic_multiturn_evaluation.py`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+* Added `sample_toolbox_with_shell.py` under `samples/agents/tools/`, demonstrating a Prompt Agent invoking a `ShellToolboxTool`.
+* Added `sample_toolbox_with_shipping_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using a skill through a Toolbox MCP endpoint.
+* Added `sample_toolbox_with_shell_and_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using a skill with a `ShellToolboxTool` through a Toolbox MCP endpoint.
+* Added `sample_synthetic_multiturn_evaluation.py` under `samples/evaluations/`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+* Added `sample_responses_model_router.py` under `samples/responses/`, demonstrating a Responses API request to a model router deployment and selection of a model by the router.
 
 ### Bugs Fixed
 
-* The hand-written `client.realtime`/`async_client.realtime` WebSocket clients now identify themselves to the service the same way the generated HTTP surface already does: a standard Azure SDK `User-Agent` header (for example `azsdk-python-ai-projects/2.6.0 ...`) and an `x-ms-client-sdk` query parameter carrying the same value, for paths where the header isn't forwarded. Previously these connections fell back to the underlying `websockets`/`aiohttp` library's generic default, preventing service telemetry from attributing this traffic to the SDK. A caller-supplied `User-Agent` in `extra_headers` still takes precedence.
 * Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
 
 ## 2.5.0 (2026-08-20)
