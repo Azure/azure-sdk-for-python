@@ -3,14 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import pytest
-
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from test_base import TestBase, servicePreparer
 
 
-@pytest.mark.skip(reason="TODO(<feature>): enable after Test Proxy recordings are added.")
 class TestFeatureAsync(TestBase):
 
     @servicePreparer()

@@ -55,4 +55,4 @@ This skill compares a newly emitted or merged public API surface with its select
 
 ### azure-ai-projects-author-tests
 
-This skill updates existing pytest coverage and authors complete sync/async Test Proxy tests for new behavior. New recorded service tests remain explicitly skipped until a human adds recordings.
+This skill updates existing pytest coverage and authors complete sync/async Test Proxy tests for new behavior. New recorded service tests remain enabled so missing-recording errors surface in PR validation and authors can contact the SDK maintainer for help.

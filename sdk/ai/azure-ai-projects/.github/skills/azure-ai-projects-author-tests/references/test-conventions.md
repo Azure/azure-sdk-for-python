@@ -9,15 +9,9 @@ Use the nearest feature tests as the final authority. Simple recorded anchors ar
 - Create clients with `self.create_client(**kwargs)` or `self.create_async_client(**kwargs)` so playback uses fake credentials and sanitized endpoints. Pass `allow_preview=True` only when the neighboring feature/API requires it.
 - Mirror sync files/methods with `_async` naming and equivalent assertions/cleanup.
 
-## New coverage stays disabled
+## New coverage stays enabled
 
-A wholly new recorded file gets one class-level marker:
-
-```python
-@pytest.mark.skip(reason="TODO(<feature>): enable after Test Proxy recordings are added.")
-```
-
-In an active class, mark only each new recorded method. Write the complete operation flow before applying the marker; skipped placeholders are not coverage. Updates to pre-existing recorded tests retain their current state.
+Do not add `skip`, `skipif`, `xfail`, or any other disabling marker to newly created recorded files, classes, or methods. Write the complete operation flow and leave it enabled even when no Test Proxy recording exists yet, so PR validation surfaces the missing-recording error. Updates to pre-existing recorded tests retain their current enabled or skipped state.
 
 ## Recording-safe design
 
@@ -27,4 +21,4 @@ Place reusable payloads under `tests\test_data`; preserve LF handling and `.gita
 
 Include `RecordedTransport.HTTPX2` when the test also uses an OpenAI/httpx client. When combining `pytest.mark.parametrize` with recorder decorators, copy the package's passthrough-wrapper pattern described in [`test_finetuning.py`](../../../../tests/finetuning/test_finetuning.py).
 
-Do not edit `assets.json` or add recordings in this workflow. Collection must succeed while the new service tests remain skipped.
+Do not edit `assets.json` or add recordings in this workflow. Collection must succeed, but do not run new service tests live. Keep them enabled and direct authors to the SDK maintainer for help when PR validation reports missing recordings.
