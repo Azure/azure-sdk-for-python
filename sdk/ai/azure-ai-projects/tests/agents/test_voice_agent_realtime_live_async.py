@@ -42,7 +42,6 @@ from azure.ai.projects.models import (
     VoiceOutputModality,
 )
 
-
 # Seconds to wait for a single server event (session handshake, an audio delta, ...).
 _EVENT_TIMEOUT: Final = 30
 # Seconds to wait for a full response turn to finish (may include a tool round-trip).

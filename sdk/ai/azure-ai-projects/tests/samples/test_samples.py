@@ -418,4 +418,3 @@ class TestSamples(AzureRecordedTestCase):
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm()
-

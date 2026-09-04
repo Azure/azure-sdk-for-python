@@ -1014,6 +1014,28 @@ class PublishApprovalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     tenant-scoped titles are reviewed."""
 
 
+class RaiInvocationContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How an invocations request/response body is parsed to locate text for content-safety
+    moderation.
+    """
+
+    JSON = "json"
+    """Parse the body as JSON and evaluate the declared paths/selectors."""
+    TEXT = "text"
+    """Treat the whole (size-capped) body as text; paths/selectors are ignored."""
+
+
+class RaiInvocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Author-declared response shape for the invocations protocol."""
+
+    NON_STREAMING = "non_streaming"
+    """Non-streaming response body."""
+    STREAMING = "streaming"
+    """Streaming response body."""
+    BOTH = "both"
+    """Both non-streaming and streaming response bodies."""
+
+
 class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of RankerVersionType."""
 
@@ -1964,8 +1986,6 @@ class VoiceAgentAvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMet
     """WEBRTC."""
     WEBSOCKET = "websocket"
     """WEBSOCKET."""
-    WEBSOCKET_BINARY = "websocket-binary"
-    """Binary WebSocket transport."""
 
 
 class VoiceAgentAvatarType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2173,12 +2193,12 @@ class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The lifecycle status of a persisted voice conversation:
 
     * `in_progress`: the live session is active, or post-session persistence finalization is
-      pending.
+    pending.
     * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
-      max-duration `1001`
-      close, or a client or network disconnect that the service can still finalize.
+    max-duration `1001`
+    close, or a client or network disconnect that the service can still finalize.
     * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
-      finalization.
+    finalization.
     """
 
     IN_PROGRESS = "in_progress"

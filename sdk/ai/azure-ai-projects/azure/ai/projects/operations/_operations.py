@@ -690,7 +690,7 @@ def build_agents_create_telephony_binding_request(  # pylint: disable=name-too-l
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony_bindings"
+    _url = "/agents/{agent_name}/telephony/bindings"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
     }
@@ -732,7 +732,7 @@ def build_agents_list_telephony_bindings_request(  # pylint: disable=name-too-lo
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony_bindings"
+    _url = "/agents/{agent_name}/telephony/bindings"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
     }
@@ -770,7 +770,7 @@ def build_agents_get_telephony_binding_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony_bindings/{binding_id}"
+    _url = "/agents/{agent_name}/telephony/bindings/{binding_id}"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
         "binding_id": _SERIALIZER.url("binding_id", binding_id, "str"),
@@ -798,7 +798,7 @@ def build_agents_update_telephony_binding_request(  # pylint: disable=name-too-l
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony_bindings/{binding_id}"
+    _url = "/agents/{agent_name}/telephony/bindings/{binding_id}"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
         "binding_id": _SERIALIZER.url("binding_id", binding_id, "str"),
@@ -831,7 +831,7 @@ def build_agents_delete_telephony_binding_request(  # pylint: disable=name-too-l
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
-    _url = "/agents/{agent_name}/telephony_bindings/{binding_id}"
+    _url = "/agents/{agent_name}/telephony/bindings/{binding_id}"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
         "binding_id": _SERIALIZER.url("binding_id", binding_id, "str"),
@@ -873,7 +873,7 @@ def build_agents_list_telephony_calls_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony_calls"
+    _url = "/agents/{agent_name}/telephony/calls"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
     }
@@ -913,7 +913,7 @@ def build_agents_get_telephony_call_request(agent_name: str, call_id: str, **kwa
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony_calls/{call_id}"
+    _url = "/agents/{agent_name}/telephony/calls/{call_id}"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
         "call_id": _SERIALIZER.url("call_id", call_id, "str"),
@@ -941,7 +941,7 @@ def build_agents_transfer_telephony_call_request(  # pylint: disable=name-too-lo
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony_calls/{call_id}:transfer"
+    _url = "/agents/{agent_name}/telephony/calls/{call_id}:transfer"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
         "call_id": _SERIALIZER.url("call_id", call_id, "str"),
@@ -968,7 +968,7 @@ def build_agents_end_telephony_call_request(agent_name: str, call_id: str, **kwa
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony_calls/{call_id}:end"
+    _url = "/agents/{agent_name}/telephony/calls/{call_id}:end"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
         "call_id": _SERIALIZER.url("call_id", call_id, "str"),
@@ -995,7 +995,7 @@ def build_agents_get_telephony_transfer_targets_request(  # pylint: disable=name
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony_transfer_targets"
+    _url = "/agents/{agent_name}/telephony/transfer_targets"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
     }
@@ -1022,7 +1022,7 @@ def build_agents_replace_telephony_transfer_targets_request(  # pylint: disable=
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/telephony_transfer_targets"
+    _url = "/agents/{agent_name}/telephony/transfer_targets"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
     }
@@ -1692,6 +1692,377 @@ def build_indexes_create_or_update_request(name: str, version: str, **kwargs: An
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_voice_agent_web_socket_connect_voice_agent_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    *,
+    foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = None,
+    transport: Optional[Union[str, _models.VoiceAgentTransport]] = None,
+    store: Optional[bool] = None,
+    structured_input: Optional[str] = None,
+    agent_version_override: Optional[str] = None,
+    websocket_subprotocol: Optional[Union[str, _models.VoiceAgentWebSocketSubprotocol]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if foundry_features_query is not None:
+        _params["foundry_features"] = _SERIALIZER.query("foundry_features_query", foundry_features_query, "str")
+    if transport is not None:
+        _params["transport"] = _SERIALIZER.query("transport", transport, "str")
+    if store is not None:
+        _params["store"] = _SERIALIZER.query("store", store, "bool")
+    if structured_input is not None:
+        _params["structured_input"] = _SERIALIZER.query("structured_input", structured_input, "str")
+    if agent_version_override is not None:
+        _params["x-agent-version-override"] = _SERIALIZER.query("agent_version_override", agent_version_override, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if websocket_subprotocol is not None:
+        _headers["Sec-WebSocket-Protocol"] = _SERIALIZER.header("websocket_subprotocol", websocket_subprotocol, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_list_agent_conversations_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_get_agent_conversation_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_delete_agent_conversation_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_agent_endpoint_conversations_list_agent_conversation_responses_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    conversation_id: str,
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/responses"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_get_agent_conversation_response_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, response_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/responses/{response_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+        "response_id": _SERIALIZER.url("response_id", response_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_list_agent_conversation_response_items_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    conversation_id: str,
+    response_id: str,
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/responses/{response_id}/items"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+        "response_id": _SERIALIZER.url("response_id", response_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_list_agent_conversation_items_request(  # pylint: disable=name-too-long
+    agent_name: str,
+    conversation_id: str,
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/items"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_get_agent_conversation_item_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/items/{item_id}"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+        "item_id": _SERIALIZER.url("item_id", item_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_get_agent_conversation_item_audio_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/items/{item_id}/audio"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+        "item_id": _SERIALIZER.url("item_id", item_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_get_agent_conversation_item_audio_content_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "audio/wav")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/items/{item_id}/audio/content"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+        "item_id": _SERIALIZER.url("item_id", item_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_agent_endpoint_conversations_get_agent_conversation_item_generated_audio_request(  # pylint: disable=name-too-long
     agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
 ) -> HttpRequest:
@@ -1737,6 +2108,60 @@ def build_agent_endpoint_conversations_get_agent_conversation_item_generated_aud
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
         "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
         "item_id": _SERIALIZER.url("item_id", item_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_get_agent_conversation_audio_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/audio"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agent_endpoint_conversations_get_agent_conversation_audio_content_request(  # pylint: disable=name-too-long
+    agent_name: str, conversation_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "audio/wav")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/audio/content"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1962,428 +2387,6 @@ def build_toolboxes_delete_version_request(name: str, version: str, **kwargs: An
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_beta_voice_agent_web_socket_connect_voice_agent_request(  # pylint: disable=name-too-long
-    agent_name: str,
-    *,
-    foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = None,
-    transport: Optional[Union[str, _models.VoiceAgentTransport]] = None,
-    store: Optional[bool] = None,
-    agent_version_override: Optional[str] = None,
-    websocket_subprotocol: Optional[Union[str, _models.VoiceAgentWebSocketSubprotocol]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if foundry_features_query is not None:
-        _params["foundry_features"] = _SERIALIZER.query("foundry_features_query", foundry_features_query, "str")
-    if transport is not None:
-        _params["transport"] = _SERIALIZER.query("transport", transport, "str")
-    if store is not None:
-        _params["store"] = _SERIALIZER.query("store", store, "bool")
-    if agent_version_override is not None:
-        _params["x-agent-version-override"] = _SERIALIZER.query("agent_version_override", agent_version_override, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if websocket_subprotocol is not None:
-        _headers["Sec-WebSocket-Protocol"] = _SERIALIZER.header("websocket_subprotocol", websocket_subprotocol, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_list_agent_conversations_request(  # pylint: disable=name-too-long
-    agent_name: str,
-    *,
-    limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_get_agent_conversation_request(  # pylint: disable=name-too-long
-    agent_name: str, conversation_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_delete_agent_conversation_request(  # pylint: disable=name-too-long
-    agent_name: str, conversation_id: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_list_agent_conversation_responses_request(  # pylint: disable=name-too-long
-    agent_name: str,
-    conversation_id: str,
-    *,
-    limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/responses"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_get_agent_conversation_response_request(  # pylint: disable=name-too-long
-    agent_name: str, conversation_id: str, response_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/responses/{response_id}"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
-        "response_id": _SERIALIZER.url("response_id", response_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_list_agent_conversation_response_items_request(  # pylint: disable=name-too-long
-    agent_name: str,
-    conversation_id: str,
-    response_id: str,
-    *,
-    limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/responses/{response_id}/items"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
-        "response_id": _SERIALIZER.url("response_id", response_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_list_agent_conversation_items_request(  # pylint: disable=name-too-long
-    agent_name: str,
-    conversation_id: str,
-    *,
-    limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/items"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_get_agent_conversation_item_request(  # pylint: disable=name-too-long
-    agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/items/{item_id}"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
-        "item_id": _SERIALIZER.url("item_id", item_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_get_agent_conversation_item_audio_request(  # pylint: disable=name-too-long
-    agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/items/{item_id}/audio"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
-        "item_id": _SERIALIZER.url("item_id", item_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_get_agent_conversation_item_audio_content_request(  # pylint: disable=name-too-long
-    agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "audio/wav")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/items/{item_id}/audio/content"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
-        "item_id": _SERIALIZER.url("item_id", item_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_get_agent_conversation_audio_request(  # pylint: disable=name-too-long
-    agent_name: str, conversation_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/audio"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agent_endpoint_conversations_get_agent_conversation_audio_content_request(  # pylint: disable=name-too-long
-    agent_name: str, conversation_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "audio/wav")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/endpoint/protocols/voice/conversations/{conversation_id}/audio/content"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "conversation_id": _SERIALIZER.url("conversation_id", conversation_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_beta_agent_insight_monitors_list_request(  # pylint: disable=name-too-long
@@ -4972,9 +4975,6 @@ class BetaOperations:  # pylint: disable=docstring-missing-param,too-many-instan
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-        self.agent_endpoint_conversations = BetaAgentEndpointConversationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -5077,8 +5077,27 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
         return deserialized  # type: ignore
 
+    @overload
+    def generate_agent(
+        self, body: _models.GenerateVoiceAgentRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Generate an agent.
+
+        Generates and creates an agent from kind-specific high-level inputs. The generated definition
+        remains fully editable through the standard agent versioning operations.
+
+        :param body: The kind-specific inputs for generating and creating an agent. Required.
+        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
-    def generate_agent(self, body: _models.GenerateVoiceAgentRequest, **kwargs: Any) -> _models.AgentDetails:
+    def generate_agent(self, body: "_unions.GenerateAgentRequest", **kwargs: Any) -> _models.AgentDetails:
         """Generate an agent.
 
         Generates and creates an agent from kind-specific high-level inputs. The generated definition
@@ -6961,23 +6980,29 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         Each SSE frame contains:
 
         * `event`: always `"log"`
-        * `data`: a plain-text log line (currently JSON-formatted, but the schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema
+        is not contractual and may include additional keys or change format
+        over time — clients should treat it as an opaque string)
 
         Example SSE frames:
 
         .. code-block::
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting FoundryCBAgent server on port 8088"}
+           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting
+        FoundryCBAgent server on port 8088"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application startup complete."}
+           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application
+        startup complete."}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+        connected to container"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since last 60 seconds"}
+           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since
+        last 60 seconds"}
 
         The stream remains open until the client disconnects or the server
         terminates the connection. Clients should handle reconnection as needed.
@@ -7019,8 +7044,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        kwargs.pop("stream", None)  # must always stream; discard any caller override
-        _stream = True
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -8972,8 +8996,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         agent_name: str,
         body: JSON,
         *,
-        etag: str,
-        match_condition: MatchConditions,
+        etag: List[_models.TelephonyTransferTarget],
+        match_condition: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -8986,9 +9010,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: JSON
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
-        :paramtype etag: str
+        :paramtype etag: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword match_condition: The match condition to use upon the etag. Required.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9004,8 +9028,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         agent_name: str,
         body: IO[bytes],
         *,
-        etag: str,
-        match_condition: MatchConditions,
+        etag: List[_models.TelephonyTransferTarget],
+        match_condition: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -9018,9 +9042,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
-        :paramtype etag: str
+        :paramtype etag: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword match_condition: The match condition to use upon the etag. Required.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11578,6 +11602,164 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
+class VoiceAgentWebSocketOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`voice_agent_web_socket` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def connect_voice_agent(  # pylint: disable=inconsistent-return-statements
+        self,
+        agent_name: str,
+        *,
+        foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = None,
+        transport: Optional[Union[str, _models.VoiceAgentTransport]] = None,
+        store: Optional[bool] = None,
+        structured_input: Optional[str] = None,
+        agent_version_override: Optional[str] = None,
+        websocket_subprotocol: Optional[Union[str, _models.VoiceAgentWebSocketSubprotocol]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Connect to a voice agent.
+
+        Connects to a voice agent over WebSocket. The client must send an HTTP GET with ``Upgrade:
+        websocket``
+        headers. The optional ``realtime`` subprotocol is the only accepted subprotocol value. Supply
+        the
+        ``VoiceAgents=V1Preview`` opt-in through either the ``Foundry-Features`` header or the
+        ``foundry_features``
+        query parameter.
+
+        Handshake failures are evaluated in the following order, independent of the requested
+        ``transport``:
+
+
+
+        1. Agent enablement (any transport): if the target agent is disabled, the handshake fails
+        before the
+        `101 Switching Protocols` upgrade with `409 Conflict`, using the shared Foundry
+        `ApiErrorResponse` shape
+        with `error.code = agent_disabled`. This failure is terminal until the caller enables the
+        agent, and it
+        takes precedence over the WebRTC-specific checks below.
+        2. WebRTC availability (only when `transport=webrtc`, and only once the agent itself is
+        enabled): the agent
+        must have the WebRTC transport capability configured. If the agent is enabled but WebRTC is not
+        available
+        for it, the handshake fails with `404 Not Found`. This is distinct from the `409
+        agent_disabled` case
+        above, which concerns the agent itself rather than its WebRTC capability.
+        3. WebRTC compatibility (only when `transport=webrtc`): WebRTC does not support
+        bring-your-own-model (BYOM)
+        or hosted-agent voice agents; those requests fail with `400 Bad Request`.
+
+        :param agent_name: The name of the voice agent. Required.
+        :type agent_name: str
+        :keyword foundry_features_query: A query alternative to the ``Foundry-Features`` header for
+         clients that cannot set headers during a
+         WebSocket handshake. Set this to ``VoiceAgents=V1Preview``. Either this query parameter or the
+         header is
+         required. VOICE_AGENTS_V1_PREVIEW. Default value is None.
+        :paramtype foundry_features_query: str or ~azure.ai.projects.models.VOICE_AGENTS_V1_PREVIEW
+        :keyword transport: Selects the connection transport. Omit or send ``websocket`` for the
+         default, where signaling and audio are
+         exchanged as JSON events over this WebSocket. Send ``webrtc`` to negotiate a WebRTC
+         connection: the WebSocket
+         then carries only SDP signaling (``rtc.call.sdp.create`` / ``rtc.call.sdp.created``) while
+         media and the data
+         channel are peer-to-peer. Known values are: "websocket" and "webrtc". Default value is None.
+        :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport
+        :keyword store: Whether to persist the conversation created by this WebSocket session. If
+         omitted, the service honors the
+         persisted voice agent definition's configured ``store`` value. If supplied, this value
+         overrides the
+         definition's ``store`` setting for this session only. Default value is None.
+        :paramtype store: bool
+        :keyword structured_input: Per-session values for the voice agent's declared
+         ``structured_inputs``, serialized as a JSON object and
+         URL-encoded as this query parameter. Supplied values override definition defaults when
+         rendering the
+         agent's instructions and session-start greeting for this session only. The decoded value must
+         be a JSON
+         object no larger than 32 KiB with a maximum nesting depth of 16. Default value is None.
+        :paramtype structured_input: str
+        :keyword agent_version_override: Selects a specific version of the voice agent for this
+         session. Default value is None.
+        :paramtype agent_version_override: str
+        :keyword websocket_subprotocol: The requested WebSocket subprotocol. Omit this header or
+         request exactly ``realtime``. "realtime" Default value is None.
+        :paramtype websocket_subprotocol: str or
+         ~azure.ai.projects.models.VoiceAgentWebSocketSubprotocol
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_voice_agent_web_socket_connect_voice_agent_request(
+            agent_name=agent_name,
+            foundry_features_query=foundry_features_query,
+            transport=transport,
+            store=store,
+            structured_input=structured_input,
+            agent_version_override=agent_version_override,
+            websocket_subprotocol=websocket_subprotocol,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [101]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Sec-WebSocket-Protocol"] = self._deserialize(
+            "str", response.headers.get("Sec-WebSocket-Protocol")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+
 class AgentEndpointConversationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
@@ -11594,6 +11776,865 @@ class AgentEndpointConversationsOperations:  # pylint: disable=docstring-missing
         self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list_agent_conversations(
+        self,
+        agent_name: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.VoiceConversation"]:
+        """List voice agent conversations.
+
+        Returns the conversations persisted for the specified voice agent endpoint. Conversations are
+        present when the session's effective ``store`` setting is ``true``, whether inherited from the
+        agent definition or enabled by the WebSocket session override.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VoiceConversation
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.VoiceConversation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VoiceConversation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversations_request(
+                agent_name=agent_name,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VoiceConversation],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_agent_conversation(self, agent_name: str, conversation_id: str, **kwargs: Any) -> _models.VoiceConversation:
+        """Get a voice agent conversation.
+
+        Retrieves a single conversation recorded for the specified voice agent endpoint by its id.
+        Returns ``404`` when the conversation was not persisted (``store = false``) or does not exist.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation to retrieve. Required.
+        :type conversation_id: str
+        :return: VoiceConversation. The VoiceConversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceConversation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceConversation] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceConversation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_agent_conversation(  # pylint: disable=inconsistent-return-statements
+        self, agent_name: str, conversation_id: str, **kwargs: Any
+    ) -> None:
+        """Delete a voice agent conversation.
+
+        Deletes a conversation and all of its stored data — responses, items, and any audio (cascade).
+        This is the customer's explicit data-deletion control for voice conversations.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation to delete. Required.
+        :type conversation_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_delete_agent_conversation_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list_agent_conversation_responses(
+        self,
+        agent_name: str,
+        conversation_id: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.VoiceResponse"]:
+        """List responses in a voice agent conversation.
+
+        Returns a paged collection of the responses (model inference turns) recorded for the specified
+        conversation. The per-response ``output`` projection may be omitted here; use the
+        response-items route for the canonical paged output. Returns ``404`` when the conversation was
+        not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose responses are listed. Required.
+        :type conversation_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VoiceResponse
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.VoiceResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VoiceResponse]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversation_responses_request(
+                agent_name=agent_name,
+                conversation_id=conversation_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VoiceResponse],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_agent_conversation_response(
+        self, agent_name: str, conversation_id: str, response_id: str, **kwargs: Any
+    ) -> _models.VoiceResponse:
+        """Get a voice agent conversation response.
+
+        Retrieves a single response from the specified conversation by its id, including its ``output``
+        items, ``usage``, and status. Returns ``404`` when the conversation or response was not
+        persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the response. Required.
+        :type conversation_id: str
+        :param response_id: The id of the response to retrieve. Required.
+        :type response_id: str
+        :return: VoiceResponse. The VoiceResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceResponse] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_response_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            response_id=response_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_agent_conversation_response_items(
+        self,
+        agent_name: str,
+        conversation_id: str,
+        response_id: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.RealtimeConversationItem"]:
+        """List items produced by a voice agent conversation response.
+
+        Returns a paged collection of the output items produced by a specific response (the response's
+        output projection). For the complete ordered conversation history — including user input and
+        client-created tool outputs — use the conversation items route instead. Returns ``404`` when
+        the conversation or response was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the response. Required.
+        :type conversation_id: str
+        :param response_id: The id of the response whose output items are listed. Required.
+        :type response_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of RealtimeConversationItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RealtimeConversationItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.RealtimeConversationItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversation_response_items_request(
+                agent_name=agent_name,
+                conversation_id=conversation_id,
+                response_id=response_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.RealtimeConversationItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_agent_conversation_items(
+        self,
+        agent_name: str,
+        conversation_id: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.RealtimeConversationItem"]:
+        """List items in a voice agent conversation.
+
+        Returns a paged collection of items — the complete ordered conversation history, including user
+        input, assistant output, and client-created tool outputs (transcripts + tool events). Returns
+        ``404`` when the conversation was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose items are listed. Required.
+        :type conversation_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of RealtimeConversationItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RealtimeConversationItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.RealtimeConversationItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversation_items_request(
+                agent_name=agent_name,
+                conversation_id=conversation_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.RealtimeConversationItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_agent_conversation_item(
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> _models.RealtimeConversationItem:
+        """Get a voice agent conversation item.
+
+        Retrieves a single item from the specified conversation by its id, including its transcript. An
+        ``input_audio``/``output_audio`` content part indicates that audio is available for the item;
+        the canonical per-item audio metadata is the ``/items/{item_id}/audio`` resource, and the bytes
+        are streamed by ``/items/{item_id}/audio/content``. Returns ``404`` when the conversation or
+        item was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item to retrieve. Required.
+        :type item_id: str
+        :return: RealtimeConversationItem. The RealtimeConversationItem is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.RealtimeConversationItem
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RealtimeConversationItem] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RealtimeConversationItem, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_agent_conversation_item_audio(
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> _models.VoiceItemAudioResponse:
+        """Get a voice agent conversation item's audio metadata.
+
+        Returns metadata for a single conversation item's audio segment, including the common playback
+        facts (role, format/codec, sample rate, channels, offset, duration) for both Foundry-managed
+        and bring-your-own-storage (BYOS) recordings; for BYOS the response additionally includes
+        ``blob_uri``, the URI of the recording in the customer's own storage (no SAS) that the customer
+        downloads with their own credentials. Requires the conversation to have persisted audio
+        (``store = true``); returns ``404`` when the conversation, item, or its audio was not
+        persisted.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item whose audio metadata is retrieved. Required.
+        :type item_id: str
+        :return: VoiceItemAudioResponse. The VoiceItemAudioResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceItemAudioResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceItemAudioResponse] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_audio_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceItemAudioResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_agent_conversation_item_audio_content(  # pylint: disable=name-too-long
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        """Stream a voice agent conversation item's audio.
+
+        Streams a single conversation item's audio as a WAV (``audio/wav``) byte stream through the
+        service (no SAS URL). This route serves Foundry-managed storage only. For
+        bring-your-own-storage (BYOS) recordings the bytes are not proxied — the caller must download
+        directly from customer storage using the ``blob_uri`` returned by the item's ``/audio``
+        metadata route — so this route returns ``409 Conflict`` for BYOS recordings. Returns ``404``
+        when the conversation, item, or its audio was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item whose audio is streamed. Required.
+        :type item_id: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_audio_content_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_agent_conversation_item_generated_audio(  # pylint: disable=name-too-long
@@ -11717,6 +12758,172 @@ class AgentEndpointConversationsOperations:  # pylint: disable=docstring-missing
             agent_name=agent_name,
             conversation_id=conversation_id,
             item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_agent_conversation_audio(
+        self, agent_name: str, conversation_id: str, **kwargs: Any
+    ) -> _models.VoiceRecordingResponse:
+        """Get a voice agent conversation's merged recording metadata.
+
+        Returns metadata for the whole-call merged stereo recording (user audio on the left channel,
+        agent audio on the right). The common metadata (format, sample rate, channels, channel layout,
+        duration) is returned for both Foundry-managed and bring-your-own-storage (BYOS) recordings;
+        for BYOS the response additionally includes ``blob_uri``, the URI of the recording in the
+        customer's own storage (no SAS) that the customer downloads with their own credentials. The
+        recording is built once from the per-turn segments after persistence finalization succeeds.
+        While the conversation is ``in_progress``, this route returns retriable ``409 Conflict`` with
+        ``error.code = recording_not_ready`` and a ``Retry-After`` header when retry guidance is
+        available. When the conversation is ``failed``, it returns terminal ``409 Conflict`` with
+        ``error.code = recording_unavailable``. For a ``completed`` conversation, metadata is available
+        subject to the existing BYOS behavior. Requires the conversation to have persisted audio
+        (``store = true``); otherwise returns ``404``.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose merged recording metadata is
+         retrieved. Required.
+        :type conversation_id: str
+        :return: VoiceRecordingResponse. The VoiceRecordingResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceRecordingResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceRecordingResponse] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_audio_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceRecordingResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_agent_conversation_audio_content(
+        self, agent_name: str, conversation_id: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        """Stream a voice agent conversation's merged recording.
+
+        Streams the whole-call merged stereo recording as a WAV (``audio/wav``) byte stream through the
+        service (no SAS URL). This route serves Foundry-managed storage only. For
+        bring-your-own-storage (BYOS) recordings the bytes are not proxied — the caller must download
+        directly from customer storage using the ``blob_uri`` returned by the metadata route — so this
+        route returns ``409 Conflict`` for BYOS recordings. While the conversation is ``in_progress``,
+        this route returns retriable ``409 Conflict`` with ``error.code = recording_not_ready`` and a
+        ``Retry-After`` header when retry guidance is available. When the conversation is ``failed``,
+        it returns terminal ``409 Conflict`` with ``error.code = recording_unavailable``. For a
+        ``completed`` conversation, content is available subject to the existing BYOS behavior. A
+        conversation without persisted audio (``store = false``) returns ``404``.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose merged recording is streamed.
+         Required.
+        :type conversation_id: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_audio_content_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -12560,1197 +13767,6 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
-
-
-class BetaVoiceAgentWebSocketOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`voice_agent_web_socket` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def connect_voice_agent(  # pylint: disable=inconsistent-return-statements
-        self,
-        agent_name: str,
-        *,
-        foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = None,
-        transport: Optional[Union[str, _models.VoiceAgentTransport]] = None,
-        store: Optional[bool] = None,
-        agent_version_override: Optional[str] = None,
-        websocket_subprotocol: Optional[Union[str, _models.VoiceAgentWebSocketSubprotocol]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Connect to a voice agent.
-
-        Connects to a voice agent over WebSocket. The client must send an HTTP GET with ``Upgrade:
-        websocket``
-        headers. The optional ``realtime`` subprotocol is the only accepted subprotocol value. Supply
-        the
-        ``VoiceAgents=V1Preview`` opt-in through either the ``Foundry-Features`` header or the
-        ``foundry_features``
-        query parameter.
-
-        Handshake failures are evaluated in the following order, independent of the requested
-        ``transport``:
-
-
-
-        1. Agent enablement (any transport): if the target agent is disabled, the handshake fails
-        before the
-        `101 Switching Protocols` upgrade with `409 Conflict`, using the shared Foundry
-        `ApiErrorResponse` shape
-        with `error.code = agent_disabled`. This failure is terminal until the caller enables the
-        agent, and it
-        takes precedence over the WebRTC-specific checks below.
-        2. WebRTC availability (only when `transport=webrtc`, and only once the agent itself is
-        enabled): the agent
-        must have the WebRTC transport capability configured. If the agent is enabled but WebRTC is not
-        available
-        for it, the handshake fails with `404 Not Found`. This is distinct from the `409
-        agent_disabled` case
-        above, which concerns the agent itself rather than its WebRTC capability.
-        3. WebRTC compatibility (only when `transport=webrtc`): WebRTC does not support
-        bring-your-own-model (BYOM)
-        or hosted-agent voice agents; those requests fail with `400 Bad Request`.
-
-        :param agent_name: The name of the voice agent. Required.
-        :type agent_name: str
-        :keyword foundry_features_query: A query alternative to the ``Foundry-Features`` header for
-         clients that cannot set headers during a
-         WebSocket handshake. Set this to ``VoiceAgents=V1Preview``. Either this query parameter or the
-         header is
-         required. VOICE_AGENTS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features_query: str or ~azure.ai.projects.models.VOICE_AGENTS_V1_PREVIEW
-        :keyword transport: Selects the connection transport. Omit or send ``websocket`` for the
-         default, where signaling and audio are
-         exchanged as JSON events over this WebSocket. Send ``webrtc`` to negotiate a WebRTC
-         connection: the WebSocket
-         then carries only SDP signaling (``rtc.call.sdp.create`` / ``rtc.call.sdp.created``) while
-         media and the data
-         channel are peer-to-peer. Known values are: "websocket" and "webrtc". Default value is None.
-        :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport
-        :keyword store: Whether to persist the conversation created by this WebSocket session. If
-         omitted, the service honors the
-         persisted voice agent definition's configured ``store`` value. If supplied, this value
-         overrides the
-         definition's ``store`` setting for this session only. Default value is None.
-        :paramtype store: bool
-        :keyword agent_version_override: Selects a specific version of the voice agent for this
-         session. Default value is None.
-        :paramtype agent_version_override: str
-        :keyword websocket_subprotocol: The requested WebSocket subprotocol. Omit this header or
-         request exactly ``realtime``. "realtime" Default value is None.
-        :paramtype websocket_subprotocol: str or
-         ~azure.ai.projects.models.VoiceAgentWebSocketSubprotocol
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_voice_agent_web_socket_connect_voice_agent_request(
-            agent_name=agent_name,
-            foundry_features_query=foundry_features_query,
-            transport=transport,
-            store=store,
-            agent_version_override=agent_version_override,
-            websocket_subprotocol=websocket_subprotocol,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [101]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Sec-WebSocket-Protocol"] = self._deserialize(
-            "str", response.headers.get("Sec-WebSocket-Protocol")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-
-class BetaAgentEndpointConversationsOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`agent_endpoint_conversations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def list_agent_conversations(
-        self,
-        agent_name: str,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.VoiceConversation"]:
-        """List voice agent conversations.
-
-        Returns the conversations persisted for the specified voice agent endpoint. Conversations are
-        present when the session's effective ``store`` setting is ``true``, whether inherited from the
-        agent definition or enabled by the WebSocket session override.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of VoiceConversation
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.VoiceConversation]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.VoiceConversation]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agent_endpoint_conversations_list_agent_conversations_request(
-                agent_name=agent_name,
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.VoiceConversation],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def get_agent_conversation(self, agent_name: str, conversation_id: str, **kwargs: Any) -> _models.VoiceConversation:
-        """Get a voice agent conversation.
-
-        Retrieves a single conversation recorded for the specified voice agent endpoint by its id.
-        Returns ``404`` when the conversation was not persisted (``store = false``) or does not exist.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param conversation_id: The id of the conversation to retrieve. Required.
-        :type conversation_id: str
-        :return: VoiceConversation. The VoiceConversation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VoiceConversation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VoiceConversation] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_endpoint_conversations_get_agent_conversation_request(
-            agent_name=agent_name,
-            conversation_id=conversation_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.VoiceConversation, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete_agent_conversation(  # pylint: disable=inconsistent-return-statements
-        self, agent_name: str, conversation_id: str, **kwargs: Any
-    ) -> None:
-        """Delete a voice agent conversation.
-
-        Deletes a conversation and all of its stored data — responses, items, and any audio (cascade).
-        This is the customer's explicit data-deletion control for voice conversations.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param conversation_id: The id of the conversation to delete. Required.
-        :type conversation_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_endpoint_conversations_delete_agent_conversation_request(
-            agent_name=agent_name,
-            conversation_id=conversation_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def list_agent_conversation_responses(
-        self,
-        agent_name: str,
-        conversation_id: str,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.VoiceResponse"]:
-        """List responses in a voice agent conversation.
-
-        Returns a paged collection of the responses (model inference turns) recorded for the specified
-        conversation. The per-response ``output`` projection may be omitted here; use the
-        response-items route for the canonical paged output. Returns ``404`` when the conversation was
-        not persisted (``store = false``).
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param conversation_id: The id of the conversation whose responses are listed. Required.
-        :type conversation_id: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of VoiceResponse
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.VoiceResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.VoiceResponse]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agent_endpoint_conversations_list_agent_conversation_responses_request(
-                agent_name=agent_name,
-                conversation_id=conversation_id,
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.VoiceResponse],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def get_agent_conversation_response(
-        self, agent_name: str, conversation_id: str, response_id: str, **kwargs: Any
-    ) -> _models.VoiceResponse:
-        """Get a voice agent conversation response.
-
-        Retrieves a single response from the specified conversation by its id, including its ``output``
-        items, ``usage``, and status. Returns ``404`` when the conversation or response was not
-        persisted (``store = false``).
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param conversation_id: The id of the conversation that contains the response. Required.
-        :type conversation_id: str
-        :param response_id: The id of the response to retrieve. Required.
-        :type response_id: str
-        :return: VoiceResponse. The VoiceResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VoiceResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VoiceResponse] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_endpoint_conversations_get_agent_conversation_response_request(
-            agent_name=agent_name,
-            conversation_id=conversation_id,
-            response_id=response_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.VoiceResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list_agent_conversation_response_items(
-        self,
-        agent_name: str,
-        conversation_id: str,
-        response_id: str,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.RealtimeConversationItem"]:
-        """List items produced by a voice agent conversation response.
-
-        Returns a paged collection of the output items produced by a specific response (the response's
-        output projection). For the complete ordered conversation history — including user input and
-        client-created tool outputs — use the conversation items route instead. Returns ``404`` when
-        the conversation or response was not persisted (``store = false``).
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param conversation_id: The id of the conversation that contains the response. Required.
-        :type conversation_id: str
-        :param response_id: The id of the response whose output items are listed. Required.
-        :type response_id: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of RealtimeConversationItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RealtimeConversationItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.RealtimeConversationItem]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agent_endpoint_conversations_list_agent_conversation_response_items_request(
-                agent_name=agent_name,
-                conversation_id=conversation_id,
-                response_id=response_id,
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.RealtimeConversationItem],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_agent_conversation_items(
-        self,
-        agent_name: str,
-        conversation_id: str,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.RealtimeConversationItem"]:
-        """List items in a voice agent conversation.
-
-        Returns a paged collection of items — the complete ordered conversation history, including user
-        input, assistant output, and client-created tool outputs (transcripts + tool events). Returns
-        ``404`` when the conversation was not persisted (``store = false``).
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param conversation_id: The id of the conversation whose items are listed. Required.
-        :type conversation_id: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of RealtimeConversationItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RealtimeConversationItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.RealtimeConversationItem]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agent_endpoint_conversations_list_agent_conversation_items_request(
-                agent_name=agent_name,
-                conversation_id=conversation_id,
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.RealtimeConversationItem],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def get_agent_conversation_item(
-        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
-    ) -> _models.RealtimeConversationItem:
-        """Get a voice agent conversation item.
-
-        Retrieves a single item from the specified conversation by its id, including its transcript. An
-        ``input_audio``/``output_audio`` content part indicates that audio is available for the item;
-        the canonical per-item audio metadata is the ``/items/{item_id}/audio`` resource, and the bytes
-        are streamed by ``/items/{item_id}/audio/content``. Returns ``404`` when the conversation or
-        item was not persisted (``store = false``).
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param conversation_id: The id of the conversation that contains the item. Required.
-        :type conversation_id: str
-        :param item_id: The id of the conversation item to retrieve. Required.
-        :type item_id: str
-        :return: RealtimeConversationItem. The RealtimeConversationItem is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.RealtimeConversationItem
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.RealtimeConversationItem] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_endpoint_conversations_get_agent_conversation_item_request(
-            agent_name=agent_name,
-            conversation_id=conversation_id,
-            item_id=item_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.RealtimeConversationItem, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_agent_conversation_item_audio(
-        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
-    ) -> _models.VoiceItemAudioResponse:
-        """Get a voice agent conversation item's audio metadata.
-
-        Returns metadata for a single conversation item's audio segment, including the common playback
-        facts (role, format/codec, sample rate, channels, offset, duration) for both Foundry-managed
-        and bring-your-own-storage (BYOS) recordings; for BYOS the response additionally includes
-        ``blob_uri``, the URI of the recording in the customer's own storage (no SAS) that the customer
-        downloads with their own credentials. Requires the conversation to have persisted audio
-        (``store = true``); returns ``404`` when the conversation, item, or its audio was not
-        persisted.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param conversation_id: The id of the conversation that contains the item. Required.
-        :type conversation_id: str
-        :param item_id: The id of the conversation item whose audio metadata is retrieved. Required.
-        :type item_id: str
-        :return: VoiceItemAudioResponse. The VoiceItemAudioResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VoiceItemAudioResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VoiceItemAudioResponse] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_endpoint_conversations_get_agent_conversation_item_audio_request(
-            agent_name=agent_name,
-            conversation_id=conversation_id,
-            item_id=item_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.VoiceItemAudioResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_agent_conversation_item_audio_content(  # pylint: disable=name-too-long
-        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        """Stream a voice agent conversation item's audio.
-
-        Streams a single conversation item's audio as a WAV (``audio/wav``) byte stream through the
-        service (no SAS URL). This route serves Foundry-managed storage only. For
-        bring-your-own-storage (BYOS) recordings the bytes are not proxied — the caller must download
-        directly from customer storage using the ``blob_uri`` returned by the item's ``/audio``
-        metadata route — so this route returns ``409 Conflict`` for BYOS recordings. Returns ``404``
-        when the conversation, item, or its audio was not persisted (``store = false``).
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param conversation_id: The id of the conversation that contains the item. Required.
-        :type conversation_id: str
-        :param item_id: The id of the conversation item whose audio is streamed. Required.
-        :type item_id: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_endpoint_conversations_get_agent_conversation_item_audio_content_request(
-            agent_name=agent_name,
-            conversation_id=conversation_id,
-            item_id=item_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_agent_conversation_audio(
-        self, agent_name: str, conversation_id: str, **kwargs: Any
-    ) -> _models.VoiceRecordingResponse:
-        """Get a voice agent conversation's merged recording metadata.
-
-        Returns metadata for the whole-call merged stereo recording (user audio on the left channel,
-        agent audio on the right). The common metadata (format, sample rate, channels, channel layout,
-        duration) is returned for both Foundry-managed and bring-your-own-storage (BYOS) recordings;
-        for BYOS the response additionally includes ``blob_uri``, the URI of the recording in the
-        customer's own storage (no SAS) that the customer downloads with their own credentials. The
-        recording is built once from the per-turn segments after persistence finalization succeeds.
-        While the conversation is ``in_progress``, this route returns retriable ``409 Conflict`` with
-        ``error.code = recording_not_ready`` and a ``Retry-After`` header when retry guidance is
-        available. When the conversation is ``failed``, it returns terminal ``409 Conflict`` with
-        ``error.code = recording_unavailable``. For a ``completed`` conversation, metadata is available
-        subject to the existing BYOS behavior. Requires the conversation to have persisted audio
-        (``store = true``); otherwise returns ``404``.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param conversation_id: The id of the conversation whose merged recording metadata is
-         retrieved. Required.
-        :type conversation_id: str
-        :return: VoiceRecordingResponse. The VoiceRecordingResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VoiceRecordingResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VoiceRecordingResponse] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_endpoint_conversations_get_agent_conversation_audio_request(
-            agent_name=agent_name,
-            conversation_id=conversation_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.VoiceRecordingResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_agent_conversation_audio_content(
-        self, agent_name: str, conversation_id: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        """Stream a voice agent conversation's merged recording.
-
-        Streams the whole-call merged stereo recording as a WAV (``audio/wav``) byte stream through the
-        service (no SAS URL). This route serves Foundry-managed storage only. For
-        bring-your-own-storage (BYOS) recordings the bytes are not proxied — the caller must download
-        directly from customer storage using the ``blob_uri`` returned by the metadata route — so this
-        route returns ``409 Conflict`` for BYOS recordings. While the conversation is ``in_progress``,
-        this route returns retriable ``409 Conflict`` with ``error.code = recording_not_ready`` and a
-        ``Retry-After`` header when retry guidance is available. When the conversation is ``failed``,
-        it returns terminal ``409 Conflict`` with ``error.code = recording_unavailable``. For a
-        ``completed`` conversation, content is available subject to the existing BYOS behavior. A
-        conversation without persisted audio (``store = false``) returns ``404``.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param conversation_id: The id of the conversation whose merged recording is streamed.
-         Required.
-        :type conversation_id: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_endpoint_conversations_get_agent_conversation_audio_content_request(
-            agent_name=agent_name,
-            conversation_id=conversation_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-param

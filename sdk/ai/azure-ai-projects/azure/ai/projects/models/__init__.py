@@ -315,6 +315,8 @@ from ._models import (  # type: ignore
     ProtocolConfiguration,
     ProtocolVersionRecord,
     RaiConfig,
+    RaiInvocationModeration,
+    RaiSseTextSelector,
     RankingOptions,
     RealtimeAudioFormats,
     RealtimeAudioFormatsAudioPcm,
@@ -575,8 +577,8 @@ from ._models import (  # type: ignore
     VoiceAgentSessionResponseConfig,
     VoiceAgentSessionUpdateConfig,
     VoiceAgentStaticInterimResponseConfig,
-    VoiceAgentSubAgent,
-    VoiceAgentSubAgentConfig,
+    VoiceAgentSubagent,
+    VoiceAgentSubagentConfig,
     VoiceAgentSubagentResponsePolicy,
     VoiceAgentSystemTool,
     VoiceAgentTemplateGreetingConfig,
@@ -685,6 +687,8 @@ from ._enums import (  # type: ignore
     PageOrder,
     PendingUploadType,
     PublishApprovalStatus,
+    RaiInvocationContentType,
+    RaiInvocationMode,
     RankerVersionType,
     RealtimeAudioFormatsType,
     RealtimeClientEventType,
@@ -763,6 +767,7 @@ from ._enums import (  # type: ignore
     VoiceModelType,
     VoiceOutputModality,
     VoiceType,
+    _AgentDefinitionOptInKeys,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -1069,6 +1074,8 @@ __all__ = [
     "ProtocolConfiguration",
     "ProtocolVersionRecord",
     "RaiConfig",
+    "RaiInvocationModeration",
+    "RaiSseTextSelector",
     "RankingOptions",
     "RealtimeAudioFormats",
     "RealtimeAudioFormatsAudioPcm",
@@ -1329,8 +1336,8 @@ __all__ = [
     "VoiceAgentSessionResponseConfig",
     "VoiceAgentSessionUpdateConfig",
     "VoiceAgentStaticInterimResponseConfig",
-    "VoiceAgentSubAgent",
-    "VoiceAgentSubAgentConfig",
+    "VoiceAgentSubagent",
+    "VoiceAgentSubagentConfig",
     "VoiceAgentSubagentResponsePolicy",
     "VoiceAgentSystemTool",
     "VoiceAgentTemplateGreetingConfig",
@@ -1436,6 +1443,8 @@ __all__ = [
     "PageOrder",
     "PendingUploadType",
     "PublishApprovalStatus",
+    "RaiInvocationContentType",
+    "RaiInvocationMode",
     "RankerVersionType",
     "RealtimeAudioFormatsType",
     "RealtimeClientEventType",
@@ -1514,6 +1523,7 @@ __all__ = [
     "VoiceModelType",
     "VoiceOutputModality",
     "VoiceType",
+    "_AgentDefinitionOptInKeys",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

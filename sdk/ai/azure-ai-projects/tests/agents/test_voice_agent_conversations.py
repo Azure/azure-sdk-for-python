@@ -192,11 +192,7 @@ class TestVoiceAgentConversations(TestBase):
             assert response_detail.id == first_response.id
 
             # The items produced by that response (does not raise; count may be 0 or more).
-            list(
-                conversations.list_agent_conversation_response_items(
-                    _AGENT_NAME, conversation_id, first_response.id
-                )
-            )
+            list(conversations.list_agent_conversation_response_items(_AGENT_NAME, conversation_id, first_response.id))
 
             # The ordered conversation items -- the full transcript (user + assistant + tool events).
             items = list(conversations.list_agent_conversation_items(_AGENT_NAME, conversation_id))
@@ -217,9 +213,7 @@ class TestVoiceAgentConversations(TestBase):
             recording = conversations.get_agent_conversation_audio(_AGENT_NAME, conversation_id)
             assert recording.format is not None
             if not recording.blob_uri:
-                audio_bytes = b"".join(
-                    conversations.get_agent_conversation_audio_content(_AGENT_NAME, conversation_id)
-                )
+                audio_bytes = b"".join(conversations.get_agent_conversation_audio_content(_AGENT_NAME, conversation_id))
                 assert len(audio_bytes) > 0
 
             # A single item's audio, if any item has one.
@@ -228,9 +222,7 @@ class TestVoiceAgentConversations(TestBase):
                 if not item_id:
                     continue
                 try:
-                    item_audio = conversations.get_agent_conversation_item_audio(
-                        _AGENT_NAME, conversation_id, item_id
-                    )
+                    item_audio = conversations.get_agent_conversation_item_audio(_AGENT_NAME, conversation_id, item_id)
                 except HttpResponseError as e:
                     if e.status_code == 404:
                         continue
@@ -238,9 +230,7 @@ class TestVoiceAgentConversations(TestBase):
                 assert item_audio.role is not None
                 if not item_audio.blob_uri:
                     item_audio_bytes = b"".join(
-                        conversations.get_agent_conversation_item_audio_content(
-                            _AGENT_NAME, conversation_id, item_id
-                        )
+                        conversations.get_agent_conversation_item_audio_content(_AGENT_NAME, conversation_id, item_id)
                     )
                     assert len(item_audio_bytes) > 0
                 break

@@ -14482,16 +14482,136 @@ class RaiConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keywo
 
     :ivar rai_policy_name: The name of the RAI policy to apply. Required.
     :vartype rai_policy_name: str
+    :ivar invocations_moderation: Author-declared configuration telling the platform where
+     user/agent text lives in the agent-defined invocations request/response bodies, so
+     content-safety guardrails can extract and moderate it. Optional; a rai_config without it leaves
+     the invocations path without content-safety moderation.
+    :vartype invocations_moderation: ~azure.ai.projects.models.RaiInvocationModeration
     """
 
     rai_policy_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the RAI policy to apply. Required."""
+    invocations_moderation: Optional["_models.RaiInvocationModeration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Author-declared configuration telling the platform where user/agent text lives in the
+     agent-defined invocations request/response bodies, so content-safety guardrails can extract and
+     moderate it. Optional; a rai_config without it leaves the invocations path without
+     content-safety moderation."""
 
     @overload
     def __init__(
         self,
         *,
         rai_policy_name: str,
+        invocations_moderation: Optional["_models.RaiInvocationModeration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiInvocationModeration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Declares where request/response text lives so content-safety guardrails can extract it.
+
+    :ivar input_content_type: How the REQUEST body is parsed. When omitted, the service defaults to
+     ``json``. Known values are: "json" and "text".
+    :vartype input_content_type: str or ~azure.ai.projects.models.RaiInvocationContentType
+    :ivar output_content_type: How the RESPONSE body is parsed. When omitted, the service defaults
+     to ``json``. Known values are: "json" and "text".
+    :vartype output_content_type: str or ~azure.ai.projects.models.RaiInvocationContentType
+    :ivar response_mode: Author-declared response shape; drives which output gate runs and which
+     fields are required. Required. Known values are: "non_streaming", "streaming", and "both".
+    :vartype response_mode: str or ~azure.ai.projects.models.RaiInvocationMode
+    :ivar input_paths: Path(s) to user text in the REQUEST body. Required when input_content_type
+     is ``json``.
+    :vartype input_paths: list[str]
+    :ivar output_paths: Path(s) to agent text in a NON-STREAMING response body. Required when
+     response_mode is non_streaming/both and output_content_type is ``json``.
+    :vartype output_paths: list[str]
+    :ivar stream_selectors: One SSE event->field selector per event type carrying text. Required
+     when response_mode is streaming/both and output_content_type is ``json``.
+    :vartype stream_selectors: list[~azure.ai.projects.models.RaiSseTextSelector]
+    """
+
+    input_content_type: Optional[Union[str, "_models.RaiInvocationContentType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the REQUEST body is parsed. When omitted, the service defaults to ``json``. Known values
+     are: \"json\" and \"text\"."""
+    output_content_type: Optional[Union[str, "_models.RaiInvocationContentType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the RESPONSE body is parsed. When omitted, the service defaults to ``json``. Known values
+     are: \"json\" and \"text\"."""
+    response_mode: Union[str, "_models.RaiInvocationMode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Author-declared response shape; drives which output gate runs and which fields are required.
+     Required. Known values are: \"non_streaming\", \"streaming\", and \"both\"."""
+    input_paths: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Path(s) to user text in the REQUEST body. Required when input_content_type is ``json``."""
+    output_paths: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Path(s) to agent text in a NON-STREAMING response body. Required when response_mode is
+     non_streaming/both and output_content_type is ``json``."""
+    stream_selectors: Optional[list["_models.RaiSseTextSelector"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """One SSE event->field selector per event type carrying text. Required when response_mode is
+     streaming/both and output_content_type is ``json``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        response_mode: Union[str, "_models.RaiInvocationMode"],
+        input_content_type: Optional[Union[str, "_models.RaiInvocationContentType"]] = None,
+        output_content_type: Optional[Union[str, "_models.RaiInvocationContentType"]] = None,
+        input_paths: Optional[list[str]] = None,
+        output_paths: Optional[list[str]] = None,
+        stream_selectors: Optional[list["_models.RaiSseTextSelector"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiSseTextSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An SSE event-type to text-field selector for streaming invocation output.
+
+    :ivar event_type: The SSE event ``type`` value that carries text. Required.
+    :vartype event_type: str
+    :ivar text_field: The field on a matched event holding the text delta. When omitted, the
+     service defaults to ``delta``.
+    :vartype text_field: str
+    """
+
+    event_type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The SSE event ``type`` value that carries text. Required."""
+    text_field: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The field on a matched event holding the text delta. When omitted, the service defaults to
+     ``delta``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_type: str,
+        text_field: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -16612,11 +16732,10 @@ class RealtimeServerEventConversationItemAdded(
 
     * When the client sends a `conversation.item.create` event.
     * When the input audio buffer is committed. In this case the item will be a user message
-      containing the audio from the buffer.
+    containing the audio from the buffer.
     * When the model is generating a Response. In this case the `conversation.item.added` event
-      will be sent when the model starts generating a specific Item, and thus it will not yet have
-      any content (and `status` will be `in_progress`).
-
+    will be sent when the model starts generating a specific Item, and thus it will not yet have
+    any content (and `status` will be `in_progress`).
     The event will include the full content of the Item (except when model is generating a
     Response) except for audio data, which can be retrieved separately with a
     `conversation.item.retrieve` event if necessary.
@@ -16668,13 +16787,13 @@ class RealtimeServerEventConversationItemCreated(
     event:
 
     * The server is generating a Response, which if successful will produce
-      either one or two Items, which will be of type `message`
-      (role `assistant`) or type `function_call`.
+    either one or two Items, which will be of type `message`
+    (role `assistant`) or type `function_call`.
     * The input audio buffer has been committed, either by the client or the
-      server (in `server_vad` mode). The server will take the content of the
-      input audio buffer and add it to a new user message Item.
+    server (in `server_vad` mode). The server will take the content of the
+    input audio buffer and add it to a new user message Item.
     * The client has sent a `conversation.item.create` event to add a new Item
-      to the Conversation.
+    to the Conversation.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -19031,7 +19150,7 @@ class RealtimeServerEventSessionCreated(
     """The unique ID of the server event. Required."""
     type: Literal[RealtimeServerEventType.SESSION_CREATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The event type, must be ``session.created``. Required. SESSION_CREATED."""
-    session: "_models.VoiceAgentSessionResponseConfig" = rest_field(
+    session: "_unions.VoiceAgentSessionResponse" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The session configuration. Required. Is one of the following types:
@@ -19045,7 +19164,7 @@ class RealtimeServerEventSessionCreated(
         self,
         *,
         event_id: str,
-        session: "_models.VoiceAgentSessionResponseConfig",
+        session: "_unions.VoiceAgentSessionResponse",
         conversation_id: Optional[str] = None,
     ) -> None: ...
 
@@ -19079,7 +19198,7 @@ class RealtimeServerEventSessionUpdated(
     """The unique ID of the server event. Required."""
     type: Literal[RealtimeServerEventType.SESSION_UPDATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The event type, must be ``session.updated``. Required. SESSION_UPDATED."""
-    session: "_models.VoiceAgentSessionResponseConfig" = rest_field(
+    session: "_unions.VoiceAgentSessionResponse" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The session configuration. Required. Is one of the following types:
@@ -19090,7 +19209,7 @@ class RealtimeServerEventSessionUpdated(
         self,
         *,
         event_id: str,
-        session: "_models.VoiceAgentSessionResponseConfig",
+        session: "_unions.VoiceAgentSessionResponse",
     ) -> None: ...
 
     @overload
@@ -20163,10 +20282,12 @@ class SessionLogEvent(_Model):  # pylint: disable=docstring-keyword-should-match
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -24100,14 +24221,13 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
 
     * `openai`: `voice` and `speed`.
     * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
-      `custom_lexicon_url`,
-      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    `custom_lexicon_url`,
+    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
     * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
-      `personal_voice_model`; the voice name is derived from the avatar.
+    `personal_voice_model`; the voice name is derived from the avatar.
     * `azure-realtime-native`: `voice` and `speed`.
-
     `format` and `output_audio_timestamp_types` apply to every voice type.
 
     :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
@@ -24255,7 +24375,7 @@ class VoiceAgentAvatarConfig(_Model):  # pylint: disable=docstring-keyword-shoul
     :ivar customized: Whether the avatar is a customer-customized avatar. Defaults to false.
     :vartype customized: bool
     :ivar output_protocol: The transport used to deliver the avatar video stream. Known values are:
-     "webrtc", "websocket", and "websocket-binary".
+     "webrtc" and "websocket".
     :vartype output_protocol: str or ~azure.ai.projects.models.VoiceAgentAvatarOutputProtocol
     :ivar model: The avatar model identifier.
     :vartype model: str
@@ -24280,8 +24400,8 @@ class VoiceAgentAvatarConfig(_Model):  # pylint: disable=docstring-keyword-shoul
     output_protocol: Optional[Union[str, "_models.VoiceAgentAvatarOutputProtocol"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The transport used to deliver the avatar video stream. Known values are: \"webrtc\",
-     \"websocket\", and \"websocket-binary\"."""
+    """The transport used to deliver the avatar video stream. Known values are: \"webrtc\" and
+     \"websocket\"."""
     model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The avatar model identifier."""
     video: Optional["_models.VoiceAgentAvatarVideoParams"] = rest_field(
@@ -24996,9 +25116,7 @@ class VoiceAgentClientEventSessionUpdate(_Model):  # pylint: disable=docstring-k
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The event type, must be ``session.update``. Required. SESSION_UPDATE."""
-    session: "_models.VoiceAgentSessionUpdateConfig" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    session: "_unions.VoiceAgentSessionUpdate" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The voice-agent session settings to update. Required. Is one of the following types:
      VoiceAgentSessionUpdateConfig"""
 
@@ -25007,7 +25125,7 @@ class VoiceAgentClientEventSessionUpdate(_Model):  # pylint: disable=docstring-k
         self,
         *,
         type: Literal[RealtimeClientEventType.SESSION_UPDATE],
-        session: "_models.VoiceAgentSessionUpdateConfig",
+        session: "_unions.VoiceAgentSessionUpdate",
         event_id: Optional[str] = None,
     ) -> None: ...
 
@@ -25095,7 +25213,7 @@ class VoiceAgentDefinition(
     :vartype structured_inputs: dict[str, ~azure.ai.projects.models.StructuredInputDefinition]
     :ivar subagent_config: Optional configuration for sibling Foundry text agents that this voice
      agent may consult as background specialists.
-    :vartype subagent_config: ~azure.ai.projects.models.VoiceAgentSubAgentConfig
+    :vartype subagent_config: ~azure.ai.projects.models.VoiceAgentSubagentConfig
     :ivar store: Whether conversations with this agent are persisted. A single, all-or-nothing
      persistence switch that defaults to ``false`` (privacy-safe: off by default). When ``true``,
      Foundry persists the full conversation — the transcript/event timeline and raw audio. When
@@ -25186,7 +25304,7 @@ class VoiceAgentDefinition(
     )
     """Set of structured inputs that participate in prompt template substitution, rendered per session
      before the live session starts."""
-    subagent_config: Optional["_models.VoiceAgentSubAgentConfig"] = rest_field(
+    subagent_config: Optional["_models.VoiceAgentSubagentConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional configuration for sibling Foundry text agents that this voice agent may consult as
@@ -25220,7 +25338,7 @@ class VoiceAgentDefinition(
         tool_choice: Optional["_unions.VoiceAgentToolChoice"] = None,
         parallel_tool_calls: Optional[bool] = None,
         structured_inputs: Optional[dict[str, "_models.StructuredInputDefinition"]] = None,
-        subagent_config: Optional["_models.VoiceAgentSubAgentConfig"] = None,
+        subagent_config: Optional["_models.VoiceAgentSubagentConfig"] = None,
         store: Optional[bool] = None,
     ) -> None: ...
 
@@ -27221,7 +27339,7 @@ class VoiceAgentSessionAvatarConfig(
     :ivar customized: Whether the avatar is a customer-customized avatar. Defaults to false.
     :vartype customized: bool
     :ivar output_protocol: The transport used to deliver the avatar video stream. Known values are:
-     "webrtc", "websocket", and "websocket-binary".
+     "webrtc" and "websocket".
     :vartype output_protocol: str or ~azure.ai.projects.models.VoiceAgentAvatarOutputProtocol
     :ivar model: The avatar model identifier.
     :vartype model: str
@@ -27590,7 +27708,7 @@ class VoiceAgentStaticInterimResponseConfig(
         self.type = "static_interim_response"  # type: ignore
 
 
-class VoiceAgentSubAgent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VoiceAgentSubagent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A sibling Foundry text agent that a voice agent may consult as a background specialist.
 
     :ivar agent_name: The name of the subagent. The subagent must be in the same project as the
@@ -27650,15 +27768,15 @@ class VoiceAgentSubAgent(_Model):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentSubAgentConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VoiceAgentSubagentConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for sibling Foundry text agents that a voice agent may consult.
 
     :ivar subagents: The sibling Foundry text agents, in the same project, that this voice agent
      may consult. Required.
-    :vartype subagents: list[~azure.ai.projects.models.VoiceAgentSubAgent]
+    :vartype subagents: list[~azure.ai.projects.models.VoiceAgentSubagent]
     """
 
-    subagents: list["_models.VoiceAgentSubAgent"] = rest_field(
+    subagents: list["_models.VoiceAgentSubagent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The sibling Foundry text agents, in the same project, that this voice agent may consult.
@@ -27668,7 +27786,7 @@ class VoiceAgentSubAgentConfig(_Model):  # pylint: disable=docstring-keyword-sho
     def __init__(
         self,
         *,
-        subagents: list["_models.VoiceAgentSubAgent"],
+        subagents: list["_models.VoiceAgentSubagent"],
     ) -> None: ...
 
     @overload
@@ -28590,7 +28708,7 @@ class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-sho
     :vartype completed_at: ~datetime.datetime
     """
 
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])  # type: ignore[reportIncompatibleVariableOverride]
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique id of the response. Required."""
     output: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -28599,7 +28717,7 @@ class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-sho
      response (GET .../responses/{response_id}) or use the paged response-items route (GET
      .../responses/{response_id}/items) for its output items. Each item's ``response_id`` also links
      it back to this response in the conversation-level items list."""
-    conversation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])  # type: ignore[reportIncompatibleVariableOverride]
+    conversation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The id of the conversation this response belongs to. Required."""
     audio: Optional["_models.VoiceResponseAudio"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
