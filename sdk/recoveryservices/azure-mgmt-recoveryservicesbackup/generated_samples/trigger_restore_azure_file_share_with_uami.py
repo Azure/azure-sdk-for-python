@@ -54,6 +54,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-07-01/AzureStorage/TriggerRestore_AzureFileShare_WithUAMI.json
+# x-ms-original-file: 2026-08-01/AzureStorage/TriggerRestore_AzureFileShare_WithUAMI.json
 if __name__ == "__main__":
     main()
