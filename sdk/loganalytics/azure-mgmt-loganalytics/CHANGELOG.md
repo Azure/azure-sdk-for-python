@@ -1,5 +1,21 @@
 # Release History
 
+## 14.1.0 (2026-08-09)
+
+### Features Added
+
+  - Enum `ColumnDataTypeHintEnum` added member `VECTOR16`
+  - Model `SummaryLogs` added property `identity`
+  - Model `TableProperties` added property `protection_level`
+  - Model `WorkspaceFeatures` added property `data_authorization_mode`
+  - Added model `SummaryLogsIdentity`
+  - Added enum `SummaryLogsIdentityType`
+  - Added model `SummaryLogsUserIdentityProperties`
+  - Added enum `TableProtectionLevelEnum`
+  - Added model `WorkspacePurgeLakeDataBody`
+  - Added model `WorkspacePurgeLakeDataTimeRange`
+  - Operation group `WorkspacePurgeOperations` added method `begin_purge_lake_data`
+
 ## 14.0.0 (2026-06-24)
 
 ### Features Added

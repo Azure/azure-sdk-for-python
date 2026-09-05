@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/WorkspacesPurgeResourceId.json
+# x-ms-original-file: 2026-03-01/WorkspacesPurgeResourceId.json
 if __name__ == "__main__":
     main()

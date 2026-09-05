@@ -32,14 +32,14 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import LogAnalyticsManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_clusters_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_clusters_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_clusters_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +160,7 @@ def build_clusters_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/clusters/{clusterName}"
     path_format_arguments = {
@@ -183,7 +183,7 @@ def build_clusters_list_by_resource_group_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -208,7 +208,7 @@ def build_clusters_list_request(subscription_id: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -234,7 +234,7 @@ def build_data_exports_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -264,7 +264,7 @@ def build_data_exports_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -294,7 +294,7 @@ def build_data_exports_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/dataExports/{dataExportName}"
     path_format_arguments = {
@@ -318,7 +318,7 @@ def build_data_exports_list_by_workspace_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -346,7 +346,7 @@ def build_workspaces_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -375,7 +375,7 @@ def build_workspaces_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -406,7 +406,7 @@ def build_workspaces_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -435,7 +435,7 @@ def build_workspaces_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}"
     path_format_arguments = {
@@ -460,7 +460,7 @@ def build_workspaces_list_by_resource_group_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -485,7 +485,7 @@ def build_workspaces_list_request(subscription_id: str, **kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -510,7 +510,7 @@ def build_workspaces_failback_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/failback"
     path_format_arguments = {
@@ -537,7 +537,7 @@ def build_workspaces_get_nsp_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -568,7 +568,7 @@ def build_workspaces_list_nsp_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -599,7 +599,7 @@ def build_workspaces_reconcile_nsp_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/networkSecurityPerimeterConfigurations/{networkSecurityPerimeterConfigurationName}/reconcile"
     path_format_arguments = {
@@ -624,7 +624,7 @@ def build_workspaces_failover_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/locations/{location}/workspaces/{workspaceName}/failover"
     path_format_arguments = {
@@ -648,7 +648,7 @@ def build_data_sources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -678,7 +678,7 @@ def build_data_sources_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -708,7 +708,7 @@ def build_data_sources_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/dataSources/{dataSourceName}"
     path_format_arguments = {
@@ -738,7 +738,7 @@ def build_data_sources_list_by_workspace_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -769,7 +769,7 @@ def build_linked_services_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -799,7 +799,7 @@ def build_linked_services_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -830,7 +830,7 @@ def build_linked_services_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -859,7 +859,7 @@ def build_linked_services_list_by_workspace_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -887,7 +887,7 @@ def build_saved_searches_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -917,7 +917,7 @@ def build_saved_searches_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -947,7 +947,7 @@ def build_saved_searches_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/savedSearches/{savedSearchId}"
     path_format_arguments = {
@@ -971,7 +971,7 @@ def build_saved_searches_list_by_workspace_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -999,7 +999,7 @@ def build_tables_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1029,7 +1029,7 @@ def build_tables_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1061,7 +1061,7 @@ def build_tables_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1091,7 +1091,7 @@ def build_tables_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/tables/{tableName}"
     path_format_arguments = {
@@ -1115,7 +1115,7 @@ def build_tables_list_by_workspace_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1142,7 +1142,7 @@ def build_tables_migrate_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/tables/{tableName}/migrate"
     path_format_arguments = {
@@ -1165,7 +1165,7 @@ def build_tables_cancel_search_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/tables/{tableName}/cancelSearch"
     path_format_arguments = {
@@ -1189,7 +1189,7 @@ def build_available_service_tiers_list_by_workspace_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1216,7 +1216,7 @@ def build_gateways_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/gateways/{gatewayId}"
     path_format_arguments = {
@@ -1239,7 +1239,7 @@ def build_intelligence_packs_disable_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/intelligencePacks/{intelligencePackName}/Disable"
     path_format_arguments = {
@@ -1262,7 +1262,7 @@ def build_intelligence_packs_enable_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/intelligencePacks/{intelligencePackName}/Enable"
     path_format_arguments = {
@@ -1286,7 +1286,7 @@ def build_intelligence_packs_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1314,7 +1314,7 @@ def build_management_groups_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1342,7 +1342,7 @@ def build_schema_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1370,7 +1370,7 @@ def build_shared_keys_get_shared_keys_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1398,7 +1398,7 @@ def build_shared_keys_regenerate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1426,7 +1426,7 @@ def build_usages_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1455,7 +1455,7 @@ def build_workspace_purge_purge_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1485,7 +1485,7 @@ def build_workspace_purge_get_purge_status_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1508,6 +1508,34 @@ def build_workspace_purge_get_purge_status_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_workspace_purge_purge_lake_data_request(  # pylint: disable=name-too-long
+    resource_group_name: str, workspace_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/purgeLakeData"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_linked_storage_accounts_get_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     workspace_name: str,
@@ -1518,7 +1546,7 @@ def build_linked_storage_accounts_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1552,7 +1580,7 @@ def build_linked_storage_accounts_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1586,7 +1614,7 @@ def build_linked_storage_accounts_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/linkedStorageAccounts/{dataSourceType}"
     path_format_arguments = {
@@ -1610,7 +1638,7 @@ def build_linked_storage_accounts_list_by_workspace_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1638,7 +1666,7 @@ def build_queries_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1668,7 +1696,7 @@ def build_queries_put_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1700,7 +1728,7 @@ def build_queries_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1730,7 +1758,7 @@ def build_queries_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/queryPacks/{queryPackName}/queries/{id}"
     path_format_arguments = {
@@ -1761,7 +1789,7 @@ def build_queries_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1803,7 +1831,7 @@ def build_queries_search_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1839,7 +1867,7 @@ def build_query_packs_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1868,7 +1896,7 @@ def build_query_packs_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1899,7 +1927,7 @@ def build_query_packs_update_tags_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1928,7 +1956,7 @@ def build_query_packs_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/queryPacks/{queryPackName}"
     path_format_arguments = {
@@ -1951,7 +1979,7 @@ def build_query_packs_list_by_resource_group_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1976,7 +2004,7 @@ def build_query_packs_list_request(subscription_id: str, **kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2003,7 +2031,7 @@ def build_query_packs_create_or_update_without_name_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2032,7 +2060,7 @@ def build_storage_insight_configs_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2062,7 +2090,7 @@ def build_storage_insight_configs_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2092,7 +2120,7 @@ def build_storage_insight_configs_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/storageInsightConfigs/{storageInsightName}"
     path_format_arguments = {
@@ -2116,7 +2144,7 @@ def build_storage_insight_configs_list_by_workspace_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2144,7 +2172,7 @@ def build_summary_logs_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2174,7 +2202,7 @@ def build_summary_logs_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2204,7 +2232,7 @@ def build_summary_logs_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/summaryLogs/{summaryLogsName}"
     path_format_arguments = {
@@ -2228,7 +2256,7 @@ def build_summary_logs_list_by_workspace_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2255,7 +2283,7 @@ def build_summary_logs_start_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/summaryLogs/{summaryLogsName}/start"
     path_format_arguments = {
@@ -2278,7 +2306,7 @@ def build_summary_logs_stop_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/summaryLogs/{summaryLogsName}/stop"
     path_format_arguments = {
@@ -2303,7 +2331,7 @@ def build_summary_logs_retry_bin_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/summaryLogs/{summaryLogsName}/retrybin"
     path_format_arguments = {
@@ -2331,7 +2359,7 @@ def build_operation_statuses_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2357,7 +2385,7 @@ def build_deleted_workspaces_list_request(subscription_id: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2383,7 +2411,7 @@ def build_deleted_workspaces_list_by_resource_group_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2404,7 +2432,7 @@ def build_deleted_workspaces_list_by_resource_group_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2516,7 +2544,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class ClustersOperations:
+class ClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2609,7 +2637,7 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.Cluster, JSON, IO[bytes]],
+        parameters: Union[_models.Cluster, _types.Cluster, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2717,7 +2745,7 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: JSON,
+        parameters: _types.Cluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2731,7 +2759,7 @@ class ClustersOperations:
         :type cluster_name: str
         :param parameters: The parameters required to create or update a Log Analytics cluster.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.Cluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2775,7 +2803,7 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.Cluster, JSON, IO[bytes]],
+        parameters: Union[_models.Cluster, _types.Cluster, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Cluster]:
         """Create or update a Log Analytics cluster.
@@ -2785,9 +2813,10 @@ class ClustersOperations:
         :type resource_group_name: str
         :param cluster_name: Name of the Log Analytics Cluster. Required.
         :type cluster_name: str
-        :param parameters: The parameters required to create or update a Log Analytics cluster. Is one
-         of the following types: Cluster, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.Cluster or JSON or IO[bytes]
+        :param parameters: The parameters required to create or update a Log Analytics cluster. Is
+         either a Cluster type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.Cluster or
+         ~azure.mgmt.loganalytics.types.Cluster or IO[bytes]
         :return: An instance of LROPoller that returns Cluster. The Cluster is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.loganalytics.models.Cluster]
@@ -2849,7 +2878,7 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.ClusterPatch, JSON, IO[bytes]],
+        parameters: Union[_models.ClusterPatch, _types.ClusterPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2956,7 +2985,7 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: JSON,
+        parameters: _types.ClusterPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2969,7 +2998,7 @@ class ClustersOperations:
         :param cluster_name: Name of the Log Analytics Cluster. Required.
         :type cluster_name: str
         :param parameters: The parameters required to patch a Log Analytics cluster. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.ClusterPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3012,7 +3041,7 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.ClusterPatch, JSON, IO[bytes]],
+        parameters: Union[_models.ClusterPatch, _types.ClusterPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Cluster]:
         """Updates a Log Analytics cluster.
@@ -3022,9 +3051,10 @@ class ClustersOperations:
         :type resource_group_name: str
         :param cluster_name: Name of the Log Analytics Cluster. Required.
         :type cluster_name: str
-        :param parameters: The parameters required to patch a Log Analytics cluster. Is one of the
-         following types: ClusterPatch, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.ClusterPatch or JSON or IO[bytes]
+        :param parameters: The parameters required to patch a Log Analytics cluster. Is either a
+         ClusterPatch type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.ClusterPatch or
+         ~azure.mgmt.loganalytics.types.ClusterPatch or IO[bytes]
         :return: An instance of LROPoller that returns Cluster. The Cluster is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.loganalytics.models.Cluster]
@@ -3389,7 +3419,7 @@ class ClustersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DataExportsOperations:
+class DataExportsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3519,7 +3549,7 @@ class DataExportsOperations:
         resource_group_name: str,
         workspace_name: str,
         data_export_name: str,
-        parameters: JSON,
+        parameters: _types.DataExport,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3534,7 +3564,7 @@ class DataExportsOperations:
         :param data_export_name: The data export rule name. Required.
         :type data_export_name: str
         :param parameters: The parameters required to create or update a data export. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.DataExport
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3579,7 +3609,7 @@ class DataExportsOperations:
         resource_group_name: str,
         workspace_name: str,
         data_export_name: str,
-        parameters: Union[_models.DataExport, JSON, IO[bytes]],
+        parameters: Union[_models.DataExport, _types.DataExport, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataExport:
         """Create or update a data export.
@@ -3591,9 +3621,10 @@ class DataExportsOperations:
         :type workspace_name: str
         :param data_export_name: The data export rule name. Required.
         :type data_export_name: str
-        :param parameters: The parameters required to create or update a data export. Is one of the
-         following types: DataExport, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.DataExport or JSON or IO[bytes]
+        :param parameters: The parameters required to create or update a data export. Is either a
+         DataExport type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.DataExport or
+         ~azure.mgmt.loganalytics.types.DataExport or IO[bytes]
         :return: DataExport. The DataExport is compatible with MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.DataExport
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3831,7 +3862,7 @@ class DataExportsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspacesOperations:
+class WorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3924,7 +3955,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: Union[_models.Workspace, JSON, IO[bytes]],
+        parameters: Union[_models.Workspace, _types.Workspace, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4032,7 +4063,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: JSON,
+        parameters: _types.Workspace,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4045,7 +4076,7 @@ class WorkspacesOperations:
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
         :param parameters: The parameters required to create or update a workspace. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.Workspace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4088,7 +4119,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: Union[_models.Workspace, JSON, IO[bytes]],
+        parameters: Union[_models.Workspace, _types.Workspace, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Workspace]:
         """Create or update a workspace.
@@ -4098,9 +4129,10 @@ class WorkspacesOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
-        :param parameters: The parameters required to create or update a workspace. Is one of the
-         following types: Workspace, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.Workspace or JSON or IO[bytes]
+        :param parameters: The parameters required to create or update a workspace. Is either a
+         Workspace type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.Workspace or
+         ~azure.mgmt.loganalytics.types.Workspace or IO[bytes]
         :return: An instance of LROPoller that returns Workspace. The Workspace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.loganalytics.models.Workspace]
@@ -4190,7 +4222,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: JSON,
+        parameters: _types.WorkspacePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4203,7 +4235,7 @@ class WorkspacesOperations:
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
         :param parameters: The parameters required to patch a workspace. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.WorkspacePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4244,7 +4276,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        parameters: Union[_models.WorkspacePatch, JSON, IO[bytes]],
+        parameters: Union[_models.WorkspacePatch, _types.WorkspacePatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.Workspace:
         """Updates a workspace.
@@ -4254,9 +4286,10 @@ class WorkspacesOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
-        :param parameters: The parameters required to patch a workspace. Is one of the following types:
-         WorkspacePatch, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.WorkspacePatch or JSON or IO[bytes]
+        :param parameters: The parameters required to patch a workspace. Is either a WorkspacePatch
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.WorkspacePatch or
+         ~azure.mgmt.loganalytics.types.WorkspacePatch or IO[bytes]
         :return: Workspace. The Workspace is compatible with MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.Workspace
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5216,7 +5249,7 @@ class WorkspacesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DataSourcesOperations:
+class DataSourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5346,7 +5379,7 @@ class DataSourcesOperations:
         resource_group_name: str,
         workspace_name: str,
         data_source_name: str,
-        parameters: JSON,
+        parameters: _types.DataSource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5361,7 +5394,7 @@ class DataSourcesOperations:
         :param data_source_name: Name of the datasource. Required.
         :type data_source_name: str
         :param parameters: The parameters required to create or update a datasource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.DataSource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5406,7 +5439,7 @@ class DataSourcesOperations:
         resource_group_name: str,
         workspace_name: str,
         data_source_name: str,
-        parameters: Union[_models.DataSource, JSON, IO[bytes]],
+        parameters: Union[_models.DataSource, _types.DataSource, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataSource:
         """Create or update a data source.
@@ -5418,9 +5451,10 @@ class DataSourcesOperations:
         :type workspace_name: str
         :param data_source_name: Name of the datasource. Required.
         :type data_source_name: str
-        :param parameters: The parameters required to create or update a datasource. Is one of the
-         following types: DataSource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.DataSource or JSON or IO[bytes]
+        :param parameters: The parameters required to create or update a datasource. Is either a
+         DataSource type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.DataSource or
+         ~azure.mgmt.loganalytics.types.DataSource or IO[bytes]
         :return: DataSource. The DataSource is compatible with MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.DataSource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5671,7 +5705,7 @@ class DataSourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class LinkedServicesOperations:
+class LinkedServicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5770,7 +5804,7 @@ class LinkedServicesOperations:
         resource_group_name: str,
         workspace_name: str,
         linked_service_name: str,
-        parameters: Union[_models.LinkedService, JSON, IO[bytes]],
+        parameters: Union[_models.LinkedService, _types.LinkedService, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5883,7 +5917,7 @@ class LinkedServicesOperations:
         resource_group_name: str,
         workspace_name: str,
         linked_service_name: str,
-        parameters: JSON,
+        parameters: _types.LinkedService,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5898,7 +5932,7 @@ class LinkedServicesOperations:
         :param linked_service_name: Name of the linked service. Required.
         :type linked_service_name: str
         :param parameters: The parameters required to create or update a linked service. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.LinkedService
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5945,7 +5979,7 @@ class LinkedServicesOperations:
         resource_group_name: str,
         workspace_name: str,
         linked_service_name: str,
-        parameters: Union[_models.LinkedService, JSON, IO[bytes]],
+        parameters: Union[_models.LinkedService, _types.LinkedService, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.LinkedService]:
         """Create or update a linked service.
@@ -5957,9 +5991,10 @@ class LinkedServicesOperations:
         :type workspace_name: str
         :param linked_service_name: Name of the linked service. Required.
         :type linked_service_name: str
-        :param parameters: The parameters required to create or update a linked service. Is one of the
-         following types: LinkedService, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.LinkedService or JSON or IO[bytes]
+        :param parameters: The parameters required to create or update a linked service. Is either a
+         LinkedService type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.LinkedService or
+         ~azure.mgmt.loganalytics.types.LinkedService or IO[bytes]
         :return: An instance of LROPoller that returns LinkedService. The LinkedService is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.loganalytics.models.LinkedService]
@@ -6251,7 +6286,7 @@ class LinkedServicesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SavedSearchesOperations:
+class SavedSearchesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6381,7 +6416,7 @@ class SavedSearchesOperations:
         resource_group_name: str,
         workspace_name: str,
         saved_search_id: str,
-        parameters: JSON,
+        parameters: _types.SavedSearch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6396,7 +6431,7 @@ class SavedSearchesOperations:
         :param saved_search_id: The id of the saved search. Required.
         :type saved_search_id: str
         :param parameters: The parameters required to save a search. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.SavedSearch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6441,7 +6476,7 @@ class SavedSearchesOperations:
         resource_group_name: str,
         workspace_name: str,
         saved_search_id: str,
-        parameters: Union[_models.SavedSearch, JSON, IO[bytes]],
+        parameters: Union[_models.SavedSearch, _types.SavedSearch, IO[bytes]],
         **kwargs: Any
     ) -> _models.SavedSearch:
         """Creates or updates a saved search for a given workspace.
@@ -6453,9 +6488,10 @@ class SavedSearchesOperations:
         :type workspace_name: str
         :param saved_search_id: The id of the saved search. Required.
         :type saved_search_id: str
-        :param parameters: The parameters required to save a search. Is one of the following types:
-         SavedSearch, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.SavedSearch or JSON or IO[bytes]
+        :param parameters: The parameters required to save a search. Is either a SavedSearch type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.SavedSearch or
+         ~azure.mgmt.loganalytics.types.SavedSearch or IO[bytes]
         :return: SavedSearch. The SavedSearch is compatible with MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.SavedSearch
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6663,7 +6699,7 @@ class SavedSearchesOperations:
         return deserialized  # type: ignore
 
 
-class TablesOperations:
+class TablesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6760,7 +6796,7 @@ class TablesOperations:
         resource_group_name: str,
         workspace_name: str,
         table_name: str,
-        parameters: Union[_models.Table, JSON, IO[bytes]],
+        parameters: Union[_models.Table, _types.Table, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6871,7 +6907,7 @@ class TablesOperations:
         resource_group_name: str,
         workspace_name: str,
         table_name: str,
-        parameters: JSON,
+        parameters: _types.Table,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6886,7 +6922,7 @@ class TablesOperations:
         :param table_name: The name of the table. Required.
         :type table_name: str
         :param parameters: The parameters required to update table properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.Table
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6933,7 +6969,7 @@ class TablesOperations:
         resource_group_name: str,
         workspace_name: str,
         table_name: str,
-        parameters: Union[_models.Table, JSON, IO[bytes]],
+        parameters: Union[_models.Table, _types.Table, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Table]:
         """Update or Create a Log Analytics workspace table.
@@ -6945,9 +6981,10 @@ class TablesOperations:
         :type workspace_name: str
         :param table_name: The name of the table. Required.
         :type table_name: str
-        :param parameters: The parameters required to update table properties. Is one of the following
-         types: Table, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.Table or JSON or IO[bytes]
+        :param parameters: The parameters required to update table properties. Is either a Table type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.Table or ~azure.mgmt.loganalytics.types.Table
+         or IO[bytes]
         :return: An instance of LROPoller that returns Table. The Table is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.loganalytics.models.Table]
@@ -7011,7 +7048,7 @@ class TablesOperations:
         resource_group_name: str,
         workspace_name: str,
         table_name: str,
-        parameters: Union[_models.Table, JSON, IO[bytes]],
+        parameters: Union[_models.Table, _types.Table, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7122,7 +7159,7 @@ class TablesOperations:
         resource_group_name: str,
         workspace_name: str,
         table_name: str,
-        parameters: JSON,
+        parameters: _types.Table,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7137,7 +7174,7 @@ class TablesOperations:
         :param table_name: The name of the table. Required.
         :type table_name: str
         :param parameters: The parameters required to update table properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.Table
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7184,7 +7221,7 @@ class TablesOperations:
         resource_group_name: str,
         workspace_name: str,
         table_name: str,
-        parameters: Union[_models.Table, JSON, IO[bytes]],
+        parameters: Union[_models.Table, _types.Table, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Table]:
         """Update a Log Analytics workspace table.
@@ -7196,9 +7233,10 @@ class TablesOperations:
         :type workspace_name: str
         :param table_name: The name of the table. Required.
         :type table_name: str
-        :param parameters: The parameters required to update table properties. Is one of the following
-         types: Table, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.Table or JSON or IO[bytes]
+        :param parameters: The parameters required to update table properties. Is either a Table type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.Table or ~azure.mgmt.loganalytics.types.Table
+         or IO[bytes]
         :return: An instance of LROPoller that returns Table. The Table is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.loganalytics.models.Table]
@@ -7612,7 +7650,7 @@ class TablesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class AvailableServiceTiersOperations:
+class AvailableServiceTiersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7704,7 +7742,7 @@ class AvailableServiceTiersOperations:
         return deserialized  # type: ignore
 
 
-class GatewaysOperations:
+class GatewaysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7786,7 +7824,7 @@ class GatewaysOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IntelligencePacksOperations:
+class IntelligencePacksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8001,7 +8039,7 @@ class IntelligencePacksOperations:
         return deserialized  # type: ignore
 
 
-class ManagementGroupsOperations:
+class ManagementGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8123,7 +8161,7 @@ class ManagementGroupsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SchemaOperations:
+class SchemaOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8213,7 +8251,7 @@ class SchemaOperations:
         return deserialized  # type: ignore
 
 
-class SharedKeysOperations:
+class SharedKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8374,7 +8412,7 @@ class SharedKeysOperations:
         return deserialized  # type: ignore
 
 
-class UsagesOperations:
+class UsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8494,7 +8532,7 @@ class UsagesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspacePurgeOperations:
+class WorkspacePurgeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8555,7 +8593,7 @@ class WorkspacePurgeOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        body: JSON,
+        body: _types.WorkspacePurgeBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8578,7 +8616,7 @@ class WorkspacePurgeOperations:
         :type workspace_name: str
         :param body: Describes the body of a request to purge data in a single table of an Log
          Analytics Workspace. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.loganalytics.types.WorkspacePurgeBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8629,7 +8667,7 @@ class WorkspacePurgeOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        body: Union[_models.WorkspacePurgeBody, JSON, IO[bytes]],
+        body: Union[_models.WorkspacePurgeBody, _types.WorkspacePurgeBody, IO[bytes]],
         **kwargs: Any
     ) -> _models.WorkspacePurgeResponse:
         """Purges data in an Log Analytics workspace by a set of user-defined filters.
@@ -8649,9 +8687,9 @@ class WorkspacePurgeOperations:
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
         :param body: Describes the body of a request to purge data in a single table of an Log
-         Analytics Workspace. Is one of the following types: WorkspacePurgeBody, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.loganalytics.models.WorkspacePurgeBody or JSON or IO[bytes]
+         Analytics Workspace. Is either a WorkspacePurgeBody type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.loganalytics.models.WorkspacePurgeBody or
+         ~azure.mgmt.loganalytics.types.WorkspacePurgeBody or IO[bytes]
         :return: WorkspacePurgeResponse. The WorkspacePurgeResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.WorkspacePurgeResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8805,8 +8843,271 @@ class WorkspacePurgeOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "content_type"]
+        },
+        api_versions_list=["2026-03-01"],
+    )
+    def _purge_lake_data_initial(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        body: Union[_models.WorkspacePurgeLakeDataBody, _types.WorkspacePurgeLakeDataBody, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-class LinkedStorageAccountsOperations:
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_workspace_purge_purge_lake_data_request(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_purge_lake_data(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        body: _models.WorkspacePurgeLakeDataBody,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Purges data lake data in a Log Analytics workspace for a table over a specified time range.
+
+        This operation deletes data lake data (Auxiliary tables, or Analytics tables mirrored to the
+        data lake) for the specified table within the given time range. The operation is long-running;
+        poll the URL returned in the Azure-AsyncOperation response header to track its status.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace. Required.
+        :type workspace_name: str
+        :param body: Describes the body of a request to purge data lake data in a single table of an
+         Log Analytics Workspace. Required.
+        :type body: ~azure.mgmt.loganalytics.models.WorkspacePurgeLakeDataBody
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_purge_lake_data(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        body: _types.WorkspacePurgeLakeDataBody,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Purges data lake data in a Log Analytics workspace for a table over a specified time range.
+
+        This operation deletes data lake data (Auxiliary tables, or Analytics tables mirrored to the
+        data lake) for the specified table within the given time range. The operation is long-running;
+        poll the URL returned in the Azure-AsyncOperation response header to track its status.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace. Required.
+        :type workspace_name: str
+        :param body: Describes the body of a request to purge data lake data in a single table of an
+         Log Analytics Workspace. Required.
+        :type body: ~azure.mgmt.loganalytics.types.WorkspacePurgeLakeDataBody
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_purge_lake_data(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Purges data lake data in a Log Analytics workspace for a table over a specified time range.
+
+        This operation deletes data lake data (Auxiliary tables, or Analytics tables mirrored to the
+        data lake) for the specified table within the given time range. The operation is long-running;
+        poll the URL returned in the Azure-AsyncOperation response header to track its status.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace. Required.
+        :type workspace_name: str
+        :param body: Describes the body of a request to purge data lake data in a single table of an
+         Log Analytics Workspace. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "content_type"]
+        },
+        api_versions_list=["2026-03-01"],
+    )
+    def begin_purge_lake_data(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        body: Union[_models.WorkspacePurgeLakeDataBody, _types.WorkspacePurgeLakeDataBody, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Purges data lake data in a Log Analytics workspace for a table over a specified time range.
+
+        This operation deletes data lake data (Auxiliary tables, or Analytics tables mirrored to the
+        data lake) for the specified table within the given time range. The operation is long-running;
+        poll the URL returned in the Azure-AsyncOperation response header to track its status.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace. Required.
+        :type workspace_name: str
+        :param body: Describes the body of a request to purge data lake data in a single table of an
+         Log Analytics Workspace. Is either a WorkspacePurgeLakeDataBody type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.loganalytics.models.WorkspacePurgeLakeDataBody or
+         ~azure.mgmt.loganalytics.types.WorkspacePurgeLakeDataBody or IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._purge_lake_data_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class LinkedStorageAccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8947,7 +9248,7 @@ class LinkedStorageAccountsOperations:
         resource_group_name: str,
         workspace_name: str,
         data_source_type: Union[str, _models.DataSourceType],
-        parameters: JSON,
+        parameters: _types.LinkedStorageAccountsResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8965,7 +9266,7 @@ class LinkedStorageAccountsOperations:
         :type data_source_type: str or ~azure.mgmt.loganalytics.models.DataSourceType
         :param parameters: The parameters required to create or update linked storage accounts.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.LinkedStorageAccountsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9015,7 +9316,7 @@ class LinkedStorageAccountsOperations:
         resource_group_name: str,
         workspace_name: str,
         data_source_type: Union[str, _models.DataSourceType],
-        parameters: Union[_models.LinkedStorageAccountsResource, JSON, IO[bytes]],
+        parameters: Union[_models.LinkedStorageAccountsResource, _types.LinkedStorageAccountsResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.LinkedStorageAccountsResource:
         """Create or Update a link relation between current workspace and a group of storage accounts of a
@@ -9029,10 +9330,10 @@ class LinkedStorageAccountsOperations:
         :param data_source_type: Linked storage accounts type. Known values are: "CustomLogs",
          "AzureWatson", "Query", "Ingestion", and "Alerts". Required.
         :type data_source_type: str or ~azure.mgmt.loganalytics.models.DataSourceType
-        :param parameters: The parameters required to create or update linked storage accounts. Is one
-         of the following types: LinkedStorageAccountsResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.LinkedStorageAccountsResource or JSON or
-         IO[bytes]
+        :param parameters: The parameters required to create or update linked storage accounts. Is
+         either a LinkedStorageAccountsResource type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.LinkedStorageAccountsResource or
+         ~azure.mgmt.loganalytics.types.LinkedStorageAccountsResource or IO[bytes]
         :return: LinkedStorageAccountsResource. The LinkedStorageAccountsResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.LinkedStorageAccountsResource
@@ -9279,7 +9580,7 @@ class LinkedStorageAccountsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class QueriesOperations:
+class QueriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9412,7 +9713,7 @@ class QueriesOperations:
         resource_group_name: str,
         query_pack_name: str,
         id: str,
-        query_payload: JSON,
+        query_payload: _types.LogAnalyticsQueryPackQuery,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9428,7 +9729,7 @@ class QueriesOperations:
         :type id: str
         :param query_payload: Properties that need to be specified to create a new query and add it to
          a Log Analytics QueryPack. Required.
-        :type query_payload: JSON
+        :type query_payload: ~azure.mgmt.loganalytics.types.LogAnalyticsQueryPackQuery
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9476,7 +9777,7 @@ class QueriesOperations:
         resource_group_name: str,
         query_pack_name: str,
         id: str,
-        query_payload: Union[_models.LogAnalyticsQueryPackQuery, JSON, IO[bytes]],
+        query_payload: Union[_models.LogAnalyticsQueryPackQuery, _types.LogAnalyticsQueryPackQuery, IO[bytes]],
         **kwargs: Any
     ) -> _models.LogAnalyticsQueryPackQuery:
         """Adds or Updates a specific Query within a Log Analytics QueryPack.
@@ -9489,10 +9790,10 @@ class QueriesOperations:
         :param id: The id of a specific query defined in the Log Analytics QueryPack. Required.
         :type id: str
         :param query_payload: Properties that need to be specified to create a new query and add it to
-         a Log Analytics QueryPack. Is one of the following types: LogAnalyticsQueryPackQuery, JSON,
-         IO[bytes] Required.
-        :type query_payload: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery or JSON or
-         IO[bytes]
+         a Log Analytics QueryPack. Is either a LogAnalyticsQueryPackQuery type or a IO[bytes] type.
+         Required.
+        :type query_payload: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery or
+         ~azure.mgmt.loganalytics.types.LogAnalyticsQueryPackQuery or IO[bytes]
         :return: LogAnalyticsQueryPackQuery. The LogAnalyticsQueryPackQuery is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery
@@ -9604,7 +9905,7 @@ class QueriesOperations:
         resource_group_name: str,
         query_pack_name: str,
         id: str,
-        query_payload: JSON,
+        query_payload: _types.LogAnalyticsQueryPackQuery,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9620,7 +9921,7 @@ class QueriesOperations:
         :type id: str
         :param query_payload: Properties that need to be specified to create a new query and add it to
          a Log Analytics QueryPack. Required.
-        :type query_payload: JSON
+        :type query_payload: ~azure.mgmt.loganalytics.types.LogAnalyticsQueryPackQuery
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9668,7 +9969,7 @@ class QueriesOperations:
         resource_group_name: str,
         query_pack_name: str,
         id: str,
-        query_payload: Union[_models.LogAnalyticsQueryPackQuery, JSON, IO[bytes]],
+        query_payload: Union[_models.LogAnalyticsQueryPackQuery, _types.LogAnalyticsQueryPackQuery, IO[bytes]],
         **kwargs: Any
     ) -> _models.LogAnalyticsQueryPackQuery:
         """Adds or Updates a specific Query within a Log Analytics QueryPack.
@@ -9681,10 +9982,10 @@ class QueriesOperations:
         :param id: The id of a specific query defined in the Log Analytics QueryPack. Required.
         :type id: str
         :param query_payload: Properties that need to be specified to create a new query and add it to
-         a Log Analytics QueryPack. Is one of the following types: LogAnalyticsQueryPackQuery, JSON,
-         IO[bytes] Required.
-        :type query_payload: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery or JSON or
-         IO[bytes]
+         a Log Analytics QueryPack. Is either a LogAnalyticsQueryPackQuery type or a IO[bytes] type.
+         Required.
+        :type query_payload: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery or
+         ~azure.mgmt.loganalytics.types.LogAnalyticsQueryPackQuery or IO[bytes]
         :return: LogAnalyticsQueryPackQuery. The LogAnalyticsQueryPackQuery is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery
@@ -9988,7 +10289,7 @@ class QueriesOperations:
         self,
         resource_group_name: str,
         query_pack_name: str,
-        query_search_properties: JSON,
+        query_search_properties: _types.LogAnalyticsQueryPackQuerySearchProperties,
         *,
         top: Optional[int] = None,
         include_body: Optional[bool] = None,
@@ -10006,7 +10307,8 @@ class QueriesOperations:
         :type query_pack_name: str
         :param query_search_properties: Properties by which to search queries in the given Log
          Analytics QueryPack. Required.
-        :type query_search_properties: JSON
+        :type query_search_properties:
+         ~azure.mgmt.loganalytics.types.LogAnalyticsQueryPackQuerySearchProperties
         :keyword top: Maximum items returned in page. Default value is None.
         :paramtype top: int
         :keyword include_body: Flag indicating whether or not to return the body of each applicable
@@ -10070,7 +10372,11 @@ class QueriesOperations:
         self,
         resource_group_name: str,
         query_pack_name: str,
-        query_search_properties: Union[_models.LogAnalyticsQueryPackQuerySearchProperties, JSON, IO[bytes]],
+        query_search_properties: Union[
+            _models.LogAnalyticsQueryPackQuerySearchProperties,
+            _types.LogAnalyticsQueryPackQuerySearchProperties,
+            IO[bytes],
+        ],
         *,
         top: Optional[int] = None,
         include_body: Optional[bool] = None,
@@ -10086,10 +10392,11 @@ class QueriesOperations:
         :param query_pack_name: The name of the Log Analytics QueryPack resource. Required.
         :type query_pack_name: str
         :param query_search_properties: Properties by which to search queries in the given Log
-         Analytics QueryPack. Is one of the following types: LogAnalyticsQueryPackQuerySearchProperties,
-         JSON, IO[bytes] Required.
+         Analytics QueryPack. Is either a LogAnalyticsQueryPackQuerySearchProperties type or a IO[bytes]
+         type. Required.
         :type query_search_properties:
-         ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuerySearchProperties or JSON or IO[bytes]
+         ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuerySearchProperties or
+         ~azure.mgmt.loganalytics.types.LogAnalyticsQueryPackQuerySearchProperties or IO[bytes]
         :keyword top: Maximum items returned in page. Default value is None.
         :paramtype top: int
         :keyword include_body: Flag indicating whether or not to return the body of each applicable
@@ -10203,7 +10510,7 @@ class QueriesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class QueryPacksOperations:
+class QueryPacksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10326,7 +10633,7 @@ class QueryPacksOperations:
         self,
         resource_group_name: str,
         query_pack_name: str,
-        log_analytics_query_pack_payload: JSON,
+        log_analytics_query_pack_payload: _types.LogAnalyticsQueryPack,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10341,7 +10648,7 @@ class QueryPacksOperations:
         :type query_pack_name: str
         :param log_analytics_query_pack_payload: Properties that need to be specified to create or
          update a Log Analytics QueryPack. Required.
-        :type log_analytics_query_pack_payload: JSON
+        :type log_analytics_query_pack_payload: ~azure.mgmt.loganalytics.types.LogAnalyticsQueryPack
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10384,7 +10691,7 @@ class QueryPacksOperations:
         self,
         resource_group_name: str,
         query_pack_name: str,
-        log_analytics_query_pack_payload: Union[_models.LogAnalyticsQueryPack, JSON, IO[bytes]],
+        log_analytics_query_pack_payload: Union[_models.LogAnalyticsQueryPack, _types.LogAnalyticsQueryPack, IO[bytes]],
         **kwargs: Any
     ) -> _models.LogAnalyticsQueryPack:
         """Creates (or updates) a Log Analytics QueryPack. Note: You cannot specify a different value for
@@ -10396,10 +10703,10 @@ class QueryPacksOperations:
         :param query_pack_name: The name of the Log Analytics QueryPack resource. Required.
         :type query_pack_name: str
         :param log_analytics_query_pack_payload: Properties that need to be specified to create or
-         update a Log Analytics QueryPack. Is one of the following types: LogAnalyticsQueryPack, JSON,
-         IO[bytes] Required.
+         update a Log Analytics QueryPack. Is either a LogAnalyticsQueryPack type or a IO[bytes] type.
+         Required.
         :type log_analytics_query_pack_payload: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPack
-         or JSON or IO[bytes]
+         or ~azure.mgmt.loganalytics.types.LogAnalyticsQueryPack or IO[bytes]
         :return: LogAnalyticsQueryPack. The LogAnalyticsQueryPack is compatible with MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPack
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10503,7 +10810,7 @@ class QueryPacksOperations:
         self,
         resource_group_name: str,
         query_pack_name: str,
-        query_pack_tags: JSON,
+        query_pack_tags: _types.TagsResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10516,7 +10823,7 @@ class QueryPacksOperations:
         :param query_pack_name: The name of the Log Analytics QueryPack resource. Required.
         :type query_pack_name: str
         :param query_pack_tags: Updated tag information to set into the QueryPack instance. Required.
-        :type query_pack_tags: JSON
+        :type query_pack_tags: ~azure.mgmt.loganalytics.types.TagsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10557,7 +10864,7 @@ class QueryPacksOperations:
         self,
         resource_group_name: str,
         query_pack_name: str,
-        query_pack_tags: Union[_models.TagsResource, JSON, IO[bytes]],
+        query_pack_tags: Union[_models.TagsResource, _types.TagsResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.LogAnalyticsQueryPack:
         """Updates an existing QueryPack's tags. To update other fields use the CreateOrUpdate method.
@@ -10567,9 +10874,10 @@ class QueryPacksOperations:
         :type resource_group_name: str
         :param query_pack_name: The name of the Log Analytics QueryPack resource. Required.
         :type query_pack_name: str
-        :param query_pack_tags: Updated tag information to set into the QueryPack instance. Is one of
-         the following types: TagsResource, JSON, IO[bytes] Required.
-        :type query_pack_tags: ~azure.mgmt.loganalytics.models.TagsResource or JSON or IO[bytes]
+        :param query_pack_tags: Updated tag information to set into the QueryPack instance. Is either a
+         TagsResource type or a IO[bytes] type. Required.
+        :type query_pack_tags: ~azure.mgmt.loganalytics.models.TagsResource or
+         ~azure.mgmt.loganalytics.types.TagsResource or IO[bytes]
         :return: LogAnalyticsQueryPack. The LogAnalyticsQueryPack is compatible with MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPack
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10921,7 +11229,7 @@ class QueryPacksOperations:
     def create_or_update_without_name(
         self,
         resource_group_name: str,
-        log_analytics_query_pack_payload: JSON,
+        log_analytics_query_pack_payload: _types.LogAnalyticsQueryPack,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10933,7 +11241,7 @@ class QueryPacksOperations:
          Required.
         :type resource_group_name: str
         :param log_analytics_query_pack_payload: The request body. Required.
-        :type log_analytics_query_pack_payload: JSON
+        :type log_analytics_query_pack_payload: ~azure.mgmt.loganalytics.types.LogAnalyticsQueryPack
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10971,7 +11279,7 @@ class QueryPacksOperations:
     def create_or_update_without_name(
         self,
         resource_group_name: str,
-        log_analytics_query_pack_payload: Union[_models.LogAnalyticsQueryPack, JSON, IO[bytes]],
+        log_analytics_query_pack_payload: Union[_models.LogAnalyticsQueryPack, _types.LogAnalyticsQueryPack, IO[bytes]],
         **kwargs: Any
     ) -> _models.LogAnalyticsQueryPack:
         """Creates a Log Analytics QueryPack. Note: You cannot specify a different value for
@@ -10980,10 +11288,10 @@ class QueryPacksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param log_analytics_query_pack_payload: The request body. Is one of the following types:
-         LogAnalyticsQueryPack, JSON, IO[bytes] Required.
+        :param log_analytics_query_pack_payload: The request body. Is either a LogAnalyticsQueryPack
+         type or a IO[bytes] type. Required.
         :type log_analytics_query_pack_payload: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPack
-         or JSON or IO[bytes]
+         or ~azure.mgmt.loganalytics.types.LogAnalyticsQueryPack or IO[bytes]
         :return: LogAnalyticsQueryPack. The LogAnalyticsQueryPack is compatible with MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPack
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11055,7 +11363,7 @@ class QueryPacksOperations:
         return deserialized  # type: ignore
 
 
-class StorageInsightConfigsOperations:
+class StorageInsightConfigsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11185,7 +11493,7 @@ class StorageInsightConfigsOperations:
         resource_group_name: str,
         workspace_name: str,
         storage_insight_name: str,
-        parameters: JSON,
+        parameters: _types.StorageInsight,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11200,7 +11508,7 @@ class StorageInsightConfigsOperations:
         :param storage_insight_name: Name of the storageInsightsConfigs resource. Required.
         :type storage_insight_name: str
         :param parameters: The parameters required to create or update a storage insight. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.StorageInsight
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11245,7 +11553,7 @@ class StorageInsightConfigsOperations:
         resource_group_name: str,
         workspace_name: str,
         storage_insight_name: str,
-        parameters: Union[_models.StorageInsight, JSON, IO[bytes]],
+        parameters: Union[_models.StorageInsight, _types.StorageInsight, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageInsight:
         """Create or update a storage insight.
@@ -11257,9 +11565,10 @@ class StorageInsightConfigsOperations:
         :type workspace_name: str
         :param storage_insight_name: Name of the storageInsightsConfigs resource. Required.
         :type storage_insight_name: str
-        :param parameters: The parameters required to create or update a storage insight. Is one of the
-         following types: StorageInsight, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.StorageInsight or JSON or IO[bytes]
+        :param parameters: The parameters required to create or update a storage insight. Is either a
+         StorageInsight type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.StorageInsight or
+         ~azure.mgmt.loganalytics.types.StorageInsight or IO[bytes]
         :return: StorageInsight. The StorageInsight is compatible with MutableMapping
         :rtype: ~azure.mgmt.loganalytics.models.StorageInsight
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11497,7 +11806,7 @@ class StorageInsightConfigsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SummaryLogsOperations:
+class SummaryLogsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11596,7 +11905,7 @@ class SummaryLogsOperations:
         resource_group_name: str,
         workspace_name: str,
         summary_logs_name: str,
-        parameters: Union[_models.SummaryLogs, JSON, IO[bytes]],
+        parameters: Union[_models.SummaryLogs, _types.SummaryLogs, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11711,7 +12020,7 @@ class SummaryLogsOperations:
         resource_group_name: str,
         workspace_name: str,
         summary_logs_name: str,
-        parameters: JSON,
+        parameters: _types.SummaryLogs,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11726,7 +12035,7 @@ class SummaryLogsOperations:
         :param summary_logs_name: The name of the summary logs. Must not contain '/'. Required.
         :type summary_logs_name: str
         :param parameters: The parameters required to update summary rules properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.SummaryLogs
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11773,7 +12082,7 @@ class SummaryLogsOperations:
         resource_group_name: str,
         workspace_name: str,
         summary_logs_name: str,
-        parameters: Union[_models.SummaryLogs, JSON, IO[bytes]],
+        parameters: Union[_models.SummaryLogs, _types.SummaryLogs, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SummaryLogs]:
         """Creates or updates Log Analytics workspace Summary rules.
@@ -11785,9 +12094,10 @@ class SummaryLogsOperations:
         :type workspace_name: str
         :param summary_logs_name: The name of the summary logs. Must not contain '/'. Required.
         :type summary_logs_name: str
-        :param parameters: The parameters required to update summary rules properties. Is one of the
-         following types: SummaryLogs, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.SummaryLogs or JSON or IO[bytes]
+        :param parameters: The parameters required to update summary rules properties. Is either a
+         SummaryLogs type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.SummaryLogs or
+         ~azure.mgmt.loganalytics.types.SummaryLogs or IO[bytes]
         :return: An instance of LROPoller that returns SummaryLogs. The SummaryLogs is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.loganalytics.models.SummaryLogs]
@@ -12275,7 +12585,7 @@ class SummaryLogsOperations:
         resource_group_name: str,
         workspace_name: str,
         summary_logs_name: str,
-        parameters: Union[_models.SummaryLogsRetryBin, JSON, IO[bytes]],
+        parameters: Union[_models.SummaryLogsRetryBin, _types.SummaryLogsRetryBin, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12385,7 +12695,7 @@ class SummaryLogsOperations:
         resource_group_name: str,
         workspace_name: str,
         summary_logs_name: str,
-        parameters: JSON,
+        parameters: _types.SummaryLogsRetryBin,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12400,7 +12710,7 @@ class SummaryLogsOperations:
         :param summary_logs_name: The name of the summary logs. Must not contain '/'. Required.
         :type summary_logs_name: str
         :param parameters: The parameters required to retry a Summary rule bin. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.loganalytics.types.SummaryLogsRetryBin
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12445,7 +12755,7 @@ class SummaryLogsOperations:
         resource_group_name: str,
         workspace_name: str,
         summary_logs_name: str,
-        parameters: Union[_models.SummaryLogsRetryBin, JSON, IO[bytes]],
+        parameters: Union[_models.SummaryLogsRetryBin, _types.SummaryLogsRetryBin, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Retries a failed Summary rule bin.
@@ -12457,9 +12767,10 @@ class SummaryLogsOperations:
         :type workspace_name: str
         :param summary_logs_name: The name of the summary logs. Must not contain '/'. Required.
         :type summary_logs_name: str
-        :param parameters: The parameters required to retry a Summary rule bin. Is one of the following
-         types: SummaryLogsRetryBin, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.loganalytics.models.SummaryLogsRetryBin or JSON or IO[bytes]
+        :param parameters: The parameters required to retry a Summary rule bin. Is either a
+         SummaryLogsRetryBin type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.loganalytics.models.SummaryLogsRetryBin or
+         ~azure.mgmt.loganalytics.types.SummaryLogsRetryBin or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12513,7 +12824,7 @@ class SummaryLogsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class OperationStatusesOperations:
+class OperationStatusesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12602,7 +12913,7 @@ class OperationStatusesOperations:
         return deserialized  # type: ignore
 
 
-class DeletedWorkspacesOperations:
+class DeletedWorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
