@@ -37,6 +37,14 @@ from ._response_decoding import decode_response_body_for_status
 from ._request_object import RequestObject
 from .documents import _OperationType
 
+_ITEM_BODY_WRITE_OPERATIONS = frozenset((
+    _OperationType.Create,
+    _OperationType.Upsert,
+    _OperationType.Replace,
+    _OperationType.Patch,
+    _OperationType.Batch,
+))
+
 # cspell:ignore ppaf
 def _is_readable_stream(obj):
     """Checks whether obj is a file-like readable stream.
@@ -50,24 +58,56 @@ def _is_readable_stream(obj):
     return False
 
 
-def _request_body_from_data(data):
-    """Gets request body from data.
+def _request_body_from_data(data, ensure_ascii=True):
+    """Convert supported request data into an HTTP body and optional UTF-8 byte length.
 
-    When `data` is dict and list into unicode string; otherwise return `data`
-    without making any change.
+    Dictionaries, lists, and tuples are serialized as compact JSON. Other
+    supported body types are returned unchanged.
 
     :param Union[str, unicode, file-like stream object, dict, list, None] data:
-    :returns: the json dump data.
-    :rtype: Union[str, unicode, file-like stream object, None]
+    :param bool ensure_ascii: Whether non-ASCII characters should be escaped.
+    :returns: the request body and its known UTF-8 byte length, if already calculated.
+    :rtype: tuple[Union[str, unicode, file-like stream object, None], Optional[int]]
 
     """
     if data is None or isinstance(data, str) or _is_readable_stream(data):
-        return data
+        return data, None
     if isinstance(data, (dict, list, tuple)):
-        json_dumped = json.dumps(data, separators=(",", ":"))
+        if ensure_ascii:
+            return json.dumps(data, separators=(",", ":")), None
+        json_dumped = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+        try:
+            # Validate the compact body once and retain its byte length for Content-Length.
+            encoded_body = json_dumped.encode("utf-8")
+        except UnicodeEncodeError:
+            # Rare path: the body contains surrogate code units, which
+            # have no UTF-8 representation. backslashreplace rewrites only those
+            # code points as \uXXXX, which is valid JSON escape syntax and can
+            # only ever occur inside a string literal, so valid Unicode elsewhere
+            # in the body stays compact.
+            encoded_body = json_dumped.encode("utf-8", "backslashreplace")
+            json_dumped = encoded_body.decode("utf-8")
+        return json_dumped, len(encoded_body)
+    return None, None
 
-        return json_dumped
-    return None
+
+def _should_escape_non_ascii_in_request_body(client, request_params):
+    """Decide whether a request body must keep non-ASCII characters escaped.
+
+    Compact UTF-8 is only used when the client opted in and the request is one
+    of the item write operations the option is scoped to. Every other request,
+    including control-plane bodies and queries, keeps the escaped form.
+
+    :param object client: the client connection issuing the request.
+    :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
+    :returns: whether non-ASCII characters should be escaped in the body.
+    :rtype: bool
+    """
+    return (
+        not client._enable_compact_utf8_item_writes  # pylint: disable=protected-access
+        or request_params.resource_type != http_constants.ResourceType.Document
+        or request_params.operation_type not in _ITEM_BODY_WRITE_OPERATIONS
+    )
 
 
 def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
@@ -285,12 +325,19 @@ def SynchronizedRequest(
     :return: tuple of (result, headers)
     :rtype: tuple of (dict dict)
     """
-    request.data = _request_body_from_data(request_data)
+    request.data, utf8_byte_length = _request_body_from_data(
+        request_data,
+        ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params)
+    )
     if request.data and isinstance(request.data, str):
         # Use UTF-8 byte length, not str length (code-point count), so the
         # header matches the bytes the transport actually writes for any
         # non-ASCII payload.
-        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data.encode("utf-8"))
+        request.headers[http_constants.HttpHeaders.ContentLength] = (
+            utf8_byte_length
+            if utf8_byte_length is not None
+            else len(request.data.encode("utf-8"))
+        )
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 

@@ -5,6 +5,8 @@
 ### 4.16.5 (Unreleased)
 
 #### Features Added
+* Added the `enable_compact_utf8_item_writes` client option. Set it to `True` to reduce item write request sizes by
+  serializing valid Unicode as compact UTF-8 for create, upsert, replace, patch, and transactional batch operations.
 
 #### Breaking Changes
 

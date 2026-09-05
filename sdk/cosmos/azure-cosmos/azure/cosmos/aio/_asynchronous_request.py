@@ -36,7 +36,11 @@ from .._availability_strategy_config import CrossRegionHedgingStrategy
 from .._constants import _Constants
 from .._request_object import RequestObject
 from .._response_decoding import decode_response_body_for_status
-from .._synchronized_request import _request_body_from_data, _replace_url_prefix
+from .._synchronized_request import (
+    _request_body_from_data,
+    _replace_url_prefix,
+    _should_escape_non_ascii_in_request_body,
+)
 from ..documents import _OperationType
 
 # cspell:ignore ppaf
@@ -238,12 +242,19 @@ async def AsynchronousRequest(
     :return: tuple of (result, headers)
     :rtype: tuple of (dict dict)
     """
-    request.data = _request_body_from_data(request_data)
+    request.data, utf8_byte_length = _request_body_from_data(
+        request_data,
+        ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params)
+    )
     if request.data and isinstance(request.data, str):
         # Use UTF-8 byte length, not str length (code-point count), so the
         # header matches the bytes the transport actually writes for any
         # non-ASCII payload.
-        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data.encode("utf-8"))
+        request.headers[http_constants.HttpHeaders.ContentLength] = (
+            utf8_byte_length
+            if utf8_byte_length is not None
+            else len(request.data.encode("utf-8"))
+        )
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 

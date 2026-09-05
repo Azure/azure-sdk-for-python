@@ -35,6 +35,14 @@ from ._version import VERSION
 # cspell:ignore ppcb
 # pylint: disable=protected-access
 
+
+def _validate_enable_compact_utf8_item_writes(value: Any) -> bool:
+    """Validate the compact UTF-8 item-write setting."""
+    if not isinstance(value, bool):
+        raise TypeError("enable_compact_utf8_item_writes must be a bool.")
+    return value
+
+
 def get_user_agent(suffix: Optional[str] = None) -> str:
     os_name = safe_user_agent_header(platform.platform())
     python_version = safe_user_agent_header(platform.python_version())

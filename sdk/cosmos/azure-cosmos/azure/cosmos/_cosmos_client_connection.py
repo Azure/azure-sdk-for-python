@@ -142,6 +142,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         consistency_level: Optional[str] = None,
         availability_strategy: Union[bool, dict[str, Any]] = False,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
+        enable_compact_utf8_item_writes: bool = False,
         **kwargs: Any
     ) -> None:
         """
@@ -160,10 +161,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The availability strategy configuration for routing requests across regions.
         :param concurrent.futures.ThreadPoolExecutor availability_strategy_executor:
             The thread pool executor for handling availability strategy requests.
+        :param bool enable_compact_utf8_item_writes:
+            Whether item write bodies should use compact UTF-8 serialization.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for the
             client. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         """
+        self._enable_compact_utf8_item_writes = _utils._validate_enable_compact_utf8_item_writes(
+            enable_compact_utf8_item_writes
+        )
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
         self.availability_strategy: Union[CrossRegionHedgingStrategy, None] =\
