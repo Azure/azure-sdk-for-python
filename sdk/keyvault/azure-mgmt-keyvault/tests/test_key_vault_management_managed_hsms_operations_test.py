@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
-class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
+class TestKeyVaultManagementManagedHsmsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(KeyVaultManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_vaults_list_by_resource_group(self, resource_group):
-        response = self.client.vaults.list_by_resource_group(
+    def test_managed_hsms_list_by_resource_group(self, resource_group):
+        response = self.client.managed_hsms.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
@@ -29,23 +29,14 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_vaults_list_by_subscription(self, resource_group):
-        response = self.client.vaults.list_by_subscription()
+    def test_managed_hsms_list_by_subscription(self, resource_group):
+        response = self.client.managed_hsms.list_by_subscription()
         result = [r for r in response]
         assert len(result)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_vaults_list_deleted(self, resource_group):
-        response = self.client.vaults.list_deleted()
-        result = [r for r in response]
-        assert len(result)
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_vaults_list(self, resource_group):
-        response = self.client.vaults.list(
-            filter="resourceType eq 'Microsoft.KeyVault/vaults'",
-        )
+    def test_managed_hsms_list_deleted(self, resource_group):
+        response = self.client.managed_hsms.list_deleted()
         result = [r for r in response]
         assert len(result)

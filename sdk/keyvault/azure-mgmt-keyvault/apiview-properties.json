@@ -80,6 +80,7 @@
         "azure.mgmt.keyvault.models.ServiceSpecification": "Microsoft.KeyVault.ServiceSpecification",
         "azure.mgmt.keyvault.models.Sku": "Microsoft.KeyVault.Sku",
         "azure.mgmt.keyvault.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.keyvault.models.TokenBindingParameters": "Microsoft.KeyVault.TokenBindingParameters",
         "azure.mgmt.keyvault.models.Trigger": "Microsoft.KeyVault.Trigger",
         "azure.mgmt.keyvault.models.UserAssignedIdentity": "Azure.ResourceManager.CommonTypes.UserAssignedIdentity",
         "azure.mgmt.keyvault.models.Vault": "Microsoft.KeyVault.Vault",
@@ -105,6 +106,8 @@
         "azure.mgmt.keyvault.models.PrivateEndpointServiceConnectionStatus": "Microsoft.KeyVault.PrivateEndpointServiceConnectionStatus",
         "azure.mgmt.keyvault.models.ActionsRequired": "Microsoft.KeyVault.ActionsRequired",
         "azure.mgmt.keyvault.models.PrivateEndpointConnectionProvisioningState": "Microsoft.KeyVault.PrivateEndpointConnectionProvisioningState",
+        "azure.mgmt.keyvault.models.TokenBindingMode": "Microsoft.KeyVault.TokenBindingMode",
+        "azure.mgmt.keyvault.models.TokenBindingStrength": "Microsoft.KeyVault.TokenBindingStrength",
         "azure.mgmt.keyvault.models.AccessPolicyUpdateKind": "Microsoft.KeyVault.AccessPolicyUpdateKind",
         "azure.mgmt.keyvault.models.Reason": "Microsoft.KeyVault.Reason",
         "azure.mgmt.keyvault.models.ProvisioningState": "Microsoft.KeyVault.ProvisioningState",
@@ -112,7 +115,7 @@
         "azure.mgmt.keyvault.models.PublicNetworkAccess": "Microsoft.KeyVault.PublicNetworkAccess",
         "azure.mgmt.keyvault.models.ActivationStatus": "Microsoft.KeyVault.ActivationStatus",
         "azure.mgmt.keyvault.models.ManagedHsmSkuFamily": "Microsoft.KeyVault.ManagedHsmSkuFamily",
-        "azure.mgmt.keyvault.models.ManagedHsmSkuName": "Microsoft.KeyVault.ManagedHsmSkuName",
+        "azure.mgmt.keyvault.models.ManagedHsmSkuNameV2": "Microsoft.KeyVault.ManagedHsmSkuNameV2",
         "azure.mgmt.keyvault.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
         "azure.mgmt.keyvault.models.DeletionRecoveryLevel": "Microsoft.KeyVault.DeletionRecoveryLevel",
         "azure.mgmt.keyvault.models.JsonWebKeyType": "Microsoft.KeyVault.JsonWebKeyType",
@@ -215,5 +218,6 @@
         "azure.mgmt.keyvault.aio.operations.MHSMPrivateEndpointConnectionsOperations.begin_delete": "Microsoft.KeyVault.MhsmPrivateEndpointConnections.delete",
         "azure.mgmt.keyvault.operations.MHSMPrivateEndpointConnectionsOperations.list_by_resource": "Microsoft.KeyVault.MhsmPrivateEndpointConnections.listByResource",
         "azure.mgmt.keyvault.aio.operations.MHSMPrivateEndpointConnectionsOperations.list_by_resource": "Microsoft.KeyVault.MhsmPrivateEndpointConnections.listByResource"
-    }
+    },
+    "CrossLanguageVersion": "b437e4d795d6"
 }
