@@ -6,6 +6,7 @@
 
 import pytest
 from unittest.mock import AsyncMock, patch
+from urllib.parse import parse_qs, urlparse
 
 pytest.importorskip(
     "aiohttp",
@@ -21,6 +22,7 @@ from azure.ai.voicelive.aio import (
     connect,
 )
 from azure.ai.voicelive.aio._patch import _VoiceLiveConnectionManager
+from azure.ai.voicelive._version import VERSION
 from azure.ai.voicelive.models import (
     ClientEventSessionUpdate,
     ClientEventResponseCreate,
@@ -206,6 +208,40 @@ class TestVoiceLiveConnectionMocked:
 
         assert isinstance(connection.response, ResponseResource)
         assert connection.response._connection is connection
+
+
+@pytest.mark.asyncio
+class TestConnectionIdentification:
+    """Test SDK identification on WebSocket connections."""
+
+    async def _connect_and_get_headers(self, headers=None):
+        with patch("azure.ai.voicelive.aio._patch.aiohttp.ClientSession") as mock_client_session:
+            session = mock_client_session.return_value
+            session.ws_connect = AsyncMock(return_value=AsyncMock())
+            session.close = AsyncMock()
+
+            async with connect(
+                credential=AzureKeyCredential("test-key"),
+                endpoint="wss://test-endpoint.com",
+                model="gpt-realtime",
+                headers=headers,
+            ):
+                pass
+
+            return session.ws_connect.await_args.kwargs["headers"]
+
+    async def test_connection_uses_sdk_user_agent(self):
+        """Test the default User-Agent identifies the package and version."""
+        headers = await self._connect_and_get_headers()
+
+        assert "azsdk-python-ai-voicelive" in headers["User-Agent"]
+        assert VERSION in headers["User-Agent"]
+
+    async def test_connection_preserves_caller_user_agent(self):
+        """Test a caller-supplied User-Agent overrides the SDK default."""
+        headers = await self._connect_and_get_headers({"User-Agent": "custom-user-agent"})
+
+        assert headers["User-Agent"] == "custom-user-agent"
 
 
 class TestVoiceLiveConnectionIntegration:
@@ -699,3 +735,33 @@ class TestAgentConfigUrlPreparation:
         url = manager._prepare_url()
 
         assert "api-version=2026-07-15" in url
+
+    def test_url_includes_sdk_identifier(self):
+        """Test that the connection URL identifies the SDK."""
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint=self.endpoint,
+            agent_config=None,
+            extra_query={},
+            extra_headers={},
+        )
+
+        query = parse_qs(urlparse(manager._prepare_url()).query)
+        sdk_identifier = query["x-ms-client-sdk"][0]
+
+        assert "azsdk-python-ai-voicelive" in sdk_identifier
+        assert VERSION in sdk_identifier
+
+    def test_url_preserves_traffic_type(self):
+        """Test that SDK identification does not overwrite customer traffic tagging."""
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint=f"{self.endpoint}?trafficType=customer-tag",
+            agent_config=None,
+            extra_query={},
+            extra_headers={},
+        )
+
+        query = parse_qs(urlparse(manager._prepare_url()).query)
+
+        assert query["trafficType"] == ["customer-tag"]

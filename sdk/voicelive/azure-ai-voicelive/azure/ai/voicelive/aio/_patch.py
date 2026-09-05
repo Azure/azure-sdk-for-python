@@ -42,7 +42,9 @@ from azure.ai.voicelive.models._models import (
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import AzureError
+from azure.core.pipeline.policies import UserAgentPolicy
 from azure.ai.voicelive.models import ClientEvent, ServerEvent, RequestSession
+from azure.ai.voicelive._version import VERSION
 
 # === Local ===
 
@@ -67,6 +69,7 @@ __all__: list[str] = [
 ]
 
 log = logging.getLogger(__name__)
+_USER_AGENT = UserAgentPolicy(sdk_moniker=f"ai-voicelive/{VERSION}").user_agent
 
 
 def _json_default(o: Any) -> Any:
@@ -775,7 +778,7 @@ class _VoiceLiveConnectionManager(
             self.__connection_options.setdefault("heartbeat", 30)
 
             auth_headers = await self._get_auth_headers()
-            headers = {**auth_headers, **dict(self.__extra_headers)}
+            headers = {"User-Agent": _USER_AGENT, **auth_headers, **dict(self.__extra_headers)}
 
             session = aiohttp.ClientSession()
             try:
@@ -821,7 +824,10 @@ class _VoiceLiveConnectionManager(
             else ("ws" if parsed.scheme.startswith("http") else parsed.scheme)
         )
 
-        params: dict[str, Any] = {"api-version": self.__api_version}
+        params: dict[str, Any] = {
+            "api-version": self.__api_version,
+            "x-ms-client-sdk": _USER_AGENT,
+        }
         if self.__model is not None:
             params["model"] = self.__model
 
