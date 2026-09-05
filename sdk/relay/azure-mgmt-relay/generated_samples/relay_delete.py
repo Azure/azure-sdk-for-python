@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2024-01-01/Relay/RelayDelete.json
+# x-ms-original-file: 2026-07-01-preview/Relay/RelayDelete.json
 if __name__ == "__main__":
     main()
