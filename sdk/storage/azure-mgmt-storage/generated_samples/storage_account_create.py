@@ -39,6 +39,7 @@ def main():
             "location": "eastus",
             "properties": {
                 "allowBlobPublicAccess": False,
+                "allowCrossTenantDelegationSas": False,
                 "allowSharedKeyAccess": True,
                 "allowSharedKeyAccessForServices": {
                     "blob": {"enabled": True},
@@ -65,7 +66,12 @@ def main():
                     "publishMicrosoftEndpoints": True,
                     "routingChoice": "MicrosoftRouting",
                 },
-                "sasPolicy": {"expirationAction": "Log", "sasExpirationPeriod": "1.15:59:59"},
+                "sasPolicy": {
+                    "expirationAction": "Log",
+                    "requireUserBoundUserDelegationSas": True,
+                    "requireUserBoundUserDelegationSasAction": "Block",
+                    "sasExpirationPeriod": "1.15:59:59",
+                },
             },
             "sku": {"name": "Standard_GRS"},
             "tags": {"key1": "value1", "key2": "value2"},
@@ -74,6 +80,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01/StorageAccountCreate.json
+# x-ms-original-file: 2026-06-01/StorageAccountCreate.json
 if __name__ == "__main__":
     main()
