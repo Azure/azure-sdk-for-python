@@ -39,16 +39,16 @@ class RoomsSample(object):
 
     def setUp(self):
         # [START auth_from_connection_string]
-        self.connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_ROOMS")
+        self.connection_string: str = os.getenv("COMMUNICATION_CONNECTION_STRING_ROOMS")  # type: ignore
 
         self.rooms_client = RoomsClient.from_connection_string(self.connection_string)
         # [END auth_from_connection_string]
         self.identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         self.rooms = []
-        self.participant_1 = RoomParticipant(
+        self.participant_1 = RoomParticipant(  # type: ignore[call-overload]
             communication_identifier=self.identity_client.create_user(), role=ParticipantRole.PRESENTER
         )
-        self.participant_2 = RoomParticipant(
+        self.participant_2 = RoomParticipant(  # type: ignore[call-overload]
             communication_identifier=self.identity_client.create_user(), role=ParticipantRole.CONSUMER
         )
 

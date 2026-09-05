@@ -28,8 +28,8 @@ sys.path.append("..")
 
 class GetTemplatesSample(object):
 
-    connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-    channel_id = os.getenv("WHATSAPP_CHANNEL_ID")
+    connection_string: str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")  # type: ignore
+    channel_id: str = os.getenv("WHATSAPP_CHANNEL_ID")  # type: ignore
 
     def get_templates_list(self):
 

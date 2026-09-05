@@ -80,7 +80,7 @@ class JobQueueSamples(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         print("JobRouterAdministrationClient created successfully!")
 
-        updated_job_queue: RouterQueue = router_admin_client.upsert_queue(
+        updated_job_queue: RouterQueue = router_admin_client.upsert_queue(  # type: ignore[call-overload]
             job_queue_id, labels={"Additional-Queue-Label": "ChatQueue"}
         )
 
