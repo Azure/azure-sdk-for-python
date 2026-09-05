@@ -14,15 +14,26 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestRelationshipsMgmtDependencyOfRelationshipsOperations(AzureMgmtRecordedTestCase):
+class TestRelationshipsMgmtDependencyOfRelationshipsByServiceGroupOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(RelationshipsMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dependency_of_relationships_begin_create_or_update(self, resource_group):
-        response = self.client.dependency_of_relationships.begin_create_or_update(
-            resource_uri="str",
+    def test_dependency_of_relationships_by_service_group_get(self, resource_group):
+        response = self.client.dependency_of_relationships_by_service_group.get(
+            service_group_name="str",
+            name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_dependency_of_relationships_by_service_group_begin_create_or_update(self, resource_group):
+        response = self.client.dependency_of_relationships_by_service_group.begin_create_or_update(
+            service_group_name="str",
             name="str",
             resource={
                 "id": "str",
@@ -52,20 +63,9 @@ class TestRelationshipsMgmtDependencyOfRelationshipsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dependency_of_relationships_get(self, resource_group):
-        response = self.client.dependency_of_relationships.get(
-            resource_uri="str",
-            name="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_dependency_of_relationships_begin_delete(self, resource_group):
-        response = self.client.dependency_of_relationships.begin_delete(
-            resource_uri="str",
+    def test_dependency_of_relationships_by_service_group_begin_delete(self, resource_group):
+        response = self.client.dependency_of_relationships_by_service_group.begin_delete(
+            service_group_name="str",
             name="str",
         ).result()  # call '.result()' to poll until service return final result
 
@@ -74,9 +74,9 @@ class TestRelationshipsMgmtDependencyOfRelationshipsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dependency_of_relationships_list_by_parent(self, resource_group):
-        response = self.client.dependency_of_relationships.list_by_parent(
-            resource_uri="str",
+    def test_dependency_of_relationships_by_service_group_list(self, resource_group):
+        response = self.client.dependency_of_relationships_by_service_group.list(
+            service_group_name="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

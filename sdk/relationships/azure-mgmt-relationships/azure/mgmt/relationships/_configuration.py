@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class RelationshipsMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class RelationshipsMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for RelationshipsMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -26,30 +27,36 @@ class RelationshipsMgmtClientConfiguration:  # pylint: disable=too-many-instance
 
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+    :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2023-09-01-preview". Default value is "2023-09-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-08-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self,
         credential: "TokenCredential",
+        subscription_id: str,
         base_url: str = "https://management.azure.com",
         cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2023-09-01-preview")
+        api_version: str = kwargs.pop("api_version", "2026-08-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if subscription_id is None:
+            raise ValueError("Parameter 'subscription_id' must not be None.")
 
         self.credential = credential
+        self.subscription_id = subscription_id
         self.base_url = base_url
         self.cloud_setting = cloud_setting
         self.api_version = api_version
