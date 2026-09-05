@@ -72,6 +72,15 @@ TZ_UTC: timezone = timezone.utc
 # Number of seconds between the Unix epoch (1/1/1970) and year 1 CE.
 # This is the lowest value that can be represented by an AMQP timestamp.
 CE_ZERO_SECONDS: int = -62_135_596_800
+EPOCH_UTC: datetime.datetime = datetime.datetime(1970, 1, 1, tzinfo=TZ_UTC)
+
+
+def datetime_to_timestamp_ms(value: datetime.datetime) -> int:
+    if value.tzinfo is None:
+        normalized = value.replace(tzinfo=TZ_UTC)
+    else:
+        normalized = value.astimezone(TZ_UTC)
+    return (normalized - EPOCH_UTC) // datetime.timedelta(milliseconds=1)
 
 def utc_from_timestamp(timestamp: float) -> datetime.datetime:
     """
