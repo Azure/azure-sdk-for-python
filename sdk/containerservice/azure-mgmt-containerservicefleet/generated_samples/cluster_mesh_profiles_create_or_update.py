@@ -15,7 +15,7 @@ from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
     pip install azure-identity
     pip install azure-mgmt-containerservicefleet
 # USAGE
-    python fleets_list_by_sub.py
+    python cluster_mesh_profiles_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.fleets.list_by_subscription()
-    for item in response:
-        print(item)
+    response = client.cluster_mesh_profiles.begin_create_or_update(
+        resource_group_name="rgfleets",
+        fleet_name="fleet1",
+        cluster_mesh_profile_name="clustermeshprofile1",
+        resource={"properties": {"memberSelector": {"byLabel": "env=production"}}},
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-06-02-preview/Fleets_ListBySub.json
+# x-ms-original-file: 2026-06-02-preview/ClusterMeshProfiles_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
