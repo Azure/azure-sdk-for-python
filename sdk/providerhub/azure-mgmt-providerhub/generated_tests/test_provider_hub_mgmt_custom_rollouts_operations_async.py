@@ -42,6 +42,10 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                         "specification": {
                             "autoProvisionConfig": {"resourceGraph": bool, "storage": bool},
                             "canary": {"regions": ["str"]},
+                            "manifestCheckinSpecification": {
+                                "manifestCheckinOption": "str",
+                                "manifestCheckinParams": {"baselineArmManifestLocation": "str", "environment": "str"},
+                            },
                             "providerRegistration": {
                                 "id": "str",
                                 "kind": "str",
@@ -50,7 +54,7 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                     "capabilities": [{"effect": "str", "quotaId": "str", "requiredFeatures": ["str"]}],
                                     "crossTenantTokenValidation": "str",
                                     "customManifestVersion": "str",
-                                    "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
+                                    "enablePresetResourceTypes": bool,
                                     "enableTenantLinkedNotification": bool,
                                     "featuresRule": {"requiredFeaturesPolicy": "str"},
                                     "globalNotificationEndpoints": [
@@ -71,7 +75,6 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                     "linkedNotificationRules": [
                                         {
                                             "actions": ["str"],
-                                            "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                                             "endpoints": [
                                                 {
                                                     "apiVersions": ["str"],
@@ -98,6 +101,7 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                         "errorResponseMessageOptions": {"serverFailureResponseMessageType": "str"},
                                         "expeditedRolloutMetadata": {"enabled": bool, "expeditedRolloutIntent": "str"},
                                         "expeditedRolloutSubmitters": ["str"],
+                                        "featureManagementOwners": ["str"],
                                         "incidentContactEmail": "str",
                                         "incidentRoutingService": "str",
                                         "incidentRoutingTeam": "str",
@@ -107,9 +111,6 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                         "resourceAccessPolicy": "str",
                                         "resourceAccessRoles": [{"actions": ["str"], "allowedGroupClaims": ["str"]}],
                                         "schemaOwners": ["str"],
-                                        "serviceTreeInfos": [
-                                            {"componentId": "str", "readiness": "str", "serviceId": "str"}
-                                        ],
                                     },
                                     "managementGroupGlobalNotificationEndpoints": [
                                         {
@@ -146,6 +147,7 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                         ]
                                     },
                                     "notifications": [{"notificationType": "str", "skipNotifications": "str"}],
+                                    "oboSubscriptionId": "str",
                                     "optionalFeatures": ["str"],
                                     "privateResourceProviderConfiguration": {"allowedSubscriptions": ["str"]},
                                     "providerAuthentication": {"allowedAudiences": ["str"]},
@@ -269,7 +271,6 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                         "defaultApiVersion": "str",
                                         "disallowedActionVerbs": ["str"],
                                         "disallowedEndUserOperations": ["str"],
-                                        "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                                         "enableAsyncOperation": bool,
                                         "enableThirdPartyS2S": bool,
                                         "endpoints": [
@@ -277,7 +278,6 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                                 "apiVersion": "str",
                                                 "apiVersions": ["str"],
                                                 "dataBoundary": "str",
-                                                "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                                                 "enabled": bool,
                                                 "endpointType": "str",
                                                 "endpointUri": "str",
@@ -331,6 +331,7 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                                 "linkedActionVerb": "str",
                                                 "linkedProperty": "str",
                                                 "linkedType": "str",
+                                                "options": "str",
                                             }
                                         ],
                                         "linkedNotificationRules": [
@@ -356,6 +357,12 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                                 },
                                             }
                                         ],
+                                        "managedResourceGroupConfiguration": {
+                                            "applicationIds": ["str"],
+                                            "denyAssignmentConfiguration": {"enabled": bool, "notActions": ["str"]},
+                                            "enabled": bool,
+                                            "resourceGroupLocationOverride": "str",
+                                        },
                                         "management": {
                                             "authorizationOwners": ["str"],
                                             "canaryManifestOwners": ["str"],
@@ -365,6 +372,7 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                                 "expeditedRolloutIntent": "str",
                                             },
                                             "expeditedRolloutSubmitters": ["str"],
+                                            "featureManagementOwners": ["str"],
                                             "incidentContactEmail": "str",
                                             "incidentRoutingService": "str",
                                             "incidentRoutingTeam": "str",
@@ -376,9 +384,6 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                                 {"actions": ["str"], "allowedGroupClaims": ["str"]}
                                             ],
                                             "schemaOwners": ["str"],
-                                            "serviceTreeInfos": [
-                                                {"componentId": "str", "readiness": "str", "serviceId": "str"}
-                                            ],
                                         },
                                         "manifestLink": "str",
                                         "marketplaceOptions": {"addOnPlanConversionAllowed": bool},
@@ -390,6 +395,17 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                             "validation": {"allowNoncompliantCollectionResponse": bool}
                                         },
                                         "policyExecutionType": "str",
+                                        "privateEndpointConfiguration": {
+                                            "groupConnectivityInformation": [
+                                                {
+                                                    "groupId": "str",
+                                                    "requiredMembers": ["str"],
+                                                    "requiredZoneNames": ["str"],
+                                                    "redirectMapId": "str",
+                                                }
+                                            ],
+                                            "minApiVersion": "str",
+                                        },
                                         "provisioningState": "str",
                                         "quotaRule": {
                                             "locationRules": [{"location": "str", "policy": "str", "quotaId": "str"}],
@@ -404,10 +420,28 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                             "resourceCacheExpirationTimespan": "str",
                                         },
                                         "resourceConcurrencyControlOptions": {"str": {"policy": "str"}},
+                                        "resourceDeletionPolicies": [
+                                            {
+                                                "policyName": "str",
+                                                "properties": {
+                                                    "maximumRetentionTime": "1 day, 0:00:00",
+                                                    "minimumRetentionTime": "1 day, 0:00:00",
+                                                },
+                                            }
+                                        ],
                                         "resourceDeletionPolicy": "str",
                                         "resourceGraphConfiguration": {"apiVersion": "str", "enabled": bool},
                                         "resourceManagementOptions": {
-                                            "batchProvisioningSupport": {"supportedOperations": "str"},
+                                            "batchProvisioningSupport": {
+                                                "actionConfigurations": [
+                                                    {"authorizationAction": "str", "maxBatchSize": 0}
+                                                ],
+                                                "batchContractVersion": "str",
+                                                "maxBatchSize": 0,
+                                                "maxNestedBatchSize": 0,
+                                                "requiredFeatures": ["str"],
+                                                "supportedOperations": "str",
+                                            },
                                             "deleteDependencies": [
                                                 {
                                                     "linkedProperty": "str",
@@ -434,15 +468,13 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                         "resourceValidation": "str",
                                         "routingRule": {"hostResourceType": "str"},
                                         "routingType": "str",
-                                        "serviceTreeInfos": [
-                                            {"componentId": "str", "readiness": "str", "serviceId": "str"}
-                                        ],
                                         "skuLink": "str",
                                         "subscriptionLifecycleNotificationSpecifications": {
                                             "softDeleteTTL": "1 day, 0:00:00",
                                             "subscriptionStateOverrideActions": [{"action": "str", "state": "str"}],
                                         },
                                         "subscriptionStateRules": [{"allowedActions": ["str"], "state": "str"}],
+                                        "superScaleEnabled": bool,
                                         "supportsTags": bool,
                                         "swaggerSpecifications": [
                                             {"apiVersions": ["str"], "swaggerSpecFolderUri": "str"}
@@ -459,7 +491,14 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                         "throttlingRules": [
                                             {
                                                 "action": "str",
-                                                "metrics": [{"limit": 0, "type": "str", "interval": "1 day, 0:00:00"}],
+                                                "metrics": [
+                                                    {
+                                                        "limit": 0,
+                                                        "type": "str",
+                                                        "bucketSize": "str",
+                                                        "interval": "1 day, 0:00:00",
+                                                    }
+                                                ],
                                                 "applicationId": ["str"],
                                                 "requiredFeatures": ["str"],
                                             }
@@ -469,6 +508,7 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                             "disableCertificateAuthenticationFallback": bool,
                                             "signedRequestScope": "str",
                                         },
+                                        "writeLock": {"state": "str"},
                                     },
                                     "systemData": {
                                         "createdAt": "2020-02-20 00:00:00",
@@ -481,11 +521,20 @@ class TestProviderHubMgmtCustomRolloutsOperationsAsync(AzureMgmtRecordedTestCase
                                     "type": "str",
                                 }
                             ],
+                            "rolloutId": "str",
                             "skipReleaseScopeValidation": bool,
                         },
                         "provisioningState": "str",
                         "status": {
                             "completedRegions": ["str"],
+                            "completedRegionsInfo": [
+                                {
+                                    "appliedCommitId": "str",
+                                    "manifestAppliedAt": "2020-02-20 00:00:00",
+                                    "previousCommitId": "str",
+                                    "region": "str",
+                                }
+                            ],
                             "failedOrSkippedRegions": {
                                 "str": {
                                     "additionalInfo": [{"type": "str", "info": {}}],

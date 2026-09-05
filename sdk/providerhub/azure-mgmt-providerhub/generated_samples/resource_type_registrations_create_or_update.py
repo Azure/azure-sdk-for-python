@@ -49,19 +49,24 @@ def main():
                     "incidentContactEmail": "helpme@contoso.com",
                     "incidentRoutingService": "",
                     "incidentRoutingTeam": "",
-                    "manifestOwners": ["SPARTA-PlatformServiceAdministrator"],
+                    "manifestOwners": ["Contoso-PlatformServiceAdministrator"],
                     "resourceAccessPolicy": "NotSpecified",
-                    "serviceTreeInfos": [
-                        {
-                            "componentId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                            "readiness": "InDevelopment",
-                            "serviceId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                        }
-                    ],
                 },
+                "marketplaceType": "ProviderHub",
                 "metadata": {},
                 "notifications": [{"notificationType": "SubscriptionNotification", "skipNotifications": "Disabled"}],
                 "openApiConfiguration": {"validation": {"allowNoncompliantCollectionResponse": True}},
+                "privateEndpointConfiguration": {
+                    "groupConnectivityInformation": [
+                        {
+                            "groupId": "Sql",
+                            "redirectMapId": "test",
+                            "requiredMembers": ["Sql_Member"],
+                            "requiredZoneNames": ["Zone"],
+                        }
+                    ],
+                    "minApiVersion": "2022-10-01",
+                },
                 "regionality": "Regional",
                 "requestHeaderOptions": {"optOutHeaders": "SystemDataCreatedByLastModifiedBy"},
                 "resourceConcurrencyControlOptions": {
@@ -70,6 +75,18 @@ def main():
                     "put": {"policy": "SynchronizeBeginExtension"},
                 },
                 "resourceGraphConfiguration": {"apiVersion": "2019-01-01", "enabled": True},
+                "resourceManagementOptions": {
+                    "batchProvisioningSupport": {
+                        "actionConfigurations": [
+                            {"authorizationAction": "Microsoft.Contoso/authorize", "maxBatchSize": 5}
+                        ],
+                        "batchContractVersion": "2020-06-01-preview",
+                        "maxBatchSize": 10,
+                        "maxNestedBatchSize": 5,
+                        "requiredFeatures": ["Microsoft.Contoso/feature1"],
+                        "supportedOperations": "Get",
+                    }
+                },
                 "routingType": "Default",
                 "swaggerSpecifications": [
                     {
@@ -77,12 +94,19 @@ def main():
                         "swaggerSpecFolderUri": "https://github.com/Azure/azure-rest-api-specs/blob/feature/azure/contoso/specification/contoso/resource-manager/Microsoft.SampleRP/",
                     }
                 ],
+                "throttlingRules": [
+                    {
+                        "action": "Microsoft.Foo/checkNameAvailability/write",
+                        "metrics": [{"bucketSize": "XLarge", "limit": 1, "type": "NumberOfRequests"}],
+                    }
+                ],
+                "writeLock": {"state": "Enabled"},
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/ResourceTypeRegistrations_CreateOrUpdate.json
+# x-ms-original-file: 2025-10-01/ResourceTypeRegistrations_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

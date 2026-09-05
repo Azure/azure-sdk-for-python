@@ -43,7 +43,7 @@ class TestProviderHubMgmtProviderRegistrationsOperationsAsync(AzureMgmtRecordedT
                         "capabilities": [{"effect": "str", "quotaId": "str", "requiredFeatures": ["str"]}],
                         "crossTenantTokenValidation": "str",
                         "customManifestVersion": "str",
-                        "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
+                        "enablePresetResourceTypes": bool,
                         "enableTenantLinkedNotification": bool,
                         "featuresRule": {"requiredFeaturesPolicy": "str"},
                         "globalNotificationEndpoints": [
@@ -64,7 +64,6 @@ class TestProviderHubMgmtProviderRegistrationsOperationsAsync(AzureMgmtRecordedT
                         "linkedNotificationRules": [
                             {
                                 "actions": ["str"],
-                                "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                                 "endpoints": [
                                     {
                                         "apiVersions": ["str"],
@@ -91,6 +90,7 @@ class TestProviderHubMgmtProviderRegistrationsOperationsAsync(AzureMgmtRecordedT
                             "errorResponseMessageOptions": {"serverFailureResponseMessageType": "str"},
                             "expeditedRolloutMetadata": {"enabled": bool, "expeditedRolloutIntent": "str"},
                             "expeditedRolloutSubmitters": ["str"],
+                            "featureManagementOwners": ["str"],
                             "incidentContactEmail": "str",
                             "incidentRoutingService": "str",
                             "incidentRoutingTeam": "str",
@@ -100,7 +100,6 @@ class TestProviderHubMgmtProviderRegistrationsOperationsAsync(AzureMgmtRecordedT
                             "resourceAccessPolicy": "str",
                             "resourceAccessRoles": [{"actions": ["str"], "allowedGroupClaims": ["str"]}],
                             "schemaOwners": ["str"],
-                            "serviceTreeInfos": [{"componentId": "str", "readiness": "str", "serviceId": "str"}],
                         },
                         "managementGroupGlobalNotificationEndpoints": [
                             {
@@ -133,6 +132,7 @@ class TestProviderHubMgmtProviderRegistrationsOperationsAsync(AzureMgmtRecordedT
                             ]
                         },
                         "notifications": [{"notificationType": "str", "skipNotifications": "str"}],
+                        "oboSubscriptionId": "str",
                         "optionalFeatures": ["str"],
                         "privateResourceProviderConfiguration": {"allowedSubscriptions": ["str"]},
                         "providerAuthentication": {"allowedAudiences": ["str"]},

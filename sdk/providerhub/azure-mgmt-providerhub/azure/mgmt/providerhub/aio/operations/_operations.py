@@ -37,6 +37,7 @@ from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_authorized_applications_create_or_update_request,
     build_authorized_applications_delete_request,
@@ -52,10 +53,8 @@ from ...operations._operations import (
     build_default_rollouts_get_request,
     build_default_rollouts_list_by_provider_registration_request,
     build_default_rollouts_stop_request,
-    build_new_region_frontload_release_create_or_update_request,
-    build_new_region_frontload_release_generate_manifest_request,
-    build_new_region_frontload_release_get_request,
-    build_new_region_frontload_release_stop_request,
+    build_manifests_create_or_update_request,
+    build_manifests_get_request,
     build_notification_registrations_create_or_update_request,
     build_notification_registrations_delete_request,
     build_notification_registrations_get_request,
@@ -106,7 +105,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -219,14 +218,14 @@ class Operations:
     @distributed_trace_async
     async def list_by_provider_registration(
         self, provider_namespace: str, **kwargs: Any
-    ) -> List[_models.OperationsDefinition]:
+    ) -> _models.OperationsPutContent:
         """Gets the operations supported by the given provider.
 
         :param provider_namespace: The name of the resource provider hosted within ProviderHub.
          Required.
         :type provider_namespace: str
-        :return: list of OperationsDefinition
-        :rtype: list[~azure.mgmt.providerhub.models.OperationsDefinition]
+        :return: OperationsPutContent. The OperationsPutContent is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.OperationsPutContent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -240,7 +239,7 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OperationsDefinition]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationsPutContent] = kwargs.pop("cls", None)
 
         _request = build_operations_list_by_provider_registration_request(
             provider_namespace=provider_namespace,
@@ -278,7 +277,7 @@ class Operations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(List[_models.OperationsDefinition], response.json())
+            deserialized = _deserialize(_models.OperationsPutContent, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -489,7 +488,7 @@ class Operations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ErrorResponse,
@@ -501,7 +500,7 @@ class Operations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class CustomRolloutsOperations:
+class CustomRolloutsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1042,478 +1041,7 @@ class CustomRolloutsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class NewRegionFrontloadReleaseOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.providerhub.aio.ProviderHubMgmtClient`'s
-        :attr:`new_region_frontload_release` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ProviderHubMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, provider_namespace: str, release_name: str, **kwargs: Any) -> _models.DefaultRollout:
-        """Gets a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :return: DefaultRollout. The DefaultRollout is compatible with MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.DefaultRollout
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DefaultRollout] = kwargs.pop("cls", None)
-
-        _request = build_new_region_frontload_release_get_request(
-            provider_namespace=provider_namespace,
-            release_name=release_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.DefaultRollout, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_update(
-        self,
-        provider_namespace: str,
-        release_name: str,
-        properties: _models.FrontloadPayload,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DefaultRollout:
-        """Creates or updates a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :param properties: Required.
-        :type properties: ~azure.mgmt.providerhub.models.FrontloadPayload
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DefaultRollout. The DefaultRollout is compatible with MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.DefaultRollout
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        provider_namespace: str,
-        release_name: str,
-        properties: _types.FrontloadPayload,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DefaultRollout:
-        """Creates or updates a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :param properties: Required.
-        :type properties: ~azure.mgmt.providerhub.types.FrontloadPayload
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DefaultRollout. The DefaultRollout is compatible with MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.DefaultRollout
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        provider_namespace: str,
-        release_name: str,
-        properties: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DefaultRollout:
-        """Creates or updates a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :param properties: Required.
-        :type properties: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DefaultRollout. The DefaultRollout is compatible with MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.DefaultRollout
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update(
-        self,
-        provider_namespace: str,
-        release_name: str,
-        properties: Union[_models.FrontloadPayload, _types.FrontloadPayload, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.DefaultRollout:
-        """Creates or updates a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :param properties: Is either a FrontloadPayload type or a IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.providerhub.models.FrontloadPayload or
-         ~azure.mgmt.providerhub.types.FrontloadPayload or IO[bytes]
-        :return: DefaultRollout. The DefaultRollout is compatible with MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.DefaultRollout
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DefaultRollout] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
-        else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_new_region_frontload_release_create_or_update_request(
-            provider_namespace=provider_namespace,
-            release_name=release_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.DefaultRollout, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def stop(self, provider_namespace: str, release_name: str, **kwargs: Any) -> None:
-        """Stops a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_new_region_frontload_release_stop_request(
-            provider_namespace=provider_namespace,
-            release_name=release_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    async def generate_manifest(
-        self,
-        provider_namespace: str,
-        properties: _models.FrontloadPayload,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ResourceProviderManifest:
-        """Generates the new region frontload manifest.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param properties: Required.
-        :type properties: ~azure.mgmt.providerhub.models.FrontloadPayload
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ResourceProviderManifest. The ResourceProviderManifest is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.ResourceProviderManifest
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def generate_manifest(
-        self,
-        provider_namespace: str,
-        properties: _types.FrontloadPayload,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ResourceProviderManifest:
-        """Generates the new region frontload manifest.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param properties: Required.
-        :type properties: ~azure.mgmt.providerhub.types.FrontloadPayload
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ResourceProviderManifest. The ResourceProviderManifest is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.ResourceProviderManifest
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def generate_manifest(
-        self, provider_namespace: str, properties: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ResourceProviderManifest:
-        """Generates the new region frontload manifest.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param properties: Required.
-        :type properties: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ResourceProviderManifest. The ResourceProviderManifest is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.ResourceProviderManifest
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def generate_manifest(
-        self,
-        provider_namespace: str,
-        properties: Union[_models.FrontloadPayload, _types.FrontloadPayload, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.ResourceProviderManifest:
-        """Generates the new region frontload manifest.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param properties: Is either a FrontloadPayload type or a IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.providerhub.models.FrontloadPayload or
-         ~azure.mgmt.providerhub.types.FrontloadPayload or IO[bytes]
-        :return: ResourceProviderManifest. The ResourceProviderManifest is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.ResourceProviderManifest
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ResourceProviderManifest] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
-        else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_new_region_frontload_release_generate_manifest_request(
-            provider_namespace=provider_namespace,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ResourceProviderManifest, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class ProviderRegistrationsOperations:
+class ProviderRegistrationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2033,7 +1561,7 @@ class ProviderRegistrationsOperations:
         return deserialized  # type: ignore
 
 
-class DefaultRolloutsOperations:
+class DefaultRolloutsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2574,7 +2102,7 @@ class DefaultRolloutsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class NotificationRegistrationsOperations:
+class NotificationRegistrationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3000,7 +2528,7 @@ class NotificationRegistrationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ResourceTypeRegistrationsOperations:
+class ResourceTypeRegistrationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3550,7 +3078,7 @@ class ResourceTypeRegistrationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SkusOperations:
+class SkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5437,7 +4965,7 @@ class SkusOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AuthorizedApplicationsOperations:
+class AuthorizedApplicationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5924,7 +5452,7 @@ class AuthorizedApplicationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ProviderMonitorSettingsOperations:
+class ProviderMonitorSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6582,7 +6110,287 @@ class ProviderMonitorSettingsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ResourceActionsOperations:
+class ManifestsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.providerhub.aio.ProviderHubMgmtClient`'s
+        :attr:`manifests` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ProviderHubMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-10-01",
+        params_added_on={
+            "2025-10-01": ["api_version", "subscription_id", "provider_namespace", "environment", "accept"]
+        },
+        api_versions_list=["2025-10-01"],
+    )
+    async def get(self, provider_namespace: str, environment: str, **kwargs: Any) -> _models.ManifestInfo:
+        """Gets the manifest from the manifest repository.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param environment: The environment supplied to the manifests operation. Required.
+        :type environment: str
+        :return: ManifestInfo. The ManifestInfo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.ManifestInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ManifestInfo] = kwargs.pop("cls", None)
+
+        _request = build_manifests_get_request(
+            provider_namespace=provider_namespace,
+            environment=environment,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ManifestInfo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        provider_namespace: str,
+        environment: str,
+        properties: _models.ManifestInfo,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ManifestInfo:
+        """Creates or Updates a manifest in manifest repository.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param environment: The environment supplied to the manifests operation. Required.
+        :type environment: str
+        :param properties: The manifest supplied to the CreateOrUpdate manifests operation. Required.
+        :type properties: ~azure.mgmt.providerhub.models.ManifestInfo
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManifestInfo. The ManifestInfo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.ManifestInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        provider_namespace: str,
+        environment: str,
+        properties: _types.ManifestInfo,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ManifestInfo:
+        """Creates or Updates a manifest in manifest repository.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param environment: The environment supplied to the manifests operation. Required.
+        :type environment: str
+        :param properties: The manifest supplied to the CreateOrUpdate manifests operation. Required.
+        :type properties: ~azure.mgmt.providerhub.types.ManifestInfo
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManifestInfo. The ManifestInfo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.ManifestInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        provider_namespace: str,
+        environment: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ManifestInfo:
+        """Creates or Updates a manifest in manifest repository.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param environment: The environment supplied to the manifests operation. Required.
+        :type environment: str
+        :param properties: The manifest supplied to the CreateOrUpdate manifests operation. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManifestInfo. The ManifestInfo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.ManifestInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-10-01",
+        params_added_on={
+            "2025-10-01": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "environment",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01"],
+    )
+    async def create_or_update(
+        self,
+        provider_namespace: str,
+        environment: str,
+        properties: Union[_models.ManifestInfo, _types.ManifestInfo, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ManifestInfo:
+        """Creates or Updates a manifest in manifest repository.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param environment: The environment supplied to the manifests operation. Required.
+        :type environment: str
+        :param properties: The manifest supplied to the CreateOrUpdate manifests operation. Is either a
+         ManifestInfo type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.providerhub.models.ManifestInfo or
+         ~azure.mgmt.providerhub.types.ManifestInfo or IO[bytes]
+        :return: ManifestInfo. The ManifestInfo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.ManifestInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ManifestInfo] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_manifests_create_or_update_request(
+            provider_namespace=provider_namespace,
+            environment=environment,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ManifestInfo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ResourceActionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
