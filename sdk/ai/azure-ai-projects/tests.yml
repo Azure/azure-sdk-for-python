@@ -1,0 +1,17 @@
+trigger: none
+
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: 'azure-ai-projects'
+      ServiceDirectory: ai
+      TestResourceDirectories:
+      - ai/azure-ai-projects
+      # gpt-realtime (GlobalStandard) is only deployable in a handful of regions (e.g. eastus2,
+      # centralus, canadacentral); the shared template's default region for this cloud (westus)
+      # does not support it, which would fail resource provisioning before any test runs.
+      Location: 'eastus2'
+      EnvVars:
+        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_TEST_USE_CLI_AUTH: 'true'
+      TestMarkArgument: 'live_test_only'

@@ -6,17 +6,19 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 157 unique public methods:
+There are a total of 196 unique public methods:
 
 - 5 stable methods on the client
-- 58 stable methods on top-level sub-clients
+- 97 stable methods on top-level sub-clients
 - 94 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
-| `agents` | AgentsOperations | 26 |
+| `agent_endpoint_conversations` | AgentEndpointConversationsOperations | 14 |
+| `agent_telephony` | AgentTelephonyOperations | 13 |
+| `agents` | AgentsOperations | 38 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 9 |
 | `deployments` | DeploymentsOperations | 2 |
@@ -59,31 +61,72 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 Alphabetically sorted. An asterisk at the end of the method name means it is a hand-written method.
 
 ```text
+.agent_endpoint_conversations.delete_agent_conversation*
+.agent_endpoint_conversations.get_agent_conversation*
+.agent_endpoint_conversations.get_agent_conversation_audio*
+.agent_endpoint_conversations.get_agent_conversation_audio_content*
+.agent_endpoint_conversations.get_agent_conversation_item*
+.agent_endpoint_conversations.get_agent_conversation_item_audio*
+.agent_endpoint_conversations.get_agent_conversation_item_audio_content*
+.agent_endpoint_conversations.get_agent_conversation_item_generated_audio*
+.agent_endpoint_conversations.get_agent_conversation_item_generated_audio_content*
+.agent_endpoint_conversations.get_agent_conversation_response*
+.agent_endpoint_conversations.list_agent_conversation_items*
+.agent_endpoint_conversations.list_agent_conversation_response_items*
+.agent_endpoint_conversations.list_agent_conversation_responses*
+.agent_endpoint_conversations.list_agent_conversations*
+
+.agent_telephony.begin_import_telephony_campaign_recipients
+.agent_telephony.begin_publish_telephony_campaign
+.agent_telephony.begin_validate_telephony_campaign
+.agent_telephony.cancel_telephony_call_job
+.agent_telephony.cancel_telephony_campaign
+.agent_telephony.create_telephony_call_job
+.agent_telephony.create_telephony_campaign
+.agent_telephony.get_telephony_call_job
+.agent_telephony.get_telephony_campaign
+.agent_telephony.get_telephony_campaign_recipient_import
+.agent_telephony.get_telephony_operation
+.agent_telephony.pause_telephony_campaign
+.agent_telephony.resume_telephony_campaign
+
 .agents.create_session
+.agents.create_telephony_binding*
 .agents.create_version*
 .agents.create_version_from_code*
 .agents.create_version_from_manifest
 .agents.delete
 .agents.delete_session
 .agents.delete_session_file
+.agents.delete_telephony_binding*
 .agents.delete_version
 .agents.disable
 .agents.download_code
 .agents.download_session_file
 .agents.enable
+.agents.end_telephony_call*
+.agents.generate_agent*
 .agents.get
 .agents.get_microsoft365_package
 .agents.get_microsoft365_publish_defaults
 .agents.get_session
 .agents.get_session_log_stream
+.agents.get_telephony_binding*
+.agents.get_telephony_call*
+.agents.get_telephony_transfer_targets*
 .agents.get_version
 .agents.list
 .agents.list_session_files
 .agents.list_sessions
+.agents.list_telephony_bindings*
+.agents.list_telephony_calls*
 .agents.list_versions
 .agents.publish_to_microsoft365
+.agents.replace_telephony_transfer_targets*
 .agents.stop_session
+.agents.transfer_telephony_call*
 .agents.update_details
+.agents.update_telephony_binding*
 .agents.upload_session_file
 
 .connections.get*

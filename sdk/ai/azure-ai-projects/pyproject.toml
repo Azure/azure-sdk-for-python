@@ -17,7 +17,7 @@ authors = [
 description = "Microsoft Corporation Azure AI Projects Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -40,6 +40,12 @@ dependencies = [
 ]
 dynamic = [
 "version", "readme"
+]
+
+[project.optional-dependencies]
+realtime = [
+    "websockets>=13.0",
+    "aiohttp>=3.9.0,<4.0.0",
 ]
 
 [project.urls]

@@ -46,7 +46,12 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "schedules": "Schedules=V1Preview",
     "skills": "Skills=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    # NOTE: `agent_endpoint_conversations` used to need an entry here (it lived as a nested
+    # `.beta` sub-client). Upstream has since merged it entirely into the top-level, stable
+    # `agent_endpoint_conversations` client attribute (see the dedicated
+    # `_NON_BETA_OPTIONAL_TEST_CASES` entries below), so it must NOT have an entry in this dict --
+    # it's no longer part of `.beta` at all.
 }
 
 # Methods on .beta sub-clients that are NOT simple one-HTTP-call wrappers and
@@ -84,13 +89,187 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     #   The test id is derived automatically from method_name.
     pytest.param(
         "agents.create_version",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.generate_agent",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.create_telephony_binding",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.list_telephony_bindings",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.get_telephony_binding",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.update_telephony_binding",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.delete_telephony_binding",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.list_telephony_calls",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.get_telephony_call",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.transfer_telephony_call",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.end_telephony_call",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.get_telephony_transfer_targets",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agents.replace_telephony_transfer_targets",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.create_telephony_call_job",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.get_telephony_call_job",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.cancel_telephony_call_job",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.create_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.get_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.begin_import_telephony_campaign_recipients",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.get_telephony_campaign_recipient_import",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.begin_validate_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.begin_publish_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.pause_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.resume_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.cancel_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.get_telephony_operation",
+        "VoiceAgents=V1Preview",
     ),
     pytest.param(
         "evaluation_rules.create_or_update",
         "Evaluations=V1Preview",
     ),
+    # `agent_endpoint_conversations` is a top-level client attribute. Like `agents.generate_agent`,
+    # every one of its methods optionally sends the Foundry-Features header gated behind
+    # `allow_preview`, so they belong here rather than in EXPECTED_FOUNDRY_FEATURES above. Upstream
+    # merged what used to be the separate, always-on `.beta.agent_endpoint_conversations` sub-client
+    # (12 methods) entirely into this top-level attribute (see the NOTE below), so all 14 methods are
+    # now covered here uniformly.
+    pytest.param(
+        "agent_endpoint_conversations.list_agent_conversations",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.get_agent_conversation",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.delete_agent_conversation",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.list_agent_conversation_responses",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.get_agent_conversation_response",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.list_agent_conversation_response_items",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.list_agent_conversation_items",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.get_agent_conversation_item",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.get_agent_conversation_item_audio",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.get_agent_conversation_item_audio_content",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.get_agent_conversation_item_generated_audio",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.get_agent_conversation_item_generated_audio_content",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.get_agent_conversation_audio",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_endpoint_conversations.get_agent_conversation_audio_content",
+        "VoiceAgents=V1Preview",
+    ),
 ]
+
+# NOTE: `agent_endpoint_conversations` used to need its own dedicated test cases here (it was
+# wrapped with `_OperationMethodHeaderProxy` directly in `_patch.py`, unconditionally regardless
+# of `allow_preview`, since it lived as a top-level client attribute rather than a `.beta`
+# sub-client). It then moved under `.beta` upstream (all methods together) and was covered
+# automatically by the dynamic discovery in test_foundry_features_header_on_beta_operations.py.
+# Upstream has since merged the entire `.beta.agent_endpoint_conversations` sub-client back into a
+# single top-level `agent_endpoint_conversations` attribute (all 14 methods, no `.beta` variant
+# left at all) that once again needs dedicated `allow_preview`-gated test cases -- see above. This
+# operation group has now round-tripped between "top-level" and "nested under .beta" more than
+# once across TypeSpec regenerations; if it moves again, update both this list and
+# EXPECTED_FOUNDRY_FEATURES above together.
 
 # Both sentinel values – used by _make_fake_call to detect required parameters
 # whose defaults are the internal _Unset object (rather than inspect.Parameter.empty).

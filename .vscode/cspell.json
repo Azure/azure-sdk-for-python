@@ -144,6 +144,8 @@
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
+    "PSTN",
+    "pstn",
     "vally",
     "regen",
     "pylintrc",

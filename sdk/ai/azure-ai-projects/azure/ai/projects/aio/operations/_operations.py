@@ -7,17 +7,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
+import datetime
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TYPE_CHECKING, TypeVar, Union, cast, overload
 import urllib.parse
 
-from azure.core import AsyncPipelineClient
+from azure.core import AsyncPipelineClient, MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
+    ResourceModifiedError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
     StreamClosedError,
@@ -36,32 +38,72 @@ from ... import models as _models
 from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
+from ...models._enums import _AgentDefinitionOptInKeys
 from ...operations._operations import (
+    build_agent_endpoint_conversations_delete_agent_conversation_request,
+    build_agent_endpoint_conversations_get_agent_conversation_audio_content_request,
+    build_agent_endpoint_conversations_get_agent_conversation_audio_request,
+    build_agent_endpoint_conversations_get_agent_conversation_item_audio_content_request,
+    build_agent_endpoint_conversations_get_agent_conversation_item_audio_request,
+    build_agent_endpoint_conversations_get_agent_conversation_item_generated_audio_content_request,
+    build_agent_endpoint_conversations_get_agent_conversation_item_generated_audio_request,
+    build_agent_endpoint_conversations_get_agent_conversation_item_request,
+    build_agent_endpoint_conversations_get_agent_conversation_request,
+    build_agent_endpoint_conversations_get_agent_conversation_response_request,
+    build_agent_endpoint_conversations_list_agent_conversation_items_request,
+    build_agent_endpoint_conversations_list_agent_conversation_response_items_request,
+    build_agent_endpoint_conversations_list_agent_conversation_responses_request,
+    build_agent_endpoint_conversations_list_agent_conversations_request,
+    build_agent_telephony_cancel_telephony_call_job_request,
+    build_agent_telephony_cancel_telephony_campaign_request,
+    build_agent_telephony_create_telephony_call_job_request,
+    build_agent_telephony_create_telephony_campaign_request,
+    build_agent_telephony_get_telephony_call_job_request,
+    build_agent_telephony_get_telephony_campaign_recipient_import_request,
+    build_agent_telephony_get_telephony_campaign_request,
+    build_agent_telephony_get_telephony_operation_request,
+    build_agent_telephony_import_telephony_campaign_recipients_request,
+    build_agent_telephony_pause_telephony_campaign_request,
+    build_agent_telephony_publish_telephony_campaign_request,
+    build_agent_telephony_resume_telephony_campaign_request,
+    build_agent_telephony_validate_telephony_campaign_request,
     build_agents_create_session_request,
+    build_agents_create_telephony_binding_request,
     build_agents_create_version_from_code_request,
     build_agents_create_version_from_manifest_request,
     build_agents_create_version_request,
     build_agents_delete_request,
     build_agents_delete_session_file_request,
     build_agents_delete_session_request,
+    build_agents_delete_telephony_binding_request,
     build_agents_delete_version_request,
     build_agents_disable_request,
     build_agents_download_code_request,
     build_agents_download_session_file_request,
     build_agents_enable_request,
+    build_agents_end_telephony_call_request,
+    build_agents_generate_agent_request,
     build_agents_get_microsoft365_package_request,
     build_agents_get_microsoft365_publish_defaults_request,
     build_agents_get_request,
     build_agents_get_session_log_stream_request,
     build_agents_get_session_request,
+    build_agents_get_telephony_binding_request,
+    build_agents_get_telephony_call_request,
+    build_agents_get_telephony_transfer_targets_request,
     build_agents_get_version_request,
     build_agents_list_request,
     build_agents_list_session_files_request,
     build_agents_list_sessions_request,
+    build_agents_list_telephony_bindings_request,
+    build_agents_list_telephony_calls_request,
     build_agents_list_versions_request,
     build_agents_publish_to_microsoft365_request,
+    build_agents_replace_telephony_transfer_targets_request,
     build_agents_stop_session_request,
+    build_agents_transfer_telephony_call_request,
     build_agents_update_details_request,
+    build_agents_update_telephony_binding_request,
     build_agents_upload_session_file_request,
     build_beta_agent_insight_monitors_cancel_run_request,
     build_beta_agent_insight_monitors_create_request,
@@ -185,9 +227,12 @@ from ...operations._operations import (
     build_toolboxes_list_request,
     build_toolboxes_list_versions_request,
     build_toolboxes_update_request,
+    build_voice_agent_web_socket_connect_voice_agent_request,
 )
 from .._configuration import AIProjectClientConfiguration
 
+if TYPE_CHECKING:
+    from ... import _unions
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 T = TypeVar("T")
@@ -275,6 +320,80 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         _request = build_agents_get_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def generate_agent(self, body: _models.GenerateVoiceAgentRequest, **kwargs: Any) -> _models.AgentDetails:
+        """Generate an agent.
+
+        Generates and creates an agent from kind-specific high-level inputs. The generated definition
+        remains fully editable through the standard agent versioning operations.
+
+        :param body: The kind-specific inputs for generating and creating an agent. Is one of the
+         following types: GenerateVoiceAgentRequest Required.
+        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_generate_agent_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -406,7 +525,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         Returns a paged collection of agent resources.
 
         :keyword kind: Filter agents by kind. If not provided, all agents are returned. Known values
-         are: "prompt", "hosted", "workflow", and "external". Default value is None.
+         are: "prompt", "hosted", "workflow", "external", and "voice". Default value is None.
         :paramtype kind: str or ~azure.ai.projects.models.AgentKind
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -2182,6 +2301,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
+        kwargs.pop("stream", None)  # must always stream; discard any caller override
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2993,6 +3113,1315 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_telephony_binding(
+        self,
+        agent_name: str,
+        body: _models.CreateTelephonyBindingRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Create an agent telephony binding.
+
+        Creates a telephony binding for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param body: The provider-specific binding to create. Required.
+        :type body: ~azure.ai.projects.models.CreateTelephonyBindingRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_telephony_binding(
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Create an agent telephony binding.
+
+        Creates a telephony binding for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param body: The provider-specific binding to create. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_telephony_binding(
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Create an agent telephony binding.
+
+        Creates a telephony binding for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param body: The provider-specific binding to create. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_telephony_binding(
+        self, agent_name: str, body: Union[_models.CreateTelephonyBindingRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Create an agent telephony binding.
+
+        Creates a telephony binding for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param body: The provider-specific binding to create. Is one of the following types:
+         CreateTelephonyBindingRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.CreateTelephonyBindingRequest or JSON or IO[bytes]
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyBinding] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_create_telephony_binding_request(
+            agent_name=agent_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyBinding, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_telephony_bindings(
+        self,
+        agent_name: str,
+        *,
+        provider: Optional[Union[str, _models.TelephonyProvider]] = None,
+        status: Optional[Union[str, _models.TelephonyBindingStatus]] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.TelephonyBindingListItem"]:
+        """List agent telephony bindings.
+
+        Returns the telephony bindings owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose bindings are listed. Required.
+        :type agent_name: str
+        :keyword provider: Filters bindings by provider. Known values are: "teams_phone_extension" and
+         "twilio". Default value is None.
+        :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
+        :keyword status: Filters bindings by lifecycle status. Known values are: "active" and
+         "suspended". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of TelephonyBindingListItem
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.TelephonyBindingListItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TelephonyBindingListItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agents_list_telephony_bindings_request(
+                agent_name=agent_name,
+                provider=provider,
+                status=status,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TelephonyBindingListItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_telephony_binding(self, agent_name: str, binding_id: str, **kwargs: Any) -> _models.TelephonyBinding:
+        """Get an agent telephony binding.
+
+        Retrieves a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyBinding] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_telephony_binding_request(
+            agent_name=agent_name,
+            binding_id=binding_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyBinding, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update_telephony_binding(
+        self,
+        agent_name: str,
+        binding_id: str,
+        body: _models.UpdateTelephonyBindingRequest,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Update an agent telephony binding.
+
+        Updates a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :param body: The binding properties to update. Required.
+        :type body: ~azure.ai.projects.models.UpdateTelephonyBindingRequest
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_telephony_binding(
+        self,
+        agent_name: str,
+        binding_id: str,
+        body: JSON,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Update an agent telephony binding.
+
+        Updates a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :param body: The binding properties to update. Required.
+        :type body: JSON
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_telephony_binding(
+        self,
+        agent_name: str,
+        binding_id: str,
+        body: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Update an agent telephony binding.
+
+        Updates a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :param body: The binding properties to update. Required.
+        :type body: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_telephony_binding(
+        self,
+        agent_name: str,
+        binding_id: str,
+        body: Union[_models.UpdateTelephonyBindingRequest, JSON, IO[bytes]],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.TelephonyBinding:
+        """Update an agent telephony binding.
+
+        Updates a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :param body: The binding properties to update. Is one of the following types:
+         UpdateTelephonyBindingRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.UpdateTelephonyBindingRequest or JSON or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyBinding] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_update_telephony_binding_request(
+            agent_name=agent_name,
+            binding_id=binding_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyBinding, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_telephony_binding(
+        self, agent_name: str, binding_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
+    ) -> None:
+        """Delete an agent telephony binding.
+
+        Deletes a telephony binding owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the binding. Required.
+        :type agent_name: str
+        :param binding_id: The service-generated binding identifier. Required.
+        :type binding_id: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_delete_telephony_binding_request(
+            agent_name=agent_name,
+            binding_id=binding_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list_telephony_calls(
+        self,
+        agent_name: str,
+        *,
+        provider: Optional[Union[str, _models.TelephonyProvider]] = None,
+        status: Optional[Union[str, _models.TelephonyCallStatus]] = None,
+        started_after: Optional[datetime.datetime] = None,
+        started_before: Optional[datetime.datetime] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.TelephonyCallSummary"]:
+        """List agent telephony calls.
+
+        Returns the durable inbound call history for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose calls are listed. Required.
+        :type agent_name: str
+        :keyword provider: Filters calls by provider. Known values are: "teams_phone_extension" and
+         "twilio". Default value is None.
+        :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
+        :keyword status: Filters calls by lifecycle status. Known values are: "in_progress", "success",
+         and "failed". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.TelephonyCallStatus
+        :keyword started_after: Includes calls that started at or after this Unix timestamp in seconds.
+         Default value is None.
+        :paramtype started_after: ~datetime.datetime
+        :keyword started_before: Includes calls that started at or before this Unix timestamp in
+         seconds. Default value is None.
+        :paramtype started_before: ~datetime.datetime
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of TelephonyCallSummary
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.TelephonyCallSummary]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TelephonyCallSummary]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agents_list_telephony_calls_request(
+                agent_name=agent_name,
+                provider=provider,
+                status=status,
+                started_after=started_after,
+                started_before=started_before,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TelephonyCallSummary],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_telephony_call(self, agent_name: str, call_id: str, **kwargs: Any) -> _models.TelephonyCallRecord:
+        """Get an agent telephony call.
+
+        Retrieves a durable inbound call record owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the call record. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCallRecord] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_telephony_call_request(
+            agent_name=agent_name,
+            call_id=call_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCallRecord, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def transfer_telephony_call(
+        self, agent_name: str, call_id: str, *, target: str, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyCallRecord:
+        """Transfer an active agent telephony call.
+
+        Transfers an active inbound call to a configured target for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the active call. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :keyword target: The name of a transfer target configured for the voice agent. Required.
+        :paramtype target: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def transfer_telephony_call(
+        self, agent_name: str, call_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyCallRecord:
+        """Transfer an active agent telephony call.
+
+        Transfers an active inbound call to a configured target for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the active call. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def transfer_telephony_call(
+        self, agent_name: str, call_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyCallRecord:
+        """Transfer an active agent telephony call.
+
+        Transfers an active inbound call to a configured target for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the active call. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def transfer_telephony_call(
+        self,
+        agent_name: str,
+        call_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        target: str = _Unset,
+        **kwargs: Any
+    ) -> _models.TelephonyCallRecord:
+        """Transfer an active agent telephony call.
+
+        Transfers an active inbound call to a configured target for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the active call. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword target: The name of a transfer target configured for the voice agent. Required.
+        :paramtype target: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyCallRecord] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if target is _Unset:
+                raise TypeError("missing required argument: target")
+            body = {"target": target}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_transfer_telephony_call_request(
+            agent_name=agent_name,
+            call_id=call_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCallRecord, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def end_telephony_call(self, agent_name: str, call_id: str, **kwargs: Any) -> _models.TelephonyCallRecord:
+        """End an active agent telephony call.
+
+        Ends an active inbound call owned by the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent that owns the active call. Required.
+        :type agent_name: str
+        :param call_id: The service-generated call identifier. Required.
+        :type call_id: str
+        :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCallRecord] = kwargs.pop("cls", None)
+
+        _request = build_agents_end_telephony_call_request(
+            agent_name=agent_name,
+            call_id=call_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCallRecord, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_telephony_transfer_targets(self, agent_name: str, **kwargs: Any) -> _models.TelephonyTransferTargets:
+        """Get agent telephony transfer targets.
+
+        Returns all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are retrieved. Required.
+        :type agent_name: str
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyTransferTargets] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_telephony_transfer_targets_request(
+            agent_name=agent_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyTransferTargets, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def replace_telephony_transfer_targets(
+        self,
+        agent_name: str,
+        *,
+        transfer_targets: List[_models.TelephonyTransferTarget],
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyTransferTargets:
+        """Replace agent telephony transfer targets.
+
+        Replaces all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
+        :type agent_name: str
+        :keyword transfer_targets: The complete set of destinations to which the voice agent may
+         transfer calls. An empty array clears all targets when replacing the configuration. Required.
+        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def replace_telephony_transfer_targets(
+        self,
+        agent_name: str,
+        body: JSON,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyTransferTargets:
+        """Replace agent telephony transfer targets.
+
+        Replaces all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def replace_telephony_transfer_targets(
+        self,
+        agent_name: str,
+        body: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyTransferTargets:
+        """Replace agent telephony transfer targets.
+
+        Replaces all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def replace_telephony_transfer_targets(
+        self,
+        agent_name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        transfer_targets: List[_models.TelephonyTransferTarget] = _Unset,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.TelephonyTransferTargets:
+        """Replace agent telephony transfer targets.
+
+        Replaces all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
+        :type agent_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword transfer_targets: The complete set of destinations to which the voice agent may
+         transfer calls. An empty array clears all targets when replacing the configuration. Required.
+        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyTransferTargets] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if transfer_targets is _Unset:
+                raise TypeError("missing required argument: transfer_targets")
+            body = {"transfer_targets": transfer_targets}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_replace_telephony_transfer_targets_request(
+            agent_name=agent_name,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyTransferTargets, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -5428,6 +6857,2990 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Index, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class VoiceAgentWebSocketOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`voice_agent_web_socket` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def connect_voice_agent(
+        self,
+        agent_name: str,
+        *,
+        foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = None,
+        transport: Optional[Union[str, _models.VoiceAgentTransport]] = None,
+        store: Optional[bool] = None,
+        structured_input: Optional[str] = None,
+        agent_version_override: Optional[str] = None,
+        websocket_subprotocol: Optional[Union[str, _models.VoiceAgentWebSocketSubprotocol]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Connect to a voice agent.
+
+        Connects to a voice agent over WebSocket. The client must send an HTTP GET with ``Upgrade:
+        websocket``
+        headers. The optional ``realtime`` subprotocol is the only accepted subprotocol value. Supply
+        the
+        ``VoiceAgents=V1Preview`` opt-in through either the ``Foundry-Features`` header or the
+        ``foundry_features``
+        query parameter.
+
+        Handshake failures are evaluated in the following order, independent of the requested
+        ``transport``:
+
+
+
+        1. Agent enablement (any transport): if the target agent is disabled, the handshake fails
+        before the
+        `101 Switching Protocols` upgrade with `409 Conflict`, using the shared Foundry
+        `ApiErrorResponse` shape
+        with `error.code = agent_disabled`. This failure is terminal until the caller enables the
+        agent, and it
+        takes precedence over the WebRTC-specific checks below.
+        2. WebRTC availability (only when `transport=webrtc`, and only once the agent itself is
+        enabled): the agent
+        must have the WebRTC transport capability configured. If the agent is enabled but WebRTC is not
+        available
+        for it, the handshake fails with `404 Not Found`. This is distinct from the `409
+        agent_disabled` case
+        above, which concerns the agent itself rather than its WebRTC capability.
+        3. WebRTC compatibility (only when `transport=webrtc`): WebRTC does not support
+        bring-your-own-model (BYOM)
+        or hosted-agent voice agents; those requests fail with `400 Bad Request`.
+
+        :param agent_name: The name of the voice agent. Required.
+        :type agent_name: str
+        :keyword foundry_features_query: A query alternative to the ``Foundry-Features`` header for
+         clients that cannot set headers during a
+         WebSocket handshake. Set this to ``VoiceAgents=V1Preview``. Either this query parameter or the
+         header is
+         required. VOICE_AGENTS_V1_PREVIEW. Default value is None.
+        :paramtype foundry_features_query: str or ~azure.ai.projects.models.VOICE_AGENTS_V1_PREVIEW
+        :keyword transport: Selects the connection transport. Omit or send ``websocket`` for the
+         default, where signaling and audio are
+         exchanged as JSON events over this WebSocket. Send ``webrtc`` to negotiate a WebRTC
+         connection: the WebSocket
+         then carries only SDP signaling (``rtc.call.sdp.create`` / ``rtc.call.sdp.created``) while
+         media and the data
+         channel are peer-to-peer. Known values are: "websocket" and "webrtc". Default value is None.
+        :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport
+        :keyword store: Whether to persist the conversation created by this WebSocket session. If
+         omitted, the service honors the
+         persisted voice agent definition's configured ``store`` value. If supplied, this value
+         overrides the
+         definition's ``store`` setting for this session only. Default value is None.
+        :paramtype store: bool
+        :keyword structured_input: Per-session values for the voice agent's declared
+         ``structured_inputs``, serialized as a JSON object and
+         URL-encoded as this query parameter. Supplied values override definition defaults when
+         rendering the
+         agent's instructions and session-start greeting for this session only. The decoded value must
+         be a JSON
+         object no larger than 32 KiB with a maximum nesting depth of 16. Default value is None.
+        :paramtype structured_input: str
+        :keyword agent_version_override: Selects a specific version of the voice agent for this
+         session. Default value is None.
+        :paramtype agent_version_override: str
+        :keyword websocket_subprotocol: The requested WebSocket subprotocol. Omit this header or
+         request exactly ``realtime``. "realtime" Default value is None.
+        :paramtype websocket_subprotocol: str or
+         ~azure.ai.projects.models.VoiceAgentWebSocketSubprotocol
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_voice_agent_web_socket_connect_voice_agent_request(
+            agent_name=agent_name,
+            foundry_features_query=foundry_features_query,
+            transport=transport,
+            store=store,
+            structured_input=structured_input,
+            agent_version_override=agent_version_override,
+            websocket_subprotocol=websocket_subprotocol,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [101]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Sec-WebSocket-Protocol"] = self._deserialize(
+            "str", response.headers.get("Sec-WebSocket-Protocol")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+
+class AgentEndpointConversationsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`agent_endpoint_conversations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list_agent_conversations(
+        self,
+        agent_name: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.VoiceConversation"]:
+        """List voice agent conversations.
+
+        Returns the conversations persisted for the specified voice agent endpoint. Conversations are
+        present when the session's effective ``store`` setting is ``true``, whether inherited from the
+        agent definition or enabled by the WebSocket session override.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VoiceConversation
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.VoiceConversation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VoiceConversation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversations_request(
+                agent_name=agent_name,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VoiceConversation],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_agent_conversation(
+        self, agent_name: str, conversation_id: str, **kwargs: Any
+    ) -> _models.VoiceConversation:
+        """Get a voice agent conversation.
+
+        Retrieves a single conversation recorded for the specified voice agent endpoint by its id.
+        Returns ``404`` when the conversation was not persisted (``store = false``) or does not exist.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation to retrieve. Required.
+        :type conversation_id: str
+        :return: VoiceConversation. The VoiceConversation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceConversation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceConversation] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceConversation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_agent_conversation(self, agent_name: str, conversation_id: str, **kwargs: Any) -> None:
+        """Delete a voice agent conversation.
+
+        Deletes a conversation and all of its stored data — responses, items, and any audio (cascade).
+        This is the customer's explicit data-deletion control for voice conversations.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation to delete. Required.
+        :type conversation_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_delete_agent_conversation_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list_agent_conversation_responses(
+        self,
+        agent_name: str,
+        conversation_id: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.VoiceResponse"]:
+        """List responses in a voice agent conversation.
+
+        Returns a paged collection of the responses (model inference turns) recorded for the specified
+        conversation. The per-response ``output`` projection may be omitted here; use the
+        response-items route for the canonical paged output. Returns ``404`` when the conversation was
+        not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose responses are listed. Required.
+        :type conversation_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VoiceResponse
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.VoiceResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VoiceResponse]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversation_responses_request(
+                agent_name=agent_name,
+                conversation_id=conversation_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VoiceResponse],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_agent_conversation_response(
+        self, agent_name: str, conversation_id: str, response_id: str, **kwargs: Any
+    ) -> _models.VoiceResponse:
+        """Get a voice agent conversation response.
+
+        Retrieves a single response from the specified conversation by its id, including its ``output``
+        items, ``usage``, and status. Returns ``404`` when the conversation or response was not
+        persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the response. Required.
+        :type conversation_id: str
+        :param response_id: The id of the response to retrieve. Required.
+        :type response_id: str
+        :return: VoiceResponse. The VoiceResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceResponse] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_response_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            response_id=response_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_agent_conversation_response_items(
+        self,
+        agent_name: str,
+        conversation_id: str,
+        response_id: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.RealtimeConversationItem"]:
+        """List items produced by a voice agent conversation response.
+
+        Returns a paged collection of the output items produced by a specific response (the response's
+        output projection). For the complete ordered conversation history — including user input and
+        client-created tool outputs — use the conversation items route instead. Returns ``404`` when
+        the conversation or response was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the response. Required.
+        :type conversation_id: str
+        :param response_id: The id of the response whose output items are listed. Required.
+        :type response_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of RealtimeConversationItem
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RealtimeConversationItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.RealtimeConversationItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversation_response_items_request(
+                agent_name=agent_name,
+                conversation_id=conversation_id,
+                response_id=response_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.RealtimeConversationItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_agent_conversation_items(
+        self,
+        agent_name: str,
+        conversation_id: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.RealtimeConversationItem"]:
+        """List items in a voice agent conversation.
+
+        Returns a paged collection of items — the complete ordered conversation history, including user
+        input, assistant output, and client-created tool outputs (transcripts + tool events). Returns
+        ``404`` when the conversation was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose items are listed. Required.
+        :type conversation_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of RealtimeConversationItem
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RealtimeConversationItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.RealtimeConversationItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agent_endpoint_conversations_list_agent_conversation_items_request(
+                agent_name=agent_name,
+                conversation_id=conversation_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.RealtimeConversationItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_agent_conversation_item(
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> _models.RealtimeConversationItem:
+        """Get a voice agent conversation item.
+
+        Retrieves a single item from the specified conversation by its id, including its transcript. An
+        ``input_audio``/``output_audio`` content part indicates that audio is available for the item;
+        the canonical per-item audio metadata is the ``/items/{item_id}/audio`` resource, and the bytes
+        are streamed by ``/items/{item_id}/audio/content``. Returns ``404`` when the conversation or
+        item was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item to retrieve. Required.
+        :type item_id: str
+        :return: RealtimeConversationItem. The RealtimeConversationItem is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.RealtimeConversationItem
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RealtimeConversationItem] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RealtimeConversationItem, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_agent_conversation_item_audio(
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> _models.VoiceItemAudioResponse:
+        """Get a voice agent conversation item's audio metadata.
+
+        Returns metadata for a single conversation item's audio segment, including the common playback
+        facts (role, format/codec, sample rate, channels, offset, duration) for both Foundry-managed
+        and bring-your-own-storage (BYOS) recordings; for BYOS the response additionally includes
+        ``blob_uri``, the URI of the recording in the customer's own storage (no SAS) that the customer
+        downloads with their own credentials. Requires the conversation to have persisted audio
+        (``store = true``); returns ``404`` when the conversation, item, or its audio was not
+        persisted.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item whose audio metadata is retrieved. Required.
+        :type item_id: str
+        :return: VoiceItemAudioResponse. The VoiceItemAudioResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceItemAudioResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceItemAudioResponse] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_audio_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceItemAudioResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_agent_conversation_item_audio_content(  # pylint: disable=name-too-long
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Stream a voice agent conversation item's audio.
+
+        Streams a single conversation item's audio as a WAV (``audio/wav``) byte stream through the
+        service (no SAS URL). This route serves Foundry-managed storage only. For
+        bring-your-own-storage (BYOS) recordings the bytes are not proxied — the caller must download
+        directly from customer storage using the ``blob_uri`` returned by the item's ``/audio``
+        metadata route — so this route returns ``409 Conflict`` for BYOS recordings. Returns ``404``
+        when the conversation, item, or its audio was not persisted (``store = false``).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item whose audio is streamed. Required.
+        :type item_id: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_audio_content_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_agent_conversation_item_generated_audio(  # pylint: disable=name-too-long
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> _models.VoiceGeneratedItemAudioResponse:
+        """Get a voice agent conversation item's generated audio metadata.
+
+        Returns metadata for a conversation item's generated audio. This subordinate artifact is
+        separate from the canonical heard-audio segment and exists only when playback was interrupted
+        and the service rendered more audio than the listener heard, including when the response ends
+        as cancelled. Returns ``404`` when the conversation or item was not persisted, or when no
+        generated audio exists beyond the heard segment.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item whose generated audio metadata is retrieved.
+         Required.
+        :type item_id: str
+        :return: VoiceGeneratedItemAudioResponse. The VoiceGeneratedItemAudioResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceGeneratedItemAudioResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceGeneratedItemAudioResponse] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_generated_audio_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceGeneratedItemAudioResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_agent_conversation_item_generated_audio_content(  # pylint: disable=name-too-long
+        self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Stream a voice agent conversation item's generated audio.
+
+        Streams a conversation item's generated audio as a WAV (``audio/wav``) byte stream through the
+        service. This subordinate artifact exists only when playback was interrupted and the service
+        rendered more audio than the listener heard, including when the response ends as cancelled.
+        This route serves Foundry-managed storage only. For bring-your-own-storage (BYOS) recordings
+        the bytes are not proxied, so this route returns ``409 Conflict``. Returns ``404`` when the
+        conversation or item was not persisted, or when no generated audio exists beyond the heard
+        segment.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation that contains the item. Required.
+        :type conversation_id: str
+        :param item_id: The id of the conversation item whose generated audio is streamed. Required.
+        :type item_id: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_item_generated_audio_content_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_agent_conversation_audio(
+        self, agent_name: str, conversation_id: str, **kwargs: Any
+    ) -> _models.VoiceRecordingResponse:
+        """Get a voice agent conversation's merged recording metadata.
+
+        Returns metadata for the whole-call merged stereo recording (user audio on the left channel,
+        agent audio on the right). The common metadata (format, sample rate, channels, channel layout,
+        duration) is returned for both Foundry-managed and bring-your-own-storage (BYOS) recordings;
+        for BYOS the response additionally includes ``blob_uri``, the URI of the recording in the
+        customer's own storage (no SAS) that the customer downloads with their own credentials. The
+        recording is built once from the per-turn segments after persistence finalization succeeds.
+        While the conversation is ``in_progress``, this route returns retriable ``409 Conflict`` with
+        ``error.code = recording_not_ready`` and a ``Retry-After`` header when retry guidance is
+        available. When the conversation is ``failed``, it returns terminal ``409 Conflict`` with
+        ``error.code = recording_unavailable``. For a ``completed`` conversation, metadata is available
+        subject to the existing BYOS behavior. Requires the conversation to have persisted audio
+        (``store = true``); otherwise returns ``404``.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose merged recording metadata is
+         retrieved. Required.
+        :type conversation_id: str
+        :return: VoiceRecordingResponse. The VoiceRecordingResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceRecordingResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VoiceRecordingResponse] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_audio_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VoiceRecordingResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_agent_conversation_audio_content(
+        self, agent_name: str, conversation_id: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Stream a voice agent conversation's merged recording.
+
+        Streams the whole-call merged stereo recording as a WAV (``audio/wav``) byte stream through the
+        service (no SAS URL). This route serves Foundry-managed storage only. For
+        bring-your-own-storage (BYOS) recordings the bytes are not proxied — the caller must download
+        directly from customer storage using the ``blob_uri`` returned by the metadata route — so this
+        route returns ``409 Conflict`` for BYOS recordings. While the conversation is ``in_progress``,
+        this route returns retriable ``409 Conflict`` with ``error.code = recording_not_ready`` and a
+        ``Retry-After`` header when retry guidance is available. When the conversation is ``failed``,
+        it returns terminal ``409 Conflict`` with ``error.code = recording_unavailable``. For a
+        ``completed`` conversation, content is available subject to the existing BYOS behavior. A
+        conversation without persisted audio (``store = false``) returns ``404``.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param conversation_id: The id of the conversation whose merged recording is streamed.
+         Required.
+        :type conversation_id: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_endpoint_conversations_get_agent_conversation_audio_content_request(
+            agent_name=agent_name,
+            conversation_id=conversation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class AgentTelephonyOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`agent_telephony` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def create_telephony_call_job(
+        self,
+        agent_name: str,
+        body: _models.CreateTelephonyCallJobRequest,
+        *,
+        idempotency_key: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyCallJob:
+        """Create an outbound telephony call job.
+
+        Creates one durable direct outbound call job. The latest agent definition is resolved when each
+        attempt executes.
+
+        :param agent_name: The name of the voice agent that executes the call. Required.
+        :type agent_name: str
+        :param body: The direct outbound call to create. Required.
+        :type body: ~azure.ai.projects.models.CreateTelephonyCallJobRequest
+        :keyword idempotency_key: A customer-generated idempotency key. Reusing it with an equivalent
+         request returns the same call job. Required.
+        :paramtype idempotency_key: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_telephony_call_job(
+        self,
+        agent_name: str,
+        body: JSON,
+        *,
+        idempotency_key: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyCallJob:
+        """Create an outbound telephony call job.
+
+        Creates one durable direct outbound call job. The latest agent definition is resolved when each
+        attempt executes.
+
+        :param agent_name: The name of the voice agent that executes the call. Required.
+        :type agent_name: str
+        :param body: The direct outbound call to create. Required.
+        :type body: JSON
+        :keyword idempotency_key: A customer-generated idempotency key. Reusing it with an equivalent
+         request returns the same call job. Required.
+        :paramtype idempotency_key: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_telephony_call_job(
+        self,
+        agent_name: str,
+        body: IO[bytes],
+        *,
+        idempotency_key: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyCallJob:
+        """Create an outbound telephony call job.
+
+        Creates one durable direct outbound call job. The latest agent definition is resolved when each
+        attempt executes.
+
+        :param agent_name: The name of the voice agent that executes the call. Required.
+        :type agent_name: str
+        :param body: The direct outbound call to create. Required.
+        :type body: IO[bytes]
+        :keyword idempotency_key: A customer-generated idempotency key. Reusing it with an equivalent
+         request returns the same call job. Required.
+        :paramtype idempotency_key: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_telephony_call_job(
+        self,
+        agent_name: str,
+        body: Union[_models.CreateTelephonyCallJobRequest, JSON, IO[bytes]],
+        *,
+        idempotency_key: str,
+        **kwargs: Any
+    ) -> _models.TelephonyCallJob:
+        """Create an outbound telephony call job.
+
+        Creates one durable direct outbound call job. The latest agent definition is resolved when each
+        attempt executes.
+
+        :param agent_name: The name of the voice agent that executes the call. Required.
+        :type agent_name: str
+        :param body: The direct outbound call to create. Is one of the following types:
+         CreateTelephonyCallJobRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.CreateTelephonyCallJobRequest or JSON or IO[bytes]
+        :keyword idempotency_key: A customer-generated idempotency key. Reusing it with an equivalent
+         request returns the same call job. Required.
+        :paramtype idempotency_key: str
+        :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyCallJob] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_telephony_create_telephony_call_job_request(
+            agent_name=agent_name,
+            idempotency_key=idempotency_key,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("duration-seconds-int", response.headers.get("Retry-After"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCallJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_telephony_call_job(
+        self, agent_name: str, call_job_id: str, **kwargs: Any
+    ) -> _models.TelephonyCallJob:
+        """Get an outbound telephony call job.
+
+        Retrieves a durable direct or campaign-created outbound call job.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param call_job_id: Required.
+        :type call_job_id: str
+        :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCallJob] = kwargs.pop("cls", None)
+
+        _request = build_agent_telephony_get_telephony_call_job_request(
+            agent_name=agent_name,
+            call_job_id=call_job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCallJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def cancel_telephony_call_job(
+        self, agent_name: str, call_job_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
+    ) -> _models.TelephonyCallJob:
+        """Cancel an outbound telephony call job.
+
+        Requests cancellation of a durable outbound call job. A connected call is allowed to finish.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param call_job_id: Required.
+        :type call_job_id: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCallJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCallJob] = kwargs.pop("cls", None)
+
+        _request = build_agent_telephony_cancel_telephony_call_job_request(
+            agent_name=agent_name,
+            call_job_id=call_job_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        if response.status_code == 200:
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if response.status_code == 202:
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize(
+                "duration-seconds-int", response.headers.get("Retry-After")
+            )
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCallJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_telephony_campaign(
+        self,
+        agent_name: str,
+        body: _models.CreateTelephonyCampaignRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyCampaign:
+        """Create an outbound telephony campaign.
+
+        Creates a draft outbound campaign. Recipients are imported and validated before the campaign
+        can be published.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: ~azure.ai.projects.models.CreateTelephonyCampaignRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCampaign
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_telephony_campaign(
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyCampaign:
+        """Create an outbound telephony campaign.
+
+        Creates a draft outbound campaign. Recipients are imported and validated before the campaign
+        can be published.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCampaign
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_telephony_campaign(
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TelephonyCampaign:
+        """Create an outbound telephony campaign.
+
+        Creates a draft outbound campaign. Recipients are imported and validated before the campaign
+        can be published.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCampaign
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_telephony_campaign(
+        self, agent_name: str, body: Union[_models.CreateTelephonyCampaignRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.TelephonyCampaign:
+        """Create an outbound telephony campaign.
+
+        Creates a draft outbound campaign. Recipients are imported and validated before the campaign
+        can be published.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param body: Is one of the following types: CreateTelephonyCampaignRequest, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.ai.projects.models.CreateTelephonyCampaignRequest or JSON or IO[bytes]
+        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCampaign
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_telephony_create_telephony_campaign_request(
+            agent_name=agent_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_telephony_campaign(
+        self, agent_name: str, campaign_id: str, **kwargs: Any
+    ) -> _models.TelephonyCampaign:
+        """Get an outbound telephony campaign.
+
+        Retrieves an outbound campaign, including configuration, execution state, and aggregate
+        call-job counts.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCampaign
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
+
+        _request = build_agent_telephony_get_telephony_campaign_request(
+            agent_name=agent_name,
+            campaign_id=campaign_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _import_telephony_campaign_recipients_initial(  # pylint: disable=name-too-long
+        self,
+        agent_name: str,
+        campaign_id: str,
+        body: Union[_models.ImportTelephonyCampaignRecipientsRequest, JSON, IO[bytes]],
+        *,
+        idempotency_key: str,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_telephony_import_telephony_campaign_recipients_request(
+            agent_name=agent_name,
+            campaign_id=campaign_id,
+            idempotency_key=idempotency_key,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Retry-After"] = self._deserialize("duration-seconds-int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_import_telephony_campaign_recipients(  # pylint: disable=name-too-long
+        self,
+        agent_name: str,
+        campaign_id: str,
+        body: _models.ImportTelephonyCampaignRecipientsRequest,
+        *,
+        idempotency_key: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
+        """Import outbound telephony campaign recipients.
+
+        Starts an asynchronous import of campaign recipients from a Dataset CSV, JSON array, or JSONL
+        file.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :param body: Required.
+        :type body: ~azure.ai.projects.models.ImportTelephonyCampaignRecipientsRequest
+        :keyword idempotency_key: Required.
+        :paramtype idempotency_key: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
+         TelephonyOperationResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_import_telephony_campaign_recipients(  # pylint: disable=name-too-long
+        self,
+        agent_name: str,
+        campaign_id: str,
+        body: JSON,
+        *,
+        idempotency_key: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
+        """Import outbound telephony campaign recipients.
+
+        Starts an asynchronous import of campaign recipients from a Dataset CSV, JSON array, or JSONL
+        file.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword idempotency_key: Required.
+        :paramtype idempotency_key: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
+         TelephonyOperationResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_import_telephony_campaign_recipients(  # pylint: disable=name-too-long
+        self,
+        agent_name: str,
+        campaign_id: str,
+        body: IO[bytes],
+        *,
+        idempotency_key: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
+        """Import outbound telephony campaign recipients.
+
+        Starts an asynchronous import of campaign recipients from a Dataset CSV, JSON array, or JSONL
+        file.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword idempotency_key: Required.
+        :paramtype idempotency_key: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
+         TelephonyOperationResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_import_telephony_campaign_recipients(  # pylint: disable=name-too-long
+        self,
+        agent_name: str,
+        campaign_id: str,
+        body: Union[_models.ImportTelephonyCampaignRecipientsRequest, JSON, IO[bytes]],
+        *,
+        idempotency_key: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
+        """Import outbound telephony campaign recipients.
+
+        Starts an asynchronous import of campaign recipients from a Dataset CSV, JSON array, or JSONL
+        file.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :param body: Is one of the following types: ImportTelephonyCampaignRecipientsRequest, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.ImportTelephonyCampaignRecipientsRequest or JSON or
+         IO[bytes]
+        :keyword idempotency_key: Required.
+        :paramtype idempotency_key: str
+        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
+         TelephonyOperationResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyOperationResource] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._import_telephony_campaign_recipients_initial(
+                agent_name=agent_name,
+                campaign_id=campaign_id,
+                body=body,
+                idempotency_key=idempotency_key,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "duration-seconds-int", response.headers.get("Retry-After")
+            )
+
+            deserialized = _deserialize(_models.TelephonyOperationResource, response.json().get("resource", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.TelephonyOperationResource].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.TelephonyOperationResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace_async
+    async def get_telephony_campaign_recipient_import(
+        self, agent_name: str, campaign_id: str, import_id: str, **kwargs: Any
+    ) -> _models.TelephonyCampaignRecipientImport:
+        """Get an outbound telephony campaign recipient import.
+
+        Retrieves the durable status and counters for a campaign recipient import.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :param import_id: Required.
+        :type import_id: str
+        :return: TelephonyCampaignRecipientImport. The TelephonyCampaignRecipientImport is compatible
+         with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCampaignRecipientImport
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCampaignRecipientImport] = kwargs.pop("cls", None)
+
+        _request = build_agent_telephony_get_telephony_campaign_recipient_import_request(
+            agent_name=agent_name,
+            campaign_id=campaign_id,
+            import_id=import_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCampaignRecipientImport, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _validate_telephony_campaign_initial(
+        self, agent_name: str, campaign_id: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_telephony_validate_telephony_campaign_request(
+            agent_name=agent_name,
+            campaign_id=campaign_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Retry-After"] = self._deserialize("duration-seconds-int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_validate_telephony_campaign(
+        self, agent_name: str, campaign_id: str, **kwargs: Any
+    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
+        """Validate an outbound telephony campaign.
+
+        Starts asynchronous validation of the current campaign draft and imported recipient snapshot.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
+         TelephonyOperationResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyOperationResource] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._validate_telephony_campaign_initial(
+                agent_name=agent_name,
+                campaign_id=campaign_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "duration-seconds-int", response.headers.get("Retry-After")
+            )
+
+            deserialized = _deserialize(_models.TelephonyOperationResource, response.json().get("resource", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.TelephonyOperationResource].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.TelephonyOperationResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _publish_telephony_campaign_initial(
+        self,
+        agent_name: str,
+        campaign_id: str,
+        body: Union[_models.PublishTelephonyCampaignRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_telephony_publish_telephony_campaign_request(
+            agent_name=agent_name,
+            campaign_id=campaign_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Retry-After"] = self._deserialize("duration-seconds-int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_publish_telephony_campaign(
+        self,
+        agent_name: str,
+        campaign_id: str,
+        body: _models.PublishTelephonyCampaignRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
+        """Publish an outbound telephony campaign.
+
+        Permanently locks the validated campaign draft and starts asynchronous call-job
+        materialization.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :param body: Required.
+        :type body: ~azure.ai.projects.models.PublishTelephonyCampaignRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
+         TelephonyOperationResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_publish_telephony_campaign(
+        self, agent_name: str, campaign_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
+        """Publish an outbound telephony campaign.
+
+        Permanently locks the validated campaign draft and starts asynchronous call-job
+        materialization.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
+         TelephonyOperationResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_publish_telephony_campaign(
+        self,
+        agent_name: str,
+        campaign_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
+        """Publish an outbound telephony campaign.
+
+        Permanently locks the validated campaign draft and starts asynchronous call-job
+        materialization.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
+         TelephonyOperationResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_publish_telephony_campaign(
+        self,
+        agent_name: str,
+        campaign_id: str,
+        body: Union[_models.PublishTelephonyCampaignRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
+        """Publish an outbound telephony campaign.
+
+        Permanently locks the validated campaign draft and starts asynchronous call-job
+        materialization.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :param body: Is one of the following types: PublishTelephonyCampaignRequest, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.ai.projects.models.PublishTelephonyCampaignRequest or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
+         TelephonyOperationResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TelephonyOperationResource] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._publish_telephony_campaign_initial(
+                agent_name=agent_name,
+                campaign_id=campaign_id,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "duration-seconds-int", response.headers.get("Retry-After")
+            )
+
+            deserialized = _deserialize(_models.TelephonyOperationResource, response.json().get("resource", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.TelephonyOperationResource].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.TelephonyOperationResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace_async
+    async def pause_telephony_campaign(
+        self, agent_name: str, campaign_id: str, **kwargs: Any
+    ) -> _models.TelephonyCampaign:
+        """Pause an outbound telephony campaign.
+
+        Pauses dispatch of call jobs owned by a published campaign.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCampaign
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
+
+        _request = build_agent_telephony_pause_telephony_campaign_request(
+            agent_name=agent_name,
+            campaign_id=campaign_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def resume_telephony_campaign(
+        self, agent_name: str, campaign_id: str, **kwargs: Any
+    ) -> _models.TelephonyCampaign:
+        """Resume an outbound telephony campaign.
+
+        Resumes dispatch of call jobs owned by a paused campaign.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCampaign
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
+
+        _request = build_agent_telephony_resume_telephony_campaign_request(
+            agent_name=agent_name,
+            campaign_id=campaign_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def cancel_telephony_campaign(
+        self, agent_name: str, campaign_id: str, **kwargs: Any
+    ) -> _models.TelephonyCampaign:
+        """Cancel an outbound telephony campaign.
+
+        Cancels a campaign and prevents any further call-job dispatch.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param campaign_id: Required.
+        :type campaign_id: str
+        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyCampaign
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
+
+        _request = build_agent_telephony_cancel_telephony_campaign_request(
+            agent_name=agent_name,
+            campaign_id=campaign_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_telephony_operation(
+        self, agent_name: str, operation_id: str, **kwargs: Any
+    ) -> _models.TelephonyOperation:
+        """Get an outbound telephony operation.
+
+        Retrieves an asynchronous outbound campaign operation.
+
+        :param agent_name: Required.
+        :type agent_name: str
+        :param operation_id: Required.
+        :type operation_id: str
+        :return: TelephonyOperation. The TelephonyOperation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyOperation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TelephonyOperation] = kwargs.pop("cls", None)
+
+        _request = build_agent_telephony_get_telephony_operation_request(
+            agent_name=agent_name,
+            operation_id=operation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TelephonyOperation, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

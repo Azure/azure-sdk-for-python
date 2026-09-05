@@ -32,7 +32,7 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
         :attr:`evaluation_rules` attribute.
     """
 
-    @overload
+    @overload  # type: ignore[override]
     def create_or_update(
         self, id: str, evaluation_rule: _models.EvaluationRule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
@@ -90,7 +90,7 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
         ...
 
     @distributed_trace
-    def create_or_update(
+    def create_or_update(  # type: ignore[override]
         self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
@@ -117,7 +117,7 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
                 kwargs["headers"] = headers
 
         try:
-            return super().create_or_update(id, evaluation_rule, **kwargs)
+            return super().create_or_update(id, evaluation_rule, **kwargs)  # type: ignore[arg-type]
         except HttpResponseError as exc:
             if exc.status_code == 403 and not self._config.allow_preview and exc.model is not None:
                 api_error_response = exc.model

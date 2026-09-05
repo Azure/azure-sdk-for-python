@@ -1,5 +1,31 @@
 # Release History
 
+## 2.7.0b1 (Unreleased)
+
+### Features Added
+
+* Added voice agents, unified with the rest of the Agents API as a new `kind="voice"` on `AgentDefinition`:
+  * Define a voice agent with `VoiceAgentDefinition`, configuring its model (`VoiceModelType`), audio input/output (`VoiceAgentAudioConfig`, `VoiceAgentAudioInputConfig`, `VoiceAgentAudioOutputConfig`), turn detection (`VoiceAgentTurnDetectionConfig` and its `VoiceAgentServerVadTurnDetection` / `VoiceAgentAzureSemanticVadTurnDetection` / `VoiceAgentAzureSemanticVadEnTurnDetection` / `VoiceAgentAzureSemanticVadMultilingualTurnDetection` variants), greeting (`VoiceAgentGreetingConfig` and its `VoiceAgentTemplateGreetingConfig` / `VoiceAgentLlmGeneratedGreetingConfig` variants), tools (`VoiceAgentTool`, `VoiceAgentFunctionTool`, `VoiceAgentMcpTool`, `VoiceAgentSystemTool`, `VoiceAgentToolboxTool`), and avatar (`VoiceAgentAvatarConfig`). Manage it like any other agent through `project_client.agents` (`create_version`, `get`, `list`, `disable`/`enable`, `delete`).
+  * Added guided authoring via `project_client.agents.generate_agent(GenerateVoiceAgentRequest(kind=AgentKind.VOICE, ...))`, which returns a service-generated starter definition that can be edited afterward through the standard `create_version`/`update` flow.
+  * Added a new `client.realtime` / `async_client.realtime` entry point for realtime speech-to-speech streaming. Use `with client.realtime.connect(agent_name=...) as connection:` to open a WebSocket connection, `connection.send(...)` to send strongly-typed client events (or use the `connection.response`, `connection.conversation.item`, and `connection.session` helpers), and iterate over `connection` to receive strongly-typed server events (`RealtimeServerEvent*`). Conversation items exchanged with `connection.conversation.item.create(...)` are `RealtimeConversationItemMessageSystem`, `RealtimeConversationItemMessageUser`, `RealtimeConversationItemMessageAssistant`, `RealtimeConversationItemFunctionCall`, `RealtimeConversationItemFunctionCallOutput`, `RealtimeMCPApprovalResponse`, or a raw `Mapping[str, Any]`. The new types `Realtime`, `RealtimeConnection`, and `RealtimeConnectionManager` (and their async equivalents `AsyncRealtime`, `AsyncRealtimeConnection`, `AsyncRealtimeConnectionManager`) are exported from `azure.ai.projects` / `azure.ai.projects.aio`. Requires the optional `websockets` package for the sync client, or `aiohttp` for the async client.
+  * Added the `agent_endpoint_conversations` operation group for reading back persisted voice-agent conversation transcripts and audio, for agents created with `store=True`.
+  * Added the underlying `RealtimeConversationItem*`, `RealtimeMCP*`, `RealtimeResponseUsage`, and related realtime event/session models used by the voice agent WebSocket protocol.
+* Added 11 new samples under `samples/agents/voice/`, covering basic agent lifecycle, guided generation, live audio and text conversations (sync and async), function tools, versioning, and reading back conversation transcripts and audio.
+* Extended voice agents with telephony, WebRTC, and sub-agent consultation:
+  * Added telephony bindings so a voice agent can receive calls through Teams Phone or Twilio. `project_client.agents.create_telephony_binding`/`get_telephony_binding`/`update_telephony_binding`/`delete_telephony_binding`/`list_telephony_bindings` manage the binding (`TelephonyBinding` and its `TeamsPhoneExtensionTelephonyBinding`/`TwilioTelephonyBinding` variants), and `list_telephony_calls`/`get_telephony_call`/`transfer_telephony_call`/`end_telephony_call`/`get_telephony_transfer_targets`/`replace_telephony_transfer_targets` manage in-progress and historical calls (`TelephonyCallRecord`, `TelephonyCallSummary`, `TelephonyCallTrace`, `TelephonyTransferTarget` and its `PSTNTelephonyTransferDestination`/`SipTelephonyTransferDestination`/`TeamsTelephonyTransferDestination` variants).
+  * Added an optional WebRTC transport for realtime voice sessions (`VoiceAgentTransport.WEBRTC`), where only SDP signaling travels over the WebSocket connection while media flows peer-to-peer. The new `VoiceAgentClientEventRtcCallSdpCreate`, `VoiceAgentServerEventRtcCallSdpCreated`, and `VoiceAgentServerEventRtcCallError` events carry the signaling exchange.
+  * Added the `agent_endpoint_conversations.get_agent_conversation_item_generated_audio`/`get_agent_conversation_item_generated_audio_content` methods for reading back a conversation item's *generated* audio, a subordinate artifact that can differ from what the listener heard when playback was interrupted, returning `VoiceGeneratedItemAudioResponse`.
+  * Added sub-agent consultation, letting a voice agent consult sibling Foundry text agents as background specialists mid-conversation, through the new `subagent_config` property on `VoiceAgentDefinition` (`VoiceAgentSubagentConfig`, `VoiceAgentSubagent`, `VoiceAgentSubagentResponsePolicy`), and the new `session.subagent.started`/`session.subagent.completed`/`session.subagent.aborted` realtime server events.
+  * Added an optional `conversation_engine` property on `VoiceAgentDefinition` (`VoiceConversationEngine`, `VoiceHostedAgentConversationEngine`) to delegate a voice agent's conversation handling to another hosted agent instead of configuring a model directly.
+
+### Dependency update
+
+* Added an optional dependency on `websockets` (sync `client.realtime`) and `aiohttp` (async `async_client.realtime`), required only when using the new voice agent realtime streaming APIs.
+
+### Bugs Fixed
+
+* The hand-written `client.realtime`/`async_client.realtime` WebSocket clients now identify themselves to the service the same way the generated HTTP surface already does: a standard Azure SDK `User-Agent` header (for example `azsdk-python-ai-projects/2.7.0b1 ...`) and an `x-ms-client-sdk` query parameter carrying the same value, for paths where the header isn't forwarded. Previously these connections fell back to the underlying `websockets`/`aiohttp` library's generic default, preventing service telemetry from attributing this traffic to the SDK. A caller-supplied `User-Agent` in `extra_headers` still takes precedence.
+
 ## 2.6.0 (2026-09-04)
 
 ### Features Added

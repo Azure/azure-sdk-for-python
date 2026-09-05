@@ -34,6 +34,14 @@ from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
+from ._realtime import (
+    Realtime,
+    RealtimeConnection,
+    RealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 from .models import (
     AzureAIBenchmarkPreviewEvalRunDataSource,
     AzureAIDataSourceConfig,
@@ -46,7 +54,7 @@ from .models import (
 )
 
 class _AzureEvalRuns(Runs):
-    def create(
+    def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         eval_id: str,
         *,
@@ -70,7 +78,7 @@ class _AzureEvalRuns(Runs):
     ) -> RunCreateResponse: ...
 
 class _AzureEvals(Evals):
-    def create(
+    def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         *,
         data_source_config: Union[
@@ -102,6 +110,8 @@ class OpenAI(OpenAIClient):
 
 class AIProjectClient(AIProjectClientGenerated):
     telemetry: TelemetryOperations
+    @property
+    def realtime(self) -> Realtime: ...
     def get_openai_client(
         self, agent_name: Optional[str] = None, **kwargs: Any  # pylint: disable=unused-argument
     ) -> OpenAI: ...
@@ -126,6 +136,14 @@ def _resolve_openai_default_headers(agent_name: Optional[str], kwargs: dict) -> 
 def _build_openai_user_agent(custom_user_agent: Optional[str], openai_default_user_agent: str) -> str: ...
 def _log_streaming_response_notice(logging_enabled: bool) -> bool: ...
 
-__all__: List[str] = ["AIProjectClient"]
+__all__: List[str] = [
+    "AIProjectClient",
+    "Realtime",
+    "RealtimeConnection",
+    "RealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
+]
 
 def patch_sdk() -> None: ...

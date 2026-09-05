@@ -17,6 +17,8 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AIProjectClientConfiguration
 from .operations import (
+    AgentEndpointConversationsOperations,
+    AgentTelephonyOperations,
     AgentsOperations,
     BetaOperations,
     ConnectionsOperations,
@@ -53,6 +55,11 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
+    :ivar agent_endpoint_conversations: AgentEndpointConversationsOperations operations
+    :vartype agent_endpoint_conversations:
+     azure.ai.projects.aio.operations.AgentEndpointConversationsOperations
+    :ivar agent_telephony: AgentTelephonyOperations operations
+    :vartype agent_telephony: azure.ai.projects.aio.operations.AgentTelephonyOperations
     :ivar toolboxes: ToolboxesOperations operations
     :vartype toolboxes: azure.ai.projects.aio.operations.ToolboxesOperations
     :param endpoint: Foundry Project endpoint in the form
@@ -113,6 +120,10 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.agent_endpoint_conversations = AgentEndpointConversationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.agent_telephony = AgentTelephonyOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
