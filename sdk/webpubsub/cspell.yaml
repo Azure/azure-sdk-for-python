@@ -5,9 +5,11 @@ import:
 words:
   - awps
   - ctxt
+  - deser
   - deseralize
   - MQTT
   - Nify
   - psutil
+  - undoc
   - unflattened
   - wday
