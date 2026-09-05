@@ -1,5 +1,54 @@
 # Release History
 
+## 8.0.0 (2026-07-06)
+
+### Features Added
+
+  - Model `CommunicationDetails` added property `system_data`
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Model `ProblemClassification` added property `system_data`
+  - Model `Service` added property `system_data`
+  - Model `SupportTicketDetails` added property `system_data`
+  - Model `UpdateSupportTicket` added property `direct_connect_escalation`
+  - Added enum `ActionType`
+  - Added enum `ChatConversationStatus`
+  - Added model `ClassificationService`
+  - Added model `DirectConnectEscalation`
+  - Added enum `EscalationStatus`
+  - Added model `LookUpResourceIdRequest`
+  - Added model `LookUpResourceIdResponse`
+  - Added enum `Origin`
+  - Added model `ProblemClassificationsClassificationInput`
+  - Added model `ProblemClassificationsClassificationOutput`
+  - Added model `ProblemClassificationsClassificationResult`
+  - Added model `ServiceClassificationAnswer`
+  - Added model `ServiceClassificationOutput`
+  - Added model `ServiceClassificationRequest`
+  - Added enum `SupportChannel`
+  - Operation group `SupportTicketsOperations` added method `look_up_resource_id`
+  - Added operation group `ClassifyProblemsNoSubscriptionOperations`
+  - Added operation group `ClassifyProblemsOperations`
+  - Added operation group `ClassifyServicesNoSubscriptionOperations`
+  - Added operation group `ClassifyServicesOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Renamed client `MicrosoftSupport` to `SupportMgmtClient`
+  - Model `ChatTranscriptDetails` moved instance variable `messages` and `start_time` under property `properties` whose type is `ChatTranscriptDetailsProperties`
+  - Model `CommunicationDetails` moved instance variable `communication_type`, `communication_direction`, `sender`, `subject`, `body` and `created_date` under property `properties` whose type is `CommunicationDetailsProperties`
+  - Model `FileDetails` moved instance variable `created_on`, `chunk_size`, `file_size` and `number_of_chunks` under property `properties` whose type is `FileDetailsProperties`
+  - Model `FileWorkspaceDetails` moved instance variable `created_on` and `expiration_time` under property `properties` whose type is `FileWorkspaceDetailsProperties`
+  - Model `ProblemClassification` moved instance variable `display_name` and `secondary_consent_enabled` under property `properties` whose type is `ProblemClassificationProperties`
+  - Model `Service` moved instance variable `display_name` and `resource_types` under property `properties` whose type is `ServiceProperties`
+  - Model `SupportTicketDetails` moved instance variable `support_ticket_id`, `description`, `problem_classification_id`, `problem_classification_display_name`, `severity`, `enrollment_id`, `require24_x7_response`, `advanced_diagnostic_consent`, `problem_scoping_questions`, `support_plan_id`, `contact_details`, `service_level_agreement`, `support_engineer`, `support_plan_type`, `support_plan_display_name`, `title`, `problem_start_time`, `service_id`, `service_display_name`, `status`, `created_date`, `modified_date`, `file_workspace_name`, `is_temporary_ticket`, `technical_ticket_details`, `quota_ticket_details` and `secondary_consent` under property `properties` whose type is `SupportTicketDetailsProperties`
+
+### Other Changes
+
+  - Deleted model `ChatTranscriptsListResult`/`CommunicationsListResult`/`FilesListResult`/`OperationsListResult`/`ProblemClassificationsListResult`/`ServicesListResult`/`SupportTicketsListResult`/`TranscriptContentType` which actually were not used by SDK users
+
 ## 7.0.0 (2024-04-22)
 
 ### Features Added
