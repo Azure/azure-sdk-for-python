@@ -21,7 +21,7 @@
         "azure.mgmt.batch.models.AutoUserSpecification": "Microsoft.Batch.AutoUserSpecification",
         "azure.mgmt.batch.models.AzureBlobFileSystemConfiguration": "Microsoft.Batch.AzureBlobFileSystemConfiguration",
         "azure.mgmt.batch.models.AzureFileShareConfiguration": "Microsoft.Batch.AzureFileShareConfiguration",
-        "azure.mgmt.batch.models.AzureResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
+        "azure.mgmt.batch.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
         "azure.mgmt.batch.models.BatchAccount": "Microsoft.Batch.BatchAccount",
         "azure.mgmt.batch.models.BatchAccountCreateParameters": "Microsoft.Batch.BatchAccountCreateParameters",
         "azure.mgmt.batch.models.BatchAccountCreateProperties": "Microsoft.Batch.BatchAccountCreateProperties",
@@ -74,7 +74,7 @@
         "azure.mgmt.batch.models.NetworkProfile": "Microsoft.Batch.NetworkProfile",
         "azure.mgmt.batch.models.NetworkSecurityGroupRule": "Microsoft.Batch.NetworkSecurityGroupRule",
         "azure.mgmt.batch.models.NetworkSecurityPerimeter": "Azure.ResourceManager.CommonTypes.NetworkSecurityPerimeter",
-        "azure.mgmt.batch.models.NetworkSecurityPerimeterConfiguration": "Azure.ResourceManager.CommonTypes.NetworkSecurityPerimeterConfiguration",
+        "azure.mgmt.batch.models.NetworkSecurityPerimeterConfiguration": "Microsoft.Batch.NetworkSecurityPerimeterConfiguration",
         "azure.mgmt.batch.models.NetworkSecurityPerimeterConfigurationProperties": "Azure.ResourceManager.CommonTypes.NetworkSecurityPerimeterConfigurationProperties",
         "azure.mgmt.batch.models.NetworkSecurityProfile": "Azure.ResourceManager.CommonTypes.NetworkSecurityProfile",
         "azure.mgmt.batch.models.NFSMountConfiguration": "Microsoft.Batch.NFSMountConfiguration",
@@ -253,5 +253,6 @@
         "azure.mgmt.batch.aio.operations.LocationOperations.list_supported_virtual_machine_skus": "Microsoft.Batch.LocationOperationGroup.listSupportedVirtualMachineSkus",
         "azure.mgmt.batch.operations.LocationOperations.check_name_availability": "Microsoft.Batch.LocationOperationGroup.checkNameAvailability",
         "azure.mgmt.batch.aio.operations.LocationOperations.check_name_availability": "Microsoft.Batch.LocationOperationGroup.checkNameAvailability"
-    }
+    },
+    "CrossLanguageVersion": "a5a30f98e3b2"
 }

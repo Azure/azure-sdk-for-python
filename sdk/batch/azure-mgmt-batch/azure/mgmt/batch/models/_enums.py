@@ -352,19 +352,19 @@ class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable
     """
 
     SUCCEEDED = "Succeeded"
-    """SUCCEEDED."""
+    """The configuration was provisioned successfully."""
     CREATING = "Creating"
-    """CREATING."""
+    """The configuration is being created."""
     UPDATING = "Updating"
-    """UPDATING."""
+    """The configuration is being updated."""
     DELETING = "Deleting"
-    """DELETING."""
+    """The configuration is being deleted."""
     ACCEPTED = "Accepted"
-    """ACCEPTED."""
+    """The configuration request was accepted and provisioning has not started yet."""
     FAILED = "Failed"
-    """FAILED."""
+    """The configuration failed to provision."""
     CANCELED = "Canceled"
-    """CANCELED."""
+    """The configuration provisioning was canceled."""
 
 
 class NodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -544,9 +544,9 @@ class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Severity of the issue."""
 
     WARNING = "Warning"
-    """WARNING."""
+    """The issue is a warning and does not prevent the configuration from being applied."""
     ERROR = "Error"
-    """ERROR."""
+    """The issue is an error and prevents the configuration from being applied."""
 
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

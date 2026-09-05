@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class BatchManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class BatchManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for BatchManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -33,7 +34,8 @@ class BatchManagementClientConfiguration:  # pylint: disable=too-many-instance-a
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-06-01".
+    :keyword api_version: The API version to use for this operation. Known values are "2025-06-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
