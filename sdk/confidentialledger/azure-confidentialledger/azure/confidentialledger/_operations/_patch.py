@@ -11,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import time
 from typing import Any, Callable, IO, List, Optional, Union, cast
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
 
 from azure.confidentialledger._operations._operations import (
@@ -111,6 +111,14 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
                     not_retryable = not self._retry_not_found or self._give_up_not_found_error(not_found_exception)
 
                     if not_retryable or self._not_found_count >= 3:
+                        raise
+                except HttpResponseError as http_exception:
+                    # 406: node knows the transaction but it hasn't committed yet.
+                    # This is transient during transaction-status polling — treat as
+                    # pending so the poller retries.
+                    if http_exception.status_code == 406 and self._retry_not_found:
+                        pass  # stay in polling loop
+                    else:
                         raise
                 if not self.finished():
                     time.sleep(self._polling_interval_s)
