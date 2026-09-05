@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2025-12-24-preview",
+  "apiVersion": "2026-08-11",
   "apiVersions": {
-    "Napster.CompanionAPI": "2025-12-24-preview"
+    "Napster.CompanionAPI": "2026-08-11"
   },
-  "commit": "fdb904690da515aa8449471145922a90b666bbe8",
+  "commit": "e9b8d33567e9422a09711667279fe178fada51a1",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/napster/Napster.CompanionAPI.Management",
-  "emitterVersion": "0.63.1",
-  "httpClientPythonVersion": "^0.31.1"
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.35.1"
 }
