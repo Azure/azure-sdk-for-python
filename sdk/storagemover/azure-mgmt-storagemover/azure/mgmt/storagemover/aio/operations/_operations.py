@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -56,6 +56,7 @@ from ...operations._operations import (
     build_job_definitions_delete_request,
     build_job_definitions_get_request,
     build_job_definitions_list_request,
+    build_job_definitions_reconcile_job_request,
     build_job_definitions_start_job_request,
     build_job_definitions_stop_job_request,
     build_job_definitions_update_request,
@@ -78,7 +79,6 @@ from .._configuration import StorageMoverMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -146,7 +146,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -308,7 +311,7 @@ class StorageMoversOperations:
         self,
         resource_group_name: str,
         storage_mover_name: str,
-        storage_mover: JSON,
+        storage_mover: _types.StorageMover,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -321,7 +324,7 @@ class StorageMoversOperations:
         :param storage_mover_name: The name of the Storage Mover resource. Required.
         :type storage_mover_name: str
         :param storage_mover: Required.
-        :type storage_mover: JSON
+        :type storage_mover: ~azure.mgmt.storagemover.types.StorageMover
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -362,7 +365,7 @@ class StorageMoversOperations:
         self,
         resource_group_name: str,
         storage_mover_name: str,
-        storage_mover: Union[_models.StorageMover, JSON, IO[bytes]],
+        storage_mover: Union[_models.StorageMover, _types.StorageMover, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageMover:
         """Creates or updates a top-level Storage Mover resource.
@@ -372,8 +375,9 @@ class StorageMoversOperations:
         :type resource_group_name: str
         :param storage_mover_name: The name of the Storage Mover resource. Required.
         :type storage_mover_name: str
-        :param storage_mover: Is one of the following types: StorageMover, JSON, IO[bytes] Required.
-        :type storage_mover: ~azure.mgmt.storagemover.models.StorageMover or JSON or IO[bytes]
+        :param storage_mover: Is either a StorageMover type or a IO[bytes] type. Required.
+        :type storage_mover: ~azure.mgmt.storagemover.models.StorageMover or
+         ~azure.mgmt.storagemover.types.StorageMover or IO[bytes]
         :return: StorageMover. The StorageMover is compatible with MutableMapping
         :rtype: ~azure.mgmt.storagemover.models.StorageMover
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -478,7 +482,7 @@ class StorageMoversOperations:
         self,
         resource_group_name: str,
         storage_mover_name: str,
-        storage_mover: JSON,
+        storage_mover: _types.StorageMoverUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -492,7 +496,7 @@ class StorageMoversOperations:
         :param storage_mover_name: The name of the Storage Mover resource. Required.
         :type storage_mover_name: str
         :param storage_mover: Required.
-        :type storage_mover: JSON
+        :type storage_mover: ~azure.mgmt.storagemover.types.StorageMoverUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -534,7 +538,7 @@ class StorageMoversOperations:
         self,
         resource_group_name: str,
         storage_mover_name: str,
-        storage_mover: Union[_models.StorageMoverUpdateParameters, JSON, IO[bytes]],
+        storage_mover: Union[_models.StorageMoverUpdateParameters, _types.StorageMoverUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageMover:
         """Updates properties for a Storage Mover resource. Properties not specified in the request body
@@ -545,10 +549,10 @@ class StorageMoversOperations:
         :type resource_group_name: str
         :param storage_mover_name: The name of the Storage Mover resource. Required.
         :type storage_mover_name: str
-        :param storage_mover: Is one of the following types: StorageMoverUpdateParameters, JSON,
-         IO[bytes] Required.
-        :type storage_mover: ~azure.mgmt.storagemover.models.StorageMoverUpdateParameters or JSON or
-         IO[bytes]
+        :param storage_mover: Is either a StorageMoverUpdateParameters type or a IO[bytes] type.
+         Required.
+        :type storage_mover: ~azure.mgmt.storagemover.models.StorageMoverUpdateParameters or
+         ~azure.mgmt.storagemover.types.StorageMoverUpdateParameters or IO[bytes]
         :return: StorageMover. The StorageMover is compatible with MutableMapping
         :rtype: ~azure.mgmt.storagemover.models.StorageMover
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -792,7 +796,10 @@ class StorageMoversOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -882,7 +889,10 @@ class StorageMoversOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1054,7 +1064,7 @@ class AgentsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         agent_name: str,
-        agent: JSON,
+        agent: _types.Agent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1070,7 +1080,7 @@ class AgentsOperations:
         :param agent_name: The name of the Agent resource. Required.
         :type agent_name: str
         :param agent: Required.
-        :type agent: JSON
+        :type agent: ~azure.mgmt.storagemover.types.Agent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1116,7 +1126,7 @@ class AgentsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         agent_name: str,
-        agent: Union[_models.Agent, JSON, IO[bytes]],
+        agent: Union[_models.Agent, _types.Agent, IO[bytes]],
         **kwargs: Any
     ) -> _models.Agent:
         """Creates or updates an Agent resource, which references a hybrid compute machine that can run
@@ -1129,8 +1139,9 @@ class AgentsOperations:
         :type storage_mover_name: str
         :param agent_name: The name of the Agent resource. Required.
         :type agent_name: str
-        :param agent: Is one of the following types: Agent, JSON, IO[bytes] Required.
-        :type agent: ~azure.mgmt.storagemover.models.Agent or JSON or IO[bytes]
+        :param agent: Is either a Agent type or a IO[bytes] type. Required.
+        :type agent: ~azure.mgmt.storagemover.models.Agent or ~azure.mgmt.storagemover.types.Agent or
+         IO[bytes]
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.mgmt.storagemover.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1239,7 +1250,7 @@ class AgentsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         agent_name: str,
-        agent: JSON,
+        agent: _types.AgentUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1254,7 +1265,7 @@ class AgentsOperations:
         :param agent_name: The name of the Agent resource. Required.
         :type agent_name: str
         :param agent: Required.
-        :type agent: JSON
+        :type agent: ~azure.mgmt.storagemover.types.AgentUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1299,7 +1310,7 @@ class AgentsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         agent_name: str,
-        agent: Union[_models.AgentUpdateParameters, JSON, IO[bytes]],
+        agent: Union[_models.AgentUpdateParameters, _types.AgentUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Agent:
         """Creates or updates an Agent resource.
@@ -1311,8 +1322,9 @@ class AgentsOperations:
         :type storage_mover_name: str
         :param agent_name: The name of the Agent resource. Required.
         :type agent_name: str
-        :param agent: Is one of the following types: AgentUpdateParameters, JSON, IO[bytes] Required.
-        :type agent: ~azure.mgmt.storagemover.models.AgentUpdateParameters or JSON or IO[bytes]
+        :param agent: Is either a AgentUpdateParameters type or a IO[bytes] type. Required.
+        :type agent: ~azure.mgmt.storagemover.models.AgentUpdateParameters or
+         ~azure.mgmt.storagemover.types.AgentUpdateParameters or IO[bytes]
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.mgmt.storagemover.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1564,7 +1576,10 @@ class AgentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1736,7 +1751,7 @@ class EndpointsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         endpoint_name: str,
-        endpoint: JSON,
+        endpoint: _types.Endpoint,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1752,7 +1767,7 @@ class EndpointsOperations:
         :param endpoint_name: The name of the Endpoint resource. Required.
         :type endpoint_name: str
         :param endpoint: Required.
-        :type endpoint: JSON
+        :type endpoint: ~azure.mgmt.storagemover.types.Endpoint
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1798,7 +1813,7 @@ class EndpointsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         endpoint_name: str,
-        endpoint: Union[_models.Endpoint, JSON, IO[bytes]],
+        endpoint: Union[_models.Endpoint, _types.Endpoint, IO[bytes]],
         **kwargs: Any
     ) -> _models.Endpoint:
         """Creates or updates an Endpoint resource, which represents a data transfer source or
@@ -1811,8 +1826,9 @@ class EndpointsOperations:
         :type storage_mover_name: str
         :param endpoint_name: The name of the Endpoint resource. Required.
         :type endpoint_name: str
-        :param endpoint: Is one of the following types: Endpoint, JSON, IO[bytes] Required.
-        :type endpoint: ~azure.mgmt.storagemover.models.Endpoint or JSON or IO[bytes]
+        :param endpoint: Is either a Endpoint type or a IO[bytes] type. Required.
+        :type endpoint: ~azure.mgmt.storagemover.models.Endpoint or
+         ~azure.mgmt.storagemover.types.Endpoint or IO[bytes]
         :return: Endpoint. The Endpoint is compatible with MutableMapping
         :rtype: ~azure.mgmt.storagemover.models.Endpoint
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1922,7 +1938,7 @@ class EndpointsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         endpoint_name: str,
-        endpoint: JSON,
+        endpoint: _types.EndpointBaseUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1938,7 +1954,7 @@ class EndpointsOperations:
         :param endpoint_name: The name of the Endpoint resource. Required.
         :type endpoint_name: str
         :param endpoint: Required.
-        :type endpoint: JSON
+        :type endpoint: ~azure.mgmt.storagemover.types.EndpointBaseUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1984,7 +2000,7 @@ class EndpointsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         endpoint_name: str,
-        endpoint: Union[_models.EndpointBaseUpdateParameters, JSON, IO[bytes]],
+        endpoint: Union[_models.EndpointBaseUpdateParameters, _types.EndpointBaseUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Endpoint:
         """Updates properties for an Endpoint resource. Properties not specified in the request body will
@@ -1997,10 +2013,9 @@ class EndpointsOperations:
         :type storage_mover_name: str
         :param endpoint_name: The name of the Endpoint resource. Required.
         :type endpoint_name: str
-        :param endpoint: Is one of the following types: EndpointBaseUpdateParameters, JSON, IO[bytes]
-         Required.
-        :type endpoint: ~azure.mgmt.storagemover.models.EndpointBaseUpdateParameters or JSON or
-         IO[bytes]
+        :param endpoint: Is either a EndpointBaseUpdateParameters type or a IO[bytes] type. Required.
+        :type endpoint: ~azure.mgmt.storagemover.models.EndpointBaseUpdateParameters or
+         ~azure.mgmt.storagemover.types.EndpointBaseUpdateParameters or IO[bytes]
         :return: Endpoint. The Endpoint is compatible with MutableMapping
         :rtype: ~azure.mgmt.storagemover.models.Endpoint
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2254,7 +2269,10 @@ class EndpointsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2425,7 +2443,7 @@ class ProjectsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         project_name: str,
-        project: JSON,
+        project: _types.Project,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2440,7 +2458,7 @@ class ProjectsOperations:
         :param project_name: The name of the Project resource. Required.
         :type project_name: str
         :param project: Required.
-        :type project: JSON
+        :type project: ~azure.mgmt.storagemover.types.Project
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2485,7 +2503,7 @@ class ProjectsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         project_name: str,
-        project: Union[_models.Project, JSON, IO[bytes]],
+        project: Union[_models.Project, _types.Project, IO[bytes]],
         **kwargs: Any
     ) -> _models.Project:
         """Creates or updates a Project resource, which is a logical grouping of related jobs.
@@ -2497,8 +2515,9 @@ class ProjectsOperations:
         :type storage_mover_name: str
         :param project_name: The name of the Project resource. Required.
         :type project_name: str
-        :param project: Is one of the following types: Project, JSON, IO[bytes] Required.
-        :type project: ~azure.mgmt.storagemover.models.Project or JSON or IO[bytes]
+        :param project: Is either a Project type or a IO[bytes] type. Required.
+        :type project: ~azure.mgmt.storagemover.models.Project or
+         ~azure.mgmt.storagemover.types.Project or IO[bytes]
         :return: Project. The Project is compatible with MutableMapping
         :rtype: ~azure.mgmt.storagemover.models.Project
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2608,7 +2627,7 @@ class ProjectsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         project_name: str,
-        project: JSON,
+        project: _types.ProjectUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2624,7 +2643,7 @@ class ProjectsOperations:
         :param project_name: The name of the Project resource. Required.
         :type project_name: str
         :param project: Required.
-        :type project: JSON
+        :type project: ~azure.mgmt.storagemover.types.ProjectUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2670,7 +2689,7 @@ class ProjectsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         project_name: str,
-        project: Union[_models.ProjectUpdateParameters, JSON, IO[bytes]],
+        project: Union[_models.ProjectUpdateParameters, _types.ProjectUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Project:
         """Updates properties for a Project resource. Properties not specified in the request body will be
@@ -2683,9 +2702,9 @@ class ProjectsOperations:
         :type storage_mover_name: str
         :param project_name: The name of the Project resource. Required.
         :type project_name: str
-        :param project: Is one of the following types: ProjectUpdateParameters, JSON, IO[bytes]
-         Required.
-        :type project: ~azure.mgmt.storagemover.models.ProjectUpdateParameters or JSON or IO[bytes]
+        :param project: Is either a ProjectUpdateParameters type or a IO[bytes] type. Required.
+        :type project: ~azure.mgmt.storagemover.models.ProjectUpdateParameters or
+         ~azure.mgmt.storagemover.types.ProjectUpdateParameters or IO[bytes]
         :return: Project. The Project is compatible with MutableMapping
         :rtype: ~azure.mgmt.storagemover.models.Project
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2939,7 +2958,10 @@ class ProjectsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3123,7 +3145,7 @@ class JobDefinitionsOperations:
         storage_mover_name: str,
         project_name: str,
         job_definition_name: str,
-        job_definition: JSON,
+        job_definition: _types.JobDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3141,7 +3163,7 @@ class JobDefinitionsOperations:
         :param job_definition_name: The name of the Job Definition resource. Required.
         :type job_definition_name: str
         :param job_definition: Required.
-        :type job_definition: JSON
+        :type job_definition: ~azure.mgmt.storagemover.types.JobDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3191,7 +3213,7 @@ class JobDefinitionsOperations:
         storage_mover_name: str,
         project_name: str,
         job_definition_name: str,
-        job_definition: Union[_models.JobDefinition, JSON, IO[bytes]],
+        job_definition: Union[_models.JobDefinition, _types.JobDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.JobDefinition:
         """Creates or updates a Job Definition resource, which contains configuration for a single unit of
@@ -3206,8 +3228,9 @@ class JobDefinitionsOperations:
         :type project_name: str
         :param job_definition_name: The name of the Job Definition resource. Required.
         :type job_definition_name: str
-        :param job_definition: Is one of the following types: JobDefinition, JSON, IO[bytes] Required.
-        :type job_definition: ~azure.mgmt.storagemover.models.JobDefinition or JSON or IO[bytes]
+        :param job_definition: Is either a JobDefinition type or a IO[bytes] type. Required.
+        :type job_definition: ~azure.mgmt.storagemover.models.JobDefinition or
+         ~azure.mgmt.storagemover.types.JobDefinition or IO[bytes]
         :return: JobDefinition. The JobDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.storagemover.models.JobDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3322,7 +3345,7 @@ class JobDefinitionsOperations:
         storage_mover_name: str,
         project_name: str,
         job_definition_name: str,
-        job_definition: JSON,
+        job_definition: _types.JobDefinitionUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3340,7 +3363,7 @@ class JobDefinitionsOperations:
         :param job_definition_name: The name of the Job Definition resource. Required.
         :type job_definition_name: str
         :param job_definition: Required.
-        :type job_definition: JSON
+        :type job_definition: ~azure.mgmt.storagemover.types.JobDefinitionUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3390,7 +3413,7 @@ class JobDefinitionsOperations:
         storage_mover_name: str,
         project_name: str,
         job_definition_name: str,
-        job_definition: Union[_models.JobDefinitionUpdateParameters, JSON, IO[bytes]],
+        job_definition: Union[_models.JobDefinitionUpdateParameters, _types.JobDefinitionUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.JobDefinition:
         """Updates properties for a Job Definition resource. Properties not specified in the request body
@@ -3405,10 +3428,10 @@ class JobDefinitionsOperations:
         :type project_name: str
         :param job_definition_name: The name of the Job Definition resource. Required.
         :type job_definition_name: str
-        :param job_definition: Is one of the following types: JobDefinitionUpdateParameters, JSON,
-         IO[bytes] Required.
-        :type job_definition: ~azure.mgmt.storagemover.models.JobDefinitionUpdateParameters or JSON or
-         IO[bytes]
+        :param job_definition: Is either a JobDefinitionUpdateParameters type or a IO[bytes] type.
+         Required.
+        :type job_definition: ~azure.mgmt.storagemover.models.JobDefinitionUpdateParameters or
+         ~azure.mgmt.storagemover.types.JobDefinitionUpdateParameters or IO[bytes]
         :return: JobDefinition. The JobDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.storagemover.models.JobDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3680,7 +3703,10 @@ class JobDefinitionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3889,6 +3915,104 @@ class JobDefinitionsOperations:
 
         return deserialized  # type: ignore
 
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01",
+        params_added_on={
+            "2026-05-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_mover_name",
+                "project_name",
+                "job_definition_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01"],
+    )
+    async def reconcile_job(
+        self,
+        resource_group_name: str,
+        storage_mover_name: str,
+        project_name: str,
+        job_definition_name: str,
+        **kwargs: Any
+    ) -> _models.JobRunResourceId:
+        """Post action to reconcile the running job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_mover_name: The name of the Storage Mover resource. Required.
+        :type storage_mover_name: str
+        :param project_name: The name of the Project resource. Required.
+        :type project_name: str
+        :param job_definition_name: The name of the Job Definition resource. Required.
+        :type job_definition_name: str
+        :return: JobRunResourceId. The JobRunResourceId is compatible with MutableMapping
+        :rtype: ~azure.mgmt.storagemover.models.JobRunResourceId
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.JobRunResourceId] = kwargs.pop("cls", None)
+
+        _request = build_job_definitions_reconcile_job_request(
+            resource_group_name=resource_group_name,
+            storage_mover_name=storage_mover_name,
+            project_name=project_name,
+            job_definition_name=job_definition_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.JobRunResourceId, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
 
 class ConnectionsOperations:
     """
@@ -3943,7 +4067,7 @@ class ConnectionsOperations:
         resource_group_name: str,
         storage_mover_name: str,
         connection_name: str,
-        connection: JSON,
+        connection: _types.Connection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3958,7 +4082,7 @@ class ConnectionsOperations:
         :param connection_name: The name of the Connection resource. Required.
         :type connection_name: str
         :param connection: Required.
-        :type connection: JSON
+        :type connection: ~azure.mgmt.storagemover.types.Connection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4011,14 +4135,14 @@ class ConnectionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-12-01"],
+        api_versions_list=["2025-08-01", "2025-12-01", "2026-05-01"],
     )
     async def create_or_update(
         self,
         resource_group_name: str,
         storage_mover_name: str,
         connection_name: str,
-        connection: Union[_models.Connection, JSON, IO[bytes]],
+        connection: Union[_models.Connection, _types.Connection, IO[bytes]],
         **kwargs: Any
     ) -> _models.Connection:
         """Creates or updates a Connection resource.
@@ -4030,8 +4154,9 @@ class ConnectionsOperations:
         :type storage_mover_name: str
         :param connection_name: The name of the Connection resource. Required.
         :type connection_name: str
-        :param connection: Is one of the following types: Connection, JSON, IO[bytes] Required.
-        :type connection: ~azure.mgmt.storagemover.models.Connection or JSON or IO[bytes]
+        :param connection: Is either a Connection type or a IO[bytes] type. Required.
+        :type connection: ~azure.mgmt.storagemover.models.Connection or
+         ~azure.mgmt.storagemover.types.Connection or IO[bytes]
         :return: Connection. The Connection is compatible with MutableMapping
         :rtype: ~azure.mgmt.storagemover.models.Connection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4117,7 +4242,7 @@ class ConnectionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-12-01"],
+        api_versions_list=["2025-08-01", "2025-12-01", "2026-05-01"],
     )
     async def get(
         self, resource_group_name: str, storage_mover_name: str, connection_name: str, **kwargs: Any
@@ -4199,7 +4324,7 @@ class ConnectionsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "storage_mover_name", "accept"]
         },
-        api_versions_list=["2025-08-01", "2025-12-01"],
+        api_versions_list=["2025-08-01", "2025-12-01", "2026-05-01"],
     )
     def list(
         self, resource_group_name: str, storage_mover_name: str, **kwargs: Any
@@ -4257,7 +4382,10 @@ class ConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4310,7 +4438,7 @@ class ConnectionsOperations:
                 "connection_name",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-12-01"],
+        api_versions_list=["2025-08-01", "2025-12-01", "2026-05-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, storage_mover_name: str, connection_name: str, **kwargs: Any
@@ -4386,7 +4514,7 @@ class ConnectionsOperations:
                 "connection_name",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-12-01"],
+        api_versions_list=["2025-08-01", "2025-12-01", "2026-05-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, storage_mover_name: str, connection_name: str, **kwargs: Any
@@ -4622,7 +4750,10 @@ class JobRunsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
