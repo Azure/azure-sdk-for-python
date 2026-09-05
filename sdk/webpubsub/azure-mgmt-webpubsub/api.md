@@ -3269,16 +3269,14 @@ namespace azure.mgmt.webpubsub.types
         key "maxClientConnectionLifetimeInSeconds": int
         clientConnectionCountRules: list[ClientConnectionCountRule]
         clientTrafficControlRules: list[ClientTrafficControlRule]
-        client_connection_count_rules: list[ClientConnectionCountRule]
-        client_traffic_control_rules: list[ClientTrafficControlRule]
-        max_client_connection_lifetime_in_seconds: int
+        maxClientConnectionLifetimeInSeconds: int
 
 
     class azure.mgmt.webpubsub.types.ChatSettings(TypedDict, total=False):
         key "mode": str
         key "persistentStorage": ForwardRef('ResourceReference', module='types')
         mode: str
-        persistent_storage: ResourceReference
+        persistentStorage: ResourceReference
 
 
     class azure.mgmt.webpubsub.types.ClientConnectionCountRuleDiscriminator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3302,7 +3300,7 @@ namespace azure.mgmt.webpubsub.types
         id: str
         name: str
         properties: CustomCertificateProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3311,10 +3309,10 @@ namespace azure.mgmt.webpubsub.types
         key "keyVaultSecretName": Required[str]
         key "keyVaultSecretVersion": str
         key "provisioningState": Union[str, ProvisioningState]
-        key_vault_base_uri: str
-        key_vault_secret_name: str
-        key_vault_secret_version: str
-        provisioning_state: Union[str, ProvisioningState]
+        keyVaultBaseUri: str
+        keyVaultSecretName: str
+        keyVaultSecretVersion: str
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.webpubsub.types.CustomDomain(ProxyResource):
@@ -3326,7 +3324,7 @@ namespace azure.mgmt.webpubsub.types
         id: str
         name: str
         properties: CustomDomainProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3334,44 +3332,9 @@ namespace azure.mgmt.webpubsub.types
         key "customCertificate": Required[ResourceReference]
         key "domainName": Required[str]
         key "provisioningState": Union[str, ProvisioningState]
-        custom_certificate: ResourceReference
-        domain_name: str
-        provisioning_state: Union[str, ProvisioningState]
-
-
-    class azure.mgmt.webpubsub.types.Dimension(TypedDict, total=False):
-        key "displayName": str
-        key "internalName": str
-        key "name": str
-        key "toBeExportedForShoebox": bool
-        display_name: str
-        internal_name: str
-        name: str
-        to_be_exported_for_shoebox: bool
-
-
-    class azure.mgmt.webpubsub.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.webpubsub.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.webpubsub.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
+        customCertificate: ResourceReference
+        domainName: str
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.webpubsub.types.EventHandler(TypedDict, total=False):
@@ -3380,19 +3343,18 @@ namespace azure.mgmt.webpubsub.types
         key "urlTemplate": Required[str]
         key "userEventPattern": str
         auth: UpstreamAuthSettings
-        group_presence_events: GroupPresenceEventFilters
+        groupPresenceEvents: GroupPresenceEventFilters
         systemEvents: list[str]
-        system_events: list[str]
-        url_template: str
-        user_event_pattern: str
+        urlTemplate: str
+        userEventPattern: str
 
 
     class azure.mgmt.webpubsub.types.EventHubEndpoint(TypedDict, total=False):
         key "eventHubName": Required[str]
         key "fullyQualifiedNamespace": Required[str]
         key "type": Required[Literal[EventListenerEndpointDiscriminator.EVENT_HUB]]
-        event_hub_name: str
-        fully_qualified_namespace: str
+        eventHubName: str
+        fullyQualifiedNamespace: str
         type: Literal[EventListenerEndpointDiscriminator.EVENT_HUB]
 
 
@@ -3407,8 +3369,8 @@ namespace azure.mgmt.webpubsub.types
         key "eventHubName": Required[str]
         key "fullyQualifiedNamespace": Required[str]
         key "type": Required[Literal[EventListenerEndpointDiscriminator.EVENT_HUB]]
-        event_hub_name: str
-        fully_qualified_namespace: str
+        eventHubName: str
+        fullyQualifiedNamespace: str
         type: Literal[EventListenerEndpointDiscriminator.EVENT_HUB]
 
 
@@ -3420,9 +3382,8 @@ namespace azure.mgmt.webpubsub.types
         key "type": Required[Literal[EventListenerFilterDiscriminator.EVENT_NAME]]
         key "userEventPattern": str
         systemEvents: list[str]
-        system_events: list[str]
         type: Literal[EventListenerFilterDiscriminator.EVENT_NAME]
-        user_event_pattern: str
+        userEventPattern: str
 
 
     class azure.mgmt.webpubsub.types.EventListenerFilterDiscriminator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3433,16 +3394,14 @@ namespace azure.mgmt.webpubsub.types
         key "type": Required[Literal[EventListenerFilterDiscriminator.EVENT_NAME]]
         key "userEventPattern": str
         systemEvents: list[str]
-        system_events: list[str]
         type: Literal[EventListenerFilterDiscriminator.EVENT_NAME]
-        user_event_pattern: str
+        userEventPattern: str
 
 
     class azure.mgmt.webpubsub.types.GroupPresenceEventFilters(TypedDict, total=False):
         key "eventNames": Required[list[Union[str, GroupPresenceEventName]]]
-        event_names: list[Union[str, GroupPresenceEventName]]
+        eventNames: list[Union[str, GroupPresenceEventName]]
         groupFilters: list[str]
-        group_filters: list[str]
 
 
     class azure.mgmt.webpubsub.types.IPRule(TypedDict, total=False):
@@ -3465,54 +3424,19 @@ namespace azure.mgmt.webpubsub.types
         enabled: str
 
 
-    class azure.mgmt.webpubsub.types.LogSpecification(TypedDict, total=False):
-        key "displayName": str
-        key "name": str
-        display_name: str
-        name: str
-
-
     class azure.mgmt.webpubsub.types.ManagedIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Union[str, ManagedIdentityType]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentityProperty]
-        user_assigned_identities: dict[str, UserAssignedIdentityProperty]
 
 
     class azure.mgmt.webpubsub.types.ManagedIdentitySettings(TypedDict, total=False):
         key "resource": str
         resource: str
-
-
-    class azure.mgmt.webpubsub.types.MetricSpecification(TypedDict, total=False):
-        key "aggregationType": str
-        key "category": str
-        key "displayDescription": str
-        key "displayName": str
-        key "fillGapWithZero": str
-        key "name": str
-        key "unit": str
-        aggregation_type: str
-        category: str
-        dimensions: list[Dimension]
-        display_description: str
-        display_name: str
-        fill_gap_with_zero: str
-        name: str
-        unit: str
-
-
-    class azure.mgmt.webpubsub.types.NameAvailability(TypedDict, total=False):
-        key "message": str
-        key "nameAvailable": bool
-        key "reason": str
-        message: str
-        name_available: bool
-        reason: str
 
 
     class azure.mgmt.webpubsub.types.NameAvailabilityParameters(TypedDict, total=False):
@@ -3527,35 +3451,6 @@ namespace azure.mgmt.webpubsub.types
         deny: list[Union[str, WebPubSubRequestType]]
 
 
-    class azure.mgmt.webpubsub.types.Operation(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": str
-        key "properties": ForwardRef('OperationProperties', module='types')
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: str
-        properties: OperationProperties
-
-
-    class azure.mgmt.webpubsub.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
-    class azure.mgmt.webpubsub.types.OperationProperties(TypedDict, total=False):
-        key "serviceSpecification": ForwardRef('ServiceSpecification', module='types')
-        service_specification: ServiceSpecification
-
-
     class azure.mgmt.webpubsub.types.PersistentStorage(ProxyResource):
         key "id": str
         key "name": str
@@ -3565,15 +3460,15 @@ namespace azure.mgmt.webpubsub.types
         id: str
         name: str
         properties: PersistentStorageProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.webpubsub.types.PersistentStorageProperties(TypedDict, total=False):
         key "provisioningState": Union[str, ProvisioningState]
         key "storageAccount": Required[ResourceReference]
-        provisioning_state: Union[str, ProvisioningState]
-        storage_account: ResourceReference
+        provisioningState: Union[str, ProvisioningState]
+        storageAccount: ResourceReference
 
 
     class azure.mgmt.webpubsub.types.PrivateEndpoint(TypedDict, total=False):
@@ -3597,7 +3492,7 @@ namespace azure.mgmt.webpubsub.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3606,41 +3501,16 @@ namespace azure.mgmt.webpubsub.types
         key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionState', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         groupIds: list[str]
-        group_ids: list[str]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, ProvisioningState]
-
-
-    class azure.mgmt.webpubsub.types.PrivateLinkResource(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateLinkResourceProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PrivateLinkResourceProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.webpubsub.types.PrivateLinkResourceProperties(TypedDict, total=False):
-        key "groupId": str
-        group_id: str
-        requiredMembers: list[str]
-        requiredZoneNames: list[str]
-        required_members: list[str]
-        required_zone_names: list[str]
-        shareablePrivateLinkResourceTypes: list[ShareablePrivateLinkResourceType]
-        shareable_private_link_resource_types: list[ShareablePrivateLinkResourceType]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.webpubsub.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
         key "actionsRequired": str
         key "description": str
         key "status": Union[str, PrivateLinkServiceConnectionStatus]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: Union[str, PrivateLinkServiceConnectionStatus]
 
@@ -3652,13 +3522,13 @@ namespace azure.mgmt.webpubsub.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.webpubsub.types.RegenerateKeyParameters(TypedDict, total=False):
         key "keyType": Union[str, KeyType]
-        key_type: Union[str, KeyType]
+        keyType: Union[str, KeyType]
 
 
     class azure.mgmt.webpubsub.types.Replica(TrackedResource):
@@ -3674,7 +3544,7 @@ namespace azure.mgmt.webpubsub.types
         name: str
         properties: ReplicaProperties
         sku: ResourceSku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -3683,9 +3553,9 @@ namespace azure.mgmt.webpubsub.types
         key "provisioningState": Union[str, ProvisioningState]
         key "regionEndpointEnabled": str
         key "resourceStopped": str
-        provisioning_state: Union[str, ProvisioningState]
-        region_endpoint_enabled: str
-        resource_stopped: str
+        provisioningState: Union[str, ProvisioningState]
+        regionEndpointEnabled: str
+        resourceStopped: str
 
 
     class azure.mgmt.webpubsub.types.Resource(TypedDict, total=False):
@@ -3695,7 +3565,7 @@ namespace azure.mgmt.webpubsub.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3728,29 +3598,6 @@ namespace azure.mgmt.webpubsub.types
         tier: Union[str, WebPubSubSkuTier]
 
 
-    class azure.mgmt.webpubsub.types.ServiceSpecification(TypedDict, total=False):
-        logSpecifications: list[LogSpecification]
-        log_specifications: list[LogSpecification]
-        metricSpecifications: list[MetricSpecification]
-        metric_specifications: list[MetricSpecification]
-
-
-    class azure.mgmt.webpubsub.types.ShareablePrivateLinkResourceProperties(TypedDict, total=False):
-        key "description": str
-        key "groupId": str
-        key "type": str
-        description: str
-        group_id: str
-        type: str
-
-
-    class azure.mgmt.webpubsub.types.ShareablePrivateLinkResourceType(TypedDict, total=False):
-        key "name": str
-        key "properties": ForwardRef('ShareablePrivateLinkResourceProperties', module='types')
-        name: str
-        properties: ShareablePrivateLinkResourceProperties
-
-
     class azure.mgmt.webpubsub.types.SharedPrivateLinkResource(ProxyResource):
         key "id": str
         key "name": str
@@ -3760,7 +3607,7 @@ namespace azure.mgmt.webpubsub.types
         id: str
         name: str
         properties: SharedPrivateLinkResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3771,59 +3618,11 @@ namespace azure.mgmt.webpubsub.types
         key "requestMessage": str
         key "status": Union[str, SharedPrivateLinkResourceStatus]
         fqdns: list[str]
-        group_id: str
-        private_link_resource_id: str
-        provisioning_state: Union[str, ProvisioningState]
-        request_message: str
+        groupId: str
+        privateLinkResourceId: str
+        provisioningState: Union[str, ProvisioningState]
+        requestMessage: str
         status: Union[str, SharedPrivateLinkResourceStatus]
-
-
-    class azure.mgmt.webpubsub.types.SignalRServiceUsage(TypedDict, total=False):
-        key "currentValue": int
-        key "id": str
-        key "limit": int
-        key "name": ForwardRef('SignalRServiceUsageName', module='types')
-        key "unit": str
-        current_value: int
-        id: str
-        limit: int
-        name: SignalRServiceUsageName
-        unit: str
-
-
-    class azure.mgmt.webpubsub.types.SignalRServiceUsageName(TypedDict, total=False):
-        key "localizedValue": str
-        key "value": str
-        localized_value: str
-        value: str
-
-
-    class azure.mgmt.webpubsub.types.Sku(TypedDict, total=False):
-        key "capacity": ForwardRef('SkuCapacity', module='types')
-        key "resourceType": str
-        key "sku": ForwardRef('ResourceSku', module='types')
-        capacity: SkuCapacity
-        resource_type: str
-        sku: ResourceSku
-
-
-    class azure.mgmt.webpubsub.types.SkuCapacity(TypedDict, total=False):
-        key "default": int
-        key "maximum": int
-        key "minimum": int
-        key "scaleType": Union[str, ScaleType]
-        allowedValues: list[int]
-        allowed_values: list[int]
-        default: int
-        maximum: int
-        minimum: int
-        scale_type: Union[str, ScaleType]
-
-
-    class azure.mgmt.webpubsub.types.SkuList(TypedDict, total=False):
-        key "nextLink": str
-        next_link: str
-        value: list[Sku]
 
 
     class azure.mgmt.webpubsub.types.SystemData(TypedDict, total=False):
@@ -3833,34 +3632,34 @@ namespace azure.mgmt.webpubsub.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.webpubsub.types.ThrottleByJwtCustomClaimRule(TypedDict, total=False):
         key "claimName": Required[str]
         key "maxCount": int
         key "type": Required[Literal[ClientConnectionCountRuleDiscriminator.THROTTLE_BY_JWT_CUSTOM_CLAIM_RULE]]
-        claim_name: str
-        max_count: int
+        claimName: str
+        maxCount: int
         type: Literal[ClientConnectionCountRuleDiscriminator.THROTTLE_BY_JWT_CUSTOM_CLAIM_RULE]
 
 
     class azure.mgmt.webpubsub.types.ThrottleByJwtSignatureRule(TypedDict, total=False):
         key "maxCount": int
         key "type": Required[Literal[ClientConnectionCountRuleDiscriminator.THROTTLE_BY_JWT_SIGNATURE_RULE]]
-        max_count: int
+        maxCount: int
         type: Literal[ClientConnectionCountRuleDiscriminator.THROTTLE_BY_JWT_SIGNATURE_RULE]
 
 
     class azure.mgmt.webpubsub.types.ThrottleByUserIdRule(TypedDict, total=False):
         key "maxCount": int
         key "type": Required[Literal[ClientConnectionCountRuleDiscriminator.THROTTLE_BY_USER_ID_RULE]]
-        max_count: int
+        maxCount: int
         type: Literal[ClientConnectionCountRuleDiscriminator.THROTTLE_BY_USER_ID_RULE]
 
 
@@ -3873,7 +3672,7 @@ namespace azure.mgmt.webpubsub.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -3883,9 +3682,9 @@ namespace azure.mgmt.webpubsub.types
         key "claimName": Required[str]
         key "maxInboundMessageBytes": int
         key "type": Required[Literal[ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_JWT_CUSTOM_CLAIM_RULE]]
-        aggregation_window_in_seconds: int
-        claim_name: str
-        max_inbound_message_bytes: int
+        aggregationWindowInSeconds: int
+        claimName: str
+        maxInboundMessageBytes: int
         type: Literal[ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_JWT_CUSTOM_CLAIM_RULE]
 
 
@@ -3893,8 +3692,8 @@ namespace azure.mgmt.webpubsub.types
         key "aggregationWindowInSeconds": int
         key "maxInboundMessageBytes": int
         key "type": Required[Literal[ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_JWT_SIGNATURE_RULE]]
-        aggregation_window_in_seconds: int
-        max_inbound_message_bytes: int
+        aggregationWindowInSeconds: int
+        maxInboundMessageBytes: int
         type: Literal[ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_JWT_SIGNATURE_RULE]
 
 
@@ -3902,23 +3701,23 @@ namespace azure.mgmt.webpubsub.types
         key "aggregationWindowInSeconds": int
         key "maxInboundMessageBytes": int
         key "type": Required[Literal[ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_USER_ID_RULE]]
-        aggregation_window_in_seconds: int
-        max_inbound_message_bytes: int
+        aggregationWindowInSeconds: int
+        maxInboundMessageBytes: int
         type: Literal[ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_USER_ID_RULE]
 
 
     class azure.mgmt.webpubsub.types.UpstreamAuthSettings(TypedDict, total=False):
         key "managedIdentity": ForwardRef('ManagedIdentitySettings', module='types')
         key "type": Union[str, UpstreamAuthType]
-        managed_identity: ManagedIdentitySettings
+        managedIdentity: ManagedIdentitySettings
         type: Union[str, UpstreamAuthType]
 
 
     class azure.mgmt.webpubsub.types.UserAssignedIdentityProperty(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.webpubsub.types.WebPubSubHub(ProxyResource):
@@ -3930,7 +3729,7 @@ namespace azure.mgmt.webpubsub.types
         id: str
         name: str
         properties: WebPubSubHubProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3938,35 +3737,20 @@ namespace azure.mgmt.webpubsub.types
         key "anonymousConnectPolicy": str
         key "chat": ForwardRef('ChatSettings', module='types')
         key "webSocketKeepAliveIntervalInSeconds": int
-        anonymous_connect_policy: str
+        anonymousConnectPolicy: str
         chat: ChatSettings
         eventHandlers: list[EventHandler]
         eventListeners: list[EventListener]
-        event_handlers: list[EventHandler]
-        event_listeners: list[EventListener]
-        web_socket_keep_alive_interval_in_seconds: int
-
-
-    class azure.mgmt.webpubsub.types.WebPubSubKeys(TypedDict, total=False):
-        key "primaryConnectionString": str
-        key "primaryKey": str
-        key "secondaryConnectionString": str
-        key "secondaryKey": str
-        primary_connection_string: str
-        primary_key: str
-        secondary_connection_string: str
-        secondary_key: str
+        webSocketKeepAliveIntervalInSeconds: int
 
 
     class azure.mgmt.webpubsub.types.WebPubSubNetworkACLs(TypedDict, total=False):
         key "defaultAction": Union[str, ACLAction]
         key "publicNetwork": ForwardRef('NetworkACL', module='types')
-        default_action: Union[str, ACLAction]
+        defaultAction: Union[str, ACLAction]
         ipRules: list[IPRule]
-        ip_rules: list[IPRule]
         privateEndpoints: list[PrivateEndpointACL]
-        private_endpoints: list[PrivateEndpointACL]
-        public_network: NetworkACL
+        publicNetwork: NetworkACL
 
 
     class azure.mgmt.webpubsub.types.WebPubSubProperties(TypedDict, total=False):
@@ -3988,26 +3772,24 @@ namespace azure.mgmt.webpubsub.types
         key "socketIO": ForwardRef('WebPubSubSocketIOSettings', module='types')
         key "tls": ForwardRef('WebPubSubTlsSettings', module='types')
         key "version": str
-        application_firewall: ApplicationFirewallSettings
-        disable_aad_auth: bool
-        disable_local_auth: bool
-        external_ip: str
-        host_name: str
-        host_name_prefix: str
-        live_trace_configuration: LiveTraceConfiguration
-        network_ac_ls: WebPubSubNetworkACLs
+        applicationFirewall: ApplicationFirewallSettings
+        disableAadAuth: bool
+        disableLocalAuth: bool
+        externalIP: str
+        hostName: str
+        hostNamePrefix: str
+        liveTraceConfiguration: LiveTraceConfiguration
+        networkACLs: WebPubSubNetworkACLs
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: Union[str, ProvisioningState]
-        public_network_access: str
-        public_port: int
-        region_endpoint_enabled: str
-        resource_log_configuration: ResourceLogConfiguration
-        resource_stopped: str
-        server_port: int
+        provisioningState: Union[str, ProvisioningState]
+        publicNetworkAccess: str
+        publicPort: int
+        regionEndpointEnabled: str
+        resourceLogConfiguration: ResourceLogConfiguration
+        resourceStopped: str
+        serverPort: int
         sharedPrivateLinkResources: list[SharedPrivateLinkResource]
-        shared_private_link_resources: list[SharedPrivateLinkResource]
-        socket_io: WebPubSubSocketIOSettings
+        socketIO: WebPubSubSocketIOSettings
         tls: WebPubSubTlsSettings
         version: str
 
@@ -4029,19 +3811,19 @@ namespace azure.mgmt.webpubsub.types
         name: str
         properties: WebPubSubProperties
         sku: ResourceSku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.webpubsub.types.WebPubSubSocketIOSettings(TypedDict, total=False):
         key "serviceMode": str
-        service_mode: str
+        serviceMode: str
 
 
     class azure.mgmt.webpubsub.types.WebPubSubTlsSettings(TypedDict, total=False):
         key "clientCertEnabled": bool
-        client_cert_enabled: bool
+        clientCertEnabled: bool
 
 
 ```

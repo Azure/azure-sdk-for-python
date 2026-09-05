@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ApplicationFirewallSettings(_Model):
+class ApplicationFirewallSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application firewall settings for the resource.
 
     :ivar client_connection_count_rules: Rules to control the client connection count.
@@ -71,7 +71,7 @@ class ApplicationFirewallSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatSettings(_Model):
+class ChatSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Chat settings.
 
     :ivar mode: Enable or disable the chat feature.
@@ -106,7 +106,7 @@ class ChatSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientConnectionCountRule(_Model):
+class ClientConnectionCountRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A base class for client connection count rules.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -140,7 +140,7 @@ class ClientConnectionCountRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientTrafficControlRule(_Model):
+class ClientTrafficControlRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A base class for client traffic control rules.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -220,7 +220,7 @@ class ProxyResource(Resource):
     """
 
 
-class CustomCertificate(ProxyResource):
+class CustomCertificate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A custom certificate.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -286,7 +286,7 @@ class CustomCertificate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CustomCertificateProperties(_Model):
+class CustomCertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom certificate properties.
 
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
@@ -332,7 +332,7 @@ class CustomCertificateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomDomain(ProxyResource):
+class CustomDomain(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A custom domain.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -393,7 +393,7 @@ class CustomDomain(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CustomDomainProperties(_Model):
+class CustomDomainProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a custom domain.
 
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
@@ -436,7 +436,7 @@ class CustomDomainProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Dimension(_Model):
+class Dimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications of the Dimension of metrics.
 
     :ivar name: The public facing name of the dimension.
@@ -531,7 +531,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -559,7 +559,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventHandler(_Model):
+class EventHandler(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of event handler.
 
     :ivar url_template: Gets or sets the URL template for the event handler. The actual URL is
@@ -647,7 +647,7 @@ class EventHandler(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventListenerEndpoint(_Model):
+class EventListenerEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An endpoint specifying where Web PubSub should send events to.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -679,7 +679,9 @@ class EventListenerEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventHubEndpoint(EventListenerEndpoint, discriminator="EventHub"):
+class EventHubEndpoint(
+    EventListenerEndpoint, discriminator="EventHub"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Event Hub endpoint. The managed identity of Web PubSub service must be enabled, and the
     identity should have the "Azure Event Hubs Data sender" role to access Event Hub.
 
@@ -721,7 +723,7 @@ class EventHubEndpoint(EventListenerEndpoint, discriminator="EventHub"):
         self.type = EventListenerEndpointDiscriminator.EVENT_HUB  # type: ignore
 
 
-class EventListener(_Model):
+class EventListener(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A setting defines which kinds of events should be sent to which endpoint.
 
     :ivar filter: A base class for event filter which determines whether an event should be sent to
@@ -756,7 +758,7 @@ class EventListener(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventListenerFilter(_Model):
+class EventListenerFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A base class for event filter which determines whether an event should be sent to an event
     listener.
 
@@ -789,7 +791,9 @@ class EventListenerFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventNameFilter(EventListenerFilter, discriminator="EventName"):
+class EventNameFilter(
+    EventListenerFilter, discriminator="EventName"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Filter events by their name.
 
     :ivar system_events: Gets or sets a list of system events. Supported events: "connected" and
@@ -845,7 +849,7 @@ class EventNameFilter(EventListenerFilter, discriminator="EventName"):
         self.type = EventListenerFilterDiscriminator.EVENT_NAME  # type: ignore
 
 
-class GroupPresenceEventFilters(_Model):
+class GroupPresenceEventFilters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents presence event filters for event handler configuration.
 
     :ivar event_names: The concerning event names. Valid values are "joined", "left". If the value
@@ -888,7 +892,7 @@ class GroupPresenceEventFilters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPRule(_Model):
+class IPRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An IP rule.
 
     :ivar value: An IP or CIDR or ServiceTag.
@@ -923,7 +927,7 @@ class IPRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LiveTraceCategory(_Model):
+class LiveTraceCategory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Live trace category configuration of a Microsoft.SignalRService resource.
 
     :ivar name: Gets or sets the live trace category's name. Available values: ConnectivityLogs,
@@ -960,7 +964,7 @@ class LiveTraceCategory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LiveTraceConfiguration(_Model):
+class LiveTraceConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Live trace configuration of a Microsoft.SignalRService resource.
 
     :ivar enabled: Indicates whether or not enable live trace. When it's set to true, live trace
@@ -1001,7 +1005,7 @@ class LiveTraceConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogSpecification(_Model):
+class LogSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications of the Logs for Azure Monitoring.
 
     :ivar name: Name of the log.
@@ -1036,7 +1040,7 @@ class LogSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedIdentity(_Model):
+class ManagedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A class represent managed identities used for request and response.
 
     :ivar type: Represents the identity type: systemAssigned, userAssigned, None. Known values are:
@@ -1085,7 +1089,7 @@ class ManagedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedIdentitySettings(_Model):
+class ManagedIdentitySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed identity settings for upstream.
 
     :ivar resource: The Resource indicating the App ID URI of the target resource. It also appears
@@ -1115,7 +1119,7 @@ class ManagedIdentitySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricSpecification(_Model):
+class MetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications of the Metrics for Azure Monitoring.
 
     :ivar name: Name of the metric.
@@ -1197,7 +1201,7 @@ class MetricSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NameAvailability(_Model):
+class NameAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the request to check name availability. It contains a flag and possible reason of
     failure.
 
@@ -1238,7 +1242,7 @@ class NameAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NameAvailabilityParameters(_Model):
+class NameAvailabilityParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data POST-ed to the nameAvailability action.
 
     :ivar type: The resource type. Can be "Microsoft.SignalRService/SignalR",
@@ -1275,7 +1279,7 @@ class NameAvailabilityParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkACL(_Model):
+class NetworkACL(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network ACL.
 
     :ivar allow: Allowed request types. The value can be one or more of: ClientConnection,
@@ -1316,7 +1320,7 @@ class NetworkACL(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API operation supported by resource provider.
 
     :ivar name: Name of the operation with format: {provider}/{resource}/{operation}.
@@ -1372,7 +1376,7 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that describes a operation.
 
     :ivar provider: Friendly name of the resource provider.
@@ -1415,7 +1419,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationProperties(_Model):
+class OperationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Extra Operation properties.
 
     :ivar service_specification: An object that describes a specification.
@@ -1445,7 +1449,7 @@ class OperationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PersistentStorage(ProxyResource):
+class PersistentStorage(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A persistent storage.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1506,7 +1510,7 @@ class PersistentStorage(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PersistentStorageProperties(_Model):
+class PersistentStorageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a persistent storage.
 
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
@@ -1545,7 +1549,7 @@ class PersistentStorageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpoint(_Model):
+class PrivateEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint.
 
     :ivar id: Full qualified Id of the private endpoint.
@@ -1573,7 +1577,7 @@ class PrivateEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointACL(NetworkACL):
+class PrivateEndpointACL(NetworkACL):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ACL for a private endpoint.
 
     :ivar allow: Allowed request types. The value can be one or more of: ClientConnection,
@@ -1609,7 +1613,7 @@ class PrivateEndpointACL(NetworkACL):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private endpoint connection to an azure resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1670,7 +1674,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint connection properties.
 
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
@@ -1721,7 +1725,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1782,7 +1786,7 @@ class PrivateLinkResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private link resource properties.
 
     :ivar group_id: Group Id of the private link resource.
@@ -1833,7 +1837,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connection state of the private endpoint connection.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
@@ -1878,7 +1882,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegenerateKeyParameters(_Model):
+class RegenerateKeyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters describes the request to regenerate access keys.
 
     :ivar key_type: The type of access key. Known values are: "Primary", "Secondary", and "Salt".
@@ -1908,7 +1912,7 @@ class RegenerateKeyParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1952,7 +1956,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Replica(TrackedResource):
+class Replica(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A class represent a replica resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2023,7 +2027,7 @@ class Replica(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ReplicaProperties(_Model):
+class ReplicaProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ReplicaProperties.
 
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
@@ -2075,7 +2079,7 @@ class ReplicaProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceLogCategory(_Model):
+class ResourceLogCategory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource log category configuration of a Microsoft.SignalRService resource.
 
     :ivar name: Gets or sets the resource log category's name. Available values: ConnectivityLogs,
@@ -2112,7 +2116,7 @@ class ResourceLogCategory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceLogConfiguration(_Model):
+class ResourceLogConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource log configuration of a Microsoft.SignalRService resource.
 
     :ivar categories: Gets or sets the list of category configurations.
@@ -2142,7 +2146,7 @@ class ResourceLogConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceReference(_Model):
+class ResourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reference to a resource.
 
     :ivar id: Resource ID.
@@ -2170,7 +2174,7 @@ class ResourceReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSku(_Model):
+class ResourceSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The billing information of the resource.
 
     :ivar name: The name of the SKU. Required.
@@ -2242,7 +2246,7 @@ class ResourceSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceSpecification(_Model):
+class ServiceSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that describes a specification.
 
     :ivar metric_specifications: Specifications of the Metrics for Azure Monitoring.
@@ -2279,7 +2283,7 @@ class ServiceSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShareablePrivateLinkResourceProperties(_Model):
+class ShareablePrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a resource type that has been onboarded to private link service.
 
     :ivar description: The description of the resource type that has been onboarded to private link
@@ -2321,7 +2325,7 @@ class ShareablePrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShareablePrivateLinkResourceType(_Model):
+class ShareablePrivateLinkResourceType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a  resource type that has been onboarded to private link service.
 
     :ivar name: The name of the resource type that has been onboarded to private link service.
@@ -2357,7 +2361,7 @@ class ShareablePrivateLinkResourceType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharedPrivateLinkResource(ProxyResource):
+class SharedPrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Shared Private Link Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2425,7 +2429,7 @@ class SharedPrivateLinkResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SharedPrivateLinkResourceProperties(_Model):
+class SharedPrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of an existing Shared Private Link Resource.
 
     :ivar group_id: The group id from the provider of resource the shared private link resource is
@@ -2489,7 +2493,7 @@ class SharedPrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignalRServiceUsage(_Model):
+class SignalRServiceUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Object that describes a specific usage of the resources.
 
     :ivar id: Fully qualified ARM resource id.
@@ -2544,7 +2548,7 @@ class SignalRServiceUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignalRServiceUsageName(_Model):
+class SignalRServiceUsageName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Localizable String object containing the name and a localized value.
 
     :ivar value: The identifier of the usage.
@@ -2644,7 +2648,7 @@ class SkuList(_Model):
      now, added for future use."""
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2711,7 +2715,9 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThrottleByJwtCustomClaimRule(ClientConnectionCountRule, discriminator="ThrottleByJwtCustomClaimRule"):
+class ThrottleByJwtCustomClaimRule(
+    ClientConnectionCountRule, discriminator="ThrottleByJwtCustomClaimRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Throttle the client connection by a custom JWT claim.
 
     :ivar claim_name: The name of the claim in the JWT token. The client connection with the same
@@ -2755,7 +2761,9 @@ class ThrottleByJwtCustomClaimRule(ClientConnectionCountRule, discriminator="Thr
         self.type = ClientConnectionCountRuleDiscriminator.THROTTLE_BY_JWT_CUSTOM_CLAIM_RULE  # type: ignore
 
 
-class ThrottleByJwtSignatureRule(ClientConnectionCountRule, discriminator="ThrottleByJwtSignatureRule"):
+class ThrottleByJwtSignatureRule(
+    ClientConnectionCountRule, discriminator="ThrottleByJwtSignatureRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Throttle the client connection by the JWT signature.
 
     :ivar max_count: Maximum connection count allowed for the same JWT signature. Clients with the
@@ -2791,7 +2799,9 @@ class ThrottleByJwtSignatureRule(ClientConnectionCountRule, discriminator="Throt
         self.type = ClientConnectionCountRuleDiscriminator.THROTTLE_BY_JWT_SIGNATURE_RULE  # type: ignore
 
 
-class ThrottleByUserIdRule(ClientConnectionCountRule, discriminator="ThrottleByUserIdRule"):
+class ThrottleByUserIdRule(
+    ClientConnectionCountRule, discriminator="ThrottleByUserIdRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Throttle the client connection by the user ID.
 
     :ivar max_count: Maximum connection count allowed for the same user ID. Clients with the same
@@ -2828,7 +2838,7 @@ class ThrottleByUserIdRule(ClientConnectionCountRule, discriminator="ThrottleByU
 
 class TrafficThrottleByJwtCustomClaimRule(
     ClientTrafficControlRule, discriminator="TrafficThrottleByJwtCustomClaimRule"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Throttle the client traffic by a custom JWT claim.
 
     :ivar claim_name: The name of the claim in the JWT token. The message bytes with the same claim
@@ -2885,7 +2895,9 @@ class TrafficThrottleByJwtCustomClaimRule(
         self.type = ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_JWT_CUSTOM_CLAIM_RULE  # type: ignore
 
 
-class TrafficThrottleByJwtSignatureRule(ClientTrafficControlRule, discriminator="TrafficThrottleByJwtSignatureRule"):
+class TrafficThrottleByJwtSignatureRule(
+    ClientTrafficControlRule, discriminator="TrafficThrottleByJwtSignatureRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Throttle the client traffic by the JWT signature.
 
     :ivar max_inbound_message_bytes: Maximum accumulated inbound message bytes allowed for the same
@@ -2934,7 +2946,9 @@ class TrafficThrottleByJwtSignatureRule(ClientTrafficControlRule, discriminator=
         self.type = ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_JWT_SIGNATURE_RULE  # type: ignore
 
 
-class TrafficThrottleByUserIdRule(ClientTrafficControlRule, discriminator="TrafficThrottleByUserIdRule"):
+class TrafficThrottleByUserIdRule(
+    ClientTrafficControlRule, discriminator="TrafficThrottleByUserIdRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Throttle the client traffic by the user ID.
 
     :ivar max_inbound_message_bytes: Maximum accumulated inbound message bytes allowed for the same
@@ -2983,7 +2997,7 @@ class TrafficThrottleByUserIdRule(ClientTrafficControlRule, discriminator="Traff
         self.type = ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_USER_ID_RULE  # type: ignore
 
 
-class UpstreamAuthSettings(_Model):
+class UpstreamAuthSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Upstream auth settings. If not set, no auth is used for upstream messages.
 
     :ivar type: Upstream auth type enum. Known values are: "None" and "ManagedIdentity".
@@ -3035,7 +3049,7 @@ class UserAssignedIdentityProperty(_Model):
     """Get the client id for the user assigned identity."""
 
 
-class WebPubSubHub(ProxyResource):
+class WebPubSubHub(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A hub setting.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3076,7 +3090,7 @@ class WebPubSubHub(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class WebPubSubHubProperties(_Model):
+class WebPubSubHubProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a hub.
 
     :ivar event_handlers: Event handler of a hub.
@@ -3145,7 +3159,7 @@ class WebPubSubHubProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebPubSubKeys(_Model):
+class WebPubSubKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A class represents the access keys of the resource.
 
     :ivar primary_key: The primary access key.
@@ -3196,7 +3210,7 @@ class WebPubSubKeys(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebPubSubNetworkACLs(_Model):
+class WebPubSubNetworkACLs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network ACLs for the resource.
 
     :ivar default_action: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
@@ -3247,7 +3261,7 @@ class WebPubSubNetworkACLs(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebPubSubProperties(_Model):
+class WebPubSubProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A class that describes the properties of the resource.
 
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
@@ -3415,7 +3429,7 @@ class WebPubSubProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebPubSubResource(TrackedResource):
+class WebPubSubResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A class represent a resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3520,7 +3534,7 @@ class WebPubSubResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class WebPubSubSocketIOSettings(_Model):
+class WebPubSubSocketIOSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SocketIO settings for the resource.
 
     :ivar service_mode: The service mode of Web PubSub for Socket.IO. Values allowed: "Default":
@@ -3553,7 +3567,7 @@ class WebPubSubSocketIOSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebPubSubTlsSettings(_Model):
+class WebPubSubTlsSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TLS settings for the resource.
 
     :ivar client_cert_enabled: Request client certificate during TLS handshake if enabled. Not

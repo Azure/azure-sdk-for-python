@@ -193,5 +193,5 @@
         "azure.mgmt.webpubsub.operations.UsagesOperations.list": "Microsoft.SignalRService.UsagesOperationGroup.list",
         "azure.mgmt.webpubsub.aio.operations.UsagesOperations.list": "Microsoft.SignalRService.UsagesOperationGroup.list"
     },
-    "CrossLanguageVersion": "f35af8a4bb82"
+    "CrossLanguageVersion": "76b293b8a6c5"
 }

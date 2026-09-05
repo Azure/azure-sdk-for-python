@@ -26,7 +26,6 @@ if TYPE_CHECKING:
         ManagedIdentityType,
         PrivateLinkServiceConnectionStatus,
         ProvisioningState,
-        ScaleType,
         ServiceKind,
         SharedPrivateLinkResourceStatus,
         UpstreamAuthType,
@@ -38,13 +37,13 @@ if TYPE_CHECKING:
 class ApplicationFirewallSettings(TypedDict, total=False):
     """Application firewall settings for the resource.
 
-    :ivar client_connection_count_rules: Rules to control the client connection count.
-    :vartype client_connection_count_rules: list["ClientConnectionCountRule"]
-    :ivar client_traffic_control_rules: Rules to control the client traffic.
-    :vartype client_traffic_control_rules: list["ClientTrafficControlRule"]
-    :ivar max_client_connection_lifetime_in_seconds: Config to control the client connection
-     lifetime in seconds, can be set to 0 to disable the config.
-    :vartype max_client_connection_lifetime_in_seconds: int
+    :ivar clientConnectionCountRules: Rules to control the client connection count.
+    :vartype clientConnectionCountRules: list["ClientConnectionCountRule"]
+    :ivar clientTrafficControlRules: Rules to control the client traffic.
+    :vartype clientTrafficControlRules: list["ClientTrafficControlRule"]
+    :ivar maxClientConnectionLifetimeInSeconds: Config to control the client connection lifetime in
+     seconds, can be set to 0 to disable the config.
+    :vartype maxClientConnectionLifetimeInSeconds: int
     """
 
     clientConnectionCountRules: list["ClientConnectionCountRule"]
@@ -61,8 +60,8 @@ class ChatSettings(TypedDict, total=False):
 
     :ivar mode: Enable or disable the chat feature.
     :vartype mode: str
-    :ivar persistent_storage: Reference to the the persistent storage for perisisting chat states.
-    :vartype persistent_storage: "ResourceReference"
+    :ivar persistentStorage: Reference to the the persistent storage for perisisting chat states.
+    :vartype persistentStorage: "ResourceReference"
     """
 
     mode: str
@@ -82,9 +81,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -110,9 +109,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -127,9 +126,9 @@ class CustomCertificate(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Custom certificate properties. Required.
     :vartype properties: "CustomCertificateProperties"
     """
@@ -141,15 +140,15 @@ class CustomCertificate(ProxyResource):
 class CustomCertificateProperties(TypedDict, total=False):
     """Custom certificate properties.
 
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar key_vault_base_uri: Base uri of the KeyVault that stores certificate. Required.
-    :vartype key_vault_base_uri: str
-    :ivar key_vault_secret_name: Certificate secret name. Required.
-    :vartype key_vault_secret_name: str
-    :ivar key_vault_secret_version: Certificate secret version.
-    :vartype key_vault_secret_version: str
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar keyVaultBaseUri: Base uri of the KeyVault that stores certificate. Required.
+    :vartype keyVaultBaseUri: str
+    :ivar keyVaultSecretName: Certificate secret name. Required.
+    :vartype keyVaultSecretName: str
+    :ivar keyVaultSecretVersion: Certificate secret version.
+    :vartype keyVaultSecretVersion: str
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -174,9 +173,9 @@ class CustomDomain(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of a custom domain. Required.
     :vartype properties: "CustomDomainProperties"
     """
@@ -188,13 +187,13 @@ class CustomDomain(ProxyResource):
 class CustomDomainProperties(TypedDict, total=False):
     """Properties of a custom domain.
 
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar domain_name: The custom domain name. Required.
-    :vartype domain_name: str
-    :ivar custom_certificate: Reference to a resource. Required.
-    :vartype custom_certificate: "ResourceReference"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar domainName: The custom domain name. Required.
+    :vartype domainName: str
+    :ivar customCertificate: Reference to a resource. Required.
+    :vartype customCertificate: "ResourceReference"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -206,88 +205,10 @@ class CustomDomainProperties(TypedDict, total=False):
     """Reference to a resource. Required."""
 
 
-class Dimension(TypedDict, total=False):
-    """Specifications of the Dimension of metrics.
-
-    :ivar name: The public facing name of the dimension.
-    :vartype name: str
-    :ivar display_name: Localized friendly display name of the dimension.
-    :vartype display_name: str
-    :ivar internal_name: Name of the dimension as it appears in MDM.
-    :vartype internal_name: str
-    :ivar to_be_exported_for_shoebox: A Boolean flag indicating whether this dimension should be
-     included for the shoebox export scenario.
-    :vartype to_be_exported_for_shoebox: bool
-    """
-
-    name: str
-    """The public facing name of the dimension."""
-    displayName: str
-    """Localized friendly display name of the dimension."""
-    internalName: str
-    """Name of the dimension as it appears in MDM."""
-    toBeExportedForShoebox: bool
-    """A Boolean flag indicating whether this dimension should be included for the shoebox export
-     scenario."""
-
-
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
 class EventHandler(TypedDict, total=False):
     """Properties of event handler.
 
-    :ivar url_template: Gets or sets the URL template for the event handler. The actual URL is
+    :ivar urlTemplate: Gets or sets the URL template for the event handler. The actual URL is
      calculated when the corresponding event is triggered. The template supports predefined
      parameters syntax: ``{event}``, ``{hub}``, and KeyVault reference syntax
      ``{@Microsoft.KeyVault(SecretUri=_your_secret_identifier_)}`` For example, if the template is
@@ -296,23 +217,23 @@ class EventHandler(TypedDict, total=False):
      the hostname of the URL, and curly brackets ``{}`` are reserved for parameter syntax only. If
      your URL path contains literal curly brackets, please URL-encode them to ensure proper
      handling. Required.
-    :vartype url_template: str
-    :ivar user_event_pattern: Gets or sets the matching pattern for event names.
+    :vartype urlTemplate: str
+    :ivar userEventPattern: Gets or sets the matching pattern for event names.
      There are 3 kinds of patterns supported:
 
      1. "*", it matches any event name
      2. Combine multiple events with ",", for example "event1,event2", it matches event "event1" and
      "event2"
      3. A single event name, for example, "event1", it matches "event1".
-    :vartype user_event_pattern: str
-    :ivar system_events: Gets or sets the list of system events.
-    :vartype system_events: list[str]
+    :vartype userEventPattern: str
+    :ivar systemEvents: Gets or sets the list of system events.
+    :vartype systemEvents: list[str]
     :ivar auth: Upstream auth settings. If not set, no auth is used for upstream messages.
     :vartype auth: "UpstreamAuthSettings"
-    :ivar group_presence_events: The group presence events that this event handler is concerned
-     with. Group presence events are triggered when connections join or leave groups in the hub. If
-     the value is null, no presence events will be sent to this event handler.
-    :vartype group_presence_events: "GroupPresenceEventFilters"
+    :ivar groupPresenceEvents: The group presence events that this event handler is concerned with.
+     Group presence events are triggered when connections join or leave groups in the hub. If the
+     value is null, no presence events will be sent to this event handler.
+    :vartype groupPresenceEvents: "GroupPresenceEventFilters"
     """
 
     urlTemplate: Required[str]
@@ -347,11 +268,11 @@ class EventHubEndpoint(TypedDict, total=False):
     """An Event Hub endpoint. The managed identity of Web PubSub service must be enabled, and the
     identity should have the "Azure Event Hubs Data sender" role to access Event Hub.
 
-    :ivar fully_qualified_namespace: The fully qualified namespace name of the Event Hub resource.
+    :ivar fullyQualifiedNamespace: The fully qualified namespace name of the Event Hub resource.
      Required.
-    :vartype fully_qualified_namespace: str
-    :ivar event_hub_name: The name of the Event Hub. Required.
-    :vartype event_hub_name: str
+    :vartype fullyQualifiedNamespace: str
+    :ivar eventHubName: The name of the Event Hub. Required.
+    :vartype eventHubName: str
     :ivar type: Required. EVENT_HUB.
     :vartype type: Literal[EventListenerEndpointDiscriminator.EVENT_HUB]
     """
@@ -384,17 +305,17 @@ class EventListener(TypedDict, total=False):
 class EventNameFilter(TypedDict, total=False):
     """Filter events by their name.
 
-    :ivar system_events: Gets or sets a list of system events. Supported events: "connected" and
+    :ivar systemEvents: Gets or sets a list of system events. Supported events: "connected" and
      "disconnected". Blocking event "connect" is not supported because it requires a response.
-    :vartype system_events: list[str]
-    :ivar user_event_pattern: Gets or sets a matching pattern for event names.
+    :vartype systemEvents: list[str]
+    :ivar userEventPattern: Gets or sets a matching pattern for event names.
      There are 3 kinds of patterns supported:
 
      1. "*", it matches any event name
      2. Combine multiple events with ",", for example "event1,event2", it matches events "event1"
      and "event2"
      3. A single event name, for example, "event1", it matches "event1".
-    :vartype user_event_pattern: str
+    :vartype userEventPattern: str
     :ivar type: Required. EVENT_NAME.
     :vartype type: Literal[EventListenerFilterDiscriminator.EVENT_NAME]
     """
@@ -417,13 +338,13 @@ class EventNameFilter(TypedDict, total=False):
 class GroupPresenceEventFilters(TypedDict, total=False):
     """Represents presence event filters for event handler configuration.
 
-    :ivar event_names: The concerning event names. Valid values are "joined", "left". If the value
+    :ivar eventNames: The concerning event names. Valid values are "joined", "left". If the value
      is null or empty, no presence events will be sent to the event handler. Required.
-    :vartype event_names: list[Union[str, "GroupPresenceEventName"]]
-    :ivar group_filters: The group filters. Only events from these groups will be sent to the event
+    :vartype eventNames: list[Union[str, "GroupPresenceEventName"]]
+    :ivar groupFilters: The group filters. Only events from these groups will be sent to the event
      handler. Each element is a pattern that may match multiple groups. If null or empty, events
      from all groups will be sent (subject to eventNames).
-    :vartype group_filters: list[str]
+    :vartype groupFilters: list[str]
     """
 
     eventNames: Required[list[Union[str, "GroupPresenceEventName"]]]
@@ -490,34 +411,19 @@ class LiveTraceConfiguration(TypedDict, total=False):
     """Gets or sets the list of category configurations."""
 
 
-class LogSpecification(TypedDict, total=False):
-    """Specifications of the Logs for Azure Monitoring.
-
-    :ivar name: Name of the log.
-    :vartype name: str
-    :ivar display_name: Localized friendly display name of the log.
-    :vartype display_name: str
-    """
-
-    name: str
-    """Name of the log."""
-    displayName: str
-    """Localized friendly display name of the log."""
-
-
 class ManagedIdentity(TypedDict, total=False):
     """A class represent managed identities used for request and response.
 
     :ivar type: Represents the identity type: systemAssigned, userAssigned, None. Known values are:
      "None", "SystemAssigned", and "UserAssigned".
     :vartype type: Union[str, "ManagedIdentityType"]
-    :ivar user_assigned_identities: Get or set the user assigned identities.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentityProperty"]
-    :ivar principal_id: Get the principal id for the system assigned identity. Only be used in
+    :ivar userAssignedIdentities: Get or set the user assigned identities.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentityProperty"]
+    :ivar principalId: Get the principal id for the system assigned identity. Only be used in
      response.
-    :vartype principal_id: str
-    :ivar tenant_id: Get the tenant id for the system assigned identity. Only be used in response.
-    :vartype tenant_id: str
+    :vartype principalId: str
+    :ivar tenantId: Get the tenant id for the system assigned identity. Only be used in response.
+    :vartype tenantId: str
     """
 
     type: Union[str, "ManagedIdentityType"]
@@ -542,74 +448,6 @@ class ManagedIdentitySettings(TypedDict, total=False):
     resource: str
     """The Resource indicating the App ID URI of the target resource. It also appears in the aud
      (audience) claim of the issued token."""
-
-
-class MetricSpecification(TypedDict, total=False):
-    """Specifications of the Metrics for Azure Monitoring.
-
-    :ivar name: Name of the metric.
-    :vartype name: str
-    :ivar display_name: Localized friendly display name of the metric.
-    :vartype display_name: str
-    :ivar display_description: Localized friendly description of the metric.
-    :vartype display_description: str
-    :ivar unit: The unit that makes sense for the metric.
-    :vartype unit: str
-    :ivar aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
-     Maximum, Total, Count.
-    :vartype aggregation_type: str
-    :ivar fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
-     duration where no metric is emitted/published. Ex. a metric that returns the number of times a
-     particular error code was emitted. The error code may not appear often, instead of the RP
-     publishing 0, Shoebox can auto fill in 0s for time periods where nothing was emitted.
-    :vartype fill_gap_with_zero: str
-    :ivar category: The name of the metric category that the metric belongs to. A metric can only
-     belong to a single category.
-    :vartype category: str
-    :ivar dimensions: The dimensions of the metrics.
-    :vartype dimensions: list["Dimension"]
-    """
-
-    name: str
-    """Name of the metric."""
-    displayName: str
-    """Localized friendly display name of the metric."""
-    displayDescription: str
-    """Localized friendly description of the metric."""
-    unit: str
-    """The unit that makes sense for the metric."""
-    aggregationType: str
-    """Only provide one value for this field. Valid values: Average, Minimum, Maximum, Total, Count."""
-    fillGapWithZero: str
-    """Optional. If set to true, then zero will be returned for time duration where no metric is
-     emitted/published. Ex. a metric that returns the number of times a particular error code was
-     emitted. The error code may not appear often, instead of the RP publishing 0, Shoebox can auto
-     fill in 0s for time periods where nothing was emitted."""
-    category: str
-    """The name of the metric category that the metric belongs to. A metric can only belong to a
-     single category."""
-    dimensions: list["Dimension"]
-    """The dimensions of the metrics."""
-
-
-class NameAvailability(TypedDict, total=False):
-    """Result of the request to check name availability. It contains a flag and possible reason of
-    failure.
-
-    :ivar name_available: Indicates whether the name is available or not.
-    :vartype name_available: bool
-    :ivar reason: The reason of the availability. Required if name is not available.
-    :vartype reason: str
-    :ivar message: The message of the operation.
-    :vartype message: str
-    """
-
-    nameAvailable: bool
-    """Indicates whether the name is available or not."""
-    reason: str
-    """The reason of the availability. Required if name is not available."""
-    message: str
-    """The message of the operation."""
 
 
 class NameAvailabilityParameters(TypedDict, total=False):
@@ -650,69 +488,6 @@ class NetworkACL(TypedDict, total=False):
      RESTAPI."""
 
 
-class Operation(TypedDict, total=False):
-    """REST API operation supported by resource provider.
-
-    :ivar name: Name of the operation with format: {provider}/{resource}/{operation}.
-    :vartype name: str
-    :ivar is_data_action: If the operation is a data action. (for data plane rbac).
-    :vartype is_data_action: bool
-    :ivar display: The object that describes a operation.
-    :vartype display: "OperationDisplay"
-    :ivar origin: Optional. The intended executor of the operation; governs the display of the
-     operation in the RBAC UX and the audit logs UX.
-    :vartype origin: str
-    :ivar properties: Extra Operation properties.
-    :vartype properties: "OperationProperties"
-    """
-
-    name: str
-    """Name of the operation with format: {provider}/{resource}/{operation}."""
-    isDataAction: bool
-    """If the operation is a data action. (for data plane rbac)."""
-    display: "OperationDisplay"
-    """The object that describes a operation."""
-    origin: str
-    """Optional. The intended executor of the operation; governs the display of the operation in the
-     RBAC UX and the audit logs UX."""
-    properties: "OperationProperties"
-    """Extra Operation properties."""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """The object that describes a operation.
-
-    :ivar provider: Friendly name of the resource provider.
-    :vartype provider: str
-    :ivar resource: Resource type on which the operation is performed.
-    :vartype resource: str
-    :ivar operation: The localized friendly name for the operation.
-    :vartype operation: str
-    :ivar description: The localized friendly description for the operation.
-    :vartype description: str
-    """
-
-    provider: str
-    """Friendly name of the resource provider."""
-    resource: str
-    """Resource type on which the operation is performed."""
-    operation: str
-    """The localized friendly name for the operation."""
-    description: str
-    """The localized friendly description for the operation."""
-
-
-class OperationProperties(TypedDict, total=False):
-    """Extra Operation properties.
-
-    :ivar service_specification: An object that describes a specification.
-    :vartype service_specification: "ServiceSpecification"
-    """
-
-    serviceSpecification: "ServiceSpecification"
-    """An object that describes a specification."""
-
-
 class PersistentStorage(ProxyResource):
     """A persistent storage.
 
@@ -724,9 +499,9 @@ class PersistentStorage(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of a persistent storage. Required.
     :vartype properties: "PersistentStorageProperties"
     """
@@ -738,12 +513,12 @@ class PersistentStorage(ProxyResource):
 class PersistentStorageProperties(TypedDict, total=False):
     """Properties of a persistent storage.
 
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar storage_account: Reference to the storage account to be used for persistent storage.
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar storageAccount: Reference to the storage account to be used for persistent storage.
      Required.
-    :vartype storage_account: "ResourceReference"
+    :vartype storageAccount: "ResourceReference"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -792,9 +567,9 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Private endpoint connection properties.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -806,16 +581,15 @@ class PrivateEndpointConnection(ProxyResource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Private endpoint connection properties.
 
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar private_endpoint: Private endpoint.
-    :vartype private_endpoint: "PrivateEndpoint"
-    :ivar group_ids: Group IDs.
-    :vartype group_ids: list[str]
-    :ivar private_link_service_connection_state: Connection state of the private endpoint
-     connection.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionState"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar privateEndpoint: Private endpoint.
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar groupIds: Group IDs.
+    :vartype groupIds: list[str]
+    :ivar privateLinkServiceConnectionState: Connection state of the private endpoint connection.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -829,52 +603,6 @@ class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Connection state of the private endpoint connection."""
 
 
-class PrivateLinkResource(ProxyResource):
-    """Private link resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Private link resource properties.
-    :vartype properties: "PrivateLinkResourceProperties"
-    """
-
-    properties: "PrivateLinkResourceProperties"
-    """Private link resource properties."""
-
-
-class PrivateLinkResourceProperties(TypedDict, total=False):
-    """Private link resource properties.
-
-    :ivar group_id: Group Id of the private link resource.
-    :vartype group_id: str
-    :ivar required_members: Required members of the private link resource.
-    :vartype required_members: list[str]
-    :ivar required_zone_names: Required private DNS zone names.
-    :vartype required_zone_names: list[str]
-    :ivar shareable_private_link_resource_types: The list of resources that are onboarded to
-     private link service.
-    :vartype shareable_private_link_resource_types: list["ShareablePrivateLinkResourceType"]
-    """
-
-    groupId: str
-    """Group Id of the private link resource."""
-    requiredMembers: list[str]
-    """Required members of the private link resource."""
-    requiredZoneNames: list[str]
-    """Required private DNS zone names."""
-    shareablePrivateLinkResourceTypes: list["ShareablePrivateLinkResourceType"]
-    """The list of resources that are onboarded to private link service."""
-
-
 class PrivateLinkServiceConnectionState(TypedDict, total=False):
     """Connection state of the private endpoint connection.
 
@@ -883,9 +611,9 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
     :vartype status: Union[str, "PrivateLinkServiceConnectionStatus"]
     :ivar description: The reason for approval/rejection of the connection.
     :vartype description: str
-    :ivar actions_required: A message indicating if changes on the service provider require any
+    :ivar actionsRequired: A message indicating if changes on the service provider require any
      updates on the consumer.
-    :vartype actions_required: str
+    :vartype actionsRequired: str
     """
 
     status: Union[str, "PrivateLinkServiceConnectionStatus"]
@@ -900,8 +628,8 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
 class RegenerateKeyParameters(TypedDict, total=False):
     """Parameters describes the request to regenerate access keys.
 
-    :ivar key_type: The type of access key. Known values are: "Primary", "Secondary", and "Salt".
-    :vartype key_type: Union[str, "KeyType"]
+    :ivar keyType: The type of access key. Known values are: "Primary", "Secondary", and "Salt".
+    :vartype keyType: Union[str, "KeyType"]
     """
 
     keyType: Union[str, "KeyType"]
@@ -919,9 +647,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -945,9 +673,9 @@ class Replica(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -966,17 +694,17 @@ class Replica(TrackedResource):
 class ReplicaProperties(TypedDict, total=False):
     """ReplicaProperties.
 
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar region_endpoint_enabled: Enable or disable the regional endpoint. Default to "Enabled".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar regionEndpointEnabled: Enable or disable the regional endpoint. Default to "Enabled".
      When it's Disabled, new connections will not be routed to this endpoint, however existing
      connections will not be affected.
-    :vartype region_endpoint_enabled: str
-    :ivar resource_stopped: Stop or start the resource.  Default to "false". When it's true, the
+    :vartype regionEndpointEnabled: str
+    :ivar resourceStopped: Stop or start the resource.  Default to "false". When it's true, the
      data plane of the resource is shutdown. When it's false, the data plane of the resource is
      started.
-    :vartype resource_stopped: str
+    :vartype resourceStopped: str
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -1083,60 +811,6 @@ class ResourceSku(TypedDict, total=False):
      Premium_P2:  100,200,300,400,500,600,700,800,900,1000;."""
 
 
-class ServiceSpecification(TypedDict, total=False):
-    """An object that describes a specification.
-
-    :ivar metric_specifications: Specifications of the Metrics for Azure Monitoring.
-    :vartype metric_specifications: list["MetricSpecification"]
-    :ivar log_specifications: Specifications of the Logs for Azure Monitoring.
-    :vartype log_specifications: list["LogSpecification"]
-    """
-
-    metricSpecifications: list["MetricSpecification"]
-    """Specifications of the Metrics for Azure Monitoring."""
-    logSpecifications: list["LogSpecification"]
-    """Specifications of the Logs for Azure Monitoring."""
-
-
-class ShareablePrivateLinkResourceProperties(TypedDict, total=False):
-    """Describes the properties of a resource type that has been onboarded to private link service.
-
-    :ivar description: The description of the resource type that has been onboarded to private link
-     service.
-    :vartype description: str
-    :ivar group_id: The resource provider group id for the resource that has been onboarded to
-     private link service.
-    :vartype group_id: str
-    :ivar type: The resource provider type for the resource that has been onboarded to private link
-     service.
-    :vartype type: str
-    """
-
-    description: str
-    """The description of the resource type that has been onboarded to private link service."""
-    groupId: str
-    """The resource provider group id for the resource that has been onboarded to private link
-     service."""
-    type: str
-    """The resource provider type for the resource that has been onboarded to private link service."""
-
-
-class ShareablePrivateLinkResourceType(TypedDict, total=False):
-    """Describes a  resource type that has been onboarded to private link service.
-
-    :ivar name: The name of the resource type that has been onboarded to private link service.
-    :vartype name: str
-    :ivar properties: Describes the properties of a resource type that has been onboarded to
-     private link service.
-    :vartype properties: "ShareablePrivateLinkResourceProperties"
-    """
-
-    name: str
-    """The name of the resource type that has been onboarded to private link service."""
-    properties: "ShareablePrivateLinkResourceProperties"
-    """Describes the properties of a resource type that has been onboarded to private link service."""
-
-
 class SharedPrivateLinkResource(ProxyResource):
     """Describes a Shared Private Link Resource.
 
@@ -1148,9 +822,9 @@ class SharedPrivateLinkResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Describes the properties of an existing Shared Private Link Resource.
     :vartype properties: "SharedPrivateLinkResourceProperties"
     """
@@ -1162,18 +836,18 @@ class SharedPrivateLinkResource(ProxyResource):
 class SharedPrivateLinkResourceProperties(TypedDict, total=False):
     """Describes the properties of an existing Shared Private Link Resource.
 
-    :ivar group_id: The group id from the provider of resource the shared private link resource is
+    :ivar groupId: The group id from the provider of resource the shared private link resource is
      for. Required.
-    :vartype group_id: str
-    :ivar private_link_resource_id: The resource id of the resource the shared private link
-     resource is for. Required.
-    :vartype private_link_resource_id: str
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+    :vartype groupId: str
+    :ivar privateLinkResourceId: The resource id of the resource the shared private link resource
+     is for. Required.
+    :vartype privateLinkResourceId: str
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar request_message: The request message for requesting approval of the shared private link
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar requestMessage: The request message for requesting approval of the shared private link
      resource.
-    :vartype request_message: str
+    :vartype requestMessage: str
     :ivar fqdns: A list of FQDNs for third party private link service.
     :vartype fqdns: list[str]
     :ivar status: Status of the shared private link resource. Known values are: "Pending",
@@ -1197,133 +871,23 @@ class SharedPrivateLinkResourceProperties(TypedDict, total=False):
      \"Rejected\", \"Disconnected\", and \"Timeout\"."""
 
 
-class SignalRServiceUsage(TypedDict, total=False):
-    """Object that describes a specific usage of the resources.
-
-    :ivar id: Fully qualified ARM resource id.
-    :vartype id: str
-    :ivar current_value: Current value for the usage quota.
-    :vartype current_value: int
-    :ivar limit: The maximum permitted value for the usage quota. If there is no limit, this value
-     will be -1.
-    :vartype limit: int
-    :ivar name: Localizable String object containing the name and a localized value.
-    :vartype name: "SignalRServiceUsageName"
-    :ivar unit: Representing the units of the usage quota. Possible values are: Count, Bytes,
-     Seconds, Percent, CountPerSecond, BytesPerSecond.
-    :vartype unit: str
-    """
-
-    id: str
-    """Fully qualified ARM resource id."""
-    currentValue: int
-    """Current value for the usage quota."""
-    limit: int
-    """The maximum permitted value for the usage quota. If there is no limit, this value will be -1."""
-    name: "SignalRServiceUsageName"
-    """Localizable String object containing the name and a localized value."""
-    unit: str
-    """Representing the units of the usage quota. Possible values are: Count, Bytes, Seconds, Percent,
-     CountPerSecond, BytesPerSecond."""
-
-
-class SignalRServiceUsageName(TypedDict, total=False):
-    """Localizable String object containing the name and a localized value.
-
-    :ivar value: The identifier of the usage.
-    :vartype value: str
-    :ivar localized_value: Localized name of the usage.
-    :vartype localized_value: str
-    """
-
-    value: str
-    """The identifier of the usage."""
-    localizedValue: str
-    """Localized name of the usage."""
-
-
-class Sku(TypedDict, total=False):
-    """Describes an available sku.".
-
-    :ivar resource_type: The resource type that this object applies to.
-    :vartype resource_type: str
-    :ivar sku: The billing information of the resource.
-    :vartype sku: "ResourceSku"
-    :ivar capacity: Describes scaling information of a sku.
-    :vartype capacity: "SkuCapacity"
-    """
-
-    resourceType: str
-    """The resource type that this object applies to."""
-    sku: "ResourceSku"
-    """The billing information of the resource."""
-    capacity: "SkuCapacity"
-    """Describes scaling information of a sku."""
-
-
-class SkuCapacity(TypedDict, total=False):
-    """Describes scaling information of a sku.
-
-    :ivar minimum: The lowest permitted capacity for this resource.
-    :vartype minimum: int
-    :ivar maximum: The highest permitted capacity for this resource.
-    :vartype maximum: int
-    :ivar default: The default capacity.
-    :vartype default: int
-    :ivar allowed_values: Allows capacity value list.
-    :vartype allowed_values: list[int]
-    :ivar scale_type: The scale type applicable to the sku. Known values are: "None", "Manual", and
-     "Automatic".
-    :vartype scale_type: Union[str, "ScaleType"]
-    """
-
-    minimum: int
-    """The lowest permitted capacity for this resource."""
-    maximum: int
-    """The highest permitted capacity for this resource."""
-    default: int
-    """The default capacity."""
-    allowedValues: list[int]
-    """Allows capacity value list."""
-    scaleType: Union[str, "ScaleType"]
-    """The scale type applicable to the sku. Known values are: \"None\", \"Manual\", and
-     \"Automatic\"."""
-
-
-class SkuList(TypedDict, total=False):
-    """The list skus operation response.
-
-    :ivar value: The list of skus available for the resource.
-    :vartype value: list["Sku"]
-    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
-     It's null for now, added for future use.
-    :vartype next_link: str
-    """
-
-    value: list["Sku"]
-    """The list of skus available for the resource."""
-    nextLink: str
-    """The URL the client should use to fetch the next page (per server side paging). It's null for
-     now, added for future use."""
-
-
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1345,14 +909,14 @@ class SystemData(TypedDict, total=False):
 class ThrottleByJwtCustomClaimRule(TypedDict, total=False):
     """Throttle the client connection by a custom JWT claim.
 
-    :ivar claim_name: The name of the claim in the JWT token. The client connection with the same
+    :ivar claimName: The name of the claim in the JWT token. The client connection with the same
      claim value will be aggregated. If the claim is not found in the token, the connection will be
      allowed. Required.
-    :vartype claim_name: str
-    :ivar max_count: Maximum connection count allowed for the same Jwt claim value. Clients with
-     the same Jwt claim will get rejected if the connection count exceeds this value. Default value
-     is 20.
-    :vartype max_count: int
+    :vartype claimName: str
+    :ivar maxCount: Maximum connection count allowed for the same Jwt claim value. Clients with the
+     same Jwt claim will get rejected if the connection count exceeds this value. Default value is
+     20.
+    :vartype maxCount: int
     :ivar type: Required. THROTTLE_BY_JWT_CUSTOM_CLAIM_RULE.
     :vartype type:
      Literal[ClientConnectionCountRuleDiscriminator.THROTTLE_BY_JWT_CUSTOM_CLAIM_RULE]
@@ -1371,10 +935,10 @@ class ThrottleByJwtCustomClaimRule(TypedDict, total=False):
 class ThrottleByJwtSignatureRule(TypedDict, total=False):
     """Throttle the client connection by the JWT signature.
 
-    :ivar max_count: Maximum connection count allowed for the same JWT signature. Clients with the
+    :ivar maxCount: Maximum connection count allowed for the same JWT signature. Clients with the
      same JWT signature will get rejected if the connection count exceeds this value. Default value
      is 20.
-    :vartype max_count: int
+    :vartype maxCount: int
     :ivar type: Required. THROTTLE_BY_JWT_SIGNATURE_RULE.
     :vartype type: Literal[ClientConnectionCountRuleDiscriminator.THROTTLE_BY_JWT_SIGNATURE_RULE]
     """
@@ -1389,9 +953,9 @@ class ThrottleByJwtSignatureRule(TypedDict, total=False):
 class ThrottleByUserIdRule(TypedDict, total=False):
     """Throttle the client connection by the user ID.
 
-    :ivar max_count: Maximum connection count allowed for the same user ID. Clients with the same
+    :ivar maxCount: Maximum connection count allowed for the same user ID. Clients with the same
      user ID will get rejected if the connection count exceeds this value. Default value is 20.
-    :vartype max_count: int
+    :vartype maxCount: int
     :ivar type: Required. THROTTLE_BY_USER_ID_RULE.
     :vartype type: Literal[ClientConnectionCountRuleDiscriminator.THROTTLE_BY_USER_ID_RULE]
     """
@@ -1406,18 +970,18 @@ class ThrottleByUserIdRule(TypedDict, total=False):
 class TrafficThrottleByJwtCustomClaimRule(TypedDict, total=False):
     """Throttle the client traffic by a custom JWT claim.
 
-    :ivar claim_name: The name of the claim in the JWT token. The message bytes with the same claim
+    :ivar claimName: The name of the claim in the JWT token. The message bytes with the same claim
      value will be aggregated. If the claim is not found in the token, the rule will be skipped.
      Required.
-    :vartype claim_name: str
-    :ivar max_inbound_message_bytes: Maximum accumulated inbound message bytes allowed for the same
+    :vartype claimName: str
+    :ivar maxInboundMessageBytes: Maximum accumulated inbound message bytes allowed for the same
      JWT signature within a time window. Clients with the same JWT claim will get disconnected if
      the message bytes exceeds this value. Default value is 1GB.
-    :vartype max_inbound_message_bytes: int
-    :ivar aggregation_window_in_seconds: The aggregation window for the message bytes. The message
+    :vartype maxInboundMessageBytes: int
+    :ivar aggregationWindowInSeconds: The aggregation window for the message bytes. The message
      bytes will be aggregated in this window and be reset after the window. Default value is 60
      seconds.
-    :vartype aggregation_window_in_seconds: int
+    :vartype aggregationWindowInSeconds: int
     :ivar type: Required. TRAFFIC_THROTTLE_BY_JWT_CUSTOM_CLAIM_RULE.
     :vartype type:
      Literal[ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_JWT_CUSTOM_CLAIM_RULE]
@@ -1440,14 +1004,14 @@ class TrafficThrottleByJwtCustomClaimRule(TypedDict, total=False):
 class TrafficThrottleByJwtSignatureRule(TypedDict, total=False):
     """Throttle the client traffic by the JWT signature.
 
-    :ivar max_inbound_message_bytes: Maximum accumulated inbound message bytes allowed for the same
+    :ivar maxInboundMessageBytes: Maximum accumulated inbound message bytes allowed for the same
      JWT signature within a time window. Clients with the same JWT signature will get disconnected
      if the message bytes exceeds this value. Default value is 1GB.
-    :vartype max_inbound_message_bytes: int
-    :ivar aggregation_window_in_seconds: The aggregation window for the message bytes. The message
+    :vartype maxInboundMessageBytes: int
+    :ivar aggregationWindowInSeconds: The aggregation window for the message bytes. The message
      bytes will be aggregated in this window and be reset after the window. Default value is 60
      seconds.
-    :vartype aggregation_window_in_seconds: int
+    :vartype aggregationWindowInSeconds: int
     :ivar type: Required. TRAFFIC_THROTTLE_BY_JWT_SIGNATURE_RULE.
     :vartype type:
      Literal[ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_JWT_SIGNATURE_RULE]
@@ -1467,14 +1031,14 @@ class TrafficThrottleByJwtSignatureRule(TypedDict, total=False):
 class TrafficThrottleByUserIdRule(TypedDict, total=False):
     """Throttle the client traffic by the user ID.
 
-    :ivar max_inbound_message_bytes: Maximum accumulated inbound message bytes allowed for the same
+    :ivar maxInboundMessageBytes: Maximum accumulated inbound message bytes allowed for the same
      user ID within a time window. Clients with the same user ID will get disconnected if the
      message bytes exceeds this value. Default value is 1GB.
-    :vartype max_inbound_message_bytes: int
-    :ivar aggregation_window_in_seconds: The aggregation window for the message bytes. The message
+    :vartype maxInboundMessageBytes: int
+    :ivar aggregationWindowInSeconds: The aggregation window for the message bytes. The message
      bytes will be aggregated in this window and be reset after the window. Default value is 60
      seconds.
-    :vartype aggregation_window_in_seconds: int
+    :vartype aggregationWindowInSeconds: int
     :ivar type: Required. TRAFFIC_THROTTLE_BY_USER_ID_RULE.
     :vartype type: Literal[ClientTrafficControlRuleDiscriminator.TRAFFIC_THROTTLE_BY_USER_ID_RULE]
     """
@@ -1495,8 +1059,8 @@ class UpstreamAuthSettings(TypedDict, total=False):
 
     :ivar type: Upstream auth type enum. Known values are: "None" and "ManagedIdentity".
     :vartype type: Union[str, "UpstreamAuthType"]
-    :ivar managed_identity: Managed identity settings for upstream.
-    :vartype managed_identity: "ManagedIdentitySettings"
+    :ivar managedIdentity: Managed identity settings for upstream.
+    :vartype managedIdentity: "ManagedIdentitySettings"
     """
 
     type: Union[str, "UpstreamAuthType"]
@@ -1508,10 +1072,10 @@ class UpstreamAuthSettings(TypedDict, total=False):
 class UserAssignedIdentityProperty(TypedDict, total=False):
     """Properties of user assigned identity.
 
-    :ivar principal_id: Get the principal id for the user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: Get the client id for the user assigned identity.
-    :vartype client_id: str
+    :ivar principalId: Get the principal id for the user assigned identity.
+    :vartype principalId: str
+    :ivar clientId: Get the client id for the user assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -1531,9 +1095,9 @@ class WebPubSubHub(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of a hub. Required.
     :vartype properties: "WebPubSubHubProperties"
     """
@@ -1545,21 +1109,20 @@ class WebPubSubHub(ProxyResource):
 class WebPubSubHubProperties(TypedDict, total=False):
     """Properties of a hub.
 
-    :ivar event_handlers: Event handler of a hub.
-    :vartype event_handlers: list["EventHandler"]
-    :ivar event_listeners: Event listener settings for forwarding your client events to listeners.
+    :ivar eventHandlers: Event handler of a hub.
+    :vartype eventHandlers: list["EventHandler"]
+    :ivar eventListeners: Event listener settings for forwarding your client events to listeners.
      Event listener is transparent to Web PubSub clients, and it doesn't return any result to
      clients nor interrupt the lifetime of clients. One event can be sent to multiple listeners, as
      long as it matches the filters in those listeners. The order of the array elements doesn't
      matter. Maximum count of event listeners among all hubs is 10.
-    :vartype event_listeners: list["EventListener"]
-    :ivar anonymous_connect_policy: The settings for configuring if anonymous connections are
-     allowed for this hub: "allow" or "deny". Default to "deny".
-    :vartype anonymous_connect_policy: str
-    :ivar web_socket_keep_alive_interval_in_seconds: The settings for configuring the WebSocket
-     ping-pong interval in seconds for all clients in the hub. Valid range: 1 to 120. Default to 20
-     seconds.
-    :vartype web_socket_keep_alive_interval_in_seconds: int
+    :vartype eventListeners: list["EventListener"]
+    :ivar anonymousConnectPolicy: The settings for configuring if anonymous connections are allowed
+     for this hub: "allow" or "deny". Default to "deny".
+    :vartype anonymousConnectPolicy: str
+    :ivar webSocketKeepAliveIntervalInSeconds: The settings for configuring the WebSocket ping-pong
+     interval in seconds for all clients in the hub. Valid range: 1 to 120. Default to 20 seconds.
+    :vartype webSocketKeepAliveIntervalInSeconds: int
     :ivar chat: The chat settings for the hub.
     :vartype chat: "ChatSettings"
     """
@@ -1582,40 +1145,17 @@ class WebPubSubHubProperties(TypedDict, total=False):
     """The chat settings for the hub."""
 
 
-class WebPubSubKeys(TypedDict, total=False):
-    """A class represents the access keys of the resource.
-
-    :ivar primary_key: The primary access key.
-    :vartype primary_key: str
-    :ivar secondary_key: The secondary access key.
-    :vartype secondary_key: str
-    :ivar primary_connection_string: Connection string constructed via the primaryKey.
-    :vartype primary_connection_string: str
-    :ivar secondary_connection_string: Connection string constructed via the secondaryKey.
-    :vartype secondary_connection_string: str
-    """
-
-    primaryKey: str
-    """The primary access key."""
-    secondaryKey: str
-    """The secondary access key."""
-    primaryConnectionString: str
-    """Connection string constructed via the primaryKey."""
-    secondaryConnectionString: str
-    """Connection string constructed via the secondaryKey."""
-
-
 class WebPubSubNetworkACLs(TypedDict, total=False):
     """Network ACLs for the resource.
 
-    :ivar default_action: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
-    :vartype default_action: Union[str, "ACLAction"]
-    :ivar public_network: Network ACL.
-    :vartype public_network: "NetworkACL"
-    :ivar private_endpoints: ACLs for requests from private endpoints.
-    :vartype private_endpoints: list["PrivateEndpointACL"]
-    :ivar ip_rules: IP rules for filtering public traffic.
-    :vartype ip_rules: list["IPRule"]
+    :ivar defaultAction: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
+    :vartype defaultAction: Union[str, "ACLAction"]
+    :ivar publicNetwork: Network ACL.
+    :vartype publicNetwork: "NetworkACL"
+    :ivar privateEndpoints: ACLs for requests from private endpoints.
+    :vartype privateEndpoints: list["PrivateEndpointACL"]
+    :ivar ipRules: IP rules for filtering public traffic.
+    :vartype ipRules: list["IPRule"]
     """
 
     defaultAction: Union[str, "ACLAction"]
@@ -1631,61 +1171,60 @@ class WebPubSubNetworkACLs(TypedDict, total=False):
 class WebPubSubProperties(TypedDict, total=False):
     """A class that describes the properties of the resource.
 
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar external_ip: The publicly accessible IP of the resource.
-    :vartype external_ip: str
-    :ivar host_name: FQDN of the service instance.
-    :vartype host_name: str
-    :ivar public_port: The publicly accessible port of the resource which is designed for
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar externalIP: The publicly accessible IP of the resource.
+    :vartype externalIP: str
+    :ivar hostName: FQDN of the service instance.
+    :vartype hostName: str
+    :ivar publicPort: The publicly accessible port of the resource which is designed for
      browser/client side usage.
-    :vartype public_port: int
-    :ivar server_port: The publicly accessible port of the resource which is designed for customer
+    :vartype publicPort: int
+    :ivar serverPort: The publicly accessible port of the resource which is designed for customer
      server side usage.
-    :vartype server_port: int
+    :vartype serverPort: int
     :ivar version: Version of the resource. Probably you need the same or higher version of client
      SDKs.
     :vartype version: str
-    :ivar private_endpoint_connections: Private endpoint connections to the resource.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar shared_private_link_resources: The list of shared private link resources.
-    :vartype shared_private_link_resources: list["SharedPrivateLinkResource"]
+    :ivar privateEndpointConnections: Private endpoint connections to the resource.
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar sharedPrivateLinkResources: The list of shared private link resources.
+    :vartype sharedPrivateLinkResources: list["SharedPrivateLinkResource"]
     :ivar tls: TLS settings for the resource.
     :vartype tls: "WebPubSubTlsSettings"
-    :ivar host_name_prefix: Deprecated.
-    :vartype host_name_prefix: str
-    :ivar live_trace_configuration: Live trace configuration of a Microsoft.SignalRService
+    :ivar hostNamePrefix: Deprecated.
+    :vartype hostNamePrefix: str
+    :ivar liveTraceConfiguration: Live trace configuration of a Microsoft.SignalRService resource.
+    :vartype liveTraceConfiguration: "LiveTraceConfiguration"
+    :ivar resourceLogConfiguration: Resource log configuration of a Microsoft.SignalRService
      resource.
-    :vartype live_trace_configuration: "LiveTraceConfiguration"
-    :ivar resource_log_configuration: Resource log configuration of a Microsoft.SignalRService
-     resource.
-    :vartype resource_log_configuration: "ResourceLogConfiguration"
-    :ivar network_ac_ls: Network ACLs for the resource.
-    :vartype network_ac_ls: "WebPubSubNetworkACLs"
-    :ivar application_firewall: Application firewall settings for the resource.
-    :vartype application_firewall: "ApplicationFirewallSettings"
-    :ivar public_network_access: Enable or disable public network access. Default to "Enabled".
-     When it's Enabled, network ACLs still apply. When it's Disabled, public network access is
-     always disabled no matter what you set in network ACLs.
-    :vartype public_network_access: str
-    :ivar disable_local_auth: DisableLocalAuth Enable or disable local auth with AccessKey When set
+    :vartype resourceLogConfiguration: "ResourceLogConfiguration"
+    :ivar networkACLs: Network ACLs for the resource.
+    :vartype networkACLs: "WebPubSubNetworkACLs"
+    :ivar applicationFirewall: Application firewall settings for the resource.
+    :vartype applicationFirewall: "ApplicationFirewallSettings"
+    :ivar publicNetworkAccess: Enable or disable public network access. Default to "Enabled". When
+     it's Enabled, network ACLs still apply. When it's Disabled, public network access is always
+     disabled no matter what you set in network ACLs.
+    :vartype publicNetworkAccess: str
+    :ivar disableLocalAuth: DisableLocalAuth Enable or disable local auth with AccessKey When set
      as true, connection with AccessKey=xxx won't work.
-    :vartype disable_local_auth: bool
-    :ivar disable_aad_auth: DisableLocalAuth Enable or disable aad auth When set as true,
-     connection with AuthType=aad won't work.
-    :vartype disable_aad_auth: bool
-    :ivar region_endpoint_enabled: Enable or disable the regional endpoint. Default to "Enabled".
+    :vartype disableLocalAuth: bool
+    :ivar disableAadAuth: DisableLocalAuth Enable or disable aad auth When set as true, connection
+     with AuthType=aad won't work.
+    :vartype disableAadAuth: bool
+    :ivar regionEndpointEnabled: Enable or disable the regional endpoint. Default to "Enabled".
      When it's Disabled, new connections will not be routed to this endpoint, however existing
      connections will not be affected. This property is replica specific. Disable the regional
      endpoint without replica is not allowed.
-    :vartype region_endpoint_enabled: str
-    :ivar resource_stopped: Stop or start the resource.  Default to "False". When it's true, the
+    :vartype regionEndpointEnabled: str
+    :ivar resourceStopped: Stop or start the resource.  Default to "False". When it's true, the
      data plane of the resource is shutdown. When it's false, the data plane of the resource is
      started.
-    :vartype resource_stopped: str
-    :ivar socket_io: SocketIO settings for the resource.
-    :vartype socket_io: "WebPubSubSocketIOSettings"
+    :vartype resourceStopped: str
+    :ivar socketIO: SocketIO settings for the resource.
+    :vartype socketIO: "WebPubSubSocketIOSettings"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -1750,9 +1289,9 @@ class WebPubSubResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1780,10 +1319,10 @@ class WebPubSubResource(TrackedResource):
 class WebPubSubSocketIOSettings(TypedDict, total=False):
     """SocketIO settings for the resource.
 
-    :ivar service_mode: The service mode of Web PubSub for Socket.IO. Values allowed: "Default":
+    :ivar serviceMode: The service mode of Web PubSub for Socket.IO. Values allowed: "Default":
      have your own backend Socket.IO server "Serverless": your application doesn't have a backend
      server.
-    :vartype service_mode: str
+    :vartype serviceMode: str
     """
 
     serviceMode: str
@@ -1794,9 +1333,9 @@ class WebPubSubSocketIOSettings(TypedDict, total=False):
 class WebPubSubTlsSettings(TypedDict, total=False):
     """TLS settings for the resource.
 
-    :ivar client_cert_enabled: Request client certificate during TLS handshake if enabled. Not
+    :ivar clientCertEnabled: Request client certificate during TLS handshake if enabled. Not
      supported for free tier. Any input will be ignored for free tier.
-    :vartype client_cert_enabled: bool
+    :vartype clientCertEnabled: bool
     """
 
     clientCertEnabled: bool
