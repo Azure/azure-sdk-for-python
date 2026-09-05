@@ -29,7 +29,8 @@ from .._patch import (
 )
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
-from ..operations._patch import _method_accepts_keyword_headers
+from ..operations._patch import _OperationMethodHeaderProxy, _method_accepts_keyword_headers
+from ..models._enums import _AgentDefinitionOptInKeys
 from ..models._patch import _has_header_case_insensitive
 from ._realtime import (
     AsyncRealtime,
@@ -179,6 +180,16 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self._custom_user_agent = self._kwargs.get("user_agent", None)
 
         super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
+
+        if allow_preview:
+            setattr(
+                self,
+                "agent_telephony",
+                _OperationMethodHeaderProxy(
+                    self.agent_telephony,
+                    _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
+                ),
+            )
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
         self._realtime: Optional[AsyncRealtime] = None

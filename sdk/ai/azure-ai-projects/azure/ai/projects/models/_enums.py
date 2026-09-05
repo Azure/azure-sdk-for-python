@@ -1590,6 +1590,35 @@ class TelephonyCallDurationBasis(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     available."""
 
 
+class TelephonyCallJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle status of a durable outbound call job."""
+
+    ACCEPTED = "accepted"
+    """ACCEPTED."""
+    WAITING_FOR_SCHEDULE = "waiting_for_schedule"
+    """WAITING_FOR_SCHEDULE."""
+    QUEUED = "queued"
+    """QUEUED."""
+    DISPATCHING = "dispatching"
+    """DISPATCHING."""
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    WAITING_FOR_RETRY = "waiting_for_retry"
+    """WAITING_FOR_RETRY."""
+    CANCELLATION_REQUESTED = "cancellation_requested"
+    """CANCELLATION_REQUESTED."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    BLOCKED = "blocked"
+    """BLOCKED."""
+    EXPIRED = "expired"
+    """EXPIRED."""
+    FAILED = "failed"
+    """FAILED."""
+    CANCELLED = "cancelled"
+    """CANCELLED."""
+
+
 class TelephonyCallLifecycleEventName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A provider-neutral lifecycle event name. Known values are stable; additional values may be
     added over time.
@@ -1725,6 +1754,115 @@ class TelephonyCallTraceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The call was not eligible for a customer-facing trace."""
     FAILED = "failed"
     """Trace creation failed."""
+
+
+class TelephonyCampaignConfigurationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The immutable-configuration lifecycle status of an outbound campaign."""
+
+    DRAFT = "draft"
+    """DRAFT."""
+    IMPORTING = "importing"
+    """IMPORTING."""
+    VALIDATING = "validating"
+    """VALIDATING."""
+    PUBLISHING = "publishing"
+    """PUBLISHING."""
+    PUBLISHED = "published"
+    """PUBLISHED."""
+    PUBLISH_FAILED = "publish_failed"
+    """PUBLISH_FAILED."""
+
+
+class TelephonyCampaignDuplicateHandling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How duplicate recipient keys in an import are handled."""
+
+    REJECT = "reject"
+    """Reject duplicate recipient keys."""
+    KEEP_EACH = "keep_each"
+    """Keep each recipient entry, distinguishing duplicates by recipient item key."""
+    MERGE = "merge"
+    """Merge entries with the same recipient key."""
+
+
+class TelephonyCampaignExecutionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The execution lifecycle status of a published outbound campaign."""
+
+    NONE = "none"
+    """NONE."""
+    SCHEDULED = "scheduled"
+    """SCHEDULED."""
+    RUNNING = "running"
+    """RUNNING."""
+    PAUSED = "paused"
+    """PAUSED."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    FAILED = "failed"
+    """FAILED."""
+    CANCELLED = "cancelled"
+    """CANCELLED."""
+
+
+class TelephonyCampaignRecipientImportFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A supported Dataset recipient file format."""
+
+    CSV = "csv"
+    """A comma-separated values file."""
+    JSON = "json"
+    """A JSON file containing an array of recipient objects."""
+    JSONL = "jsonl"
+    """A JSON Lines file containing one recipient object per line."""
+
+
+class TelephonyCampaignRecipientImportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle status of a campaign recipient import."""
+
+    RUNNING = "running"
+    """RUNNING."""
+    SUCCEEDED = "succeeded"
+    """SUCCEEDED."""
+    FAILED = "failed"
+    """FAILED."""
+
+
+class TelephonyCampaignScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """When a published outbound campaign becomes eligible to dispatch calls."""
+
+    IMMEDIATE = "immediate"
+    """Calls are eligible immediately after publication."""
+    SCHEDULED = "scheduled"
+    """Calls are eligible at the scheduled start instant."""
+
+
+class TelephonyOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle status of an outbound telephony operation."""
+
+    NOT_STARTED = "not_started"
+    """NOT_STARTED."""
+    RUNNING = "running"
+    """RUNNING."""
+    SUCCEEDED = "succeeded"
+    """SUCCEEDED."""
+    FAILED = "failed"
+    """FAILED."""
+    CANCELLED = "cancelled"
+    """CANCELLED."""
+    UNKNOWN_STATUS = "unknown"
+    """UNKNOWN_STATUS."""
+
+
+class TelephonyOutboundDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of destination for an outbound call."""
+
+    PHONE_NUMBER = "phone_number"
+    """An E.164 phone number."""
+
+
+class TelephonyOutboundRetryPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The retry strategy for an outbound call."""
+
+    FIXED_INTERVAL = "fixed_interval"
+    """Retry after a fixed interval between attempts."""
 
 
 class TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):

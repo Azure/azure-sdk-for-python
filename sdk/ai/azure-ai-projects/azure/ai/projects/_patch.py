@@ -19,6 +19,8 @@ from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
+from .operations._patch import _OperationMethodHeaderProxy
+from .models._enums import _AgentDefinitionOptInKeys
 from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from ._realtime import (
     Realtime,
@@ -245,6 +247,16 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self._custom_user_agent = self._kwargs.get("user_agent", None)
 
         super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
+
+        if allow_preview:
+            setattr(
+                self,
+                "agent_telephony",
+                _OperationMethodHeaderProxy(
+                    self.agent_telephony,
+                    _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
+                ),
+            )
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
         self._realtime: Optional[Realtime] = None

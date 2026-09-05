@@ -213,18 +213,20 @@ class TestFoundryFeaturesHeaderOverrideOnGaOperations(FoundryFeaturesHeaderTestB
         return lambda: method(*args, **kwargs)
 
     @pytest.mark.parametrize("method_name,_expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
+    @pytest.mark.parametrize("header_name", [FOUNDRY_FEATURES_HEADER, "foundry-features", "FoUnDrY-FeAtUrEs"])
     def test_foundry_features_header_override_on_ga_operations(
         self,
         client_preview_enabled: AIProjectClient,
         method_name: str,
         _expected_header_value: str,
+        header_name: str,
     ) -> None:
         """Caller-supplied headers={"Foundry-Features": "CustomValue"} must reach the transport
         instead of the internally-set default value (allow_preview=True)."""
         subclient_name, method_attr = method_name.split(".")
         sc = getattr(client_preview_enabled, subclient_name)
         method = getattr(sc, method_attr)
-        custom_headers = {FOUNDRY_FEATURES_HEADER: "CustomValue"}
+        custom_headers = {header_name: "CustomValue"}
         request = self._capture(self._make_fake_call_with_headers(method, custom_headers))
         assert (
             request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue"

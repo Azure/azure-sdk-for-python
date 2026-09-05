@@ -18,6 +18,7 @@ from ._configuration import AIProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AgentEndpointConversationsOperations,
+    AgentTelephonyOperations,
     AgentsOperations,
     BetaOperations,
     ConnectionsOperations,
@@ -57,6 +58,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
     :ivar agent_endpoint_conversations: AgentEndpointConversationsOperations operations
     :vartype agent_endpoint_conversations:
      azure.ai.projects.operations.AgentEndpointConversationsOperations
+    :ivar agent_telephony: AgentTelephonyOperations operations
+    :vartype agent_telephony: azure.ai.projects.operations.AgentTelephonyOperations
     :ivar toolboxes: ToolboxesOperations operations
     :vartype toolboxes: azure.ai.projects.operations.ToolboxesOperations
     :param endpoint: Foundry Project endpoint in the form
@@ -120,6 +123,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
         self.agent_endpoint_conversations = AgentEndpointConversationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.agent_telephony = AgentTelephonyOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
