@@ -1,5 +1,15 @@
 # Release History
 
+## 2.2.0b1 (2026-08-31)
+
+### Features Added
+
+  - Added enum `BackupSolutionType`
+  - Added model `PostgreSqlFlexibleServerBackupDatasourceParameters`
+  - Added model `ResumeProtectionRequest`
+  - Added enum `ResumeProtectionRequestObjectType`
+  - Model `BackupInstancesOperations` added parameter `content_type` in method `begin_resume_protection`
+
 ## 2.1.0 (2026-07-29)
 
 ### Features Added

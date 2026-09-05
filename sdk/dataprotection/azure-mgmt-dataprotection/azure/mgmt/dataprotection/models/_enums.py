@@ -52,6 +52,15 @@ class AlertsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DISABLED."""
 
 
+class BackupSolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Backup solution types for PostgreSQL Flexible Server."""
+
+    LOGICAL_BACKUP = "LogicalBackup"
+    """Logical backup type."""
+    PHYSICAL_BACKUP = "PhysicalBackup"
+    """Physical backup type."""
+
+
 class BCDRSecurityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Security Level of Backup Vault."""
 
@@ -420,6 +429,13 @@ class RestoreTargetLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AZURE_BLOBS."""
     AZURE_FILES = "AzureFiles"
     """AZURE_FILES."""
+
+
+class ResumeProtectionRequestObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of Datasource object, used to initialize the right inherited type."""
+
+    RESUME_PROTECTION_REQUEST = "ResumeProtectionRequest"
+    """Resume Protection Request Type."""
 
 
 class SecretStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

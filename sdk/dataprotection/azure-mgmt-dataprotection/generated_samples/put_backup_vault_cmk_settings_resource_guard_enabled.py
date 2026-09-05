@@ -62,6 +62,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/VaultCRUD/PutBackupVaultCMKSettings_ResourceGuardEnabled.json
+# x-ms-original-file: 2026-04-01-preview/VaultCRUD/PutBackupVaultCMKSettings_ResourceGuardEnabled.json
 if __name__ == "__main__":
     main()

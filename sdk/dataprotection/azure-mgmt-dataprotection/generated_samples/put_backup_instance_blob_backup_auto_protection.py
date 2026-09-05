@@ -91,6 +91,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/BackupInstanceOperations/PutBackupInstance_BlobBackupAutoProtection.json
+# x-ms-original-file: 2026-04-01-preview/BackupInstanceOperations/PutBackupInstance_BlobBackupAutoProtection.json
 if __name__ == "__main__":
     main()
