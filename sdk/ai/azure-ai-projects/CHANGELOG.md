@@ -1,5 +1,15 @@
 # Release History
 
+## 2.6.1 (Unreleased)
+
+### Sample updates
+
+* Added `sample_agent_insights_on_demand.py` and `sample_agent_insights_scheduled.py` under `samples/agent_insights/` to demonstrate repeatable on-demand analysis, insight lifecycle updates, and scheduled monitor setup.
+
+### Bugs Fixed
+
+* Fixed Agent Insights run pollers to return the completed operation response without following the service's relative `Location` header.
+
 ## 2.6.0 (2026-09-04)
 
 ### Features Added

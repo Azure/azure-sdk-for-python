@@ -134,6 +134,33 @@ def add_sanitizers(test_proxy, sanitized_values):
     # Sanitize checkpoint IDs in URLs and response bodies
     add_general_regex_sanitizer(regex=r"ftchkpt-[a-f0-9]+", value="sanitized-checkpoint-id")
 
+    # Sanitize Agent Insights idempotency and service-generated identifiers.
+    add_header_regex_sanitizer(
+        key="Operation-Id",
+        regex=r".+",
+        value="00000000-0000-0000-0000-000000000000",
+    )
+    add_general_regex_sanitizer(
+        regex=r"monitor_[0-9a-f-]{32,36}",
+        value="monitor_00000000000000000000000000000000",
+    )
+    add_general_regex_sanitizer(
+        regex=r"run_[0-9a-f-]{32,36}",
+        value="run_00000000000000000000000000000000",
+    )
+    add_general_regex_sanitizer(
+        regex=r"insight_[0-9a-f]{24,64}",
+        value="insight_000000000000000000000000",
+    )
+    add_body_key_sanitizer(
+        json_path="$..trace_id",
+        value="00000000000000000000000000000000",
+    )
+    add_general_regex_sanitizer(
+        regex=r"https://(?:agent-insights|Sanitized)\.[a-z0-9-]+\.hyena\.infra\.ai\.azure\.com",
+        value="https://sanitized-agent-insights.azure.com",
+    )
+
     # Sanitize eval dataset names with timestamps (e.g., eval-data-2026-01-19_040648_UTC)
     add_general_regex_sanitizer(regex=r"eval-data-\d{4}-\d{2}-\d{2}_\d{6}_UTC", value="eval-data-sanitized-timestamp")
 
@@ -245,6 +272,8 @@ def add_sanitizers(test_proxy, sanitized_values):
         for value in (
             os.environ.get("FOUNDRY_MODEL_NAME"),
             os.environ.get("foundry_model_name"),
+            os.environ.get("LLM_VALIDATION_MODEL"),
+            os.environ.get("llm_validation_model"),
             os.environ.get("MODEL_DEPLOYMENT_NAME"),
             os.environ.get("model_deployment_name"),
             os.environ.get("MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME"),
@@ -363,6 +392,7 @@ def add_sanitizers(test_proxy, sanitized_values):
     add_remove_header_sanitizer(
         headers="x-stainless-arch, x-stainless-async, x-stainless-lang, x-stainless-os, x-stainless-package-version, x-stainless-read-timeout, x-stainless-retry-count, x-stainless-runtime, x-stainless-runtime-version"
     )
+    add_remove_header_sanitizer(headers="openai-organization, openai-project")
 
     # Strip Content-Encoding so playback doesn't try to decompress a body that the test-proxy
     # has already stored decoded (notably brotli responses from openai endpoints which httpx

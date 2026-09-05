@@ -799,7 +799,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
         instructions = self._resolve_validation_instructions(instructions)
         if is_live():
             endpoint = os.environ["LLM_VALIDATION_PROJECT_ENDPOINT"]
-            model = "gpt-5.2"
+            model = os.environ.get("LLM_VALIDATION_MODEL", "gpt-5.2")
         else:
             endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
             model = PLAYBACK_LLM_VALIDATION_MODEL
@@ -1002,7 +1002,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         instructions = self._resolve_validation_instructions(instructions)
         if is_live():
             endpoint = os.environ["LLM_VALIDATION_PROJECT_ENDPOINT"]
-            model = "gpt-5.2"
+            model = os.environ.get("LLM_VALIDATION_MODEL", "gpt-5.2")
         else:
             endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
             model = PLAYBACK_LLM_VALIDATION_MODEL
