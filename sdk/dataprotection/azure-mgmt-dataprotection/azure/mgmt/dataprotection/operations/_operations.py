@@ -50,7 +50,7 @@ def build_data_protection_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -76,7 +76,7 @@ def build_backup_instances_get_backup_instance_operation_result_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -106,7 +106,7 @@ def build_backup_instances_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -135,7 +135,7 @@ def build_backup_instances_validate_for_backup_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -165,7 +165,7 @@ def build_backup_instances_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -201,7 +201,7 @@ def build_backup_instances_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -242,7 +242,7 @@ def build_backup_instances_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}"
     path_format_arguments = {
@@ -273,7 +273,7 @@ def build_backup_instances_adhoc_backup_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -305,7 +305,7 @@ def build_backup_instances_validate_for_modify_backup_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/validateForModifyBackup"
     path_format_arguments = {
@@ -334,7 +334,7 @@ def build_backup_instances_trigger_rehydrate_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/rehydrate"
     path_format_arguments = {
@@ -369,7 +369,7 @@ def build_backup_instances_trigger_restore_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -403,7 +403,7 @@ def build_backup_instances_resume_backups_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/resumeBackups"
     path_format_arguments = {
@@ -426,7 +426,7 @@ def build_backup_instances_resume_protection_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/resumeProtection"
     path_format_arguments = {
@@ -457,7 +457,7 @@ def build_backup_instances_stop_protection_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/stopProtection"
     path_format_arguments = {
@@ -496,7 +496,7 @@ def build_backup_instances_suspend_backups_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/suspendBackups"
     path_format_arguments = {
@@ -529,7 +529,7 @@ def build_backup_instances_sync_backup_instance_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/sync"
     path_format_arguments = {
@@ -558,7 +558,7 @@ def build_backup_instances_validate_for_restore_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -590,7 +590,7 @@ def build_backup_instances_trigger_cross_region_restore_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -621,7 +621,7 @@ def build_backup_instances_validate_cross_region_restore_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -651,7 +651,7 @@ def build_backup_vault_operation_results_get_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -680,7 +680,7 @@ def build_deleted_backup_vaults_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -708,7 +708,7 @@ def build_deleted_backup_vaults_list_by_location_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -735,7 +735,7 @@ def build_resource_guards_get_default_delete_resource_guard_proxy_requests_objec
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -764,7 +764,7 @@ def build_resource_guards_get_delete_resource_guard_proxy_requests_objects_reque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -792,7 +792,7 @@ def build_resource_guards_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -821,7 +821,7 @@ def build_resource_guards_put_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -852,7 +852,7 @@ def build_resource_guards_patch_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -881,7 +881,7 @@ def build_resource_guards_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/resourceGuards/{resourceGuardsName}"
     path_format_arguments = {
@@ -904,7 +904,7 @@ def build_resource_guards_get_resources_in_resource_group_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -931,7 +931,7 @@ def build_resource_guards_get_resources_in_subscription_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -957,7 +957,7 @@ def build_resource_guards_get_default_disable_soft_delete_requests_object_reques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -986,7 +986,7 @@ def build_resource_guards_get_disable_soft_delete_requests_objects_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1014,7 +1014,7 @@ def build_resource_guards_get_default_update_protected_item_requests_object_requ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1043,7 +1043,7 @@ def build_resource_guards_get_update_protected_item_requests_objects_request(  #
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1071,7 +1071,7 @@ def build_resource_guards_get_default_update_protection_policy_requests_object_r
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1100,7 +1100,7 @@ def build_resource_guards_get_update_protection_policy_requests_objects_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1128,7 +1128,7 @@ def build_resource_guards_get_default_delete_protected_item_requests_object_requ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1157,7 +1157,7 @@ def build_resource_guards_get_delete_protected_item_requests_objects_request(  #
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1185,7 +1185,7 @@ def build_resource_guards_get_default_backup_security_pin_requests_object_reques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1214,7 +1214,7 @@ def build_resource_guards_get_backup_security_pin_requests_objects_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1242,7 +1242,7 @@ def build_backup_vaults_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1277,7 +1277,7 @@ def build_backup_vaults_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1319,7 +1319,7 @@ def build_backup_vaults_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1352,7 +1352,7 @@ def build_backup_vaults_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}"
     path_format_arguments = {
@@ -1375,7 +1375,7 @@ def build_backup_vaults_get_in_subscription_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1401,7 +1401,7 @@ def build_backup_vaults_get_in_resource_group_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1429,7 +1429,7 @@ def build_backup_vaults_check_name_availability_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1459,7 +1459,7 @@ def build_operation_status_backup_vault_context_get_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1487,7 +1487,7 @@ def build_export_jobs_trigger_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/exportBackupJobs"
     path_format_arguments = {
@@ -1510,7 +1510,7 @@ def build_export_jobs_operation_result_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1539,7 +1539,7 @@ def build_backup_policies_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1569,7 +1569,7 @@ def build_backup_policies_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1599,7 +1599,7 @@ def build_backup_policies_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupPolicies/{backupPolicyName}"
     path_format_arguments = {
@@ -1623,7 +1623,7 @@ def build_backup_policies_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1652,7 +1652,7 @@ def build_restorable_time_ranges_find_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1688,7 +1688,7 @@ def build_recovery_points_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1725,7 +1725,7 @@ def build_recovery_points_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1758,7 +1758,7 @@ def build_jobs_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1787,7 +1787,7 @@ def build_jobs_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1815,7 +1815,7 @@ def build_deleted_backup_instances_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1844,7 +1844,7 @@ def build_deleted_backup_instances_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1871,7 +1871,7 @@ def build_deleted_backup_instances_undelete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/deletedBackupInstances/{backupInstanceName}/undelete"
     path_format_arguments = {
@@ -1895,7 +1895,7 @@ def build_dpp_resource_guard_proxy_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1925,7 +1925,7 @@ def build_dpp_resource_guard_proxy_create_or_update_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1955,7 +1955,7 @@ def build_dpp_resource_guard_proxy_delete_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupResourceGuardProxies/{resourceGuardProxyName}"
     path_format_arguments = {
@@ -1979,7 +1979,7 @@ def build_dpp_resource_guard_proxy_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2014,7 +2014,7 @@ def build_dpp_resource_guard_proxy_unlock_delete_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2049,7 +2049,7 @@ def build_operation_result_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2077,7 +2077,7 @@ def build_operation_status_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2105,7 +2105,7 @@ def build_operation_status_resource_group_context_get_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2134,7 +2134,7 @@ def build_data_protection_check_feature_support_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2170,7 +2170,7 @@ def build_fetch_secondary_recovery_points_list_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2205,7 +2205,7 @@ def build_fetch_cross_region_restore_job_get_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2236,7 +2236,7 @@ def build_fetch_cross_region_restore_jobs_list_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2268,7 +2268,7 @@ def build_backup_instances_extension_routing_list_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2288,7 +2288,7 @@ def build_backup_instances_extension_routing_list_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class DataProtectionOperationsOperations:
+class DataProtectionOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2398,7 +2398,7 @@ class DataProtectionOperationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
+class BackupInstancesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4469,6 +4469,19 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "backup_instance_name",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
     def _resume_protection_initial(
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
@@ -4534,6 +4547,19 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "backup_instance_name",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
     def begin_resume_protection(
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
     ) -> LROPoller[None]:
@@ -6119,7 +6145,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class BackupVaultOperationResultsOperations:
+class BackupVaultOperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6222,7 +6248,7 @@ class BackupVaultOperationResultsOperations:
         return deserialized  # type: ignore
 
 
-class DeletedBackupVaultsOperations:
+class DeletedBackupVaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6243,7 +6269,7 @@ class DeletedBackupVaultsOperations:
     @api_version_validation(
         method_added_on="2025-09-01",
         params_added_on={"2025-09-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "accept"]},
-        api_versions_list=["2025-09-01", "2026-03-01"],
+        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
     )
     def get(self, location: str, deleted_vault_name: str, **kwargs: Any) -> _models.DeletedBackupVaultResource:
         """Gets a deleted backup vault.
@@ -6318,7 +6344,7 @@ class DeletedBackupVaultsOperations:
     @api_version_validation(
         method_added_on="2025-09-01",
         params_added_on={"2025-09-01": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2025-09-01", "2026-03-01"],
+        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
     )
     def list_by_location(self, location: str, **kwargs: Any) -> ItemPaged["_models.DeletedBackupVaultResource"]:
         """Lists deleted backup vaults by location.
@@ -6417,7 +6443,7 @@ class DeletedBackupVaultsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ResourceGuardsOperations:
+class ResourceGuardsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8176,7 +8202,7 @@ class ResourceGuardsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BackupVaultsOperations:
+class BackupVaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8265,7 +8291,7 @@ class BackupVaultsOperations:
 
     @api_version_validation(
         params_added_on={"2025-09-01": ["x_ms_deleted_vault_id"]},
-        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01"],
+        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
     )
     def _create_or_update_initial(
         self,
@@ -8455,7 +8481,7 @@ class BackupVaultsOperations:
     @distributed_trace
     @api_version_validation(
         params_added_on={"2025-09-01": ["x_ms_deleted_vault_id"]},
-        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01"],
+        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
     )
     def begin_create_or_update(
         self,
@@ -9290,7 +9316,7 @@ class BackupVaultsOperations:
         return deserialized  # type: ignore
 
 
-class OperationStatusBackupVaultContextOperations:  # pylint: disable=name-too-long
+class OperationStatusBackupVaultContextOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9383,7 +9409,7 @@ class OperationStatusBackupVaultContextOperations:  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
 
-class ExportJobsOperations:
+class ExportJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9516,7 +9542,7 @@ class ExportJobsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ExportJobsOperationResultOperations:
+class ExportJobsOperationResultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9613,7 +9639,7 @@ class ExportJobsOperationResultOperations:
         return deserialized  # type: ignore
 
 
-class BackupPoliciesOperations:
+class BackupPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10060,7 +10086,7 @@ class BackupPoliciesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableTimeRangesOperations:
+class RestorableTimeRangesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10270,7 +10296,7 @@ class RestorableTimeRangesOperations:
         return deserialized  # type: ignore
 
 
-class RecoveryPointsOperations:
+class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10491,7 +10517,7 @@ class RecoveryPointsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class JobsOperations:
+class JobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10687,7 +10713,7 @@ class JobsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DeletedBackupInstancesOperations:
+class DeletedBackupInstancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11008,7 +11034,7 @@ class DeletedBackupInstancesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DppResourceGuardProxyOperations:
+class DppResourceGuardProxyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11654,7 +11680,7 @@ class DppResourceGuardProxyOperations:
         return deserialized  # type: ignore
 
 
-class OperationResultOperations:
+class OperationResultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11754,7 +11780,7 @@ class OperationResultOperations:
         return deserialized  # type: ignore
 
 
-class OperationStatusOperations:
+class OperationStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11843,7 +11869,7 @@ class OperationStatusOperations:
         return deserialized  # type: ignore
 
 
-class OperationStatusResourceGroupContextOperations:  # pylint: disable=name-too-long
+class OperationStatusResourceGroupContextOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11933,7 +11959,7 @@ class OperationStatusResourceGroupContextOperations:  # pylint: disable=name-too
         return deserialized  # type: ignore
 
 
-class DataProtectionOperations:
+class DataProtectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12112,7 +12138,7 @@ class DataProtectionOperations:
         return deserialized  # type: ignore
 
 
-class FetchSecondaryRecoveryPointsOperations:
+class FetchSecondaryRecoveryPointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12367,7 +12393,7 @@ class FetchSecondaryRecoveryPointsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FetchCrossRegionRestoreJobOperations:
+class FetchCrossRegionRestoreJobOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12556,7 +12582,7 @@ class FetchCrossRegionRestoreJobOperations:
         return deserialized  # type: ignore
 
 
-class FetchCrossRegionRestoreJobsOperations:
+class FetchCrossRegionRestoreJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12788,7 +12814,7 @@ class FetchCrossRegionRestoreJobsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BackupInstancesExtensionRoutingOperations:  # pylint: disable=name-too-long
+class BackupInstancesExtensionRoutingOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
