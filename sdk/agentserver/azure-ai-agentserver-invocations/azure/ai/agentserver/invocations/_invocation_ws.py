@@ -15,6 +15,7 @@ the user handler with:
 * a clean close on handler return (code 1000) or a 1011 close on uncaught
   handler exceptions;
 * a structured close-event log line carrying
+  ``azure.ai.agentserver.session_id``,
   ``azure.ai.agentserver.invocations_ws.session_id``,
   ``azure.ai.agentserver.invocations_ws.close_code``, and
   ``azure.ai.agentserver.invocations_ws.duration_ms``.
@@ -27,11 +28,13 @@ import uuid
 from collections.abc import Awaitable, Callable
 from typing import TYPE_CHECKING, Any, Optional
 
+from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
 )
+from azure.ai.agentserver.core._tracing import _BAGGAGE_SESSION_ID
 
 from ._constants import InvocationsWSConstants
 
@@ -56,6 +59,36 @@ logger = logging.getLogger("azure.ai.agentserver")
 
 
 WSHandler = Callable[[WebSocket], Awaitable[None]]
+
+
+def _websocket_session_context(session_id: str, *, context: Any = None) -> Any:
+    """Add WebSocket session baggage while preserving caller context.
+
+    :param str session_id: The session identifier to add to OpenTelemetry baggage.
+    :keyword context: The caller context to enrich. Defaults to the current context.
+    :paramtype context: ~opentelemetry.context.Context or None
+    :return: The enriched OpenTelemetry context.
+    :rtype: ~opentelemetry.context.Context
+    """
+    if context is None:
+        context = _otel_context.get_current()
+    return _otel_baggage.set_baggage(
+        _BAGGAGE_SESSION_ID,
+        session_id,
+        context=context,
+    )
+
+
+def _attach_websocket_session_context(session_id: str, *, context: Any = None) -> Any:
+    """Attach the WebSocket session baggage while preserving caller context.
+
+    :param str session_id: The session identifier to add to OpenTelemetry baggage.
+    :keyword context: The caller context to enrich. Defaults to the current context.
+    :paramtype context: ~opentelemetry.context.Context or None
+    :return: The token used to restore the previous OpenTelemetry context.
+    :rtype: ~opentelemetry.context.Token
+    """
+    return _otel_context.attach(_websocket_session_context(session_id, context=context))
 
 
 class _WSHandlerMixin(_MixinBase):
@@ -187,9 +220,9 @@ class _WSHandlerMixin(_MixinBase):
     async def _ws_endpoint(self, websocket: WebSocket) -> None:
         """ASGI endpoint for ``/invocations_ws``.
 
-        Wraps the user-registered handler with: accept, span lifecycle,
-        graceful close on success, 1011 close on failure, and a structured
-        close event log + span attributes.
+        Wraps the user-registered handler with caller-context propagation,
+        session baggage, accept, graceful close on success, 1011 close on
+        failure, and structured close-event logging.
 
         :param websocket: The incoming Starlette WebSocket.
         :type websocket: ~starlette.websockets.WebSocket
@@ -204,58 +237,70 @@ class _WSHandlerMixin(_MixinBase):
         session_id = self.config.session_id or str(uuid.uuid4())
         start_ns = time.monotonic_ns()
 
-        # NOTE: when no ``@ws_handler`` is registered, the route itself is
-        # not registered (see ``_ensure_ws_route_registered``), so this
-        # endpoint is unreachable in that state — Starlette returns 404.
-
-        # Accept the upgrade *before* invoking the user handler — per spec.
+        # Preserve caller baggage extracted by TraceContextMiddleware and add
+        # the session correlation key consumed by the A365 enrichment
+        # processor for child spans and logs.
+        baggage_token = _attach_websocket_session_context(session_id)
         try:
-            await websocket.accept()
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            await self._finalize_session(
-                websocket=None,
-                session_id=session_id,
-                start_ns=start_ns,
-                close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
-                error_code="accept_failed",
-            )
-            logger.error(
-                "WebSocket accept failed for session %s: %s",
-                session_id, exc, exc_info=True,
-            )
-            return
+            # NOTE: when no ``@ws_handler`` is registered, the route itself is
+            # not registered (see ``_ensure_ws_route_registered``), so this
+            # endpoint is unreachable in that state — Starlette returns 404.
 
-        close_code: int = InvocationsWSConstants.CLOSE_NORMAL
-        handler_exc: Optional[BaseException] = None
-        try:
-            close_code, handler_exc = await self._invoke_user_handler(websocket, session_id)
-        except BaseException as exc:  # pylint: disable=broad-exception-caught
-            # ``_invoke_user_handler`` catches ``Exception`` but not
-            # ``BaseException`` (notably ``asyncio.CancelledError``).  Capture
-            # the exception so the ``finally`` block below can record it,
-            # then re-raise via ``finally`` so cancellation is never
-            # swallowed.
-            close_code = InvocationsWSConstants.CLOSE_INTERNAL_ERROR
-            handler_exc = exc
-            raise
+            # Accept the upgrade *before* invoking the user handler — per spec.
+            try:
+                await websocket.accept()
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                await self._finalize_session(
+                    websocket=None,
+                    session_id=session_id,
+                    start_ns=start_ns,
+                    close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
+                    error_code="accept_failed",
+                )
+                logger.error(
+                    "WebSocket accept failed for session %s: %s",
+                    session_id, exc, exc_info=True,
+                )
+                return
+
+            close_code: int = InvocationsWSConstants.CLOSE_NORMAL
+            handler_exc: Optional[BaseException] = None
+            try:
+                close_code, handler_exc = await self._invoke_user_handler(
+                    websocket, session_id
+                )
+            except BaseException as exc:  # pylint: disable=broad-exception-caught
+                # ``_invoke_user_handler`` catches ``Exception`` but not
+                # ``BaseException`` (notably ``asyncio.CancelledError``).
+                # Capture the exception so the ``finally`` block below can
+                # record it, then re-raise via ``finally`` so cancellation is
+                # never swallowed.
+                close_code = InvocationsWSConstants.CLOSE_INTERNAL_ERROR
+                handler_exc = exc
+                raise
+            finally:
+                # Always finalize — emits the close-event log line and
+                # best-effort closes the socket — even when the handler
+                # raised a ``BaseException`` like ``CancelledError``.
+                error_code: Optional[str]
+                if handler_exc is None:
+                    error_code = None
+                elif isinstance(handler_exc, Exception):
+                    error_code = "internal_error"
+                else:
+                    error_code = "cancelled"
+                await self._finalize_session(
+                    websocket=websocket,
+                    session_id=session_id,
+                    start_ns=start_ns,
+                    close_code=close_code,
+                    error_code=error_code,
+                )
         finally:
-            # Always finalize — emits the close-event log line and
-            # best-effort closes the socket — even when the handler
-            # raised a ``BaseException`` like ``CancelledError``.
-            error_code: Optional[str]
-            if handler_exc is None:
-                error_code = None
-            elif isinstance(handler_exc, Exception):
-                error_code = "internal_error"
-            else:
-                error_code = "cancelled"
-            await self._finalize_session(
-                websocket=websocket,
-                session_id=session_id,
-                start_ns=start_ns,
-                close_code=close_code,
-                error_code=error_code,
-            )
+            try:
+                _otel_context.detach(baggage_token)
+            except ValueError:
+                pass
 
     async def _invoke_user_handler(
         self, websocket: WebSocket, session_id: str,
@@ -364,7 +409,8 @@ class _WSHandlerMixin(_MixinBase):
     ) -> None:
         """Emit the structured close-event log line for one WS connection.
 
-        The log record carries ``azure.ai.agentserver.invocations_ws.session_id``,
+        The log record carries ``azure.ai.agentserver.session_id``,
+        ``azure.ai.agentserver.invocations_ws.session_id``,
         ``azure.ai.agentserver.invocations_ws.close_code``, and
         ``azure.ai.agentserver.invocations_ws.duration_ms`` via the standard
         ``logging`` ``extra`` dict — a structured-logging formatter or an
@@ -383,6 +429,7 @@ class _WSHandlerMixin(_MixinBase):
         :paramtype error_code: Optional[str]
         """
         extra: dict[str, Any] = {
+            _BAGGAGE_SESSION_ID: session_id,
             InvocationsWSConstants.ATTR_SPAN_SESSION_ID: session_id,
             InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE: close_code,
             InvocationsWSConstants.ATTR_SPAN_DURATION_MS: duration_ms,
@@ -390,9 +437,11 @@ class _WSHandlerMixin(_MixinBase):
         if error_code:
             extra[InvocationsWSConstants.ATTR_SPAN_ERROR_CODE] = error_code
 
-        # NOTE: ``extra`` keys deliberately use dotted names
-        # (``azure.ai.agentserver.invocations_ws.session_id`` etc.) so they
-        # line up 1:1 with the keys defined in :class:`InvocationsWSConstants`.
+        # NOTE: ``extra`` keys deliberately use dotted names so they line up
+        # 1:1 with their source constants — the session-ID key comes from the
+        # shared ``_BAGGAGE_SESSION_ID`` (``azure.ai.agentserver.session_id``)
+        # in ``azure-ai-agentserver-core`` so HTTP and WebSocket logs correlate.
+        # The protocol-specific session key is retained for compatibility.
         # The trade-off is that printf-style log formatters can't address
         # them directly — use a structured (JSON / OTel) formatter, or
         # access via ``LogRecord.__dict__["<key>"]`` for plain ``logging``.

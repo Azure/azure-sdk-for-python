@@ -18,6 +18,10 @@
   `FOUNDRY_AGENT_SESSION_GUID` environment variable for hosted session
   incarnation identity.
 
+### Bugs Fixed
+
+- Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
+
 ### Other Changes
 
 - Changed the default Azure Monitor trace sampling rate to 100%. Explicit OpenTelemetry sampler environment variables continue to take precedence.

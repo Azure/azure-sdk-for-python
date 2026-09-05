@@ -2,14 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
-
+import asyncio
 import os
 from functools import partial
 from threading import Event, Thread
 from typing import Any, Optional
 from unittest import mock
 
-from opentelemetry import baggage as _otel_baggage, context as _otel_context
+import pytest
+from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
 from opentelemetry.sdk.resources import Resource
@@ -24,6 +25,7 @@ from azure.ai.agentserver.core._config import (
 from azure.ai.agentserver.core._tracing import (
     _BaggageLogRecordProcessor,
     _FoundryEnrichmentSpanProcessor,
+    TraceContextMiddleware,
 )
 
 
@@ -42,6 +44,91 @@ class _CollectorExporter(SpanExporter):
 
     def force_flush(self, timeout_millis=30000):
         return True
+
+
+def test_trace_context_middleware_preserves_repeated_baggage_headers() -> None:
+    captured_baggage = {}
+
+    async def app(_scope, _receive, _send):
+        captured_baggage.update(_otel_baggage.get_all())
+
+    scope = {
+        "type": "websocket",
+        "headers": [
+            (b"Baggage", b"caller.first=one"),
+            (b"baggage", b"caller.second=two"),
+        ],
+    }
+
+    asyncio.run(TraceContextMiddleware(app)(scope, None, None))
+
+    assert captured_baggage == {
+        "caller.first": "one",
+        "caller.second": "two",
+    }
+
+
+def test_trace_context_middleware_preserves_repeated_tracestate_headers() -> None:
+    captured = {}
+
+    async def app(_scope, _receive, _send):
+        span_context = trace.get_current_span().get_span_context()
+        captured.update(
+            {
+                "is_remote": span_context.is_remote,
+                "vendor1": span_context.trace_state.get("vendor1"),
+                "vendor2": span_context.trace_state.get("vendor2"),
+            }
+        )
+
+    scope = {
+        "type": "websocket",
+        "headers": [
+            (b"traceparent", b"00-11111111111111111111111111111111-2222222222222222-01"),
+            (b"tracestate", b"vendor1=value1"),
+            (b"TraceState", b"vendor2=value2"),
+        ],
+    }
+
+    asyncio.run(TraceContextMiddleware(app)(scope, None, None))
+
+    assert captured == {
+        "is_remote": True,
+        "vendor1": "value1",
+        "vendor2": "value2",
+    }
+
+
+def test_trace_context_middleware_rejects_duplicate_traceparent_headers() -> None:
+    captured_trace_id = None
+
+    async def app(_scope, _receive, _send):
+        nonlocal captured_trace_id
+        captured_trace_id = trace.get_current_span().get_span_context().trace_id
+
+    scope = {
+        "type": "websocket",
+        "headers": [
+            (b"traceparent", b"00-11111111111111111111111111111111-2222222222222222-01"),
+            (b"TraceParent", b"00-33333333333333333333333333333333-4444444444444444-01"),
+        ],
+    }
+
+    asyncio.run(TraceContextMiddleware(app)(scope, None, None))
+
+    assert captured_trace_id == 0
+
+
+def test_trace_context_middleware_propagates_process_control_exceptions() -> None:
+    async def app(_scope, _receive, _send):
+        raise AssertionError("downstream app should not run")
+
+    scope = {"type": "websocket", "headers": []}
+    middleware = TraceContextMiddleware(app)
+
+    with mock.patch("opentelemetry.propagate.extract", side_effect=SystemExit):
+        with pytest.raises(SystemExit):
+            asyncio.run(middleware(scope, None, None))
 
 
 # ------------------------------------------------------------------ #

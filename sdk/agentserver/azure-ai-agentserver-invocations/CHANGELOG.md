@@ -24,6 +24,10 @@
 - Added source-aware `Session.termination` for classifying unfinished
   application work during connection cleanup.
 
+### Bugs Fixed
+
+- Added A365 telemetry correlation to `invocations_ws` by propagating the WebSocket session ID as OpenTelemetry baggage for handler spans and logs, using the cross-protocol `azure.ai.agentserver.session_id` attribute while retaining the legacy structured-log field.
+
 ### Samples
 
 - Updated `basic_voice_agent` to declare target turns around real background
@@ -35,6 +39,7 @@
 ### Other Changes
 
 - Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
+- Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b1`.
 
 ## 1.1.0 (2026-08-24)
 
