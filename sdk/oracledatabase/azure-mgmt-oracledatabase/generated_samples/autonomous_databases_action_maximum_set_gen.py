@@ -32,12 +32,12 @@ def main():
 
     response = client.autonomous_databases.begin_action(
         resource_group_name="rgopenapi",
-        autonomousdatabasename="databasedb1",
+        autonomousdatabasename="resource1",
         body={"action": "Start"},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/AutonomousDatabases_Action_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/AutonomousDatabases_Action_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
