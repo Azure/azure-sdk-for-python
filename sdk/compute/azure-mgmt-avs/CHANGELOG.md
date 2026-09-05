@@ -1,5 +1,42 @@
 # Release History
 
+## 10.1.0 (2026-09-03)
+
+### Features Added
+
+  - Enum `BlockedDatesConstraintCategory` added member `OVERLAPPING_MAINTENANCE`
+  - Model `GeneralHostProperties` added property `licenses`
+  - Model `HostProperties` added property `licenses`
+  - Model `MaintenanceProperties` added property `activities`
+  - Model `MaintenanceProperties` added property `group`
+  - Model `MaintenanceProperties` added property `relationships`
+  - Model `RescheduleOperation` added property `recommendation`
+  - Enum `RescheduleOperationConstraintKind` added member `RESCHEDULING_WINDOW`
+  - Enum `RescheduleOperationConstraintKind` added member `WEEKEND_RESCHEDULING`
+  - Model `ScheduleOperation` added property `recommendation`
+  - Enum `ScheduleOperationConstraintKind` added member `WEEKEND_SCHEDULING`
+  - Model `SpecializedHostProperties` added property `licenses`
+  - Added model `HostLicense`
+  - Added enum `HostLicenseKind`
+  - Added model `HostUpdate`
+  - Added model `HostUpdateProperties`
+  - Added model `MaintenanceActivity`
+  - Added enum `MaintenanceActivityKind`
+  - Added model `MaintenanceGroup`
+  - Added enum `MaintenanceGroupKind`
+  - Added model `MaintenanceRecommendation`
+  - Added model `MaintenanceRelationships`
+  - Added model `MaintenanceWindowRecommendation`
+  - Added model `ReschedulingWindowConstraint`
+  - Added model `WeekendReschedulingConstraint`
+  - Added model `WeekendSchedulingConstraint`
+  - Added model `WindowsServerLicense`
+  - Operation group `HostsOperations` added method `update`
+
+### Breaking Changes
+
+  - Minimum Python version raised to 3.10 (previously 3.9); Python 3.9 is no longer supported.
+
 ## 10.0.0 (2025-12-15)
 
 ### Features Added
