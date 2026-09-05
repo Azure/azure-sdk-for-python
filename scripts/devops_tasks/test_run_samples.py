@@ -96,6 +96,11 @@ IGNORED_SAMPLES = {
         # Runs until Ctrl-C (continuous microphone capture/playback); would hang indefinitely
         # under this non-interactive runner whenever PyAudio and live credentials are available.
         "sample_voice_agent_live_audio_conversation_async.py",
+        # Opens a live client.realtime WebSocket connection; excluded here for the same reason
+        # the package's own recorded sample suite skips it (see samples_to_skip in
+        # tests/samples/test_samples.py) -- a WebSocket session can't be captured/replayed, so
+        # this runner would otherwise execute it live and non-interactively.
+        "sample_voice_agent_live_function_tool.py",
         # These read back a conversation transcript/audio from a *pre-existing*, already-persisted
         # voice session via FOUNDRY_VOICE_CONVERSATION_ID, which no automation here provides (the
         # package's own recorded sample suite skips them for the same reason -- see

@@ -25,7 +25,7 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
     2) FOUNDRY_VOICE_AGENT_NAME - The name of the voice agent.
     3) FOUNDRY_VOICE_CONVERSATION_ID - The id of a persisted conversation
-       (captured from the `conversation.created` event during a live session,
+       (captured from the `session.created` event during a live session,
        see sample_voice_agent_live_audio_conversation_async.py).
 """
 

@@ -34,7 +34,7 @@ USAGE:
 import json
 import os
 import sys
-from typing import Any, Final, cast
+from typing import Any, Final, List, Tuple, cast
 
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
@@ -106,6 +106,11 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
         )
         conn.response.create()
 
+        # Tool outputs collected from the current turn's function-call(s). These are held back
+        # and only sent once this turn's own response.done arrives (below) -- calling
+        # response.create() while the function-call response is still finishing can otherwise
+        # race with the service and produce a concurrent-response error.
+        pending_tool_outputs: List[Tuple[str, str]] = []
         while True:
             try:
                 event = conn.recv(timeout=_RESPONSE_TIMEOUT)
@@ -114,19 +119,15 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
                 conn.response.cancel()
                 return
             if isinstance(event, RealtimeServerEventResponseFunctionCallArgumentsDone):
-                # The service forwards the call to us; execute it locally and
-                # send the result back so the agent can use it in its reply.
+                # The service forwards the call to us; execute it locally now, but defer sending
+                # the result until this response's own response.done arrives.
                 args = json.loads(event.arguments)
                 print(f"Tool call: {event.name}({args})")
                 if event.name == "get_weather":
                     result = get_weather(**args)
                 else:
                     result = json.dumps({"error": f"Unknown tool: {event.name}"})
-
-                conn.conversation.item.create(
-                    item=RealtimeConversationItemFunctionCallOutput(call_id=event.call_id, output=result)
-                )
-                conn.response.create()
+                pending_tool_outputs.append((event.call_id, result))
             elif isinstance(event, RealtimeServerEventResponseTextDone):
                 # The sample agent uses a text-only output modality, so the
                 # reply arrives as output text rather than an audio transcript.
@@ -136,7 +137,16 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
                 # Output items are typed models in the tested scenarios here, but the underlying
                 # union is open (forward-compatible with item kinds this SDK doesn't map yet), so
                 # an unrecognized kind could still surface as a plain mapping; check both.
-                if not any(
+                if pending_tool_outputs:
+                    # The function-call response has now fully completed, so it's safe to submit
+                    # its tool output(s) and ask for a new response.
+                    for call_id, result in pending_tool_outputs:
+                        conn.conversation.item.create(
+                            item=RealtimeConversationItemFunctionCallOutput(call_id=call_id, output=result)
+                        )
+                    pending_tool_outputs = []
+                    conn.response.create()
+                elif not any(
                     (item.get("type") if isinstance(item, dict) else getattr(item, "type", None)) == "function_call"
                     for item in (event.response.output or [])
                 ):

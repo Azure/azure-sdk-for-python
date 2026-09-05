@@ -24,7 +24,7 @@ against a recorded cassette rather than opening a live WebSocket connection on e
 
 import json
 import time
-from typing import Any, cast, Final
+from typing import Any, cast, Final, List, Tuple
 
 import pytest
 from test_base import TestBase, servicePreparer
@@ -252,6 +252,11 @@ class TestVoiceAgentRealtimeLive(TestBase):
                 final_text = ""
                 deadline = time.monotonic() + _RESPONSE_TIMEOUT
                 done = False
+                # Tool outputs collected from the current turn's function-call(s). These are held
+                # back and only sent once this turn's own response.done arrives (below) -- calling
+                # response.create() while the function-call response is still finishing can
+                # otherwise race with the service and produce a concurrent-response error.
+                pending_tool_outputs: List[Tuple[str, str]] = []
 
                 while time.monotonic() < deadline and not done:
                     event = conn.recv(timeout=_EVENT_TIMEOUT)
@@ -261,10 +266,7 @@ class TestVoiceAgentRealtimeLive(TestBase):
                         args = json.loads(event.arguments)
                         assert "city" in args
                         result = _get_weather(**args)
-                        conn.conversation.item.create(
-                            item=RealtimeConversationItemFunctionCallOutput(call_id=event.call_id, output=result)
-                        )
-                        conn.response.create()
+                        pending_tool_outputs.append((event.call_id, result))
                     elif isinstance(event, RealtimeServerEventResponseTextDone):
                         final_text = event.text
                     elif isinstance(event, RealtimeServerEventResponseDone):
@@ -276,7 +278,16 @@ class TestVoiceAgentRealtimeLive(TestBase):
                             == "function_call"
                             for item in output
                         )
-                        if not is_function_call:
+                        if pending_tool_outputs:
+                            # The function-call response has now fully completed, so it's safe to
+                            # submit its tool output(s) and ask for a new response.
+                            for call_id, result in pending_tool_outputs:
+                                conn.conversation.item.create(
+                                    item=RealtimeConversationItemFunctionCallOutput(call_id=call_id, output=result)
+                                )
+                            pending_tool_outputs = []
+                            conn.response.create()
+                        elif not is_function_call:
                             done = True
                     elif isinstance(event, RealtimeServerEventError):
                         pytest.fail(f"Session error: {event.error.message}")
