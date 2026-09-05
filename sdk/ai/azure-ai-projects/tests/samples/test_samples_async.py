@@ -324,8 +324,6 @@ class TestSamplesAsync(AzureRecordedTestCase):
                 # through this mechanism.
                 "sample_voice_agent_live_text_conversation_async.py",
                 "sample_voice_agent_live_audio_conversation_async.py",
-                # PR #48484: recording not yet available for this REST-only sample.
-                "sample_voice_agent_basic_async.py",
             ],
         ),
     )
@@ -336,4 +334,13 @@ class TestSamplesAsync(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
+
+        if os.path.basename(sample_path) == "sample_voice_agent_basic_async.py":
+            # validate_print_calls_by_llm_async needs a live LLM_VALIDATION_PROJECT_ENDPOINT
+            # with a gpt-5.2 deployment to record, which isn't available for this REST-only
+            # sample (PR #48484). execute_async() above still records/replays its real REST
+            # calls, so execution success is the validation signal here; the LLM-judge content
+            # check is deferred until that resource is available.
+            return
+
         await executor.validate_print_calls_by_llm_async()

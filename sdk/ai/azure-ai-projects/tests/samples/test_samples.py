@@ -402,11 +402,6 @@ class TestSamples(AzureRecordedTestCase):
                 # do so). Needs a recorded conversation fixture before it can run here.
                 "sample_voice_agent_read_conversation.py",
                 "sample_voice_agent_read_conversation_audio.py",
-                # PR #48484: recording not yet available for these REST-only samples.
-                "sample_voice_agent_basic.py",
-                "sample_voice_agent_generate.py",
-                "sample_voice_agent_versions.py",
-                "sample_voice_agent_with_tools.py",
             ],
         ),
     )
@@ -417,4 +412,18 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
+
+        if os.path.basename(sample_path) in (
+            "sample_voice_agent_basic.py",
+            "sample_voice_agent_generate.py",
+            "sample_voice_agent_versions.py",
+            "sample_voice_agent_with_tools.py",
+        ):
+            # validate_print_calls_by_llm needs a live LLM_VALIDATION_PROJECT_ENDPOINT with a
+            # gpt-5.2 deployment to record, which isn't available for these REST-only samples
+            # (PR #48484). execute() above still records/replays their real REST calls, so
+            # execution success is the validation signal here; the LLM-judge content check is
+            # deferred until that resource is available.
+            return
+
         executor.validate_print_calls_by_llm()
