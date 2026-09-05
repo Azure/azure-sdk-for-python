@@ -17,15 +17,11 @@ FULL_BUILD_SET = [
     "sdist",
     "import_all",
     "latestdependency",
-    # Testing mindependency is disabled for CFS onboarding. 
-    # https://github.com/Azure/azure-sdk-for-python/issues/48346
-    # "mindependency",
+    "mindependency",
     "whl_no_aio",
 ]
 
-# Testing mindependency is disabled for CFS onboarding. 
-# https://github.com/Azure/azure-sdk-for-python/issues/48346
-PR_BUILD_SET = ["whl", "sdist"] #, "mindependency"]
+PR_BUILD_SET = ["whl", "sdist", "mindependency"]
 
 
 def resolve_devops_variable(var_value: str) -> List[str]:
