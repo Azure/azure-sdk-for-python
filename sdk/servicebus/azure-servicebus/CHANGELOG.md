@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Bounded the recursion depth of the pyAMQP decoder so a deeply nested message cannot exhaust the interpreter stack (`RecursionError`) during decode. Nesting beyond a fixed limit now raises a clear `ValueError`, complementing the existing element-count cap.
+
 ### Other Changes
 
 ## 7.15.0b2 (2026-08-21)

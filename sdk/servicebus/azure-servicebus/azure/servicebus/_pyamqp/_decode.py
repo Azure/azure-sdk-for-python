@@ -7,6 +7,7 @@ import struct
 import uuid
 import logging
 import decimal
+import threading
 from typing import (
     Callable,
     List,
@@ -73,6 +74,32 @@ DECIMAL128_EXPONENT_MAX = 6144
 DECIMAL128_EXPONENT_MIN = -6143
 DECIMAL128_MAX_DIGITS = 34
 DECIMAL128_BIAS = 6176
+
+# --- Nesting-depth guard: bound recursion of the recursive-descent decoder.
+# Complements the _MAX_COMPOUND_COUNT element-count cap. A malicious peer can nest
+# compound types (list/map/array/described) arbitrarily deep; each level is ~1-3 wire
+# bytes but one Python recursion frame, so a small message can exhaust the interpreter
+# stack (RecursionError) before any count cap applies. ---
+_MAX_NESTED_DEPTH = 64
+_decode_depth = threading.local()
+
+
+def _depth_guarded(fn):
+    """Bound the recursion depth of a compound-type decoder. Thread-local so concurrent
+    connections do not race; balanced by try/finally (decode is synchronous, no awaits)."""
+    def _wrapper(buffer, *args, **kwargs):
+        depth = getattr(_decode_depth, "value", 0) + 1
+        if depth > _MAX_NESTED_DEPTH:
+            raise ValueError(
+                f"AMQP nested compound depth exceeds maximum {_MAX_NESTED_DEPTH}"
+            )
+        _decode_depth.value = depth
+        try:
+            return fn(buffer, *args, **kwargs)
+        finally:
+            _decode_depth.value = depth - 1
+    return _wrapper
+
 
 
 
@@ -232,6 +259,7 @@ def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]
     with decimal.localcontext(decimal_ctx) as ctx:
         return buffer[16:], ctx.create_decimal((sign, digits, exponent))
 
+@_depth_guarded
 def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]
     buffer = buffer[2:]
@@ -241,6 +269,7 @@ def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     return buffer, values
 
 
+@_depth_guarded
 def _decode_list_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     # Validate the wire-supplied count before allocating `[None] * count`,
@@ -256,6 +285,7 @@ def _decode_list_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     return buffer, values
 
 
+@_depth_guarded
 def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
     raw_count = buffer[1]
     if raw_count % 2 != 0:
@@ -272,6 +302,7 @@ def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
     return buffer, values
 
 
+@_depth_guarded
 def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
     # Validate the raw on-wire count *before* halving it (the AMQP encoding
     # stores total entries; pairs = entries / 2). Checking pre-halve keeps
@@ -298,6 +329,7 @@ def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
     return buffer, values
 
 
+@_depth_guarded
 def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]  # Ignore first byte (size) and just rely on count
     if count:
@@ -319,6 +351,7 @@ def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     return buffer[2:], []
 
 
+@_depth_guarded
 def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     # Validate the wire-supplied count before allocating `[None] * count`.
@@ -347,6 +380,7 @@ def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     return buffer[8:], []
 
 
+@_depth_guarded
 def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
     # TODO: to move the cursor of the buffer to the described value based on size of the
     #  descriptor without decoding descriptor value

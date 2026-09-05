@@ -1,6 +1,11 @@
 import pathlib
 import pytest
-from azure.servicebus._pyamqp._decode import decode_frame, _PERFORMATIVE_FIELD_COUNT
+from azure.servicebus._pyamqp._decode import (
+    decode_frame,
+    decode_payload,
+    _PERFORMATIVE_FIELD_COUNT,
+    _MAX_NESTED_DEPTH,
+)
 from azure.servicebus._pyamqp import performatives
 
 
@@ -183,6 +188,36 @@ def test_performative_field_count_matches_spec(frame_cls, expected_count):
     # The padding target is the number of wire fields defined for each
     # performative (the trailing transfer payload slot is excluded).
     assert _PERFORMATIVE_FIELD_COUNT[frame_cls._code] == expected_count
+
+
+def _nested_value(levels):
+    # An amqp-value section (descriptor 0x77) wrapping `levels` nested list8
+    # compounds, each holding exactly one element: 0xc0 (list8), size, count=1,
+    # with an innermost list0 (0x45) leaf. decode_payload dispatches the value
+    # constructor directly and the list0 leaf is not a guarded decoder, so the
+    # decode reaches exactly `levels` guarded compound frames. Every level passes
+    # the _MAX_COMPOUND_COUNT check (count == 1); only the nesting depth grows,
+    # ~3 wire bytes per level.
+    inner = bytes([0x45])  # innermost empty list (list0)
+    for _ in range(levels):
+        inner = bytes([0xC0, 0, 1]) + inner
+    return memoryview(bytes([0x00, 0x53, 0x77]) + inner)
+
+
+def test_decode_allows_nesting_at_the_depth_cap():
+    # Exactly at the cap must still decode: the guard rejects only depth > cap.
+    decode_payload(_nested_value(_MAX_NESTED_DEPTH))
+
+
+def test_decode_rejects_excessive_nesting_depth():
+    # One level past the cap, and a pathologically deep message, must each raise
+    # a clean ValueError rather than exhausting the interpreter stack with a
+    # RecursionError. The element-count cap does not catch this: every level has
+    # count == 1.
+    with pytest.raises(ValueError, match="nested compound depth"):
+        decode_payload(_nested_value(_MAX_NESTED_DEPTH + 1))
+    with pytest.raises(ValueError, match="nested compound depth"):
+        decode_payload(_nested_value(5000))
 
 
 # The _pyamqp engine is vendored identically into azure-eventhub and
