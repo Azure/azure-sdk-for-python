@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CheckNameAvailabilityRequest(_Model):
+class CheckNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability request body.
 
     :ivar name: The name of the resource for which availability needs to be checked.
@@ -50,7 +50,7 @@ class CheckNameAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResponse(_Model):
+class CheckNameAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability result.
 
     :ivar name_available: Indicates if the resource name is available.
@@ -138,7 +138,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -184,7 +184,7 @@ class FreeTrialProperties(_Model):
      \"NotApplicable\"."""
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -236,7 +236,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -369,7 +369,7 @@ class ProxyResource(Resource):
     """
 
 
-class PlaywrightQuota(ProxyResource):
+class PlaywrightQuota(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subscription-level location-based Playwright quota resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -429,7 +429,7 @@ class PlaywrightQuotaProperties(_Model):
      \"Canceled\", \"Creating\", \"Deleting\", and \"Accepted\"."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -473,7 +473,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PlaywrightWorkspace(TrackedResource):
+class PlaywrightWorkspace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Playwright workspace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -555,7 +555,7 @@ class PlaywrightWorkspaceFreeTrialProperties(_Model):
     """The percentage of the free trial quota used. Required."""
 
 
-class PlaywrightWorkspaceProperties(_Model):
+class PlaywrightWorkspaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Playwright workspace resource properties.
 
     :ivar provisioning_state: The status of the last resource operation. Known values are:
@@ -580,6 +580,11 @@ class PlaywrightWorkspaceProperties(_Model):
     :ivar storage_uri: The URI of the Azure storage account used to store workspace artifacts, test
      results, and reports.
     :vartype storage_uri: str
+    :ivar subnet_id: The ARM resource ID of the virtual network subnet to inject the workspace into
+     for private network connectivity. This is of the form
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Network/virtualNetworks/{virtualNetwork}/subnets/{subnet}'.
+     This value cannot be changed after the workspace is created.
+    :vartype subnet_id: str
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -613,6 +618,11 @@ class PlaywrightWorkspaceProperties(_Model):
     )
     """The URI of the Azure storage account used to store workspace artifacts, test results, and
      reports."""
+    subnet_id: Optional[str] = rest_field(name="subnetId", visibility=["read", "create"])
+    """The ARM resource ID of the virtual network subnet to inject the workspace into for private
+     network connectivity. This is of the form
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Network/virtualNetworks/{virtualNetwork}/subnets/{subnet}'.
+     This value cannot be changed after the workspace is created."""
 
     @overload
     def __init__(
@@ -622,6 +632,7 @@ class PlaywrightWorkspaceProperties(_Model):
         local_auth: Optional[Union[str, "_models.EnablementStatus"]] = None,
         reporting: Optional[Union[str, "_models.EnablementStatus"]] = None,
         storage_uri: Optional[str] = None,
+        subnet_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -635,7 +646,7 @@ class PlaywrightWorkspaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlaywrightWorkspaceQuota(ProxyResource):
+class PlaywrightWorkspaceQuota(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Playwright workspace quota resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -697,7 +708,7 @@ class PlaywrightWorkspaceQuotaProperties(_Model):
      \"Canceled\", \"Creating\", \"Deleting\", and \"Accepted\"."""
 
 
-class PlaywrightWorkspaceUpdate(_Model):
+class PlaywrightWorkspaceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the PlaywrightWorkspace.
 
     :ivar identity: The managed service identities assigned to this resource.
@@ -739,7 +750,7 @@ class PlaywrightWorkspaceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlaywrightWorkspaceUpdateProperties(_Model):
+class PlaywrightWorkspaceUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the PlaywrightWorkspace.
 
     :ivar regional_affinity: Controls the connection region for client workers to cloud-hosted
@@ -803,7 +814,7 @@ class PlaywrightWorkspaceUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
