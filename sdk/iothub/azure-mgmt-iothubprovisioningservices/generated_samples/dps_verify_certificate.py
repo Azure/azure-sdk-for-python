@@ -15,7 +15,7 @@ from azure.mgmt.iothubprovisioningservices import IotDpsClient
     pip install azure-identity
     pip install azure-mgmt-iothubprovisioningservices
 # USAGE
-    python dps_list_keys.py
+    python dps_verify_certificate.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,17 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.iot_dps_resource.list_keys(
-        provisioning_service_name="myFirstProvisioningService",
+    response = client.dps_certificate.verify_certificate(
+        certificate_name="cert",
         resource_group_name="myResourceGroup",
+        provisioning_service_name="myFirstProvisioningService",
+        request={"certificate": "#####################################"},
+        etag="AAAAAAAADGk=",
+        match_condition=~azure.core.MatchConditions,
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2026-08-31/DPSListKeys.json
+# x-ms-original-file: 2026-08-31/DPSVerifyCertificate.json
 if __name__ == "__main__":
     main()
