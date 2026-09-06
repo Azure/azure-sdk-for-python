@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 """Tests for opt-in compact UTF-8 serialization of item write bodies."""
+# cspell:ignore udfff
+
 import json
 import unittest
 from unittest import mock
