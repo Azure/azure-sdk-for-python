@@ -14,8 +14,16 @@ from azure.cosmos import DatabaseProxy, ContainerProxy, exceptions
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
 class TestEncoding(unittest.TestCase):
-    """Test to ensure escaping of non-ascii characters from partition key"""
+    """Test to ensure escaping of non-ascii characters from partition key.
+
+    Marked for the emulator lane and both live lanes: the compact UTF-8
+    item-write coverage below asserts on service behavior (2 MiB request
+    limit, non-ASCII round trips) that the emulator only approximates, so
+    these must also run against a live account.
+    """
 
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
@@ -72,6 +80,11 @@ class TestEncoding(unittest.TestCase):
         read_doc = self.created_container.read_item(item=created_doc['id'], partition_key='pk')
         self.assertEqual(read_doc['unicode_content'], test_string)
 
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason="Stored-procedure creation is a control-plane operation that needs key auth; "
+               "the account under test may have local auth disabled.",
+    )
     def test_create_stored_procedure_with_line_separator_para_seperator_next_line_unicodes(self):
         # scripts.create_stored_procedure and scripts.get_stored_procedure are control-plane.
         # operations that will return 403 under AAD Data Contributor role. This test uses key_container

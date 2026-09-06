@@ -103,8 +103,10 @@ def _should_escape_non_ascii_in_request_body(client, request_params):
     :returns: whether non-ASCII characters should be escaped in the body.
     :rtype: bool
     """
+    # getattr keeps the safe (escaped) default for any caller that supplies a
+    # client object without the option, e.g. custom or legacy connections.
     return (
-        not client._enable_compact_utf8_item_writes  # pylint: disable=protected-access
+        not getattr(client, "_enable_compact_utf8_item_writes", False)
         or request_params.resource_type != http_constants.ResourceType.Document
         or request_params.operation_type not in _ITEM_BODY_WRITE_OPERATIONS
     )

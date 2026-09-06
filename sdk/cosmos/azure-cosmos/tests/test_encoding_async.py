@@ -18,8 +18,14 @@ from azure.cosmos import exceptions
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
 class TestEncodingAsync(unittest.IsolatedAsyncioTestCase):
-    """Async round-trips for non-ASCII document content."""
+    """Async round-trips for non-ASCII document content.
+
+    Marked for the emulator lane and both live lanes so the compact UTF-8
+    item-write coverage runs against a real account as well.
+    """
 
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
