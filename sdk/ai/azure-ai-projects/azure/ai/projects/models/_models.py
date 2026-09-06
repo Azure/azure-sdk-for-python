@@ -55,6 +55,7 @@ from ._enums import (
     ScheduleTaskType,
     TelemetryEndpointAuthType,
     TelemetryEndpointKind,
+    TelephonyOutboundRetryPolicyType,
     TelephonyProvider,
     TelephonyTransferDestinationKind,
     TextResponseFormatConfigurationType,
@@ -6209,6 +6210,126 @@ class CreateTeamsPhoneExtensionTelephonyBindingRequest(
         self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSION  # type: ignore
 
 
+class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A request to create one durable direct outbound call job.
+
+    :ivar destination: The phone destination to call. Required.
+    :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
+    :ivar telephony_binding_id: The active agent telephony binding used to originate the call.
+     Required.
+    :vartype telephony_binding_id: str
+    :ivar purpose: An optional customer-declared purpose for placing the call.
+    :vartype purpose: str
+    :ivar structured_inputs: Structured input values available to the agent and greeting for this
+     call. Agent-declared inputs are validated against their schemas; omitted optional inputs may
+     use their Agent-defined default values, while omitted required inputs are rejected. Additional
+     inputs remain available as dynamic template variables.
+    :vartype structured_inputs: dict[str, any]
+    :ivar schedule: The optional execution window.
+    :vartype schedule: ~azure.ai.projects.models.TelephonyCallJobSchedule
+    :ivar retry_policy: The provider-attempt retry policy. Omit it for one attempt with no retry
+     delay.
+    :vartype retry_policy: ~azure.ai.projects.models.TelephonyOutboundRetryPolicy
+    """
+
+    destination: "_models.TelephonyOutboundDestination" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The phone destination to call. Required."""
+    telephony_binding_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The active agent telephony binding used to originate the call. Required."""
+    purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional customer-declared purpose for placing the call."""
+    structured_inputs: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Structured input values available to the agent and greeting for this call. Agent-declared
+     inputs are validated against their schemas; omitted optional inputs may use their Agent-defined
+     default values, while omitted required inputs are rejected. Additional inputs remain available
+     as dynamic template variables."""
+    schedule: Optional["_models.TelephonyCallJobSchedule"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional execution window."""
+    retry_policy: Optional["_models.TelephonyOutboundRetryPolicy"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The provider-attempt retry policy. Omit it for one attempt with no retry delay."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        destination: "_models.TelephonyOutboundDestination",
+        telephony_binding_id: str,
+        purpose: Optional[str] = None,
+        structured_inputs: Optional[dict[str, Any]] = None,
+        schedule: Optional["_models.TelephonyCallJobSchedule"] = None,
+        retry_policy: Optional["_models.TelephonyOutboundRetryPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CreateTelephonyCampaignRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A request to create a draft outbound campaign.
+
+    :ivar display_name: A customer-visible name for the campaign. Required.
+    :vartype display_name: str
+    :ivar telephony_binding_id: The active agent telephony binding used to originate campaign
+     calls. Required.
+    :vartype telephony_binding_id: str
+    :ivar purpose: An optional customer-declared purpose for campaign calls.
+    :vartype purpose: str
+    :ivar schedule: When the published campaign becomes eligible to dispatch calls.
+    :vartype schedule: ~azure.ai.projects.models.TelephonyCampaignSchedule
+    :ivar retry_policy: The provider-attempt retry policy inherited by every materialized call job.
+    :vartype retry_policy: ~azure.ai.projects.models.TelephonyOutboundRetryPolicy
+    """
+
+    display_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A customer-visible name for the campaign. Required."""
+    telephony_binding_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The active agent telephony binding used to originate campaign calls. Required."""
+    purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional customer-declared purpose for campaign calls."""
+    schedule: Optional["_models.TelephonyCampaignSchedule"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When the published campaign becomes eligible to dispatch calls."""
+    retry_policy: Optional["_models.TelephonyOutboundRetryPolicy"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The provider-attempt retry policy inherited by every materialized call job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        telephony_binding_id: str,
+        purpose: Optional[str] = None,
+        schedule: Optional["_models.TelephonyCampaignSchedule"] = None,
+        retry_policy: Optional["_models.TelephonyOutboundRetryPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CreateTranscriptionResponseJsonUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Token usage statistics for the request.
 
@@ -10547,6 +10668,59 @@ class ImageGenToolInputImageMask(_Model):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
+class ImportTelephonyCampaignRecipientsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A request to import campaign recipients from a Dataset CSV, JSON array, or JSONL file. Imported
+    Agent-declared structured inputs follow the Agent definition's schema, required, and
+    default-value semantics.
+
+    :ivar source: Required.
+    :vartype source: ~azure.ai.projects.models.TelephonyCampaignRecipientImportSource
+    :ivar mapping: Mappings from recipient properties to source fields or columns. Omit this
+     property or an individual entry to use same-named source fields. Destination and recipient-key
+     source fields are required. Optional source fields may be absent, except the recipient item key
+     when ``duplicate_handling`` is ``keep_each``.
+    :vartype mapping: ~azure.ai.projects.models.TelephonyCampaignRecipientMappingRequest
+    :ivar duplicate_handling: Known values are: "reject", "keep_each", and "merge".
+    :vartype duplicate_handling: str or
+     ~azure.ai.projects.models.TelephonyCampaignDuplicateHandling
+    """
+
+    source: "_models.TelephonyCampaignRecipientImportSource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+    mapping: Optional["_models.TelephonyCampaignRecipientMappingRequest"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Mappings from recipient properties to source fields or columns. Omit this property or an
+     individual entry to use same-named source fields. Destination and recipient-key source fields
+     are required. Optional source fields may be absent, except the recipient item key when
+     ``duplicate_handling`` is ``keep_each``."""
+    duplicate_handling: Optional[Union[str, "_models.TelephonyCampaignDuplicateHandling"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"reject\", \"keep_each\", and \"merge\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: "_models.TelephonyCampaignRecipientImportSource",
+        mapping: Optional["_models.TelephonyCampaignRecipientMappingRequest"] = None,
+        duplicate_handling: Optional[Union[str, "_models.TelephonyCampaignDuplicateHandling"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class InlineSkillParam(
     ContainerSkill, discriminator="inline"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -14475,6 +14649,34 @@ class PSTNTelephonyTransferDestination(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = TelephonyTransferDestinationKind.PSTN  # type: ignore
+
+
+class PublishTelephonyCampaignRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A request to publish a validated outbound campaign draft.
+
+    :ivar validation_id: Required.
+    :vartype validation_id: str
+    """
+
+    validation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        validation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class RaiConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -21430,6 +21632,226 @@ class TelemetryConfig(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
+class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A durable direct or campaign-created outbound call intent.
+
+    :ivar destination: The phone destination to call. Required.
+    :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
+    :ivar telephony_binding_id: The active agent telephony binding used to originate the call.
+     Required.
+    :vartype telephony_binding_id: str
+    :ivar purpose: An optional customer-declared purpose for placing the call.
+    :vartype purpose: str
+    :ivar structured_inputs: Structured input values available to the agent and greeting for this
+     call. Agent-declared inputs are validated against their schemas; omitted optional inputs may
+     use their Agent-defined default values, while omitted required inputs are rejected. Additional
+     inputs remain available as dynamic template variables.
+    :vartype structured_inputs: dict[str, any]
+    :ivar schedule: The optional execution window.
+    :vartype schedule: ~azure.ai.projects.models.TelephonyCallJobSchedule
+    :ivar id: The service-generated call-job identifier. Required.
+    :vartype id: str
+    :ivar object: The object type. Always ``telephony.call_job``. Required. Default value is
+     "telephony.call_job".
+    :vartype object: str
+    :ivar agent_name: The name of the voice agent used at execution time. Required.
+    :vartype agent_name: str
+    :ivar status: The current call-job lifecycle status. Required. Known values are: "accepted",
+     "waiting_for_schedule", "queued", "dispatching", "in_progress", "waiting_for_retry",
+     "cancellation_requested", "completed", "blocked", "expired", "failed", and "cancelled".
+    :vartype status: str or ~azure.ai.projects.models.TelephonyCallJobStatus
+    :ivar cancellation: The recorded cancellation request, when cancellation was requested.
+    :vartype cancellation: ~azure.ai.projects.models.TelephonyCallJobCancellation
+    :ivar retry_policy: The frozen provider-attempt retry policy. Required.
+    :vartype retry_policy: ~azure.ai.projects.models.TelephonyOutboundRetryPolicyResponse
+    :ivar attempt_count: The number of provider attempts created so far. Required.
+    :vartype attempt_count: int
+    :ivar next_attempt_at: The Unix timestamp in seconds at which the next retry becomes eligible.
+    :vartype next_attempt_at: ~datetime.datetime
+    :ivar terminal_reason: The stable reason for the terminal status, when available.
+    :vartype terminal_reason: str
+    :ivar revision: The monotonically increasing optimistic-concurrency revision. Required.
+    :vartype revision: int
+    :ivar created_at: The Unix timestamp in seconds when the call job was created. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The Unix timestamp in seconds when the call job was last updated. Required.
+    :vartype updated_at: ~datetime.datetime
+    """
+
+    destination: "_models.TelephonyOutboundDestination" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The phone destination to call. Required."""
+    telephony_binding_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The active agent telephony binding used to originate the call. Required."""
+    purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional customer-declared purpose for placing the call."""
+    structured_inputs: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Structured input values available to the agent and greeting for this call. Agent-declared
+     inputs are validated against their schemas; omitted optional inputs may use their Agent-defined
+     default values, while omitted required inputs are rejected. Additional inputs remain available
+     as dynamic template variables."""
+    schedule: Optional["_models.TelephonyCallJobSchedule"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The optional execution window."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service-generated call-job identifier. Required."""
+    object: Literal["telephony.call_job"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type. Always ``telephony.call_job``. Required. Default value is
+     \"telephony.call_job\"."""
+    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the voice agent used at execution time. Required."""
+    status: Union[str, "_models.TelephonyCallJobStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current call-job lifecycle status. Required. Known values are: \"accepted\",
+     \"waiting_for_schedule\", \"queued\", \"dispatching\", \"in_progress\", \"waiting_for_retry\",
+     \"cancellation_requested\", \"completed\", \"blocked\", \"expired\", \"failed\", and
+     \"cancelled\"."""
+    cancellation: Optional["_models.TelephonyCallJobCancellation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recorded cancellation request, when cancellation was requested."""
+    retry_policy: "_models.TelephonyOutboundRetryPolicyResponse" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The frozen provider-attempt retry policy. Required."""
+    attempt_count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of provider attempts created so far. Required."""
+    next_attempt_at: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The Unix timestamp in seconds at which the next retry becomes eligible."""
+    terminal_reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The stable reason for the terminal status, when available."""
+    revision: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The monotonically increasing optimistic-concurrency revision. Required."""
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The Unix timestamp in seconds when the call job was created. Required."""
+    updated_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The Unix timestamp in seconds when the call job was last updated. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        destination: "_models.TelephonyOutboundDestination",
+        telephony_binding_id: str,
+        id: str,  # pylint: disable=redefined-builtin
+        agent_name: str,
+        status: Union[str, "_models.TelephonyCallJobStatus"],
+        retry_policy: "_models.TelephonyOutboundRetryPolicyResponse",
+        attempt_count: int,
+        revision: int,
+        created_at: datetime.datetime,
+        updated_at: datetime.datetime,
+        purpose: Optional[str] = None,
+        structured_inputs: Optional[dict[str, Any]] = None,
+        schedule: Optional["_models.TelephonyCallJobSchedule"] = None,
+        cancellation: Optional["_models.TelephonyCallJobCancellation"] = None,
+        next_attempt_at: Optional[datetime.datetime] = None,
+        terminal_reason: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["telephony.call_job"] = "telephony.call_job"
+
+
+class TelephonyCallJobCancellation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A cancellation request recorded for an outbound call job.
+
+    :ivar requested_by: The authenticated principal that requested cancellation. Required.
+    :vartype requested_by: str
+    :ivar mode: The cancellation mode applied to the call job. Required.
+    :vartype mode: str
+    :ivar requested_at: The Unix timestamp in seconds when cancellation was requested. Required.
+    :vartype requested_at: ~datetime.datetime
+    :ivar revision: The call-job revision at which cancellation was recorded. Required.
+    :vartype revision: int
+    """
+
+    requested_by: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The authenticated principal that requested cancellation. Required."""
+    mode: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The cancellation mode applied to the call job. Required."""
+    requested_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The Unix timestamp in seconds when cancellation was requested. Required."""
+    revision: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The call-job revision at which cancellation was recorded. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        requested_by: str,
+        mode: str,
+        requested_at: datetime.datetime,
+        revision: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TelephonyCallJobSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The optional execution window for a direct outbound call.
+
+    :ivar not_before: The earliest instant at which dispatch may begin.
+    :vartype not_before: ~datetime.datetime
+    :ivar expires_at: The instant after which the call job expires without dispatch.
+    :vartype expires_at: ~datetime.datetime
+    """
+
+    not_before: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The earliest instant at which dispatch may begin."""
+    expires_at: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The instant after which the call job expires without dispatch."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        not_before: Optional[datetime.datetime] = None,
+        expires_at: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TelephonyCallLifecycleEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A bounded durable observation in the lifecycle of one telephony call.
 
@@ -22017,6 +22439,813 @@ class TelephonyCallTrace(_Model):  # pylint: disable=docstring-keyword-should-ma
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A durable outbound campaign owned by a voice agent.
+
+    :ivar display_name: A customer-visible name for the campaign. Required.
+    :vartype display_name: str
+    :ivar telephony_binding_id: The active agent telephony binding used to originate campaign
+     calls. Required.
+    :vartype telephony_binding_id: str
+    :ivar purpose: An optional customer-declared purpose for campaign calls.
+    :vartype purpose: str
+    :ivar schedule: When the published campaign becomes eligible to dispatch calls.
+    :vartype schedule: ~azure.ai.projects.models.TelephonyCampaignSchedule
+    :ivar id: Required.
+    :vartype id: str
+    :ivar object: Required. Default value is "telephony.campaign".
+    :vartype object: str
+    :ivar agent_name: Required.
+    :vartype agent_name: str
+    :ivar configuration_status: Required. Known values are: "draft", "importing", "validating",
+     "publishing", "published", and "publish_failed".
+    :vartype configuration_status: str or
+     ~azure.ai.projects.models.TelephonyCampaignConfigurationStatus
+    :ivar execution_status: Required. Known values are: "none", "scheduled", "running", "paused",
+     "completed", "failed", and "cancelled".
+    :vartype execution_status: str or ~azure.ai.projects.models.TelephonyCampaignExecutionStatus
+    :ivar retry_policy: Required.
+    :vartype retry_policy: ~azure.ai.projects.models.TelephonyOutboundRetryPolicyResponse
+    :ivar latest_successful_validation_id:
+    :vartype latest_successful_validation_id: str
+    :ivar active_validation_id:
+    :vartype active_validation_id: str
+    :ivar active_recipient_import_id:
+    :vartype active_recipient_import_id: str
+    :ivar published_at:
+    :vartype published_at: ~datetime.datetime
+    :ivar call_job_counts: Required.
+    :vartype call_job_counts: ~azure.ai.projects.models.TelephonyCampaignCallJobCounts
+    :ivar created_at: Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: Required.
+    :vartype updated_at: ~datetime.datetime
+    """
+
+    display_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A customer-visible name for the campaign. Required."""
+    telephony_binding_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The active agent telephony binding used to originate campaign calls. Required."""
+    purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional customer-declared purpose for campaign calls."""
+    schedule: Optional["_models.TelephonyCampaignSchedule"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When the published campaign becomes eligible to dispatch calls."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    object: Literal["telephony.campaign"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"telephony.campaign\"."""
+    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    configuration_status: Union[str, "_models.TelephonyCampaignConfigurationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Known values are: \"draft\", \"importing\", \"validating\", \"publishing\",
+     \"published\", and \"publish_failed\"."""
+    execution_status: Union[str, "_models.TelephonyCampaignExecutionStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Known values are: \"none\", \"scheduled\", \"running\", \"paused\", \"completed\",
+     \"failed\", and \"cancelled\"."""
+    retry_policy: "_models.TelephonyOutboundRetryPolicyResponse" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+    latest_successful_validation_id: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    active_validation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    active_recipient_import_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    published_at: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    call_job_counts: "_models.TelephonyCampaignCallJobCounts" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """Required."""
+    updated_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        telephony_binding_id: str,
+        id: str,  # pylint: disable=redefined-builtin
+        agent_name: str,
+        configuration_status: Union[str, "_models.TelephonyCampaignConfigurationStatus"],
+        execution_status: Union[str, "_models.TelephonyCampaignExecutionStatus"],
+        retry_policy: "_models.TelephonyOutboundRetryPolicyResponse",
+        call_job_counts: "_models.TelephonyCampaignCallJobCounts",
+        created_at: datetime.datetime,
+        updated_at: datetime.datetime,
+        purpose: Optional[str] = None,
+        schedule: Optional["_models.TelephonyCampaignSchedule"] = None,
+        latest_successful_validation_id: Optional[str] = None,
+        active_validation_id: Optional[str] = None,
+        active_recipient_import_id: Optional[str] = None,
+        published_at: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["telephony.campaign"] = "telephony.campaign"
+
+
+class TelephonyCampaignCallJobCounts(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Aggregate call-job counts for an outbound campaign.
+
+    :ivar total: Required.
+    :vartype total: int
+    :ivar pending: Required.
+    :vartype pending: int
+    :ivar in_progress: Required.
+    :vartype in_progress: int
+    :ivar completed: Required.
+    :vartype completed: int
+    :ivar failed: Required.
+    :vartype failed: int
+    :ivar blocked: Required.
+    :vartype blocked: int
+    :ivar cancelled: Required.
+    :vartype cancelled: int
+    :ivar expired: Required.
+    :vartype expired: int
+    """
+
+    total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    pending: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    in_progress: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    completed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    failed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    blocked: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    cancelled: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    expired: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total: int,
+        pending: int,
+        in_progress: int,
+        completed: int,
+        failed: int,
+        blocked: int,
+        cancelled: int,
+        expired: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TelephonyCampaignRecipientImport(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A durable campaign recipient-import record.
+
+    :ivar id: Required.
+    :vartype id: str
+    :ivar object: Required. Default value is "telephony.campaign.recipient_import".
+    :vartype object: str
+    :ivar campaign_id: Required.
+    :vartype campaign_id: str
+    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
+    :vartype status: str or ~azure.ai.projects.models.TelephonyCampaignRecipientImportStatus
+    :ivar source: Required.
+    :vartype source: ~azure.ai.projects.models.TelephonyCampaignRecipientImportSource
+    :ivar mapping:
+    :vartype mapping: ~azure.ai.projects.models.TelephonyCampaignRecipientMapping
+    :ivar duplicate_handling: Required. Known values are: "reject", "keep_each", and "merge".
+    :vartype duplicate_handling: str or
+     ~azure.ai.projects.models.TelephonyCampaignDuplicateHandling
+    :ivar rows_processed: Required.
+    :vartype rows_processed: int
+    :ivar eligible_recipient_count: Required.
+    :vartype eligible_recipient_count: int
+    :ivar invalid_recipient_count: Required.
+    :vartype invalid_recipient_count: int
+    :ivar error_code:
+    :vartype error_code: str
+    :ivar error_message:
+    :vartype error_message: str
+    :ivar created_at: Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: Required.
+    :vartype updated_at: ~datetime.datetime
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    object: Literal["telephony.campaign.recipient_import"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Default value is \"telephony.campaign.recipient_import\"."""
+    campaign_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    status: Union[str, "_models.TelephonyCampaignRecipientImportStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Known values are: \"running\", \"succeeded\", and \"failed\"."""
+    source: "_models.TelephonyCampaignRecipientImportSource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+    mapping: Optional["_models.TelephonyCampaignRecipientMapping"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    duplicate_handling: Union[str, "_models.TelephonyCampaignDuplicateHandling"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Known values are: \"reject\", \"keep_each\", and \"merge\"."""
+    rows_processed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    eligible_recipient_count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    invalid_recipient_count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    error_code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error_message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """Required."""
+    updated_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        campaign_id: str,
+        status: Union[str, "_models.TelephonyCampaignRecipientImportStatus"],
+        source: "_models.TelephonyCampaignRecipientImportSource",
+        duplicate_handling: Union[str, "_models.TelephonyCampaignDuplicateHandling"],
+        rows_processed: int,
+        eligible_recipient_count: int,
+        invalid_recipient_count: int,
+        created_at: datetime.datetime,
+        updated_at: datetime.datetime,
+        mapping: Optional["_models.TelephonyCampaignRecipientMapping"] = None,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["telephony.campaign.recipient_import"] = "telephony.campaign.recipient_import"
+
+
+class TelephonyCampaignRecipientImportSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Dataset source for campaign recipient import.
+
+    :ivar type: Required. Default value is "dataset".
+    :vartype type: str
+    :ivar dataset_name: Required.
+    :vartype dataset_name: str
+    :ivar dataset_version: Required.
+    :vartype dataset_version: str
+    :ivar file_name: A relative path to a CSV, JSON array, or JSONL file in the Dataset version.
+     Required.
+    :vartype file_name: str
+    :ivar format: Required. Known values are: "csv", "json", and "jsonl".
+    :vartype format: str or ~azure.ai.projects.models.TelephonyCampaignRecipientImportFormat
+    """
+
+    type: Literal["dataset"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"dataset\"."""
+    dataset_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    dataset_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    file_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A relative path to a CSV, JSON array, or JSONL file in the Dataset version. Required."""
+    format: Union[str, "_models.TelephonyCampaignRecipientImportFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Known values are: \"csv\", \"json\", and \"jsonl\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        dataset_name: str,
+        dataset_version: str,
+        file_name: str,
+        format: Union[str, "_models.TelephonyCampaignRecipientImportFormat"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["dataset"] = "dataset"
+
+
+class TelephonyCampaignRecipientMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Source fields or CSV columns mapped into each campaign recipient. Every unmapped CSV column or
+    JSON/JSONL top-level property becomes a same-named structured input. CSV cells are preserved as
+    strings until Agent-declared inputs are parsed according to their schemas; additional inputs
+    remain strings.
+
+    :ivar destination: The source field containing the destination E.164 phone number. Defaults to
+     ``destination``. The source field is required for each recipient. Required.
+    :vartype destination: str
+    :ivar recipient_key: The source field containing the recipient key. Defaults to
+     ``recipient_key``. The source field is required for each recipient. Required.
+    :vartype recipient_key: str
+    :ivar recipient_item_key: The source field containing the recipient item key. Defaults to
+     ``recipient_item_key``. The source field is required when ``duplicate_handling`` is
+     ``keep_each``; otherwise it may be absent.
+    :vartype recipient_item_key: str
+    :ivar not_before: The source field containing the earliest dispatch time as a Unix timestamp in
+     seconds. Defaults to ``not_before``. If the source field is absent, no per-recipient start
+     bound is applied.
+    :vartype not_before: str
+    :ivar expires_at: The source field containing the expiry time as a Unix timestamp in seconds.
+     Defaults to ``expires_at``. If the source field is absent, no per-recipient expiry bound is
+     applied.
+    :vartype expires_at: str
+    """
+
+    destination: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source field containing the destination E.164 phone number. Defaults to ``destination``.
+     The source field is required for each recipient. Required."""
+    recipient_key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source field containing the recipient key. Defaults to ``recipient_key``. The source field
+     is required for each recipient. Required."""
+    recipient_item_key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source field containing the recipient item key. Defaults to ``recipient_item_key``. The
+     source field is required when ``duplicate_handling`` is ``keep_each``; otherwise it may be
+     absent."""
+    not_before: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source field containing the earliest dispatch time as a Unix timestamp in seconds. Defaults
+     to ``not_before``. If the source field is absent, no per-recipient start bound is applied."""
+    expires_at: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source field containing the expiry time as a Unix timestamp in seconds. Defaults to
+     ``expires_at``. If the source field is absent, no per-recipient expiry bound is applied."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        destination: str,
+        recipient_key: str,
+        recipient_item_key: Optional[str] = None,
+        not_before: Optional[str] = None,
+        expires_at: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TelephonyCampaignRecipientMappingRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Optional source-field mappings for a recipient import. Each omitted entry uses its same-named
+    source field.
+
+    :ivar destination: The source field containing the destination E.164 phone number. Defaults to
+     ``destination``. The source field is required for each recipient.
+    :vartype destination: str
+    :ivar recipient_key: The source field containing the recipient key. Defaults to
+     ``recipient_key``. The source field is required for each recipient.
+    :vartype recipient_key: str
+    :ivar recipient_item_key: The source field containing the recipient item key. Defaults to
+     ``recipient_item_key``. The source field is required when ``duplicate_handling`` is
+     ``keep_each``; otherwise it may be absent.
+    :vartype recipient_item_key: str
+    :ivar not_before: The source field containing the earliest dispatch time as a Unix timestamp in
+     seconds. Defaults to ``not_before``. If the source field is absent, no per-recipient start
+     bound is applied.
+    :vartype not_before: str
+    :ivar expires_at: The source field containing the expiry time as a Unix timestamp in seconds.
+     Defaults to ``expires_at``. If the source field is absent, no per-recipient expiry bound is
+     applied.
+    :vartype expires_at: str
+    """
+
+    destination: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source field containing the destination E.164 phone number. Defaults to ``destination``.
+     The source field is required for each recipient."""
+    recipient_key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source field containing the recipient key. Defaults to ``recipient_key``. The source field
+     is required for each recipient."""
+    recipient_item_key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source field containing the recipient item key. Defaults to ``recipient_item_key``. The
+     source field is required when ``duplicate_handling`` is ``keep_each``; otherwise it may be
+     absent."""
+    not_before: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source field containing the earliest dispatch time as a Unix timestamp in seconds. Defaults
+     to ``not_before``. If the source field is absent, no per-recipient start bound is applied."""
+    expires_at: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source field containing the expiry time as a Unix timestamp in seconds. Defaults to
+     ``expires_at``. If the source field is absent, no per-recipient expiry bound is applied."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        destination: Optional[str] = None,
+        recipient_key: Optional[str] = None,
+        recipient_item_key: Optional[str] = None,
+        not_before: Optional[str] = None,
+        expires_at: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TelephonyCampaignSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The schedule for an outbound campaign.
+
+    :ivar type: Whether calls are eligible immediately after publication or at a future instant.
+     Required. Known values are: "immediate" and "scheduled".
+    :vartype type: str or ~azure.ai.projects.models.TelephonyCampaignScheduleType
+    :ivar start_at: The scheduled start instant. Required only when ``type`` is ``scheduled``.
+    :vartype start_at: ~datetime.datetime
+    """
+
+    type: Union[str, "_models.TelephonyCampaignScheduleType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether calls are eligible immediately after publication or at a future instant. Required.
+     Known values are: \"immediate\" and \"scheduled\"."""
+    start_at: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The scheduled start instant. Required only when ``type`` is ``scheduled``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.TelephonyCampaignScheduleType"],
+        start_at: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TelephonyOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An asynchronous outbound telephony operation.
+
+    :ivar id: Required.
+    :vartype id: str
+    :ivar object: Required. Default value is "telephony.operation".
+    :vartype object: str
+    :ivar status: Required. Known values are: "not_started", "running", "succeeded", "failed",
+     "cancelled", and "unknown".
+    :vartype status: str or ~azure.ai.projects.models.TelephonyOperationStatus
+    :ivar created_at:
+    :vartype created_at: ~datetime.datetime
+    :ivar error:
+    :vartype error: ~azure.ai.projects.models.ApiError
+    :ivar resource:
+    :vartype resource: ~azure.ai.projects.models.TelephonyOperationResource
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    object: Literal["telephony.operation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"telephony.operation\"."""
+    status: Union[str, "_models.TelephonyOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Known values are: \"not_started\", \"running\", \"succeeded\", \"failed\",
+     \"cancelled\", and \"unknown\"."""
+    created_at: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    error: Optional["_models.ApiError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    resource: Optional["_models.TelephonyOperationResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        status: Union[str, "_models.TelephonyOperationStatus"],
+        created_at: Optional[datetime.datetime] = None,
+        error: Optional["_models.ApiError"] = None,
+        resource: Optional["_models.TelephonyOperationResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["telephony.operation"] = "telephony.operation"
+
+
+class TelephonyOperationResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A resource produced by a successful outbound telephony operation.
+
+    :ivar id: Required.
+    :vartype id: str
+    :ivar type: Required.
+    :vartype type: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TelephonyOutboundDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The destination of an outbound call.
+
+    :ivar type: The destination type. Only E.164 phone numbers are currently supported. Required.
+     "phone_number"
+    :vartype type: str or ~azure.ai.projects.models.TelephonyOutboundDestinationType
+    :ivar value: The destination E.164 phone number. Required.
+    :vartype value: str
+    """
+
+    type: Union[str, "_models.TelephonyOutboundDestinationType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The destination type. Only E.164 phone numbers are currently supported. Required.
+     \"phone_number\""""
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The destination E.164 phone number. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.TelephonyOutboundDestinationType"],
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TelephonyOutboundRetryPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The retry policy for one durable outbound call intent. ``max_attempts`` includes the first
+    attempt. Strategy-specific settings are defined by the derived policy.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    TelephonyOutboundFixedIntervalRetryPolicy
+
+    :ivar type: The retry strategy. Only fixed-interval retries are currently supported. Required.
+     "fixed_interval"
+    :vartype type: str or ~azure.ai.projects.models.TelephonyOutboundRetryPolicyType
+    :ivar max_attempts: The maximum number of provider attempts, including the first attempt.
+     Defaults to 1.
+    :vartype max_attempts: int
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The retry strategy. Only fixed-interval retries are currently supported. Required.
+     \"fixed_interval\""""
+    max_attempts: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum number of provider attempts, including the first attempt. Defaults to 1."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        max_attempts: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TelephonyOutboundFixedIntervalRetryPolicy(
+    TelephonyOutboundRetryPolicy, discriminator="fixed_interval"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A retry policy with a fixed interval between outbound call attempts.
+
+    :ivar max_attempts: The maximum number of provider attempts, including the first attempt.
+     Defaults to 1.
+    :vartype max_attempts: int
+    :ivar type: The fixed-interval retry strategy. Required. Retry after a fixed interval between
+     attempts.
+    :vartype type: str or ~azure.ai.projects.models.FIXED_INTERVAL
+    :ivar interval: The fixed delay in seconds between attempts. It must be 0 when ``max_attempts``
+     is 1, and from 60 through 86400 when retries are enabled.
+    :vartype interval: ~datetime.timedelta
+    """
+
+    type: Literal[TelephonyOutboundRetryPolicyType.FIXED_INTERVAL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The fixed-interval retry strategy. Required. Retry after a fixed interval between attempts."""
+    interval: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-seconds-int"
+    )
+    """The fixed delay in seconds between attempts. It must be 0 when ``max_attempts`` is 1, and from
+     60 through 86400 when retries are enabled."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_attempts: Optional[int] = None,
+        interval: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = TelephonyOutboundRetryPolicyType.FIXED_INTERVAL  # type: ignore
+
+
+class TelephonyOutboundRetryPolicyResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The frozen retry policy returned for an outbound call or campaign.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    TelephonyOutboundFixedIntervalRetryPolicyResponse
+
+    :ivar type: The retry strategy. Required. "fixed_interval"
+    :vartype type: str or ~azure.ai.projects.models.TelephonyOutboundRetryPolicyType
+    :ivar max_attempts: The maximum number of provider attempts, including the first attempt.
+     Required.
+    :vartype max_attempts: int
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The retry strategy. Required. \"fixed_interval\""""
+    max_attempts: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum number of provider attempts, including the first attempt. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        max_attempts: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TelephonyOutboundFixedIntervalRetryPolicyResponse(
+    TelephonyOutboundRetryPolicyResponse, discriminator="fixed_interval"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The frozen fixed-interval retry policy returned for an outbound call or campaign.
+
+    :ivar max_attempts: The maximum number of provider attempts, including the first attempt.
+     Required.
+    :vartype max_attempts: int
+    :ivar type: The fixed-interval retry strategy. Required. Retry after a fixed interval between
+     attempts.
+    :vartype type: str or ~azure.ai.projects.models.FIXED_INTERVAL
+    :ivar interval: The fixed delay in seconds between attempts. Required.
+    :vartype interval: ~datetime.timedelta
+    """
+
+    type: Literal[TelephonyOutboundRetryPolicyType.FIXED_INTERVAL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The fixed-interval retry strategy. Required. Retry after a fixed interval between attempts."""
+    interval: datetime.timedelta = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-seconds-int"
+    )
+    """The fixed delay in seconds between attempts. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_attempts: int,
+        interval: datetime.timedelta,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = TelephonyOutboundRetryPolicyType.FIXED_INTERVAL  # type: ignore
 
 
 class TelephonyTransferTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

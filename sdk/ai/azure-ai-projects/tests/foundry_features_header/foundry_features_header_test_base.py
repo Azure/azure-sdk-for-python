@@ -140,6 +140,58 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
         "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,VoiceAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
+        "agent_telephony.create_telephony_call_job",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.get_telephony_call_job",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.cancel_telephony_call_job",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.create_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.get_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.begin_import_telephony_campaign_recipients",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.get_telephony_campaign_recipient_import",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.begin_validate_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.begin_publish_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.pause_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.resume_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.cancel_telephony_campaign",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
+        "agent_telephony.get_telephony_operation",
+        "VoiceAgents=V1Preview",
+    ),
+    pytest.param(
         "evaluation_rules.create_or_update",
         "Evaluations=V1Preview",
     ),

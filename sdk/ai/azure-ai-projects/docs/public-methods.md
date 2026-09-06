@@ -6,10 +6,10 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 183 unique public methods:
+There are a total of 196 unique public methods:
 
 - 5 stable methods on the client
-- 84 stable methods on top-level sub-clients
+- 97 stable methods on top-level sub-clients
 - 94 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
@@ -17,6 +17,7 @@ There are a total of 183 unique public methods:
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
 | `agent_endpoint_conversations` | AgentEndpointConversationsOperations | 14 |
+| `agent_telephony` | AgentTelephonyOperations | 13 |
 | `agents` | AgentsOperations | 38 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 9 |
@@ -74,6 +75,20 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .agent_endpoint_conversations.list_agent_conversation_response_items*
 .agent_endpoint_conversations.list_agent_conversation_responses*
 .agent_endpoint_conversations.list_agent_conversations*
+
+.agent_telephony.begin_import_telephony_campaign_recipients
+.agent_telephony.begin_publish_telephony_campaign
+.agent_telephony.begin_validate_telephony_campaign
+.agent_telephony.cancel_telephony_call_job
+.agent_telephony.cancel_telephony_campaign
+.agent_telephony.create_telephony_call_job
+.agent_telephony.create_telephony_campaign
+.agent_telephony.get_telephony_call_job
+.agent_telephony.get_telephony_campaign
+.agent_telephony.get_telephony_campaign_recipient_import
+.agent_telephony.get_telephony_operation
+.agent_telephony.pause_telephony_campaign
+.agent_telephony.resume_telephony_campaign
 
 .agents.create_session
 .agents.create_telephony_binding*
