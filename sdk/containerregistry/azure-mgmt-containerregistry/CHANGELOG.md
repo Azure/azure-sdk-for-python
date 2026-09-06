@@ -1,5 +1,20 @@
 # Release History
 
+## 15.1.0b3 (2026-09-06)
+
+### Features Added
+
+  - Model `ConnectedRegistry` added property `identity`
+  - Model `ConnectedRegistryUpdateParameters` added property `identity`
+  - Model `StatusDetailProperties` added property `available_gib`
+  - Model `StatusDetailProperties` added property `total_gib`
+  - Model `SyncProperties` added property `auth_type`
+  - Model `SyncUpdateProperties` added property `auth_type`
+  - Added enum `AuthType`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `UserAssignedIdentity`
+
 ## 15.1.0b2 (2026-07-03)
 
 ### Features Added
