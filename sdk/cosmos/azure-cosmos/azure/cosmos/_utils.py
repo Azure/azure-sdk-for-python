@@ -37,7 +37,13 @@ from ._version import VERSION
 
 
 def _validate_enable_compact_utf8_item_writes(value: Any) -> bool:
-    """Validate the compact UTF-8 item-write setting."""
+    """Validate the compact UTF-8 item-write setting.
+
+    :param value: The value to validate.
+    :type value: Any
+    :return: The validated boolean value.
+    :rtype: bool
+    """
     if not isinstance(value, bool):
         raise TypeError("enable_compact_utf8_item_writes must be a bool.")
     return value
