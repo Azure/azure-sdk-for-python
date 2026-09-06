@@ -7,6 +7,7 @@
 #### Features Added
 * Added the `enable_compact_utf8_item_writes` client option. Set it to `True` to reduce item write request sizes by
   serializing valid Unicode as compact UTF-8 for create, upsert, replace, patch, and transactional batch operations.
+  See [PR 48914](https://github.com/Azure/azure-sdk-for-python/pull/48914).
 
 #### Breaking Changes
 

@@ -136,6 +136,11 @@ class TestEncoding(unittest.TestCase):
 
     def test_compact_utf8_item_writes_through_full_sdk_stack(self):
         """Exercise every item-write operation covered by the client option."""
+        captured = {}
+
+        def capture_body(request):
+            captured['body'] = request.http_request.body
+
         with test_config.TestConfig.create_data_client(
             enable_compact_utf8_item_writes=True
         ) as client:
@@ -152,8 +157,15 @@ class TestEncoding(unittest.TestCase):
                 'id': doc_id,
                 'pk': '日本',
                 'content': 'create café 日本 🎉',
-            })
+            }, raw_request_hook=capture_body)
             self.assertEqual(created['content'], 'create café 日本 🎉')
+
+            # Round-tripping alone cannot detect a regression to escaped
+            # output, since escaped JSON round-trips identically. Assert on
+            # the bytes actually put on the wire.
+            self.assertIsInstance(captured['body'], str)
+            self.assertIn('日本', captured['body'])
+            self.assertNotIn('\\u65e5', captured['body'])
 
             created['content'] = 'upsert مرحبا 日本 🚀'  # cspell:disable-line
             upserted = container.upsert_item(created)
@@ -195,7 +207,7 @@ class TestEncoding(unittest.TestCase):
             self.assertEqual(queried[0]['content'], patched['content'])
 
     def test_default_ascii_escaping_rejects_large_cjk_item(self):
-        """Verify the emulator rejects the escaped request body because it exceeds 2 MiB."""
+        """Verify the backend rejects the escaped request body because it exceeds 2 MiB."""
         document = self._large_cjk_document('utf8-large-default-')
         escaped_body = json.dumps(document, separators=(",", ":")).encode("utf-8")
         self.assertGreater(len(escaped_body), 2 * 1024 * 1024)
