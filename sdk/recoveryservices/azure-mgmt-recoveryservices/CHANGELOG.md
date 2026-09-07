@@ -1,5 +1,12 @@
 # Release History
 
+## 4.2.0 (2026-08-13)
+
+### Features Added
+
+  - Model `VaultProperties` added property `region_of_choice_settings`
+  - Added model `RegionOfChoiceSettings`
+
 ## 4.1.0 (2026-07-07)
 
 ### Features Added

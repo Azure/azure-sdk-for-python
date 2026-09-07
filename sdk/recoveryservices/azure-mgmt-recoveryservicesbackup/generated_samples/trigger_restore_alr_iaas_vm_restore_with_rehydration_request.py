@@ -59,6 +59,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-01-31-preview/AzureIaasVm/TriggerRestore_ALR_IaasVMRestoreWithRehydrationRequest.json
+# x-ms-original-file: 2026-07-01/AzureIaasVm/TriggerRestore_ALR_IaasVMRestoreWithRehydrationRequest.json
 if __name__ == "__main__":
     main()

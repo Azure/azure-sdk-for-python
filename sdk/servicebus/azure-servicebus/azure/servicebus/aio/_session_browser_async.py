@@ -76,7 +76,8 @@ class _SessionBrowserAsync(AsyncBaseHandler):
 
         :keyword ~datetime.datetime state_updated_after: If specified, only sessions whose
             session state was set or updated after this time are returned. If not specified,
-            returns sessions with active messages in the entity.
+            returns sessions with active messages or stored session state in the entity. Sessions
+            with neither are excluded.
         :keyword float timeout: The total operation timeout in seconds, spent across
             every page of the enumeration.
         :keyword _now: Monotonic clock function, injectable for tests. Internal.
@@ -112,7 +113,9 @@ class _SessionBrowserAsync(AsyncBaseHandler):
                     raise OperationTimeoutError(
                         message="Listing sessions did not complete within the specified timeout."
                     )
-            message = _page_request_body(self._amqp_transport, last_updated_time_ms, skip)
+            message = _page_request_body(
+                self._amqp_transport, last_updated_time_ms, skip
+            )
             result = await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
                 message,

@@ -38,6 +38,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-01-31-preview/Common/RefreshContainers_OperationResults.json
+# x-ms-original-file: 2026-07-01/Common/RefreshContainers_OperationResults.json
 if __name__ == "__main__":
     main()

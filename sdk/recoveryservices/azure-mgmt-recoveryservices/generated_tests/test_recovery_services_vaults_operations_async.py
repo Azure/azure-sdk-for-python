@@ -99,6 +99,7 @@ class TestRecoveryServicesVaultsOperationsAsync(AzureMgmtRecordedTestCase):
                         "provisioningState": "str",
                         "publicNetworkAccess": "str",
                         "redundancySettings": {"crossRegionRestore": "str", "standardTierStorageRedundancy": "str"},
+                        "regionOfChoiceSettings": {"status": "str"},
                         "resourceGuardOperationRequests": ["str"],
                         "restoreSettings": {
                             "crossSubscriptionRestoreSettings": {"crossSubscriptionRestoreState": "str"}
@@ -219,6 +220,7 @@ class TestRecoveryServicesVaultsOperationsAsync(AzureMgmtRecordedTestCase):
                         "provisioningState": "str",
                         "publicNetworkAccess": "str",
                         "redundancySettings": {"crossRegionRestore": "str", "standardTierStorageRedundancy": "str"},
+                        "regionOfChoiceSettings": {"status": "str"},
                         "resourceGuardOperationRequests": ["str"],
                         "restoreSettings": {
                             "crossSubscriptionRestoreSettings": {"crossSubscriptionRestoreState": "str"}

@@ -46,6 +46,7 @@ class TestStorageSyncMgmtCloudEndpointsOperationsAsync(AzureMgmtRecordedTestCase
                     "name": "str",
                     "properties": {
                         "azureFileShareName": "str",
+                        "changeEnumerationIntervalDays": 0,
                         "friendlyName": "str",
                         "storageAccountResourceId": "str",
                         "storageAccountTenantId": "str",
@@ -60,6 +61,22 @@ class TestStorageSyncMgmtCloudEndpointsOperationsAsync(AzureMgmtRecordedTestCase
                     },
                     "type": "str",
                 },
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_cloud_endpoints_begin_update(self, resource_group):
+        response = await (
+            await self.client.cloud_endpoints.begin_update(
+                resource_group_name=resource_group.name,
+                storage_sync_service_name="str",
+                sync_group_name="str",
+                cloud_endpoint_name="str",
+                properties={"properties": {"changeEnumerationIntervalDays": 0}},
             )
         ).result()  # call '.result()' to poll until service return final result
 

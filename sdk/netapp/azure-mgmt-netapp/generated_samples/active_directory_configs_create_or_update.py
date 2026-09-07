@@ -68,6 +68,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-15-preview/ActiveDirectoryConfigs_CreateOrUpdate.json
+# x-ms-original-file: 2026-06-15-preview/ActiveDirectoryConfigs_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

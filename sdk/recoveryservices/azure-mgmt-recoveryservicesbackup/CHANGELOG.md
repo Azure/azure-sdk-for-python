@@ -1,5 +1,214 @@
 # Release History
 
+## 11.0.0 (2026-08-13)
+
+### Features Added
+
+  - Client `RecoveryServicesBackupClient` added method `send_request`
+  - Client `RecoveryServicesBackupClient` added operation group `configure_source_scan`
+  - Model `AzureBackupServerContainer` added property `source_location`
+  - Model `AzureFileShareRecoveryPoint` added property `threat_info`
+  - Model `AzureFileShareRecoveryPoint` added property `threat_status`
+  - Model `AzureFileShareRestoreRequest` added property `identity_info`
+  - Model `AzureFileshareProtectedItem` added property `source_location`
+  - Model `AzureFileshareProtectedItem` added property `source_side_scan_info`
+  - Model `AzureIaaSClassicComputeVMContainer` added property `source_location`
+  - Model `AzureIaaSClassicComputeVMProtectedItem` added property `source_location`
+  - Model `AzureIaaSClassicComputeVMProtectedItem` added property `source_side_scan_info`
+  - Model `AzureIaaSComputeVMContainer` added property `source_location`
+  - Model `AzureIaaSComputeVMProtectedItem` added property `source_location`
+  - Model `AzureIaaSComputeVMProtectedItem` added property `source_side_scan_info`
+  - Model `AzureIaaSVMProtectedItem` added property `source_location`
+  - Model `AzureIaaSVMProtectedItem` added property `source_side_scan_info`
+  - Model `AzureSQLAGWorkloadContainerProtectionContainer` added property `source_location`
+  - Model `AzureSqlContainer` added property `source_location`
+  - Model `AzureSqlProtectedItem` added property `source_location`
+  - Model `AzureSqlProtectedItem` added property `source_side_scan_info`
+  - Model `AzureStorageContainer` added property `access_type`
+  - Model `AzureStorageContainer` added property `identity_info`
+  - Model `AzureStorageContainer` added property `source_location`
+  - Model `AzureVMAppContainerProtectionContainer` added property `source_location`
+  - Model `AzureVmWorkloadProtectedItem` added property `source_location`
+  - Model `AzureVmWorkloadProtectedItem` added property `source_side_scan_info`
+  - Model `AzureVmWorkloadSAPAseDatabaseProtectedItem` added property `source_location`
+  - Model `AzureVmWorkloadSAPAseDatabaseProtectedItem` added property `source_side_scan_info`
+  - Model `AzureVmWorkloadSAPHanaDBInstanceProtectedItem` added property `source_location`
+  - Model `AzureVmWorkloadSAPHanaDBInstanceProtectedItem` added property `source_side_scan_info`
+  - Model `AzureVmWorkloadSAPHanaDatabaseProtectedItem` added property `source_location`
+  - Model `AzureVmWorkloadSAPHanaDatabaseProtectedItem` added property `source_side_scan_info`
+  - Model `AzureVmWorkloadSQLDatabaseProtectedItem` added property `source_location`
+  - Model `AzureVmWorkloadSQLDatabaseProtectedItem` added property `source_side_scan_info`
+  - Model `AzureWorkloadContainer` added property `source_location`
+  - Model `AzureWorkloadPointInTimeRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadPointInTimeRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadSAPAseRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadSAPAseRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadSAPHanaRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadSAPHanaRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadSQLPointInTimeRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadSQLPointInTimeRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadSQLRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadSQLRecoveryPoint` added property `threat_status`
+  - Model `BackupEngineBaseResource` added property `system_data`
+  - Model `BackupRequestResource` added property `system_data`
+  - Model `BackupResourceConfigResource` added property `system_data`
+  - Model `BackupResourceEncryptionConfigExtendedResource` added property `system_data`
+  - Model `BackupResourceEncryptionConfigResource` added property `system_data`
+  - Model `BackupResourceVaultConfigResource` added property `system_data`
+  - Model `DPMProtectedItem` added property `source_location`
+  - Model `DPMProtectedItem` added property `source_side_scan_info`
+  - Model `DpmContainer` added property `source_location`
+  - Model `GenericContainer` added property `source_location`
+  - Model `GenericProtectedItem` added property `source_location`
+  - Model `GenericProtectedItem` added property `source_side_scan_info`
+  - Model `GenericRecoveryPoint` added property `threat_info`
+  - Model `GenericRecoveryPoint` added property `threat_status`
+  - Model `ILRRequestResource` added property `system_data`
+  - Model `IaaSVMContainer` added property `source_location`
+  - Model `IaasVMRecoveryPoint` added property `data_disk_metadata`
+  - Model `IaasVMRecoveryPoint` added property `threat_info`
+  - Model `IaasVMRecoveryPoint` added property `threat_status`
+  - Model `JobResource` added property `system_data`
+  - Model `MabContainer` added property `source_location`
+  - Model `MabFileFolderProtectedItem` added property `source_location`
+  - Model `MabFileFolderProtectedItem` added property `source_side_scan_info`
+  - Model `PrivateEndpointConnectionResource` added property `system_data`
+  - Model `ProtectableContainerResource` added property `system_data`
+  - Model `ProtectedItem` added property `source_location`
+  - Model `ProtectedItem` added property `source_side_scan_info`
+  - Model `ProtectedItemResource` added property `system_data`
+  - Model `ProtectionContainer` added property `source_location`
+  - Model `ProtectionContainerResource` added property `system_data`
+  - Model `ProtectionIntentResource` added property `system_data`
+  - Model `ProtectionPolicyResource` added property `system_data`
+  - Model `RecoveryPoint` added property `threat_info`
+  - Model `RecoveryPoint` added property `threat_status`
+  - Model `RecoveryPointProperties` added property `immutability_properties`
+  - Model `RecoveryPointResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceGuardProxyBaseResource` added property `system_data`
+  - Model `RestoreRequestResource` added property `system_data`
+  - Model `SecuredVMDetails` added property `data_disk_encryption_settings`
+  - Model `WorkloadItemResource` added property `system_data`
+  - Model `WorkloadProtectableItemResource` added property `system_data`
+  - Added enum `AccessType`
+  - Added model `ArmErrorDetail`
+  - Added enum `CreatedByType`
+  - Added model `DataDiskDetails`
+  - Added model `DataDiskEncryptionSettings`
+  - Added model `DiskDetails`
+  - Added model `ErrorResponse`
+  - Added model `PerDiskEncryptionSetId`
+  - Added model `ProtectedItemConfigureSourceScanRequest`
+  - Added model `ProxyResource`
+  - Added model `RecoveryPointImmutabilityProperties`
+  - Added enum `SourceScanAction`
+  - Added model `SourceSideScanInfo`
+  - Added enum `SourceSideScanStatus`
+  - Added enum `SourceSideScanSummary`
+  - Added model `SystemData`
+  - Added model `ThreatInfo`
+  - Added enum `ThreatSeverity`
+  - Added enum `ThreatState`
+  - Added enum `ThreatStatus`
+  - Operation group `ProtectedItemsOperations` added method `begin_create_or_update`
+  - Added operation group `ConfigureSourceScanOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AzureWorkloadSAPAsePointInTimeRecoveryPoint` deleted or renamed its instance variable `recovery_point_move_readiness_info`
+  - Model `AzureWorkloadSAPAsePointInTimeRecoveryPoint` deleted or renamed its instance variable `recovery_point_properties`
+  - Model `AzureWorkloadSAPAsePointInTimeRecoveryPoint` deleted or renamed its instance variable `recovery_point_tier_details`
+  - Model `AzureWorkloadSAPAsePointInTimeRecoveryPoint` deleted or renamed its instance variable `recovery_point_time_in_utc`
+  - Model `AzureWorkloadSAPAsePointInTimeRecoveryPoint` deleted or renamed its instance variable `time_ranges`
+  - Model `AzureWorkloadSAPAsePointInTimeRecoveryPoint` deleted or renamed its instance variable `type`
+  - Model `AzureWorkloadSAPHanaPointInTimeRecoveryPoint` deleted or renamed its instance variable `recovery_point_move_readiness_info`
+  - Model `AzureWorkloadSAPHanaPointInTimeRecoveryPoint` deleted or renamed its instance variable `recovery_point_properties`
+  - Model `AzureWorkloadSAPHanaPointInTimeRecoveryPoint` deleted or renamed its instance variable `recovery_point_tier_details`
+  - Model `AzureWorkloadSAPHanaPointInTimeRecoveryPoint` deleted or renamed its instance variable `recovery_point_time_in_utc`
+  - Model `AzureWorkloadSAPHanaPointInTimeRecoveryPoint` deleted or renamed its instance variable `time_ranges`
+  - Model `AzureWorkloadSAPHanaPointInTimeRecoveryPoint` deleted or renamed its instance variable `type`
+  - Model `AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `point_in_time`
+  - Model `AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `property_bag`
+  - Model `AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `recovery_mode`
+  - Model `AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `recovery_type`
+  - Model `AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `resource_guard_operation_requests`
+  - Model `AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `snapshot_restore_parameters`
+  - Model `AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `source_resource_id`
+  - Model `AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `target_info`
+  - Model `AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `target_resource_group_name`
+  - Model `AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `target_virtual_machine_id`
+  - Model `AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `user_assigned_managed_identity_details`
+  - Model `AzureWorkloadSQLAutoProtectionIntent` deleted or renamed its instance variable `backup_management_type`
+  - Model `AzureWorkloadSQLAutoProtectionIntent` deleted or renamed its instance variable `item_id`
+  - Model `AzureWorkloadSQLAutoProtectionIntent` deleted or renamed its instance variable `policy_id`
+  - Model `AzureWorkloadSQLAutoProtectionIntent` deleted or renamed its instance variable `protection_state`
+  - Model `AzureWorkloadSQLAutoProtectionIntent` deleted or renamed its instance variable `source_resource_id`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `alternate_directory_paths`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `is_non_recoverable`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `point_in_time`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `property_bag`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `recovery_mode`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `recovery_type`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `resource_guard_operation_requests`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `should_use_alternate_target_location`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `snapshot_restore_parameters`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `source_resource_id`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `target_info`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `target_resource_group_name`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `target_virtual_machine_id`
+  - Model `AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest` deleted or renamed its instance variable `user_assigned_managed_identity_details`
+  - Model `Resource` deleted or renamed its instance variable `e_tag`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `BMSBackupEngineQueryObject`
+  - Deleted or renamed model `BMSBackupEnginesQueryObject`
+  - Deleted or renamed model `BMSBackupSummariesQueryObject`
+  - Deleted or renamed model `BMSContainerQueryObject`
+  - Deleted or renamed model `BMSContainersInquiryQueryObject`
+  - Deleted or renamed model `BMSPOQueryObject`
+  - Deleted or renamed model `BMSRPQueryObject`
+  - Deleted or renamed model `BMSRefreshContainersQueryObject`
+  - Deleted or renamed model `BMSWorkloadItemQueryObject`
+  - Deleted or renamed model `ClientDiscoveryResponse`
+  - Deleted or renamed model `CloudErrorBody`
+  - Deleted or renamed model `ContainerType`
+  - Deleted or renamed model `GetProtectedItemQueryObject`
+  - Deleted or renamed model `HealthState`
+  - Deleted or renamed model `IntentItemType`
+  - Deleted or renamed model `JobOperationType`
+  - Deleted or renamed model `JobQueryObject`
+  - Deleted or renamed model `JobStatus`
+  - Deleted or renamed model `NewErrorResponse`
+  - Deleted or renamed model `NewErrorResponseError`
+  - Deleted or renamed model `ProtectedItemQueryObject`
+  - Deleted or renamed model `ProtectionIntentQueryObject`
+  - Deleted or renamed model `ProtectionPolicyQueryObject`
+  - Deleted or renamed model `RestorePointQueryType`
+  - Deleted or renamed model `Type`
+  - Renamed method `ProtectedItemsOperations.create_or_update` to `begin_create_or_update`
+  - Method `BackupEnginesOperations.get` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupEnginesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupJobsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupProtectableItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupProtectedItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupProtectionIntentOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupResourceVaultConfigsOperations.put` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupResourceVaultConfigsOperations.update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupUsageSummariesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupWorkloadItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ProtectionPoliciesOperations.create_or_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `RestoresOperations.begin_trigger` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `SecurityPINsOperations.get` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `BackupEngineBaseResourceList`/`BackupManagementUsageList`/`JobResourceList`/`ProtectableContainerResourceList`/`ProtectedItemResourceList`/`ProtectionContainerResourceList`/`ProtectionIntentResourceList`/`ProtectionPolicyResourceList`/`RecoveryPointResourceList`/`ResourceGuardProxyBaseResourceList`/`WorkloadItemResourceList`/`WorkloadProtectableItemResourceList` which actually were not used by SDK users
+
 ## 11.0.0b1 (2026-04-24)
 
 ### Features Added

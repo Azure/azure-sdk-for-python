@@ -46,6 +46,7 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
                     "name": "str",
                     "properties": {
                         "billing": {"spotMaxPrice": 0.0},
+                        "capacityReservation": {"capacityReservationGroup": {"id": "str"}},
                         "eTag": "str",
                         "evictionPolicy": "str",
                         "hardware": {
@@ -53,7 +54,7 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
                             "gpuProfile": {
                                 "driver": "str",
                                 "driverType": "str",
-                                "nvidia": {"managementMode": "str", "migStrategy": "str"},
+                                "nvidia": {"driverMode": "str", "managementMode": "str", "migStrategy": "str"},
                             },
                             "ultraSsdEnabled": bool,
                             "vmSize": "str",
@@ -68,6 +69,7 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
                                 "cpuCfsQuota": bool,
                                 "cpuCfsQuotaPeriod": "str",
                                 "cpuManagerPolicy": "str",
+                                "evictionMaxPodGracePeriodInSeconds": 0,
                                 "failSwapOn": bool,
                                 "hardEvictionThreshold": {
                                     "memoryAvailable": "str",
@@ -79,6 +81,16 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
                                 "kubeReserved": {"cpuMillicores": 0, "memoryMB": 0},
                                 "podMaxPids": 0,
                                 "seccompDefault": "str",
+                                "softEvictionGracePeriod": {
+                                    "memoryAvailable": "str",
+                                    "nodeFsAvailable": "str",
+                                    "nodeFsInodesFree": "str",
+                                },
+                                "softEvictionThreshold": {
+                                    "memoryAvailable": "str",
+                                    "nodeFsAvailable": "str",
+                                    "nodeFsInodesFree": "str",
+                                },
                                 "topologyManagerPolicy": "str",
                             },
                             "kubeletDiskType": "str",

@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ServiceFabricManagedClustersManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -1945,7 +1944,7 @@ def build_operation_status_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2060,7 +2059,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApplicationsOperations:
+class ApplicationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2160,7 +2159,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.ApplicationResource, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationResource, _types.ApplicationResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2272,7 +2271,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: JSON,
+        parameters: _types.ApplicationResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2287,7 +2286,7 @@ class ApplicationsOperations:
         :param application_name: The name of the application resource. Required.
         :type application_name: str
         :param parameters: The application resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2336,7 +2335,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.ApplicationResource, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationResource, _types.ApplicationResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ApplicationResource]:
         """Create or update a Service Fabric managed application resource with the specified name.
@@ -2348,10 +2347,10 @@ class ApplicationsOperations:
         :type cluster_name: str
         :param application_name: The name of the application resource. Required.
         :type application_name: str
-        :param parameters: The application resource. Is one of the following types:
-         ApplicationResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationResource or JSON
-         or IO[bytes]
+        :param parameters: The application resource. Is either a ApplicationResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationResource or
+         ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationResource or IO[bytes]
         :return: An instance of LROPoller that returns ApplicationResource. The ApplicationResource is
          compatible with MutableMapping
         :rtype:
@@ -2416,7 +2415,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.ApplicationUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationUpdateParameters, _types.ApplicationUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2528,7 +2527,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: JSON,
+        parameters: _types.ApplicationUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2543,7 +2542,7 @@ class ApplicationsOperations:
         :param application_name: The name of the application resource. Required.
         :type application_name: str
         :param parameters: The application resource updated tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2592,7 +2591,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.ApplicationUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationUpdateParameters, _types.ApplicationUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ApplicationResource]:
         """Updates an application resource of a given managed cluster.
@@ -2604,10 +2603,10 @@ class ApplicationsOperations:
         :type cluster_name: str
         :param application_name: The name of the application resource. Required.
         :type application_name: str
-        :param parameters: The application resource updated tags. Is one of the following types:
-         ApplicationUpdateParameters, JSON, IO[bytes] Required.
+        :param parameters: The application resource updated tags. Is either a
+         ApplicationUpdateParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationUpdateParameters
-         or JSON or IO[bytes]
+         or ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationUpdateParameters or IO[bytes]
         :return: An instance of LROPoller that returns ApplicationResource. The ApplicationResource is
          compatible with MutableMapping
         :rtype:
@@ -3028,7 +3027,11 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.RuntimeResumeApplicationUpgradeParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.RuntimeResumeApplicationUpgradeParameters,
+            _types.RuntimeResumeApplicationUpgradeParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3139,7 +3142,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: JSON,
+        parameters: _types.RuntimeResumeApplicationUpgradeParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3155,7 +3158,8 @@ class ApplicationsOperations:
         :param application_name: The name of the application resource. Required.
         :type application_name: str
         :param parameters: The parameters for resuming an application upgrade. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.servicefabricmanagedclusters.types.RuntimeResumeApplicationUpgradeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3201,7 +3205,11 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.RuntimeResumeApplicationUpgradeParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.RuntimeResumeApplicationUpgradeParameters,
+            _types.RuntimeResumeApplicationUpgradeParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Send a request to resume the current application upgrade. This will resume the application
@@ -3214,11 +3222,12 @@ class ApplicationsOperations:
         :type cluster_name: str
         :param application_name: The name of the application resource. Required.
         :type application_name: str
-        :param parameters: The parameters for resuming an application upgrade. Is one of the following
-         types: RuntimeResumeApplicationUpgradeParameters, JSON, IO[bytes] Required.
+        :param parameters: The parameters for resuming an application upgrade. Is either a
+         RuntimeResumeApplicationUpgradeParameters type or a IO[bytes] type. Required.
         :type parameters:
          ~azure.mgmt.servicefabricmanagedclusters.models.RuntimeResumeApplicationUpgradeParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.RuntimeResumeApplicationUpgradeParameters or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3402,7 +3411,11 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.RuntimeUpdateApplicationUpgradeParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.RuntimeUpdateApplicationUpgradeParameters,
+            _types.RuntimeUpdateApplicationUpgradeParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3512,7 +3525,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: JSON,
+        parameters: _types.RuntimeUpdateApplicationUpgradeParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3527,7 +3540,8 @@ class ApplicationsOperations:
         :param application_name: The name of the application resource. Required.
         :type application_name: str
         :param parameters: The parameters for updating an application upgrade. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.servicefabricmanagedclusters.types.RuntimeUpdateApplicationUpgradeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3572,7 +3586,11 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.RuntimeUpdateApplicationUpgradeParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.RuntimeUpdateApplicationUpgradeParameters,
+            _types.RuntimeUpdateApplicationUpgradeParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Send a request to update the current application upgrade.
@@ -3584,11 +3602,12 @@ class ApplicationsOperations:
         :type cluster_name: str
         :param application_name: The name of the application resource. Required.
         :type application_name: str
-        :param parameters: The parameters for updating an application upgrade. Is one of the following
-         types: RuntimeUpdateApplicationUpgradeParameters, JSON, IO[bytes] Required.
+        :param parameters: The parameters for updating an application upgrade. Is either a
+         RuntimeUpdateApplicationUpgradeParameters type or a IO[bytes] type. Required.
         :type parameters:
          ~azure.mgmt.servicefabricmanagedclusters.models.RuntimeUpdateApplicationUpgradeParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.RuntimeUpdateApplicationUpgradeParameters or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3660,7 +3679,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.ApplicationFetchHealthRequest, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationFetchHealthRequest, _types.ApplicationFetchHealthRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3770,7 +3789,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: JSON,
+        parameters: _types.ApplicationFetchHealthRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3786,7 +3805,7 @@ class ApplicationsOperations:
         :param application_name: The name of the application resource. Required.
         :type application_name: str
         :param parameters: The parameters for fetching the health of a deployed application. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationFetchHealthRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3846,7 +3865,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.ApplicationFetchHealthRequest, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationFetchHealthRequest, _types.ApplicationFetchHealthRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Get the status of the deployed application health. It will query the cluster to find the health
@@ -3859,10 +3878,10 @@ class ApplicationsOperations:
         :type cluster_name: str
         :param application_name: The name of the application resource. Required.
         :type application_name: str
-        :param parameters: The parameters for fetching the health of a deployed application. Is one of
-         the following types: ApplicationFetchHealthRequest, JSON, IO[bytes] Required.
+        :param parameters: The parameters for fetching the health of a deployed application. Is either
+         a ApplicationFetchHealthRequest type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationFetchHealthRequest
-         or JSON or IO[bytes]
+         or ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationFetchHealthRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3934,7 +3953,9 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.RestartDeployedCodePackageRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.RestartDeployedCodePackageRequest, _types.RestartDeployedCodePackageRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4045,7 +4066,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: JSON,
+        parameters: _types.RestartDeployedCodePackageRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4061,7 +4082,8 @@ class ApplicationsOperations:
         :param application_name: The name of the application resource. Required.
         :type application_name: str
         :param parameters: The parameters for restarting a deployed code package. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.servicefabricmanagedclusters.types.RestartDeployedCodePackageRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4121,7 +4143,9 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        parameters: Union[_models.RestartDeployedCodePackageRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.RestartDeployedCodePackageRequest, _types.RestartDeployedCodePackageRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Restart a code package instance of a service replica or instance. This is a potentially
@@ -4134,11 +4158,11 @@ class ApplicationsOperations:
         :type cluster_name: str
         :param application_name: The name of the application resource. Required.
         :type application_name: str
-        :param parameters: The parameters for restarting a deployed code package. Is one of the
-         following types: RestartDeployedCodePackageRequest, JSON, IO[bytes] Required.
+        :param parameters: The parameters for restarting a deployed code package. Is either a
+         RestartDeployedCodePackageRequest type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.servicefabricmanagedclusters.models.RestartDeployedCodePackageRequest or JSON or
-         IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.models.RestartDeployedCodePackageRequest or
+         ~azure.mgmt.servicefabricmanagedclusters.types.RestartDeployedCodePackageRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4192,7 +4216,7 @@ class ApplicationsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ApplicationTypesOperations:
+class ApplicationTypesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4324,7 +4348,7 @@ class ApplicationTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         application_type_name: str,
-        parameters: JSON,
+        parameters: _types.ApplicationTypeResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4340,7 +4364,7 @@ class ApplicationTypesOperations:
         :param application_type_name: The name of the application type name resource. Required.
         :type application_type_name: str
         :param parameters: The application type name resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationTypeResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4386,7 +4410,7 @@ class ApplicationTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         application_type_name: str,
-        parameters: Union[_models.ApplicationTypeResource, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationTypeResource, _types.ApplicationTypeResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ApplicationTypeResource:
         """Create or update a Service Fabric managed application type name resource with the specified
@@ -4399,10 +4423,10 @@ class ApplicationTypesOperations:
         :type cluster_name: str
         :param application_type_name: The name of the application type name resource. Required.
         :type application_type_name: str
-        :param parameters: The application type name resource. Is one of the following types:
-         ApplicationTypeResource, JSON, IO[bytes] Required.
+        :param parameters: The application type name resource. Is either a ApplicationTypeResource type
+         or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationTypeResource or IO[bytes]
         :return: ApplicationTypeResource. The ApplicationTypeResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4512,7 +4536,7 @@ class ApplicationTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         application_type_name: str,
-        parameters: JSON,
+        parameters: _types.ApplicationTypeUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4527,7 +4551,8 @@ class ApplicationTypesOperations:
         :param application_type_name: The name of the application type name resource. Required.
         :type application_type_name: str
         :param parameters: The application type resource updated tags. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationTypeUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4572,7 +4597,7 @@ class ApplicationTypesOperations:
         resource_group_name: str,
         cluster_name: str,
         application_type_name: str,
-        parameters: Union[_models.ApplicationTypeUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationTypeUpdateParameters, _types.ApplicationTypeUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.ApplicationTypeResource:
         """Updates the tags of an application type resource of a given managed cluster.
@@ -4584,11 +4609,11 @@ class ApplicationTypesOperations:
         :type cluster_name: str
         :param application_type_name: The name of the application type name resource. Required.
         :type application_type_name: str
-        :param parameters: The application type resource updated tags. Is one of the following types:
-         ApplicationTypeUpdateParameters, JSON, IO[bytes] Required.
+        :param parameters: The application type resource updated tags. Is either a
+         ApplicationTypeUpdateParameters type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeUpdateParameters or JSON or
-         IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeUpdateParameters or
+         ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationTypeUpdateParameters or IO[bytes]
         :return: ApplicationTypeResource. The ApplicationTypeResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4892,7 +4917,7 @@ class ApplicationTypesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApplicationTypeVersionsOperations:
+class ApplicationTypeVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4997,7 +5022,7 @@ class ApplicationTypeVersionsOperations:
         cluster_name: str,
         application_type_name: str,
         version: str,
-        parameters: Union[_models.ApplicationTypeVersionResource, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationTypeVersionResource, _types.ApplicationTypeVersionResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5116,7 +5141,7 @@ class ApplicationTypeVersionsOperations:
         cluster_name: str,
         application_type_name: str,
         version: str,
-        parameters: JSON,
+        parameters: _types.ApplicationTypeVersionResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5134,7 +5159,7 @@ class ApplicationTypeVersionsOperations:
         :param version: The application type version. Required.
         :type version: str
         :param parameters: The application type version resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationTypeVersionResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5188,7 +5213,7 @@ class ApplicationTypeVersionsOperations:
         cluster_name: str,
         application_type_name: str,
         version: str,
-        parameters: Union[_models.ApplicationTypeVersionResource, JSON, IO[bytes]],
+        parameters: Union[_models.ApplicationTypeVersionResource, _types.ApplicationTypeVersionResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ApplicationTypeVersionResource]:
         """Create or update a Service Fabric managed application type version resource with the specified
@@ -5203,11 +5228,11 @@ class ApplicationTypeVersionsOperations:
         :type application_type_name: str
         :param version: The application type version. Required.
         :type version: str
-        :param parameters: The application type version resource. Is one of the following types:
-         ApplicationTypeVersionResource, JSON, IO[bytes] Required.
+        :param parameters: The application type version resource. Is either a
+         ApplicationTypeVersionResource type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeVersionResource or JSON or
-         IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeVersionResource or
+         ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationTypeVersionResource or IO[bytes]
         :return: An instance of LROPoller that returns ApplicationTypeVersionResource. The
          ApplicationTypeVersionResource is compatible with MutableMapping
         :rtype:
@@ -5310,7 +5335,7 @@ class ApplicationTypeVersionsOperations:
         cluster_name: str,
         application_type_name: str,
         version: str,
-        parameters: JSON,
+        parameters: _types.ApplicationTypeVersionUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5327,7 +5352,8 @@ class ApplicationTypeVersionsOperations:
         :param version: The application type version. Required.
         :type version: str
         :param parameters: The application type version resource updated tags. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationTypeVersionUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5378,7 +5404,9 @@ class ApplicationTypeVersionsOperations:
         cluster_name: str,
         application_type_name: str,
         version: str,
-        parameters: Union[_models.ApplicationTypeVersionUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApplicationTypeVersionUpdateParameters, _types.ApplicationTypeVersionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ApplicationTypeVersionResource:
         """Updates the tags of an application type version resource of a given managed cluster.
@@ -5392,11 +5420,12 @@ class ApplicationTypeVersionsOperations:
         :type application_type_name: str
         :param version: The application type version. Required.
         :type version: str
-        :param parameters: The application type version resource updated tags. Is one of the following
-         types: ApplicationTypeVersionUpdateParameters, JSON, IO[bytes] Required.
+        :param parameters: The application type version resource updated tags. Is either a
+         ApplicationTypeVersionUpdateParameters type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeVersionUpdateParameters or JSON
-         or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeVersionUpdateParameters or
+         ~azure.mgmt.servicefabricmanagedclusters.types.ApplicationTypeVersionUpdateParameters or
+         IO[bytes]
         :return: ApplicationTypeVersionResource. The ApplicationTypeVersionResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeVersionResource
@@ -5709,7 +5738,7 @@ class ApplicationTypeVersionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ServicesOperations:
+class ServicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5814,7 +5843,7 @@ class ServicesOperations:
         cluster_name: str,
         application_name: str,
         service_name: str,
-        parameters: Union[_models.ServiceResource, JSON, IO[bytes]],
+        parameters: Union[_models.ServiceResource, _types.ServiceResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5932,7 +5961,7 @@ class ServicesOperations:
         cluster_name: str,
         application_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.ServiceResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5950,7 +5979,7 @@ class ServicesOperations:
          {applicationName}~{serviceName}. Required.
         :type service_name: str
         :param parameters: The service resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.ServiceResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6004,7 +6033,7 @@ class ServicesOperations:
         cluster_name: str,
         application_name: str,
         service_name: str,
-        parameters: Union[_models.ServiceResource, JSON, IO[bytes]],
+        parameters: Union[_models.ServiceResource, _types.ServiceResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ServiceResource]:
         """Create or update a Service Fabric managed service resource with the specified name.
@@ -6019,10 +6048,10 @@ class ServicesOperations:
         :param service_name: The name of the service resource in the format of
          {applicationName}~{serviceName}. Required.
         :type service_name: str
-        :param parameters: The service resource. Is one of the following types: ServiceResource, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ServiceResource or JSON or
-         IO[bytes]
+        :param parameters: The service resource. Is either a ServiceResource type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ServiceResource or
+         ~azure.mgmt.servicefabricmanagedclusters.types.ServiceResource or IO[bytes]
         :return: An instance of LROPoller that returns ServiceResource. The ServiceResource is
          compatible with MutableMapping
         :rtype:
@@ -6124,7 +6153,7 @@ class ServicesOperations:
         cluster_name: str,
         application_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.ServiceUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6142,7 +6171,7 @@ class ServicesOperations:
          {applicationName}~{serviceName}. Required.
         :type service_name: str
         :param parameters: The service resource updated tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.ServiceUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6192,7 +6221,7 @@ class ServicesOperations:
         cluster_name: str,
         application_name: str,
         service_name: str,
-        parameters: Union[_models.ServiceUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ServiceUpdateParameters, _types.ServiceUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.ServiceResource:
         """Updates the tags of a service resource of a given managed cluster.
@@ -6207,10 +6236,10 @@ class ServicesOperations:
         :param service_name: The name of the service resource in the format of
          {applicationName}~{serviceName}. Required.
         :type service_name: str
-        :param parameters: The service resource updated tags. Is one of the following types:
-         ServiceUpdateParameters, JSON, IO[bytes] Required.
+        :param parameters: The service resource updated tags. Is either a ServiceUpdateParameters type
+         or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ServiceUpdateParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.ServiceUpdateParameters or IO[bytes]
         :return: ServiceResource. The ServiceResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.ServiceResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6543,7 +6572,7 @@ class ServicesOperations:
         cluster_name: str,
         application_name: str,
         service_name: str,
-        parameters: Union[_models.RestartReplicaRequest, JSON, IO[bytes]],
+        parameters: Union[_models.RestartReplicaRequest, _types.RestartReplicaRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6658,7 +6687,7 @@ class ServicesOperations:
         cluster_name: str,
         application_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.RestartReplicaRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6676,7 +6705,7 @@ class ServicesOperations:
          {applicationName}~{serviceName}. Required.
         :type service_name: str
         :param parameters: The parameters for restarting replicas. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.RestartReplicaRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6741,7 +6770,7 @@ class ServicesOperations:
         cluster_name: str,
         application_name: str,
         service_name: str,
-        parameters: Union[_models.RestartReplicaRequest, JSON, IO[bytes]],
+        parameters: Union[_models.RestartReplicaRequest, _types.RestartReplicaRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """A long-running resource action.
@@ -6756,10 +6785,10 @@ class ServicesOperations:
         :param service_name: The name of the service resource in the format of
          {applicationName}~{serviceName}. Required.
         :type service_name: str
-        :param parameters: The parameters for restarting replicas. Is one of the following types:
-         RestartReplicaRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.RestartReplicaRequest or JSON
-         or IO[bytes]
+        :param parameters: The parameters for restarting replicas. Is either a RestartReplicaRequest
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.RestartReplicaRequest or
+         ~azure.mgmt.servicefabricmanagedclusters.types.RestartReplicaRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6814,7 +6843,7 @@ class ServicesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ManagedClusterVersionOperations:
+class ManagedClusterVersionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7136,7 +7165,7 @@ class ManagedClusterVersionOperations:
         return deserialized  # type: ignore
 
 
-class ManagedUnsupportedVMSizesOperations:
+class ManagedUnsupportedVMSizesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7324,7 +7353,7 @@ class ManagedUnsupportedVMSizesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ManagedClustersOperations:
+class ManagedClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7418,7 +7447,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.ManagedCluster, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedCluster, _types.ManagedCluster, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7525,7 +7554,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7538,7 +7567,7 @@ class ManagedClustersOperations:
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
         :param parameters: The cluster resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.ManagedCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7583,7 +7612,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.ManagedCluster, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedCluster, _types.ManagedCluster, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ManagedCluster]:
         """Create or update a Service Fabric managed cluster resource with the specified name.
@@ -7593,10 +7622,10 @@ class ManagedClustersOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
-        :param parameters: The cluster resource. Is one of the following types: ManagedCluster, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ManagedCluster or JSON or
-         IO[bytes]
+        :param parameters: The cluster resource. Is either a ManagedCluster type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ManagedCluster or
+         ~azure.mgmt.servicefabricmanagedclusters.types.ManagedCluster or IO[bytes]
         :return: An instance of LROPoller that returns ManagedCluster. The ManagedCluster is compatible
          with MutableMapping
         :rtype:
@@ -7659,7 +7688,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.ManagedClusterUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedClusterUpdateParameters, _types.ManagedClusterUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7767,7 +7796,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedClusterUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7780,7 +7809,7 @@ class ManagedClustersOperations:
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
         :param parameters: The managed cluster resource updated tags. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.ManagedClusterUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7825,7 +7854,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.ManagedClusterUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedClusterUpdateParameters, _types.ManagedClusterUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ManagedCluster]:
         """Update the tags of of a Service Fabric managed cluster resource with the specified name.
@@ -7835,11 +7864,11 @@ class ManagedClustersOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
-        :param parameters: The managed cluster resource updated tags. Is one of the following types:
-         ManagedClusterUpdateParameters, JSON, IO[bytes] Required.
+        :param parameters: The managed cluster resource updated tags. Is either a
+         ManagedClusterUpdateParameters type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.servicefabricmanagedclusters.models.ManagedClusterUpdateParameters or JSON or
-         IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.models.ManagedClusterUpdateParameters or
+         ~azure.mgmt.servicefabricmanagedclusters.types.ManagedClusterUpdateParameters or IO[bytes]
         :return: An instance of LROPoller that returns ManagedCluster. The ManagedCluster is compatible
          with MutableMapping
         :rtype:
@@ -8242,7 +8271,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: JSON,
+        parameters: _types.FaultSimulationIdContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8255,7 +8284,7 @@ class ManagedClustersOperations:
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
         :param parameters: parameter with fault simulation id. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationIdContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8310,7 +8339,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        parameters: Union[_models.FaultSimulationIdContent, _types.FaultSimulationIdContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.FaultSimulation:
         """Gets a fault simulation by the simulationId.
@@ -8320,10 +8349,10 @@ class ManagedClustersOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
-        :param parameters: parameter with fault simulation id. Is one of the following types:
-         FaultSimulationIdContent, JSON, IO[bytes] Required.
+        :param parameters: parameter with fault simulation id. Is either a FaultSimulationIdContent
+         type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationIdContent or IO[bytes]
         :return: FaultSimulation. The FaultSimulation is compatible with MutableMapping
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8522,7 +8551,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.FaultSimulationContentWrapper, JSON, IO[bytes]],
+        parameters: Union[_models.FaultSimulationContentWrapper, _types.FaultSimulationContentWrapper, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8628,7 +8657,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: JSON,
+        parameters: _types.FaultSimulationContentWrapper,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8641,7 +8670,7 @@ class ManagedClustersOperations:
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
         :param parameters: parameters describing the fault simulation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationContentWrapper
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8699,7 +8728,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.FaultSimulationContentWrapper, JSON, IO[bytes]],
+        parameters: Union[_models.FaultSimulationContentWrapper, _types.FaultSimulationContentWrapper, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.FaultSimulation]:
         """Starts a fault simulation on the cluster.
@@ -8709,10 +8738,10 @@ class ManagedClustersOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
-        :param parameters: parameters describing the fault simulation. Is one of the following types:
-         FaultSimulationContentWrapper, JSON, IO[bytes] Required.
+        :param parameters: parameters describing the fault simulation. Is either a
+         FaultSimulationContentWrapper type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContentWrapper
-         or JSON or IO[bytes]
+         or ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationContentWrapper or IO[bytes]
         :return: An instance of LROPoller that returns FaultSimulation. The FaultSimulation is
          compatible with MutableMapping
         :rtype:
@@ -8794,7 +8823,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        parameters: Union[_models.FaultSimulationIdContent, _types.FaultSimulationIdContent, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8900,7 +8929,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: JSON,
+        parameters: _types.FaultSimulationIdContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8913,7 +8942,7 @@ class ManagedClustersOperations:
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
         :param parameters: parameter with fault simulation id. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationIdContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8971,7 +9000,7 @@ class ManagedClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        parameters: Union[_models.FaultSimulationIdContent, _types.FaultSimulationIdContent, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.FaultSimulation]:
         """Stops a fault simulation on the cluster.
@@ -8981,10 +9010,10 @@ class ManagedClustersOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
-        :param parameters: parameter with fault simulation id. Is one of the following types:
-         FaultSimulationIdContent, JSON, IO[bytes] Required.
+        :param parameters: parameter with fault simulation id. Is either a FaultSimulationIdContent
+         type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationIdContent or IO[bytes]
         :return: An instance of LROPoller that returns FaultSimulation. The FaultSimulation is
          compatible with MutableMapping
         :rtype:
@@ -9050,7 +9079,7 @@ class ManagedClustersOperations:
         )
 
 
-class ManagedAzResiliencyStatusOperations:
+class ManagedAzResiliencyStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9142,7 +9171,7 @@ class ManagedAzResiliencyStatusOperations:
         return deserialized  # type: ignore
 
 
-class ManagedApplyMaintenanceWindowOperations:
+class ManagedApplyMaintenanceWindowOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9194,7 +9223,7 @@ class ManagedApplyMaintenanceWindowOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.ApplyMaintenanceWindowRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9208,7 +9237,7 @@ class ManagedApplyMaintenanceWindowOperations:
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
         :param body: The content of the action request. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.servicefabricmanagedclusters.types.ApplyMaintenanceWindowRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9263,7 +9292,9 @@ class ManagedApplyMaintenanceWindowOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Optional[Union[_models.ApplyMaintenanceWindowRequest, JSON, IO[bytes]]] = None,
+        body: Optional[
+            Union[_models.ApplyMaintenanceWindowRequest, _types.ApplyMaintenanceWindowRequest, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """Action to Apply Maintenance window on the Service Fabric Managed Clusters. Any pending update
@@ -9274,10 +9305,10 @@ class ManagedApplyMaintenanceWindowOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
-        :param body: The content of the action request. Is one of the following types:
-         ApplyMaintenanceWindowRequest, JSON, IO[bytes] Default value is None.
+        :param body: The content of the action request. Is either a ApplyMaintenanceWindowRequest type
+         or a IO[bytes] type. Default value is None.
         :type body: ~azure.mgmt.servicefabricmanagedclusters.models.ApplyMaintenanceWindowRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.ApplyMaintenanceWindowRequest or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9341,7 +9372,7 @@ class ManagedApplyMaintenanceWindowOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ManagedMaintenanceWindowStatusOperations:
+class ManagedMaintenanceWindowStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9432,7 +9463,7 @@ class ManagedMaintenanceWindowStatusOperations:
         return deserialized  # type: ignore
 
 
-class NodeTypesOperations:  # pylint: disable=too-many-public-methods
+class NodeTypesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9529,7 +9560,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeType, JSON, IO[bytes]],
+        parameters: Union[_models.NodeType, _types.NodeType, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9640,7 +9671,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: JSON,
+        parameters: _types.NodeType,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9655,7 +9686,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: The node type resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.NodeType
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9702,7 +9733,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeType, JSON, IO[bytes]],
+        parameters: Union[_models.NodeType, _types.NodeType, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NodeType]:
         """Create or update a Service Fabric node type of a given managed cluster.
@@ -9714,9 +9745,10 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: The node type resource. Is one of the following types: NodeType, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeType or JSON or IO[bytes]
+        :param parameters: The node type resource. Is either a NodeType type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeType or
+         ~azure.mgmt.servicefabricmanagedclusters.types.NodeType or IO[bytes]
         :return: An instance of LROPoller that returns NodeType. The NodeType is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.servicefabricmanagedclusters.models.NodeType]
@@ -9780,7 +9812,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeUpdateParameters, _types.NodeTypeUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9892,7 +9924,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: JSON,
+        parameters: _types.NodeTypeUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9908,7 +9940,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: The parameters to update the node type configuration. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9956,7 +9988,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeUpdateParameters, _types.NodeTypeUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NodeType]:
         """Update the configuration of a node type of a given managed cluster, only updating tags or
@@ -9969,10 +10001,10 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: The parameters to update the node type configuration. Is one of the
-         following types: NodeTypeUpdateParameters, JSON, IO[bytes] Required.
+        :param parameters: The parameters to update the node type configuration. Is either a
+         NodeTypeUpdateParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeUpdateParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeUpdateParameters or IO[bytes]
         :return: An instance of LROPoller that returns NodeType. The NodeType is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.servicefabricmanagedclusters.models.NodeType]
@@ -10264,7 +10296,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10374,7 +10406,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: JSON,
+        parameters: _types.NodeTypeActionParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10390,7 +10422,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for deallocate action. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10436,7 +10468,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Deallocates one or more nodes on the node type. It will disable the fabric nodes, trigger a
@@ -10449,10 +10481,10 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: parameters for deallocate action. Is one of the following types:
-         NodeTypeActionParameters, JSON, IO[bytes] Required.
+        :param parameters: parameters for deallocate action. Is either a NodeTypeActionParameters type
+         or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeActionParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10510,7 +10542,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10620,7 +10652,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: JSON,
+        parameters: _types.NodeTypeActionParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10636,7 +10668,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for delete action. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10682,7 +10714,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Deletes one or more nodes on the node type. It will disable the fabric nodes, trigger a delete
@@ -10695,10 +10727,10 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: parameters for delete action. Is one of the following types:
-         NodeTypeActionParameters, JSON, IO[bytes] Required.
+        :param parameters: parameters for delete action. Is either a NodeTypeActionParameters type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeActionParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10756,7 +10788,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10866,7 +10898,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: JSON,
+        parameters: _types.NodeTypeActionParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10882,7 +10914,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for redeploy action. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10928,7 +10960,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Redeploys one or more nodes on the node type. It will disable the fabric nodes, trigger a shut
@@ -10941,10 +10973,10 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: parameters for redeploy action. Is one of the following types:
-         NodeTypeActionParameters, JSON, IO[bytes] Required.
+        :param parameters: parameters for redeploy action. Is either a NodeTypeActionParameters type or
+         a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeActionParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11002,7 +11034,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11112,7 +11144,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: JSON,
+        parameters: _types.NodeTypeActionParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11128,7 +11160,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for reimage action. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11174,7 +11206,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Reimages one or more nodes on the node type. It will disable the fabric nodes, trigger a
@@ -11187,10 +11219,10 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: parameters for reimage action. Is one of the following types:
-         NodeTypeActionParameters, JSON, IO[bytes] Required.
+        :param parameters: parameters for reimage action. Is either a NodeTypeActionParameters type or
+         a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeActionParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11248,7 +11280,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11358,7 +11390,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: JSON,
+        parameters: _types.NodeTypeActionParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11374,7 +11406,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for restart action. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11420,7 +11452,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Restarts one or more nodes on the node type. It will disable the fabric nodes, trigger a
@@ -11433,10 +11465,10 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: parameters for restart action. Is one of the following types:
-         NodeTypeActionParameters, JSON, IO[bytes] Required.
+        :param parameters: parameters for restart action. Is either a NodeTypeActionParameters type or
+         a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeActionParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11494,7 +11526,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11604,7 +11636,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: JSON,
+        parameters: _types.NodeTypeActionParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11620,7 +11652,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters for start action. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11666,7 +11698,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.NodeTypeActionParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NodeTypeActionParameters, _types.NodeTypeActionParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Starts one or more nodes on the node type. It will trigger an allocation of the fabric node if
@@ -11679,10 +11711,10 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: parameters for start action. Is one of the following types:
-         NodeTypeActionParameters, JSON, IO[bytes] Required.
+        :param parameters: parameters for start action. Is either a NodeTypeActionParameters type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeActionParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.NodeTypeActionParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11754,7 +11786,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.FaultSimulationContentWrapper, JSON, IO[bytes]],
+        parameters: Union[_models.FaultSimulationContentWrapper, _types.FaultSimulationContentWrapper, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11865,7 +11897,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: JSON,
+        parameters: _types.FaultSimulationContentWrapper,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11880,7 +11912,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameters describing the fault simulation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationContentWrapper
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11943,7 +11975,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.FaultSimulationContentWrapper, JSON, IO[bytes]],
+        parameters: Union[_models.FaultSimulationContentWrapper, _types.FaultSimulationContentWrapper, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.FaultSimulation]:
         """Starts a fault simulation on the node type.
@@ -11955,10 +11987,10 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: parameters describing the fault simulation. Is one of the following types:
-         FaultSimulationContentWrapper, JSON, IO[bytes] Required.
+        :param parameters: parameters describing the fault simulation. Is either a
+         FaultSimulationContentWrapper type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContentWrapper
-         or JSON or IO[bytes]
+         or ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationContentWrapper or IO[bytes]
         :return: An instance of LROPoller that returns FaultSimulation. The FaultSimulation is
          compatible with MutableMapping
         :rtype:
@@ -12043,7 +12075,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        parameters: Union[_models.FaultSimulationIdContent, _types.FaultSimulationIdContent, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12154,7 +12186,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: JSON,
+        parameters: _types.FaultSimulationIdContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12169,7 +12201,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameter with fault simulation id. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationIdContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12232,7 +12264,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        parameters: Union[_models.FaultSimulationIdContent, _types.FaultSimulationIdContent, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.FaultSimulation]:
         """Stops a fault simulation on the node type.
@@ -12244,10 +12276,10 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: parameter with fault simulation id. Is one of the following types:
-         FaultSimulationIdContent, JSON, IO[bytes] Required.
+        :param parameters: parameter with fault simulation id. Is either a FaultSimulationIdContent
+         type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationIdContent or IO[bytes]
         :return: An instance of LROPoller that returns FaultSimulation. The FaultSimulation is
          compatible with MutableMapping
         :rtype:
@@ -12349,7 +12381,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: JSON,
+        parameters: _types.FaultSimulationIdContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12364,7 +12396,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
         :param parameters: parameter with fault simulation id. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationIdContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12424,7 +12456,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         node_type_name: str,
-        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        parameters: Union[_models.FaultSimulationIdContent, _types.FaultSimulationIdContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.FaultSimulation:
         """Gets a fault simulation by the simulationId.
@@ -12436,10 +12468,10 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param node_type_name: The name of the node type. Required.
         :type node_type_name: str
-        :param parameters: parameter with fault simulation id. Is one of the following types:
-         FaultSimulationIdContent, JSON, IO[bytes] Required.
+        :param parameters: parameter with fault simulation id. Is either a FaultSimulationIdContent
+         type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent or
-         JSON or IO[bytes]
+         ~azure.mgmt.servicefabricmanagedclusters.types.FaultSimulationIdContent or IO[bytes]
         :return: FaultSimulation. The FaultSimulation is compatible with MutableMapping
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12633,7 +12665,7 @@ class NodeTypesOperations:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
 
-class NodeTypeSkusOperations:
+class NodeTypeSkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12759,7 +12791,7 @@ class NodeTypeSkusOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class OperationResultsOperations:
+class OperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12843,7 +12875,7 @@ class OperationResultsOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class OperationStatusOperations:
+class OperationStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

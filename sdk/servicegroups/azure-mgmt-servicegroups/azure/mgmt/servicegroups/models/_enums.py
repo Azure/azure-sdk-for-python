@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    only APIs.
+    """
+
+    INTERNAL = "Internal"
+    """Actions are for internal-only APIs."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -21,6 +30,19 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a managed identity."""
     KEY = "Key"
     """The entity was created by a key."""
+
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
+    """
+
+    USER = "user"
+    """Indicates the operation is initiated by a user."""
+    SYSTEM = "system"
+    """Indicates the operation is initiated by a system."""
+    USER_SYSTEM = "user,system"
+    """Indicates the operation is initiated by a user or system."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

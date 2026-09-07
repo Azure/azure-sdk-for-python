@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualHubBgpConnectionOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             connection_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestNetworkManagementVirtualHubBgpConnectionOperations(AzureMgmtRecordedTe
                 },
                 "type": "str",
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestNetworkManagementVirtualHubBgpConnectionOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             connection_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

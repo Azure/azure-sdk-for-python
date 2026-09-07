@@ -1,5 +1,13 @@
 # Release History
 
+## 1.0.0b4 (2026-08-31)
+
+### Features Added
+
+  - Model `PolicyExemptionProperties` added property `exemption_management_mode`
+  - Model `PolicyExemptionUpdateProperties` added property `exemption_management_mode`
+  - Added enum `ExemptionManagementMode`
+
 ## 1.0.0b3 (2026-05-26)
 
 ### Features Added

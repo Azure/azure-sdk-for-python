@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2022-09-01/Workflows_Abort.json
+# x-ms-original-file: 2025-12-01/Workflows_Abort.json
 if __name__ == "__main__":
     main()

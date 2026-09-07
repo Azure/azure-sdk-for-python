@@ -33,7 +33,7 @@ from azure.ai.agentserver.core.tasks import (
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
 from ._dispatch import DISPOSITION_MARK_FAILED
-from ._task_id import derive_task_id
+from ._task_id import derive_task_id, derive_task_session_scope
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
@@ -426,6 +426,32 @@ class ResilientResponseOrchestrator:
         # The non-stream path (_run_background_non_stream) is a module-level
         # function and does not need this reference.
         self._parent_orchestrator = parent_orchestrator
+
+        # Opting into resilient background responses implies the durable task
+        # subsystem must be constructed (and recovery enabled) for this
+        # deployment. The subsystem is gated SOLELY on the process-global switch
+        # (``AgentServerHost`` constructs the ``TaskManager`` only when it is
+        # set), so translate the explicit ``resilient_background`` opt-in into
+        # that switch here, at host construction time (before the ASGI lifespan
+        # runs).
+        #
+        # NOTE: only ``resilient_background`` auto-enables the subsystem —
+        # ``steerable_conversations`` intentionally does NOT. Recovery is tied to
+        # ``resilient_background`` alone; a steerable host that wants durability
+        # must set ``resilient_background=True`` (or call
+        # ``set_resilient_tasks_enabled(True)`` explicitly). The two-switch UX is
+        # a known rough edge to smooth over post-Public-Preview.
+        #
+        # A host that leaves ``resilient_background`` off (and does not set the
+        # switch) constructs no ``TaskManager``: ``store=true`` work degrades to
+        # non-durable in-process execution (``_start_resilient_background``
+        # swallows ``TaskManagerNotInitialized``).
+        if options.resilient_background:
+            from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
+                set_resilient_tasks_enabled,
+            )
+
+            set_resilient_tasks_enabled(True)
 
         # Spec 023 — per-request primitive dispatch (SOT §6.6).
         # Two task primitives are registered per deployment; ``_pick_primitive``
@@ -1115,6 +1141,7 @@ class ResilientResponseOrchestrator:
             disposition=disposition,
             agent_reference=ctx.agent_reference,
             agent_session_id=ctx.agent_session_id,
+            agent_session_guid=ctx.agent_session_guid,
             user_id_key=ctx.user_id,
             call_id=ctx.call_id,
             client_headers=dict(ctx.context.client_headers) if ctx.context is not None else {},
@@ -1128,6 +1155,45 @@ class ResilientResponseOrchestrator:
             runtime_state=self._runtime_state,
         )
         return resilient_input, refs
+
+    @staticmethod
+    async def _select_compatible_task_id(
+        task_fn: Any,
+        *,
+        task_id: str,
+        legacy_task_id: str,
+    ) -> str:
+        """Select the physical task ID across the session-GUID migration.
+
+        Prefer an existing GUID-scoped task. If it does not exist, continue an
+        active pre-rollout task under the public-session-derived legacy ID.
+        Tombstoned tasks are exposed as not found by the hosted task provider
+        and therefore do not block creation under the new ID.
+
+        :param task_fn: The selected multi-turn task primitive.
+        :type task_fn: Any
+        :keyword task_id: GUID-scoped task ID.
+        :paramtype task_id: str
+        :keyword legacy_task_id: Public-session-scoped pre-rollout task ID.
+        :paramtype legacy_task_id: str
+        :returns: The task ID to use for this turn.
+        :rtype: str
+        """
+        new_task = await task_fn._get(task_id)  # pylint: disable=protected-access
+        if new_task is not None:
+            return task_id
+
+        legacy_task = await task_fn._get(legacy_task_id)  # pylint: disable=protected-access
+        legacy_status = getattr(legacy_task, "status", None)
+        if legacy_status in {"pending", "in_progress", "suspended"}:
+            logger.info(
+                "Continuing pre-rollout resilient task %s in state %s.",
+                legacy_task_id,
+                legacy_status,
+            )
+            return legacy_task_id
+
+        return task_id
 
     async def start_resilient(
         self,
@@ -1168,7 +1234,13 @@ class ResilientResponseOrchestrator:
             else None
         )
 
-        task_id = derive_task_id(
+        picked_primitive = self._pick_primitive(
+            conversation_id=conversation_id,
+            previous_response_id=previous_response_id,
+        )
+        is_multi_turn = picked_primitive is self._multi_turn_task_fn
+
+        legacy_task_id = derive_task_id(
             agent_name=_extract_agent_identity(resilient_input.agent_reference)[0],
             session_id=resilient_input.agent_session_id or "",
             conversation_id=conversation_id,
@@ -1176,6 +1248,24 @@ class ResilientResponseOrchestrator:
             response_id=response_id,
             steerable=self._options.steerable_conversations,
         )
+        task_id = derive_task_id(
+            agent_name=_extract_agent_identity(resilient_input.agent_reference)[0],
+            session_id=resilient_input.agent_session_id or "",
+            task_session_id=derive_task_session_scope(
+                session_id=resilient_input.agent_session_id or "",
+                session_guid=resilient_input.agent_session_guid,
+            ),
+            conversation_id=conversation_id,
+            previous_response_id=previous_response_id,
+            response_id=response_id,
+            steerable=self._options.steerable_conversations,
+        )
+        if is_multi_turn and task_id != legacy_task_id:
+            task_id = await self._select_compatible_task_id(
+                picked_primitive,
+                task_id=task_id,
+                legacy_task_id=legacy_task_id,
+            )
 
         # Spec 023 — per-request primitive dispatch (SOT §6.6).
         # Selects between the one-shot ``@task`` primitive (auto-deleted
@@ -1183,12 +1273,6 @@ class ResilientResponseOrchestrator:
         # ``@multi_turn_task`` primitive (suspends between turns; chain
         # semantics) based on the request's conversation_id /
         # previous_response_id / steerable_conversations tuple.
-        picked_primitive = self._pick_primitive(
-            conversation_id=conversation_id,
-            previous_response_id=previous_response_id,
-        )
-        is_multi_turn = picked_primitive is self._multi_turn_task_fn
-
         # (Spec 033 §3.1) The process-local refs are cached out-of-band keyed by
         # response_id; the resilient task input is EXACTLY the typed boundary's
         # serialization — the single producer (FR-001).
@@ -1220,7 +1304,17 @@ class ResilientResponseOrchestrator:
         # auto-queues against an in-flight chain and returns a TaskRun
         # whose ``is_queued`` is True (the public-surface detection signal).
         # See the queued-vs-fresh check below.
-        task_run = await picked_primitive.start(**start_kwargs)
+        try:
+            task_run = await picked_primitive.start(**start_kwargs)
+        except BaseException:
+            # If the primitive never started (e.g. ``TaskManagerNotInitialized``
+            # when resilient tasks are disabled, or any start failure), the
+            # resilient task body — whose ``finally`` normally evicts the
+            # out-of-band refs — never runs. Drop the cache entry here so we do
+            # not permanently retain the record/context/parsed-request/cancel
+            # event for a response that fell back to in-process execution.
+            _RUNTIME_REFS.pop(response_id, None)
+            raise
         # Store the task run reference on the record for observability
         record.resilient_task_run = task_run  # type: ignore[attr-defined]
 

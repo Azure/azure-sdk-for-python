@@ -25,7 +25,7 @@ class TestNetworkManagementFirewallPoliciesOperationsAsync(AzureMgmtRecordedTest
         response = await self.client.firewall_policies.get(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -50,6 +50,7 @@ class TestNetworkManagementFirewallPoliciesOperationsAsync(AzureMgmtRecordedTest
                     "location": "str",
                     "name": "str",
                     "properties": {
+                        "afcManaged": bool,
                         "basePolicy": {"id": "str"},
                         "childPolicies": [{"id": "str"}],
                         "dnsSettings": {"enableProxy": bool, "requireProxyForNetworkRules": bool, "servers": ["str"]},
@@ -90,6 +91,7 @@ class TestNetworkManagementFirewallPoliciesOperationsAsync(AzureMgmtRecordedTest
                             "mode": "str",
                             "profile": "str",
                         },
+                        "kubeSelectorGroups": [{"id": "str"}],
                         "provisioningState": "str",
                         "ruleCollectionGroups": [{"id": "str"}],
                         "size": "str",
@@ -103,7 +105,7 @@ class TestNetworkManagementFirewallPoliciesOperationsAsync(AzureMgmtRecordedTest
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -117,7 +119,7 @@ class TestNetworkManagementFirewallPoliciesOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -130,7 +132,7 @@ class TestNetworkManagementFirewallPoliciesOperationsAsync(AzureMgmtRecordedTest
             await self.client.firewall_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 firewall_policy_name="str",
-                api_version="2025-07-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -142,7 +144,7 @@ class TestNetworkManagementFirewallPoliciesOperationsAsync(AzureMgmtRecordedTest
     async def test_firewall_policies_list(self, resource_group):
         response = self.client.firewall_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -152,7 +154,7 @@ class TestNetworkManagementFirewallPoliciesOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_firewall_policies_list_all(self, resource_group):
         response = self.client.firewall_policies.list_all(
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

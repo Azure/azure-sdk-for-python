@@ -25,7 +25,7 @@ class TestNetworkManagementConnectionPoliciesOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             connection_policy_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestNetworkManagementConnectionPoliciesOperations(AzureMgmtRecordedTestCas
                 },
                 "type": "str",
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestNetworkManagementConnectionPoliciesOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             connection_policy_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestNetworkManagementConnectionPoliciesOperations(AzureMgmtRecordedTestCas
         response = self.client.connection_policies.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

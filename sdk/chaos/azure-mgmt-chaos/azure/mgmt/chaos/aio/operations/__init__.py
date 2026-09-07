@@ -25,8 +25,9 @@ from ._operations import OperationStatusesOperations  # type: ignore
 from ._operations import WorkspacesOperations  # type: ignore
 from ._operations import DiscoveredResourcesOperations  # type: ignore
 from ._operations import ScenariosOperations  # type: ignore
-from ._operations import ScenarioRunsOperations  # type: ignore
 from ._operations import ScenarioConfigurationsOperations  # type: ignore
+from ._operations import ScenarioRunsOperations  # type: ignore
+from ._operations import ConnectionsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -46,8 +47,9 @@ __all__ = [
     "WorkspacesOperations",
     "DiscoveredResourcesOperations",
     "ScenariosOperations",
-    "ScenarioRunsOperations",
     "ScenarioConfigurationsOperations",
+    "ScenarioRunsOperations",
+    "ConnectionsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

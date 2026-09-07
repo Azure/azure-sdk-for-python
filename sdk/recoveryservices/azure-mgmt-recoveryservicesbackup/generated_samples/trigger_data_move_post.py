@@ -43,6 +43,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-01-31-preview/BackupDataMove/TriggerDataMove_Post.json
+# x-ms-original-file: 2026-07-01/BackupDataMove/TriggerDataMove_Post.json
 if __name__ == "__main__":
     main()

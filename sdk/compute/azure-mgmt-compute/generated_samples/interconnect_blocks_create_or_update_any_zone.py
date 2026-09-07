@@ -49,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/interconnectBlockExamples/InterconnectBlocks_CreateOrUpdate_AnyZone.json
+# x-ms-original-file: 2026-04-01/interconnectBlockExamples/InterconnectBlocks_CreateOrUpdate_AnyZone.json
 if __name__ == "__main__":
     main()

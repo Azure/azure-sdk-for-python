@@ -17,7 +17,7 @@ from azure.core.exceptions import ResourceNotFoundError
 class TestAgentImageGeneration(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_image_generation(self, **kwargs):
         """
         Test agent with Image Generation tool.

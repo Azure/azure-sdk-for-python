@@ -41,7 +41,7 @@ def main():
                 "displayName": "SQL CPU utilization",
                 "evaluationRules": {
                     "degradedRule": {"operator": "GreaterThan", "threshold": 70},
-                    "unhealthyRule": {"lookBackWindow": "PT1H", "operator": "Dynamic", "sensitivity": "Medium"},
+                    "unhealthyRule": {"operator": "Dynamic", "sensitivity": "Medium"},
                 },
                 "metricName": "cpu_percent",
                 "metricNamespace": "Microsoft.Sql/servers/databases",
@@ -55,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/SignalDefinitions_CreateOrUpdate.json
+# x-ms-original-file: 2026-09-01-preview/SignalDefinitions_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

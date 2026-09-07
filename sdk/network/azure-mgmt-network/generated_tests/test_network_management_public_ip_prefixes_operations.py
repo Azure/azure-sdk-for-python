@@ -24,7 +24,7 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
         response = self.client.public_ip_prefixes.get(
             resource_group_name=resource_group.name,
             public_ip_prefix_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
                 "properties": {
                     "customIPPrefix": {"id": "str"},
                     "ipPrefix": "str",
-                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                    "ipTags": [{"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}],
                     "loadBalancerFrontendIpConfiguration": {"id": "str"},
                     "natGateway": {
                         "etag": "str",
@@ -75,13 +75,14 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
                     "publicIPAddressVersion": "str",
                     "publicIPAddresses": [{"id": "str"}],
                     "resourceGuid": "str",
+                    "upgradedToV2": bool,
                 },
                 "sku": {"name": "str", "tier": "str"},
                 "tags": {"str": "str"},
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -94,7 +95,7 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             public_ip_prefix_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +107,7 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
         response = self.client.public_ip_prefixes.begin_delete(
             resource_group_name=resource_group.name,
             public_ip_prefix_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -117,7 +118,7 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
     def test_public_ip_prefixes_list(self, resource_group):
         response = self.client.public_ip_prefixes.list(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -127,7 +128,7 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_public_ip_prefixes_list_all(self, resource_group):
         response = self.client.public_ip_prefixes.list_all(
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

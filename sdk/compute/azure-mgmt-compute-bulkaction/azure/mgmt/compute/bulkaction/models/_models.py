@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AcknowledgeBulkOperationErrorsRequest(_Model):
+class AcknowledgeBulkOperationErrorsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request to acknowledge bulk operation errors.
 
     :ivar operation_ids: The set of operation ids to acknowledge. Required.
@@ -49,7 +49,7 @@ class AcknowledgeBulkOperationErrorsRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AcknowledgeBulkOperationErrorsResponse(_Model):
+class AcknowledgeBulkOperationErrorsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from acknowledging bulk operation errors.
 
     :ivar acknowledged: The set of operation ids that were newly acknowledged. Required.
@@ -90,7 +90,7 @@ class AcknowledgeBulkOperationErrorsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdditionalCapabilities(_Model):
+class AdditionalCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enables or disables a capability on the virtual machine or virtual machine scale set.
 
     :ivar ultra_ssd_enabled: The flag that enables or disables a capability to have one or more
@@ -133,7 +133,7 @@ class AdditionalCapabilities(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdditionalUnattendContent(_Model):
+class AdditionalUnattendContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies additional XML formatted information that can be included in the Unattend.xml file,
     which is used by Windows Setup. Contents are defined by setting name, component name, and the
     pass in which the content is applied.
@@ -195,7 +195,7 @@ class AdditionalUnattendContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllInstancesDown(_Model):
+class AllInstancesDown(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies if Scheduled Events should be auto-approved when all instances are down.
 
     :ivar all_instances_down_automatically_approve: Specifies if Scheduled Events should be
@@ -227,7 +227,7 @@ class AllInstancesDown(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiEntityReference(_Model):
+class ApiEntityReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The API entity reference.
 
     :ivar id: The ARM resource id in the form of
@@ -257,7 +257,7 @@ class ApiEntityReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiError(_Model):
+class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApiError for Fleet.
 
     :ivar code: The error code.
@@ -309,7 +309,7 @@ class ApiError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiErrorBase(_Model):
+class ApiErrorBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API error base.
 
     :ivar code: The error code.
@@ -347,7 +347,7 @@ class ApiErrorBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationProfile(_Model):
+class ApplicationProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the list of gallery applications that should be made available to the VM.
 
     :ivar gallery_applications: Specifies the gallery applications that should be made available to
@@ -378,7 +378,7 @@ class ApplicationProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BootDiagnostics(_Model):
+class BootDiagnostics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot
     to diagnose VM status. You can easily view the output of your console log. Azure also enables
     you to see a screenshot of the VM from the hypervisor.
@@ -418,7 +418,7 @@ class BootDiagnostics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkactionVMExtension(_Model):
+class BulkactionVMExtension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a virtual machine extension.
 
     :ivar name: The name of the virtual machine extension. Required.
@@ -453,7 +453,7 @@ class BulkactionVMExtension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkActionVmExtensionProperties(_Model):
+class BulkActionVmExtensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine Extension.
 
     :ivar force_update_tag: How the extension handler should be forced to update even if the
@@ -564,7 +564,7 @@ class BulkActionVmExtensionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkactionVMProperties(_Model):
+class BulkactionVMProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine for bulk create.
 
     :ivar scheduled_events_policy: Specifies Redeploy, Reboot and
@@ -724,7 +724,7 @@ class BulkactionVMProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkCreateCustomOverride(_Model):
+class BulkCreateCustomOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single per-VM override. Extends the shared override fields with a per-VM name.
 
     :ivar virtual_machine_name: ARM VM name for this VM. Optional; when omitted the name is
@@ -791,7 +791,7 @@ class BulkCreateCustomOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkCreateCustomOverrideBase(_Model):
+class BulkCreateCustomOverrideBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Override fields shared by per-VM and per-VM-size overrides. Each set field takes precedence
     over the operation-level value. VM size, zone, priority, eviction policy, and billing are owned
     by the service and cannot be set here.
@@ -851,7 +851,7 @@ class BulkCreateCustomOverrideBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkCreateCustomOverridesProfile(_Model):
+class BulkCreateCustomOverridesProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Groups the per-VM overrides with the name prefix that names any override that does not supply
     its own VM name.
 
@@ -895,7 +895,7 @@ class BulkCreateCustomOverridesProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkCreateCustomPriorityProfile(_Model):
+class BulkCreateCustomPriorityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration options for Regular or Spot instances in BulkCreateCustom.
 
     :ivar type: The priority type for VM allocation. Known values are: "Regular" and "Spot".
@@ -951,7 +951,7 @@ class BulkCreateCustomPriorityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkCreateCustomProperties(_Model):
+class BulkCreateCustomProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the BulkCreateCustom.
 
     :ivar created_time: The UTC time the BulkCreateCustom resource was created.
@@ -964,6 +964,21 @@ class BulkCreateCustomProperties(_Model):
     :ivar capacity_type: Specifies capacity type for launching instances. It can be in terms of VMs
      or vCPUs. Known values are: "VM" and "VCpu".
     :vartype capacity_type: str or ~azure.mgmt.compute.bulkaction.models.CapacityType
+    :ivar min_capacity: The minimum capacity, expressed in units specified by capacityType, that
+     Azure must be able to allocate for the request to proceed. If Azure cannot allocate at least
+     this capacity with high confidence, the request is rejected with 409 Conflict
+     (InsufficientCapacity) and no VMs are created. Otherwise, Azure allocates as much capacity as
+     possible, up to the requested capacity. Must be greater than 0, less than capacity, and
+     requires partialFulfillmentPolicy.mode to be Enabled.
+    :vartype min_capacity: int
+    :ivar partial_fulfillment_policy: Controls how partial fulfillment is handled for a
+     BulkCreateCustom request. When enabled, Azure creates only the VMs or vCPUs it has high
+     confidence can be successfully allocated, instead of attempting the entire request and
+     potentially returning allocation failures.
+    :vartype partial_fulfillment_policy:
+     ~azure.mgmt.compute.bulkaction.models.PartialFulfillmentPolicy
+    :ivar resources: The virtual machine resources resolved for the operation.
+    :vartype resources: list[~azure.mgmt.compute.bulkaction.models.BulkCreateCustomResource]
     :ivar priority_profile: Configuration Options for Regular or Spot instances in
      BulkCreateCustom. Required.
     :vartype priority_profile:
@@ -999,6 +1014,23 @@ class BulkCreateCustomProperties(_Model):
     )
     """Specifies capacity type for launching instances. It can be in terms of VMs or vCPUs. Known
      values are: \"VM\" and \"VCpu\"."""
+    min_capacity: Optional[int] = rest_field(
+        name="minCapacity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum capacity, expressed in units specified by capacityType, that Azure must be able to
+     allocate for the request to proceed. If Azure cannot allocate at least this capacity with high
+     confidence, the request is rejected with 409 Conflict (InsufficientCapacity) and no VMs are
+     created. Otherwise, Azure allocates as much capacity as possible, up to the requested capacity.
+     Must be greater than 0, less than capacity, and requires partialFulfillmentPolicy.mode to be
+     Enabled."""
+    partial_fulfillment_policy: Optional["_models.PartialFulfillmentPolicy"] = rest_field(
+        name="partialFulfillmentPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls how partial fulfillment is handled for a BulkCreateCustom request. When enabled, Azure
+     creates only the VMs or vCPUs it has high confidence can be successfully allocated, instead of
+     attempting the entire request and potentially returning allocation failures."""
+    resources: Optional[list["_models.BulkCreateCustomResource"]] = rest_field(visibility=["read"])
+    """The virtual machine resources resolved for the operation."""
     priority_profile: "_models.BulkCreateCustomPriorityProfile" = rest_field(
         name="priorityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1032,6 +1064,8 @@ class BulkCreateCustomProperties(_Model):
         priority_profile: "_models.BulkCreateCustomPriorityProfile",
         compute_profile: "_models.ComputeProfile",
         capacity_type: Optional[Union[str, "_models.CapacityType"]] = None,
+        min_capacity: Optional[int] = None,
+        partial_fulfillment_policy: Optional["_models.PartialFulfillmentPolicy"] = None,
         vm_sizes_profile: Optional[list["_models.BulkCreateCustomVmSizeProfile"]] = None,
         zone_allocation_policy: Optional["_models.BulkCreateCustomZoneAllocationPolicy"] = None,
         overrides_profile: Optional["_models.BulkCreateCustomOverridesProfile"] = None,
@@ -1049,7 +1083,77 @@ class BulkCreateCustomProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkCreateCustomVmSizeProfile(_Model):
+class BulkCreateCustomResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A virtual machine resource resolved for a BulkCreateCustom operation.
+
+    :ivar virtual_machine_info: Information about the resolved virtual machine.
+    :vartype virtual_machine_info:
+     ~azure.mgmt.compute.bulkaction.models.BulkCreateCustomVirtualMachineInfo
+    """
+
+    virtual_machine_info: Optional["_models.BulkCreateCustomVirtualMachineInfo"] = rest_field(
+        name="virtualMachineInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information about the resolved virtual machine."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        virtual_machine_info: Optional["_models.BulkCreateCustomVirtualMachineInfo"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BulkCreateCustomVirtualMachineInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Information about a virtual machine resolved for a BulkCreateCustom operation.
+
+    :ivar name: The resolved Azure virtual machine name.
+    :vartype name: str
+    :ivar vm_size: The virtual machine size selected for the virtual machine.
+    :vartype vm_size: str
+    :ivar zone: The subscription-relative logical availability zone selected for the virtual
+     machine.
+    :vartype zone: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resolved Azure virtual machine name."""
+    vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read", "create", "update", "delete", "query"])
+    """The virtual machine size selected for the virtual machine."""
+    zone: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The subscription-relative logical availability zone selected for the virtual machine."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        vm_size: Optional[str] = None,
+        zone: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BulkCreateCustomVmSizeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A VM size profile entry that may additionally carry an optional per-VM-size profile override.
     Every VM that the service assigns to this size inherits the override, layered on top of the
     operation-level base profile and beneath any per-VM override. Present only on the
@@ -1098,7 +1202,7 @@ class BulkCreateCustomVmSizeProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkCreateCustomZoneAllocationPolicy(_Model):
+class BulkCreateCustomZoneAllocationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The zone allocation policy for distributing VMs across availability zones in BulkCreateCustom.
 
     :ivar distribution_strategy: The distribution strategy for zone allocation. Defaults to
@@ -1139,7 +1243,7 @@ class BulkCreateCustomZoneAllocationPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BulkInstancesInnerError(_Model):
+class BulkInstancesInnerError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Inner error details.
 
     :ivar exception_type: The exception type.
@@ -1176,7 +1280,7 @@ class BulkInstancesInnerError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CancelOccurrenceRequest(_Model):
+class CancelOccurrenceRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request to cancel an occurrence.
 
     :ivar resource_ids: The resources the cancellation should act on. If no resource is passed in
@@ -1206,7 +1310,7 @@ class CancelOccurrenceRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CancelOperationsContent(_Model):
+class CancelOperationsContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the request to cancel running operations in scheduled actions using the operation ids.
 
     :ivar operation_ids: The list of operation ids to cancel operations on. Required.
@@ -1236,7 +1340,7 @@ class CancelOperationsContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CancelOperationsResponse(_Model):
+class CancelOperationsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the response from a cancel operations request.
 
     :ivar results: An array of resource operations that were successfully cancelled. Required.
@@ -1264,7 +1368,250 @@ class CancelOperationsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CapacityReservationProfile(_Model):
+class CapacityRecommendation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The capacity/placement recommendation computed for a resource operation.
+
+    :ivar status: The lifecycle status of the capacity recommendation. Required. Known values are:
+     "NotInitiated", "Succeeded", "Failed", and "Skipped".
+    :vartype status: str or ~azure.mgmt.compute.bulkaction.models.CapacityRecommendationStatus
+    :ivar error: The error message if the capacity recommendation failed.
+    :vartype error: str
+    :ivar error_details: The detailed error information if the capacity recommendation failed.
+    :vartype error_details: str
+    :ivar details: The details of the capacity recommendation.
+    :vartype details: ~azure.mgmt.compute.bulkaction.models.CapacityRecommendationDetails
+    """
+
+    status: Union[str, "_models.CapacityRecommendationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The lifecycle status of the capacity recommendation. Required. Known values are:
+     \"NotInitiated\", \"Succeeded\", \"Failed\", and \"Skipped\"."""
+    error: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error message if the capacity recommendation failed."""
+    error_details: Optional[str] = rest_field(
+        name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The detailed error information if the capacity recommendation failed."""
+    details: Optional["_models.CapacityRecommendationDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the capacity recommendation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.CapacityRecommendationStatus"],
+        error: Optional[str] = None,
+        error_details: Optional[str] = None,
+        details: Optional["_models.CapacityRecommendationDetails"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CapacityRecommendationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The details of a capacity recommendation.
+
+    :ivar desired_locations: The list of desired Azure regions from the request.
+    :vartype desired_locations: list[str]
+    :ivar recommendation_requested_at_utc: The UTC timestamp of when the recommendation was
+     requested.
+    :vartype recommendation_requested_at_utc: ~datetime.datetime
+    :ivar desired_sizes: The list of desired VM sizes from the request.
+    :vartype desired_sizes: list[~azure.mgmt.compute.bulkaction.models.CapacityRecommendationSize]
+    :ivar availability_zones: Whether the response is split by availability zone.
+    :vartype availability_zones: bool
+    :ivar placement_scores: The array of placement scores per SKU, region and zone.
+    :vartype placement_scores:
+     list[~azure.mgmt.compute.bulkaction.models.CapacityRecommendationPlacementScore]
+    """
+
+    desired_locations: Optional[list[str]] = rest_field(
+        name="desiredLocations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of desired Azure regions from the request."""
+    recommendation_requested_at_utc: Optional[datetime.datetime] = rest_field(
+        name="recommendationRequestedAtUtc",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
+    )
+    """The UTC timestamp of when the recommendation was requested."""
+    desired_sizes: Optional[list["_models.CapacityRecommendationSize"]] = rest_field(
+        name="desiredSizes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of desired VM sizes from the request."""
+    availability_zones: Optional[bool] = rest_field(
+        name="availabilityZones", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the response is split by availability zone."""
+    placement_scores: Optional[list["_models.CapacityRecommendationPlacementScore"]] = rest_field(
+        name="placementScores", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The array of placement scores per SKU, region and zone."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        desired_locations: Optional[list[str]] = None,
+        recommendation_requested_at_utc: Optional[datetime.datetime] = None,
+        desired_sizes: Optional[list["_models.CapacityRecommendationSize"]] = None,
+        availability_zones: Optional[bool] = None,
+        placement_scores: Optional[list["_models.CapacityRecommendationPlacementScore"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CapacityRecommendationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The parameters used to request capacity/placement recommendations for a start operation.
+    Placement recommendations are only computed if the VM fails to start due to an allocation
+    failure.
+
+    :ivar desired_locations: The list of desired Azure regions to be considered for the capacity
+     recommendation.
+    :vartype desired_locations: list[str]
+    :ivar desired_sizes: The list of desired VM sizes (SKUs) to be considered for the capacity
+     recommendation.
+    :vartype desired_sizes: list[str]
+    :ivar availability_zones: Whether the capacity recommendation should be computed per
+     availability zone.
+    :vartype availability_zones: bool
+    """
+
+    desired_locations: Optional[list[str]] = rest_field(
+        name="desiredLocations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of desired Azure regions to be considered for the capacity recommendation."""
+    desired_sizes: Optional[list[str]] = rest_field(
+        name="desiredSizes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of desired VM sizes (SKUs) to be considered for the capacity recommendation."""
+    availability_zones: Optional[bool] = rest_field(
+        name="availabilityZones", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the capacity recommendation should be computed per availability zone."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        desired_locations: Optional[list[str]] = None,
+        desired_sizes: Optional[list[str]] = None,
+        availability_zones: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CapacityRecommendationPlacementScore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The placement score for a given SKU, region and optionally availability zone.
+
+    :ivar sku: The VM size (SKU) name.
+    :vartype sku: str
+    :ivar region: The Azure region.
+    :vartype region: str
+    :ivar availability_zone: The availability zone identifier, present only when availabilityZones
+     was requested.
+    :vartype availability_zone: str
+    :ivar score: The placement score, eg High, Medium or Low.
+    :vartype score: str
+    :ivar is_quota_available: Whether quota is available for the SKU, region and zone combination.
+    :vartype is_quota_available: bool
+    """
+
+    sku: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The VM size (SKU) name."""
+    region: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Azure region."""
+    availability_zone: Optional[str] = rest_field(
+        name="availabilityZone", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The availability zone identifier, present only when availabilityZones was requested."""
+    score: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The placement score, eg High, Medium or Low."""
+    is_quota_available: Optional[bool] = rest_field(
+        name="isQuotaAvailable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether quota is available for the SKU, region and zone combination."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sku: Optional[str] = None,
+        region: Optional[str] = None,
+        availability_zone: Optional[str] = None,
+        score: Optional[str] = None,
+        is_quota_available: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CapacityRecommendationSize(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A desired VM size (SKU) considered for the capacity recommendation.
+
+    :ivar sku: The VM size (SKU) name.
+    :vartype sku: str
+    """
+
+    sku: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The VM size (SKU) name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sku: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CapacityReservationProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters of a capacity reservation Profile.
 
     :ivar capacity_reservation_group: Specifies the capacity reservation group resource id that
@@ -1299,7 +1646,7 @@ class CapacityReservationProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComputeProfile(_Model):
+class ComputeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Compute Profile to configure the Virtual Machines.
 
     :ivar virtual_machine_profile: Base Virtual Machine Profile Properties to be specified
@@ -1354,7 +1701,7 @@ class ComputeProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateResourceOperationResponse(_Model):
+class CreateResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from a create request.
 
     :ivar description: The description of the operation response. Required.
@@ -1399,7 +1746,7 @@ class CreateResourceOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataDisk(_Model):
+class DataDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a data disk.
 
     :ivar lun: Specifies the logical unit number of the data disk. This value is used to identify
@@ -1539,7 +1886,7 @@ class DataDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeallocateResourceOperationResponse(_Model):
+class DeallocateResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from a deallocate request.
 
     :ivar description: The description of the operation response. Required.
@@ -1584,7 +1931,7 @@ class DeallocateResourceOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DelayRequest(_Model):
+class DelayRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to ask for a delay in an occurrence, delay should be set to client local time eg (PST)
     2025-05-30T06:35:00-07:00.
 
@@ -1620,7 +1967,7 @@ class DelayRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteResourceOperationResponse(_Model):
+class DeleteResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from a delete request.
 
     :ivar description: The description of the operation response. Required.
@@ -1665,7 +2012,7 @@ class DeleteResourceOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticsProfile(_Model):
+class DiagnosticsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the boot diagnostic settings state. Minimum compute api-version: 2015-06-15.
 
     :ivar boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
@@ -1702,7 +2049,7 @@ class DiagnosticsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiffDiskSettings(_Model):
+class DiffDiskSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the parameters of ephemeral disk settings that can be specified for operating system
     disk. Note: The ephemeral disk settings can only be specified for managed disk.
 
@@ -1746,7 +2093,7 @@ class DiffDiskSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubResource(_Model):
+class SubResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a reference to a sub-resource.
 
     :ivar id: The ID of the sub-resource.
@@ -1774,7 +2121,7 @@ class SubResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionSetParametersContent(SubResource):
+class DiskEncryptionSetParametersContent(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the parameter of customer managed disk encryption set resource id that can be
     specified for disk. **Note:** The disk encryption set resource id can only be specified for
     managed disk. Please refer `https://aka.ms/mdssewithcmkoverview
@@ -1802,7 +2149,7 @@ class DiskEncryptionSetParametersContent(SubResource):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionSettings(_Model):
+class DiskEncryptionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Encryption Settings for a Disk.
 
     :ivar disk_encryption_key: Specifies the location of the disk encryption key, which is a Key
@@ -1845,7 +2192,7 @@ class DiskEncryptionSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionIdentity(_Model):
+class EncryptionIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Managed Identity used by ADE to get access token for keyvault operations.
 
     :ivar user_assigned_identity_resource_id: Specifies ARM Resource ID of one of the user
@@ -1920,7 +2267,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1948,7 +2295,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventGridAndResourceGraph(_Model):
+class EventGridAndResourceGraph(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies eventGridAndResourceGraph related Scheduled Event related configurations.
 
     :ivar enable: Specifies if event grid and resource graph is enabled for Scheduled event related
@@ -1987,7 +2334,7 @@ class EventGridAndResourceGraph(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteCreateContent(_Model):
+class ExecuteCreateContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ExecuteCreateRequest request for create operations.
 
     :ivar resource_config_parameters: resource creation payload. Required.
@@ -2025,7 +2372,7 @@ class ExecuteCreateContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteDeallocateContent(_Model):
+class ExecuteDeallocateContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ExecuteDeallocateRequest request for executeDeallocate operations.
 
     :ivar execution_parameters: The execution parameters for the request. Required.
@@ -2069,7 +2416,7 @@ class ExecuteDeallocateContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteDeleteContent(_Model):
+class ExecuteDeleteContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ExecuteDeleteRequest for delete VM operation.
 
     :ivar execution_parameters: The execution parameters for the request. Required.
@@ -2120,7 +2467,7 @@ class ExecuteDeleteContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteHibernateContent(_Model):
+class ExecuteHibernateContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ExecuteHibernateRequest request for executeHibernate operations.
 
     :ivar execution_parameters: The execution parameters for the request. Required.
@@ -2164,7 +2511,7 @@ class ExecuteHibernateContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteReimageRequest(_Model):
+class ExecuteReimageRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ExecuteReimageRequest request for reimage operations.
 
     :ivar execution_parameters: The execution parameters for the request. Required.
@@ -2215,7 +2562,7 @@ class ExecuteReimageRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteStartContent(_Model):
+class ExecuteStartContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ExecuteStartRequest request for executeStart operations.
 
     :ivar execution_parameters: The execution parameters for the request. Required.
@@ -2259,7 +2606,7 @@ class ExecuteStartContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteVdiCreateRequest(_Model):
+class ExecuteVdiCreateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The VdiCreateRequest request for create operations.
 
     :ivar resource_config_parameters: resource creation payload. Required.
@@ -2297,7 +2644,7 @@ class ExecuteVdiCreateRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecutionParameters(_Model):
+class ExecutionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Extra details needed to run the user's request.
 
     :ivar optimization_preference: Details that could optimize the user's request. Known values
@@ -2310,6 +2657,12 @@ class ExecutionParameters(_Model):
      health check and engage the fallback chain if the guest agent does not report Ready. Ignored
      for non-Start operations.
     :vartype verify_vm_agent_health: bool
+    :ivar capacity_recommendation_parameters: Capacity recommendation parameters for the request.
+     When provided on an executeStart request, the service computes placement recommendations only
+     if the VM fails to start due to an allocation failure; the recommendations for the desired
+     sizes and locations are then surfaced in the operation's capacityRecommendation response.
+    :vartype capacity_recommendation_parameters:
+     ~azure.mgmt.compute.bulkaction.models.CapacityRecommendationParameters
     """
 
     optimization_preference: Optional[Union[str, "_models.OptimizationPreference"]] = rest_field(
@@ -2326,6 +2679,13 @@ class ExecutionParameters(_Model):
     )
     """When true on an executeStart request, run a post-Start VM agent health check and engage the
      fallback chain if the guest agent does not report Ready. Ignored for non-Start operations."""
+    capacity_recommendation_parameters: Optional["_models.CapacityRecommendationParameters"] = rest_field(
+        name="capacityRecommendationParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Capacity recommendation parameters for the request. When provided on an executeStart request,
+     the service computes placement recommendations only if the VM fails to start due to an
+     allocation failure; the recommendations for the desired sizes and locations are then surfaced
+     in the operation's capacityRecommendation response."""
 
     @overload
     def __init__(
@@ -2334,6 +2694,7 @@ class ExecutionParameters(_Model):
         optimization_preference: Optional[Union[str, "_models.OptimizationPreference"]] = None,
         retry_policy: Optional["_models.RetryPolicy"] = None,
         verify_vm_agent_health: Optional[bool] = None,
+        capacity_recommendation_parameters: Optional["_models.CapacityRecommendationParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -2392,7 +2753,7 @@ class ExtensionResource(Resource):
     """
 
 
-class FallbackOperationInfo(_Model):
+class FallbackOperationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the fallback operation that was performed.
 
     :ivar last_op_type: The last operation type that was performed as a fallback. Required. Known
@@ -2438,7 +2799,7 @@ class FallbackOperationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FlexProperties(_Model):
+class FlexProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The flex properties for flexible VM creation.
 
     :ivar vm_size_profiles: The list of VM size profiles to use for flex creation. Required.
@@ -2501,7 +2862,7 @@ class FlexProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetOperationStatusContent(_Model):
+class GetOperationStatusContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the request to get operation status using operationids.
 
     :ivar operation_ids: The list of operation ids to get the status of. Required.
@@ -2531,7 +2892,7 @@ class GetOperationStatusContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetOperationStatusResponse(_Model):
+class GetOperationStatusResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the response from a get operations status request.
 
     :ivar results: An array of resource operations based on their operation ids. Required.
@@ -2559,7 +2920,7 @@ class GetOperationStatusResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HardwareProfile(_Model):
+class HardwareProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the hardware profile for the virtual machine.
 
     :ivar vm_size: Specifies the size of the virtual machine. The enum data type is currently
@@ -2621,7 +2982,7 @@ class HardwareProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HibernateResourceOperationResponse(_Model):
+class HibernateResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from a Hibernate request.
 
     :ivar description: The description of the operation response. Required.
@@ -2666,7 +3027,7 @@ class HibernateResourceOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostEndpointSettings(_Model):
+class HostEndpointSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies particular host endpoint settings.
 
     :ivar mode: Specifies the execution mode. In Audit mode, the system acts as if it is enforcing
@@ -2712,7 +3073,7 @@ class HostEndpointSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageReference(SubResource):
+class ImageReference(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the image to use. You can specify information about platform
     images, marketplace images, or virtual machine images. This element is required when you want
     to use a platform image, marketplace image, or virtual machine image, but is not used in other
@@ -2798,7 +3159,7 @@ class ImageReference(SubResource):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultKeyReference(_Model):
+class KeyVaultKeyReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a reference to Key Vault Key.
 
     :ivar key_url: The URL referencing a key encryption key in Key Vault. Required.
@@ -2833,7 +3194,7 @@ class KeyVaultKeyReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultSecretReference(_Model):
+class KeyVaultSecretReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a reference to Key Vault Secret.
 
     :ivar secret_url: The URL referencing a secret in a Key Vault. Required.
@@ -2868,7 +3229,7 @@ class KeyVaultSecretReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LaunchBulkInstancesOperationProperties(_Model):
+class LaunchBulkInstancesOperationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the LaunchBulkInstancesOperation.
 
     :ivar created_time: The UTC time the LaunchBulkInstancesOperation resource was created.
@@ -2960,7 +3321,7 @@ class LaunchBulkInstancesOperationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxConfiguration(_Model):
+class LinuxConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Linux operating system settings on the virtual machine. For a list of supported
     Linux distributions, see `Linux on Azure-Endorsed Distributions
     <https://docs.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
@@ -3027,7 +3388,7 @@ class LinuxConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxPatchSettings(_Model):
+class LinuxPatchSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies settings related to VM Guest Patching on Linux.
 
     :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
@@ -3091,7 +3452,9 @@ class LinuxPatchSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxVMGuestPatchAutomaticByPlatformSettings(_Model):  # pylint: disable=name-too-long
+class LinuxVMGuestPatchAutomaticByPlatformSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies additional settings to be applied when patch mode AutomaticByPlatform is selected in
     Linux patch settings.
 
@@ -3150,7 +3513,7 @@ class ProxyResource(Resource):
     """
 
 
-class LocationBasedBulkCreateCustom(ProxyResource):
+class LocationBasedBulkCreateCustom(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Location based BulkCreateCustom resource. The location is part of the resource path.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3213,7 +3576,9 @@ class LocationBasedBulkCreateCustom(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class LocationBasedLaunchBulkInstancesOperation(ProxyResource):  # pylint: disable=name-too-long
+class LocationBasedLaunchBulkInstancesOperation(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Location based LaunchBulkInstancesOperation resource. The location is part of the resource
     path.
 
@@ -3278,7 +3643,7 @@ class LocationBasedLaunchBulkInstancesOperation(ProxyResource):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class ManagedDiskParametersContent(SubResource):
+class ManagedDiskParametersContent(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters of a managed disk.
 
     :ivar id: The ID of the sub-resource.
@@ -3333,7 +3698,7 @@ class ManagedDiskParametersContent(SubResource):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -3385,7 +3750,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterfaceReference(SubResource):
+class NetworkInterfaceReference(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a network interface reference.
 
     :ivar id: The ID of the sub-resource.
@@ -3418,7 +3783,7 @@ class NetworkInterfaceReference(SubResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterfaceReferenceProperties(_Model):
+class NetworkInterfaceReferenceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a network interface reference properties.
 
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
@@ -3457,7 +3822,7 @@ class NetworkInterfaceReferenceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkProfile(_Model):
+class NetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the network interfaces or the networking configuration of the virtual machine.
 
     :ivar network_interfaces: Specifies the list of resource Ids for the network interfaces
@@ -3510,7 +3875,7 @@ class NetworkProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotificationProperties(_Model):
+class NotificationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The information about notifications to be send to about upcoming operations.
 
     :ivar destination: Where the notification should be sent. For email, it should follow email
@@ -3556,7 +3921,7 @@ class NotificationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Occurrence(ProxyResource):
+class Occurrence(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -3598,7 +3963,7 @@ class Occurrence(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class OccurrenceExtensionProperties(_Model):
+class OccurrenceExtensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the occurrence extension.
 
     :ivar resource_id: The ARM Id of the resource.
@@ -3612,9 +3977,9 @@ class OccurrenceExtensionProperties(_Model):
      Required.
     :vartype scheduled_time: ~datetime.datetime
     :ivar provisioning_state: The current state of the resource. Known values are: "Succeeded",
-     "Failed", and "Canceled".
+     "Failed", "Canceled", "Created", "Scheduled", "Cancelling", "Rescheduling", and "InvalidState".
     :vartype provisioning_state: str or
-     ~azure.mgmt.compute.bulkaction.models.ResourceProvisioningState
+     ~azure.mgmt.compute.bulkaction.models.OccurrenceResourceProvisioningState
     :ivar error_details: Error details for the resource. Only populated if resource is in failed
      state.
     :vartype error_details: ~azure.core.ODataV4Format
@@ -3633,11 +3998,11 @@ class OccurrenceExtensionProperties(_Model):
     """The desired notification settings for the specified resource."""
     scheduled_time: datetime.datetime = rest_field(name="scheduledTime", visibility=["read"], format="rfc3339")
     """The time the occurrence is scheduled for the resource. Specified in UTC. Required."""
-    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.OccurrenceResourceProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The current state of the resource. Known values are: \"Succeeded\", \"Failed\", and
-     \"Canceled\"."""
+    """The current state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Created\", \"Scheduled\", \"Cancelling\", \"Rescheduling\", and \"InvalidState\"."""
     error_details: Optional[ODataV4Format] = rest_field(name="errorDetails", visibility=["read"])
     """Error details for the resource. Only populated if resource is in failed state."""
     scheduled_action_id: str = rest_field(
@@ -3665,7 +4030,7 @@ class OccurrenceExtensionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OccurrenceExtensionResource(ExtensionResource):
+class OccurrenceExtensionResource(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The scheduled action extension.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3732,7 +4097,7 @@ class OccurrenceProperties(_Model):
      \"Rescheduling\", \"Scheduled\", \"Succeeded\", \"Failed\", \"Cancelling\", and \"Canceled\"."""
 
 
-class OccurrenceResource(_Model):
+class OccurrenceResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an scheduled action resource metadata.
 
     :ivar name: The name of the resource. Required.
@@ -3751,9 +4116,9 @@ class OccurrenceResource(_Model):
     :ivar scheduled_time: The time the occurrence is scheduled for the resource. Required.
     :vartype scheduled_time: ~datetime.datetime
     :ivar provisioning_state: The current state of the resource. Known values are: "Succeeded",
-     "Failed", and "Canceled".
+     "Failed", "Canceled", "Created", "Scheduled", "Cancelling", "Rescheduling", and "InvalidState".
     :vartype provisioning_state: str or
-     ~azure.mgmt.compute.bulkaction.models.ResourceProvisioningState
+     ~azure.mgmt.compute.bulkaction.models.OccurrenceResourceProvisioningState
     :ivar error_details: Error details for the resource. Only populated if resource is in failed
      state.
     :vartype error_details: ~azure.core.ODataV4Format
@@ -3775,11 +4140,11 @@ class OccurrenceResource(_Model):
     """The desired notification settings for the specified resource."""
     scheduled_time: datetime.datetime = rest_field(name="scheduledTime", visibility=["read"], format="rfc3339")
     """The time the occurrence is scheduled for the resource. Required."""
-    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.OccurrenceResourceProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """The current state of the resource. Known values are: \"Succeeded\", \"Failed\", and
-     \"Canceled\"."""
+    """The current state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Created\", \"Scheduled\", \"Cancelling\", \"Rescheduling\", and \"InvalidState\"."""
     error_details: Optional[ODataV4Format] = rest_field(name="errorDetails", visibility=["read"])
     """Error details for the resource. Only populated if resource is in failed state."""
 
@@ -3802,7 +4167,7 @@ class OccurrenceResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OccurrenceResultSummary(_Model):
+class OccurrenceResultSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The summarized provisioning result of an occurrence.
 
     :ivar total: The total number of resources that the occurrence was supposed to act on.
@@ -3838,7 +4203,7 @@ class OccurrenceResultSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -3926,7 +4291,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OperationStatusResult(_Model):
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -4002,7 +4367,7 @@ class OperationStatusResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSDisk(_Model):
+class OSDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the operating system disk used by the virtual machine. For more
     information about disks, see `About disks and VHDs for Azure virtual machines
     <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
@@ -4139,7 +4504,7 @@ class OSDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSImageNotificationProfile(_Model):
+class OSImageNotificationProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for the OS Image Scheduled event.
 
     :ivar not_before_timeout: Length of time a Virtual Machine being reimaged or having its OS
@@ -4179,7 +4544,7 @@ class OSImageNotificationProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSProfile(_Model):
+class OSProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the operating system settings for the virtual machine. Some of the settings cannot be
     changed once VM is provisioned.
 
@@ -4345,7 +4710,7 @@ class OSProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSProfileProvisioningData(_Model):
+class OSProfileProvisioningData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional parameters for Reimaging Non-Ephemeral Virtual Machine.
 
     :ivar admin_password: Specifies the password of the administrator account. <br><br>
@@ -4420,7 +4785,63 @@ class OSProfileProvisioningData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatchSettings(_Model):
+class PartialFulfillmentPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Controls how partial fulfillment is handled for a BulkCreateCustom request. When enabled, Azure
+    creates only the VMs or vCPUs it has high confidence can be successfully allocated, instead of
+    attempting the entire request and potentially returning allocation failures.
+
+    :ivar fulfilled_capacity: The amount of capacity that was actually attempted, expressed in the
+     units specified by capacityType. When partial fulfillment is enabled, this value can be less
+     than the requested capacity.
+    :vartype fulfilled_capacity: int
+    :ivar mode: Specifies whether partial fulfillment is allowed. When Enabled, Azure creates as
+     many VMs as it has high confidence can be successfully allocated. When Disabled, Azure attempts
+     to create all requested VMs, which may result into allocation failures. Known values are:
+     "Enabled" and "Disabled".
+    :vartype mode: str or ~azure.mgmt.compute.bulkaction.models.PartialFulfillmentMode
+    :ivar reason: Indicates why the fulfilled capacity is less than the requested capacity.
+     Possible values include InsufficientCapacity and InsufficientQuota. Returned only in the create
+     response when partial fulfillment is enabled and the request cannot be fully satisfied. Known
+     values are: "InsufficientCapacity", "InsufficientQuota", and "None".
+    :vartype reason: str or ~azure.mgmt.compute.bulkaction.models.PartialFulfillmentReason
+    """
+
+    fulfilled_capacity: Optional[int] = rest_field(name="fulfilledCapacity", visibility=["read"])
+    """The amount of capacity that was actually attempted, expressed in the units specified by
+     capacityType. When partial fulfillment is enabled, this value can be less than the requested
+     capacity."""
+    mode: Optional[Union[str, "_models.PartialFulfillmentMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether partial fulfillment is allowed. When Enabled, Azure creates as many VMs as it
+     has high confidence can be successfully allocated. When Disabled, Azure attempts to create all
+     requested VMs, which may result into allocation failures. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    reason: Optional[Union[str, "_models.PartialFulfillmentReason"]] = rest_field(visibility=["read"])
+    """Indicates why the fulfilled capacity is less than the requested capacity. Possible values
+     include InsufficientCapacity and InsufficientQuota. Returned only in the create response when
+     partial fulfillment is enabled and the request cannot be fully satisfied. Known values are:
+     \"InsufficientCapacity\", \"InsufficientQuota\", and \"None\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.PartialFulfillmentMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PatchSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies settings related to VM Guest Patching on Windows.
 
     :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
@@ -4505,7 +4926,7 @@ class PatchSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Plan(_Model):
+class Plan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Plan for the resource.
 
     :ivar name: A user defined name of the 3rd Party Artifact that is being procured. Required.
@@ -4560,7 +4981,7 @@ class Plan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PriorityProfile(_Model):
+class PriorityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The priority profile for flex VM creation.
 
     :ivar type: The priority type for VM allocation. Known values are: "Regular" and "Spot".
@@ -4616,7 +5037,7 @@ class PriorityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProxyAgentSettings(_Model):
+class ProxyAgentSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies ProxyAgent settings for the virtual machine or virtual machine scale set. Minimum
     api-version: 2023-09-01.
 
@@ -4692,7 +5113,7 @@ class ProxyAgentSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PublicIPAddressSku(_Model):
+class PublicIPAddressSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the public IP Sku. It can only be set with OrchestrationMode as Flexible.
 
     :ivar name: Specify public IP sku name. Known values are: "Basic" and "Standard".
@@ -4729,95 +5150,7 @@ class PublicIPAddressSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecurringScheduledActionsExecutionParameters(_Model):  # pylint: disable=name-too-long
-    """The execution parameters the scheduled action is supposed to follow.
-
-    :ivar optimization_preference: Details that could optimize the user's request. Known values
-     are: "Cost", "Availability", and "CostAvailabilityBalanced".
-    :vartype optimization_preference: str or
-     ~azure.mgmt.compute.bulkaction.models.OptimizationPreference
-    :ivar retry_policy: Retry policy the user can pass.
-    :vartype retry_policy:
-     ~azure.mgmt.compute.bulkaction.models.RecurringScheduledActionsRetryPolicy
-    """
-
-    optimization_preference: Optional[Union[str, "_models.OptimizationPreference"]] = rest_field(
-        name="optimizationPreference", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Details that could optimize the user's request. Known values are: \"Cost\", \"Availability\",
-     and \"CostAvailabilityBalanced\"."""
-    retry_policy: Optional["_models.RecurringScheduledActionsRetryPolicy"] = rest_field(
-        name="retryPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Retry policy the user can pass."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        optimization_preference: Optional[Union[str, "_models.OptimizationPreference"]] = None,
-        retry_policy: Optional["_models.RecurringScheduledActionsRetryPolicy"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RecurringScheduledActionsRetryPolicy(_Model):
-    """Retry policy the scheduled action can pass.
-
-    :ivar retry_count: Retry count for the request.
-    :vartype retry_count: int
-    :ivar retry_window_in_minutes: Retry window in minutes for the request.
-    :vartype retry_window_in_minutes: int
-    :ivar on_failure_action: Action to take on failure. Known values are: "Unknown", "Start",
-     "Deallocate", "Hibernate", "Create", and "Delete".
-    :vartype on_failure_action: str or
-     ~azure.mgmt.compute.bulkaction.models.RecurringScheduledActionsResourceOperationType
-    """
-
-    retry_count: Optional[int] = rest_field(
-        name="retryCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Retry count for the request."""
-    retry_window_in_minutes: Optional[int] = rest_field(
-        name="retryWindowInMinutes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Retry window in minutes for the request."""
-    on_failure_action: Optional[Union[str, "_models.RecurringScheduledActionsResourceOperationType"]] = rest_field(
-        name="onFailureAction", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Action to take on failure. Known values are: \"Unknown\", \"Start\", \"Deallocate\",
-     \"Hibernate\", \"Create\", and \"Delete\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        retry_count: Optional[int] = None,
-        retry_window_in_minutes: Optional[int] = None,
-        on_failure_action: Optional[Union[str, "_models.RecurringScheduledActionsResourceOperationType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ReimagePayload(_Model):
+class ReimagePayload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reimage payload with common profile and per-resource overrides.
 
     :ivar base_profile: Common reimage profile applied to all resources unless overridden.
@@ -4855,7 +5188,7 @@ class ReimagePayload(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReimageResourceOperationResponse(_Model):
+class ReimageResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from a reimage request.
 
     :ivar description: The description of the operation response. Required.
@@ -4900,7 +5233,7 @@ class ReimageResourceOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReimageResourceOverride(_Model):
+class ReimageResourceOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Per-resource override entry for reimage requests.
 
     :ivar resource_id: The Azure resource ID of the virtual machine for this override. Required.
@@ -4935,7 +5268,7 @@ class ReimageResourceOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceAttachRequest(_Model):
+class ResourceAttachRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request model to attach a list of scheduled action resources.
 
     :ivar resources: List of resources to be attached/patched. Required.
@@ -4965,7 +5298,7 @@ class ResourceAttachRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceDetachRequest(_Model):
+class ResourceDetachRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request model to detach a list of scheduled action resources.
 
     :ivar resources: List of resources to be detached. Required.
@@ -4993,7 +5326,7 @@ class ResourceDetachRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceNotificationDetails(_Model):
+class ResourceNotificationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource notification details containing notification metadata like the resource context.
 
     :ivar resource_context: Resource context for notification tracking.
@@ -5023,7 +5356,7 @@ class ResourceNotificationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceOperation(_Model):
+class ResourceOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """High level response from an operation on a resource.
 
     :ivar resource_id: Unique identifier for the resource involved in the operation, for example
@@ -5080,7 +5413,7 @@ class ResourceOperation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceOperationDetails(_Model):
+class ResourceOperationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of a response from an operation on a resource.
 
     :ivar operation_id: Operation identifier for the unique operation. Required.
@@ -5115,6 +5448,9 @@ class ResourceOperationDetails(_Model):
     :ivar resource_notification_details: Resource notification details.
     :vartype resource_notification_details:
      ~azure.mgmt.compute.bulkaction.models.ResourceNotificationDetails
+    :ivar capacity_recommendation: The capacity/placement recommendation computed for the
+     operation, if requested.
+    :vartype capacity_recommendation: ~azure.mgmt.compute.bulkaction.models.CapacityRecommendation
     """
 
     operation_id: str = rest_field(name="operationId", visibility=["read", "create", "update", "delete", "query"])
@@ -5169,6 +5505,10 @@ class ResourceOperationDetails(_Model):
         name="resourceNotificationDetails", visibility=["read", "create", "update", "delete", "query"]
     )
     """Resource notification details."""
+    capacity_recommendation: Optional["_models.CapacityRecommendation"] = rest_field(
+        name="capacityRecommendation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The capacity/placement recommendation computed for the operation, if requested."""
 
     @overload
     def __init__(
@@ -5187,6 +5527,7 @@ class ResourceOperationDetails(_Model):
         completed_at: Optional[datetime.datetime] = None,
         retry_policy: Optional["_models.RetryPolicy"] = None,
         resource_notification_details: Optional["_models.ResourceNotificationDetails"] = None,
+        capacity_recommendation: Optional["_models.CapacityRecommendation"] = None,
     ) -> None: ...
 
     @overload
@@ -5200,7 +5541,7 @@ class ResourceOperationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceOperationError(_Model):
+class ResourceOperationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """These describe errors that occur at the resource level.
 
     :ivar error_code: Code for the error eg 404, 500. Required.
@@ -5233,7 +5574,7 @@ class ResourceOperationError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceOperationResponse(_Model):
+class ResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from scheduled action resource requests, which contains the status of each
     resource.
 
@@ -5269,7 +5610,7 @@ class ResourceOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourcePatchRequest(_Model):
+class ResourcePatchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request model perform a resource operation in a list of resources.
 
     :ivar resources: The list of resources we watch to patch. Required.
@@ -5299,7 +5640,7 @@ class ResourcePatchRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProvisionPayload(_Model):
+class ResourceProvisionPayload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource creation data model.
 
     :ivar base_profile: Bulk Actions Virtual Machine Profile object that contains VM properties
@@ -5354,7 +5695,7 @@ class ResourceProvisionPayload(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProvisionVdiPayload(_Model):
+class ResourceProvisionVdiPayload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource creation data model with Flex properties for VDI scenarios.
 
     :ivar base_profile: Bulk Actions Virtual Machine Profile object that contains VM properties
@@ -5416,7 +5757,7 @@ class ResourceProvisionVdiPayload(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceResultSummary(_Model):
+class ResourceResultSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of the resources.
 
     :ivar code: The error code for those resources. In case of success, code is populated with
@@ -5458,7 +5799,7 @@ class ResourceResultSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Resources(_Model):
+class Resources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resources needed for the user request.
 
     :ivar ids: The resource ids used for the request. Required.
@@ -5486,7 +5827,7 @@ class Resources(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceStatus(_Model):
+class ResourceStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of a resource after a resource level operation was performed.
 
     :ivar resource_id: The arm identifier of the resource. Required.
@@ -5528,7 +5869,7 @@ class ResourceStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourcesWithContext(_Model):
+class ResourcesWithContext(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resources needed for the user request with the context for tracking purposes.
 
     :ivar resources: The resource ids used for the request. Required.
@@ -5558,7 +5899,7 @@ class ResourcesWithContext(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceWithContext(_Model):
+class ResourceWithContext(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resources needed for the user request with the resourceContext.
 
     :ivar resource_id: The resource ids used for the request. Required.
@@ -5593,7 +5934,7 @@ class ResourceWithContext(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetryPolicy(_Model):
+class RetryPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The retry policy for the user request.
 
     :ivar retry_count: Retry count for user request.
@@ -5639,7 +5980,7 @@ class RetryPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5683,7 +6024,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledAction(TrackedResource):
+class ScheduledAction(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The scheduled action resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5730,7 +6071,7 @@ class ScheduledAction(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledActionProperties(_Model):
+class ScheduledActionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scheduled action properties.
 
     :ivar resource_type: The type of resource the scheduled action is targeting. Required. Known
@@ -5753,7 +6094,7 @@ class ScheduledActionProperties(_Model):
     :ivar provisioning_state: The status of the last provisioning operation performed on the
      resource. Known values are: "Succeeded", "Failed", "Canceled", and "Deleting".
     :vartype provisioning_state: str or
-     ~azure.mgmt.compute.bulkaction.models.RecurringScheduledActionsProvisioningState
+     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsProvisioningState
     """
 
     resource_type: Union[str, "_models.ResourceType"] = rest_field(
@@ -5784,7 +6125,7 @@ class ScheduledActionProperties(_Model):
     """The notification settings for the scheduled action. Required."""
     disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tell if the scheduled action is disabled or not."""
-    provisioning_state: Optional[Union[str, "_models.RecurringScheduledActionsProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ScheduledActionsProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """The status of the last provisioning operation performed on the resource. Known values are:
@@ -5814,7 +6155,7 @@ class ScheduledActionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledActionResource(_Model):
+class ScheduledActionResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an scheduled action resource metadata.
 
     :ivar name: The name of the resource. Required.
@@ -5866,7 +6207,7 @@ class ScheduledActionResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledActionResourceInput(_Model):
+class ScheduledActionResourceInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the writable fields of a scheduled action resource used in attach and patch
     requests.
 
@@ -5907,7 +6248,7 @@ class ScheduledActionResourceInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledActionResources(ExtensionResource):
+class ScheduledActionResources(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The scheduled action extension.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5948,7 +6289,47 @@ class ScheduledActionResources(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledActionsExtensionProperties(_Model):
+class ScheduledActionsExecutionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The execution parameters the scheduled action is supposed to follow.
+
+    :ivar optimization_preference: Details that could optimize the user's request. Known values
+     are: "Cost", "Availability", and "CostAvailabilityBalanced".
+    :vartype optimization_preference: str or
+     ~azure.mgmt.compute.bulkaction.models.OptimizationPreference
+    :ivar retry_policy: Retry policy the user can pass.
+    :vartype retry_policy: ~azure.mgmt.compute.bulkaction.models.ScheduledActionsRetryPolicy
+    """
+
+    optimization_preference: Optional[Union[str, "_models.OptimizationPreference"]] = rest_field(
+        name="optimizationPreference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details that could optimize the user's request. Known values are: \"Cost\", \"Availability\",
+     and \"CostAvailabilityBalanced\"."""
+    retry_policy: Optional["_models.ScheduledActionsRetryPolicy"] = rest_field(
+        name="retryPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Retry policy the user can pass."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        optimization_preference: Optional[Union[str, "_models.OptimizationPreference"]] = None,
+        retry_policy: Optional["_models.ScheduledActionsRetryPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledActionsExtensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scheduled action extension properties.
 
     :ivar resource_type: The type of resource the scheduled action is targeting. Required. Known
@@ -5971,7 +6352,7 @@ class ScheduledActionsExtensionProperties(_Model):
     :ivar provisioning_state: The status of the last provisioning operation performed on the
      resource. Known values are: "Succeeded", "Failed", "Canceled", and "Deleting".
     :vartype provisioning_state: str or
-     ~azure.mgmt.compute.bulkaction.models.RecurringScheduledActionsProvisioningState
+     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsProvisioningState
     :ivar resource_notification_settings: The notification settings for the scheduled action at a
      resource level. Resource level notification settings are scope to specific resources only and
      submitted through attach requests.
@@ -6007,7 +6388,7 @@ class ScheduledActionsExtensionProperties(_Model):
     """The notification settings for the scheduled action. Required."""
     disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tell if the scheduled action is disabled or not."""
-    provisioning_state: Optional[Union[str, "_models.RecurringScheduledActionsProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ScheduledActionsProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """The status of the last provisioning operation performed on the resource. Known values are:
@@ -6043,7 +6424,54 @@ class ScheduledActionsExtensionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledActionsSchedule(_Model):
+class ScheduledActionsRetryPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Retry policy the scheduled action can pass.
+
+    :ivar retry_count: Retry count for the request.
+    :vartype retry_count: int
+    :ivar retry_window_in_minutes: Retry window in minutes for the request.
+    :vartype retry_window_in_minutes: int
+    :ivar on_failure_action: Action to take on failure. Known values are: "Unknown", "Start",
+     "Deallocate", "Hibernate", "Create", and "Delete".
+    :vartype on_failure_action: str or
+     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsResourceOperationType
+    """
+
+    retry_count: Optional[int] = rest_field(
+        name="retryCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Retry count for the request."""
+    retry_window_in_minutes: Optional[int] = rest_field(
+        name="retryWindowInMinutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Retry window in minutes for the request."""
+    on_failure_action: Optional[Union[str, "_models.ScheduledActionsResourceOperationType"]] = rest_field(
+        name="onFailureAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Action to take on failure. Known values are: \"Unknown\", \"Start\", \"Deallocate\",
+     \"Hibernate\", \"Create\", and \"Delete\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        retry_count: Optional[int] = None,
+        retry_window_in_minutes: Optional[int] = None,
+        on_failure_action: Optional[Union[str, "_models.ScheduledActionsResourceOperationType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledActionsSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specify the schedule in which the scheduled action is supposed to follow.
 
     :ivar scheduled_time: The time the scheduled action is supposed to run on. Required.
@@ -6062,12 +6490,12 @@ class ScheduledActionsSchedule(_Model):
     :ivar execution_parameters: The execution parameters the scheduled action is supposed to
      follow.
     :vartype execution_parameters:
-     ~azure.mgmt.compute.bulkaction.models.RecurringScheduledActionsExecutionParameters
+     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsExecutionParameters
     :ivar deadline_type: The type of deadline the scheduled action is supposed to follow for the
      schedule. If no value is passed, it will default to InitiateAt. Known values are: "Unknown",
      "InitiateAt", and "CompleteBy".
     :vartype deadline_type: str or
-     ~azure.mgmt.compute.bulkaction.models.RecurringScheduledActionsDeadlineType
+     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsDeadlineType
     """
 
     scheduled_time: datetime.time = rest_field(
@@ -6091,11 +6519,11 @@ class ScheduledActionsSchedule(_Model):
     )
     """The days of the month the scheduled action is supposed to run on. If empty, it means it will
      run on every day of the month."""
-    execution_parameters: Optional["_models.RecurringScheduledActionsExecutionParameters"] = rest_field(
+    execution_parameters: Optional["_models.ScheduledActionsExecutionParameters"] = rest_field(
         name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """The execution parameters the scheduled action is supposed to follow."""
-    deadline_type: Optional[Union[str, "_models.RecurringScheduledActionsDeadlineType"]] = rest_field(
+    deadline_type: Optional[Union[str, "_models.ScheduledActionsDeadlineType"]] = rest_field(
         name="deadlineType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of deadline the scheduled action is supposed to follow for the schedule. If no value
@@ -6111,8 +6539,8 @@ class ScheduledActionsSchedule(_Model):
         requested_week_days: Optional[list[Union[str, "_models.WeekDay"]]] = None,
         requested_months: Optional[list[Union[str, "_models.Month"]]] = None,
         requested_days_of_the_month: Optional[list[int]] = None,
-        execution_parameters: Optional["_models.RecurringScheduledActionsExecutionParameters"] = None,
-        deadline_type: Optional[Union[str, "_models.RecurringScheduledActionsDeadlineType"]] = None,
+        execution_parameters: Optional["_models.ScheduledActionsExecutionParameters"] = None,
+        deadline_type: Optional[Union[str, "_models.ScheduledActionsDeadlineType"]] = None,
     ) -> None: ...
 
     @overload
@@ -6126,7 +6554,7 @@ class ScheduledActionsSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledActionsScheduleUpdate(_Model):
+class ScheduledActionsScheduleUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schedule properties for update (PATCH). All properties are optional so individual fields can be
     patched (merge semantics); omitting a property preserves the current value.
 
@@ -6146,12 +6574,12 @@ class ScheduledActionsScheduleUpdate(_Model):
     :ivar execution_parameters: The execution parameters the scheduled action is supposed to
      follow.
     :vartype execution_parameters:
-     ~azure.mgmt.compute.bulkaction.models.RecurringScheduledActionsExecutionParameters
+     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsExecutionParameters
     :ivar deadline_type: The type of deadline the scheduled action is supposed to follow for the
      schedule. If no value is passed, it will default to InitiateAt. Known values are: "Unknown",
      "InitiateAt", and "CompleteBy".
     :vartype deadline_type: str or
-     ~azure.mgmt.compute.bulkaction.models.RecurringScheduledActionsDeadlineType
+     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsDeadlineType
     """
 
     scheduled_time: Optional[datetime.time] = rest_field(
@@ -6175,11 +6603,11 @@ class ScheduledActionsScheduleUpdate(_Model):
     )
     """The days of the month the scheduled action is supposed to run on. If empty, it means it will
      run on every day of the month."""
-    execution_parameters: Optional["_models.RecurringScheduledActionsExecutionParameters"] = rest_field(
+    execution_parameters: Optional["_models.ScheduledActionsExecutionParameters"] = rest_field(
         name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """The execution parameters the scheduled action is supposed to follow."""
-    deadline_type: Optional[Union[str, "_models.RecurringScheduledActionsDeadlineType"]] = rest_field(
+    deadline_type: Optional[Union[str, "_models.ScheduledActionsDeadlineType"]] = rest_field(
         name="deadlineType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of deadline the scheduled action is supposed to follow for the schedule. If no value
@@ -6195,8 +6623,8 @@ class ScheduledActionsScheduleUpdate(_Model):
         requested_week_days: Optional[list[Union[str, "_models.WeekDay"]]] = None,
         requested_months: Optional[list[Union[str, "_models.Month"]]] = None,
         requested_days_of_the_month: Optional[list[int]] = None,
-        execution_parameters: Optional["_models.RecurringScheduledActionsExecutionParameters"] = None,
-        deadline_type: Optional[Union[str, "_models.RecurringScheduledActionsDeadlineType"]] = None,
+        execution_parameters: Optional["_models.ScheduledActionsExecutionParameters"] = None,
+        deadline_type: Optional[Union[str, "_models.ScheduledActionsDeadlineType"]] = None,
     ) -> None: ...
 
     @overload
@@ -6210,7 +6638,7 @@ class ScheduledActionsScheduleUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledActionUpdate(_Model):
+class ScheduledActionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the ScheduledAction.
 
     :ivar tags: Resource tags.
@@ -6245,7 +6673,7 @@ class ScheduledActionUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledActionUpdateProperties(_Model):
+class ScheduledActionUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the ScheduledAction.
 
     :ivar resource_type: The type of resource the scheduled action is targeting. Known values are:
@@ -6320,7 +6748,9 @@ class ScheduledActionUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledEventsAdditionalPublishingTargets(_Model):  # pylint: disable=name-too-long
+class ScheduledEventsAdditionalPublishingTargets(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies additional publishing targets for scheduled events.
 
     :ivar event_grid_and_resource_graph: The configuration parameters used while creating
@@ -6353,7 +6783,7 @@ class ScheduledEventsAdditionalPublishingTargets(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ScheduledEventsPolicy(_Model):
+class ScheduledEventsPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies Redeploy, Reboot and ScheduledEventsAdditionalPublishingTargets Scheduled Event
     related configurations.
 
@@ -6418,7 +6848,7 @@ class ScheduledEventsPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledEventsProfile(_Model):
+class ScheduledEventsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for the scheduled events.
 
     :ivar terminate_notification_profile: Specifies Terminate Scheduled Event related
@@ -6458,7 +6888,7 @@ class ScheduledEventsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityProfile(_Model):
+class SecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Security profile settings for the virtual machine or virtual machine scale set.
 
     :ivar uefi_settings: Specifies the security settings like secure boot and vTPM used while
@@ -6532,7 +6962,7 @@ class SecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshConfiguration(_Model):
+class SshConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SSH configuration for Linux based VMs running on Azure.
 
     :ivar public_keys: The list of SSH public keys used to authenticate with linux based VMs.
@@ -6562,7 +6992,7 @@ class SshConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshPublicKey(_Model):
+class SshPublicKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about SSH certificate public key and the path on the Linux VM where the
     public key is placed.
 
@@ -6607,7 +7037,7 @@ class SshPublicKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StartResourceOperationResponse(_Model):
+class StartResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from a start request.
 
     :ivar description: The description of the operation response. Required.
@@ -6652,7 +7082,7 @@ class StartResourceOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageProfile(_Model):
+class StorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the storage settings for the virtual machine disks.
 
     :ivar image_reference: Specifies information about the image to use. You can specify
@@ -6729,7 +7159,7 @@ class StorageProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -6796,7 +7226,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TerminateNotificationProfile(_Model):
+class TerminateNotificationProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile properties for the Terminate Scheduled event.
 
     :ivar not_before_timeout: Configurable length of time a Virtual Machine being deleted will have
@@ -6836,7 +7266,7 @@ class TerminateNotificationProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UefiSettings(_Model):
+class UefiSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security settings like secure boot and vTPM used while creating the virtual
     machine. Minimum api-version: 2020-12-01.
 
@@ -6908,7 +7338,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserInitiatedReboot(_Model):
+class UserInitiatedReboot(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies Reboot related Scheduled Event related configurations.
 
     :ivar user_initiated_reboot_automatically_approve: Specifies Reboot Scheduled Event related
@@ -6939,7 +7369,7 @@ class UserInitiatedReboot(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserInitiatedRedeploy(_Model):
+class UserInitiatedRedeploy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies Redeploy related Scheduled Event related configurations.
 
     :ivar user_initiated_redeploy_automatically_approve: Specifies Redeploy Scheduled Event related
@@ -6970,7 +7400,7 @@ class UserInitiatedRedeploy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultCertificate(_Model):
+class VaultCertificate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a single certificate reference in a Key Vault, and where the certificate should
     reside on the VM.
 
@@ -7035,7 +7465,7 @@ class VaultCertificate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultSecretGroup(_Model):
+class VaultSecretGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a set of certificates which are all in the same Key Vault.
 
     :ivar source_vault: The relative URL of the Key Vault containing all of the certificates in
@@ -7074,7 +7504,7 @@ class VaultSecretGroup(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDisk(_Model):
+class VirtualHardDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the uri of a disk.
 
     :ivar uri: Specifies the virtual hard disk's uri.
@@ -7139,7 +7569,7 @@ class VirtualMachine(_Model):
     """Error information when operationStatus is Failed."""
 
 
-class VirtualMachineIdentity(_Model):
+class VirtualMachineIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the virtual machine.
 
     :ivar principal_id: The principal id of virtual machine identity. This property will only be
@@ -7199,7 +7629,7 @@ class VirtualMachineIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInfo(_Model):
+class VirtualMachineInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a virtual machine.
 
     :ivar vm_size: The name of the VM size, eg Standard_D2ads_v5.
@@ -7232,7 +7662,7 @@ class VirtualMachineInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineIpTag(_Model):
+class VirtualMachineIpTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the IP tag associated with the public IP address.
 
     :ivar ip_tag_type: IP tag type. Example: FirstPartyUsage.
@@ -7267,7 +7697,9 @@ class VirtualMachineIpTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineNetworkInterfaceConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineNetworkInterfaceConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine network interface configurations.
 
     :ivar name: The network interface configuration name. Required.
@@ -7310,7 +7742,9 @@ class VirtualMachineNetworkInterfaceConfiguration(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineNetworkInterfaceConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachineNetworkInterfaceConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine network profile's IP configuration.
 
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
@@ -7429,7 +7863,9 @@ class VirtualMachineNetworkInterfaceConfigurationProperties(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines network configuration's DNS settings.
 
     :ivar dns_servers: List of DNS servers IP addresses.
@@ -7459,7 +7895,9 @@ class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineNetworkInterfaceIPConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineNetworkInterfaceIPConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine network profile's IP configuration.
 
     :ivar name: The IP configuration name. Required.
@@ -7495,7 +7933,9 @@ class VirtualMachineNetworkInterfaceIPConfiguration(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineNetworkInterfaceIPConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachineNetworkInterfaceIPConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine network interface IP configuration properties.
 
     :ivar subnet: Specifies the identifier of the subnet.
@@ -7583,7 +8023,9 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachinePublicIPAddressConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachinePublicIPAddressConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines IP Configuration's PublicIPAddress configuration.
 
     :ivar name: The publicIP address configuration name. Required.
@@ -7631,7 +8073,9 @@ class VirtualMachinePublicIPAddressConfiguration(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachinePublicIPAddressConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachinePublicIPAddressConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines IP Configuration's PublicIPAddress configuration.
 
     :ivar idle_timeout_in_minutes: The idle timeout of the public IP address.
@@ -7712,7 +8156,9 @@ class VirtualMachinePublicIPAddressConfigurationProperties(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachinePublicIPAddressDnsSettingsConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachinePublicIPAddressDnsSettingsConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines network configuration's DNS settings.
 
     :ivar domain_name_label: The Domain name label prefix of the PublicIPAddress resources that
@@ -7760,7 +8206,7 @@ class VirtualMachinePublicIPAddressDnsSettingsConfiguration(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineReimageParameters(_Model):
+class VirtualMachineReimageParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for Reimaging Virtual Machine. NOTE: Virtual Machine OS disk will always be
     reimaged.
 
@@ -7808,7 +8254,7 @@ class VirtualMachineReimageParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMAttributeMinMaxDouble(_Model):
+class VMAttributeMinMaxDouble(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMAttributes using double values.
 
     :ivar min: Minimum value. If not specified, no minimum filter is applied.
@@ -7841,7 +8287,7 @@ class VMAttributeMinMaxDouble(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMAttributeMinMaxInteger(_Model):
+class VMAttributeMinMaxInteger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """While retrieving VMSizes from CRS, Min = 0 (uint.MinValue) if not specified, Max = 4294967295
     (uint.MaxValue) if not specified. This allows to filter VMAttributes on all available VMSizes.
 
@@ -7875,7 +8321,7 @@ class VMAttributeMinMaxInteger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMAttributes(_Model):
+class VMAttributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMAttributes that will be used to filter VMSizes which will be used to launch instances.
 
     :ivar v_cpu_count: The range of vCpuCount specified from Min to Max. Must be specified if
@@ -8120,7 +8566,7 @@ class VMAttributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMDiskSecurityProfile(_Model):
+class VMDiskSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security profile settings for the managed disk. **Note:** It can only be set for
     Confidential VMs.
 
@@ -8172,7 +8618,7 @@ class VMDiskSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMGalleryApplication(_Model):
+class VMGalleryApplication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the required information to reference a compute gallery application version.
 
     :ivar tags: Optional, Specifies a passthrough value for more generic context.
@@ -8242,7 +8688,7 @@ class VMGalleryApplication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmSizeProfile(_Model):
+class VmSizeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A VM size profile with a name and rank for flex VM creation.
 
     :ivar name: The name of the VM size, eg Standard_D2ads_v5. Required.
@@ -8275,7 +8721,7 @@ class VmSizeProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmSizeProperties(_Model):
+class VmSizeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies VM Size Property settings on the virtual machine.
 
     :ivar v_cpus_available: Specifies the number of vCPUs available for the VM. When this property
@@ -8326,7 +8772,7 @@ class VmSizeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsConfiguration(_Model):
+class WindowsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies Windows operating system settings on the virtual machine.
 
     :ivar provision_vm_agent: Indicates whether virtual machine agent should be provisioned on the
@@ -8411,7 +8857,9 @@ class WindowsConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsVMGuestPatchAutomaticByPlatformSettings(_Model):  # pylint: disable=name-too-long
+class WindowsVMGuestPatchAutomaticByPlatformSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies additional settings to be applied when patch mode AutomaticByPlatform is selected in
     Windows patch settings.
 
@@ -8453,7 +8901,7 @@ class WindowsVMGuestPatchAutomaticByPlatformSettings(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class WinRMConfiguration(_Model):
+class WinRMConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes Windows Remote Management configuration of the VM.
 
     :ivar listeners: The list of Windows Remote Management listeners.
@@ -8483,7 +8931,7 @@ class WinRMConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WinRMListener(_Model):
+class WinRMListener(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes Protocol and thumbprint of Windows Remote Management listener.
 
     :ivar protocol: Specifies the protocol of WinRM listener. Possible values are: **http,**
@@ -8541,7 +8989,7 @@ class WinRMListener(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ZoneAllocationPolicy(_Model):
+class ZoneAllocationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The zone allocation policy for distributing VMs across availability zones.
 
     :ivar distribution_strategy: The distribution strategy for zone allocation. Known values are:
@@ -8581,7 +9029,7 @@ class ZoneAllocationPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ZonePreference(_Model):
+class ZonePreference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A zone preference with a zone identifier and rank.
 
     :ivar zone: The zone identifier. Required.

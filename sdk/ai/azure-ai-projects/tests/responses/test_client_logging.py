@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock, patch
 
-import httpx
+import httpx2
 import pytest
 from azure.core.credentials import TokenCredential
 from azure.ai.projects import AIProjectClient
@@ -26,7 +26,7 @@ class DummyTokenCredential(TokenCredential):
         return None
 
 
-class _TestSyncByteStream(httpx.SyncByteStream):
+class _TestSyncByteStream(httpx2.SyncByteStream):
     def __init__(self, chunks):
         self._chunks = chunks
 
@@ -184,13 +184,13 @@ def test_get_openai_client_logs_creation_message(tmp_path, restore_logger_state)
 
 def test_openai_transport_full_logging_writes_request_response_and_raw_token_to_file(tmp_path, restore_logger_state):
     """With logging_enable=True, the log file should include request, response, JSON bodies, and the raw bearer token."""
-    request = httpx.Request(
+    request = httpx2.Request(
         "POST",
         "https://example.com/openai/v1/responses",
         headers={"authorization": "Bearer secret-token", "content-type": "application/json"},
         content=b'{"message":"hello"}',
     )
-    response = httpx.Response(
+    response = httpx2.Response(
         200,
         request=request,
         headers={"content-type": "application/json"},
@@ -199,7 +199,7 @@ def test_openai_transport_full_logging_writes_request_response_and_raw_token_to_
     log_file = tmp_path / "transport_full.log"
     handler = _attach_file_handler("azure.ai.projects.openai_transport", log_file)
 
-    with patch.object(httpx.HTTPTransport, "handle_request", return_value=response):
+    with patch.object(httpx2.HTTPTransport, "handle_request", return_value=response):
         result = _OpenAILoggingTransport(logging_enabled=True).handle_request(request)
 
     log_text = _read_log_file(handler, log_file)
@@ -216,13 +216,13 @@ def test_openai_transport_full_logging_writes_request_response_and_raw_token_to_
 
 def test_openai_transport_reduced_logging_writes_metadata_only_to_file(tmp_path, restore_logger_state):
     """With logging_enable=False, the log file should include metadata but not the raw bearer token or JSON bodies."""
-    request = httpx.Request(
+    request = httpx2.Request(
         "POST",
         "https://example.com/openai/v1/responses",
         headers={"authorization": "Bearer secret-token", "content-type": "application/json"},
         content=b'{"message":"hello"}',
     )
-    response = httpx.Response(
+    response = httpx2.Response(
         200,
         request=request,
         headers={"content-type": "application/json"},
@@ -231,7 +231,7 @@ def test_openai_transport_reduced_logging_writes_metadata_only_to_file(tmp_path,
     log_file = tmp_path / "transport_reduced.log"
     handler = _attach_file_handler("azure.ai.projects.openai_transport", log_file)
 
-    with patch.object(httpx.HTTPTransport, "handle_request", return_value=response):
+    with patch.object(httpx2.HTTPTransport, "handle_request", return_value=response):
         result = _OpenAILoggingTransport(logging_enabled=False).handle_request(request)
 
     log_text = _read_log_file(handler, log_file)
@@ -248,13 +248,13 @@ def test_openai_transport_reduced_logging_writes_metadata_only_to_file(tmp_path,
 
 def test_openai_transport_streaming_response_skips_body_read_and_keeps_metadata(tmp_path, restore_logger_state):
     """Streaming responses should keep metadata logging without buffering the response body."""
-    request = httpx.Request(
+    request = httpx2.Request(
         "POST",
         "https://example.com/openai/v1/responses",
         headers={"authorization": "Bearer secret-token", "content-type": "application/json"},
         content=b'{"message":"hello"}',
     )
-    response = httpx.Response(
+    response = httpx2.Response(
         200,
         request=request,
         headers={"content-type": "text/event-stream"},
@@ -263,7 +263,7 @@ def test_openai_transport_streaming_response_skips_body_read_and_keeps_metadata(
     handler = _attach_file_handler("azure.ai.projects.openai_transport", log_file)
 
     with (
-        patch.object(httpx.HTTPTransport, "handle_request", return_value=response),
+        patch.object(httpx2.HTTPTransport, "handle_request", return_value=response),
         patch.object(response, "read", side_effect=AssertionError("streaming response should not be read")),
     ):
         result = _OpenAILoggingTransport(logging_enabled=False).handle_request(request)
@@ -280,13 +280,13 @@ def test_openai_transport_streaming_response_skips_body_read_and_keeps_metadata(
 
 
 def test_openai_transport_streaming_response_logs_chunks_lazily(tmp_path, restore_logger_state):
-    request = httpx.Request(
+    request = httpx2.Request(
         "POST",
         "https://example.com/openai/v1/responses",
         headers={"authorization": "Bearer secret-token", "content-type": "application/json"},
         content=b'{"message":"hello"}',
     )
-    response = httpx.Response(
+    response = httpx2.Response(
         200,
         request=request,
         headers={"content-type": "text/event-stream"},
@@ -295,7 +295,7 @@ def test_openai_transport_streaming_response_logs_chunks_lazily(tmp_path, restor
     log_file = tmp_path / "transport_streaming_lazy.log"
     handler = _attach_file_handler("azure.ai.projects.openai_transport", log_file)
 
-    with patch.object(httpx.HTTPTransport, "handle_request", return_value=response):
+    with patch.object(httpx2.HTTPTransport, "handle_request", return_value=response):
         result = _OpenAILoggingTransport(logging_enabled=True).handle_request(request)
 
     log_text = _read_log_file(handler, log_file)

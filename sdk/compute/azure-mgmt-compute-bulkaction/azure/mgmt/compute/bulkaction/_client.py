@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -41,7 +42,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ComputeBulkActionsMgmtClient:  # pylint: disable=too-many-instance-attributes
+class ComputeBulkActionsMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """ComputeBulkActionsMgmtClient.
 
     :ivar operations: Operations operations
@@ -78,7 +79,7 @@ class ComputeBulkActionsMgmtClient:  # pylint: disable=too-many-instance-attribu
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-07-06-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-08-06-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str

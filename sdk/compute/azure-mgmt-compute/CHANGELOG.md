@@ -1,5 +1,60 @@
 # Release History
 
+## 38.3.0 (2026-08-12)
+
+### Features Added
+
+  - Client `ComputeManagementClient` added operation group `virtual_machine_diagnostic_run_commands`
+  - Client `ComputeManagementClient` added operation group `virtual_machine_scale_set_vm_diagnostic_run_commands`
+  - Model `CapacityReservationInstanceView` added property `reservation_state_info`
+  - Model `CapacityReservationInstanceViewWithName` added property `reservation_state_info`
+  - Model `CapacityReservationProfile` added property `disable_capacity_reservation_assignment`
+  - Model `CapacityReservationUtilization` added property `used_reserved_count_by_subscription`
+  - Model `HardwareProfile` added property `processor_mode`
+  - Model `HostEndpointSettings` added property `use_local_file_rules`
+  - Model `ManagedDiskParameters` added property `additional_disk_properties`
+  - Enum `ReservationType` added member `OPEN`
+  - Model `ScheduleProfile` added property `minimum_commitment_days`
+  - Model `ScheduleProfile` added property `modifiable_until`
+  - Model `StorageProfile` added property `disk_api_version`
+  - Model `VirtualMachineExtensionImageProperties` added property `extension_feature_metadata`
+  - Model `VirtualMachineExtensionImageProperties` added property `release_category`
+  - Model `VirtualMachineExtensionImageProperties` added property `release_notes`
+  - Model `VirtualMachineExtensionImageProperties` added property `run_profile`
+  - Model `VirtualMachineExtensionImageProperties` added property `urgency_level`
+  - Model `VirtualMachineInstanceView` added property `capacity_reservation_type`
+  - Model `VirtualMachineIpTag` added property `first_party_service_tag_id`
+  - Enum `VirtualMachinePriorityTypes` added member `SPOT_PLUS`
+  - Model `VirtualMachineScaleSetHardwareProfile` added property `processor_mode`
+  - Model `VirtualMachineScaleSetIpTag` added property `first_party_service_tag_id`
+  - Model `VirtualMachineScaleSetManagedDiskParameters` added property `additional_disk_properties`
+  - Model `VirtualMachineScaleSetStorageProfile` added property `disk_api_version`
+  - Model `VirtualMachineScaleSetUpdateStorageProfile` added property `disk_api_version`
+  - Model `VirtualMachineScaleSetVMInstanceView` added property `capacity_reservation_type`
+  - Model `VirtualMachineScaleSetVMProperties` added property `capacity_reservation`
+  - Added model `AdditionalDiskProperties`
+  - Added model `CapacityReservationStateInfo`
+  - Added enum `CapacityReservationType`
+  - Added enum `DiskApiVersion`
+  - Added model `DiskAvailabilityPolicy`
+  - Added model `ExtensionFeatureMetadata`
+  - Added model `ExtensionFeatureTag`
+  - Added enum `ListVersionsExpandOptions`
+  - Added model `MigrateVMAvailabilityZoneInput`
+  - Added enum `ProcessorMode`
+  - Added enum `ReleaseCategory`
+  - Added enum `ReservationState`
+  - Added enum `RunProfile`
+  - Added enum `UrgencyLevel`
+  - Added model `VirtualMachineDiagnosticRunCommand`
+  - Added enum `VirtualMachineDiskDelayAction`
+  - Added enum `VirtualMachineDiskNetworkAccessPolicy`
+  - Added model `VirtualMachineDiskProperties`
+  - Operation group `VirtualMachineExtensionImagesOperations` added parameter `expand` in method `list_versions`
+  - Operation group `VirtualMachineScaleSetsOperations` added method `begin_migrate_vm_availability_zone`
+  - Added operation group `VirtualMachineDiagnosticRunCommandsOperations`
+  - Added operation group `VirtualMachineScaleSetVMDiagnosticRunCommandsOperations`
+
 ## 38.2.0 (2026-07-15)
 
 ### Features Added

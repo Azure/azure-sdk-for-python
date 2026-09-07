@@ -30,6 +30,7 @@ from ._builders import (
 )
 from ._state_machine import EventStreamValidator
 from ._checkpoint import ResponseCheckpointEvent
+from ._internal_metadata import _ResponseInternalMetadataView
 
 # Event types whose payload is a full Response snapshot.
 # Lifecycle events nest under a "response" key on the wire.
@@ -176,6 +177,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         if agent_reference is not None:
             self._response["agent_reference"] = deepcopy(agent_reference)
 
+        _ResponseInternalMetadataView(self._response)
         self._agent_reference, self._model = _internals.extract_response_fields(
             cast(response_models.ResponseObject, self._response)
         )
@@ -198,23 +200,16 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """Live, mutable response-level framework-internal metadata.
 
         A convenience proxy backed by a reserved ``_internal_metadata`` key
-        inside the response's public ``metadata`` map — read / write / delete in
-        place (``stream.internal_metadata["phase"] = 3``). Stripped from every
-        client-facing payload and persisted at the next ``yield
-        stream.checkpoint()`` (and at terminal). Values may be any
-        JSON-serialisable type.
+        inside the response's public ``metadata`` map. The private bag is
+        JSON-encoded into the string-valued metadata slot required by Foundry
+        storage. Read / write / delete in place
+        (``stream.internal_metadata["phase"] = 3``). Stripped from every
+        client-facing payload and persisted at the next
+        ``yield stream.checkpoint()`` (and at terminal).
 
         :rtype: ~collections.abc.MutableMapping[str, ~typing.Any]
         """
-        metadata = self._response.get("metadata")
-        if not isinstance(metadata, dict):
-            metadata = {}
-            self._response["metadata"] = metadata
-        bag = metadata.get("_internal_metadata")
-        if not isinstance(bag, dict):
-            bag = {}
-            metadata["_internal_metadata"] = bag
-        return bag
+        return _ResponseInternalMetadataView(self._response)
 
     def checkpoint(self) -> "ResponseCheckpointEvent":
         """Return a checkpoint event to ``yield`` for persistence.

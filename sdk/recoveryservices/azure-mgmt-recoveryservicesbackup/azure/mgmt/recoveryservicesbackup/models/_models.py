@@ -47,7 +47,7 @@ class ArmErrorDetail(_Model):
     """The error additional info."""
 
 
-class FeatureSupportRequest(_Model):
+class FeatureSupportRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for feature request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -108,7 +108,7 @@ class AzureBackupGoalFeatureSupportRequest(FeatureSupportRequest, discriminator=
         self.feature_type = "AzureBackupGoals"  # type: ignore
 
 
-class ProtectionContainer(_Model):
+class ProtectionContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for container with backup items. Containers with specific workloads are derived from
     this class.
 
@@ -144,6 +144,8 @@ class ProtectionContainer(_Model):
      ~azure.mgmt.recoveryservicesbackup.models.ProtectableContainerType
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -182,6 +184,8 @@ class ProtectionContainer(_Model):
         name="protectableObjectType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Type of the protectable object associated with this container."""
+    source_location: Optional[str] = rest_field(name="sourceLocation", visibility=["read"])
+    """Source location of the container."""
 
     @overload
     def __init__(
@@ -206,7 +210,9 @@ class ProtectionContainer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DpmContainer(ProtectionContainer, discriminator="DPMContainer"):
+class DpmContainer(
+    ProtectionContainer, discriminator="DPMContainer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DPM workload-specific protection container.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -226,6 +232,8 @@ class DpmContainer(ProtectionContainer, discriminator="DPMContainer"):
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar container_type: Type of the container. The value of this property for: 1. Compute Azure
      VM is Microsoft.Compute/virtualMachines 2. Classic Compute Azure VM is
      Microsoft.ClassicCompute/virtualMachines 3. Windows machines (like MAB, DPM etc) is Windows 4.
@@ -321,7 +329,9 @@ class DpmContainer(ProtectionContainer, discriminator="DPMContainer"):
         self.container_type = ProtectableContainerType.DPM_CONTAINER  # type: ignore
 
 
-class AzureBackupServerContainer(DpmContainer, discriminator="AzureBackupServerContainer"):
+class AzureBackupServerContainer(
+    DpmContainer, discriminator="AzureBackupServerContainer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureBackupServer (DPMVenus) workload-specific protection container.
 
     :ivar friendly_name: Friendly name of the container.
@@ -338,6 +348,8 @@ class AzureBackupServerContainer(DpmContainer, discriminator="AzureBackupServerC
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar can_re_register: Specifies whether the container is re-registrable.
     :vartype can_re_register: bool
     :ivar container_id: ID of container.
@@ -401,7 +413,7 @@ class AzureBackupServerContainer(DpmContainer, discriminator="AzureBackupServerC
         self.container_type = ProtectableContainerType.AZURE_BACKUP_SERVER_CONTAINER  # type: ignore
 
 
-class BackupEngineBase(_Model):
+class BackupEngineBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The base backup engine class. All workload specific backup engines derive from this class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -529,7 +541,9 @@ class BackupEngineBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBackupServerEngine(BackupEngineBase, discriminator="AzureBackupServerEngine"):
+class AzureBackupServerEngine(
+    BackupEngineBase, discriminator="AzureBackupServerEngine"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup engine type when Azure Backup Server is used to manage the backups.
 
     :ivar friendly_name: Friendly name of the backup engine.
@@ -600,7 +614,7 @@ class AzureBackupServerEngine(BackupEngineBase, discriminator="AzureBackupServer
         self.backup_engine_type = BackupEngineType.AZURE_BACKUP_SERVER_ENGINE  # type: ignore
 
 
-class BackupRequest(_Model):
+class BackupRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup request. Workload-specific backup requests are derived from this class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -634,7 +648,9 @@ class BackupRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileShareBackupRequest(BackupRequest, discriminator="AzureFileShareBackupRequest"):
+class AzureFileShareBackupRequest(
+    BackupRequest, discriminator="AzureFileShareBackupRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureFileShare workload-specific backup request.
 
     :ivar recovery_point_expiry_time_in_utc: Backup copy will expire after the time specified
@@ -675,16 +691,16 @@ class AzureFileShareBackupRequest(BackupRequest, discriminator="AzureFileShareBa
         self.object_type = "AzureFileShareBackupRequest"  # type: ignore
 
 
-class WorkloadProtectableItem(_Model):
+class WorkloadProtectableItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup item. Workload-specific backup items are derived from this class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureFileShareProtectableItem, AzureVmWorkloadProtectableItem,
-    AzureVmWorkloadSAPHanaHSRProtectableItem, AzureVmWorkloadSAPHanaScaleoutProtectableItem,
-    IaaSVMProtectableItem, AzureIaaSClassicComputeVMProtectableItem,
-    AzureIaaSComputeVMProtectableItem, AzureVmWorkloadSAPAseDatabaseProtectableItem,
-    AzureVmWorkloadSAPAseSystemProtectableItem, AzureVmWorkloadSAPHanaDBInstance,
-    AzureVmWorkloadSAPHanaDatabaseProtectableItem, AzureVmWorkloadSAPHanaSystemProtectableItem,
+    AzureVmWorkloadSAPHanaHSRProtectableItem, IaaSVMProtectableItem,
+    AzureIaaSClassicComputeVMProtectableItem, AzureIaaSComputeVMProtectableItem,
+    AzureVmWorkloadSAPAseDatabaseProtectableItem, AzureVmWorkloadSAPAseSystemProtectableItem,
+    AzureVmWorkloadSAPHanaDBInstance, AzureVmWorkloadSAPHanaDatabaseProtectableItem,
+    AzureVmWorkloadSAPHanaSystemProtectableItem,
     AzureVmWorkloadSQLAvailabilityGroupProtectableItem, AzureVmWorkloadSQLDatabaseProtectableItem,
     AzureVmWorkloadSQLInstanceProtectableItem
 
@@ -746,7 +762,9 @@ class WorkloadProtectableItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileShareProtectableItem(WorkloadProtectableItem, discriminator="AzureFileShare"):
+class AzureFileShareProtectableItem(
+    WorkloadProtectableItem, discriminator="AzureFileShare"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protectable item for Azure Fileshare workloads.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -813,16 +831,15 @@ class AzureFileShareProtectableItem(WorkloadProtectableItem, discriminator="Azur
         self.protectable_item_type = "AzureFileShare"  # type: ignore
 
 
-class ProtectedItem(_Model):
+class ProtectedItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup items.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureFileshareProtectedItem, AzureIaaSVMProtectedItem, AzureVmWorkloadProtectedItem,
     AzureVmWorkloadSAPAseDatabaseProtectedItem, AzureVmWorkloadSAPHanaDBInstanceProtectedItem,
     AzureVmWorkloadSAPHanaDatabaseProtectedItem, AzureVmWorkloadSQLDatabaseProtectedItem,
-    AzureVmWorkloadSQLInstanceProtectedItem, DPMProtectedItem, GenericProtectedItem,
-    MabFileFolderProtectedItem, AzureIaaSClassicComputeVMProtectedItem,
-    AzureIaaSComputeVMProtectedItem, AzureSqlProtectedItem
+    DPMProtectedItem, GenericProtectedItem, MabFileFolderProtectedItem,
+    AzureIaaSClassicComputeVMProtectedItem, AzureIaaSComputeVMProtectedItem, AzureSqlProtectedItem
 
     :ivar protected_item_type: backup item type. Required. Default value is None.
     :vartype protected_item_type: str
@@ -872,6 +889,8 @@ class ProtectedItem(_Model):
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -953,6 +972,8 @@ class ProtectedItem(_Model):
         name="softDeleteRetentionPeriodInDays", visibility=["read", "create", "update", "delete", "query"]
     )
     """Soft delete retention period in days."""
+    source_location: Optional[str] = rest_field(name="sourceLocation", visibility=["read"])
+    """Source location of the protected item datasource."""
     vault_id: Optional[str] = rest_field(name="vaultId", visibility=["read"])
     """ID of the vault which protects this item."""
     source_side_scan_info: Optional["_models.SourceSideScanInfo"] = rest_field(
@@ -994,7 +1015,9 @@ class ProtectedItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileshareProtectedItem(ProtectedItem, discriminator="AzureFileShareProtectedItem"):
+class AzureFileshareProtectedItem(
+    ProtectedItem, discriminator="AzureFileShareProtectedItem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure File Share workload-specific backup item.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -1043,6 +1066,8 @@ class AzureFileshareProtectedItem(ProtectedItem, discriminator="AzureFileSharePr
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -1143,7 +1168,7 @@ class AzureFileshareProtectedItem(ProtectedItem, discriminator="AzureFileSharePr
         self.protected_item_type = "AzureFileShareProtectedItem"  # type: ignore
 
 
-class AzureFileshareProtectedItemExtendedInfo(_Model):
+class AzureFileshareProtectedItemExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information about Azure File Share backup item.
 
     :ivar oldest_recovery_point: The oldest backup copy available for this item in the service.
@@ -1200,7 +1225,7 @@ class AzureFileshareProtectedItemExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionPolicy(_Model):
+class ProtectionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup policy. Workload-specific backup policies are derived from this class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1251,7 +1276,9 @@ class ProtectionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileShareProtectionPolicy(ProtectionPolicy, discriminator="AzureStorage"):
+class AzureFileShareProtectionPolicy(
+    ProtectionPolicy, discriminator="AzureStorage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureStorage backup policy.
 
     :ivar protected_items_count: Number of items associated with this policy.
@@ -1328,7 +1355,7 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy, discriminator="AzureStora
         self.backup_management_type = "AzureStorage"  # type: ignore
 
 
-class ILRRequest(_Model):
+class ILRRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to Provision ILR API.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1362,7 +1389,9 @@ class ILRRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileShareProvisionILRRequest(ILRRequest, discriminator="AzureFileShareProvisionILRRequest"):
+class AzureFileShareProvisionILRRequest(
+    ILRRequest, discriminator="AzureFileShareProvisionILRRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update snapshot Uri with the correct friendly Name of the source Azure file share.
 
     :ivar recovery_point_id: Recovery point ID.
@@ -1407,7 +1436,7 @@ class AzureFileShareProvisionILRRequest(ILRRequest, discriminator="AzureFileShar
         self.object_type = "AzureFileShareProvisionILRRequest"  # type: ignore
 
 
-class RecoveryPoint(_Model):
+class RecoveryPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup copies. Workload-specific backup copies are derived from this class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1461,7 +1490,9 @@ class RecoveryPoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileShareRecoveryPoint(RecoveryPoint, discriminator="AzureFileShareRecoveryPoint"):
+class AzureFileShareRecoveryPoint(
+    RecoveryPoint, discriminator="AzureFileShareRecoveryPoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure File Share workload specific backup copy.
 
     :ivar threat_status: Threat status of the recovery point. Known values are: "Unknown",
@@ -1544,7 +1575,7 @@ class AzureFileShareRecoveryPoint(RecoveryPoint, discriminator="AzureFileShareRe
         self.object_type = "AzureFileShareRecoveryPoint"  # type: ignore
 
 
-class RestoreRequest(_Model):
+class RestoreRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for restore request. Workload-specific restore requests are derived from this class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1593,7 +1624,9 @@ class RestoreRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileShareRestoreRequest(RestoreRequest, discriminator="AzureFileShareRestoreRequest"):
+class AzureFileShareRestoreRequest(
+    RestoreRequest, discriminator="AzureFileShareRestoreRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureFileShare Restore Request.
 
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
@@ -1616,6 +1649,8 @@ class AzureFileShareRestoreRequest(RestoreRequest, discriminator="AzureFileShare
     :vartype restore_file_specs: list[~azure.mgmt.recoveryservicesbackup.models.RestoreFileSpecs]
     :ivar target_details: Target File Share Details.
     :vartype target_details: ~azure.mgmt.recoveryservicesbackup.models.TargetAFSRestoreInfo
+    :ivar identity_info: Managed identity information required to access the storage account.
+    :vartype identity_info: ~azure.mgmt.recoveryservicesbackup.models.IdentityInfo
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required. Default value is
      "AzureFileShareRestoreRequest".
@@ -1649,6 +1684,10 @@ class AzureFileShareRestoreRequest(RestoreRequest, discriminator="AzureFileShare
         name="targetDetails", visibility=["read", "create", "update", "delete", "query"]
     )
     """Target File Share Details."""
+    identity_info: Optional["_models.IdentityInfo"] = rest_field(
+        name="identityInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity information required to access the storage account."""
     object_type: Literal["AzureFileShareRestoreRequest"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """This property will be used as the discriminator for deciding the specific types in the
      polymorphic chain of types. Required. Default value is \"AzureFileShareRestoreRequest\"."""
@@ -1664,6 +1703,7 @@ class AzureFileShareRestoreRequest(RestoreRequest, discriminator="AzureFileShare
         restore_request_type: Optional[Union[str, "_models.RestoreRequestType"]] = None,
         restore_file_specs: Optional[list["_models.RestoreFileSpecs"]] = None,
         target_details: Optional["_models.TargetAFSRestoreInfo"] = None,
+        identity_info: Optional["_models.IdentityInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -1678,7 +1718,9 @@ class AzureFileShareRestoreRequest(RestoreRequest, discriminator="AzureFileShare
         self.object_type = "AzureFileShareRestoreRequest"  # type: ignore
 
 
-class IaaSVMContainer(ProtectionContainer, discriminator="IaasVMContainer"):
+class IaaSVMContainer(
+    ProtectionContainer, discriminator="IaasVMContainer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific container.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1698,6 +1740,8 @@ class IaaSVMContainer(ProtectionContainer, discriminator="IaasVMContainer"):
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar container_type: Type of the container. The value of this property for: 1. Compute Azure
      VM is Microsoft.Compute/virtualMachines 2. Classic Compute Azure VM is
      Microsoft.ClassicCompute/virtualMachines 3. Windows machines (like MAB, DPM etc) is Windows 4.
@@ -1760,7 +1804,9 @@ class IaaSVMContainer(ProtectionContainer, discriminator="IaasVMContainer"):
         self.container_type = ProtectableContainerType.IAAS_VM_CONTAINER  # type: ignore
 
 
-class AzureIaaSClassicComputeVMContainer(IaaSVMContainer, discriminator="Microsoft.ClassicCompute/virtualMachines"):
+class AzureIaaSClassicComputeVMContainer(
+    IaaSVMContainer, discriminator="Microsoft.ClassicCompute/virtualMachines"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific backup item representing a classic virtual machine.
 
     :ivar friendly_name: Friendly name of the container.
@@ -1777,6 +1823,8 @@ class AzureIaaSClassicComputeVMContainer(IaaSVMContainer, discriminator="Microso
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar virtual_machine_id: Fully qualified ARM url of the virtual machine represented by this
      Azure IaaS VM container.
     :vartype virtual_machine_id: str
@@ -1827,7 +1875,9 @@ class AzureIaaSClassicComputeVMContainer(IaaSVMContainer, discriminator="Microso
         self.container_type = ProtectableContainerType.MICROSOFT_CLASSIC_COMPUTE_VIRTUAL_MACHINES  # type: ignore
 
 
-class IaaSVMProtectableItem(WorkloadProtectableItem, discriminator="IaaSVMProtectableItem"):
+class IaaSVMProtectableItem(
+    WorkloadProtectableItem, discriminator="IaaSVMProtectableItem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific backup item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1897,7 +1947,7 @@ class IaaSVMProtectableItem(WorkloadProtectableItem, discriminator="IaaSVMProtec
 
 class AzureIaaSClassicComputeVMProtectableItem(
     IaaSVMProtectableItem, discriminator="Microsoft.ClassicCompute/virtualMachines"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific backup item representing the Classic Compute VM.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -1950,7 +2000,9 @@ class AzureIaaSClassicComputeVMProtectableItem(
         self.protectable_item_type = "Microsoft.ClassicCompute/virtualMachines"  # type: ignore
 
 
-class AzureIaaSVMProtectedItem(ProtectedItem, discriminator="AzureIaaSVMProtectedItem"):
+class AzureIaaSVMProtectedItem(
+    ProtectedItem, discriminator="AzureIaaSVMProtectedItem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific backup item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2002,6 +2054,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem, discriminator="AzureIaaSVMProtecte
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -2135,7 +2189,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem, discriminator="AzureIaaSVMProtecte
 
 class AzureIaaSClassicComputeVMProtectedItem(
     AzureIaaSVMProtectedItem, discriminator="Microsoft.ClassicCompute/virtualMachines"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific backup item representing the Classic Compute VM.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -2184,6 +2238,8 @@ class AzureIaaSClassicComputeVMProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -2270,7 +2326,9 @@ class AzureIaaSClassicComputeVMProtectedItem(
         self.protected_item_type = "Microsoft.ClassicCompute/virtualMachines"  # type: ignore
 
 
-class AzureIaaSComputeVMContainer(IaaSVMContainer, discriminator="Microsoft.Compute/virtualMachines"):
+class AzureIaaSComputeVMContainer(
+    IaaSVMContainer, discriminator="Microsoft.Compute/virtualMachines"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific backup item representing an Azure Resource Manager virtual machine.
 
     :ivar friendly_name: Friendly name of the container.
@@ -2287,6 +2345,8 @@ class AzureIaaSComputeVMContainer(IaaSVMContainer, discriminator="Microsoft.Comp
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar virtual_machine_id: Fully qualified ARM url of the virtual machine represented by this
      Azure IaaS VM container.
     :vartype virtual_machine_id: str
@@ -2337,7 +2397,9 @@ class AzureIaaSComputeVMContainer(IaaSVMContainer, discriminator="Microsoft.Comp
         self.container_type = ProtectableContainerType.MICROSOFT_COMPUTE_VIRTUAL_MACHINES  # type: ignore
 
 
-class AzureIaaSComputeVMProtectableItem(IaaSVMProtectableItem, discriminator="Microsoft.Compute/virtualMachines"):
+class AzureIaaSComputeVMProtectableItem(
+    IaaSVMProtectableItem, discriminator="Microsoft.Compute/virtualMachines"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific backup item representing the Azure Resource Manager VM.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -2389,7 +2451,9 @@ class AzureIaaSComputeVMProtectableItem(IaaSVMProtectableItem, discriminator="Mi
         self.protectable_item_type = "Microsoft.Compute/virtualMachines"  # type: ignore
 
 
-class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem, discriminator="Microsoft.Compute/virtualMachines"):
+class AzureIaaSComputeVMProtectedItem(
+    AzureIaaSVMProtectedItem, discriminator="Microsoft.Compute/virtualMachines"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific backup item representing the Azure Resource Manager VM.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -2438,6 +2502,8 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem, discriminator="M
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -2584,7 +2650,7 @@ class AzureIaaSVMHealthDetails(ResourceHealthDetails):
     """
 
 
-class Job(_Model):
+class Job(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines workload agnostic properties for a job.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2668,7 +2734,9 @@ class Job(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureIaaSVMJob(Job, discriminator="AzureIaaSVMJob"):
+class AzureIaaSVMJob(
+    Job, discriminator="AzureIaaSVMJob"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure IaaS VM workload-specific job object.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
@@ -2771,7 +2839,7 @@ class AzureIaaSVMJob(Job, discriminator="AzureIaaSVMJob"):
         self.job_type = "AzureIaaSVMJob"  # type: ignore
 
 
-class AzureIaaSVMJobExtendedInfo(_Model):
+class AzureIaaSVMJobExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure IaaS VM workload-specific additional information for job.
 
     :ivar tasks_list: List of tasks associated with this job.
@@ -2837,7 +2905,7 @@ class AzureIaaSVMJobExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureIaaSVMJobTaskDetails(_Model):
+class AzureIaaSVMJobTaskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure IaaS VM workload-specific job task details.
 
     :ivar task_id: The task display name.
@@ -2911,7 +2979,9 @@ class AzureIaaSVMJobTaskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureIaaSVMJobV2(Job, discriminator="AzureIaaSVMJobV2"):
+class AzureIaaSVMJobV2(
+    Job, discriminator="AzureIaaSVMJobV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure IaaS VM workload-specific job object.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
@@ -3007,7 +3077,7 @@ class AzureIaaSVMJobV2(Job, discriminator="AzureIaaSVMJobV2"):
         self.job_type = "AzureIaaSVMJobV2"  # type: ignore
 
 
-class AzureIaaSVMProtectedItemExtendedInfo(_Model):
+class AzureIaaSVMProtectedItemExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information on Azure IaaS VM specific backup item.
 
     :ivar oldest_recovery_point: The oldest backup copy available for this backup item across all
@@ -3081,7 +3151,9 @@ class AzureIaaSVMProtectedItemExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureIaaSVMProtectionPolicy(ProtectionPolicy, discriminator="AzureIaasVM"):
+class AzureIaaSVMProtectionPolicy(
+    ProtectionPolicy, discriminator="AzureIaasVM"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific backup policy.
 
     :ivar protected_items_count: Number of items associated with this policy.
@@ -3177,7 +3249,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy, discriminator="AzureIaasVM")
         self.backup_management_type = "AzureIaasVM"  # type: ignore
 
 
-class ProtectionIntent(_Model):
+class ProtectionIntent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup ProtectionIntent.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3260,7 +3332,7 @@ class ProtectionIntent(_Model):
 
 class AzureRecoveryServiceVaultProtectionIntent(
     ProtectionIntent, discriminator="RecoveryServiceVaultItem"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure Recovery Services Vault specific protection intent item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3314,7 +3386,9 @@ class AzureRecoveryServiceVaultProtectionIntent(
         self.protection_intent_item_type = ProtectionIntentItemType.RECOVERY_SERVICE_VAULT_ITEM  # type: ignore
 
 
-class AzureResourceProtectionIntent(ProtectionIntent, discriminator="AzureResourceItem"):
+class AzureResourceProtectionIntent(
+    ProtectionIntent, discriminator="AzureResourceItem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM specific backup protection intent item.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -3370,7 +3444,9 @@ class AzureResourceProtectionIntent(ProtectionIntent, discriminator="AzureResour
         self.protection_intent_item_type = ProtectionIntentItemType.AZURE_RESOURCE_ITEM  # type: ignore
 
 
-class AzureWorkloadContainer(ProtectionContainer, discriminator="AzureWorkloadContainer"):
+class AzureWorkloadContainer(
+    ProtectionContainer, discriminator="AzureWorkloadContainer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container for the workloads running inside Azure Compute or Classic Compute.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3390,6 +3466,8 @@ class AzureWorkloadContainer(ProtectionContainer, discriminator="AzureWorkloadCo
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar container_type: Type of the container. The value of this property for: 1. Compute Azure
      VM is Microsoft.Compute/virtualMachines 2. Classic Compute Azure VM is
      Microsoft.ClassicCompute/virtualMachines 3. Windows machines (like MAB, DPM etc) is Windows 4.
@@ -3477,7 +3555,7 @@ class AzureWorkloadContainer(ProtectionContainer, discriminator="AzureWorkloadCo
 
 class AzureSQLAGWorkloadContainerProtectionContainer(
     AzureWorkloadContainer, discriminator="SQLAGWorkLoadContainer"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Container for SQL workloads under SQL Availability Group.
 
     :ivar friendly_name: Friendly name of the container.
@@ -3494,6 +3572,8 @@ class AzureSQLAGWorkloadContainerProtectionContainer(
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar source_resource_id: ARM ID of the virtual machine represented by this Azure Workload
      Container.
     :vartype source_resource_id: str
@@ -3554,7 +3634,9 @@ class AzureSQLAGWorkloadContainerProtectionContainer(
         self.container_type = ProtectableContainerType.SQLAG_WORK_LOAD_CONTAINER  # type: ignore
 
 
-class AzureSqlContainer(ProtectionContainer, discriminator="AzureSqlContainer"):
+class AzureSqlContainer(
+    ProtectionContainer, discriminator="AzureSqlContainer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Sql workload-specific container.
 
     :ivar friendly_name: Friendly name of the container.
@@ -3571,6 +3653,8 @@ class AzureSqlContainer(ProtectionContainer, discriminator="AzureSqlContainer"):
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar container_type: Type of the container. The value of this property for: 1. Compute Azure
      VM is Microsoft.Compute/virtualMachines 2. Classic Compute Azure VM is
      Microsoft.ClassicCompute/virtualMachines 3. Windows machines (like MAB, DPM etc) is Windows 4.
@@ -3609,7 +3693,9 @@ class AzureSqlContainer(ProtectionContainer, discriminator="AzureSqlContainer"):
         self.container_type = ProtectableContainerType.AZURE_SQL_CONTAINER  # type: ignore
 
 
-class AzureSqlProtectedItem(ProtectedItem, discriminator="Microsoft.Sql/servers/databases"):
+class AzureSqlProtectedItem(
+    ProtectedItem, discriminator="Microsoft.Sql/servers/databases"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure SQL workload-specific backup item.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -3658,6 +3744,8 @@ class AzureSqlProtectedItem(ProtectedItem, discriminator="Microsoft.Sql/servers/
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -3731,7 +3819,7 @@ class AzureSqlProtectedItem(ProtectedItem, discriminator="Microsoft.Sql/servers/
         self.protected_item_type = "Microsoft.Sql/servers/databases"  # type: ignore
 
 
-class AzureSqlProtectedItemExtendedInfo(_Model):
+class AzureSqlProtectedItemExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information on Azure Sql specific protected item.
 
     :ivar oldest_recovery_point: The oldest backup copy available for this item in the service.
@@ -3775,7 +3863,9 @@ class AzureSqlProtectedItemExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureSqlProtectionPolicy(ProtectionPolicy, discriminator="AzureSql"):
+class AzureSqlProtectionPolicy(
+    ProtectionPolicy, discriminator="AzureSql"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure SQL workload-specific backup policy.
 
     :ivar protected_items_count: Number of items associated with this policy.
@@ -3818,7 +3908,9 @@ class AzureSqlProtectionPolicy(ProtectionPolicy, discriminator="AzureSql"):
         self.backup_management_type = "AzureSql"  # type: ignore
 
 
-class AzureStorageContainer(ProtectionContainer, discriminator="StorageContainer"):
+class AzureStorageContainer(
+    ProtectionContainer, discriminator="StorageContainer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Storage Account workload-specific container.
 
     :ivar friendly_name: Friendly name of the container.
@@ -3835,6 +3927,8 @@ class AzureStorageContainer(ProtectionContainer, discriminator="StorageContainer
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar source_resource_id: Fully qualified ARM url.
     :vartype source_resource_id: str
     :ivar storage_account_version: Storage account version.
@@ -3850,6 +3944,12 @@ class AzureStorageContainer(ProtectionContainer, discriminator="StorageContainer
     :ivar operation_type: Re-Do Operation. Known values are: "Invalid", "Register", "Reregister",
      and "Rehydrate".
     :vartype operation_type: str or ~azure.mgmt.recoveryservicesbackup.models.OperationType
+    :ivar access_type: Whether access to the storage account is key-based or identity-based. When
+     ``IdentityBased``, ``identityInfo`` must be provided to identify the managed identity used to
+     access the storage account. Known values are: "KeyBased" and "IdentityBased".
+    :vartype access_type: str or ~azure.mgmt.recoveryservicesbackup.models.AccessType
+    :ivar identity_info: Managed identity information required to access the storage account.
+    :vartype identity_info: ~azure.mgmt.recoveryservicesbackup.models.IdentityInfo
     :ivar container_type: Type of the container. The value of this property for: 1. Compute Azure
      VM is Microsoft.Compute/virtualMachines 2. Classic Compute Azure VM is
      Microsoft.ClassicCompute/virtualMachines 3. Windows machines (like MAB, DPM etc) is Windows 4.
@@ -3884,6 +3984,16 @@ class AzureStorageContainer(ProtectionContainer, discriminator="StorageContainer
     )
     """Re-Do Operation. Known values are: \"Invalid\", \"Register\", \"Reregister\", and
      \"Rehydrate\"."""
+    access_type: Optional[Union[str, "_models.AccessType"]] = rest_field(
+        name="accessType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether access to the storage account is key-based or identity-based. When ``IdentityBased``,
+     ``identityInfo`` must be provided to identify the managed identity used to access the storage
+     account. Known values are: \"KeyBased\" and \"IdentityBased\"."""
+    identity_info: Optional["_models.IdentityInfo"] = rest_field(
+        name="identityInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity information required to access the storage account."""
     container_type: Literal[ProtectableContainerType.STORAGE_CONTAINER] = rest_discriminator(name="containerType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of the container. The value of this property for: 1. Compute Azure VM is
      Microsoft.Compute/virtualMachines 2. Classic Compute Azure VM is
@@ -3906,6 +4016,8 @@ class AzureStorageContainer(ProtectionContainer, discriminator="StorageContainer
         protected_item_count: Optional[int] = None,
         acquire_storage_account_lock: Optional[Union[str, "_models.AcquireStorageAccountLock"]] = None,
         operation_type: Optional[Union[str, "_models.OperationType"]] = None,
+        access_type: Optional[Union[str, "_models.AccessType"]] = None,
+        identity_info: Optional["_models.IdentityInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -3920,7 +4032,7 @@ class AzureStorageContainer(ProtectionContainer, discriminator="StorageContainer
         self.container_type = ProtectableContainerType.STORAGE_CONTAINER  # type: ignore
 
 
-class AzureStorageErrorInfo(_Model):
+class AzureStorageErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure storage specific error information.
 
     :ivar error_code: Error code.
@@ -3960,7 +4072,9 @@ class AzureStorageErrorInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureStorageJob(Job, discriminator="AzureStorageJob"):
+class AzureStorageJob(
+    Job, discriminator="AzureStorageJob"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure storage specific job.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
@@ -4064,7 +4178,7 @@ class AzureStorageJob(Job, discriminator="AzureStorageJob"):
         self.job_type = "AzureStorageJob"  # type: ignore
 
 
-class AzureStorageJobExtendedInfo(_Model):
+class AzureStorageJobExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Storage workload-specific additional information for job.
 
     :ivar tasks_list: List of tasks for this job.
@@ -4108,7 +4222,7 @@ class AzureStorageJobExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureStorageJobTaskDetails(_Model):
+class AzureStorageJobTaskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure storage workload specific job task details.
 
     :ivar task_id: The task display name.
@@ -4141,7 +4255,7 @@ class AzureStorageJobTaskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectableContainer(_Model):
+class ProtectableContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protectable Container Class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4226,7 +4340,9 @@ class ProtectableContainer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureStorageProtectableContainer(ProtectableContainer, discriminator="StorageContainer"):
+class AzureStorageProtectableContainer(
+    ProtectableContainer, discriminator="StorageContainer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Storage-specific protectable containers.
 
     :ivar friendly_name: Friendly name of the container.
@@ -4278,7 +4394,9 @@ class AzureStorageProtectableContainer(ProtectableContainer, discriminator="Stor
         self.protectable_container_type = ProtectableContainerType.STORAGE_CONTAINER  # type: ignore
 
 
-class AzureVMAppContainerProtectableContainer(ProtectableContainer, discriminator="VMAppContainer"):
+class AzureVMAppContainerProtectableContainer(
+    ProtectableContainer, discriminator="VMAppContainer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure workload-specific container.
 
     :ivar friendly_name: Friendly name of the container.
@@ -4330,7 +4448,9 @@ class AzureVMAppContainerProtectableContainer(ProtectableContainer, discriminato
         self.protectable_container_type = ProtectableContainerType.VM_APP_CONTAINER  # type: ignore
 
 
-class AzureVMAppContainerProtectionContainer(AzureWorkloadContainer, discriminator="VMAppContainer"):
+class AzureVMAppContainerProtectionContainer(
+    AzureWorkloadContainer, discriminator="VMAppContainer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container for SQL workloads under Azure Virtual Machines.
 
     :ivar friendly_name: Friendly name of the container.
@@ -4347,6 +4467,8 @@ class AzureVMAppContainerProtectionContainer(AzureWorkloadContainer, discriminat
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar source_resource_id: ARM ID of the virtual machine represented by this Azure Workload
      Container.
     :vartype source_resource_id: str
@@ -4406,7 +4528,9 @@ class AzureVMAppContainerProtectionContainer(AzureWorkloadContainer, discriminat
         self.container_type = ProtectableContainerType.VM_APP_CONTAINER  # type: ignore
 
 
-class AzureVMResourceFeatureSupportRequest(FeatureSupportRequest, discriminator="AzureVMResourceBackup"):
+class AzureVMResourceFeatureSupportRequest(
+    FeatureSupportRequest, discriminator="AzureVMResourceBackup"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureResource(IaaS VM) Specific feature support request.
 
     :ivar vm_size: Size of the resource: VM size(A/D series etc) in case of IaasVM.
@@ -4445,7 +4569,7 @@ class AzureVMResourceFeatureSupportRequest(FeatureSupportRequest, discriminator=
         self.feature_type = "AzureVMResourceBackup"  # type: ignore
 
 
-class AzureVMResourceFeatureSupportResponse(_Model):
+class AzureVMResourceFeatureSupportResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for feature support requests for Azure IaasVm.
 
     :ivar support_status: Support status of feature. Known values are: "Invalid", "Supported",
@@ -4477,7 +4601,7 @@ class AzureVMResourceFeatureSupportResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadItem(_Model):
+class WorkloadItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup item. Workload-specific backup items are derived from this class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4544,7 +4668,9 @@ class WorkloadItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureVmWorkloadItem(WorkloadItem, discriminator="AzureVmWorkloadItem"):
+class AzureVmWorkloadItem(
+    WorkloadItem, discriminator="AzureVmWorkloadItem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific workload item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4625,14 +4751,15 @@ class AzureVmWorkloadItem(WorkloadItem, discriminator="AzureVmWorkloadItem"):
         self.workload_item_type = "AzureVmWorkloadItem"  # type: ignore
 
 
-class AzureVmWorkloadProtectableItem(WorkloadProtectableItem, discriminator="AzureVmWorkloadProtectableItem"):
+class AzureVmWorkloadProtectableItem(
+    WorkloadProtectableItem, discriminator="AzureVmWorkloadProtectableItem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protectable item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureVmWorkloadSAPHanaHSRProtectableItem, AzureVmWorkloadSAPHanaScaleoutProtectableItem,
-    AzureVmWorkloadSAPAseDatabaseProtectableItem, AzureVmWorkloadSAPAseSystemProtectableItem,
-    AzureVmWorkloadSAPHanaDBInstance, AzureVmWorkloadSAPHanaDatabaseProtectableItem,
-    AzureVmWorkloadSAPHanaSystemProtectableItem,
+    AzureVmWorkloadSAPHanaHSRProtectableItem, AzureVmWorkloadSAPAseDatabaseProtectableItem,
+    AzureVmWorkloadSAPAseSystemProtectableItem, AzureVmWorkloadSAPHanaDBInstance,
+    AzureVmWorkloadSAPHanaDatabaseProtectableItem, AzureVmWorkloadSAPHanaSystemProtectableItem,
     AzureVmWorkloadSQLAvailabilityGroupProtectableItem, AzureVmWorkloadSQLDatabaseProtectableItem,
     AzureVmWorkloadSQLInstanceProtectableItem
 
@@ -4738,13 +4865,14 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem, discriminator="Azu
         self.protectable_item_type = "AzureVmWorkloadProtectableItem"  # type: ignore
 
 
-class AzureVmWorkloadProtectedItem(ProtectedItem, discriminator="AzureVmWorkloadProtectedItem"):
+class AzureVmWorkloadProtectedItem(
+    ProtectedItem, discriminator="AzureVmWorkloadProtectedItem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protected item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureVmWorkloadSAPAseDatabaseProtectedItem, AzureVmWorkloadSAPHanaDBInstanceProtectedItem,
-    AzureVmWorkloadSAPHanaDatabaseProtectedItem, AzureVmWorkloadSQLDatabaseProtectedItem,
-    AzureVmWorkloadSQLInstanceProtectedItem
+    AzureVmWorkloadSAPHanaDatabaseProtectedItem, AzureVmWorkloadSQLDatabaseProtectedItem
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -4792,6 +4920,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem, discriminator="AzureVmWorkload
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -4943,7 +5073,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem, discriminator="AzureVmWorkload
         self.protected_item_type = "AzureVmWorkloadProtectedItem"  # type: ignore
 
 
-class AzureVmWorkloadProtectedItemExtendedInfo(_Model):
+class AzureVmWorkloadProtectedItemExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information on Azure Workload for SQL specific backup item.
 
     :ivar oldest_recovery_point: The oldest backup copy available for this backup item across all
@@ -5025,7 +5155,9 @@ class AzureVmWorkloadProtectedItemExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureVmWorkloadProtectionPolicy(ProtectionPolicy, discriminator="AzureWorkload"):
+class AzureVmWorkloadProtectionPolicy(
+    ProtectionPolicy, discriminator="AzureWorkload"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM (Mercury) workload-specific backup policy.
 
     :ivar protected_items_count: Number of items associated with this policy.
@@ -5037,10 +5169,6 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy, discriminator="AzureWork
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
      "SAPAseDatabase", and "SAPHanaDBInstance".
     :vartype work_load_type: str or ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
-    :ivar vm_workload_policy_type: Type of the protection policy. Known values are: "Invalid",
-     "SnapshotV1", "SnapshotV2", and "Streaming".
-    :vartype vm_workload_policy_type: str or
-     ~azure.mgmt.recoveryservicesbackup.models.VMWorkloadPolicyType
     :ivar settings: Common settings for the backup management.
     :vartype settings: ~azure.mgmt.recoveryservicesbackup.models.Settings
     :ivar sub_protection_policy: List of sub-protection policies which includes schedule and
@@ -5061,11 +5189,6 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy, discriminator="AzureWork
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
      \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
-    vm_workload_policy_type: Optional[Union[str, "_models.VMWorkloadPolicyType"]] = rest_field(
-        name="vmWorkloadPolicyType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of the protection policy. Known values are: \"Invalid\", \"SnapshotV1\", \"SnapshotV2\",
-     and \"Streaming\"."""
     settings: Optional["_models.Settings"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Common settings for the backup management."""
     sub_protection_policy: Optional[list["_models.SubProtectionPolicy"]] = rest_field(
@@ -5087,7 +5210,6 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy, discriminator="AzureWork
         protected_items_count: Optional[int] = None,
         resource_guard_operation_requests: Optional[list[str]] = None,
         work_load_type: Optional[Union[str, "_models.WorkloadType"]] = None,
-        vm_workload_policy_type: Optional[Union[str, "_models.VMWorkloadPolicyType"]] = None,
         settings: Optional["_models.Settings"] = None,
         sub_protection_policy: Optional[list["_models.SubProtectionPolicy"]] = None,
         make_policy_consistent: Optional[bool] = None,
@@ -5107,7 +5229,7 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy, discriminator="AzureWork
 
 class AzureVmWorkloadSAPAseDatabaseProtectableItem(
     AzureVmWorkloadProtectableItem, discriminator="SAPAseDatabase"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protectable item representing SAP ASE Database.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -5180,7 +5302,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectableItem(
 
 class AzureVmWorkloadSAPAseDatabaseProtectedItem(
     AzureVmWorkloadProtectedItem, discriminator="AzureVmWorkloadSAPAseDatabase"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protected item representing SAP ASE Database.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -5229,6 +5351,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -5328,7 +5452,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
 
 class AzureVmWorkloadSAPAseDatabaseWorkloadItem(
     AzureVmWorkloadItem, discriminator="SAPAseDatabase"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific workload item representing SAP ASE Database.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -5386,7 +5510,7 @@ class AzureVmWorkloadSAPAseDatabaseWorkloadItem(
 
 class AzureVmWorkloadSAPAseSystemProtectableItem(
     AzureVmWorkloadProtectableItem, discriminator="SAPAseSystem"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protectable item representing SAP ASE System.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -5457,7 +5581,9 @@ class AzureVmWorkloadSAPAseSystemProtectableItem(
         self.protectable_item_type = "SAPAseSystem"  # type: ignore
 
 
-class AzureVmWorkloadSAPAseSystemWorkloadItem(AzureVmWorkloadItem, discriminator="SAPAseSystem"):
+class AzureVmWorkloadSAPAseSystemWorkloadItem(
+    AzureVmWorkloadItem, discriminator="SAPAseSystem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific workload item representing SAP ASE System.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -5515,7 +5641,7 @@ class AzureVmWorkloadSAPAseSystemWorkloadItem(AzureVmWorkloadItem, discriminator
 
 class AzureVmWorkloadSAPHanaDatabaseProtectableItem(
     AzureVmWorkloadProtectableItem, discriminator="SAPHanaDatabase"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protectable item representing SAP HANA Database.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -5588,7 +5714,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectableItem(
 
 class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
     AzureVmWorkloadProtectedItem, discriminator="AzureVmWorkloadSAPHanaDatabase"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protected item representing SAP HANA Database.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -5637,6 +5763,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -5736,7 +5864,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
 
 class AzureVmWorkloadSAPHanaDatabaseWorkloadItem(
     AzureVmWorkloadItem, discriminator="SAPHanaDatabase"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific workload item representing SAP HANA Database.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -5793,7 +5921,9 @@ class AzureVmWorkloadSAPHanaDatabaseWorkloadItem(
         self.workload_item_type = "SAPHanaDatabase"  # type: ignore
 
 
-class AzureVmWorkloadSAPHanaDBInstance(AzureVmWorkloadProtectableItem, discriminator="SAPHanaDBInstance"):
+class AzureVmWorkloadSAPHanaDBInstance(
+    AzureVmWorkloadProtectableItem, discriminator="SAPHanaDBInstance"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protectable item representing SAP HANA Dbinstance.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -5866,7 +5996,7 @@ class AzureVmWorkloadSAPHanaDBInstance(AzureVmWorkloadProtectableItem, discrimin
 
 class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
     AzureVmWorkloadProtectedItem, discriminator="AzureVmWorkloadSAPHanaDBInstance"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protected item representing SAP HANA DBInstance.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -5915,6 +6045,8 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -6012,7 +6144,9 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         self.protected_item_type = "AzureVmWorkloadSAPHanaDBInstance"  # type: ignore
 
 
-class AzureVmWorkloadSAPHanaHSRProtectableItem(AzureVmWorkloadProtectableItem, discriminator="HanaHSRContainer"):
+class AzureVmWorkloadSAPHanaHSRProtectableItem(
+    AzureVmWorkloadProtectableItem, discriminator="HanaHSRContainer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protectable item representing HANA HSR.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -6083,82 +6217,9 @@ class AzureVmWorkloadSAPHanaHSRProtectableItem(AzureVmWorkloadProtectableItem, d
         self.protectable_item_type = "HanaHSRContainer"  # type: ignore
 
 
-class AzureVmWorkloadSAPHanaScaleoutProtectableItem(
-    AzureVmWorkloadProtectableItem, discriminator="HanaScaleoutContainer"
-):  # pylint: disable=name-too-long
-    """Azure VM workload-specific protectable item representing HANA scale out.
-
-    :ivar backup_management_type: Type of backup management to backup an item.
-    :vartype backup_management_type: str
-    :ivar workload_type: Type of workload for the backup management.
-    :vartype workload_type: str
-    :ivar friendly_name: Friendly name of the backup item.
-    :vartype friendly_name: str
-    :ivar protection_state: State of the back up item. Known values are: "Invalid", "NotProtected",
-     "Protecting", "Protected", and "ProtectionFailed".
-    :vartype protection_state: str or ~azure.mgmt.recoveryservicesbackup.models.ProtectionStatus
-    :ivar parent_name: Name for instance or AG.
-    :vartype parent_name: str
-    :ivar parent_unique_name: Parent Unique Name is added to provide the service formatted URI Name
-     of the Parent Only Applicable for data bases where the parent would be either Instance or a SQL
-     AG.
-    :vartype parent_unique_name: str
-    :ivar server_name: Host/Cluster Name for instance or AG.
-    :vartype server_name: str
-    :ivar is_auto_protectable: Indicates if protectable item is auto-protectable.
-    :vartype is_auto_protectable: bool
-    :ivar is_auto_protected: Indicates if protectable item is auto-protected.
-    :vartype is_auto_protected: bool
-    :ivar subinquireditemcount: For instance or AG, indicates number of DB's present.
-    :vartype subinquireditemcount: int
-    :ivar subprotectableitemcount: For instance or AG, indicates number of DB's to be protected.
-    :vartype subprotectableitemcount: int
-    :ivar prebackupvalidation: Pre-backup validation for protectable objects.
-    :vartype prebackupvalidation: ~azure.mgmt.recoveryservicesbackup.models.PreBackupValidation
-    :ivar is_protectable: Indicates if item is protectable.
-    :vartype is_protectable: bool
-    :ivar protectable_item_type: Type of the backup item. Required. Default value is
-     "HanaScaleoutContainer".
-    :vartype protectable_item_type: str
-    """
-
-    protectable_item_type: Literal["HanaScaleoutContainer"] = rest_discriminator(name="protectableItemType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Type of the backup item. Required. Default value is \"HanaScaleoutContainer\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        backup_management_type: Optional[str] = None,
-        workload_type: Optional[str] = None,
-        friendly_name: Optional[str] = None,
-        protection_state: Optional[Union[str, "_models.ProtectionStatus"]] = None,
-        parent_name: Optional[str] = None,
-        parent_unique_name: Optional[str] = None,
-        server_name: Optional[str] = None,
-        is_auto_protectable: Optional[bool] = None,
-        is_auto_protected: Optional[bool] = None,
-        subinquireditemcount: Optional[int] = None,
-        subprotectableitemcount: Optional[int] = None,
-        prebackupvalidation: Optional["_models.PreBackupValidation"] = None,
-        is_protectable: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.protectable_item_type = "HanaScaleoutContainer"  # type: ignore
-
-
 class AzureVmWorkloadSAPHanaSystemProtectableItem(
     AzureVmWorkloadProtectableItem, discriminator="SAPHanaSystem"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protectable item representing SAP HANA System.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -6229,7 +6290,9 @@ class AzureVmWorkloadSAPHanaSystemProtectableItem(
         self.protectable_item_type = "SAPHanaSystem"  # type: ignore
 
 
-class AzureVmWorkloadSAPHanaSystemWorkloadItem(AzureVmWorkloadItem, discriminator="SAPHanaSystem"):
+class AzureVmWorkloadSAPHanaSystemWorkloadItem(
+    AzureVmWorkloadItem, discriminator="SAPHanaSystem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific workload item representing SAP HANA System.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -6287,7 +6350,7 @@ class AzureVmWorkloadSAPHanaSystemWorkloadItem(AzureVmWorkloadItem, discriminato
 
 class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(
     AzureVmWorkloadProtectableItem, discriminator="SQLAvailabilityGroupContainer"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protectable item representing SQL Availability Group.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -6367,7 +6430,7 @@ class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(
 
 class AzureVmWorkloadSQLDatabaseProtectableItem(
     AzureVmWorkloadProtectableItem, discriminator="SQLDataBase"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protectable item representing SQL Database.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -6437,7 +6500,9 @@ class AzureVmWorkloadSQLDatabaseProtectableItem(
         self.protectable_item_type = "SQLDataBase"  # type: ignore
 
 
-class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem, discriminator="AzureVmWorkloadSQLDatabase"):
+class AzureVmWorkloadSQLDatabaseProtectedItem(
+    AzureVmWorkloadProtectedItem, discriminator="AzureVmWorkloadSQLDatabase"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protected item representing SQL Database.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -6486,6 +6551,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem, disc
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -6531,27 +6598,11 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem, disc
      specific types in the polymorphic chain of types. Required. Default value is
      "AzureVmWorkloadSQLDatabase".
     :vartype protected_item_type: str
-    :ivar parent_protected_item: Name of the parent protected item (e.g., SQL Instance name) when
-     this database is protected as part of a parent.
-    :vartype parent_protected_item: str
-    :ivar protection_level: Protection type in case protected as part of a parent. Known values
-     are: "Database" and "DatabaseUnderInstance".
-    :vartype protection_level: str or ~azure.mgmt.recoveryservicesbackup.models.ProtectionLevel
     """
 
     protected_item_type: Literal["AzureVmWorkloadSQLDatabase"] = rest_discriminator(name="protectedItemType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """This property will be used as the discriminator for deciding the specific types in the
      polymorphic chain of types. Required. Default value is \"AzureVmWorkloadSQLDatabase\"."""
-    parent_protected_item: Optional[str] = rest_field(
-        name="parentProtectedItem", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Name of the parent protected item (e.g., SQL Instance name) when this database is protected as
-     part of a parent."""
-    protection_level: Optional[Union[str, "_models.ProtectionLevel"]] = rest_field(
-        name="protectionLevel", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Protection type in case protected as part of a parent. Known values are: \"Database\" and
-     \"DatabaseUnderInstance\"."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -6585,8 +6636,6 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem, disc
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[dict[str, "_models.KPIResourceHealthDetails"]] = None,
         nodes_list: Optional[list["_models.DistributedNodesInfo"]] = None,
-        parent_protected_item: Optional[str] = None,
-        protection_level: Optional[Union[str, "_models.ProtectionLevel"]] = None,
     ) -> None: ...
 
     @overload
@@ -6601,7 +6650,9 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem, disc
         self.protected_item_type = "AzureVmWorkloadSQLDatabase"  # type: ignore
 
 
-class AzureVmWorkloadSQLDatabaseWorkloadItem(AzureVmWorkloadItem, discriminator="SQLDataBase"):
+class AzureVmWorkloadSQLDatabaseWorkloadItem(
+    AzureVmWorkloadItem, discriminator="SQLDataBase"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific workload item representing SQL Database.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -6659,7 +6710,7 @@ class AzureVmWorkloadSQLDatabaseWorkloadItem(AzureVmWorkloadItem, discriminator=
 
 class AzureVmWorkloadSQLInstanceProtectableItem(
     AzureVmWorkloadProtectableItem, discriminator="SQLInstance"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific protectable item representing SQL Instance.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -6729,170 +6780,9 @@ class AzureVmWorkloadSQLInstanceProtectableItem(
         self.protectable_item_type = "SQLInstance"  # type: ignore
 
 
-class AzureVmWorkloadSQLInstanceProtectedItem(AzureVmWorkloadProtectedItem, discriminator="AzureVmWorkloadSQLInstance"):
-    """Azure VM workload-specific protected item representing SQL Instance.
-
-    :ivar backup_management_type: Type of backup management for the backed up item. Known values
-     are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", and "DefaultBackup".
-    :vartype backup_management_type: str or
-     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
-    :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
-     "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
-    :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
-    :ivar container_name: Unique name of container.
-    :vartype container_name: str
-    :ivar source_resource_id: ARM ID of the resource to be backed up.
-    :vartype source_resource_id: str
-    :ivar policy_id: ID of the backup policy with which this item is backed up.
-    :vartype policy_id: str
-    :ivar last_recovery_point: Timestamp when the last (latest) backup copy was created for this
-     backup item.
-    :vartype last_recovery_point: ~datetime.datetime
-    :ivar backup_set_name: Name of the backup set the backup item belongs to.
-    :vartype backup_set_name: str
-    :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
-    :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.models.CreateMode
-    :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
-    :vartype deferred_delete_time_in_utc: ~datetime.datetime
-    :ivar is_scheduled_for_deferred_delete: Flag to identify whether the DS is scheduled for
-     deferred delete.
-    :vartype is_scheduled_for_deferred_delete: bool
-    :ivar deferred_delete_time_remaining: Time remaining before the DS marked for deferred delete
-     is permanently deleted.
-    :vartype deferred_delete_time_remaining: str
-    :ivar is_deferred_delete_schedule_upcoming: Flag to identify whether the deferred deleted DS is
-     to be purged soon.
-    :vartype is_deferred_delete_schedule_upcoming: bool
-    :ivar is_rehydrate: Flag to identify that deferred deleted DS is to be moved into Pause state.
-    :vartype is_rehydrate: bool
-    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
-     be performed.
-    :vartype resource_guard_operation_requests: list[str]
-    :ivar is_archive_enabled: Flag to identify whether datasource is protected in archive.
-    :vartype is_archive_enabled: bool
-    :ivar policy_name: Name of the policy used for protection.
-    :vartype policy_name: str
-    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
-    :vartype soft_delete_retention_period_in_days: int
-    :ivar vault_id: ID of the vault which protects this item.
-    :vartype vault_id: str
-    :ivar source_side_scan_info: Source side threat information.
-    :vartype source_side_scan_info: ~azure.mgmt.recoveryservicesbackup.models.SourceSideScanInfo
-    :ivar friendly_name: Friendly name of the DB represented by this backup item.
-    :vartype friendly_name: str
-    :ivar server_name: Host/Cluster Name for instance or AG.
-    :vartype server_name: str
-    :ivar parent_name: Parent name of the DB such as Instance or Availability Group.
-    :vartype parent_name: str
-    :ivar parent_type: Parent type of protected item, example: for a DB, standalone server or
-     distributed.
-    :vartype parent_type: str
-    :ivar protection_status: Backup status of this backup item.
-    :vartype protection_status: str
-    :ivar protection_state: Backup state of this backup item. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused", and
-     "BackupsSuspended".
-    :vartype protection_state: str or ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
-    :ivar last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
-     Known values are: "Invalid", "Healthy", "Unhealthy", and "IRPending".
-    :vartype last_backup_status: str or ~azure.mgmt.recoveryservicesbackup.models.LastBackupStatus
-    :ivar last_backup_time: Timestamp of the last backup operation on this backup item.
-    :vartype last_backup_time: ~datetime.datetime
-    :ivar last_backup_error_detail: Error details in last backup.
-    :vartype last_backup_error_detail: ~azure.mgmt.recoveryservicesbackup.models.ErrorDetail
-    :ivar protected_item_data_source_id: Data ID of the protected item.
-    :vartype protected_item_data_source_id: str
-    :ivar protected_item_health_status: Health status of the backup item, evaluated based on last
-     heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable", and
-     "IRPending".
-    :vartype protected_item_health_status: str or
-     ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
-    :ivar extended_info: Additional information for this backup item.
-    :vartype extended_info:
-     ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
-    :ivar kpis_healths: Health details of different KPIs.
-    :vartype kpis_healths: dict[str,
-     ~azure.mgmt.recoveryservicesbackup.models.KPIResourceHealthDetails]
-    :ivar nodes_list: List of the nodes in case of distributed container.
-    :vartype nodes_list: list[~azure.mgmt.recoveryservicesbackup.models.DistributedNodesInfo]
-    :ivar protected_item_type: This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types. Required. Default value is
-     "AzureVmWorkloadSQLInstance".
-    :vartype protected_item_type: str
-    :ivar child_db_names: Name of Child Dbs protected under this parent.
-    :vartype child_db_names: list[str]
-    :ivar instance_protection_readiness: The state of instance protection. Known values are:
-     "Unknown", "Ready", "ScheduleDisabled", "PartialProtection", and "ProtectionError".
-    :vartype instance_protection_readiness: str or
-     ~azure.mgmt.recoveryservicesbackup.models.InstanceProtectionReadiness
-    """
-
-    protected_item_type: Literal["AzureVmWorkloadSQLInstance"] = rest_discriminator(name="protectedItemType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """This property will be used as the discriminator for deciding the specific types in the
-     polymorphic chain of types. Required. Default value is \"AzureVmWorkloadSQLInstance\"."""
-    child_db_names: Optional[list[str]] = rest_field(
-        name="childDBNames", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Name of Child Dbs protected under this parent."""
-    instance_protection_readiness: Optional[Union[str, "_models.InstanceProtectionReadiness"]] = rest_field(
-        name="instanceProtectionReadiness", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The state of instance protection. Known values are: \"Unknown\", \"Ready\",
-     \"ScheduleDisabled\", \"PartialProtection\", and \"ProtectionError\"."""
-
-    @overload
-    def __init__(  # pylint: disable=too-many-locals
-        self,
-        *,
-        container_name: Optional[str] = None,
-        source_resource_id: Optional[str] = None,
-        policy_id: Optional[str] = None,
-        last_recovery_point: Optional[datetime.datetime] = None,
-        backup_set_name: Optional[str] = None,
-        create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
-        deferred_delete_time_in_utc: Optional[datetime.datetime] = None,
-        is_scheduled_for_deferred_delete: Optional[bool] = None,
-        deferred_delete_time_remaining: Optional[str] = None,
-        is_deferred_delete_schedule_upcoming: Optional[bool] = None,
-        is_rehydrate: Optional[bool] = None,
-        resource_guard_operation_requests: Optional[list[str]] = None,
-        is_archive_enabled: Optional[bool] = None,
-        policy_name: Optional[str] = None,
-        soft_delete_retention_period_in_days: Optional[int] = None,
-        source_side_scan_info: Optional["_models.SourceSideScanInfo"] = None,
-        server_name: Optional[str] = None,
-        parent_name: Optional[str] = None,
-        parent_type: Optional[str] = None,
-        protection_state: Optional[Union[str, "_models.ProtectionState"]] = None,
-        last_backup_status: Optional[Union[str, "_models.LastBackupStatus"]] = None,
-        last_backup_time: Optional[datetime.datetime] = None,
-        last_backup_error_detail: Optional["_models.ErrorDetail"] = None,
-        protected_item_data_source_id: Optional[str] = None,
-        protected_item_health_status: Optional[Union[str, "_models.ProtectedItemHealthStatus"]] = None,
-        extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
-        kpis_healths: Optional[dict[str, "_models.KPIResourceHealthDetails"]] = None,
-        nodes_list: Optional[list["_models.DistributedNodesInfo"]] = None,
-        child_db_names: Optional[list[str]] = None,
-        instance_protection_readiness: Optional[Union[str, "_models.InstanceProtectionReadiness"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.protected_item_type = "AzureVmWorkloadSQLInstance"  # type: ignore
-
-
-class AzureVmWorkloadSQLInstanceWorkloadItem(AzureVmWorkloadItem, discriminator="SQLInstance"):
+class AzureVmWorkloadSQLInstanceWorkloadItem(
+    AzureVmWorkloadItem, discriminator="SQLInstance"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific workload item representing SQL Instance.
 
     :ivar backup_management_type: Type of backup management to backup an item.
@@ -6957,7 +6847,7 @@ class AzureVmWorkloadSQLInstanceWorkloadItem(AzureVmWorkloadItem, discriminator=
 
 class AzureWorkloadAutoProtectionIntent(
     AzureRecoveryServiceVaultProtectionIntent, discriminator="AzureWorkloadAutoProtectionIntent"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Recovery Services Vault specific protection intent item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7011,7 +6901,9 @@ class AzureWorkloadAutoProtectionIntent(
         self.protection_intent_item_type = ProtectionIntentItemType.AZURE_WORKLOAD_AUTO_PROTECTION_INTENT  # type: ignore
 
 
-class AzureWorkloadBackupRequest(BackupRequest, discriminator="AzureWorkloadBackupRequest"):
+class AzureWorkloadBackupRequest(
+    BackupRequest, discriminator="AzureWorkloadBackupRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureWorkload workload-specific backup request.
 
     :ivar backup_type: Type of backup, viz. Full, Differential, Log or CopyOnlyFull. Known values
@@ -7072,7 +6964,7 @@ class AzureWorkloadBackupRequest(BackupRequest, discriminator="AzureWorkloadBack
 
 class AzureWorkloadContainerAutoProtectionIntent(
     ProtectionIntent, discriminator="AzureWorkloadContainerAutoProtectionIntent"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure workload specific protection intent item.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -7122,7 +7014,7 @@ class AzureWorkloadContainerAutoProtectionIntent(
         self.protection_intent_item_type = ProtectionIntentItemType.AZURE_WORKLOAD_CONTAINER_AUTO_PROTECTION_INTENT  # type: ignore
 
 
-class AzureWorkloadContainerExtendedInfo(_Model):
+class AzureWorkloadContainerExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Extended information of the container.
 
     :ivar host_server_name: Host Os Name in case of Stand Alone and Cluster Name in case of
@@ -7167,7 +7059,7 @@ class AzureWorkloadContainerExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureWorkloadErrorInfo(_Model):
+class AzureWorkloadErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure storage specific error information.
 
     :ivar error_code: Error code.
@@ -7221,7 +7113,9 @@ class AzureWorkloadErrorInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureWorkloadJob(Job, discriminator="AzureWorkloadJob"):
+class AzureWorkloadJob(
+    Job, discriminator="AzureWorkloadJob"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure storage specific job.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
@@ -7309,7 +7203,7 @@ class AzureWorkloadJob(Job, discriminator="AzureWorkloadJob"):
         self.job_type = "AzureWorkloadJob"  # type: ignore
 
 
-class AzureWorkloadJobExtendedInfo(_Model):
+class AzureWorkloadJobExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload-specific additional information for job.
 
     :ivar tasks_list: List of tasks for this job.
@@ -7354,7 +7248,7 @@ class AzureWorkloadJobExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureWorkloadJobTaskDetails(_Model):
+class AzureWorkloadJobTaskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM workload specific job task details.
 
     :ivar task_id: The task display name.
@@ -7387,7 +7281,9 @@ class AzureWorkloadJobTaskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureWorkloadRecoveryPoint(RecoveryPoint, discriminator="AzureWorkloadRecoveryPoint"):
+class AzureWorkloadRecoveryPoint(
+    RecoveryPoint, discriminator="AzureWorkloadRecoveryPoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload specific recovery point, specifically encapsulates full/diff recovery point.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7474,7 +7370,7 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint, discriminator="AzureWorkloadReco
 
 class AzureWorkloadPointInTimeRecoveryPoint(
     AzureWorkloadRecoveryPoint, discriminator="AzureWorkloadPointInTimeRecoveryPoint"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery point specific to PointInTime.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7543,7 +7439,9 @@ class AzureWorkloadPointInTimeRecoveryPoint(
         self.object_type = "AzureWorkloadPointInTimeRecoveryPoint"  # type: ignore
 
 
-class AzureWorkloadRestoreRequest(RestoreRequest, discriminator="AzureWorkloadRestoreRequest"):
+class AzureWorkloadRestoreRequest(
+    RestoreRequest, discriminator="AzureWorkloadRestoreRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureWorkload-specific restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7665,7 +7563,7 @@ class AzureWorkloadRestoreRequest(RestoreRequest, discriminator="AzureWorkloadRe
 
 class AzureWorkloadPointInTimeRestoreRequest(
     AzureWorkloadRestoreRequest, discriminator="AzureWorkloadPointInTimeRestoreRequest"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureWorkload SAP Hana -specific restore. Specifically for PointInTime/Log restore.
 
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
@@ -7777,7 +7675,9 @@ class AzureWorkloadSAPAsePointInTimeRecoveryPoint(
         self.object_type = "AzureWorkloadSAPAsePointInTimeRecoveryPoint"  # type: ignore
 
 
-class AzureWorkloadSAPAseRestoreRequest(AzureWorkloadRestoreRequest, discriminator="AzureWorkloadSAPAseRestoreRequest"):
+class AzureWorkloadSAPAseRestoreRequest(
+    AzureWorkloadRestoreRequest, discriminator="AzureWorkloadSAPAseRestoreRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureWorkload SAP Ase-specific restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7854,7 +7754,7 @@ class AzureWorkloadSAPAseRestoreRequest(AzureWorkloadRestoreRequest, discriminat
 
 class AzureWorkloadSAPAsePointInTimeRestoreRequest(
     AzureWorkloadSAPAseRestoreRequest, discriminator="AzureWorkloadSAPAsePointInTimeRestoreRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureWorkload SAP Ase-specific restore. Specifically for PointInTime/Log restore.
 
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
@@ -7933,7 +7833,9 @@ class AzureWorkloadSAPAsePointInTimeRestoreRequest(
         self.object_type = "AzureWorkloadSAPAsePointInTimeRestoreRequest"  # type: ignore
 
 
-class AzureWorkloadSAPAseRecoveryPoint(AzureWorkloadRecoveryPoint, discriminator="AzureWorkloadSAPAseRecoveryPoint"):
+class AzureWorkloadSAPAseRecoveryPoint(
+    AzureWorkloadRecoveryPoint, discriminator="AzureWorkloadSAPAseRecoveryPoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SAPAse specific recoverypoint, specifically encapsulates full/diff recoverypoints.
 
     :ivar threat_status: Threat status of the recovery point. Known values are: "Unknown",
@@ -8025,7 +7927,7 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(
 
 class AzureWorkloadSAPHanaRestoreRequest(
     AzureWorkloadRestoreRequest, discriminator="AzureWorkloadSAPHanaRestoreRequest"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureWorkload SAP Hana-specific restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8104,7 +8006,7 @@ class AzureWorkloadSAPHanaRestoreRequest(
 
 class AzureWorkloadSAPHanaPointInTimeRestoreRequest(
     AzureWorkloadSAPHanaRestoreRequest, discriminator="AzureWorkloadSAPHanaPointInTimeRestoreRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureWorkload SAP Hana -specific restore. Specifically for PointInTime/Log restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8190,7 +8092,7 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(
 class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(
     AzureWorkloadSAPHanaPointInTimeRestoreRequest,
     discriminator="AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest",
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureWorkload SAP Hana-specific restore with integrated rehydration of recovery point.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
@@ -8230,7 +8132,9 @@ class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(
         self.object_type = "AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest"  # type: ignore
 
 
-class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint, discriminator="AzureWorkloadSAPHanaRecoveryPoint"):
+class AzureWorkloadSAPHanaRecoveryPoint(
+    AzureWorkloadRecoveryPoint, discriminator="AzureWorkloadSAPHanaRecoveryPoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SAPHana specific recoverypoint, specifically encapsulates full/diff recoverypoints.
 
     :ivar threat_status: Threat status of the recovery point. Known values are: "Unknown",
@@ -8289,7 +8193,7 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint, discriminato
 
 class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(
     AzureWorkloadSAPHanaRestoreRequest, discriminator="AzureWorkloadSAPHanaRestoreWithRehydrateRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureWorkload SAP Hana-specific restore with integrated rehydration of recovery point.
 
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
@@ -8371,7 +8275,7 @@ class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(
 
 class AzureWorkloadSQLAutoProtectionIntent(
     AzureWorkloadAutoProtectionIntent, discriminator="AzureWorkloadSQLAutoProtectionIntent"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Workload SQL Auto Protection intent item.
 
     :ivar protection_intent_item_type: backup protectionIntent type. Required.
@@ -8412,7 +8316,9 @@ class AzureWorkloadSQLAutoProtectionIntent(
         self.protection_intent_item_type = ProtectionIntentItemType.AZURE_WORKLOAD_SQL_AUTO_PROTECTION_INTENT  # type: ignore
 
 
-class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint, discriminator="AzureWorkloadSQLRecoveryPoint"):
+class AzureWorkloadSQLRecoveryPoint(
+    AzureWorkloadRecoveryPoint, discriminator="AzureWorkloadSQLRecoveryPoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SQL specific recoverypoint, specifically encapsulates full/diff recoverypoint along with
     extended info.
 
@@ -8488,7 +8394,7 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint, discriminator="A
 
 class AzureWorkloadSQLPointInTimeRecoveryPoint(
     AzureWorkloadSQLRecoveryPoint, discriminator="AzureWorkloadSQLPointInTimeRecoveryPoint"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery point specific to PointInTime.
 
     :ivar threat_status: Threat status of the recovery point. Known values are: "Unknown",
@@ -8559,7 +8465,9 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(
         self.object_type = "AzureWorkloadSQLPointInTimeRecoveryPoint"  # type: ignore
 
 
-class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest, discriminator="AzureWorkloadSQLRestoreRequest"):
+class AzureWorkloadSQLRestoreRequest(
+    AzureWorkloadRestoreRequest, discriminator="AzureWorkloadSQLRestoreRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureWorkload SQL -specific restore. Specifically for full/diff restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8662,7 +8570,7 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest, discriminator=
 
 class AzureWorkloadSQLPointInTimeRestoreRequest(
     AzureWorkloadSQLRestoreRequest, discriminator="AzureWorkloadSQLPointInTimeRestoreRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureWorkload SQL -specific restore. Specifically for PointInTime/Log restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8759,7 +8667,7 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
 
 class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(
     AzureWorkloadSQLPointInTimeRestoreRequest, discriminator="AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureWorkload SQL-specific restore with integrated rehydration of recovery point.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
@@ -8799,15 +8707,15 @@ class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(
         self.object_type = "AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest"  # type: ignore
 
 
-class AzureWorkloadSQLRecoveryPointExtendedInfo(_Model):  # pylint: disable=name-too-long
+class AzureWorkloadSQLRecoveryPointExtendedInfo(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Extended info class details.
 
     :ivar data_directory_time_in_utc: UTC time at which data directory info was captured.
     :vartype data_directory_time_in_utc: ~datetime.datetime
     :ivar data_directory_paths: List of data directory paths during restore operation.
     :vartype data_directory_paths: list[~azure.mgmt.recoveryservicesbackup.models.SQLDataDirectory]
-    :ivar included_databases: List of databases included in recovery point.
-    :vartype included_databases: list[~azure.mgmt.recoveryservicesbackup.models.DatabaseInRP]
     """
 
     data_directory_time_in_utc: Optional[datetime.datetime] = rest_field(
@@ -8818,10 +8726,6 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(_Model):  # pylint: disable=name
         name="dataDirectoryPaths", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of data directory paths during restore operation."""
-    included_databases: Optional[list["_models.DatabaseInRP"]] = rest_field(
-        name="includedDatabases", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of databases included in recovery point."""
 
     @overload
     def __init__(
@@ -8829,7 +8733,6 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(_Model):  # pylint: disable=name
         *,
         data_directory_time_in_utc: Optional[datetime.datetime] = None,
         data_directory_paths: Optional[list["_models.SQLDataDirectory"]] = None,
-        included_databases: Optional[list["_models.DatabaseInRP"]] = None,
     ) -> None: ...
 
     @overload
@@ -8845,7 +8748,7 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(_Model):  # pylint: disable=name
 
 class AzureWorkloadSQLRestoreWithRehydrateRequest(
     AzureWorkloadSQLRestoreRequest, discriminator="AzureWorkloadSQLRestoreWithRehydrateRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureWorkload SQL-specific restore with integrated rehydration of recovery point.
 
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
@@ -8982,7 +8885,7 @@ class ProxyResource(Resource):
     """
 
 
-class BackupEngineBaseResource(ProxyResource):
+class BackupEngineBaseResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The base backup engine class. All workload specific backup engines derive from this class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9038,7 +8941,7 @@ class BackupEngineBaseResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BackupEngineExtendedInfo(_Model):
+class BackupEngineExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information on backup engine.
 
     :ivar database_name: Database name of backup engine.
@@ -9115,7 +9018,7 @@ class BackupEngineExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupManagementUsage(_Model):
+class BackupManagementUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup management usages of a vault.
 
     :ivar unit: Unit of the usage. Known values are: "Count", "Bytes", "Seconds", "Percent",
@@ -9178,7 +9081,7 @@ class BackupManagementUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupRequestResource(Resource):
+class BackupRequestResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup request. Workload-specific backup requests are derived from this class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9234,7 +9137,7 @@ class BackupRequestResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class BackupResourceConfig(_Model):
+class BackupResourceConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource storage details.
 
     :ivar storage_model_type: Storage type. Known values are: "Invalid", "GeoRedundant",
@@ -9305,7 +9208,7 @@ class BackupResourceConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupResourceConfigResource(ProxyResource):
+class BackupResourceConfigResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource storage details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9361,7 +9264,7 @@ class BackupResourceConfigResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BackupResourceEncryptionConfig(_Model):
+class BackupResourceEncryptionConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupResourceEncryptionConfig.
 
     :ivar encryption_at_rest_type: Encryption At Rest Type. Known values are: "Invalid",
@@ -9423,7 +9326,9 @@ class BackupResourceEncryptionConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupResourceEncryptionConfigExtended(BackupResourceEncryptionConfig):
+class BackupResourceEncryptionConfigExtended(
+    BackupResourceEncryptionConfig
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupResourceEncryptionConfigExtended.
 
     :ivar encryption_at_rest_type: Encryption At Rest Type. Known values are: "Invalid",
@@ -9480,7 +9385,9 @@ class BackupResourceEncryptionConfigExtended(BackupResourceEncryptionConfig):
         super().__init__(*args, **kwargs)
 
 
-class BackupResourceEncryptionConfigExtendedResource(ProxyResource):  # pylint: disable=name-too-long
+class BackupResourceEncryptionConfigExtendedResource(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """BackupResourceEncryptionConfigExtendedResource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9537,7 +9444,7 @@ class BackupResourceEncryptionConfigExtendedResource(ProxyResource):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class BackupResourceEncryptionConfigResource(Resource):
+class BackupResourceEncryptionConfigResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupResourceEncryptionConfigResource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9593,7 +9500,7 @@ class BackupResourceEncryptionConfigResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class BackupResourceVaultConfig(_Model):
+class BackupResourceVaultConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup resource vault config details.
 
     :ivar storage_model_type: Storage type. Known values are: "Invalid", "GeoRedundant",
@@ -9685,7 +9592,7 @@ class BackupResourceVaultConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupResourceVaultConfigResource(ProxyResource):
+class BackupResourceVaultConfigResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup resource vault config details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9741,7 +9648,7 @@ class BackupResourceVaultConfigResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BackupStatusRequest(_Model):
+class BackupStatusRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupStatus request.
 
     :ivar resource_type: Container Type - VM, SQLPaaS, DPM, AzureFileShare... Known values are:
@@ -9791,7 +9698,7 @@ class BackupStatusRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupStatusResponse(_Model):
+class BackupStatusResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupStatus response.
 
     :ivar protection_status: Specifies whether the container is registered or not. Known values
@@ -9896,7 +9803,7 @@ class BackupStatusResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BEKDetails(_Model):
+class BEKDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BEK is bitlocker encryption key.
 
     :ivar secret_url: Secret is BEK.
@@ -9938,7 +9845,7 @@ class BEKDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientDiscoveryDisplay(_Model):
+class ClientDiscoveryDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Localized display information of an operation.
 
     :ivar provider: Name of the provider for display purposes.
@@ -9981,7 +9888,7 @@ class ClientDiscoveryDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientDiscoveryForLogSpecification(_Model):
+class ClientDiscoveryForLogSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class to represent shoebox log specification in json client discovery.
 
     :ivar name: Name for shoebox log specification.
@@ -10023,7 +9930,7 @@ class ClientDiscoveryForLogSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientDiscoveryForProperties(_Model):
+class ClientDiscoveryForProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class to represent shoebox properties in json client discovery.
 
     :ivar service_specification: Operation properties.
@@ -10054,7 +9961,7 @@ class ClientDiscoveryForProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientDiscoveryForServiceSpecification(_Model):
+class ClientDiscoveryForServiceSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class to represent shoebox service specification in json client discovery.
 
     :ivar log_specifications: List of log specifications of this operation.
@@ -10085,7 +9992,7 @@ class ClientDiscoveryForServiceSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientDiscoveryValueForSingleApi(_Model):
+class ClientDiscoveryValueForSingleApi(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Available operation details.
 
     :ivar name: Name of the Operation.
@@ -10134,7 +10041,7 @@ class ClientDiscoveryValueForSingleApi(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientScriptForConnect(_Model):
+class ClientScriptForConnect(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Client script details for file / folder restore.
 
     :ivar script_content: File content of the client script for file / folder restore.
@@ -10194,7 +10101,7 @@ class ClientScriptForConnect(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerIdentityInfo(_Model):
+class ContainerIdentityInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container identity information.
 
     :ivar unique_name: Unique name of the container.
@@ -10243,7 +10150,7 @@ class ContainerIdentityInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DailyRetentionFormat(_Model):
+class DailyRetentionFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Daily retention format.
 
     :ivar days_of_the_month: List of days of the month.
@@ -10273,7 +10180,7 @@ class DailyRetentionFormat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DailyRetentionSchedule(_Model):
+class DailyRetentionSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Daily retention schedule.
 
     :ivar retention_times: Retention times of retention policy.
@@ -10310,7 +10217,7 @@ class DailyRetentionSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DailySchedule(_Model):
+class DailySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DailySchedule.
 
     :ivar schedule_run_times: List of times of day this schedule has to be run.
@@ -10340,30 +10247,25 @@ class DailySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseInRP(_Model):
-    """Database included in RP.
+class DataDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Data disk details.
 
-    :ivar datasource_id: Datasource Id for the database.
-    :vartype datasource_id: str
-    :ivar datasource_name: Datasource name for the database.
-    :vartype datasource_name: str
+    :ivar encrypted_data_disks: List of data disks in the VM which are encrypted at the time of
+     backup. This will be used to provide Disk Encryption Set Id for each data disk.
+    :vartype encrypted_data_disks: list[~azure.mgmt.recoveryservicesbackup.models.DiskDetails]
     """
 
-    datasource_id: Optional[str] = rest_field(
-        name="datasourceId", visibility=["read", "create", "update", "delete", "query"]
+    encrypted_data_disks: Optional[list["_models.DiskDetails"]] = rest_field(
+        name="encryptedDataDisks", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Datasource Id for the database."""
-    datasource_name: Optional[str] = rest_field(
-        name="datasourceName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Datasource name for the database."""
+    """List of data disks in the VM which are encrypted at the time of backup. This will be used to
+     provide Disk Encryption Set Id for each data disk."""
 
     @overload
     def __init__(
         self,
         *,
-        datasource_id: Optional[str] = None,
-        datasource_name: Optional[str] = None,
+        encrypted_data_disks: Optional[list["_models.DiskDetails"]] = None,
     ) -> None: ...
 
     @overload
@@ -10377,7 +10279,60 @@ class DatabaseInRP(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Day(_Model):
+class DataDiskEncryptionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Data disk encryption settings for Secured VM. This will be used to provide Disk Encryption Set
+    Id for each data disk.
+
+    :ivar per_disk_encryption_set_ids: Per Disk Encryption Set Ids for Secured VM Data Disks. This
+     will be used to provide Disk Encryption Set Id for each data disk.
+    :vartype per_disk_encryption_set_ids:
+     list[~azure.mgmt.recoveryservicesbackup.models.PerDiskEncryptionSetId]
+    :ivar data_disk_encryption_set_id: Disk Encryption Set Id for Secured VM Data Disk. This will
+     be used for all data disks if perDiskEncryptionSetIds is not provided. If
+     perDiskEncryptionSetIds is provided, this will be ignored.
+    :vartype data_disk_encryption_set_id: str
+    :ivar data_disk_encryption_identity: Managed Identity resource Id used to encrypt the data disk
+     during restore.
+    :vartype data_disk_encryption_identity: str
+    """
+
+    per_disk_encryption_set_ids: Optional[list["_models.PerDiskEncryptionSetId"]] = rest_field(
+        name="perDiskEncryptionSetIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per Disk Encryption Set Ids for Secured VM Data Disks. This will be used to provide Disk
+     Encryption Set Id for each data disk."""
+    data_disk_encryption_set_id: Optional[str] = rest_field(
+        name="dataDiskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Disk Encryption Set Id for Secured VM Data Disk. This will be used for all data disks if
+     perDiskEncryptionSetIds is not provided. If perDiskEncryptionSetIds is provided, this will be
+     ignored."""
+    data_disk_encryption_identity: Optional[str] = rest_field(
+        name="dataDiskEncryptionIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed Identity resource Id used to encrypt the data disk during restore."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        per_disk_encryption_set_ids: Optional[list["_models.PerDiskEncryptionSetId"]] = None,
+        data_disk_encryption_set_id: Optional[str] = None,
+        data_disk_encryption_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Day(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Day of the week.
 
     :ivar date: Date of the month.
@@ -10410,7 +10365,40 @@ class Day(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskExclusionProperties(_Model):
+class DiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Disk details.
+
+    :ivar lun: LUN of the disk.
+    :vartype lun: int
+    :ivar disk_name: Disk name of the disk.
+    :vartype disk_name: str
+    """
+
+    lun: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """LUN of the disk."""
+    disk_name: Optional[str] = rest_field(name="diskName", visibility=["read", "create", "update", "delete", "query"])
+    """Disk name of the disk."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        lun: Optional[int] = None,
+        disk_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiskExclusionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DiskExclusionProperties.
 
     :ivar disk_lun_list: List of Disks' Logical Unit Numbers (LUN) to be used for VM Protection.
@@ -10448,7 +10436,7 @@ class DiskExclusionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskInformation(_Model):
+class DiskInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk information.
 
     :ivar lun:
@@ -10479,7 +10467,7 @@ class DiskInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DistributedNodesInfo(_Model):
+class DistributedNodesInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is used to represent the various nodes of the distributed container.
 
     :ivar node_name: Name of the node under a distributed container.
@@ -10526,7 +10514,9 @@ class DistributedNodesInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DpmBackupEngine(BackupEngineBase, discriminator="DpmBackupEngine"):
+class DpmBackupEngine(
+    BackupEngineBase, discriminator="DpmBackupEngine"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data Protection Manager (DPM) specific backup engine.
 
     :ivar friendly_name: Friendly name of the backup engine.
@@ -10596,7 +10586,7 @@ class DpmBackupEngine(BackupEngineBase, discriminator="DpmBackupEngine"):
         self.backup_engine_type = BackupEngineType.DPM_BACKUP_ENGINE  # type: ignore
 
 
-class DPMContainerExtendedInfo(_Model):
+class DPMContainerExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information of the DPMContainer.
 
     :ivar last_refreshed_at: Last refresh time of the DPMContainer.
@@ -10626,7 +10616,7 @@ class DPMContainerExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DpmErrorInfo(_Model):
+class DpmErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DPM workload-specific error information.
 
     :ivar error_string: Localized error string.
@@ -10661,7 +10651,7 @@ class DpmErrorInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DpmJob(Job, discriminator="DpmJob"):
+class DpmJob(Job, discriminator="DpmJob"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DPM workload-specific job object.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
@@ -10770,7 +10760,7 @@ class DpmJob(Job, discriminator="DpmJob"):
         self.job_type = "DpmJob"  # type: ignore
 
 
-class DpmJobExtendedInfo(_Model):
+class DpmJobExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information on the DPM workload-specific job.
 
     :ivar tasks_list: List of tasks associated with this job.
@@ -10814,7 +10804,7 @@ class DpmJobExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DpmJobTaskDetails(_Model):
+class DpmJobTaskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DPM workload-specific job task details.
 
     :ivar task_id: The task display name.
@@ -10866,7 +10856,9 @@ class DpmJobTaskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DPMProtectedItem(ProtectedItem, discriminator="DPMProtectedItem"):
+class DPMProtectedItem(
+    ProtectedItem, discriminator="DPMProtectedItem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information on Backup engine specific backup item.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -10915,6 +10907,8 @@ class DPMProtectedItem(ProtectedItem, discriminator="DPMProtectedItem"):
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -10992,7 +10986,7 @@ class DPMProtectedItem(ProtectedItem, discriminator="DPMProtectedItem"):
         self.protected_item_type = "DPMProtectedItem"  # type: ignore
 
 
-class DPMProtectedItemExtendedInfo(_Model):
+class DPMProtectedItemExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information of DPM Protected item.
 
     :ivar protectable_object_load_path: Attribute to provide information on various DBs.
@@ -11115,7 +11109,7 @@ class DPMProtectedItemExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionDetails(_Model):
+class EncryptionDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details needed if the VM was encrypted at the time of backup.
 
     :ivar encryption_enabled: Identifies whether this backup copy represents an encrypted VM at the
@@ -11206,7 +11200,7 @@ class ErrorDetail(_Model):
     """List of recommendation strings."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -11234,7 +11228,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResultInfoBase(_Model):
+class OperationResultInfoBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for operation result info.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -11268,7 +11262,9 @@ class OperationResultInfoBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportJobsOperationResultInfo(OperationResultInfoBase, discriminator="ExportJobsOperationResultInfo"):
+class ExportJobsOperationResultInfo(
+    OperationResultInfoBase, discriminator="ExportJobsOperationResultInfo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class is used to send blob details after exporting jobs.
 
     :ivar blob_url: URL of the blob into which the serialized string of list of jobs is exported.
@@ -11325,7 +11321,7 @@ class ExportJobsOperationResultInfo(OperationResultInfoBase, discriminator="Expo
         self.object_type = "ExportJobsOperationResultInfo"  # type: ignore
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The extended location of Recovery point where VM was present.
 
     :ivar name: Name of the extended location.
@@ -11358,7 +11354,7 @@ class ExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedProperties(_Model):
+class ExtendedProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Extended Properties for Azure IaasVM Backup.
 
     :ivar disk_exclusion_properties: Extended Properties for Disk Exclusion.
@@ -11396,7 +11392,7 @@ class ExtendedProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FetchTieringCostInfoRequest(_Model):
+class FetchTieringCostInfoRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for tiering cost request. Specific cost request types are derived from this class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -11453,7 +11449,7 @@ class FetchTieringCostInfoRequest(_Model):
 
 class FetchTieringCostInfoForRehydrationRequest(
     FetchTieringCostInfoRequest, discriminator="FetchTieringCostInfoForRehydrationRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Request parameters for fetching cost info of rehydration.
 
     :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
@@ -11526,7 +11522,7 @@ class FetchTieringCostInfoForRehydrationRequest(
 
 class FetchTieringCostSavingsInfoForPolicyRequest(
     FetchTieringCostInfoRequest, discriminator="FetchTieringCostSavingsInfoForPolicyRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Request parameters for tiering cost info for policy.
 
     :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
@@ -11576,7 +11572,7 @@ class FetchTieringCostSavingsInfoForPolicyRequest(
 
 class FetchTieringCostSavingsInfoForProtectedItemRequest(
     FetchTieringCostInfoRequest, discriminator="FetchTieringCostSavingsInfoForProtectedItemRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Request parameters for tiering cost info for protected item.
 
     :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
@@ -11632,7 +11628,7 @@ class FetchTieringCostSavingsInfoForProtectedItemRequest(
 
 class FetchTieringCostSavingsInfoForVaultRequest(
     FetchTieringCostInfoRequest, discriminator="FetchTieringCostSavingsInfoForVaultRequest"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Request parameters for tiering cost info for vault.
 
     :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
@@ -11674,7 +11670,9 @@ class FetchTieringCostSavingsInfoForVaultRequest(
         self.object_type = "FetchTieringCostSavingsInfoForVaultRequest"  # type: ignore
 
 
-class GenericContainer(ProtectionContainer, discriminator="GenericContainer"):
+class GenericContainer(
+    ProtectionContainer, discriminator="GenericContainer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for generic container of backup items.
 
     :ivar friendly_name: Friendly name of the container.
@@ -11691,6 +11689,8 @@ class GenericContainer(ProtectionContainer, discriminator="GenericContainer"):
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar fabric_name: Name of the container's fabric.
     :vartype fabric_name: str
     :ivar extended_information: Extended information (not returned in List container API calls).
@@ -11744,7 +11744,7 @@ class GenericContainer(ProtectionContainer, discriminator="GenericContainer"):
         self.container_type = ProtectableContainerType.GENERIC_CONTAINER  # type: ignore
 
 
-class GenericContainerExtendedInfo(_Model):
+class GenericContainerExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container extended information.
 
     :ivar raw_cert_data: Public key of container cert.
@@ -11789,7 +11789,9 @@ class GenericContainerExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenericProtectedItem(ProtectedItem, discriminator="GenericProtectedItem"):
+class GenericProtectedItem(
+    ProtectedItem, discriminator="GenericProtectedItem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup items.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -11838,6 +11840,8 @@ class GenericProtectedItem(ProtectedItem, discriminator="GenericProtectedItem"):
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -11930,7 +11934,9 @@ class GenericProtectedItem(ProtectedItem, discriminator="GenericProtectedItem"):
         self.protected_item_type = "GenericProtectedItem"  # type: ignore
 
 
-class GenericProtectionPolicy(ProtectionPolicy, discriminator="GenericProtectionPolicy"):
+class GenericProtectionPolicy(
+    ProtectionPolicy, discriminator="GenericProtectionPolicy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM (Mercury) workload-specific backup policy.
 
     :ivar protected_items_count: Number of items associated with this policy.
@@ -11989,7 +11995,9 @@ class GenericProtectionPolicy(ProtectionPolicy, discriminator="GenericProtection
         self.backup_management_type = "GenericProtectionPolicy"  # type: ignore
 
 
-class GenericRecoveryPoint(RecoveryPoint, discriminator="GenericRecoveryPoint"):
+class GenericRecoveryPoint(
+    RecoveryPoint, discriminator="GenericRecoveryPoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Generic backup copy.
 
     :ivar threat_status: Threat status of the recovery point. Known values are: "Unknown",
@@ -12062,7 +12070,7 @@ class GenericRecoveryPoint(RecoveryPoint, discriminator="GenericRecoveryPoint"):
         self.object_type = "GenericRecoveryPoint"  # type: ignore
 
 
-class HourlySchedule(_Model):
+class HourlySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HourlySchedule.
 
     :ivar interval: Interval at which backup needs to be triggered. For hourly the value can be
@@ -12105,7 +12113,9 @@ class HourlySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IaasVMBackupRequest(BackupRequest, discriminator="IaasVMBackupRequest"):
+class IaasVMBackupRequest(
+    BackupRequest, discriminator="IaasVMBackupRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific backup request.
 
     :ivar recovery_point_expiry_time_in_utc: Backup copy will expire after the time specified
@@ -12145,7 +12155,9 @@ class IaasVMBackupRequest(BackupRequest, discriminator="IaasVMBackupRequest"):
         self.object_type = "IaasVMBackupRequest"  # type: ignore
 
 
-class IaasVMILRRegistrationRequest(ILRRequest, discriminator="IaasVMILRRegistrationRequest"):
+class IaasVMILRRegistrationRequest(
+    ILRRequest, discriminator="IaasVMILRRegistrationRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore files/folders from a backup copy of IaaS VM.
 
     :ivar recovery_point_id: ID of the IaaS VM backup copy from where the files/folders have to be
@@ -12207,7 +12219,9 @@ class IaasVMILRRegistrationRequest(ILRRequest, discriminator="IaasVMILRRegistrat
         self.object_type = "IaasVMILRRegistrationRequest"  # type: ignore
 
 
-class IaasVMRecoveryPoint(RecoveryPoint, discriminator="IaasVMRecoveryPoint"):
+class IaasVMRecoveryPoint(
+    RecoveryPoint, discriminator="IaasVMRecoveryPoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload specific backup copy.
 
     :ivar threat_status: Threat status of the recovery point. Known values are: "Unknown",
@@ -12266,6 +12280,8 @@ class IaasVMRecoveryPoint(RecoveryPoint, discriminator="IaasVMRecoveryPoint"):
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required. Default value is "IaasVMRecoveryPoint".
     :vartype object_type: str
+    :ivar data_disk_metadata: Data disk metadata for the VM recovery point.
+    :vartype data_disk_metadata: ~azure.mgmt.recoveryservicesbackup.models.DataDiskDetails
     """
 
     recovery_point_type: Optional[str] = rest_field(
@@ -12344,6 +12360,10 @@ class IaasVMRecoveryPoint(RecoveryPoint, discriminator="IaasVMRecoveryPoint"):
     object_type: Literal["IaasVMRecoveryPoint"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """This property will be used as the discriminator for deciding the specific types in the
      polymorphic chain of types. Required. Default value is \"IaasVMRecoveryPoint\"."""
+    data_disk_metadata: Optional["_models.DataDiskDetails"] = rest_field(
+        name="dataDiskMetadata", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data disk metadata for the VM recovery point."""
 
     @overload
     def __init__(
@@ -12370,6 +12390,7 @@ class IaasVMRecoveryPoint(RecoveryPoint, discriminator="IaasVMRecoveryPoint"):
         recovery_point_properties: Optional["_models.RecoveryPointProperties"] = None,
         is_private_access_enabled_on_any_disk: Optional[bool] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
+        data_disk_metadata: Optional["_models.DataDiskDetails"] = None,
     ) -> None: ...
 
     @overload
@@ -12384,7 +12405,9 @@ class IaasVMRecoveryPoint(RecoveryPoint, discriminator="IaasVMRecoveryPoint"):
         self.object_type = "IaasVMRecoveryPoint"  # type: ignore
 
 
-class IaasVMRestoreRequest(RestoreRequest, discriminator="IaasVMRestoreRequest"):
+class IaasVMRestoreRequest(
+    RestoreRequest, discriminator="IaasVMRestoreRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -12607,7 +12630,9 @@ class IaasVMRestoreRequest(RestoreRequest, discriminator="IaasVMRestoreRequest")
         self.object_type = "IaasVMRestoreRequest"  # type: ignore
 
 
-class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest, discriminator="IaasVMRestoreWithRehydrationRequest"):
+class IaasVMRestoreWithRehydrationRequest(
+    IaasVMRestoreRequest, discriminator="IaasVMRestoreWithRehydrationRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload-specific restore with integrated rehydration of recovery point.
 
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
@@ -12739,7 +12764,7 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest, discriminator="I
         self.object_type = "IaasVMRestoreWithRehydrationRequest"  # type: ignore
 
 
-class IdentityBasedRestoreDetails(_Model):
+class IdentityBasedRestoreDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload specific restore details for restores using managed identity.
 
     :ivar object_type: Gets the class type.
@@ -12776,7 +12801,7 @@ class IdentityBasedRestoreDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityInfo(_Model):
+class IdentityInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encapsulates Managed Identity related information.
 
     :ivar is_system_assigned_identity: To differentiate if the managed identity is system assigned
@@ -12816,7 +12841,7 @@ class IdentityInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ILRRequestResource(Resource):
+class ILRRequestResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to Provision ILR API.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12870,7 +12895,7 @@ class ILRRequestResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class InquiryInfo(_Model):
+class InquiryInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about inquired protectable items under a given container.
 
     :ivar status: Inquiry Status for this container such as InProgress | Failed | Succeeded.
@@ -12915,7 +12940,7 @@ class InquiryInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InquiryValidation(_Model):
+class InquiryValidation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Validation for inquired protectable items under a given container.
 
     :ivar status: Status for the Inquiry Validation.
@@ -12959,7 +12984,7 @@ class InquiryValidation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstantItemRecoveryTarget(_Model):
+class InstantItemRecoveryTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target details for file / folder restore.
 
     :ivar client_scripts: List of client scripts.
@@ -12989,7 +13014,7 @@ class InstantItemRecoveryTarget(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstantRPAdditionalDetails(_Model):
+class InstantRPAdditionalDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InstantRPAdditionalDetails.
 
     :ivar azure_backup_rg_name_prefix:
@@ -13024,7 +13049,7 @@ class InstantRPAdditionalDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobResource(ProxyResource):
+class JobResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines workload agnostic properties for a job.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13078,7 +13103,7 @@ class JobResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class KEKDetails(_Model):
+class KEKDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KEK is encryption key for BEK.
 
     :ivar key_url: Key is KEK.
@@ -13120,7 +13145,7 @@ class KEKDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyAndSecretDetails(_Model):
+class KeyAndSecretDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BEK is bitlocker key.
     KEK is encryption key for BEK
     If the VM was encrypted then we will store following details :
@@ -13171,7 +13196,7 @@ class KeyAndSecretDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KPIResourceHealthDetails(_Model):
+class KPIResourceHealthDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KPI Resource Health Details.
 
     :ivar resource_health_status: Resource Health Status. Known values are: "Healthy",
@@ -13213,7 +13238,9 @@ class KPIResourceHealthDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListRecoveryPointsRecommendedForMoveRequest(_Model):  # pylint: disable=name-too-long
+class ListRecoveryPointsRecommendedForMoveRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ListRecoveryPointsRecommendedForMoveRequest Request.
 
     :ivar object_type: Gets the class type.
@@ -13250,7 +13277,7 @@ class ListRecoveryPointsRecommendedForMoveRequest(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class SchedulePolicy(_Model):
+class SchedulePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup schedule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -13286,7 +13313,9 @@ class SchedulePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogSchedulePolicy(SchedulePolicy, discriminator="LogSchedulePolicy"):
+class LogSchedulePolicy(
+    SchedulePolicy, discriminator="LogSchedulePolicy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Log policy schedule.
 
     :ivar schedule_frequency_in_mins: Frequency of the log schedule operation of this policy in
@@ -13325,7 +13354,7 @@ class LogSchedulePolicy(SchedulePolicy, discriminator="LogSchedulePolicy"):
         self.schedule_policy_type = "LogSchedulePolicy"  # type: ignore
 
 
-class RetentionPolicy(_Model):
+class RetentionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for retention policy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -13361,7 +13390,9 @@ class RetentionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LongTermRetentionPolicy(RetentionPolicy, discriminator="LongTermRetentionPolicy"):
+class LongTermRetentionPolicy(
+    RetentionPolicy, discriminator="LongTermRetentionPolicy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Long term retention policy.
 
     :ivar daily_schedule: Daily retention schedule of the protection policy.
@@ -13450,7 +13481,9 @@ class LongTermSchedulePolicy(SchedulePolicy, discriminator="LongTermSchedulePoli
         self.schedule_policy_type = "LongTermSchedulePolicy"  # type: ignore
 
 
-class MabContainer(ProtectionContainer, discriminator="Windows"):
+class MabContainer(
+    ProtectionContainer, discriminator="Windows"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container with items backed up using MAB backup engine.
 
     :ivar friendly_name: Friendly name of the container.
@@ -13467,6 +13500,8 @@ class MabContainer(ProtectionContainer, discriminator="Windows"):
     :vartype health_status: str
     :ivar protectable_object_type: Type of the protectable object associated with this container.
     :vartype protectable_object_type: str
+    :ivar source_location: Source location of the container.
+    :vartype source_location: str
     :ivar can_re_register: Can the container be registered one more time.
     :vartype can_re_register: bool
     :ivar container_id: ContainerID represents the container.
@@ -13555,7 +13590,7 @@ class MabContainer(ProtectionContainer, discriminator="Windows"):
         self.container_type = ProtectableContainerType.WINDOWS  # type: ignore
 
 
-class MabContainerExtendedInfo(_Model):
+class MabContainerExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information of the container.
 
     :ivar last_refreshed_at: Time stamp when this container was refreshed.
@@ -13619,7 +13654,7 @@ class MabContainerExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MABContainerHealthDetails(_Model):
+class MABContainerHealthDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MAB workload-specific Health Details.
 
     :ivar code: Health Code.
@@ -13677,7 +13712,9 @@ class MabErrorInfo(_Model):
     """List of localized recommendations."""
 
 
-class MabFileFolderProtectedItem(ProtectedItem, discriminator="MabFileFolderProtectedItem"):
+class MabFileFolderProtectedItem(
+    ProtectedItem, discriminator="MabFileFolderProtectedItem"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MAB workload-specific backup item.
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
@@ -13726,6 +13763,8 @@ class MabFileFolderProtectedItem(ProtectedItem, discriminator="MabFileFolderProt
     :vartype policy_name: str
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
     :ivar vault_id: ID of the vault which protects this item.
     :vartype vault_id: str
     :ivar source_side_scan_info: Source side threat information.
@@ -13822,7 +13861,7 @@ class MabFileFolderProtectedItem(ProtectedItem, discriminator="MabFileFolderProt
         self.protected_item_type = "MabFileFolderProtectedItem"  # type: ignore
 
 
-class MabFileFolderProtectedItemExtendedInfo(_Model):
+class MabFileFolderProtectedItemExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information on the backed up item.
 
     :ivar last_refreshed_at: Last time when the agent data synced to service.
@@ -13866,7 +13905,7 @@ class MabFileFolderProtectedItemExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MabJob(Job, discriminator="MabJob"):
+class MabJob(Job, discriminator="MabJob"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MAB workload-specific job.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
@@ -13980,7 +14019,7 @@ class MabJob(Job, discriminator="MabJob"):
         self.job_type = "MabJob"  # type: ignore
 
 
-class MabJobExtendedInfo(_Model):
+class MabJobExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information for the MAB workload-specific job.
 
     :ivar tasks_list: List of tasks for this job.
@@ -14024,7 +14063,7 @@ class MabJobExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MabJobTaskDetails(_Model):
+class MabJobTaskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MAB workload-specific job task details.
 
     :ivar task_id: The task display name.
@@ -14076,7 +14115,9 @@ class MabJobTaskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MabProtectionPolicy(ProtectionPolicy, discriminator="MAB"):
+class MabProtectionPolicy(
+    ProtectionPolicy, discriminator="MAB"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mab container-specific backup policy.
 
     :ivar protected_items_count: Number of items associated with this policy.
@@ -14126,7 +14167,7 @@ class MabProtectionPolicy(ProtectionPolicy, discriminator="MAB"):
         self.backup_management_type = "MAB"  # type: ignore
 
 
-class MonthlyRetentionSchedule(_Model):
+class MonthlyRetentionSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monthly retention schedule.
 
     :ivar retention_schedule_format_type: Retention schedule format type for monthly retention
@@ -14189,7 +14230,7 @@ class MonthlyRetentionSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MoveRPAcrossTiersRequest(_Model):
+class MoveRPAcrossTiersRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MoveRPAcrossTiersRequest.
 
     :ivar object_type: Gets the class type.
@@ -14239,7 +14280,7 @@ class MoveRPAcrossTiersRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NameInfo(_Model):
+class NameInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The name of usage.
 
     :ivar value: Value of usage.
@@ -14274,7 +14315,9 @@ class NameInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResultInfo(OperationResultInfoBase, discriminator="OperationResultInfo"):
+class OperationResultInfo(
+    OperationResultInfoBase, discriminator="OperationResultInfo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation result info.
 
     :ivar job_list: List of jobs created by this operation.
@@ -14311,7 +14354,7 @@ class OperationResultInfo(OperationResultInfoBase, discriminator="OperationResul
         self.object_type = "OperationResultInfo"  # type: ignore
 
 
-class OperationWorkerResponse(_Model):
+class OperationWorkerResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the base class for operation result responses.
 
     :ivar status_code: HTTP Status Code of the operation. Known values are: "Continue",
@@ -14366,7 +14409,9 @@ class OperationWorkerResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResultInfoBaseResource(OperationWorkerResponse):
+class OperationResultInfoBaseResource(
+    OperationWorkerResponse
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for operation result info.
 
     :ivar status_code: HTTP Status Code of the operation. Known values are: "Continue",
@@ -14412,7 +14457,7 @@ class OperationResultInfoBaseResource(OperationWorkerResponse):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatus(_Model):
+class OperationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation status.
 
     :ivar id: ID of the operation.
@@ -14482,7 +14527,7 @@ class OperationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatusError(_Model):
+class OperationStatusError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error information associated with operation status call.
 
     :ivar code: Error code of the operation failure.
@@ -14515,7 +14560,7 @@ class OperationStatusError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatusExtendedInfo(_Model):
+class OperationStatusExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for additional information of operation status.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -14550,7 +14595,9 @@ class OperationStatusExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo, discriminator="OperationStatusJobExtendedInfo"):
+class OperationStatusJobExtendedInfo(
+    OperationStatusExtendedInfo, discriminator="OperationStatusJobExtendedInfo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation status job extended info.
 
     :ivar job_id: ID of the job created for this protected item.
@@ -14586,7 +14633,9 @@ class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo, discriminator=
         self.object_type = "OperationStatusJobExtendedInfo"  # type: ignore
 
 
-class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo, discriminator="OperationStatusJobsExtendedInfo"):
+class OperationStatusJobsExtendedInfo(
+    OperationStatusExtendedInfo, discriminator="OperationStatusJobsExtendedInfo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation status extended info for list of jobs.
 
     :ivar job_ids: IDs of the jobs created for the protected item.
@@ -14631,7 +14680,7 @@ class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo, discriminator
 
 class OperationStatusProvisionILRExtendedInfo(
     OperationStatusExtendedInfo, discriminator="OperationStatusProvisionILRExtendedInfo"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation status extended info for ILR provision action.
 
     :ivar recovery_target: Target details for file / folder restore.
@@ -14672,7 +14721,7 @@ class OperationStatusProvisionILRExtendedInfo(
 
 class OperationStatusValidateOperationExtendedInfo(
     OperationStatusExtendedInfo, discriminator="OperationStatusValidateOperationExtendedInfo"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Operation status extended info for ValidateOperation action.
 
     :ivar validate_operation_response: Gets the validation operation response.
@@ -14712,24 +14761,29 @@ class OperationStatusValidateOperationExtendedInfo(
         self.object_type = "OperationStatusValidateOperationExtendedInfo"  # type: ignore
 
 
-class PatchRecoveryPointInput(_Model):
-    """Recovery Point Contract for Update Recovery Point API.
+class PerDiskEncryptionSetId(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Per Disk Encryption Set Ids for Secured VM Data Disks. This will be used to provide Disk
+    Encryption Set Id for each data disk.
 
-    :ivar recovery_point_properties: Properties of Recovery Point.
-    :vartype recovery_point_properties:
-     ~azure.mgmt.recoveryservicesbackup.models.PatchRecoveryPointPropertiesInput
+    :ivar lun: LUN for Secured VM Data Disk.
+    :vartype lun: int
+    :ivar disk_encryption_set_id: Disk Encryption Set Id for Secured VM Data Disk.
+    :vartype disk_encryption_set_id: str
     """
 
-    recovery_point_properties: Optional["_models.PatchRecoveryPointPropertiesInput"] = rest_field(
-        name="recoveryPointProperties", visibility=["read", "create", "update", "delete", "query"]
+    lun: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """LUN for Secured VM Data Disk."""
+    disk_encryption_set_id: Optional[str] = rest_field(
+        name="diskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Properties of Recovery Point."""
+    """Disk Encryption Set Id for Secured VM Data Disk."""
 
     @overload
     def __init__(
         self,
         *,
-        recovery_point_properties: Optional["_models.PatchRecoveryPointPropertiesInput"] = None,
+        lun: Optional[int] = None,
+        disk_encryption_set_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -14743,37 +14797,7 @@ class PatchRecoveryPointInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatchRecoveryPointPropertiesInput(_Model):
-    """Recovery Point Properties Contract for Update Recovery Point API.
-
-    :ivar expiry_time: Expiry time of Recovery Point in UTC.
-    :vartype expiry_time: ~datetime.datetime
-    """
-
-    expiry_time: Optional[datetime.datetime] = rest_field(
-        name="expiryTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Expiry time of Recovery Point in UTC."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        expiry_time: Optional[datetime.datetime] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PointInTimeRange(_Model):
+class PointInTimeRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provides details for log ranges.
 
     :ivar start_time: Start time of the time range for log recovery.
@@ -14810,7 +14834,7 @@ class PointInTimeRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreBackupValidation(_Model):
+class PreBackupValidation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pre-backup validation for Azure VM Workload provider.
 
     :ivar status: Status of protectable item, i.e. InProgress,Succeeded,Failed. Known values are:
@@ -14852,7 +14876,7 @@ class PreBackupValidation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrepareDataMoveRequest(_Model):
+class PrepareDataMoveRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Prepare DataMove Request.
 
     :ivar target_resource_id: ARM Id of target vault. Required.
@@ -14910,7 +14934,9 @@ class PrepareDataMoveRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultStorageConfigOperationResultResponse(_Model):  # pylint: disable=name-too-long
+class VaultStorageConfigOperationResultResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Operation result response for Vault Storage Config.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -14944,7 +14970,9 @@ class VaultStorageConfigOperationResultResponse(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class PrepareDataMoveResponse(VaultStorageConfigOperationResultResponse, discriminator="PrepareDataMoveResponse"):
+class PrepareDataMoveResponse(
+    VaultStorageConfigOperationResultResponse, discriminator="PrepareDataMoveResponse"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Prepare DataMove Response.
 
     :ivar correlation_id: Co-relationId for move operation.
@@ -14988,7 +15016,7 @@ class PrepareDataMoveResponse(VaultStorageConfigOperationResultResponse, discrim
         self.object_type = "PrepareDataMoveResponse"  # type: ignore
 
 
-class PreValidateEnableBackupRequest(_Model):
+class PreValidateEnableBackupRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contract to validate if backup can be enabled on the given resource in a given vault and given
     configuration.
     It will validate followings
@@ -15047,7 +15075,7 @@ class PreValidateEnableBackupRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreValidateEnableBackupResponse(_Model):
+class PreValidateEnableBackupResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response contract for enable backup validation request.
 
     :ivar status: Validation Status. Known values are: "Invalid", "Succeeded", and "Failed".
@@ -15112,7 +15140,7 @@ class PreValidateEnableBackupResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpoint(_Model):
+class PrivateEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Private Endpoint network resource that is linked to the Private Endpoint connection.
 
     :ivar id: Gets or sets id.
@@ -15140,7 +15168,7 @@ class PrivateEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(_Model):
+class PrivateEndpointConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private Endpoint Connection Response Properties.
 
     :ivar provisioning_state: Gets or sets provisioning state of the private endpoint connection.
@@ -15196,7 +15224,7 @@ class PrivateEndpointConnection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionResource(ProxyResource):
+class PrivateEndpointConnectionResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private Endpoint Connection Response Properties.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15252,7 +15280,7 @@ class PrivateEndpointConnectionResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private Link Service Connection State.
 
     :ivar status: Gets or sets the status. Known values are: "Pending", "Approved", "Rejected", and
@@ -15297,7 +15325,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectableContainerResource(Resource):
+class ProtectableContainerResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protectable Container Class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15353,7 +15381,38 @@ class ProtectableContainerResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectedItemResource(ProxyResource):
+class ProtectedItemConfigureSourceScanRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request to configure source scan for a protected item.
+
+    :ivar source_scan_action: Source scan action to perform. Known values are: "Enable" and
+     "Disable".
+    :vartype source_scan_action: str or ~azure.mgmt.recoveryservicesbackup.models.SourceScanAction
+    """
+
+    source_scan_action: Optional[Union[str, "_models.SourceScanAction"]] = rest_field(
+        name="sourceScanAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Source scan action to perform. Known values are: \"Enable\" and \"Disable\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_scan_action: Optional[Union[str, "_models.SourceScanAction"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProtectedItemResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup items.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15409,7 +15468,7 @@ class ProtectedItemResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionContainerResource(ProxyResource):
+class ProtectionContainerResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for container with backup items. Containers with specific workloads are derived from
     this class.
 
@@ -15466,7 +15525,7 @@ class ProtectionContainerResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionIntentResource(ProxyResource):
+class ProtectionIntentResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup ProtectionIntent.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15522,7 +15581,7 @@ class ProtectionIntentResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionPolicyResource(ProxyResource):
+class ProtectionPolicyResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup policy. Workload-specific backup policies are derived from this class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15578,7 +15637,7 @@ class ProtectionPolicyResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPointDiskConfiguration(_Model):
+class RecoveryPointDiskConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk configuration.
 
     :ivar number_of_disks_included_in_backup: Number of disks included in backup.
@@ -15629,7 +15688,43 @@ class RecoveryPointDiskConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPointMoveReadinessInfo(_Model):
+class RecoveryPointImmutabilityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Immutability properties of a recovery point.
+
+    :ivar is_immutable: Whether the recovery point is immutable. Required.
+    :vartype is_immutable: bool
+    :ivar expiry_time: Expiry time of immutability in UTC. Omitted when immutability is as per
+     policy.
+    :vartype expiry_time: ~datetime.datetime
+    """
+
+    is_immutable: bool = rest_field(name="isImmutable", visibility=["read", "create", "update", "delete", "query"])
+    """Whether the recovery point is immutable. Required."""
+    expiry_time: Optional[datetime.datetime] = rest_field(
+        name="expiryTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Expiry time of immutability in UTC. Omitted when immutability is as per policy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_immutable: bool,
+        expiry_time: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RecoveryPointMoveReadinessInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RecoveryPointMoveReadinessInfo.
 
     :ivar is_ready_for_move:
@@ -15664,7 +15759,7 @@ class RecoveryPointMoveReadinessInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPointProperties(_Model):
+class RecoveryPointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Recovery Point.
 
     :ivar expiry_time: Expiry time of Recovery Point in UTC.
@@ -15673,6 +15768,9 @@ class RecoveryPointProperties(_Model):
     :vartype rule_name: str
     :ivar is_soft_deleted: Bool to indicate whether RP is in soft delete state or not.
     :vartype is_soft_deleted: bool
+    :ivar immutability_properties: Immutability properties of the recovery point.
+    :vartype immutability_properties:
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointImmutabilityProperties
     """
 
     expiry_time: Optional[str] = rest_field(
@@ -15685,6 +15783,10 @@ class RecoveryPointProperties(_Model):
         name="isSoftDeleted", visibility=["read", "create", "update", "delete", "query"]
     )
     """Bool to indicate whether RP is in soft delete state or not."""
+    immutability_properties: Optional["_models.RecoveryPointImmutabilityProperties"] = rest_field(
+        name="immutabilityProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Immutability properties of the recovery point."""
 
     @overload
     def __init__(
@@ -15693,6 +15795,7 @@ class RecoveryPointProperties(_Model):
         expiry_time: Optional[str] = None,
         rule_name: Optional[str] = None,
         is_soft_deleted: Optional[bool] = None,
+        immutability_properties: Optional["_models.RecoveryPointImmutabilityProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -15706,7 +15809,7 @@ class RecoveryPointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPointRehydrationInfo(_Model):
+class RecoveryPointRehydrationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RP Rehydration Info.
 
     :ivar rehydration_retention_duration: How long the rehydrated RP should be kept Should be
@@ -15745,7 +15848,7 @@ class RecoveryPointRehydrationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPointResource(ProxyResource):
+class RecoveryPointResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup copies. Workload-specific backup copies are derived from this class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15801,7 +15904,7 @@ class RecoveryPointResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPointTierInformation(_Model):
+class RecoveryPointTierInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery point tier information.
 
     :ivar type: Recovery point tier type. Known values are: "Invalid", "InstantRP", "HardenedRP",
@@ -15849,7 +15952,9 @@ class RecoveryPointTierInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPointTierInformationV2(RecoveryPointTierInformation):
+class RecoveryPointTierInformationV2(
+    RecoveryPointTierInformation
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RecoveryPoint Tier Information V2.
 
     :ivar extended_info: Recovery point tier status.
@@ -15882,7 +15987,7 @@ class RecoveryPointTierInformationV2(RecoveryPointTierInformation):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGuardOperationDetail(_Model):
+class ResourceGuardOperationDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceGuardOperationDetail.
 
     :ivar vault_critical_operation:
@@ -15917,7 +16022,7 @@ class ResourceGuardOperationDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGuardProxyBase(_Model):
+class ResourceGuardProxyBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceGuardProxyBase.
 
     :ivar resource_guard_resource_id: Required.
@@ -15964,7 +16069,7 @@ class ResourceGuardProxyBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGuardProxyBaseResource(ProxyResource):
+class ResourceGuardProxyBaseResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceGuardProxyBaseResource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16020,7 +16125,7 @@ class ResourceGuardProxyBaseResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ResourceList(_Model):
+class ResourceList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base for all lists of resources.
 
     :ivar next_link: The URI to fetch the next page of resources, with each API call returning up
@@ -16051,7 +16156,7 @@ class ResourceList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreFileSpecs(_Model):
+class RestoreFileSpecs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore file specs like file path, type and target folder path info.
 
     :ivar path: Source File/Folder path.
@@ -16093,7 +16198,7 @@ class RestoreFileSpecs(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreRequestResource(Resource):
+class RestoreRequestResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for restore request. Workload-specific restore requests are derived from this class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16149,7 +16254,7 @@ class RestoreRequestResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class RetentionDuration(_Model):
+class RetentionDuration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Retention duration.
 
     :ivar count: Count of duration types. Retention duration is obtained by the counting the
@@ -16190,24 +16295,34 @@ class RetentionDuration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecuredVMDetails(_Model):
+class SecuredVMDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore request parameters for Secured VMs.
 
     :ivar secured_vmos_disk_encryption_set_id: Gets or Sets Disk Encryption Set Id for Secured VM
      OS Disk.
     :vartype secured_vmos_disk_encryption_set_id: str
+    :ivar data_disk_encryption_settings: Data disk encryption settings for Secured VM. This will be
+     used to provide Disk Encryption Set Id for each data disk.
+    :vartype data_disk_encryption_settings:
+     ~azure.mgmt.recoveryservicesbackup.models.DataDiskEncryptionSettings
     """
 
     secured_vmos_disk_encryption_set_id: Optional[str] = rest_field(
         name="securedVMOsDiskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or Sets Disk Encryption Set Id for Secured VM OS Disk."""
+    data_disk_encryption_settings: Optional["_models.DataDiskEncryptionSettings"] = rest_field(
+        name="dataDiskEncryptionSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data disk encryption settings for Secured VM. This will be used to provide Disk Encryption Set
+     Id for each data disk."""
 
     @overload
     def __init__(
         self,
         *,
         secured_vmos_disk_encryption_set_id: Optional[str] = None,
+        data_disk_encryption_settings: Optional["_models.DataDiskEncryptionSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -16221,7 +16336,7 @@ class SecuredVMDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPinBase(_Model):
+class SecurityPinBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for get security pin request body.
 
     :ivar resource_guard_operation_requests: ResourceGuard Operation Requests.
@@ -16251,7 +16366,7 @@ class SecurityPinBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Settings(_Model):
+class Settings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common settings field for backup management.
 
     :ivar time_zone: TimeZone optional input as string. For example: TimeZone = "Pacific Standard
@@ -16294,7 +16409,9 @@ class Settings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SimpleRetentionPolicy(RetentionPolicy, discriminator="SimpleRetentionPolicy"):
+class SimpleRetentionPolicy(
+    RetentionPolicy, discriminator="SimpleRetentionPolicy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Simple policy retention.
 
     :ivar retention_duration: Retention duration of the protection policy.
@@ -16332,7 +16449,9 @@ class SimpleRetentionPolicy(RetentionPolicy, discriminator="SimpleRetentionPolic
         self.retention_policy_type = "SimpleRetentionPolicy"  # type: ignore
 
 
-class SimpleSchedulePolicy(SchedulePolicy, discriminator="SimpleSchedulePolicy"):
+class SimpleSchedulePolicy(
+    SchedulePolicy, discriminator="SimpleSchedulePolicy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Simple policy schedule.
 
     :ivar schedule_run_frequency: Frequency of the schedule operation of this policy. Known values
@@ -16401,7 +16520,9 @@ class SimpleSchedulePolicy(SchedulePolicy, discriminator="SimpleSchedulePolicy")
         self.schedule_policy_type = "SimpleSchedulePolicy"  # type: ignore
 
 
-class SimpleSchedulePolicyV2(SchedulePolicy, discriminator="SimpleSchedulePolicyV2"):
+class SimpleSchedulePolicyV2(
+    SchedulePolicy, discriminator="SimpleSchedulePolicyV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The V2 policy schedule for IaaS that supports hourly backups.
 
     :ivar schedule_run_frequency: Frequency of the schedule operation of this policy. Known values
@@ -16463,7 +16584,7 @@ class SimpleSchedulePolicyV2(SchedulePolicy, discriminator="SimpleSchedulePolicy
         self.schedule_policy_type = "SimpleSchedulePolicyV2"  # type: ignore
 
 
-class SnapshotBackupAdditionalDetails(_Model):
+class SnapshotBackupAdditionalDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Snapshot Backup related fields for WorkloadType SaPHanaSystem.
 
     :ivar instant_rp_retention_range_in_days:
@@ -16506,7 +16627,7 @@ class SnapshotBackupAdditionalDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SnapshotRestoreParameters(_Model):
+class SnapshotRestoreParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encapsulates information regarding snapshot recovery for SAP Hana.
 
     :ivar skip_attach_and_mount:
@@ -16541,15 +16662,15 @@ class SnapshotRestoreParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceSideScanInfo(_Model):
+class SourceSideScanInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source side threat information.
 
     :ivar source_side_scan_status: Threat status of the container. Known values are: "Configured",
-     "NotConfigured", and "NotApplicable".
+     "NotConfigured", "NotApplicable", and "ConfigurationFailed".
     :vartype source_side_scan_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.SourceSideScanStatus
     :ivar source_side_scan_summary: Threat summary for the container. Known values are: "Unknown",
-     "NotApplicable", "Suspicious", and "Healthy".
+     "NotApplicable", "Suspicious", "Healthy", and "NoThreatsReported".
     :vartype source_side_scan_summary: str or
      ~azure.mgmt.recoveryservicesbackup.models.SourceSideScanSummary
     """
@@ -16557,13 +16678,13 @@ class SourceSideScanInfo(_Model):
     source_side_scan_status: Optional[Union[str, "_models.SourceSideScanStatus"]] = rest_field(
         name="sourceSideScanStatus", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Threat status of the container. Known values are: \"Configured\", \"NotConfigured\", and
-     \"NotApplicable\"."""
+    """Threat status of the container. Known values are: \"Configured\", \"NotConfigured\",
+     \"NotApplicable\", and \"ConfigurationFailed\"."""
     source_side_scan_summary: Optional[Union[str, "_models.SourceSideScanSummary"]] = rest_field(
         name="sourceSideScanSummary", visibility=["read", "create", "update", "delete", "query"]
     )
     """Threat summary for the container. Known values are: \"Unknown\", \"NotApplicable\",
-     \"Suspicious\", and \"Healthy\"."""
+     \"Suspicious\", \"Healthy\", and \"NoThreatsReported\"."""
 
     @overload
     def __init__(
@@ -16584,7 +16705,7 @@ class SourceSideScanInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SQLDataDirectory(_Model):
+class SQLDataDirectory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SQLDataDirectory info.
 
     :ivar type: Type of data directory mapping. Known values are: "Invalid", "Data", and "Log".
@@ -16626,7 +16747,7 @@ class SQLDataDirectory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SQLDataDirectoryMapping(_Model):
+class SQLDataDirectoryMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encapsulates information regarding data directory.
 
     :ivar mapping_type: Type of data directory mapping. Known values are: "Invalid", "Data", and
@@ -16678,7 +16799,7 @@ class SQLDataDirectoryMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubProtectionPolicy(_Model):
+class SubProtectionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sub-protection policy which includes schedule and retention.
 
     :ivar policy_type: Type of backup policy type. Known values are: "Invalid", "Full",
@@ -16745,7 +16866,7 @@ class SubProtectionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -16812,7 +16933,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetAFSRestoreInfo(_Model):
+class TargetAFSRestoreInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target Azure File Share Info.
 
     :ivar name: File share name.
@@ -16847,7 +16968,7 @@ class TargetAFSRestoreInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetDiskNetworkAccessSettings(_Model):
+class TargetDiskNetworkAccessSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies target network access settings for disks of VM to be restored.
 
     :ivar target_disk_network_access_option: Network access settings to be used for restored disks.
@@ -16891,7 +17012,7 @@ class TargetDiskNetworkAccessSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetRestoreInfo(_Model):
+class TargetRestoreInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about target workload during restore operation.
 
     :ivar overwrite_option: Can Overwrite if Target DataBase already exists. Known values are:
@@ -16945,7 +17066,7 @@ class TargetRestoreInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatInfo(_Model):
+class ThreatInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery Point Threat information.
 
     :ivar threat_title: Threat Subject.
@@ -17016,7 +17137,7 @@ class ThreatInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TieringCostInfo(_Model):
+class TieringCostInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for tiering cost response.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -17050,7 +17171,9 @@ class TieringCostInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TieringCostRehydrationInfo(TieringCostInfo, discriminator="TieringCostRehydrationInfo"):
+class TieringCostRehydrationInfo(
+    TieringCostInfo, discriminator="TieringCostRehydrationInfo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response parameters for tiering cost info for rehydration.
 
     :ivar rehydration_size_in_bytes: Rehydration size in bytes. Required.
@@ -17096,7 +17219,9 @@ class TieringCostRehydrationInfo(TieringCostInfo, discriminator="TieringCostRehy
         self.object_type = "TieringCostRehydrationInfo"  # type: ignore
 
 
-class TieringCostSavingInfo(TieringCostInfo, discriminator="TieringCostSavingInfo"):
+class TieringCostSavingInfo(
+    TieringCostInfo, discriminator="TieringCostSavingInfo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response parameters for tiering cost info for savings.
 
     :ivar source_tier_size_reduction_in_bytes: Source tier size reduction in bytes after moving all
@@ -17160,7 +17285,7 @@ class TieringCostSavingInfo(TieringCostInfo, discriminator="TieringCostSavingInf
         self.object_type = "TieringCostSavingInfo"  # type: ignore
 
 
-class TieringPolicy(_Model):
+class TieringPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tiering Policy for a target tier. If the policy is not specified for a given target tier,
     service retains the existing configured tiering policy for that tier.
 
@@ -17220,7 +17345,7 @@ class TieringPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TokenInformation(_Model):
+class TokenInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The token information details.
 
     :ivar token: Token value.
@@ -17262,7 +17387,7 @@ class TokenInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TriggerDataMoveRequest(_Model):
+class TriggerDataMoveRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Trigger DataMove Request.
 
     :ivar source_resource_id: ARM Id of source vault. Required.
@@ -17322,7 +17447,7 @@ class TriggerDataMoveRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UnlockDeleteRequest(_Model):
+class UnlockDeleteRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body of unlock delete API.
 
     :ivar resource_guard_operation_requests:
@@ -17357,7 +17482,7 @@ class UnlockDeleteRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UnlockDeleteResponse(_Model):
+class UnlockDeleteResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response of Unlock Delete API.
 
     :ivar unlock_delete_expiry_time: This is the time when unlock delete privileges will get
@@ -17388,37 +17513,7 @@ class UnlockDeleteResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateRecoveryPointRequest(_Model):
-    """Patch Request content to update recovery point for given RecoveryPointId.
-
-    :ivar properties: Resource properties.
-    :vartype properties: ~azure.mgmt.recoveryservicesbackup.models.PatchRecoveryPointInput
-    """
-
-    properties: Optional["_models.PatchRecoveryPointInput"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Resource properties."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.PatchRecoveryPointInput"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class UserAssignedIdentityProperties(_Model):
+class UserAssignedIdentityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User assigned managed identity properties.
 
     :ivar client_id: The client ID of the assigned identity.
@@ -17453,7 +17548,7 @@ class UserAssignedIdentityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAssignedManagedIdentityDetails(_Model):
+class UserAssignedManagedIdentityDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User assigned managed identity details.
 
     :ivar identity_arm_id: The ARM id of the assigned identity.
@@ -17498,7 +17593,7 @@ class UserAssignedManagedIdentityDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateOperationRequest(_Model):
+class ValidateOperationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for validate operation request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -17532,7 +17627,9 @@ class ValidateOperationRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateRestoreOperationRequest(ValidateOperationRequest, discriminator="ValidateRestoreOperationRequest"):
+class ValidateRestoreOperationRequest(
+    ValidateOperationRequest, discriminator="ValidateRestoreOperationRequest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureRestoreValidation request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -17576,7 +17673,7 @@ class ValidateRestoreOperationRequest(ValidateOperationRequest, discriminator="V
 
 class ValidateIaasVMRestoreOperationRequest(
     ValidateRestoreOperationRequest, discriminator="ValidateIaasVMRestoreOperationRequest"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureRestoreValidation request.
 
     :ivar restore_request: Sets restore request to be validated.
@@ -17611,7 +17708,7 @@ class ValidateIaasVMRestoreOperationRequest(
         self.object_type = "ValidateIaasVMRestoreOperationRequest"  # type: ignore
 
 
-class ValidateOperationRequestResource(_Model):
+class ValidateOperationRequestResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for validate operation request.
 
     :ivar id: Recovery point ID. Required.
@@ -17646,7 +17743,7 @@ class ValidateOperationRequestResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateOperationResponse(_Model):
+class ValidateOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for validate operation response.
 
     :ivar validation_results: Gets the validation result.
@@ -17676,7 +17773,7 @@ class ValidateOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateOperationsResponse(_Model):
+class ValidateOperationsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ValidateOperationsResponse.
 
     :ivar validate_operation_response: Base class for validate operation response.
@@ -17707,7 +17804,7 @@ class ValidateOperationsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultJob(Job, discriminator="VaultJob"):
+class VaultJob(Job, discriminator="VaultJob"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault level Job.
 
     :ivar entity_friendly_name: Friendly name of the entity on which the current job is executing.
@@ -17788,7 +17885,7 @@ class VaultJob(Job, discriminator="VaultJob"):
         self.job_type = "VaultJob"  # type: ignore
 
 
-class VaultJobErrorInfo(_Model):
+class VaultJobErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault Job specific error information.
 
     :ivar error_code: Error code.
@@ -17828,7 +17925,7 @@ class VaultJobErrorInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultJobExtendedInfo(_Model):
+class VaultJobExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault Job for CMK - has CMK specific info.
 
     :ivar property_bag: Job properties.
@@ -17858,7 +17955,7 @@ class VaultJobExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultRetentionPolicy(_Model):
+class VaultRetentionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault retention policy for AzureFileShare.
 
     :ivar vault_retention: Base class for retention policy. Required.
@@ -17895,7 +17992,7 @@ class VaultRetentionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WeeklyRetentionFormat(_Model):
+class WeeklyRetentionFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Weekly retention format.
 
     :ivar days_of_the_week: List of days of the week.
@@ -17932,7 +18029,7 @@ class WeeklyRetentionFormat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WeeklyRetentionSchedule(_Model):
+class WeeklyRetentionSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Weekly retention schedule.
 
     :ivar days_of_the_week: List of days of week for weekly retention policy.
@@ -17976,7 +18073,7 @@ class WeeklyRetentionSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WeeklySchedule(_Model):
+class WeeklySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WeeklySchedule.
 
     :ivar schedule_run_days:
@@ -18012,7 +18109,7 @@ class WeeklySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadInquiryDetails(_Model):
+class WorkloadInquiryDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of an inquired protectable item.
 
     :ivar type: Type of the Workload such as SQL, Oracle etc.
@@ -18052,7 +18149,7 @@ class WorkloadInquiryDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadItemResource(Resource):
+class WorkloadItemResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup item. Workload-specific backup items are derived from this class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18108,7 +18205,7 @@ class WorkloadItemResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadProtectableItemResource(Resource):
+class WorkloadProtectableItemResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for backup item. Workload-specific backup items are derived from this class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18164,7 +18261,7 @@ class WorkloadProtectableItemResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class YearlyRetentionSchedule(_Model):
+class YearlyRetentionSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Yearly retention schedule.
 
     :ivar retention_schedule_format_type: Retention schedule format for yearly retention policy.

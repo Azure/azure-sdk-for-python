@@ -38,7 +38,7 @@ def main():
         resource={
             "identity": {"type": "SystemAssigned"},
             "properties": {
-                "capacity": 10,
+                "capacity": 2,
                 "capacityType": "VM",
                 "computeProfile": {
                     "computeApiVersion": "2024-11-01",
@@ -99,6 +99,7 @@ def main():
                     },
                 },
                 "executionParameters": {"retryPolicy": {"onFailureAction": "Delete", "retryWindowInMinutes": 30}},
+                "minCapacity": 1,
                 "overridesProfile": {
                     "overrides": [
                         {"tags": {"env": "prod", "workload": "payments"}, "virtualMachineName": "bulkvm-payments-0"},
@@ -106,6 +107,7 @@ def main():
                     ],
                     "virtualMachineNamePrefix": "bulkvm",
                 },
+                "partialFulfillmentPolicy": {"mode": "Enabled"},
                 "priorityProfile": {
                     "allocationStrategy": "LowestPrice",
                     "evictionPolicy": "Delete",
@@ -143,6 +145,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-06-preview/BulkCreateCustom_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-08-06-preview/BulkCreateCustom_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

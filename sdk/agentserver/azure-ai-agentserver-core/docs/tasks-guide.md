@@ -115,31 +115,31 @@ What this primitive deliberately does **not** do:
 
 ### Enabling resilient tasks
 
-The resilient `TaskManager`'s **startup recovery scan** — a network round-trip
-to the hosted task store that reclaims tasks left in-flight by a crashed prior
-instance — runs at startup when **either** of the following holds:
-
-1. at least one durable task has been declared (`@task` / `@multi_turn_task`) —
-   an app that uses tasks gets recovery automatically, **or**
-2. it was explicitly force-enabled via `set_resilient_tasks_enabled(True)`.
-
-The force-enable is useful when tasks are registered *lazily* (declared after
-startup): it starts the periodic recovery loop up front so a task declared
-later is still recovered.
+The resilient task subsystem is **opt-in**. The `TaskManager` is constructed —
+and its **startup recovery scan** (a network round-trip to the hosted task store
+that reclaims tasks left in-flight by a crashed prior instance) plus the
+periodic recovery loop run — **only when the switch is on**:
 
 ```python
 from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
-set_resilient_tasks_enabled(True)  # force-enable recovery before any task
+set_resilient_tasks_enabled(True)  # opt in BEFORE host startup (e.g. at import)
 ```
 
 Use `resilient_tasks_enabled()` to read the current switch state.
 
-The `TaskManager` itself is always constructed (a cheap, in-memory object that
-makes no task-store calls until a task is used), so `get_task_manager()` and
-`.run()` / `.start()` work regardless of the switch. A server that neither
-declares a task nor sets the switch (e.g. an invocations-only host) simply
-skips the startup recovery scan and pays none of its latency.
+Merely declaring a durable task (`@task` / `@multi_turn_task`) does **not** turn
+the subsystem on. When the switch is off, no `TaskManager` is installed:
+`get_task_manager()` raises `TaskManagerNotInitialized` and `.run()` / `.start()`
+cannot run a task. A server that does not set the switch (e.g. an
+invocations-only host) constructs no manager and pays none of the recovery-scan
+latency.
+
+> **Protocol note:** the responses protocol exposes a `resilient_background`
+> server option that maps to this switch — constructing a
+> `ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=True))`
+> enables the subsystem automatically, so responses apps typically don't call
+> `set_resilient_tasks_enabled` directly.
 
 ### One-shot
 

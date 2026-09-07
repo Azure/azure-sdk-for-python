@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/VirtualNetworkAppliances_CreateOrUpdate.json
+# x-ms-original-file: 2025-09-01/VirtualNetworkAppliances_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

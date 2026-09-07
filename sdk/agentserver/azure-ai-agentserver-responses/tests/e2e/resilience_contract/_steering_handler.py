@@ -41,6 +41,7 @@ from __future__ import annotations
 import asyncio
 import os
 
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -77,6 +78,11 @@ options = ResponsesServerOptions(
     steerable_conversations=True,
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
+# Steering (mid-turn input queuing) is implemented by the multi-turn task
+# primitive and needs the TaskManager. Since only ``resilient_background`` now
+# auto-enables the subsystem (steerable does not), enable it explicitly so the
+# steering conformance is valid even when CONFORMANCE_RESILIENT_BACKGROUND=false.
+set_resilient_tasks_enabled(True)
 app = ResponsesAgentServerHost(options=options)
 _turn_counts: dict[str, int] = {}
 
