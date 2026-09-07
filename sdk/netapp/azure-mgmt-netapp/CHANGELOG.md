@@ -1,5 +1,18 @@
 # Release History
 
+## 18.0.0b3 (2026-08-26)
+
+### Features Added
+
+  - Model `LdapConfiguration` added property `secure_ldap_type`
+  - Model `LdapConfigurationPatch` added property `secure_ldap_type`
+  - Added enum `SecureLdapType`
+
+### Breaking Changes
+
+  - Model `LdapConfiguration` deleted or renamed its instance variable `ldap_over_tls`
+  - Model `LdapConfigurationPatch` deleted or renamed its instance variable `ldap_over_tls`
+
 ## 18.0.0b2 (2026-07-27)
 
 ### Features Added

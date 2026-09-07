@@ -42,6 +42,7 @@ def main():
                     "cpuCfsQuota": True,
                     "cpuCfsQuotaPeriod": "200ms",
                     "cpuManagerPolicy": "static",
+                    "evictionMaxPodGracePeriodInSeconds": 60,
                     "failSwapOn": False,
                     "hardEvictionThreshold": {
                         "memoryAvailable": "500Mi",
@@ -51,6 +52,16 @@ def main():
                     "imageGcHighThreshold": 90,
                     "imageGcLowThreshold": 70,
                     "kubeReserved": {"cpuMillicores": 200, "memoryMB": 1024},
+                    "softEvictionGracePeriod": {
+                        "memoryAvailable": "1m30s",
+                        "nodeFsAvailable": "2m",
+                        "nodeFsInodesFree": "2m",
+                    },
+                    "softEvictionThreshold": {
+                        "memoryAvailable": "750Mi",
+                        "nodeFsAvailable": "20%",
+                        "nodeFsInodesFree": "15%",
+                    },
                     "topologyManagerPolicy": "best-effort",
                 },
                 "linuxOSConfig": {
@@ -73,6 +84,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-02-preview/AgentPoolsCreate_CustomNodeConfig.json
+# x-ms-original-file: 2026-06-02-preview/AgentPoolsCreate_CustomNodeConfig.json
 if __name__ == "__main__":
     main()

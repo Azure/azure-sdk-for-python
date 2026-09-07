@@ -7,13 +7,6 @@
 # Register MIME types before any other imports to ensure consistent Content-Type detection
 # across Windows, macOS, and Linux when uploading files in tests
 import mimetypes
-import sys
-
-import httpx2
-
-# devtools_testutils imports httpx when test decorators are created. OpenAI 3 uses
-# httpx2, so expose that backend under the legacy module name for this test process.
-sys.modules["httpx"] = httpx2
 
 mimetypes.add_type("text/csv", ".csv")
 mimetypes.add_type("text/markdown", ".md")
@@ -31,14 +24,6 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
 )
-from devtools_testutils import proxy_testcase
-from devtools_testutils.aio import proxy_testcase_async
-
-proxy_testcase.httpx = httpx2
-proxy_testcase.HTTPXTransport = httpx2.HTTPTransport
-proxy_testcase.AsyncHTTPXTransport = httpx2.AsyncHTTPTransport
-proxy_testcase_async.httpx = httpx2
-proxy_testcase_async.AsyncHTTPXTransport = httpx2.AsyncHTTPTransport
 
 if not load_dotenv(find_dotenv(), override=True):
     print("Did not find a .env file. Using default environment variable values for tests.")
