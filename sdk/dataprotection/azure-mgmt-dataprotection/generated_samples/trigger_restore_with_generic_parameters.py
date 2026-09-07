@@ -16,7 +16,7 @@ from azure.mgmt.dataprotection import DataProtectionMgmtClient
     pip install azure-identity
     pip install azure-mgmt-dataprotection
 # USAGE
-    python trigger_restore_with_rehydration.py
+    python trigger_restore_with_generic_parameters.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -33,43 +33,48 @@ def main():
 
     response = client.backup_instances.begin_trigger_restore(
         resource_group_name="000pikumar",
-        vault_name="PratikPrivatePreviewVault1",
+        vault_name="PrivatePreviewVault1",
         backup_instance_name="testInstance1",
         parameters={
-            "objectType": "AzureBackupRestoreWithRehydrationRequest",
+            "objectType": "AzureBackupRecoveryPointBasedRestoreRequest",
             "recoveryPointId": "hardcodedRP",
-            "rehydrationPriority": "High",
-            "rehydrationRetentionDuration": "7D",
             "restoreTargetInfo": {
                 "datasourceInfo": {
-                    "datasourceType": "OssDB",
+                    "datasourceType": "Microsoft.ElasticSan/elasticSans/volumeGroups",
                     "objectType": "Datasource",
-                    "resourceID": "/subscriptions/f75d8d8b-6735-4697-82e1-1a7a3ff0d5d4/resourceGroups/viveksipgtest/providers/Microsoft.DBforPostgreSQL/servers/viveksipgtest/databases/testdb",
-                    "resourceLocation": "",
-                    "resourceName": "testdb",
-                    "resourceType": "Microsoft.DBforPostgreSQL/servers/databases",
-                    "resourceUri": "",
+                    "resourceID": "/subscriptions/97cda027-4279-4cde-b4ff-19afa0021d87/resourceGroups/ESAN-ECYBVTRG/providers/Microsoft.ElasticSan/elasticSans/ecy-bvt-adhoc/volumeGroups/target-esan-volgroup",
+                    "resourceLocation": "eastus2euap",
+                    "resourceName": "target-esan-volgroup",
+                    "resourceType": "Microsoft.ElasticSan/elasticSans/volumeGroups",
+                    "resourceUri": "SampleresourceUri123",
                 },
                 "datasourceSetInfo": {
-                    "datasourceType": "OssDB",
+                    "datasourceType": "Microsoft.ElasticSan/elasticSans/volumeGroups",
                     "objectType": "DatasourceSet",
-                    "resourceID": "/subscriptions/f75d8d8b-6735-4697-82e1-1a7a3ff0d5d4/resourceGroups/viveksipgtest/providers/Microsoft.DBforPostgreSQL/servers/viveksipgtest",
-                    "resourceLocation": "",
-                    "resourceName": "viveksipgtest",
-                    "resourceType": "Microsoft.DBforPostgreSQL/servers",
-                    "resourceUri": "",
+                    "resourceID": "/subscriptions/97cda027-4279-4cde-b4ff-19afa0021d87/resourceGroups/ESAN-ECYBVTRG/providers/Microsoft.ElasticSan/elasticSans/ecy-bvt-adhoc",
+                    "resourceLocation": "eastus2euap",
+                    "resourceType": "Microsoft.ElasticSan/elasticSans",
                 },
-                "objectType": "RestoreTargetInfo",
+                "objectType": "ItemLevelRestoreTargetInfo",
                 "recoveryOption": "FailIfExists",
+                "restoreCriteria": [
+                    {
+                        "objectType": "GenericRestoreDatasourceCriteria",
+                        "resourceSelectors": {
+                            "objectType": "resourceListSelectionCriteria",
+                            "resourceIdentifiers": ["source-vol1", "source-vol2", "source-vol3"],
+                            "resourceNameOverrides": {"source-vol1": "target-vol1", "source-vol2": "target-vol2"},
+                        },
+                    }
+                ],
                 "restoreLocation": "southeastasia",
             },
-            "sourceDataStoreType": "VaultStore",
-            "sourceResourceId": "/subscriptions/f75d8d8b-6735-4697-82e1-1a7a3ff0d5d4/resourceGroups/viveksipgtest/providers/Microsoft.DBforPostgreSQL/servers/viveksipgtest/databases/testdb",
+            "sourceDataStoreType": "OperationalStore",
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-06-01/BackupInstanceOperations/TriggerRestoreWithRehydration.json
+# x-ms-original-file: 2026-06-01/BackupInstanceOperations/TriggerRestoreWithGenericParameters.json
 if __name__ == "__main__":
     main()
