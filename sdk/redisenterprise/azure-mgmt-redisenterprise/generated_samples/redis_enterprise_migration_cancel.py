@@ -30,12 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.migration.begin_cancel(
+    client.migrations.begin_cancel(
         resource_group_name="rg1",
         cluster_name="cache1",
     ).result()
 
 
-# x-ms-original-file: 2026-02-01-preview/RedisEnterpriseMigrationCancel.json
+# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseMigrationCancel.json
 if __name__ == "__main__":
     main()

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessControlRules(_Model):
+class AccessControlRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the Access Control Rules specification for an inVMAccessControlProfile version.
 
     :ivar privileges: A list of privileges.
@@ -68,7 +68,7 @@ class AccessControlRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlRulesIdentity(_Model):
+class AccessControlRulesIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Access Control Rule Identity.
 
     :ivar name: The name of the identity. Required.
@@ -118,7 +118,7 @@ class AccessControlRulesIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlRulesPrivilege(_Model):
+class AccessControlRulesPrivilege(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Access Control Rule Privilege.
 
     :ivar name: The name of the privilege. Required.
@@ -158,7 +158,7 @@ class AccessControlRulesPrivilege(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlRulesRole(_Model):
+class AccessControlRulesRole(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Access Control Rule Role.
 
     :ivar name: The name of the role. Required.
@@ -191,7 +191,7 @@ class AccessControlRulesRole(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlRulesRoleAssignment(_Model):
+class AccessControlRulesRoleAssignment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Access Control Rule RoleAssignment.
 
     :ivar role: The name of the role. Required.
@@ -244,7 +244,7 @@ class AccessUri(_Model):
     """A SAS uri for accessing a VM metadata."""
 
 
-class AdditionalCapabilities(_Model):
+class AdditionalCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enables or disables a capability on the virtual machine or virtual machine scale set.
 
     :ivar ultra_ssd_enabled: The flag that enables or disables a capability to have one or more
@@ -298,7 +298,40 @@ class AdditionalCapabilities(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdditionalReplicaSet(_Model):
+class AdditionalDiskProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies additional properties for a managed disk that can be set at the time of implicit
+    creation of the disk.
+
+    :ivar managed_disk_properties: Specifies the managed disk properties that can be set at the
+     time of implicit creation of the disk.
+    :vartype managed_disk_properties: ~azure.mgmt.compute.models.VirtualMachineDiskProperties
+    """
+
+    managed_disk_properties: Optional["_models.VirtualMachineDiskProperties"] = rest_field(
+        name="managedDiskProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the managed disk properties that can be set at the time of implicit creation of the
+     disk."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_disk_properties: Optional["_models.VirtualMachineDiskProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AdditionalReplicaSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the additional replica set information.
 
     :ivar storage_account_type: Specifies the storage account type to be used to create the direct
@@ -340,7 +373,7 @@ class AdditionalReplicaSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdditionalUnattendContent(_Model):
+class AdditionalUnattendContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies additional XML formatted information that can be included in the Unattend.xml file,
     which is used by Windows Setup. Contents are defined by setting name, component name, and the
     pass in which the content is applied.
@@ -400,7 +433,7 @@ class AdditionalUnattendContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllInstancesDown(_Model):
+class AllInstancesDown(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies if Scheduled Events should be auto-approved when all instances are down.
 
     :ivar automatically_approve: Specifies if Scheduled Events should be auto-approved when all
@@ -432,7 +465,7 @@ class AllInstancesDown(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlternativeOption(_Model):
+class AlternativeOption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the alternative option specified by the Publisher for this image when this image is
     deprecated.
 
@@ -472,7 +505,7 @@ class AlternativeOption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiEntityReference(_Model):
+class ApiEntityReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The API entity reference.
 
     :ivar id: The ARM resource id in the form of
@@ -502,7 +535,7 @@ class ApiEntityReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiError(_Model):
+class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Api error.
 
     :ivar details: The Api error details.
@@ -552,7 +585,7 @@ class ApiError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiErrorBase(_Model):
+class ApiErrorBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Api error base.
 
     :ivar code: The error code.
@@ -590,7 +623,7 @@ class ApiErrorBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationProfile(_Model):
+class ApplicationProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the list of gallery applications that should be made available to the VM/VMSS.
 
     :ivar gallery_applications: Specifies the gallery applications that should be made available to
@@ -621,7 +654,7 @@ class ApplicationProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AttachDetachDataDisksRequest(_Model):
+class AttachDetachDataDisksRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the input for attaching and detaching a list of managed data disks.
 
     :ivar data_disks_to_attach: The list of managed data disks to be attached.
@@ -658,7 +691,7 @@ class AttachDetachDataDisksRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticOSUpgradePolicy(_Model):
+class AutomaticOSUpgradePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used for performing automatic OS upgrade.
 
     :ivar enable_automatic_os_upgrade: Indicates whether OS upgrades should automatically be
@@ -729,7 +762,7 @@ class AutomaticOSUpgradePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticOSUpgradeProperties(_Model):
+class AutomaticOSUpgradeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes automatic OS upgrade properties on the image.
 
     :ivar automatic_os_upgrade_supported: Specifies whether automatic OS upgrade is supported on
@@ -760,7 +793,7 @@ class AutomaticOSUpgradeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticRepairsPolicy(_Model):
+class AutomaticRepairsPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the configuration parameters for automatic repairs on the virtual machine scale set.
 
     :ivar enabled: Specifies whether automatic repairs should be enabled on the virtual machine
@@ -816,7 +849,7 @@ class AutomaticRepairsPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticSkuMigrationPolicy(_Model):
+class AutomaticSkuMigrationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the configuration parameters used to control automatic SKU migration for the virtual
     machine scale set. When enabled, the platform may migrate instances to a different VM size from
     the SKU profile depending on platform demands.
@@ -848,7 +881,7 @@ class AutomaticSkuMigrationPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticZoneRebalancingPolicy(_Model):
+class AutomaticZoneRebalancingPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used while performing automatic AZ balancing.
 
     :ivar enabled: Specifies whether Automatic AZ Balancing should be enabled on the virtual
@@ -899,7 +932,7 @@ class AutomaticZoneRebalancingPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvailabilityPolicy(_Model):
+class AvailabilityPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """In the case of an availability or connectivity issue with the data disk, specify the behavior
     of your VM.
 
@@ -960,7 +993,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1004,7 +1037,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AvailabilitySet(TrackedResource):
+class AvailabilitySet(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the availability set that the virtual machine should be assigned
     to. Virtual machines specified in the same availability set are allocated to different nodes to
     maximize availability. For more information about availability sets, see `Availability sets
@@ -1097,7 +1130,7 @@ class AvailabilitySet(TrackedResource):
             super().__setattr__(key, value)
 
 
-class AvailabilitySetProperties(_Model):
+class AvailabilitySetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a resource.
 
     :ivar platform_update_domain_count: Update Domain count.
@@ -1172,7 +1205,7 @@ class AvailabilitySetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateResource(_Model):
+class UpdateResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Update Resource model definition.
 
     :ivar tags: Resource tags.
@@ -1200,7 +1233,7 @@ class UpdateResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvailabilitySetUpdate(UpdateResource):
+class AvailabilitySetUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the availability set that the virtual machine should be assigned
     to. Only tags may be updated.
 
@@ -1325,7 +1358,7 @@ class AvailablePatchSummary(_Model):
      the list of them."""
 
 
-class BillingProfile(_Model):
+class BillingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the billing related details of a Azure Spot VM or VMSS. Minimum api-version:
     2019-03-01.
 
@@ -1372,7 +1405,7 @@ class BillingProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BootDiagnostics(_Model):
+class BootDiagnostics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot
     to diagnose VM status. You can easily view the output of your console log. Azure also enables
     you to see a screenshot of the VM from the hypervisor.
@@ -1437,7 +1470,7 @@ class BootDiagnosticsInstanceView(_Model):
      errors encountered in enabling boot diagnostics."""
 
 
-class CapacityReservation(TrackedResource):
+class CapacityReservation(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the capacity reservation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1540,7 +1573,7 @@ class CapacityReservation(TrackedResource):
             super().__setattr__(key, value)
 
 
-class CapacityReservationGroup(TrackedResource):
+class CapacityReservationGroup(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the capacity reservation group that the capacity reservations
     should be assigned to. Currently, a capacity reservation can only be added to a capacity
     reservation group at creation time. An existing capacity reservation cannot be added or moved
@@ -1647,7 +1680,7 @@ class CapacityReservationGroupInstanceView(_Model):
      <https://aka.ms/computereservationsharing>`_ for more details."""
 
 
-class CapacityReservationGroupProperties(_Model):
+class CapacityReservationGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """capacity reservation group Properties.
 
     :ivar capacity_reservations: A list of all capacity reservation resource ids that belong to
@@ -1668,10 +1701,15 @@ class CapacityReservationGroupProperties(_Model):
      for more details.
     :vartype sharing_profile: ~azure.mgmt.compute.models.ResourceSharingProfile
     :ivar reservation_type: Indicates the type of capacity reservation. Allowed values are 'Block'
-     for block capacity reservations and 'Targeted' for reservations that enable a VM to consume a
-     specific capacity reservation when a capacity reservation group is provided. The reservation
-     type is immutable and cannot be changed after it is assigned. Known values are: "Targeted" and
-     "Block".
+     for block capacity reservations that enable a VM to consume capacity only from this capacity
+     block when it is associated using a capacity reservation group, 'Targeted' for reservations
+     that enable a VM to consume capacity from an explicitly associated capacity reservation group
+     and fall back to the publicly available capacity if the reservation is full, and 'Open' for
+     reservations that a VM consumes when it is eligible from an implicitly associated capacity
+     reservation group with the matching VM size and zone without associating that capacity
+     reservation group and fall back to the publicly available capacity if the reservation is full.
+     The reservation type is immutable and cannot be changed after the capacity reservation group is
+     created. Known values are: "Targeted", "Block", and "Open".
     :vartype reservation_type: str or ~azure.mgmt.compute.models.ReservationType
     """
 
@@ -1702,9 +1740,15 @@ class CapacityReservationGroupProperties(_Model):
         name="reservationType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Indicates the type of capacity reservation. Allowed values are 'Block' for block capacity
-     reservations and 'Targeted' for reservations that enable a VM to consume a specific capacity
-     reservation when a capacity reservation group is provided. The reservation type is immutable
-     and cannot be changed after it is assigned. Known values are: \"Targeted\" and \"Block\"."""
+     reservations that enable a VM to consume capacity only from this capacity block when it is
+     associated using a capacity reservation group, 'Targeted' for reservations that enable a VM to
+     consume capacity from an explicitly associated capacity reservation group and fall back to the
+     publicly available capacity if the reservation is full, and 'Open' for reservations that a VM
+     consumes when it is eligible from an implicitly associated capacity reservation group with the
+     matching VM size and zone without associating that capacity reservation group and fall back to
+     the publicly available capacity if the reservation is full. The reservation type is immutable
+     and cannot be changed after the capacity reservation group is created. Known values are:
+     \"Targeted\", \"Block\", and \"Open\"."""
 
     @overload
     def __init__(
@@ -1725,7 +1769,7 @@ class CapacityReservationGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CapacityReservationGroupUpdate(UpdateResource):
+class CapacityReservationGroupUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the capacity reservation group. Only tags can be updated.
 
     :ivar tags: Resource tags.
@@ -1784,7 +1828,7 @@ class CapacityReservationGroupUpdate(UpdateResource):
             super().__setattr__(key, value)
 
 
-class CapacityReservationInstanceView(_Model):
+class CapacityReservationInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a capacity reservation that provides as snapshot of the runtime properties
     of the capacity reservation that is managed by the platform and can change outside of control
     plane operations.
@@ -1793,6 +1837,10 @@ class CapacityReservationInstanceView(_Model):
     :vartype utilization_info: ~azure.mgmt.compute.models.CapacityReservationUtilization
     :ivar statuses: The resource status information.
     :vartype statuses: list[~azure.mgmt.compute.models.InstanceViewStatus]
+    :ivar reservation_state_info: The reservation state information for a capacity reservation,
+     this detail is primarily provided for Future capacity reservations. Minimum API version:
+     2026-04-01.
+    :vartype reservation_state_info: ~azure.mgmt.compute.models.CapacityReservationStateInfo
     """
 
     utilization_info: Optional["_models.CapacityReservationUtilization"] = rest_field(
@@ -1803,6 +1851,11 @@ class CapacityReservationInstanceView(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource status information."""
+    reservation_state_info: Optional["_models.CapacityReservationStateInfo"] = rest_field(
+        name="reservationStateInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reservation state information for a capacity reservation, this detail is primarily provided
+     for Future capacity reservations. Minimum API version: 2026-04-01."""
 
     @overload
     def __init__(
@@ -1810,6 +1863,7 @@ class CapacityReservationInstanceView(_Model):
         *,
         utilization_info: Optional["_models.CapacityReservationUtilization"] = None,
         statuses: Optional[list["_models.InstanceViewStatus"]] = None,
+        reservation_state_info: Optional["_models.CapacityReservationStateInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -1823,7 +1877,9 @@ class CapacityReservationInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CapacityReservationInstanceViewWithName(CapacityReservationInstanceView):
+class CapacityReservationInstanceViewWithName(
+    CapacityReservationInstanceView
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a capacity reservation that includes the name of the capacity reservation.
     It is used for the response to the instance view of a capacity reservation group.
 
@@ -1831,6 +1887,10 @@ class CapacityReservationInstanceViewWithName(CapacityReservationInstanceView):
     :vartype utilization_info: ~azure.mgmt.compute.models.CapacityReservationUtilization
     :ivar statuses: The resource status information.
     :vartype statuses: list[~azure.mgmt.compute.models.InstanceViewStatus]
+    :ivar reservation_state_info: The reservation state information for a capacity reservation,
+     this detail is primarily provided for Future capacity reservations. Minimum API version:
+     2026-04-01.
+    :vartype reservation_state_info: ~azure.mgmt.compute.models.CapacityReservationStateInfo
     :ivar name: The name of the capacity reservation.
     :vartype name: str
     """
@@ -1844,6 +1904,7 @@ class CapacityReservationInstanceViewWithName(CapacityReservationInstanceView):
         *,
         utilization_info: Optional["_models.CapacityReservationUtilization"] = None,
         statuses: Optional[list["_models.InstanceViewStatus"]] = None,
+        reservation_state_info: Optional["_models.CapacityReservationStateInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -1857,7 +1918,7 @@ class CapacityReservationInstanceViewWithName(CapacityReservationInstanceView):
         super().__init__(*args, **kwargs)
 
 
-class CapacityReservationProfile(_Model):
+class CapacityReservationProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters of a capacity reservation Profile.
 
     :ivar capacity_reservation_group: Specifies the capacity reservation group resource id that
@@ -1865,6 +1926,12 @@ class CapacityReservationProfile(_Model):
      capacity has been reserved. Please refer to `https://aka.ms/CapacityReservation
      <https://aka.ms/CapacityReservation>`_ for more details.
     :vartype capacity_reservation_group: ~azure.mgmt.compute.models.SubResource
+    :ivar disable_capacity_reservation_assignment: Specifies whether the virtual machine is
+     explicitly opted out from being associated with any capacity reservation. When set to true, the
+     virtual machine will not be allowed to implicitly or explicitly associate with any type of
+     capacity reservation and will consume capacity from the publicly available capacity. Minimum
+     api-version: 2026-04-01.
+    :vartype disable_capacity_reservation_assignment: bool
     """
 
     capacity_reservation_group: Optional["_models.SubResource"] = rest_field(
@@ -1874,12 +1941,20 @@ class CapacityReservationProfile(_Model):
      virtual machine or scaleset vm instances provided enough capacity has been reserved. Please
      refer to `https://aka.ms/CapacityReservation <https://aka.ms/CapacityReservation>`_ for more
      details."""
+    disable_capacity_reservation_assignment: Optional[bool] = rest_field(
+        name="disableCapacityReservationAssignment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether the virtual machine is explicitly opted out from being associated with any
+     capacity reservation. When set to true, the virtual machine will not be allowed to implicitly
+     or explicitly associate with any type of capacity reservation and will consume capacity from
+     the publicly available capacity. Minimum api-version: 2026-04-01."""
 
     @overload
     def __init__(
         self,
         *,
         capacity_reservation_group: Optional["_models.SubResource"] = None,
+        disable_capacity_reservation_assignment: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -1893,7 +1968,7 @@ class CapacityReservationProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CapacityReservationProperties(_Model):
+class CapacityReservationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Capacity reservation.
 
     :ivar reservation_id: A unique id generated and assigned to the capacity reservation by the
@@ -1916,13 +1991,16 @@ class CapacityReservationProperties(_Model):
     :ivar time_created: Specifies the time at which the Capacity Reservation resource was created.
      Minimum api-version: 2021-11-01.
     :vartype time_created: ~datetime.datetime
-    :ivar schedule_profile: Defines the schedule for Block-type capacity reservations. Specifies
-     the schedule during which capacity reservation is active and VM or VMSS resource can be
-     allocated using reservation. This property is required and only supported when the capacity
-     reservation group type is 'Block'. The scheduleProfile, start, and end fields are immutable
-     after creation. Minimum API version: 2025-04-01. Please refer to
+    :ivar schedule_profile: Defines the schedule for Block and Future capacity reservations.
+     Specifies the schedule during which capacity reservation is active and VM or VMSS resource can
+     be allocated using reservation. For Block capacity reservations, the scheduleProfile, start,
+     and end fields are immutable after creation. Please refer to
      `https://aka.ms/blockcapacityreservation <https://aka.ms/blockcapacityreservation>`_ for more
-     details.
+     details. Minimum API version for Block capacity reservations: 2025-04-01. Future capacity
+     reservations must use this property with only a start time, which can be changed until the
+     ‘modifiableUntil’ time. Please refer to `https://aka.ms/futurecapacityreservation
+     <https://aka.ms/futurecapacityreservation>`_ for more details. Minimum API version for Future
+     capacity reservations: 2026-04-01.
     :vartype schedule_profile: ~azure.mgmt.compute.models.ScheduleProfile
     """
 
@@ -1954,12 +2032,15 @@ class CapacityReservationProperties(_Model):
     schedule_profile: Optional["_models.ScheduleProfile"] = rest_field(
         name="scheduleProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Defines the schedule for Block-type capacity reservations. Specifies the schedule during which
-     capacity reservation is active and VM or VMSS resource can be allocated using reservation. This
-     property is required and only supported when the capacity reservation group type is 'Block'.
-     The scheduleProfile, start, and end fields are immutable after creation. Minimum API version:
-     2025-04-01. Please refer to `https://aka.ms/blockcapacityreservation
-     <https://aka.ms/blockcapacityreservation>`_ for more details."""
+    """Defines the schedule for Block and Future capacity reservations. Specifies the schedule during
+     which capacity reservation is active and VM or VMSS resource can be allocated using
+     reservation. For Block capacity reservations, the scheduleProfile, start, and end fields are
+     immutable after creation. Please refer to `https://aka.ms/blockcapacityreservation
+     <https://aka.ms/blockcapacityreservation>`_ for more details. Minimum API version for Block
+     capacity reservations: 2025-04-01. Future capacity reservations must use this property with
+     only a start time, which can be changed until the ‘modifiableUntil’ time. Please refer to
+     `https://aka.ms/futurecapacityreservation <https://aka.ms/futurecapacityreservation>`_ for more
+     details. Minimum API version for Future capacity reservations: 2026-04-01."""
 
     @overload
     def __init__(
@@ -1979,7 +2060,40 @@ class CapacityReservationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CapacityReservationUpdate(UpdateResource):
+class CapacityReservationStateInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Details related to the current state for a Future capacity reservation.
+
+    :ivar reservation_state: The current state of the capacity reservation. Known values are:
+     "Pending", "Declined", "Approved", "FulfillmentFailed", "Committed", "Live", and
+     "PartiallyFulfilled".
+    :vartype reservation_state: str or ~azure.mgmt.compute.models.ReservationState
+    """
+
+    reservation_state: Optional[Union[str, "_models.ReservationState"]] = rest_field(
+        name="reservationState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current state of the capacity reservation. Known values are: \"Pending\", \"Declined\",
+     \"Approved\", \"FulfillmentFailed\", \"Committed\", \"Live\", and \"PartiallyFulfilled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        reservation_state: Optional[Union[str, "_models.ReservationState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CapacityReservationUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the capacity reservation. sku.capacity cannot be updated for Block
     Capacity Reservation. Tags can be update for all Capacity Reservation Types.
 
@@ -2072,6 +2186,13 @@ class CapacityReservationUtilization(_Model):
     :ivar virtual_machines_allocated: A list of all virtual machines resource ids allocated against
      the capacity reservation.
     :vartype virtual_machines_allocated: list[~azure.mgmt.compute.models.SubResourceReadOnly]
+    :ivar used_reserved_count_by_subscription: For open capacity reservations, this provides a map
+     of the used reserved capacity count keyed by the subscription id (a GUID) that is consuming the
+     capacity, i.e. each entry maps a consuming subscription id to the count of reserved capacity it
+     is currently using. This is populated only for open capacity reservations and is not reported
+     for targeted and block capacity reservations, which instead report allocation through
+     virtualMachinesAllocated. Minimum api-version: 2026-04-01.
+    :vartype used_reserved_count_by_subscription: dict[str, int]
     """
 
     current_capacity: Optional[int] = rest_field(name="currentCapacity", visibility=["read"])
@@ -2081,9 +2202,18 @@ class CapacityReservationUtilization(_Model):
         name="virtualMachinesAllocated", visibility=["read"]
     )
     """A list of all virtual machines resource ids allocated against the capacity reservation."""
+    used_reserved_count_by_subscription: Optional[dict[str, int]] = rest_field(
+        name="usedReservedCountBySubscription", visibility=["read"]
+    )
+    """For open capacity reservations, this provides a map of the used reserved capacity count keyed
+     by the subscription id (a GUID) that is consuming the capacity, i.e. each entry maps a
+     consuming subscription id to the count of reserved capacity it is currently using. This is
+     populated only for open capacity reservations and is not reported for targeted and block
+     capacity reservations, which instead report allocation through virtualMachinesAllocated.
+     Minimum api-version: 2026-04-01."""
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from the Compute service.
 
     :ivar error: Api error.
@@ -2111,7 +2241,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PirCommunityGalleryResource(_Model):
+class PirCommunityGalleryResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base information about the community gallery resource in azure compute gallery.
 
     :ivar name: Resource name.
@@ -2173,7 +2303,7 @@ class PirCommunityGalleryResource(_Model):
             super().__setattr__(key, value)
 
 
-class CommunityGallery(PirCommunityGalleryResource):
+class CommunityGallery(PirCommunityGalleryResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the Community Gallery that you want to create or update.
 
     :ivar name: Resource name.
@@ -2232,7 +2362,7 @@ class CommunityGallery(PirCommunityGalleryResource):
             super().__setattr__(key, value)
 
 
-class CommunityGalleryIdentifier(_Model):
+class CommunityGalleryIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The identifier information of community gallery.
 
     :ivar unique_id: The unique id of this community gallery.
@@ -2260,7 +2390,7 @@ class CommunityGalleryIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityGalleryImage(PirCommunityGalleryResource):
+class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery image definition that you want to create or update.
 
     :ivar name: Resource name.
@@ -2335,7 +2465,7 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
             super().__setattr__(key, value)
 
 
-class CommunityGalleryImageIdentifier(_Model):
+class CommunityGalleryImageIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the community gallery image definition identifier.
 
     :ivar publisher: The name of the gallery image definition publisher.
@@ -2373,7 +2503,7 @@ class CommunityGalleryImageIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityGalleryImageProperties(_Model):
+class CommunityGalleryImageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery image definition.
 
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
@@ -2505,7 +2635,9 @@ class CommunityGalleryImageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityGalleryImageVersion(PirCommunityGalleryResource):
+class CommunityGalleryImageVersion(
+    PirCommunityGalleryResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery image version that you want to create or update.
 
     :ivar name: Resource name.
@@ -2572,7 +2704,7 @@ class CommunityGalleryImageVersion(PirCommunityGalleryResource):
             super().__setattr__(key, value)
 
 
-class CommunityGalleryImageVersionProperties(_Model):
+class CommunityGalleryImageVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery image version.
 
     :ivar published_date: The published date of the gallery image version Definition. This property
@@ -2641,7 +2773,7 @@ class CommunityGalleryImageVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityGalleryInfo(_Model):
+class CommunityGalleryInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of community gallery if current gallery is shared to community.
 
     :ivar publisher_uri: The link to the publisher website. Visible to all users.
@@ -2702,7 +2834,7 @@ class CommunityGalleryInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityGalleryMetadata(_Model):
+class CommunityGalleryMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The metadata of community gallery.
 
     :ivar publisher_uri: The publisher URI of this community gallery.
@@ -2757,7 +2889,7 @@ class CommunityGalleryMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityGalleryProperties(_Model):
+class CommunityGalleryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a community gallery.
 
     :ivar disclaimer: The disclaimer for a community gallery resource.
@@ -2799,7 +2931,7 @@ class CommunityGalleryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConvertToVirtualMachineScaleSetInput(_Model):
+class ConvertToVirtualMachineScaleSetInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Virtual Machine Scale Set to convert from Availability Set.
 
     :ivar virtual_machine_scale_set_name: Specifies information about the Virtual Machine Scale Set
@@ -2831,7 +2963,7 @@ class ConvertToVirtualMachineScaleSetInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CopyCompletionError(_Model):
+class CopyCompletionError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Indicates the error details if the background copy of a resource created via the CopyStart
     operation fails.
 
@@ -2871,7 +3003,7 @@ class CopyCompletionError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreationData(_Model):
+class CreationData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data used when creating a disk.
 
     :ivar create_option: This enumerates the possible sources of a disk's creation. Required. Known
@@ -3029,7 +3161,7 @@ class CreationData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataDisk(_Model):
+class DataDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a data disk.
 
     :ivar lun: Specifies the logical unit number of the data disk. This value is used to identify
@@ -3231,7 +3363,7 @@ class DataDiskImage(_Model):
      within the VM and therefore must be unique for each data disk attached to a VM."""
 
 
-class DiskImageEncryption(_Model):
+class DiskImageEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the disk image encryption base class.
 
     :ivar disk_encryption_set_id: A relative URI containing the resource ID of the disk encryption
@@ -3262,7 +3394,7 @@ class DiskImageEncryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataDiskImageEncryption(DiskImageEncryption):
+class DataDiskImageEncryption(DiskImageEncryption):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains encryption settings for a data disk image.
 
     :ivar disk_encryption_set_id: A relative URI containing the resource ID of the disk encryption
@@ -3298,7 +3430,7 @@ class DataDiskImageEncryption(DiskImageEncryption):
         super().__init__(*args, **kwargs)
 
 
-class DataDisksToAttach(_Model):
+class DataDisksToAttach(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the data disk to be attached.
 
     :ivar disk_id: ID of the managed data disk. Required.
@@ -3375,7 +3507,7 @@ class DataDisksToAttach(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataDisksToDetach(_Model):
+class DataDisksToDetach(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the data disk to be detached.
 
     :ivar disk_id: ID of the managed data disk. Required.
@@ -3412,7 +3544,7 @@ class DataDisksToDetach(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHost(TrackedResource):
+class DedicatedHost(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the Dedicated host.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3496,7 +3628,7 @@ class DedicatedHost(TrackedResource):
             super().__setattr__(key, value)
 
 
-class DedicatedHostAllocatableVM(_Model):
+class DedicatedHostAllocatableVM(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the dedicated host unutilized capacity in terms of a specific VM size.
 
     :ivar vm_size: VM size in terms of which the unutilized capacity is represented.
@@ -3530,7 +3662,7 @@ class DedicatedHostAllocatableVM(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHostAvailableCapacity(_Model):
+class DedicatedHostAvailableCapacity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dedicated host unutilized capacity.
 
     :ivar allocatable_v_ms: The unutilized capacity of the dedicated host represented in terms of
@@ -3562,7 +3694,7 @@ class DedicatedHostAvailableCapacity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHostGroup(TrackedResource):
+class DedicatedHostGroup(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the dedicated host group that the dedicated hosts should be
     assigned to. Currently, a dedicated host can only be added to a dedicated host group at
     creation time. An existing dedicated host cannot be added to another dedicated host group.
@@ -3642,7 +3774,7 @@ class DedicatedHostGroup(TrackedResource):
             super().__setattr__(key, value)
 
 
-class DedicatedHostGroupInstanceView(_Model):
+class DedicatedHostGroupInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DedicatedHostGroupInstanceView.
 
     :ivar hosts: List of instance view of the dedicated hosts under the dedicated host group.
@@ -3672,7 +3804,7 @@ class DedicatedHostGroupInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHostGroupProperties(_Model):
+class DedicatedHostGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dedicated Host Group Properties.
 
     :ivar platform_fault_domain_count: Number of fault domains that the host group can span.
@@ -3737,7 +3869,9 @@ class DedicatedHostGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHostGroupPropertiesAdditionalCapabilities(_Model):  # pylint: disable=name-too-long
+class DedicatedHostGroupPropertiesAdditionalCapabilities(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Enables or disables a capability on the dedicated host group. Minimum api-version: 2022-03-01.
 
     :ivar ultra_ssd_enabled: The flag that enables or disables a capability to have UltraSSD
@@ -3781,7 +3915,7 @@ class DedicatedHostGroupPropertiesAdditionalCapabilities(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHostGroupUpdate(UpdateResource):
+class DedicatedHostGroupUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the dedicated host group that the dedicated host should be assigned
     to. Only tags may be updated.
 
@@ -3850,7 +3984,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
             super().__setattr__(key, value)
 
 
-class DedicatedHostInstanceView(_Model):
+class DedicatedHostInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a dedicated host.
 
     :ivar asset_id: Specifies the unique id of the dedicated physical machine on which the
@@ -3892,7 +4026,9 @@ class DedicatedHostInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHostInstanceViewWithName(DedicatedHostInstanceView):
+class DedicatedHostInstanceViewWithName(
+    DedicatedHostInstanceView
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a dedicated host that includes the name of the dedicated host. It is used
     for the response to the instance view of a dedicated host group.
 
@@ -3929,7 +4065,7 @@ class DedicatedHostInstanceViewWithName(DedicatedHostInstanceView):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHostProperties(_Model):
+class DedicatedHostProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the dedicated host.
 
     :ivar platform_fault_domain: Fault domain of the dedicated host within a dedicated host group.
@@ -4013,7 +4149,7 @@ class DedicatedHostProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHostUpdate(UpdateResource):
+class DedicatedHostUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the dedicated host. Only tags, autoReplaceOnFailure and licenseType
     may be updated.
 
@@ -4112,7 +4248,7 @@ class DefaultVirtualMachineScaleSetInfo(_Model):
      triggering a seamless migration via the ConvertToVirtualMachineScaleSet API."""
 
 
-class DiagnosticsProfile(_Model):
+class DiagnosticsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the boot diagnostic settings state. Minimum api-version: 2015-06-15.
 
     :ivar boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
@@ -4149,7 +4285,7 @@ class DiagnosticsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiffDiskSettings(_Model):
+class DiffDiskSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the parameters of ephemeral disk settings that can be specified for operating system
     disk. **Note:** The ephemeral disk settings can only be specified for managed disk.
 
@@ -4214,7 +4350,7 @@ class DiffDiskSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Disallowed(_Model):
+class Disallowed(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the disallowed disk types.
 
     :ivar disk_types: A list of disk types.
@@ -4244,7 +4380,7 @@ class Disallowed(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DisallowedConfiguration(_Model):
+class DisallowedConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the disallowed configuration for a virtual machine image.
 
     :ivar vm_disk_type: VM disk types which are disallowed. Known values are: "None" and
@@ -4275,7 +4411,7 @@ class DisallowedConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Disk(TrackedResource):
+class Disk(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4407,7 +4543,7 @@ class Disk(TrackedResource):
             super().__setattr__(key, value)
 
 
-class DiskAccess(TrackedResource):
+class DiskAccess(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """disk access resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4506,7 +4642,7 @@ class DiskAccessProperties(_Model):
     """The time when the disk access was created."""
 
 
-class DiskAccessUpdate(_Model):
+class DiskAccessUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used for updating a disk access resource.
 
     :ivar tags: Resource tags.
@@ -4534,7 +4670,40 @@ class DiskAccessUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionSet(TrackedResource):
+class DiskAvailabilityPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """In the case of an availability or connectivity issue with the disk, specify the behavior of
+    your VM.
+
+    :ivar action_on_disk_delay: Determines how to handle disks with slow I/O. Known values are:
+     "None" and "AutomaticReattach".
+    :vartype action_on_disk_delay: str or ~azure.mgmt.compute.models.VirtualMachineDiskDelayAction
+    """
+
+    action_on_disk_delay: Optional[Union[str, "_models.VirtualMachineDiskDelayAction"]] = rest_field(
+        name="actionOnDiskDelay", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Determines how to handle disks with slow I/O. Known values are: \"None\" and
+     \"AutomaticReattach\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action_on_disk_delay: Optional[Union[str, "_models.VirtualMachineDiskDelayAction"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiskEncryptionSet(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """disk encryption set resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4618,7 +4787,7 @@ class DiskEncryptionSet(TrackedResource):
             super().__setattr__(key, value)
 
 
-class SubResource(_Model):
+class SubResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SubResource.
 
     :ivar id: Resource Id.
@@ -4646,7 +4815,7 @@ class SubResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionSetParameters(SubResource):
+class DiskEncryptionSetParameters(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the parameter of customer managed disk encryption set resource id that can be
     specified for disk. **Note:** The disk encryption set resource id can only be specified for
     managed disk. Please refer `https://aka.ms/mdssewithcmkoverview
@@ -4674,7 +4843,7 @@ class DiskEncryptionSetParameters(SubResource):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionSettings(_Model):
+class DiskEncryptionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Encryption Settings for a Disk.
 
     :ivar disk_encryption_key: Specifies the location of the disk encryption key, which is a Key
@@ -4717,7 +4886,7 @@ class DiskEncryptionSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionSetUpdate(_Model):
+class DiskEncryptionSetUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """disk encryption set update resource.
 
     :ivar properties: disk encryption set resource update properties.
@@ -4786,7 +4955,7 @@ class DiskEncryptionSetUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class DiskEncryptionSetUpdateProperties(_Model):
+class DiskEncryptionSetUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """disk encryption set resource update properties.
 
     :ivar encryption_type: The type of key used to encrypt the data of the disk. Known values are:
@@ -4846,7 +5015,7 @@ class DiskEncryptionSetUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskInstanceView(_Model):
+class DiskInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of the disk.
 
     :ivar name: The disk name.
@@ -4898,7 +5067,7 @@ class DiskInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskProperties(_Model):
+class DiskProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk resource properties.
 
     :ivar time_created: The time when the disk was created.
@@ -5187,7 +5356,7 @@ class DiskProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskPurchasePlan(_Model):
+class DiskPurchasePlan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
 
     :ivar name: The plan ID. Required.
@@ -5251,7 +5420,7 @@ class ProxyResource(Resource):
     """
 
 
-class DiskRestorePoint(ProxyResource):
+class DiskRestorePoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of disk restore point.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5343,7 +5512,7 @@ class SubResourceReadOnly(_Model):
     """Resource Id."""
 
 
-class DiskRestorePointAttributes(SubResourceReadOnly):
+class DiskRestorePointAttributes(SubResourceReadOnly):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk Restore Point details.
 
     :ivar id: Resource Id.
@@ -5384,7 +5553,7 @@ class DiskRestorePointAttributes(SubResourceReadOnly):
         super().__init__(*args, **kwargs)
 
 
-class DiskRestorePointInstanceView(_Model):
+class DiskRestorePointInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a disk restore point.
 
     :ivar id: Disk restore point Id.
@@ -5430,7 +5599,7 @@ class DiskRestorePointInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskRestorePointProperties(_Model):
+class DiskRestorePointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an incremental disk restore point.
 
     :ivar time_created: The timestamp of restorePoint creation.
@@ -5578,7 +5747,7 @@ class DiskRestorePointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskRestorePointReplicationStatus(_Model):
+class DiskRestorePointReplicationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a disk restore point.
 
     :ivar status: The resource status information.
@@ -5615,7 +5784,7 @@ class DiskRestorePointReplicationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskSecurityProfile(_Model):
+class DiskSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the security related information for the resource.
 
     :ivar security_type: Specifies the SecurityType of the VM. Applicable for OS disks only. Known
@@ -5667,7 +5836,7 @@ class DiskSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskSku(_Model):
+class DiskSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, UltraSSD_LRS,
     Premium_ZRS, StandardSSD_ZRS, or PremiumV2_LRS.
 
@@ -5704,7 +5873,7 @@ class DiskSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskUpdate(_Model):
+class DiskUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk update resource.
 
     :ivar properties: Disk resource update properties.
@@ -5788,7 +5957,7 @@ class DiskUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class DiskUpdateProperties(_Model):
+class DiskUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk resource update properties.
 
     :ivar os_type: the Operating System type. Known values are: "Windows" and "Linux".
@@ -5995,7 +6164,7 @@ class DiskUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Encryption(_Model):
+class Encryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption at rest settings for disk or snapshot.
 
     :ivar disk_encryption_set_id: ResourceId of the disk encryption set to use for enabling
@@ -6037,7 +6206,7 @@ class Encryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionIdentity(_Model):
+class EncryptionIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Managed Identity used by ADE to get access token for keyvault operations.
 
     :ivar user_assigned_identity_resource_id: Specifies ARM Resource ID of one of the user
@@ -6068,7 +6237,7 @@ class EncryptionIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionImages(_Model):
+class EncryptionImages(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Optional. Allows users to provide customer managed keys for encrypting the OS and data disks in
     the gallery artifact.
 
@@ -6106,7 +6275,7 @@ class EncryptionImages(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionSetIdentity(_Model):
+class EncryptionSetIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed identity for the disk encryption set. It should be given permission on the key
     vault before it can be used to encrypt disks.
 
@@ -6173,7 +6342,7 @@ class EncryptionSetIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionSetProperties(_Model):
+class EncryptionSetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EncryptionSetProperties.
 
     :ivar encryption_type: The type of key used to encrypt the data of the disk. Known values are:
@@ -6259,7 +6428,7 @@ class EncryptionSetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionSettingsCollection(_Model):
+class EncryptionSettingsCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption settings for disk or snapshot.
 
     :ivar enabled: Set this flag to true and provide DiskEncryptionKey and optional
@@ -6311,7 +6480,7 @@ class EncryptionSettingsCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionSettingsElement(_Model):
+class EncryptionSettingsElement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption settings for one disk volume.
 
     :ivar disk_encryption_key: Key Vault Secret Url and vault id of the disk encryption key.
@@ -6394,7 +6563,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -6422,7 +6591,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventGridAndResourceGraph(_Model):
+class EventGridAndResourceGraph(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies eventGridAndResourceGraph related Scheduled Event related configurations.
 
     :ivar enable: Specifies if event grid and resource graph is enabled for Scheduled event related
@@ -6461,7 +6630,7 @@ class EventGridAndResourceGraph(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecutedValidation(_Model):
+class ExecutedValidation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the executed Validation.
 
     :ivar type: This property specifies the type of image version validation.
@@ -6510,7 +6679,7 @@ class ExecutedValidation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The complex type of the extended location.
 
     :ivar name: The name of the extended location.
@@ -6545,7 +6714,71 @@ class ExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalHealthPolicy(_Model):
+class ExtensionFeatureMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Additional metadata about extension features, including compliance and capability tags.
+
+    :ivar extension_feature_tags: List of additional metadata properties (e.g., compliance flags,
+     supported features).
+    :vartype extension_feature_tags: list[~azure.mgmt.compute.models.ExtensionFeatureTag]
+    """
+
+    extension_feature_tags: Optional[list["_models.ExtensionFeatureTag"]] = rest_field(
+        name="extensionFeatureTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of additional metadata properties (e.g., compliance flags, supported features)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        extension_feature_tags: Optional[list["_models.ExtensionFeatureTag"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExtensionFeatureTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a key-value pair for extension feature metadata.
+
+    :ivar key: The key of the feature tag. Required.
+    :vartype key: str
+    :ivar value: The value of the feature tag.
+    :vartype value: str
+    """
+
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The key of the feature tag. Required."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The value of the feature tag."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: str,
+        value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalHealthPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the external health policy for the virtual machine scale set.
 
     :ivar enabled: If true, external health is enabled for this scale set. Cannot be set to true on
@@ -6598,7 +6831,7 @@ class ExternalHealthPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Gallery(TrackedResource):
+class Gallery(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the Shared Image Gallery that you want to create or update.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6679,7 +6912,7 @@ class Gallery(TrackedResource):
             super().__setattr__(key, value)
 
 
-class GalleryApplication(TrackedResource):
+class GalleryApplication(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery Application Definition that you want to create or
     update.
 
@@ -6755,7 +6988,7 @@ class GalleryApplication(TrackedResource):
             super().__setattr__(key, value)
 
 
-class GalleryApplicationCustomAction(_Model):
+class GalleryApplicationCustomAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A custom action that can be performed with a Gallery Application Version.
 
     :ivar name: The name of the custom action.  Must be unique within the Gallery Application
@@ -6802,7 +7035,7 @@ class GalleryApplicationCustomAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryApplicationCustomActionParameter(_Model):
+class GalleryApplicationCustomActionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a parameter that can be passed to a custom action of a Gallery Application
     Version.
 
@@ -6861,7 +7094,7 @@ class GalleryApplicationCustomActionParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryApplicationProperties(_Model):
+class GalleryApplicationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery Application Definition.
 
     :ivar description: The description of this gallery Application Definition resource. This
@@ -6938,7 +7171,7 @@ class GalleryApplicationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateResourceDefinition(_Model):
+class UpdateResourceDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Update Resource model definition.
 
     :ivar id: Resource Id.
@@ -6978,7 +7211,7 @@ class UpdateResourceDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryApplicationUpdate(UpdateResourceDefinition):
+class GalleryApplicationUpdate(UpdateResourceDefinition):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery Application Definition that you want to update.
 
     :ivar id: Resource Id.
@@ -7045,7 +7278,7 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
             super().__setattr__(key, value)
 
 
-class GalleryApplicationVersion(TrackedResource):
+class GalleryApplicationVersion(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery Application Version that you want to create or update.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7112,7 +7345,7 @@ class GalleryApplicationVersion(TrackedResource):
             super().__setattr__(key, value)
 
 
-class GalleryApplicationVersionProperties(_Model):
+class GalleryApplicationVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery image version.
 
     :ivar publishing_profile: The publishing profile of a gallery image version. Required.
@@ -7164,7 +7397,7 @@ class GalleryApplicationVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryArtifactPublishingProfileBase(_Model):
+class GalleryArtifactPublishingProfileBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the basic gallery artifact publishing profile.
 
     :ivar target_regions: The target regions where the Image Version is going to be replicated to.
@@ -7273,7 +7506,9 @@ class GalleryArtifactPublishingProfileBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):  # pylint: disable=name-too-long
+class GalleryApplicationVersionPublishingProfile(
+    GalleryArtifactPublishingProfileBase
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The publishing profile of a gallery image version.
 
     :ivar target_regions: The target regions where the Image Version is going to be replicated to.
@@ -7379,7 +7614,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         super().__init__(*args, **kwargs)
 
 
-class GalleryArtifactSafetyProfileBase(_Model):
+class GalleryArtifactSafetyProfileBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the safety profile of the Gallery Artifact Version.
 
     :ivar allow_deletion_of_replicated_locations: Indicates whether or not removing this Gallery
@@ -7411,7 +7646,9 @@ class GalleryArtifactSafetyProfileBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryApplicationVersionSafetyProfile(GalleryArtifactSafetyProfileBase):
+class GalleryApplicationVersionSafetyProfile(
+    GalleryArtifactSafetyProfileBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The safety profile of the Gallery Application Version.
 
     :ivar allow_deletion_of_replicated_locations: Indicates whether or not removing this Gallery
@@ -7437,7 +7674,9 @@ class GalleryApplicationVersionSafetyProfile(GalleryArtifactSafetyProfileBase):
         super().__init__(*args, **kwargs)
 
 
-class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
+class GalleryApplicationVersionUpdate(
+    UpdateResourceDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery Application Version that you want to update.
 
     :ivar id: Resource Id.
@@ -7496,7 +7735,7 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
             super().__setattr__(key, value)
 
 
-class GalleryArtifactVersionSource(_Model):
+class GalleryArtifactVersionSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The gallery artifact version source.
 
     :ivar id: The id of the gallery artifact version source.
@@ -7524,7 +7763,9 @@ class GalleryArtifactVersionSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryArtifactVersionFullSource(GalleryArtifactVersionSource):
+class GalleryArtifactVersionFullSource(
+    GalleryArtifactVersionSource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The source of the gallery artifact version.
 
     :ivar id: The id of the gallery artifact version source.
@@ -7568,7 +7809,7 @@ class GalleryArtifactVersionFullSource(GalleryArtifactVersionSource):
         super().__init__(*args, **kwargs)
 
 
-class GalleryDiskImage(_Model):
+class GalleryDiskImage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the disk image base class.
 
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
@@ -7611,7 +7852,7 @@ class GalleryDiskImage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryDataDiskImage(GalleryDiskImage):
+class GalleryDataDiskImage(GalleryDiskImage):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the data disk image.
 
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
@@ -7652,7 +7893,9 @@ class GalleryDataDiskImage(GalleryDiskImage):
         super().__init__(*args, **kwargs)
 
 
-class GalleryDiskImageSource(GalleryArtifactVersionSource):
+class GalleryDiskImageSource(
+    GalleryArtifactVersionSource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The source for the disk image.
 
     :ivar id: The id of the gallery artifact version source.
@@ -7693,7 +7936,7 @@ class GalleryDiskImageSource(GalleryArtifactVersionSource):
         super().__init__(*args, **kwargs)
 
 
-class GalleryExtendedLocation(_Model):
+class GalleryExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The name of the extended location.
 
     :ivar name:
@@ -7739,7 +7982,7 @@ class GalleryIdentifier(_Model):
     """The unique name of the Shared Image Gallery. This name is generated automatically by Azure."""
 
 
-class GalleryIdentity(_Model):
+class GalleryIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the virtual machine.
 
     :ivar principal_id: The principal id of the gallery identity. This property will only be
@@ -7799,7 +8042,7 @@ class GalleryIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImage(TrackedResource):
+class GalleryImage(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery image definition that you want to create or update.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7883,7 +8126,7 @@ class GalleryImage(TrackedResource):
             super().__setattr__(key, value)
 
 
-class GalleryImageFeature(_Model):
+class GalleryImageFeature(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A feature for gallery image.
 
     :ivar name: The name of the gallery image feature.
@@ -7923,7 +8166,7 @@ class GalleryImageFeature(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageIdentifier(_Model):
+class GalleryImageIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the gallery image definition identifier.
 
     :ivar publisher: The name of the gallery image definition publisher. Required.
@@ -7961,7 +8204,7 @@ class GalleryImageIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageProperties(_Model):
+class GalleryImageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery image definition.
 
     :ivar description: The description of this gallery image definition resource. This property is
@@ -8110,7 +8353,7 @@ class GalleryImageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageUpdate(UpdateResourceDefinition):
+class GalleryImageUpdate(UpdateResourceDefinition):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery image definition that you want to update.
 
     :ivar id: Resource Id.
@@ -8186,7 +8429,7 @@ class GalleryImageUpdate(UpdateResourceDefinition):
             super().__setattr__(key, value)
 
 
-class GalleryImageVersion(TrackedResource):
+class GalleryImageVersion(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery image version that you want to create or update.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8262,7 +8505,7 @@ class GalleryImageVersion(TrackedResource):
             super().__setattr__(key, value)
 
 
-class GalleryImageVersionProperties(_Model):
+class GalleryImageVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery image version.
 
     :ivar publishing_profile: The publishing profile of a gallery image Version.
@@ -8338,7 +8581,9 @@ class GalleryImageVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
+class GalleryImageVersionPublishingProfile(
+    GalleryArtifactPublishingProfileBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The publishing profile of a gallery image Version.
 
     :ivar target_regions: The target regions where the Image Version is going to be replicated to.
@@ -8399,7 +8644,9 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageVersionSafetyProfile(GalleryArtifactSafetyProfileBase):
+class GalleryImageVersionSafetyProfile(
+    GalleryArtifactSafetyProfileBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the safety profile of the Gallery Image Version.
 
     :ivar allow_deletion_of_replicated_locations: Indicates whether or not removing this Gallery
@@ -8447,7 +8694,7 @@ class GalleryImageVersionSafetyProfile(GalleryArtifactSafetyProfileBase):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageVersionStorageProfile(_Model):
+class GalleryImageVersionStorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the storage profile of a Gallery Image Version.
 
     :ivar source: The source of the gallery artifact version.
@@ -8491,7 +8738,7 @@ class GalleryImageVersionStorageProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageVersionUefiSettings(_Model):
+class GalleryImageVersionUefiSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains UEFI settings for the image version.
 
     :ivar signature_template_names: The name of the template(s) that contains default UEFI key
@@ -8533,7 +8780,9 @@ class GalleryImageVersionUefiSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageVersionUpdate(UpdateResourceDefinition):
+class GalleryImageVersionUpdate(
+    UpdateResourceDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery image version that you want to update.
 
     :ivar id: Resource Id.
@@ -8601,7 +8850,7 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
             super().__setattr__(key, value)
 
 
-class GalleryInVMAccessControlProfile(TrackedResource):
+class GalleryInVMAccessControlProfile(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery inVMAccessControlProfile that you want to create or
     update.
 
@@ -8664,7 +8913,9 @@ class GalleryResourceProfilePropertiesBase(_Model):
      \"Updating\", \"Failed\", \"Succeeded\", \"Deleting\", and \"Migrating\"."""
 
 
-class GalleryInVMAccessControlProfileProperties(GalleryResourceProfilePropertiesBase):  # pylint: disable=name-too-long
+class GalleryInVMAccessControlProfileProperties(
+    GalleryResourceProfilePropertiesBase
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery inVMAccessControlProfile.
 
     :ivar provisioning_state: The provisioning state, which only appears in the response. Known
@@ -8718,7 +8969,9 @@ class GalleryInVMAccessControlProfileProperties(GalleryResourceProfileProperties
         super().__init__(*args, **kwargs)
 
 
-class GalleryInVMAccessControlProfileUpdate(UpdateResourceDefinition):
+class GalleryInVMAccessControlProfileUpdate(
+    UpdateResourceDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery inVMAccessControlProfile that you want to update.
 
     :ivar id: Resource Id.
@@ -8757,7 +9010,9 @@ class GalleryInVMAccessControlProfileUpdate(UpdateResourceDefinition):
         super().__init__(*args, **kwargs)
 
 
-class GalleryInVMAccessControlProfileVersion(TrackedResource):
+class GalleryInVMAccessControlProfileVersion(
+    TrackedResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery inVMAccessControlProfile version that you want to
     create or update.
 
@@ -8835,7 +9090,9 @@ class GalleryInVMAccessControlProfileVersion(TrackedResource):
             super().__setattr__(key, value)
 
 
-class GalleryResourceProfileVersionPropertiesBase(_Model):  # pylint: disable=name-too-long
+class GalleryResourceProfileVersionPropertiesBase(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of a gallery ResourceProfile version.
 
     :ivar target_locations: The target regions where the Resource Profile version is going to be
@@ -8898,7 +9155,7 @@ class GalleryResourceProfileVersionPropertiesBase(_Model):  # pylint: disable=na
 
 class GalleryInVMAccessControlProfileVersionProperties(
     GalleryResourceProfileVersionPropertiesBase
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the properties of an inVMAccessControlProfile version.
 
     :ivar target_locations: The target regions where the Resource Profile version is going to be
@@ -8966,7 +9223,9 @@ class GalleryInVMAccessControlProfileVersionProperties(
         super().__init__(*args, **kwargs)
 
 
-class GalleryInVMAccessControlProfileVersionUpdate(UpdateResourceDefinition):  # pylint: disable=name-too-long
+class GalleryInVMAccessControlProfileVersionUpdate(
+    UpdateResourceDefinition
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery inVMAccessControlProfile version that you want to
     update.
 
@@ -9036,7 +9295,7 @@ class GalleryInVMAccessControlProfileVersionUpdate(UpdateResourceDefinition):  #
             super().__setattr__(key, value)
 
 
-class GalleryOSDiskImage(GalleryDiskImage):
+class GalleryOSDiskImage(GalleryDiskImage):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the OS disk image.
 
     :ivar size_in_gb: This property indicates the size of the VHD to be created.
@@ -9067,7 +9326,7 @@ class GalleryOSDiskImage(GalleryDiskImage):
         super().__init__(*args, **kwargs)
 
 
-class GalleryProperties(_Model):
+class GalleryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Shared Image Gallery.
 
     :ivar description: The description of this Shared Image Gallery resource. This property is
@@ -9129,7 +9388,7 @@ class GalleryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryScript(TrackedResource):
+class GalleryScript(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery Script Definition that you want to create or update.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9176,7 +9435,7 @@ class GalleryScript(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class GenericGalleryParameter(_Model):
+class GenericGalleryParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a generic gallery parameter.
 
     :ivar name: The name of the parameter. Required.
@@ -9221,7 +9480,7 @@ class GenericGalleryParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryScriptParameter(GenericGalleryParameter):
+class GalleryScriptParameter(GenericGalleryParameter):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a parameter that can be passed to a script of a Gallery Script Version.
 
     :ivar name: The name of the parameter. Required.
@@ -9284,7 +9543,7 @@ class GalleryScriptParameter(GenericGalleryParameter):
         super().__init__(*args, **kwargs)
 
 
-class GalleryScriptProperties(_Model):
+class GalleryScriptProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery script definition.
 
     :ivar description: The description of this gallery script definition resource. This property is
@@ -9360,7 +9619,7 @@ class GalleryScriptProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryScriptUpdate(UpdateResourceDefinition):
+class GalleryScriptUpdate(UpdateResourceDefinition):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery Script Definition that you want to update.
 
     :ivar id: Resource Id.
@@ -9427,7 +9686,7 @@ class GalleryScriptUpdate(UpdateResourceDefinition):
             super().__setattr__(key, value)
 
 
-class GalleryScriptVersion(TrackedResource):
+class GalleryScriptVersion(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -9475,7 +9734,7 @@ class GalleryScriptVersion(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class GalleryScriptVersionProperties(_Model):
+class GalleryScriptVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery script version.
 
     :ivar publishing_profile: The publishing profile of a gallery image version. Required.
@@ -9526,7 +9785,9 @@ class GalleryScriptVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryScriptVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
+class GalleryScriptVersionPublishingProfile(
+    GalleryArtifactPublishingProfileBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The publishing profile of a gallery image version.
 
     :ivar target_regions: The target regions where the Image Version is going to be replicated to.
@@ -9593,7 +9854,9 @@ class GalleryScriptVersionPublishingProfile(GalleryArtifactPublishingProfileBase
         super().__init__(*args, **kwargs)
 
 
-class GalleryScriptVersionSafetyProfile(GalleryArtifactSafetyProfileBase):
+class GalleryScriptVersionSafetyProfile(
+    GalleryArtifactSafetyProfileBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The safety profile of the Gallery Script Version.
 
     :ivar allow_deletion_of_replicated_locations: Indicates whether or not removing this Gallery
@@ -9619,7 +9882,9 @@ class GalleryScriptVersionSafetyProfile(GalleryArtifactSafetyProfileBase):
         super().__init__(*args, **kwargs)
 
 
-class GalleryScriptVersionUpdate(UpdateResourceDefinition):
+class GalleryScriptVersionUpdate(
+    UpdateResourceDefinition
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery Script Version that you want to update.
 
     :ivar id: Resource Id.
@@ -9678,7 +9943,7 @@ class GalleryScriptVersionUpdate(UpdateResourceDefinition):
             super().__setattr__(key, value)
 
 
-class GallerySoftDeletedResource(TrackedResource):
+class GallerySoftDeletedResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details information of soft-deleted resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9745,7 +10010,7 @@ class GallerySoftDeletedResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class GallerySoftDeletedResourceProperties(_Model):
+class GallerySoftDeletedResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a soft-deleted resource.
 
     :ivar resource_arm_id: arm id of the soft-deleted resource.
@@ -9790,7 +10055,7 @@ class GallerySoftDeletedResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryTargetExtendedLocation(_Model):
+class GalleryTargetExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GalleryTargetExtendedLocation.
 
     :ivar name: The name of the region.
@@ -9854,7 +10119,7 @@ class GalleryTargetExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryUpdate(UpdateResourceDefinition):
+class GalleryUpdate(UpdateResourceDefinition):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the Shared Image Gallery that you want to update.
 
     :ivar id: Resource Id.
@@ -9927,7 +10192,7 @@ class GalleryUpdate(UpdateResourceDefinition):
             super().__setattr__(key, value)
 
 
-class GrantAccessData(_Model):
+class GrantAccessData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data used for requesting a SAS.
 
     :ivar access: The Access Level, accepted values include None, Read, Write. Required. Known
@@ -9981,7 +10246,7 @@ class GrantAccessData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HardwareProfile(_Model):
+class HardwareProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the hardware settings for the virtual machine.
 
     :ivar vm_size: Specifies the size of the virtual machine. The enum data type is currently
@@ -10036,6 +10301,11 @@ class HardwareProfile(_Model):
      supported for VirtualMachineScaleSet. Please follow the instructions in `VM Customization
      <https://aka.ms/vmcustomization>`_ for more details.
     :vartype vm_size_properties: ~azure.mgmt.compute.models.VMSizeProperties
+    :ivar processor_mode: Specifies the processor mode for the virtual machine or virtual machine
+     scale set. Optional; if omitted, the platform default applies (currently Deterministic). This
+     property can be updated on a running VM or VMSS without deallocation or reboot. Minimum
+     api-version: 2026-04-01. Known values are: "Deterministic" and "Opportunistic".
+    :vartype processor_mode: str or ~azure.mgmt.compute.models.ProcessorMode
     """
 
     vm_size: Optional[Union[str, "_models.VirtualMachineSizeTypes"]] = rest_field(
@@ -10097,6 +10367,13 @@ class HardwareProfile(_Model):
      2021-07-01. This feature is still in preview mode and is not supported for
      VirtualMachineScaleSet. Please follow the instructions in `VM Customization
      <https://aka.ms/vmcustomization>`_ for more details."""
+    processor_mode: Optional[Union[str, "_models.ProcessorMode"]] = rest_field(
+        name="processorMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the processor mode for the virtual machine or virtual machine scale set. Optional; if
+     omitted, the platform default applies (currently Deterministic). This property can be updated
+     on a running VM or VMSS without deallocation or reboot. Minimum api-version: 2026-04-01. Known
+     values are: \"Deterministic\" and \"Opportunistic\"."""
 
     @overload
     def __init__(
@@ -10104,6 +10381,7 @@ class HardwareProfile(_Model):
         *,
         vm_size: Optional[Union[str, "_models.VirtualMachineSizeTypes"]] = None,
         vm_size_properties: Optional["_models.VMSizeProperties"] = None,
+        processor_mode: Optional[Union[str, "_models.ProcessorMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -10117,7 +10395,7 @@ class HardwareProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostEndpointSettings(_Model):
+class HostEndpointSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies particular host endpoint settings.
 
     :ivar mode: Specifies the execution mode. In Audit mode, the system acts as if it is enforcing
@@ -10130,6 +10408,9 @@ class HostEndpointSettings(_Model):
      resource id in the format of
      /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.
     :vartype in_vm_access_control_profile_reference_id: str
+    :ivar use_local_file_rules: When set to true, instructs the GuestProxyAgent inside the VM to
+     load additional access control rules defined in a local file on the VM.
+    :vartype use_local_file_rules: bool
     """
 
     mode: Optional[Union[str, "_models.Modes"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -10143,6 +10424,11 @@ class HostEndpointSettings(_Model):
     )
     """Specifies the InVMAccessControlProfileVersion resource id in the format of
      /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}."""
+    use_local_file_rules: Optional[bool] = rest_field(
+        name="useLocalFileRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When set to true, instructs the GuestProxyAgent inside the VM to load additional access control
+     rules defined in a local file on the VM."""
 
     @overload
     def __init__(
@@ -10150,6 +10436,7 @@ class HostEndpointSettings(_Model):
         *,
         mode: Optional[Union[str, "_models.Modes"]] = None,
         in_vm_access_control_profile_reference_id: Optional[str] = None,
+        use_local_file_rules: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -10163,7 +10450,7 @@ class HostEndpointSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Image(TrackedResource):
+class Image(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The source user image virtual hard disk. The virtual hard disk will be copied before being
     attached to the virtual machine. If SourceImage is provided, the destination virtual hard drive
     must not exist.
@@ -10239,7 +10526,7 @@ class Image(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ImageDisk(_Model):
+class ImageDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a image disk.
 
     :ivar snapshot: The snapshot.
@@ -10321,7 +10608,7 @@ class ImageDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageDataDisk(ImageDisk):
+class ImageDataDisk(ImageDisk):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a data disk.
 
     :ivar snapshot: The snapshot.
@@ -10381,7 +10668,7 @@ class ImageDataDisk(ImageDisk):
         super().__init__(*args, **kwargs)
 
 
-class ImageDeprecationStatus(_Model):
+class ImageDeprecationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes image deprecation status properties on the image.
 
     :ivar image_state: Describes the state of the image. Known values are: "Active",
@@ -10431,7 +10718,7 @@ class ImageDeprecationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageDiskReference(_Model):
+class ImageDiskReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The source image used for creating the disk.
 
     :ivar id: A relative uri containing either a Platform Image Repository, user image, or Azure
@@ -10484,7 +10771,7 @@ class ImageDiskReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageOSDisk(ImageDisk):
+class ImageOSDisk(ImageDisk):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an Operating System disk.
 
     :ivar snapshot: The snapshot.
@@ -10556,7 +10843,7 @@ class ImageOSDisk(ImageDisk):
         super().__init__(*args, **kwargs)
 
 
-class ImageProperties(_Model):
+class ImageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of an Image.
 
     :ivar source_virtual_machine: The source virtual machine from which Image is created.
@@ -10612,7 +10899,7 @@ class ImageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImagePurchasePlan(_Model):
+class ImagePurchasePlan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the gallery image definition purchase plan. This is used by marketplace images.
 
     :ivar name: The plan ID.
@@ -10650,7 +10937,7 @@ class ImagePurchasePlan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageReference(SubResource):
+class ImageReference(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the image to use. You can specify information about platform
     images, marketplace images, or virtual machine images. This element is required when you want
     to use a platform image, marketplace image, or virtual machine image, but is not used in other
@@ -10744,7 +11031,7 @@ class ImageReference(SubResource):
         super().__init__(*args, **kwargs)
 
 
-class ImageStorageProfile(_Model):
+class ImageStorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a storage profile.
 
     :ivar os_disk: Specifies information about the operating system disk used by the virtual
@@ -10798,7 +11085,7 @@ class ImageStorageProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageUpdate(UpdateResource):
+class ImageUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The source user image virtual hard disk. Only tags may be updated.
 
     :ivar tags: Resource tags.
@@ -10851,7 +11138,7 @@ class ImageUpdate(UpdateResource):
             super().__setattr__(key, value)
 
 
-class ImageVersionSecurityProfile(_Model):
+class ImageVersionSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The security profile of a gallery image version.
 
     :ivar uefi_settings: Contains UEFI settings for the image version.
@@ -10914,7 +11201,7 @@ class ImmutabilityPolicy(_Model):
     """Indicates whether the immutability policy has expired."""
 
 
-class ImmutabilityPolicyData(_Model):
+class ImmutabilityPolicyData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data used for updating the immutability policy of a snapshot.
 
     :ivar immutability_duration_days: The immutability duration for the snapshot, in number of
@@ -10956,7 +11243,7 @@ class ImmutabilityPolicyData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImmutabilityPolicyLockData(_Model):
+class ImmutabilityPolicyLockData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data used for locking the immutability policy of a snapshot.
 
     :ivar immutability_duration_days: The immutability duration for the snapshot, in number of
@@ -10998,7 +11285,7 @@ class ImmutabilityPolicyLockData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InnerError(_Model):
+class InnerError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Inner error details.
 
     :ivar exceptiontype: The exception type.
@@ -11031,7 +11318,7 @@ class InnerError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceViewStatus(_Model):
+class InstanceViewStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance view status.
 
     :ivar code: The status code.
@@ -11085,7 +11372,7 @@ class InstanceViewStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InterconnectBlock(TrackedResource):
+class InterconnectBlock(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the Interconnect Block.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11169,7 +11456,7 @@ class InterconnectBlockInstanceView(_Model):
     """The resource status information."""
 
 
-class InterconnectBlockProfile(_Model):
+class InterconnectBlockProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters of an Interconnect Block Profile.
 
     :ivar interconnect_block: Specifies the Interconnect Block resource ID that should be used for
@@ -11202,7 +11489,7 @@ class InterconnectBlockProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InterconnectBlockProperties(_Model):
+class InterconnectBlockProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Interconnect Block.
 
     :ivar virtual_machines_associated: A list of all virtual machine resource ids that are
@@ -11267,7 +11554,7 @@ class InterconnectBlockProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InterconnectBlockUpdate(UpdateResource):
+class InterconnectBlockUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the Interconnect Block. Only tags and sku.capacity can be updated.
 
     :ivar tags: Resource tags.
@@ -11300,7 +11587,7 @@ class InterconnectBlockUpdate(UpdateResource):
         super().__init__(*args, **kwargs)
 
 
-class InterconnectGroupProfile(_Model):
+class InterconnectGroupProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the interconnect group profile for a virtual machine, used to associate the VM with
     an interconnect group and subgroups.
 
@@ -11350,7 +11637,7 @@ class InterconnectInstanceView(_Model):
     """The ID (GUID) of the Interconnect subgroup in which the Virtual Machine was placed."""
 
 
-class KeyForDiskEncryptionSet(_Model):
+class KeyForDiskEncryptionSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Key Vault Key Url to be used for server side encryption of Managed Disks and Snapshots.
 
     :ivar source_vault: Resource id of the KeyVault containing the key or secret. This property is
@@ -11390,7 +11677,7 @@ class KeyForDiskEncryptionSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultAndKeyReference(_Model):
+class KeyVaultAndKeyReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the
     encryptionKey.
 
@@ -11426,7 +11713,7 @@ class KeyVaultAndKeyReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultAndSecretReference(_Model):
+class KeyVaultAndSecretReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Key Vault Secret Url and vault id of the encryption key.
 
     :ivar source_vault: Resource id of the KeyVault containing the key or secret. Required.
@@ -11461,7 +11748,7 @@ class KeyVaultAndSecretReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultKeyReference(_Model):
+class KeyVaultKeyReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a reference to Key Vault Key.
 
     :ivar key_url: The URL referencing a key encryption key in Key Vault. Required.
@@ -11496,7 +11783,7 @@ class KeyVaultKeyReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultSecretReference(_Model):
+class KeyVaultSecretReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a reference to Key Vault Secret.
 
     :ivar secret_url: The URL referencing a secret in a Key Vault. Required.
@@ -11601,7 +11888,7 @@ class LastPatchInstallationSummary(_Model):
      the list of them."""
 
 
-class LifecycleHook(_Model):
+class LifecycleHook(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a lifecycle hook.
 
     :ivar type: Specifies the type of the lifecycle hook. Known values are:
@@ -11655,7 +11942,7 @@ class LifecycleHook(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LifecycleHooksProfile(_Model):
+class LifecycleHooksProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the lifecycle hooks profile for the virtual machine scale set.
 
     :ivar lifecycle_hooks: Specifies the lifecycle hooks configured for the virtual machine scale
@@ -11686,7 +11973,7 @@ class LifecycleHooksProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxConfiguration(_Model):
+class LinuxConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Linux operating system settings on the virtual machine. For a list of supported
     Linux distributions, see `Linux on Azure-Endorsed Distributions
     <https://docs.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
@@ -11753,7 +12040,7 @@ class LinuxConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxParameters(_Model):
+class LinuxParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for InstallPatches on a Linux VM, as directly received by the API.
 
     :ivar classifications_to_include: The update classifications to select when installing patches
@@ -11809,7 +12096,7 @@ class LinuxParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxPatchSettings(_Model):
+class LinuxPatchSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies settings related to VM Guest Patching on Linux.
 
     :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
@@ -11873,7 +12160,9 @@ class LinuxPatchSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxVMGuestPatchAutomaticByPlatformSettings(_Model):  # pylint: disable=name-too-long
+class LinuxVMGuestPatchAutomaticByPlatformSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies additional settings to be applied when patch mode AutomaticByPlatform is selected in
     Linux patch settings.
 
@@ -11915,7 +12204,7 @@ class LinuxVMGuestPatchAutomaticByPlatformSettings(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class LogAnalyticsInputBase(_Model):
+class LogAnalyticsInputBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Api input base class for LogAnalytics Api.
 
     :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
@@ -12018,7 +12307,7 @@ class LogAnalyticsOutput(_Model):
     """Output file Uri path to blob container."""
 
 
-class MaintenanceRedeployStatus(_Model):
+class MaintenanceRedeployStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance Operation Status.
 
     :ivar is_customer_initiated_maintenance_allowed: True, if customer is allowed to perform
@@ -12096,7 +12385,7 @@ class MaintenanceRedeployStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedDiskParameters(SubResource):
+class ManagedDiskParameters(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters of a managed disk.
 
     :ivar id: Resource Id.
@@ -12111,6 +12400,10 @@ class ManagedDiskParameters(SubResource):
     :vartype disk_encryption_set: ~azure.mgmt.compute.models.DiskEncryptionSetParameters
     :ivar security_profile: Specifies the security profile for the managed disk.
     :vartype security_profile: ~azure.mgmt.compute.models.VMDiskSecurityProfile
+    :ivar additional_disk_properties: Specifies additional properties for the managed disk that can
+     be set at the time of implicit creation of the disk. This property is not captured for Restore
+     Points.
+    :vartype additional_disk_properties: ~azure.mgmt.compute.models.AdditionalDiskProperties
     """
 
     storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = rest_field(
@@ -12128,6 +12421,11 @@ class ManagedDiskParameters(SubResource):
         name="securityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the security profile for the managed disk."""
+    additional_disk_properties: Optional["_models.AdditionalDiskProperties"] = rest_field(
+        name="additionalDiskProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies additional properties for the managed disk that can be set at the time of implicit
+     creation of the disk. This property is not captured for Restore Points."""
 
     @overload
     def __init__(
@@ -12137,6 +12435,7 @@ class ManagedDiskParameters(SubResource):
         storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
         disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         security_profile: Optional["_models.VMDiskSecurityProfile"] = None,
+        additional_disk_properties: Optional["_models.AdditionalDiskProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -12150,7 +12449,7 @@ class ManagedDiskParameters(SubResource):
         super().__init__(*args, **kwargs)
 
 
-class MaxInstancePercentPerZonePolicy(_Model):
+class MaxInstancePercentPerZonePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used to limit the number of virtual machines per availability zone
     in the virtual machine scale set.
 
@@ -12188,7 +12487,7 @@ class MaxInstancePercentPerZonePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrateToVirtualMachineScaleSetInput(_Model):
+class MigrateToVirtualMachineScaleSetInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Virtual Machine Scale Set to migrate from Availability Set.
 
     :ivar virtual_machine_scale_set_flexible: Specifies information about the Virtual Machine Scale
@@ -12220,7 +12519,46 @@ class MigrateToVirtualMachineScaleSetInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrateVMToVirtualMachineScaleSetInput(_Model):
+class MigrateVMAvailabilityZoneInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The input for MigrateVMAvailabilityZone.
+
+    :ivar instance_ids: The virtual machine scale set instance ids to be migrated to the target
+     availability zone. Required.
+    :vartype instance_ids: list[str]
+    :ivar target_zone: The target logical availability zone ("1", "2" or "3") to migrate the
+     virtual machine scale set instances to. If omitted, the platform selects the target zone.
+    :vartype target_zone: str
+    """
+
+    instance_ids: list[str] = rest_field(name="instanceIds", visibility=["read", "create", "update", "delete", "query"])
+    """The virtual machine scale set instance ids to be migrated to the target availability zone.
+     Required."""
+    target_zone: Optional[str] = rest_field(
+        name="targetZone", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target logical availability zone (\"1\", \"2\" or \"3\") to migrate the virtual machine
+     scale set instances to. If omitted, the platform selects the target zone."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        instance_ids: list[str],
+        target_zone: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MigrateVMToVirtualMachineScaleSetInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input of virtual machine migration from Availability Set to Flexible Virtual Machine Scale
     Set.
 
@@ -12267,7 +12605,7 @@ class MigrateVMToVirtualMachineScaleSetInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterfaceReference(SubResource):
+class NetworkInterfaceReference(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a network interface reference.
 
     :ivar id: Resource Id.
@@ -12320,7 +12658,7 @@ class NetworkInterfaceReference(SubResource):
             super().__setattr__(key, value)
 
 
-class NetworkInterfaceReferenceProperties(_Model):
+class NetworkInterfaceReferenceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a network interface reference properties.
 
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
@@ -12359,7 +12697,7 @@ class NetworkInterfaceReferenceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkProfile(_Model):
+class NetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the network interfaces or the networking configuration of the virtual machine.
 
     :ivar network_interfaces: Specifies the list of resource Ids for the network interfaces
@@ -12420,7 +12758,7 @@ class NetworkProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -12508,7 +12846,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OperationRecoverySettings(_Model):
+class OperationRecoverySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used for operation recovery settings on a virtual machine scale
     set.
 
@@ -12553,7 +12891,7 @@ class OperationRecoverySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OrchestrationServiceStateInput(_Model):
+class OrchestrationServiceStateInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input for OrchestrationServiceState.
 
     :ivar service_name: The name of the service. Required. Known values are: "AutomaticRepairs" and
@@ -12632,7 +12970,7 @@ class OrchestrationServiceSummary(_Model):
      2025-04-01."""
 
 
-class OSDisk(_Model):
+class OSDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the operating system disk used by the virtual machine. For more
     information about disks, see `About disks and VHDs for Azure virtual machines
     <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
@@ -12786,7 +13124,7 @@ class OSDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSDiskImage(_Model):
+class OSDiskImage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the os disk image information.
 
     :ivar operating_system: The operating system of the osDiskImage. Required. Known values are:
@@ -12817,7 +13155,7 @@ class OSDiskImage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSDiskImageEncryption(DiskImageEncryption):
+class OSDiskImageEncryption(DiskImageEncryption):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains encryption settings for an OS disk image.
 
     :ivar disk_encryption_set_id: A relative URI containing the resource ID of the disk encryption
@@ -12851,7 +13189,7 @@ class OSDiskImageEncryption(DiskImageEncryption):
         super().__init__(*args, **kwargs)
 
 
-class OSDiskImageSecurityProfile(_Model):
+class OSDiskImageSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains security profile for an OS disk image.
 
     :ivar confidential_vm_encryption_type: confidential VM encryption types. Known values are:
@@ -12892,7 +13230,7 @@ class OSDiskImageSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSImageNotificationProfile(_Model):
+class OSImageNotificationProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OSImageNotificationProfile.
 
     :ivar not_before_timeout: Length of time a Virtual Machine being reimaged or having its OS
@@ -12932,7 +13270,7 @@ class OSImageNotificationProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSProfile(_Model):
+class OSProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the operating system settings for the virtual machine. Some of the settings cannot be
     changed once VM is provisioned.
 
@@ -13098,7 +13436,7 @@ class OSProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSProfileProvisioningData(_Model):
+class OSProfileProvisioningData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional parameters for Reimaging Non-Ephemeral Virtual Machine.
 
     :ivar admin_password: Specifies the password of the administrator account. <br><br>
@@ -13210,7 +13548,7 @@ class PatchInstallationDetail(_Model):
      \"Unknown\", \"Installed\", \"Failed\", \"Excluded\", \"NotSelected\", and \"Pending\"."""
 
 
-class PatchSettings(_Model):
+class PatchSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies settings related to VM Guest Patching on Windows.
 
     :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
@@ -13309,7 +13647,7 @@ class PirResource(_Model):
     """Resource location."""
 
 
-class PirSharedGalleryResource(PirResource):
+class PirSharedGalleryResource(PirResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base information about the shared gallery resource in pir.
 
     :ivar name: Resource name.
@@ -13363,7 +13701,7 @@ class PirSharedGalleryResource(PirResource):
             super().__setattr__(key, value)
 
 
-class Placement(_Model):
+class Placement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the user-defined constraints for resource hardware placement.
 
     :ivar zone_placement_policy: Specifies the policy for resource's placement in availability
@@ -13425,7 +13763,7 @@ class Placement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Plan(_Model):
+class Plan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the marketplace image used to create the virtual machine. This
     element is only used for marketplace images. Before you can use a marketplace image from an
     API, you must enable the image for programmatic use.  In the Azure portal, find the marketplace
@@ -13492,7 +13830,7 @@ class PlatformAttribute(_Model):
     """This property specifies the value of the corresponding name property. It is read-only."""
 
 
-class PolicyViolation(_Model):
+class PolicyViolation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A policy violation reported against a gallery artifact.
 
     :ivar category: Describes the nature of the policy violation. Known values are: "Other",
@@ -13529,7 +13867,7 @@ class PolicyViolation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PriorityMixPolicy(_Model):
+class PriorityMixPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the target splits for Spot and Regular priority VMs within a scale set with flexible
     orchestration mode. With this property the customer is able to specify the base number of
     regular priority VMs created as the VMSS flex instance scales out and the split between Spot
@@ -13584,7 +13922,7 @@ class PrivateEndpoint(_Model):
     """The ARM identifier for Private Endpoint."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Private Endpoint Connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13645,7 +13983,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the PrivateEndpointConnectProperties.
 
     :ivar private_endpoint: The resource of private end point.
@@ -13691,7 +14029,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(_Model):
+class PrivateLinkResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar properties: Resource properties.
@@ -13753,7 +14091,7 @@ class PrivateLinkResource(_Model):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceListResult(_Model):
+class PrivateLinkResourceListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of private link resources.
 
     :ivar value: Array of private link resources.
@@ -13783,7 +14121,7 @@ class PrivateLinkResourceListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -13821,7 +14159,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -13867,7 +14205,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PropertyUpdatesInProgress(_Model):
+class PropertyUpdatesInProgress(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the disk for which update is pending.
 
     :ivar target_tier: The target performance tier of the disk if a tier change operation is in
@@ -13898,7 +14236,7 @@ class PropertyUpdatesInProgress(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProximityPlacementGroup(TrackedResource):
+class ProximityPlacementGroup(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the proximity placement group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13977,7 +14315,7 @@ class ProximityPlacementGroup(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ProximityPlacementGroupProperties(_Model):
+class ProximityPlacementGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Proximity Placement Group.
 
     :ivar proximity_placement_group_type: Specifies the type of the proximity placement group.
@@ -14048,7 +14386,7 @@ class ProximityPlacementGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProximityPlacementGroupPropertiesIntent(_Model):
+class ProximityPlacementGroupPropertiesIntent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the user intent of the proximity placement group.
 
     :ivar vm_sizes: Specifies possible sizes of virtual machines that can be created in the
@@ -14080,7 +14418,7 @@ class ProximityPlacementGroupPropertiesIntent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProximityPlacementGroupUpdate(UpdateResource):
+class ProximityPlacementGroupUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the proximity placement group.
 
     :ivar tags: Resource tags.
@@ -14105,7 +14443,7 @@ class ProximityPlacementGroupUpdate(UpdateResource):
         super().__init__(*args, **kwargs)
 
 
-class ProxyAgentSettings(_Model):
+class ProxyAgentSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies ProxyAgent settings for the virtual machine or virtual machine scale set. Minimum
     api-version: 2023-09-01.
 
@@ -14181,7 +14519,7 @@ class ProxyAgentSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PublicIPAddressSku(_Model):
+class PublicIPAddressSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the public IP Sku. It can only be set with OrchestrationMode as Flexible.
 
     :ivar name: Specify public IP sku name. Known values are: "Basic" and "Standard".
@@ -14218,7 +14556,7 @@ class PublicIPAddressSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PurchasePlan(_Model):
+class PurchasePlan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
 
     :ivar publisher: The publisher ID. Required.
@@ -14258,7 +14596,7 @@ class PurchasePlan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendedMachineConfiguration(_Model):
+class RecommendedMachineConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties describe the recommended machine configuration for this Image Definition. These
     properties are updatable.
 
@@ -14336,7 +14674,7 @@ class RegionalReplicationStatus(_Model):
     """It indicates progress of the replication job."""
 
 
-class RegionalSharingStatus(_Model):
+class RegionalSharingStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gallery regional sharing status.
 
     :ivar region: Region name.
@@ -14375,7 +14713,7 @@ class RegionalSharingStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReimageRecoveryPolicy(_Model):
+class ReimageRecoveryPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used while performing reimage recovery.
 
     :ivar enabled: Specifies whether reimage recovery should be enabled. The default value is
@@ -14423,7 +14761,7 @@ class ReplicationStatus(_Model):
     """This is a summary of replication status for each region."""
 
 
-class RequestRateByIntervalInput(LogAnalyticsInputBase):
+class RequestRateByIntervalInput(LogAnalyticsInputBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Api request input for LogAnalytics getRequestRateByInterval Api.
 
     :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
@@ -14480,7 +14818,7 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         super().__init__(*args, **kwargs)
 
 
-class ResiliencyPolicy(_Model):
+class ResiliencyPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an resiliency policy - AutomaticZoneRebalancingPolicy, ResilientVMCreationPolicy,
     ResilientVMDeletionPolicy and OperationRecoverySettings (version > 2025-11-01).
 
@@ -14545,7 +14883,7 @@ class ResiliencyPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResiliencyProfile(_Model):
+class ResiliencyProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gets resiliency solutions enabled on the VM. This includes backup or disaster recovery
     solutions.
 
@@ -14576,7 +14914,7 @@ class ResiliencyProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResilientVMCreationPolicy(_Model):
+class ResilientVMCreationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used while performing resilient VM creation.
 
     :ivar enabled: Specifies whether resilient VM creation should be enabled on the virtual machine
@@ -14606,7 +14944,7 @@ class ResilientVMCreationPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResilientVMDeletionPolicy(_Model):
+class ResilientVMDeletionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used while performing resilient VM deletion.
 
     :ivar enabled: Specifies whether resilient VM deletion should be enabled on the virtual machine
@@ -14636,7 +14974,7 @@ class ResilientVMDeletionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceRange(_Model):
+class ResourceRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the resource range.
 
     :ivar min: The minimum number of the resource.
@@ -14669,7 +15007,7 @@ class ResourceRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSharingProfile(_Model):
+class ResourceSharingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ResourceSharingProfile.
 
     :ivar subscription_ids: Specifies an array of subscription resource IDs that capacity
@@ -14921,7 +15259,7 @@ class ResourceSkuZoneDetails(_Model):
     """A list of capabilities that are available for the SKU in the specified list of zones."""
 
 
-class RestartRecoveryPolicy(_Model):
+class RestartRecoveryPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used while performing restart recovery.
 
     :ivar enabled: Specifies whether restart recovery should be enabled. The default value is
@@ -14950,7 +15288,7 @@ class RestartRecoveryPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorePoint(ProxyResource):
+class RestorePoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore Point details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15020,7 +15358,7 @@ class RestorePoint(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RestorePointCollection(TrackedResource):
+class RestorePointCollection(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create or update Restore Point collection parameters.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15093,7 +15431,7 @@ class RestorePointCollection(TrackedResource):
             super().__setattr__(key, value)
 
 
-class RestorePointCollectionProperties(_Model):
+class RestorePointCollectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The restore point collection properties.
 
     :ivar source: The properties of the source resource that this restore point collection is
@@ -15150,7 +15488,7 @@ class RestorePointCollectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorePointCollectionSourceProperties(_Model):
+class RestorePointCollectionSourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the source resource that this restore point collection is created from.
 
     :ivar location: Location of the source resource used to create this restore point collection.
@@ -15182,7 +15520,7 @@ class RestorePointCollectionSourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorePointCollectionUpdate(UpdateResource):
+class RestorePointCollectionUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update Restore Point collection parameters.
 
     :ivar tags: Resource tags.
@@ -15241,7 +15579,7 @@ class RestorePointCollectionUpdate(UpdateResource):
             super().__setattr__(key, value)
 
 
-class RestorePointEncryption(_Model):
+class RestorePointEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption at rest settings for disk restore point. It is an optional property that can be
     specified in the input while creating a restore point.
 
@@ -15289,7 +15627,7 @@ class RestorePointEncryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorePointInstanceView(_Model):
+class RestorePointInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a restore point.
 
     :ivar disk_restore_points: The disk restore points information.
@@ -15326,7 +15664,7 @@ class RestorePointInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorePointProperties(_Model):
+class RestorePointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The restore point properties.
 
     :ivar exclude_disks: List of disk resource ids that the customer wishes to exclude from the
@@ -15413,7 +15751,7 @@ class RestorePointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorePointSourceMetadata(_Model):
+class RestorePointSourceMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of the Virtual Machine for which the restore point was created. The
     properties provided are a subset and the snapshot of the overall Virtual Machine properties
     captured at the time of the restore point creation.
@@ -15489,7 +15827,7 @@ class RestorePointSourceMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorePointSourceVMDataDisk(_Model):
+class RestorePointSourceVMDataDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a data disk.
 
     :ivar lun: Gets the logical unit number.
@@ -15548,7 +15886,7 @@ class RestorePointSourceVMDataDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorePointSourceVMOSDisk(_Model):
+class RestorePointSourceVMOSDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an Operating System disk.
 
     :ivar os_type: Gets the Operating System type. Known values are: "Windows" and "Linux".
@@ -15611,7 +15949,7 @@ class RestorePointSourceVMOSDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorePointSourceVMStorageProfile(_Model):
+class RestorePointSourceVMStorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the storage profile.
 
     :ivar os_disk: Gets the OS disk of the VM captured at the time of the restore point creation.
@@ -15696,7 +16034,7 @@ class RollbackStatusInfo(_Model):
     """Error details if OS rollback failed."""
 
 
-class RollingUpgradePolicy(_Model):
+class RollingUpgradePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used while performing a rolling upgrade.
 
     :ivar max_batch_instance_percent: The maximum percent of total virtual machine instances that
@@ -15859,7 +16197,7 @@ class RollingUpgradeRunningStatus(_Model):
     """Last action time of the upgrade."""
 
 
-class RollingUpgradeStatusInfo(TrackedResource):
+class RollingUpgradeStatusInfo(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of the latest virtual machine scale set rolling upgrade.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15952,7 +16290,7 @@ class RollingUpgradeStatusInfoProperties(_Model):
     """Error details for this upgrade, if there are any."""
 
 
-class RunCommandDocumentBase(_Model):
+class RunCommandDocumentBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Run Command metadata.
 
     :ivar schema: The VM run command schema. Required.
@@ -16002,7 +16340,7 @@ class RunCommandDocumentBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunCommandDocument(RunCommandDocumentBase):
+class RunCommandDocument(RunCommandDocumentBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Run Command.
 
     :ivar schema: The VM run command schema. Required.
@@ -16052,7 +16390,7 @@ class RunCommandDocument(RunCommandDocumentBase):
         super().__init__(*args, **kwargs)
 
 
-class RunCommandInput(_Model):
+class RunCommandInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capture Virtual Machine parameters.
 
     :ivar command_id: Specifies a commandId of predefined built-in script. Command IDs available
@@ -16102,7 +16440,7 @@ class RunCommandInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunCommandInputParameter(_Model):
+class RunCommandInputParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a run command parameter.
 
     :ivar name: The run command parameter name. Required.
@@ -16135,7 +16473,7 @@ class RunCommandInputParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunCommandManagedIdentity(_Model):
+class RunCommandManagedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains clientId or objectId (use only one, not both) of a user-assigned managed identity that
     has access to storage blob used in Run Command. Use an empty RunCommandManagedIdentity object
     in case of system-assigned identity. Make sure the Azure storage blob exists in case of
@@ -16180,7 +16518,7 @@ class RunCommandManagedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunCommandParameterDefinition(_Model):
+class RunCommandParameterDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a run command parameter.
 
     :ivar name: The run command parameter name. Required.
@@ -16225,7 +16563,7 @@ class RunCommandParameterDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunCommandResult(_Model):
+class RunCommandResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RunCommandResult.
 
     :ivar value: Run command operation response.
@@ -16255,7 +16593,7 @@ class RunCommandResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScaleInPolicy(_Model):
+class ScaleInPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a scale-in policy for a virtual machine scale set.
 
     :ivar rules: The rules to be followed when scaling-in a virtual machine scale set. <br><br>
@@ -16329,7 +16667,9 @@ class ScaleInPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledEventsAdditionalPublishingTargets(_Model):  # pylint: disable=name-too-long
+class ScheduledEventsAdditionalPublishingTargets(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ScheduledEventsAdditionalPublishingTargets.
 
     :ivar event_grid_and_resource_graph: The configuration parameters used while creating
@@ -16361,7 +16701,7 @@ class ScheduledEventsAdditionalPublishingTargets(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ScheduledEventsPolicy(_Model):
+class ScheduledEventsPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies Redeploy, Reboot and ScheduledEventsAdditionalPublishingTargets Scheduled Event
     related configurations.
 
@@ -16426,7 +16766,7 @@ class ScheduledEventsPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledEventsProfile(_Model):
+class ScheduledEventsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ScheduledEventsProfile.
 
     :ivar terminate_notification_profile: Specifies Terminate Scheduled Event related
@@ -16465,30 +16805,56 @@ class ScheduledEventsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduleProfile(_Model):
-    """Defines the schedule for Block-type capacity reservations. Specifies the schedule during which
-    capacity reservation is active and VM or VMSS resource can be allocated using reservation. This
-    property is required and only supported when the capacity reservation group type is 'Block'.
-    The scheduleProfile, start, and end fields are immutable after creation. Minimum API version:
-    2025-04-01. Please refer to `https://aka.ms/blockcapacityreservation
-    <https://aka.ms/blockcapacityreservation>`_ for more details.
+class ScheduleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the schedule for Block and Future capacity reservations. Specifies the schedule during
+    which capacity reservation is active and VM or VMSS resource can be allocated using
+    reservation. For Block capacity reservations, the scheduleProfile, start, and end fields are
+    immutable after creation. Please refer to `https://aka.ms/blockcapacityreservation
+    <https://aka.ms/blockcapacityreservation>`_ for more details. Minimum API version for Block
+    capacity reservations: 2025-04-01. Future capacity reservations must use this property with
+    only a start time, which can be changed until the ‘modifiableUntil’ time. Please refer to
+    `https://aka.ms/futurecapacityreservation <https://aka.ms/futurecapacityreservation>`_ for more
+    details. Minimum API version for Future capacity reservations: 2026-04-01.
 
-    :ivar start: The required start date for block capacity reservations. Must be today or within
-     56 days in the future. For same-day scheduling, requests must be submitted before 11:30 AM UTC.
-     Example: 2025-06-27.
+    :ivar start: The required start date for Block or Future capacity reservations. Block capacity
+     reservations: Must be today or within 56 days in the future. For same-day scheduling, requests
+     must be submitted before 11:30 AM UTC. Future capacity reservations: Must be at least 7 days in
+     the future, and maximum 6 months in the future. Minimum API version for Future capacity
+     reservations: 2026-04-01. Example: 2025-06-27, applicable for both Block and Future capacity
+     reservations.
     :vartype start: str
-    :ivar end: The required end date for block capacity reservations. Must be after the start date,
+    :ivar end: The required end date for Block capacity reservations. Must be after the start date,
      with a duration of either 1–14 whole days or 3–26 whole weeks. Example: 2025-06-28.
     :vartype end: str
+    :ivar minimum_commitment_days: The minimum number of days that must pass after the start date
+     before a Future capacity reservation can be updated or deleted once it has been committed. Will
+     be populated with a default value if not provided.
+    :vartype minimum_commitment_days: int
+    :ivar modifiable_until: The date/time until which a Future capacity reservation can be updated
+     or deleted. Read-only.
+    :vartype modifiable_until: ~datetime.datetime
     """
 
     start: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The required start date for block capacity reservations. Must be today or within 56 days in the
-     future. For same-day scheduling, requests must be submitted before 11:30 AM UTC. Example:
-     2025-06-27."""
+    """The required start date for Block or Future capacity reservations. Block capacity reservations:
+     Must be today or within 56 days in the future. For same-day scheduling, requests must be
+     submitted before 11:30 AM UTC. Future capacity reservations: Must be at least 7 days in the
+     future, and maximum 6 months in the future. Minimum API version for Future capacity
+     reservations: 2026-04-01. Example: 2025-06-27, applicable for both Block and Future capacity
+     reservations."""
     end: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The required end date for block capacity reservations. Must be after the start date, with a
+    """The required end date for Block capacity reservations. Must be after the start date, with a
      duration of either 1–14 whole days or 3–26 whole weeks. Example: 2025-06-28."""
+    minimum_commitment_days: Optional[int] = rest_field(
+        name="minimumCommitmentDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum number of days that must pass after the start date before a Future capacity
+     reservation can be updated or deleted once it has been committed. Will be populated with a
+     default value if not provided."""
+    modifiable_until: Optional[datetime.datetime] = rest_field(
+        name="modifiableUntil", visibility=["read"], format="rfc3339"
+    )
+    """The date/time until which a Future capacity reservation can be updated or deleted. Read-only."""
 
     @overload
     def __init__(
@@ -16496,6 +16862,7 @@ class ScheduleProfile(_Model):
         *,
         start: Optional[str] = None,
         end: Optional[str] = None,
+        minimum_commitment_days: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -16509,7 +16876,7 @@ class ScheduleProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScriptSource(_Model):
+class ScriptSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The source script from which the Script Version is going to be created.
 
     :ivar script_link: Required. The link of the source script, it must be a readable storage blob
@@ -16548,7 +16915,7 @@ class ScriptSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPostureReference(_Model):
+class SecurityPostureReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security posture to be used in the scale set. Minimum api-version: 2023-03-01.
 
     :ivar id: The security posture reference id in the form of
@@ -16595,7 +16962,7 @@ class SecurityPostureReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPostureReferenceUpdate(_Model):
+class SecurityPostureReferenceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security posture to be used in the scale set. Minimum api-version: 2023-03-01.
 
     :ivar id: The security posture reference id in the form of
@@ -16640,7 +17007,7 @@ class SecurityPostureReferenceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityProfile(_Model):
+class SecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Security profile settings for the virtual machine or virtual machine scale set.
 
     :ivar uefi_settings: Specifies the security settings like secure boot and vTPM used while
@@ -16717,7 +17084,7 @@ class SecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceArtifactReference(_Model):
+class ServiceArtifactReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the service artifact reference id used to set same image version for all virtual
     machines in the scale set when using 'latest' image version. Minimum api-version: 2022-11-01.
 
@@ -16748,7 +17115,7 @@ class ServiceArtifactReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharedGallery(PirSharedGalleryResource):
+class SharedGallery(PirSharedGalleryResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the Shared Gallery that you want to create or update.
 
     :ivar name: Resource name.
@@ -16805,7 +17172,7 @@ class SharedGallery(PirSharedGalleryResource):
             super().__setattr__(key, value)
 
 
-class SharedGalleryDiskImage(_Model):
+class SharedGalleryDiskImage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the disk image base class.
 
     :ivar disk_size_gb: This property indicates the size of the VHD to be created.
@@ -16841,7 +17208,7 @@ class SharedGalleryDiskImage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharedGalleryDataDiskImage(SharedGalleryDiskImage):
+class SharedGalleryDataDiskImage(SharedGalleryDiskImage):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the data disk image.
 
     :ivar disk_size_gb: This property indicates the size of the VHD to be created.
@@ -16879,7 +17246,7 @@ class SharedGalleryDataDiskImage(SharedGalleryDiskImage):
         super().__init__(*args, **kwargs)
 
 
-class SharedGalleryIdentifier(_Model):
+class SharedGalleryIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The identifier information of shared gallery.
 
     :ivar unique_id: The unique id of this shared gallery.
@@ -16907,7 +17274,7 @@ class SharedGalleryIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharedGalleryImage(PirSharedGalleryResource):
+class SharedGalleryImage(PirSharedGalleryResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery image definition that you want to create or update.
 
     :ivar name: Resource name.
@@ -16979,7 +17346,7 @@ class SharedGalleryImage(PirSharedGalleryResource):
             super().__setattr__(key, value)
 
 
-class SharedGalleryImageProperties(_Model):
+class SharedGalleryImageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery image definition.
 
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
@@ -17106,7 +17473,9 @@ class SharedGalleryImageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharedGalleryImageVersion(PirSharedGalleryResource):
+class SharedGalleryImageVersion(
+    PirSharedGalleryResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery image version that you want to create or update.
 
     :ivar name: Resource name.
@@ -17170,7 +17539,7 @@ class SharedGalleryImageVersion(PirSharedGalleryResource):
             super().__setattr__(key, value)
 
 
-class SharedGalleryImageVersionProperties(_Model):
+class SharedGalleryImageVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery image version.
 
     :ivar published_date: The published date of the gallery image version Definition. This property
@@ -17234,7 +17603,7 @@ class SharedGalleryImageVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharedGalleryImageVersionStorageProfile(_Model):
+class SharedGalleryImageVersionStorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the storage profile of a Gallery Image Version.
 
     :ivar os_disk_image: This is the OS disk image.
@@ -17271,7 +17640,7 @@ class SharedGalleryImageVersionStorageProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharedGalleryOSDiskImage(SharedGalleryDiskImage):
+class SharedGalleryOSDiskImage(SharedGalleryDiskImage):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the OS disk image.
 
     :ivar disk_size_gb: This property indicates the size of the VHD to be created.
@@ -17321,7 +17690,7 @@ class ShareInfoElement(_Model):
     """A relative URI containing the ID of the VM that has the disk attached."""
 
 
-class SharingProfile(_Model):
+class SharingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for gallery sharing to subscription or tenant.
 
     :ivar permissions: This property allows you to specify the permission of sharing gallery.
@@ -17367,7 +17736,7 @@ class SharingProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharingProfileGroup(_Model):
+class SharingProfileGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Group of the gallery sharing profile.
 
     :ivar type: This property allows you to specify the type of sharing group. Possible values are:
@@ -17404,7 +17773,7 @@ class SharingProfileGroup(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharingStatus(_Model):
+class SharingStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sharing status of current gallery.
 
     :ivar aggregated_state: Aggregated sharing state of current gallery. Known values are:
@@ -17442,7 +17811,7 @@ class SharingStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharingUpdate(_Model):
+class SharingUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery sharing profile update.
 
     :ivar operation_type: This property allows you to specify the operation type of gallery sharing
@@ -17483,7 +17852,7 @@ class SharingUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set sku. NOTE: If the new VM SKU is not supported on the
     hardware the scale set is currently on, you need to deallocate the VMs in the scale set before
     you modify the SKU name.
@@ -17525,7 +17894,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuProfile(_Model):
+class SkuProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the sku profile for the virtual machine scale set. With this property the customer is
     able to specify a list of VM sizes and an allocation strategy.
 
@@ -17577,7 +17946,7 @@ class SkuProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuProfileVMSize(_Model):
+class SkuProfileVMSize(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the VM Size.
 
     :ivar name: Specifies the name of the VM Size.
@@ -17610,7 +17979,7 @@ class SkuProfileVMSize(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Snapshot(TrackedResource):
+class Snapshot(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Snapshot resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17724,7 +18093,7 @@ class Snapshot(TrackedResource):
             super().__setattr__(key, value)
 
 
-class SnapshotProperties(_Model):
+class SnapshotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Snapshot resource properties.
 
     :ivar time_created: The time when the snapshot was created.
@@ -17939,7 +18308,7 @@ class SnapshotProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SnapshotSku(_Model):
+class SnapshotSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS. This is an optional
     parameter for incremental snapshot and the default behavior is the SKU will be set to the same
     sku as the previous snapshot.
@@ -17975,7 +18344,7 @@ class SnapshotSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SnapshotUpdate(_Model):
+class SnapshotUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Snapshot update resource.
 
     :ivar properties: Snapshot resource update properties.
@@ -18051,7 +18420,7 @@ class SnapshotUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class SnapshotUpdateProperties(_Model):
+class SnapshotUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Snapshot resource update properties.
 
     :ivar os_type: the Operating System type. Known values are: "Windows" and "Linux".
@@ -18169,7 +18538,7 @@ class SnapshotUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftDeletePolicy(_Model):
+class SoftDeletePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about the soft deletion policy of the gallery.
 
     :ivar is_soft_delete_enabled: Enables soft-deletion for resources in this gallery, allowing
@@ -18201,7 +18570,7 @@ class SoftDeletePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceVault(_Model):
+class SourceVault(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The vault id is an Azure Resource Manager Resource id in the form
     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
 
@@ -18230,7 +18599,7 @@ class SourceVault(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpotRestorePolicy(_Model):
+class SpotRestorePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Spot-Try-Restore properties for the virtual machine scale set. With this property
     customer can enable or disable automatic restore of the evicted Spot VMSS VM instances
     opportunistically based on capacity availability and pricing constraint.
@@ -18271,7 +18640,7 @@ class SpotRestorePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshConfiguration(_Model):
+class SshConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SSH configuration for Linux based VMs running on Azure.
 
     :ivar public_keys: The list of SSH public keys used to authenticate with linux based VMs.
@@ -18301,7 +18670,7 @@ class SshConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshGenerateKeyPairInputParameters(_Model):
+class SshGenerateKeyPairInputParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for GenerateSshKeyPair.
 
     :ivar encryption_type: The encryption type of the SSH keys to be generated. See
@@ -18334,7 +18703,7 @@ class SshGenerateKeyPairInputParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshPublicKey(_Model):
+class SshPublicKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about SSH certificate public key and the path on the Linux VM where the
     public key is placed.
 
@@ -18379,7 +18748,7 @@ class SshPublicKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshPublicKeyGenerateKeyPairResult(_Model):
+class SshPublicKeyGenerateKeyPairResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response from generation of an SSH key pair.
 
     :ivar private_key: Private key portion of the key pair used to authenticate to a virtual
@@ -18426,7 +18795,7 @@ class SshPublicKeyGenerateKeyPairResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshPublicKeyResource(TrackedResource):
+class SshPublicKeyResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the SSH public key.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18493,7 +18862,7 @@ class SshPublicKeyResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class SshPublicKeyResourceProperties(_Model):
+class SshPublicKeyResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the SSH public key.
 
     :ivar public_key: SSH public key used to authenticate to a virtual machine through ssh. If this
@@ -18527,7 +18896,7 @@ class SshPublicKeyResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshPublicKeyUpdateResource(UpdateResource):
+class SshPublicKeyUpdateResource(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the SSH public key.
 
     :ivar tags: Resource tags.
@@ -18580,7 +18949,7 @@ class SshPublicKeyUpdateResource(UpdateResource):
             super().__setattr__(key, value)
 
 
-class StartRecoveryPolicy(_Model):
+class StartRecoveryPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used while performing start recovery.
 
     :ivar enabled: Specifies whether start recovery should be enabled. The default value is false.
@@ -18608,7 +18977,7 @@ class StartRecoveryPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageProfile(_Model):
+class StorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the storage settings for the virtual machine disks.
 
     :ivar image_reference: Specifies information about the image to use. You can specify
@@ -18636,6 +19005,10 @@ class StorageProfile(_Model):
      aligned/moved to the VM zone. This is applicable only for VMs with placement property set.
      Please note that this change is irreversible. Minimum api-version: 2024-11-01.
     :vartype align_regional_disks_to_vm_zone: bool
+    :ivar disk_api_version: Specifies the Disk API version used when applying
+     additionalDiskProperties to managed disks. The value must be in the format YYYY-MM-DD (e.g.,
+     "2026-03-02"). Known values are: "2025-01-02" and "2026-03-02".
+    :vartype disk_api_version: str or ~azure.mgmt.compute.models.DiskApiVersion
     """
 
     image_reference: Optional["_models.ImageReference"] = rest_field(
@@ -18673,6 +19046,12 @@ class StorageProfile(_Model):
     """Specifies whether the regional disks should be aligned/moved to the VM zone. This is applicable
      only for VMs with placement property set. Please note that this change is irreversible. Minimum
      api-version: 2024-11-01."""
+    disk_api_version: Optional[Union[str, "_models.DiskApiVersion"]] = rest_field(
+        name="diskApiVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Disk API version used when applying additionalDiskProperties to managed disks.
+     The value must be in the format YYYY-MM-DD (e.g., \"2026-03-02\"). Known values are:
+     \"2025-01-02\" and \"2026-03-02\"."""
 
     @overload
     def __init__(
@@ -18683,6 +19062,7 @@ class StorageProfile(_Model):
         data_disks: Optional[list["_models.DataDisk"]] = None,
         disk_controller_type: Optional[Union[str, "_models.DiskControllerTypes"]] = None,
         align_regional_disks_to_vm_zone: Optional[bool] = None,
+        disk_api_version: Optional[Union[str, "_models.DiskApiVersion"]] = None,
     ) -> None: ...
 
     @overload
@@ -18696,7 +19076,7 @@ class StorageProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubResourceWithColocationStatus(SubResource):
+class SubResourceWithColocationStatus(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SubResourceWithColocationStatus.
 
     :ivar id: Resource Id.
@@ -18730,7 +19110,7 @@ class SubResourceWithColocationStatus(SubResource):
         super().__init__(*args, **kwargs)
 
 
-class SupportedCapabilities(_Model):
+class SupportedCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of supported capabilities persisted on the disk resource for VM use.
 
     :ivar disk_controller_types: The disk controllers that an OS disk supports. If set it can be
@@ -18789,7 +19169,7 @@ class SupportedCapabilities(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -18856,7 +19236,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetRegion(_Model):
+class TargetRegion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the target region information.
 
     :ivar name: The name of the region. Required.
@@ -18929,7 +19309,7 @@ class TargetRegion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TerminateNotificationProfile(_Model):
+class TerminateNotificationProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TerminateNotificationProfile.
 
     :ivar not_before_timeout: Configurable length of time a Virtual Machine being deleted will have
@@ -18969,7 +19349,7 @@ class TerminateNotificationProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThrottledRequestsInput(LogAnalyticsInputBase):
+class ThrottledRequestsInput(LogAnalyticsInputBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Api request input for LogAnalytics getThrottledRequests Api.
 
     :ivar blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics Api
@@ -19016,7 +19396,7 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
         super().__init__(*args, **kwargs)
 
 
-class UefiKey(_Model):
+class UefiKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A UEFI key signature.
 
     :ivar type: The type of key signature. Known values are: "sha256" and "x509".
@@ -19051,7 +19431,7 @@ class UefiKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UefiKeySignatures(_Model):
+class UefiKeySignatures(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional UEFI key signatures that will be added to the image in addition to the signature
     templates.
 
@@ -19095,7 +19475,7 @@ class UefiKeySignatures(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UefiSettings(_Model):
+class UefiSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security settings like secure boot and vTPM used while creating the virtual
     machine. Minimum api-version: 2020-12-01.
 
@@ -19215,7 +19595,7 @@ class UpgradeOperationHistoryStatus(_Model):
     """End time of the upgrade."""
 
 
-class UpgradePolicy(_Model):
+class UpgradePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an upgrade policy - automatic, manual, or rolling.
 
     :ivar mode: Specifies the mode of an upgrade to virtual machines in the scale set.<br /><br />
@@ -19269,7 +19649,7 @@ class UpgradePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Usage(_Model):
+class Usage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes Compute Resource Usage.
 
     :ivar unit: An enum describing the unit of usage measurement. Required. Default value is
@@ -19313,7 +19693,7 @@ class Usage(_Model):
         self.unit: Literal["Count"] = "Count"
 
 
-class UsageName(_Model):
+class UsageName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Usage Names.
 
     :ivar value: The name of the resource.
@@ -19348,7 +19728,7 @@ class UsageName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserArtifactManage(_Model):
+class UserArtifactManage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UserArtifactManage.
 
     :ivar install: Required. The path and arguments to install the gallery application. This is
@@ -19397,7 +19777,7 @@ class UserArtifactManage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserArtifactSettings(_Model):
+class UserArtifactSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional settings for the VM app that contains the target package and config file name when
     it is deployed to target VM or VM scale set.
 
@@ -19454,7 +19834,7 @@ class UserArtifactSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserArtifactSource(_Model):
+class UserArtifactSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The source image from which the Image Version is going to be created.
 
     :ivar media_link: Required. The mediaLink of the artifact, must be a readable storage page
@@ -19506,7 +19886,7 @@ class UserAssignedIdentitiesValue(_Model):
     """The client id of user assigned identity."""
 
 
-class UserInitiatedReboot(_Model):
+class UserInitiatedReboot(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies Reboot related Scheduled Event related configurations.
 
     :ivar automatically_approve: Specifies Reboot Scheduled Event related configurations.
@@ -19536,7 +19916,7 @@ class UserInitiatedReboot(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserInitiatedRedeploy(_Model):
+class UserInitiatedRedeploy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies Redeploy related Scheduled Event related configurations.
 
     :ivar automatically_approve: Specifies Redeploy Scheduled Event related configurations.
@@ -19566,7 +19946,7 @@ class UserInitiatedRedeploy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidationsProfile(_Model):
+class ValidationsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the validations profile of a Gallery Image Version.
 
     :ivar validation_etag: The published time of the image version.
@@ -19610,7 +19990,7 @@ class ValidationsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultCertificate(_Model):
+class VaultCertificate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a single certificate reference in a Key Vault, and where the certificate should
     reside on the VM.
 
@@ -19676,7 +20056,7 @@ class VaultCertificate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultSecretGroup(_Model):
+class VaultSecretGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a set of certificates which are all in the same Key Vault.
 
     :ivar source_vault: The relative URL of the Key Vault containing all of the certificates in
@@ -19715,7 +20095,7 @@ class VaultSecretGroup(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDisk(_Model):
+class VirtualHardDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the uri of a disk.
 
     :ivar uri: Specifies the virtual hard disk's uri.
@@ -19743,7 +20123,7 @@ class VirtualHardDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachine(TrackedResource):
+class VirtualMachine(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19898,7 +20278,7 @@ class VirtualMachine(TrackedResource):
             super().__setattr__(key, value)
 
 
-class VirtualMachineAgentInstanceView(_Model):
+class VirtualMachineAgentInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of the VM Agent running on the virtual machine.
 
     :ivar vm_agent_version: The VM Agent full version.
@@ -20005,7 +20385,7 @@ class VirtualMachineAssessPatchesResult(_Model):
      the list of them."""
 
 
-class VirtualMachineCaptureParameters(_Model):
+class VirtualMachineCaptureParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capture Virtual Machine parameters.
 
     :ivar vhd_prefix: The captured virtual hard disk's name prefix. Required.
@@ -20047,7 +20427,7 @@ class VirtualMachineCaptureParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineCaptureResult(SubResource):
+class VirtualMachineCaptureResult(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Output of virtual machine capture operation.
 
     :ivar id: Resource Id.
@@ -20089,7 +20469,189 @@ class VirtualMachineCaptureResult(SubResource):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineExtension(TrackedResource):
+class VirtualMachineDiagnosticRunCommand(
+    TrackedResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Describes a Virtual Machine diagnostic run command.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Describes the properties of a Virtual Machine diagnostic run command.
+    :vartype properties: ~azure.mgmt.compute.models.VirtualMachineRunCommandProperties
+    """
+
+    properties: Optional["_models.VirtualMachineRunCommandProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Describes the properties of a Virtual Machine diagnostic run command."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.VirtualMachineRunCommandProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualMachineDiskProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies the properties of a managed disk that can be set at the time of implicit creation of
+    the disk.
+
+    :ivar tier: Performance tier of the disk (e.g., P4, S10) as described here:
+     `https://azure.microsoft.com/en-us/pricing/details/managed-disks/
+     <https://azure.microsoft.com/en-us/pricing/details/managed-disks/>`_. Does not apply to Ultra
+     disks.
+    :vartype tier: str
+    :ivar bursting_enabled: Set to true to enable bursting beyond the provisioned performance
+     target of the disk. Bursting is disabled by default. Does not apply to Ultra disks.
+    :vartype bursting_enabled: bool
+    :ivar performance_plus: Set this flag to true to get a boost on the performance target of the
+     disk deployed. This flag can only be set on disk creation time and cannot be disabled after
+     enabled.
+    :vartype performance_plus: bool
+    :ivar optimized_for_frequent_attach: Setting this property to true improves reliability and
+     performance of data disks that are frequently (more than 5 times a day) detached from one
+     virtual machine and attached to another. This property should not be set for disks that are not
+     detached and attached frequently as it causes the disks to not align with the fault domain of
+     the virtual machine.
+    :vartype optimized_for_frequent_attach: bool
+    :ivar availability_policy: In the case of an availability or connectivity issue with the disk,
+     specify the behavior of your VM.
+    :vartype availability_policy: ~azure.mgmt.compute.models.DiskAvailabilityPolicy
+    :ivar max_shares: The maximum number of VMs that can attach to the disk at the same time. Value
+     greater than one indicates a disk that can be mounted on multiple VMs at the same time. Applies
+     to data disks only.
+    :vartype max_shares: int
+    :ivar network_access_policy: Policy for accessing the disk via network. Known values are:
+     "AllowAll", "AllowPrivate", and "DenyAll".
+    :vartype network_access_policy: str or
+     ~azure.mgmt.compute.models.VirtualMachineDiskNetworkAccessPolicy
+    :ivar disk_access_id: Azure resource Id of the DiskAccess resource for using private endpoints
+     on disks.
+    :vartype disk_access_id: str
+    :ivar disk_iops_read_only: The total number of IOPS that will be allowed across all VMs
+     mounting the shared disk as ReadOnly. One operation can transfer between 4k and 256k bytes.
+    :vartype disk_iops_read_only: int
+    :ivar disk_m_bps_read_only: The total throughput (MBps) that will be allowed across all VMs
+     mounting the shared disk as ReadOnly. MBps means millions of bytes per second - MB here uses
+     the ISO notation, of powers of 10.
+    :vartype disk_m_bps_read_only: int
+    :ivar logical_sector_size: Logical sector size in bytes for Ultra Disks. Supported values are
+     512 and 4096. 4096 is the default.
+    :vartype logical_sector_size: int
+    """
+
+    tier: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Performance tier of the disk (e.g., P4, S10) as described here:
+     `https://azure.microsoft.com/en-us/pricing/details/managed-disks/
+     <https://azure.microsoft.com/en-us/pricing/details/managed-disks/>`_. Does not apply to Ultra
+     disks."""
+    bursting_enabled: Optional[bool] = rest_field(
+        name="burstingEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set to true to enable bursting beyond the provisioned performance target of the disk. Bursting
+     is disabled by default. Does not apply to Ultra disks."""
+    performance_plus: Optional[bool] = rest_field(
+        name="performancePlus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set this flag to true to get a boost on the performance target of the disk deployed. This flag
+     can only be set on disk creation time and cannot be disabled after enabled."""
+    optimized_for_frequent_attach: Optional[bool] = rest_field(
+        name="optimizedForFrequentAttach", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Setting this property to true improves reliability and performance of data disks that are
+     frequently (more than 5 times a day) detached from one virtual machine and attached to another.
+     This property should not be set for disks that are not detached and attached frequently as it
+     causes the disks to not align with the fault domain of the virtual machine."""
+    availability_policy: Optional["_models.DiskAvailabilityPolicy"] = rest_field(
+        name="availabilityPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """In the case of an availability or connectivity issue with the disk, specify the behavior of
+     your VM."""
+    max_shares: Optional[int] = rest_field(name="maxShares", visibility=["read", "create", "update", "delete", "query"])
+    """The maximum number of VMs that can attach to the disk at the same time. Value greater than one
+     indicates a disk that can be mounted on multiple VMs at the same time. Applies to data disks
+     only."""
+    network_access_policy: Optional[Union[str, "_models.VirtualMachineDiskNetworkAccessPolicy"]] = rest_field(
+        name="networkAccessPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Policy for accessing the disk via network. Known values are: \"AllowAll\", \"AllowPrivate\",
+     and \"DenyAll\"."""
+    disk_access_id: Optional[str] = rest_field(
+        name="diskAccessId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource Id of the DiskAccess resource for using private endpoints on disks."""
+    disk_iops_read_only: Optional[int] = rest_field(
+        name="diskIOPSReadOnly", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The total number of IOPS that will be allowed across all VMs mounting the shared disk as
+     ReadOnly. One operation can transfer between 4k and 256k bytes."""
+    disk_m_bps_read_only: Optional[int] = rest_field(
+        name="diskMBpsReadOnly", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The total throughput (MBps) that will be allowed across all VMs mounting the shared disk as
+     ReadOnly. MBps means millions of bytes per second - MB here uses the ISO notation, of powers of
+     10."""
+    logical_sector_size: Optional[int] = rest_field(
+        name="logicalSectorSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Logical sector size in bytes for Ultra Disks. Supported values are 512 and 4096. 4096 is the
+     default."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tier: Optional[str] = None,
+        bursting_enabled: Optional[bool] = None,
+        performance_plus: Optional[bool] = None,
+        optimized_for_frequent_attach: Optional[bool] = None,
+        availability_policy: Optional["_models.DiskAvailabilityPolicy"] = None,
+        max_shares: Optional[int] = None,
+        network_access_policy: Optional[Union[str, "_models.VirtualMachineDiskNetworkAccessPolicy"]] = None,
+        disk_access_id: Optional[str] = None,
+        disk_iops_read_only: Optional[int] = None,
+        disk_m_bps_read_only: Optional[int] = None,
+        logical_sector_size: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualMachineExtension(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine Extension.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20170,12 +20732,15 @@ class VirtualMachineExtension(TrackedResource):
             super().__setattr__(key, value)
 
 
-class VirtualMachineExtensionHandlerInstanceView(_Model):  # pylint: disable=name-too-long
+class VirtualMachineExtensionHandlerInstanceView(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The instance view of a virtual machine extension handler.
 
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
     :vartype type: str
-    :ivar type_handler_version: Specifies the version of the script handler.
+    :ivar type_handler_version: Specifies the Major.Minor.Patch.Hotfix version of the script
+     handler. Azure platform will deliver the latest Patch.Hotfix version in the Major.Minor series.
     :vartype type_handler_version: str
     :ivar status: The extension handler status.
     :vartype status: ~azure.mgmt.compute.models.InstanceViewStatus
@@ -20186,7 +20751,8 @@ class VirtualMachineExtensionHandlerInstanceView(_Model):  # pylint: disable=nam
     type_handler_version: Optional[str] = rest_field(
         name="typeHandlerVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the version of the script handler."""
+    """Specifies the Major.Minor.Patch.Hotfix version of the script handler. Azure platform will
+     deliver the latest Patch.Hotfix version in the Major.Minor series."""
     status: Optional["_models.InstanceViewStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -20212,7 +20778,7 @@ class VirtualMachineExtensionHandlerInstanceView(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineExtensionImage(TrackedResource):
+class VirtualMachineExtensionImage(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine Extension Image.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20245,6 +20811,11 @@ class VirtualMachineExtensionImage(TrackedResource):
         "handler_schema",
         "vm_scale_set_enabled",
         "supports_multiple_extensions",
+        "release_notes",
+        "release_category",
+        "urgency_level",
+        "run_profile",
+        "extension_feature_metadata",
     ]
 
     @overload
@@ -20285,7 +20856,7 @@ class VirtualMachineExtensionImage(TrackedResource):
             super().__setattr__(key, value)
 
 
-class VirtualMachineExtensionImageProperties(_Model):
+class VirtualMachineExtensionImageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine Extension Image.
 
     :ivar operating_system: The operating system this extension supports. Required.
@@ -20301,6 +20872,21 @@ class VirtualMachineExtensionImageProperties(_Model):
     :vartype vm_scale_set_enabled: bool
     :ivar supports_multiple_extensions: Whether the handler can support multiple extensions.
     :vartype supports_multiple_extensions: bool
+    :ivar release_notes: Summary of changes or updates in this extension version.
+    :vartype release_notes: str
+    :ivar release_category: Categorizes the type of change introduced (e.g., BugFix, SecurityFix,
+     CompatibilityUpdate, NewFeature, Other). Known values are: "Other", "BugFix", "SecurityFix",
+     "CompatibilityUpdate", and "NewFeature".
+    :vartype release_category: str or ~azure.mgmt.compute.models.ReleaseCategory
+    :ivar urgency_level: Indicates the urgency level for applying this extension update. Known
+     values are: "Regular", "Expedited", and "Emergency".
+    :vartype urgency_level: str or ~azure.mgmt.compute.models.UrgencyLevel
+    :ivar run_profile: Specifies when and how the extension should be executed. Known values are:
+     "Other", "RunOnce", "LongRunning", and "Hybrid".
+    :vartype run_profile: str or ~azure.mgmt.compute.models.RunProfile
+    :ivar extension_feature_metadata: Additional metadata about extension features, including
+     compliance and capability tags.
+    :vartype extension_feature_metadata: ~azure.mgmt.compute.models.ExtensionFeatureMetadata
     """
 
     operating_system: str = rest_field(
@@ -20322,6 +20908,24 @@ class VirtualMachineExtensionImageProperties(_Model):
         name="supportsMultipleExtensions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether the handler can support multiple extensions."""
+    release_notes: Optional[str] = rest_field(name="releaseNotes", visibility=["read"])
+    """Summary of changes or updates in this extension version."""
+    release_category: Optional[Union[str, "_models.ReleaseCategory"]] = rest_field(
+        name="releaseCategory", visibility=["read"]
+    )
+    """Categorizes the type of change introduced (e.g., BugFix, SecurityFix, CompatibilityUpdate,
+     NewFeature, Other). Known values are: \"Other\", \"BugFix\", \"SecurityFix\",
+     \"CompatibilityUpdate\", and \"NewFeature\"."""
+    urgency_level: Optional[Union[str, "_models.UrgencyLevel"]] = rest_field(name="urgencyLevel", visibility=["read"])
+    """Indicates the urgency level for applying this extension update. Known values are: \"Regular\",
+     \"Expedited\", and \"Emergency\"."""
+    run_profile: Optional[Union[str, "_models.RunProfile"]] = rest_field(name="runProfile", visibility=["read"])
+    """Specifies when and how the extension should be executed. Known values are: \"Other\",
+     \"RunOnce\", \"LongRunning\", and \"Hybrid\"."""
+    extension_feature_metadata: Optional["_models.ExtensionFeatureMetadata"] = rest_field(
+        name="extensionFeatureMetadata", visibility=["read"]
+    )
+    """Additional metadata about extension features, including compliance and capability tags."""
 
     @overload
     def __init__(
@@ -20345,14 +20949,15 @@ class VirtualMachineExtensionImageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineExtensionInstanceView(_Model):
+class VirtualMachineExtensionInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a virtual machine extension.
 
     :ivar name: The virtual machine extension name.
     :vartype name: str
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
     :vartype type: str
-    :ivar type_handler_version: Specifies the version of the script handler.
+    :ivar type_handler_version: Specifies the Major.Minor.Patch.Hotfix version of the script
+     handler. Azure platform will deliver the latest Patch.Hotfix version in the Major.Minor series.
     :vartype type_handler_version: str
     :ivar substatuses: The resource status information.
     :vartype substatuses: list[~azure.mgmt.compute.models.InstanceViewStatus]
@@ -20367,7 +20972,8 @@ class VirtualMachineExtensionInstanceView(_Model):
     type_handler_version: Optional[str] = rest_field(
         name="typeHandlerVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the version of the script handler."""
+    """Specifies the Major.Minor.Patch.Hotfix version of the script handler. Azure platform will
+     deliver the latest Patch.Hotfix version in the Major.Minor series."""
     substatuses: Optional[list["_models.InstanceViewStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -20399,7 +21005,7 @@ class VirtualMachineExtensionInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineExtensionProperties(_Model):
+class VirtualMachineExtensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine Extension.
 
     :ivar force_update_tag: How the extension handler should be forced to update even if the
@@ -20409,7 +21015,9 @@ class VirtualMachineExtensionProperties(_Model):
     :vartype publisher: str
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
     :vartype type: str
-    :ivar type_handler_version: Specifies the version of the script handler.
+    :ivar type_handler_version: Specifies the Major.Minor version of the script handler. Customer
+     is able to specify only the Major.Minor version of an extension, Azure platform will deliver
+     the latest Patch.Hotfix version in the Major.Minor series.
     :vartype type_handler_version: str
     :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
      version if one is available at deployment time. Once deployed, however, the extension will not
@@ -20451,7 +21059,9 @@ class VirtualMachineExtensionProperties(_Model):
     type_handler_version: Optional[str] = rest_field(
         name="typeHandlerVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the version of the script handler."""
+    """Specifies the Major.Minor version of the script handler. Customer is able to specify only the
+     Major.Minor version of an extension, Azure platform will deliver the latest Patch.Hotfix
+     version in the Major.Minor series."""
     auto_upgrade_minor_version: Optional[bool] = rest_field(
         name="autoUpgradeMinorVersion", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -20520,7 +21130,7 @@ class VirtualMachineExtensionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineExtensionsListResult(_Model):
+class VirtualMachineExtensionsListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The List Extension operation response.
 
     :ivar value: The list of extensions.
@@ -20550,7 +21160,7 @@ class VirtualMachineExtensionsListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineExtensionUpdate(UpdateResource):
+class VirtualMachineExtensionUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine Extension.
 
     :ivar tags: Resource tags.
@@ -20614,7 +21224,7 @@ class VirtualMachineExtensionUpdate(UpdateResource):
             super().__setattr__(key, value)
 
 
-class VirtualMachineExtensionUpdateProperties(_Model):
+class VirtualMachineExtensionUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine Extension.
 
     :ivar force_update_tag: How the extension handler should be forced to update even if the
@@ -20624,7 +21234,9 @@ class VirtualMachineExtensionUpdateProperties(_Model):
     :vartype publisher: str
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
     :vartype type: str
-    :ivar type_handler_version: Specifies the version of the script handler.
+    :ivar type_handler_version: Specifies the Major.Minor version of the script handler. Customer
+     is able to specify only the Major.Minor version of an extension, Azure platform will deliver
+     the latest Patch.Hotfix version in the Major.Minor series.
     :vartype type_handler_version: str
     :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
      version if one is available at deployment time. Once deployed, however, the extension will not
@@ -20659,7 +21271,9 @@ class VirtualMachineExtensionUpdateProperties(_Model):
     type_handler_version: Optional[str] = rest_field(
         name="typeHandlerVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the version of the script handler."""
+    """Specifies the Major.Minor version of the script handler. Customer is able to specify only the
+     Major.Minor version of an extension, Azure platform will deliver the latest Patch.Hotfix
+     version in the Major.Minor series."""
     auto_upgrade_minor_version: Optional[bool] = rest_field(
         name="autoUpgradeMinorVersion", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -20727,7 +21341,7 @@ class VirtualMachineHealthStatus(_Model):
     """The health status information for the VM."""
 
 
-class VirtualMachineIdentity(_Model):
+class VirtualMachineIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the virtual machine.
 
     :ivar principal_id: The principal id of virtual machine identity. This property will only be
@@ -20787,7 +21401,7 @@ class VirtualMachineIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineImageResource(SubResource):
+class VirtualMachineImageResource(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual machine image resource information.
 
     :ivar id: Resource Id.
@@ -20839,7 +21453,7 @@ class VirtualMachineImageResource(SubResource):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineImage(VirtualMachineImageResource):
+class VirtualMachineImage(VirtualMachineImageResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine Image.
 
     :ivar id: Resource Id.
@@ -20916,7 +21530,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
             super().__setattr__(key, value)
 
 
-class VirtualMachineImageFeature(_Model):
+class VirtualMachineImageFeature(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies additional capabilities supported by the image.
 
     :ivar name: The name of the feature.
@@ -20949,7 +21563,7 @@ class VirtualMachineImageFeature(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineImageProperties(_Model):
+class VirtualMachineImageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine Image.
 
     :ivar plan: Used for establishing the purchase context of any 3rd Party artifact through
@@ -21035,7 +21649,7 @@ class VirtualMachineImageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstallPatchesParameters(_Model):
+class VirtualMachineInstallPatchesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for InstallPatches as directly received by the API.
 
     :ivar maximum_duration: Specifies the maximum amount of time that the operation will run. It
@@ -21171,7 +21785,7 @@ class VirtualMachineInstallPatchesResult(_Model):
      the list of them."""
 
 
-class VirtualMachineInstanceView(_Model):
+class VirtualMachineInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a virtual machine.
 
     :ivar platform_update_domain: Specifies the update domain of the virtual machine.
@@ -21217,6 +21831,12 @@ class VirtualMachineInstanceView(_Model):
     :ivar interconnect_instance_view: The Interconnect runtime view of the Virtual Machine. Minimum
      api-version: 2026-03-01.
     :vartype interconnect_instance_view: ~azure.mgmt.compute.models.InterconnectInstanceView
+    :ivar capacity_reservation_type: Specifies which type of capacity reservation the virtual
+     machine will consume capacity from if eligible or whether it is explicitly opted out from being
+     associated and consuming capacity from any reserved capacity available in the subscription.
+     Minimum api-version: 2026-04-01. Known values are: "NotEligible", "Targeted", "Open",
+     "Disabled", and "Block".
+    :vartype capacity_reservation_type: str or ~azure.mgmt.compute.models.CapacityReservationType
     """
 
     platform_update_domain: Optional[int] = rest_field(
@@ -21286,6 +21906,13 @@ class VirtualMachineInstanceView(_Model):
         name="interconnectInstanceView", visibility=["read"]
     )
     """The Interconnect runtime view of the Virtual Machine. Minimum api-version: 2026-03-01."""
+    capacity_reservation_type: Optional[Union[str, "_models.CapacityReservationType"]] = rest_field(
+        name="capacityReservationType", visibility=["read"]
+    )
+    """Specifies which type of capacity reservation the virtual machine will consume capacity from if
+     eligible or whether it is explicitly opted out from being associated and consuming capacity
+     from any reserved capacity available in the subscription. Minimum api-version: 2026-04-01.
+     Known values are: \"NotEligible\", \"Targeted\", \"Open\", \"Disabled\", and \"Block\"."""
 
     @overload
     def __init__(
@@ -21318,13 +21945,16 @@ class VirtualMachineInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineIpTag(_Model):
+class VirtualMachineIpTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the IP tag associated with the public IP address.
 
     :ivar ip_tag_type: IP tag type. Example: FirstPartyUsage.
     :vartype ip_tag_type: str
     :ivar tag: IP tag associated with the public IP. Example: SQL, Storage etc.
     :vartype tag: str
+    :ivar first_party_service_tag_id: The first party service tag resource identifier associated
+     with the public IP address.
+    :vartype first_party_service_tag_id: str
     """
 
     ip_tag_type: Optional[str] = rest_field(
@@ -21333,6 +21963,10 @@ class VirtualMachineIpTag(_Model):
     """IP tag type. Example: FirstPartyUsage."""
     tag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """IP tag associated with the public IP. Example: SQL, Storage etc."""
+    first_party_service_tag_id: Optional[str] = rest_field(
+        name="firstPartyServiceTagId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The first party service tag resource identifier associated with the public IP address."""
 
     @overload
     def __init__(
@@ -21340,6 +21974,7 @@ class VirtualMachineIpTag(_Model):
         *,
         ip_tag_type: Optional[str] = None,
         tag: Optional[str] = None,
+        first_party_service_tag_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -21353,7 +21988,9 @@ class VirtualMachineIpTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineNetworkInterfaceConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineNetworkInterfaceConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine network interface configurations.
 
     :ivar name: The network interface configuration name. Required.
@@ -21429,7 +22066,9 @@ class VirtualMachineNetworkInterfaceConfiguration(_Model):  # pylint: disable=na
             super().__setattr__(key, value)
 
 
-class VirtualMachineNetworkInterfaceConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachineNetworkInterfaceConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine network profile's IP configuration.
 
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
@@ -21545,7 +22184,9 @@ class VirtualMachineNetworkInterfaceConfigurationProperties(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines network configuration's DNS settings.
 
     :ivar dns_servers: List of DNS servers IP addresses.
@@ -21575,7 +22216,9 @@ class VirtualMachineNetworkInterfaceDnsSettingsConfiguration(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineNetworkInterfaceIPConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineNetworkInterfaceIPConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine network profile's IP configuration.
 
     :ivar name: The IP configuration name. Required.
@@ -21639,7 +22282,9 @@ class VirtualMachineNetworkInterfaceIPConfiguration(_Model):  # pylint: disable=
             super().__setattr__(key, value)
 
 
-class VirtualMachineNetworkInterfaceIPConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachineNetworkInterfaceIPConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine network interface IP configuration properties.
 
     :ivar subnet: Specifies the identifier of the subnet.
@@ -21726,7 +22371,7 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachinePatchStatus(_Model):
+class VirtualMachinePatchStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of virtual machine patch operations.
 
     :ivar available_patch_summary: The available patch summary of the latest assessment operation
@@ -21772,7 +22417,7 @@ class VirtualMachinePatchStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineProperties(_Model):
+class VirtualMachineProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine.
 
     :ivar hardware_profile: Specifies the hardware settings for the virtual machine.
@@ -21820,7 +22465,7 @@ class VirtualMachineProperties(_Model):
      the virtual machine should be assigned to. Minimum api-version: 2018-04-01.
     :vartype proximity_placement_group: ~azure.mgmt.compute.models.SubResource
     :ivar priority: Specifies the priority for the virtual machine. Minimum api-version:
-     2019-03-01. Known values are: "Regular", "Low", and "Spot".
+     2019-03-01. Known values are: "Regular", "Low", "Spot", and "SpotPlus".
     :vartype priority: str or ~azure.mgmt.compute.models.VirtualMachinePriorityTypes
     :ivar eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
      Azure Spot scale set. For Azure Spot virtual machines, both 'Deallocate' and 'Delete' are
@@ -21954,7 +22599,7 @@ class VirtualMachineProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the priority for the virtual machine. Minimum api-version: 2019-03-01. Known values
-     are: \"Regular\", \"Low\", and \"Spot\"."""
+     are: \"Regular\", \"Low\", \"Spot\", and \"SpotPlus\"."""
     eviction_policy: Optional[Union[str, "_models.VirtualMachineEvictionPolicyTypes"]] = rest_field(
         name="evictionPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -22083,7 +22728,9 @@ class VirtualMachineProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachinePublicIPAddressConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachinePublicIPAddressConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines IP Configuration's PublicIPAddress configuration.
 
     :ivar name: The publicIP address configuration name. Required.
@@ -22159,7 +22806,9 @@ class VirtualMachinePublicIPAddressConfiguration(_Model):  # pylint: disable=nam
             super().__setattr__(key, value)
 
 
-class VirtualMachinePublicIPAddressConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachinePublicIPAddressConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines IP Configuration's PublicIPAddress configuration.
 
     :ivar idle_timeout_in_minutes: The idle timeout of the public IP address.
@@ -22240,7 +22889,9 @@ class VirtualMachinePublicIPAddressConfigurationProperties(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachinePublicIPAddressDnsSettingsConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachinePublicIPAddressDnsSettingsConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines network configuration's DNS settings.
 
     :ivar domain_name_label: The Domain name label prefix of the PublicIPAddress resources that
@@ -22287,7 +22938,7 @@ class VirtualMachinePublicIPAddressDnsSettingsConfiguration(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineReimageParameters(_Model):
+class VirtualMachineReimageParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for Reimaging Virtual Machine. NOTE: Virtual Machine OS disk will always be
     reimaged.
 
@@ -22335,7 +22986,7 @@ class VirtualMachineReimageParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineRunCommand(TrackedResource):
+class VirtualMachineRunCommand(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine run command.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22417,7 +23068,7 @@ class VirtualMachineRunCommand(TrackedResource):
             super().__setattr__(key, value)
 
 
-class VirtualMachineRunCommandInstanceView(_Model):
+class VirtualMachineRunCommandInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a virtual machine run command.
 
     :ivar execution_state: Script execution status. Known values are: "Unknown", "Pending",
@@ -22492,7 +23143,7 @@ class VirtualMachineRunCommandInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineRunCommandProperties(_Model):
+class VirtualMachineRunCommandProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine run command.
 
     :ivar source: The source of the run command script.
@@ -22668,7 +23319,7 @@ class VirtualMachineRunCommandProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineRunCommandScriptSource(_Model):
+class VirtualMachineRunCommandScriptSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the script sources for run command. Use only one of these script sources: script,
     scriptUri, commandId, galleryScriptReferenceId.
 
@@ -22759,7 +23410,7 @@ class VirtualMachineRunCommandScriptSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineRunCommandUpdate(UpdateResource):
+class VirtualMachineRunCommandUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine run command.
 
     :ivar tags: Resource tags.
@@ -22827,7 +23478,7 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSet(TrackedResource):
+class VirtualMachineScaleSet(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine Scale Set.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22971,7 +23622,7 @@ class VirtualMachineScaleSet(TrackedResource):
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetDataDisk(_Model):
+class VirtualMachineScaleSetDataDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set data disk.
 
     :ivar name: The disk name.
@@ -23101,7 +23752,9 @@ class VirtualMachineScaleSetDataDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetExtension(SubResourceReadOnly):
+class VirtualMachineScaleSetExtension(
+    SubResourceReadOnly
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine Scale Set Extension.
 
     :ivar id: Resource Id.
@@ -23175,7 +23828,7 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetExtensionProfile(_Model):
+class VirtualMachineScaleSetExtensionProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set extension profile.
 
     :ivar extensions: The virtual machine scale set child extension resources.
@@ -23216,7 +23869,9 @@ class VirtualMachineScaleSetExtensionProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetExtensionProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetExtensionProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine Scale Set Extension.
 
     :ivar force_update_tag: If a value is provided and is different from the previous value, the
@@ -23226,7 +23881,9 @@ class VirtualMachineScaleSetExtensionProperties(_Model):  # pylint: disable=name
     :vartype publisher: str
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
     :vartype type: str
-    :ivar type_handler_version: Specifies the version of the script handler.
+    :ivar type_handler_version: Specifies the Major.Minor version of the script handler. Customer
+     is able to specify only the Major.Minor version of an extension, Azure platform will deliver
+     the latest Patch.Hotfix version in the Major.Minor series.
     :vartype type_handler_version: str
     :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
      version if one is available at deployment time. Once deployed, however, the extension will not
@@ -23266,7 +23923,9 @@ class VirtualMachineScaleSetExtensionProperties(_Model):  # pylint: disable=name
     type_handler_version: Optional[str] = rest_field(
         name="typeHandlerVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the version of the script handler."""
+    """Specifies the Major.Minor version of the script handler. Customer is able to specify only the
+     Major.Minor version of an extension, Azure platform will deliver the latest Patch.Hotfix
+     version in the Major.Minor series."""
     auto_upgrade_minor_version: Optional[bool] = rest_field(
         name="autoUpgradeMinorVersion", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -23330,7 +23989,9 @@ class VirtualMachineScaleSetExtensionProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
+class VirtualMachineScaleSetExtensionUpdate(
+    SubResourceReadOnly
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine Scale Set Extension.
 
     :ivar id: Resource Id.
@@ -23403,13 +24064,18 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetHardwareProfile(_Model):
+class VirtualMachineScaleSetHardwareProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the hardware settings for the virtual machine scale set.
 
     :ivar vm_size_properties: Specifies the properties for customizing the size of the virtual
      machine. Minimum api-version: 2021-11-01. Please follow the instructions in `VM Customization
      <https://aka.ms/vmcustomization>`_ for more details.
     :vartype vm_size_properties: ~azure.mgmt.compute.models.VMSizeProperties
+    :ivar processor_mode: Specifies the processor mode for the virtual machine scale set. Optional;
+     if omitted, the platform default applies (currently Deterministic). This property can be
+     updated on a running VMSS without deallocation or reboot. Minimum api-version: 2026-04-01.
+     Known values are: "Deterministic" and "Opportunistic".
+    :vartype processor_mode: str or ~azure.mgmt.compute.models.ProcessorMode
     """
 
     vm_size_properties: Optional["_models.VMSizeProperties"] = rest_field(
@@ -23418,12 +24084,20 @@ class VirtualMachineScaleSetHardwareProfile(_Model):
     """Specifies the properties for customizing the size of the virtual machine. Minimum api-version:
      2021-11-01. Please follow the instructions in `VM Customization
      <https://aka.ms/vmcustomization>`_ for more details."""
+    processor_mode: Optional[Union[str, "_models.ProcessorMode"]] = rest_field(
+        name="processorMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the processor mode for the virtual machine scale set. Optional; if omitted, the
+     platform default applies (currently Deterministic). This property can be updated on a running
+     VMSS without deallocation or reboot. Minimum api-version: 2026-04-01. Known values are:
+     \"Deterministic\" and \"Opportunistic\"."""
 
     @overload
     def __init__(
         self,
         *,
         vm_size_properties: Optional["_models.VMSizeProperties"] = None,
+        processor_mode: Optional[Union[str, "_models.ProcessorMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -23437,7 +24111,7 @@ class VirtualMachineScaleSetHardwareProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetIdentity(_Model):
+class VirtualMachineScaleSetIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the virtual machine scale set.
 
     :ivar principal_id: The principal id of virtual machine scale set identity. This property will
@@ -23499,7 +24173,7 @@ class VirtualMachineScaleSetIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetInstanceView(_Model):
+class VirtualMachineScaleSetInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a virtual machine scale set.
 
     :ivar virtual_machine: The instance view status summary for the virtual machine scale set.
@@ -23559,7 +24233,7 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(_Model):  # pylint: disa
     """The extensions information."""
 
 
-class VirtualMachineScaleSetIPConfiguration(_Model):
+class VirtualMachineScaleSetIPConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set network profile's IP configuration.
 
     :ivar name: The IP configuration name. Required.
@@ -23624,7 +24298,9 @@ class VirtualMachineScaleSetIPConfiguration(_Model):
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetIPConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetIPConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set network profile's IP configuration properties.
 
     :ivar subnet: Specifies the identifier of the subnet.
@@ -23722,13 +24398,16 @@ class VirtualMachineScaleSetIPConfigurationProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetIpTag(_Model):
+class VirtualMachineScaleSetIpTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the IP tag associated with the public IP address.
 
     :ivar ip_tag_type: IP tag type. Example: FirstPartyUsage.
     :vartype ip_tag_type: str
     :ivar tag: IP tag associated with the public IP. Example: SQL, Storage etc.
     :vartype tag: str
+    :ivar first_party_service_tag_id: The first party service tag resource identifier associated
+     with the public IP address.
+    :vartype first_party_service_tag_id: str
     """
 
     ip_tag_type: Optional[str] = rest_field(
@@ -23737,6 +24416,10 @@ class VirtualMachineScaleSetIpTag(_Model):
     """IP tag type. Example: FirstPartyUsage."""
     tag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """IP tag associated with the public IP. Example: SQL, Storage etc."""
+    first_party_service_tag_id: Optional[str] = rest_field(
+        name="firstPartyServiceTagId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The first party service tag resource identifier associated with the public IP address."""
 
     @overload
     def __init__(
@@ -23744,6 +24427,7 @@ class VirtualMachineScaleSetIpTag(_Model):
         *,
         ip_tag_type: Optional[str] = None,
         tag: Optional[str] = None,
+        first_party_service_tag_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -23757,7 +24441,9 @@ class VirtualMachineScaleSetIpTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetManagedDiskParameters(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetManagedDiskParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the parameters of a ScaleSet managed disk.
 
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
@@ -23770,6 +24456,10 @@ class VirtualMachineScaleSetManagedDiskParameters(_Model):  # pylint: disable=na
     :vartype disk_encryption_set: ~azure.mgmt.compute.models.DiskEncryptionSetParameters
     :ivar security_profile: Specifies the security profile for the managed disk.
     :vartype security_profile: ~azure.mgmt.compute.models.VMDiskSecurityProfile
+    :ivar additional_disk_properties: Specifies additional properties for the managed disk that can
+     be set at the time of implicit creation of the disk. This property is not captured for Restore
+     Points.
+    :vartype additional_disk_properties: ~azure.mgmt.compute.models.AdditionalDiskProperties
     """
 
     storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = rest_field(
@@ -23787,6 +24477,11 @@ class VirtualMachineScaleSetManagedDiskParameters(_Model):  # pylint: disable=na
         name="securityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the security profile for the managed disk."""
+    additional_disk_properties: Optional["_models.AdditionalDiskProperties"] = rest_field(
+        name="additionalDiskProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies additional properties for the managed disk that can be set at the time of implicit
+     creation of the disk. This property is not captured for Restore Points."""
 
     @overload
     def __init__(
@@ -23795,6 +24490,7 @@ class VirtualMachineScaleSetManagedDiskParameters(_Model):  # pylint: disable=na
         storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
         disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = None,
         security_profile: Optional["_models.VMDiskSecurityProfile"] = None,
+        additional_disk_properties: Optional["_models.AdditionalDiskProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -23833,7 +24529,9 @@ class VirtualMachineScaleSetMigrationInfo(_Model):
     """Specifies the Virtual Machine Scale Set that the Availability Set is migrated to."""
 
 
-class VirtualMachineScaleSetNetworkConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetNetworkConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set network profile's network configurations.
 
     :ivar name: The network configuration name. Required.
@@ -23908,7 +24606,9 @@ class VirtualMachineScaleSetNetworkConfiguration(_Model):  # pylint: disable=nam
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetNetworkConfigurationDnsSettings(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetNetworkConfigurationDnsSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines scale sets network configuration's DNS settings.
 
     :ivar dns_servers: List of DNS servers IP addresses.
@@ -23938,7 +24638,9 @@ class VirtualMachineScaleSetNetworkConfigurationDnsSettings(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetNetworkConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetNetworkConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set network profile's IP configuration.
 
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
@@ -24048,7 +24750,7 @@ class VirtualMachineScaleSetNetworkConfigurationProperties(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetNetworkProfile(_Model):
+class VirtualMachineScaleSetNetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set network profile.
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
@@ -24110,7 +24812,7 @@ class VirtualMachineScaleSetNetworkProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetOSDisk(_Model):
+class VirtualMachineScaleSetOSDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set operating system disk.
 
     :ivar name: The disk name.
@@ -24254,7 +24956,7 @@ class VirtualMachineScaleSetOSDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetOSProfile(_Model):
+class VirtualMachineScaleSetOSProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set OS profile.
 
     :ivar computer_name_prefix: Specifies the computer name prefix for all of the virtual machines
@@ -24406,7 +25108,7 @@ class VirtualMachineScaleSetOSProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetProperties(_Model):
+class VirtualMachineScaleSetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine Scale Set.
 
     :ivar upgrade_policy: The upgrade policy.
@@ -24644,7 +25346,9 @@ class VirtualMachineScaleSetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetPublicIPAddressConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetPublicIPAddressConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
     :ivar name: The publicIP address configuration name. Required.
@@ -24719,7 +25423,9 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(_Model):  # pylint: dis
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines scale sets network configuration's DNS settings.
 
     :ivar domain_name_label: The Domain name label.The concatenation of the domain name label and
@@ -24765,7 +25471,9 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetPublicIPAddressConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetPublicIPAddressConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
     :ivar idle_timeout_in_minutes: The idle timeout of the public IP address.
@@ -24837,7 +25545,9 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationProperties(_Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetVMReimageParameters(
+    VirtualMachineReimageParameters
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
     :ivar temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
@@ -24880,7 +25590,9 @@ class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters)
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimageParameters):
+class VirtualMachineScaleSetReimageParameters(
+    VirtualMachineScaleSetVMReimageParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
     :ivar temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
@@ -24975,7 +25687,7 @@ class VirtualMachineScaleSetSkuCapacity(_Model):
     """The scale type applicable to the sku. Known values are: \"Automatic\" and \"None\"."""
 
 
-class VirtualMachineScaleSetStorageProfile(_Model):
+class VirtualMachineScaleSetStorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set storage profile.
 
     :ivar image_reference: Specifies information about the image to use. You can specify
@@ -24997,6 +25709,10 @@ class VirtualMachineScaleSetStorageProfile(_Model):
      machines in the scale set. Minimum api-version: 2022-08-01. Known values are: "SCSI" and
      "NVMe".
     :vartype disk_controller_type: str or ~azure.mgmt.compute.models.DiskControllerTypes
+    :ivar disk_api_version: Specifies the Disk API version used when applying
+     additionalDiskProperties to managed disks. The value must be in the format YYYY-MM-DD (e.g.,
+     "2026-03-02"). Known values are: "2025-01-02" and "2026-03-02".
+    :vartype disk_api_version: str or ~azure.mgmt.compute.models.DiskApiVersion
     """
 
     image_reference: Optional["_models.ImageReference"] = rest_field(
@@ -25023,6 +25739,12 @@ class VirtualMachineScaleSetStorageProfile(_Model):
     )
     """Specifies the disk controller type configured for the virtual machines in the scale set.
      Minimum api-version: 2022-08-01. Known values are: \"SCSI\" and \"NVMe\"."""
+    disk_api_version: Optional[Union[str, "_models.DiskApiVersion"]] = rest_field(
+        name="diskApiVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Disk API version used when applying additionalDiskProperties to managed disks.
+     The value must be in the format YYYY-MM-DD (e.g., \"2026-03-02\"). Known values are:
+     \"2025-01-02\" and \"2026-03-02\"."""
 
     @overload
     def __init__(
@@ -25032,6 +25754,7 @@ class VirtualMachineScaleSetStorageProfile(_Model):
         os_disk: Optional["_models.VirtualMachineScaleSetOSDisk"] = None,
         data_disks: Optional[list["_models.VirtualMachineScaleSetDataDisk"]] = None,
         disk_controller_type: Optional[Union[str, "_models.DiskControllerTypes"]] = None,
+        disk_api_version: Optional[Union[str, "_models.DiskApiVersion"]] = None,
     ) -> None: ...
 
     @overload
@@ -25045,7 +25768,7 @@ class VirtualMachineScaleSetStorageProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetUpdate(UpdateResource):
+class VirtualMachineScaleSetUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine Scale Set.
 
     :ivar tags: Resource tags.
@@ -25142,7 +25865,9 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetUpdateIPConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetUpdateIPConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set network profile's IP configuration. NOTE: The subnet of a
     scale set may be modified as long as the original subnet and the new subnet are in the same
     virtual network.
@@ -25210,7 +25935,9 @@ class VirtualMachineScaleSetUpdateIPConfiguration(_Model):  # pylint: disable=na
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetUpdateIPConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetUpdateIPConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set network profile's IP configuration properties.
 
     :ivar subnet: The subnet.
@@ -25298,7 +26025,9 @@ class VirtualMachineScaleSetUpdateIPConfigurationProperties(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetUpdateNetworkConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetUpdateNetworkConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set network profile's network configurations.
 
     :ivar name: The network configuration name.
@@ -25375,7 +26104,9 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(_Model):  # pylint: disab
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetUpdateNetworkConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetUpdateNetworkConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set updatable network profile's IP configuration.Use this
     object for updating network profile's IP Configuration.
 
@@ -25484,7 +26215,9 @@ class VirtualMachineScaleSetUpdateNetworkConfigurationProperties(_Model):  # pyl
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetUpdateNetworkProfile(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetUpdateNetworkProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set network profile.
 
     :ivar health_probe: A reference to a load balancer probe used to determine the health of an
@@ -25548,7 +26281,7 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetUpdateOSDisk(_Model):
+class VirtualMachineScaleSetUpdateOSDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes virtual machine scale set operating system disk Update Object. This should be used
     for Updating VMSS OS Disk.
 
@@ -25659,7 +26392,7 @@ class VirtualMachineScaleSetUpdateOSDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetUpdateOSProfile(_Model):
+class VirtualMachineScaleSetUpdateOSProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set OS profile.
 
     :ivar custom_data: A base-64 encoded string of custom data.
@@ -25710,7 +26443,7 @@ class VirtualMachineScaleSetUpdateOSProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetUpdateProperties(_Model):
+class VirtualMachineScaleSetUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Virtual Machine Scale Set.
 
     :ivar upgrade_policy: The upgrade policy.
@@ -25864,7 +26597,9 @@ class VirtualMachineScaleSetUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
     :ivar name: The publicIP address configuration name.
@@ -25927,7 +26662,9 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_Model):  # pylin
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetUpdatePublicIPAddressConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetUpdatePublicIPAddressConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
     :ivar idle_timeout_in_minutes: The idle timeout of the public IP address.
@@ -25981,7 +26718,9 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfigurationProperties(_Model)
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetUpdateStorageProfile(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetUpdateStorageProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set storage profile.
 
     :ivar image_reference: The image reference.
@@ -25995,6 +26734,10 @@ class VirtualMachineScaleSetUpdateStorageProfile(_Model):  # pylint: disable=nam
      set before updating its disk controller type based on the upgrade mode configured for the scale
      set. Minimum api-version: 2022-08-01. Known values are: "SCSI" and "NVMe".
     :vartype disk_controller_type: str or ~azure.mgmt.compute.models.DiskControllerTypes
+    :ivar disk_api_version: Specifies the Disk API version used when applying
+     additionalDiskProperties to managed disks. The value must be in the format YYYY-MM-DD (e.g.,
+     "2026-03-02"). Known values are: "2025-01-02" and "2026-03-02".
+    :vartype disk_api_version: str or ~azure.mgmt.compute.models.DiskApiVersion
     """
 
     image_reference: Optional["_models.ImageReference"] = rest_field(
@@ -26016,6 +26759,12 @@ class VirtualMachineScaleSetUpdateStorageProfile(_Model):  # pylint: disable=nam
      **Note:** You need to deallocate the virtual machines in the scale set before updating its disk
      controller type based on the upgrade mode configured for the scale set. Minimum api-version:
      2022-08-01. Known values are: \"SCSI\" and \"NVMe\"."""
+    disk_api_version: Optional[Union[str, "_models.DiskApiVersion"]] = rest_field(
+        name="diskApiVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Disk API version used when applying additionalDiskProperties to managed disks.
+     The value must be in the format YYYY-MM-DD (e.g., \"2026-03-02\"). Known values are:
+     \"2025-01-02\" and \"2026-03-02\"."""
 
     @overload
     def __init__(
@@ -26025,6 +26774,7 @@ class VirtualMachineScaleSetUpdateStorageProfile(_Model):  # pylint: disable=nam
         os_disk: Optional["_models.VirtualMachineScaleSetUpdateOSDisk"] = None,
         data_disks: Optional[list["_models.VirtualMachineScaleSetDataDisk"]] = None,
         disk_controller_type: Optional[Union[str, "_models.DiskControllerTypes"]] = None,
+        disk_api_version: Optional[Union[str, "_models.DiskApiVersion"]] = None,
     ) -> None: ...
 
     @overload
@@ -26038,7 +26788,7 @@ class VirtualMachineScaleSetUpdateStorageProfile(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetUpdateVMProfile(_Model):
+class VirtualMachineScaleSetUpdateVMProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set virtual machine profile.
 
     :ivar os_profile: The virtual machine scale set OS profile.
@@ -26156,7 +26906,7 @@ class VirtualMachineScaleSetUpdateVMProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetVM(TrackedResource):
+class VirtualMachineScaleSetVM(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set virtual machine.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -26245,6 +26995,7 @@ class VirtualMachineScaleSetVM(TrackedResource):
         "time_created",
         "virtual_machine_resource_id",
         "interconnect_block_profile",
+        "capacity_reservation",
     ]
 
     @overload
@@ -26287,7 +27038,9 @@ class VirtualMachineScaleSetVM(TrackedResource):
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
+class VirtualMachineScaleSetVMExtension(
+    SubResourceReadOnly
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a VMSS VM Extension.
 
     :ivar id: Resource Id.
@@ -26366,7 +27119,9 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetVMExtensionsListResult(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetVMExtensionsListResult(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The List VMSS VM Extension operation response.
 
     :ivar value: The list of VMSS VM extensions.
@@ -26413,7 +27168,9 @@ class VirtualMachineScaleSetVMExtensionsSummary(_Model):  # pylint: disable=name
     """The extensions information."""
 
 
-class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
+class VirtualMachineScaleSetVMExtensionUpdate(
+    SubResourceReadOnly
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a VMSS VM Extension.
 
     :ivar id: Resource Id.
@@ -26484,7 +27241,7 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
             super().__setattr__(key, value)
 
 
-class VirtualMachineScaleSetVMInstanceIDs(_Model):
+class VirtualMachineScaleSetVMInstanceIDs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies a list of virtual machine instance IDs from the VM scale set.
 
     :ivar instance_ids: The virtual machine scale set instance ids. Omitting the virtual machine
@@ -26518,7 +27275,9 @@ class VirtualMachineScaleSetVMInstanceIDs(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetVMInstanceRequiredIDs(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetVMInstanceRequiredIDs(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies a list of virtual machine instance IDs from the VM scale set.
 
     :ivar instance_ids: The virtual machine scale set instance ids. Required.
@@ -26546,7 +27305,7 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetVMInstanceView(_Model):
+class VirtualMachineScaleSetVMInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a virtual machine scale set VM.
 
     :ivar platform_update_domain: The Update Domain count.
@@ -26594,6 +27353,12 @@ class VirtualMachineScaleSetVMInstanceView(_Model):
     :ivar interconnect_instance_view: The Interconnect runtime view of the Scale Set VM instance.
      Minimum api-version: 2026-03-01.
     :vartype interconnect_instance_view: ~azure.mgmt.compute.models.InterconnectInstanceView
+    :ivar capacity_reservation_type: Specifies which type of capacity reservation the virtual
+     machine scale set VM instance will consume capacity from if eligible or whether it is
+     explicitly opted out from being associated and consuming capacity from any reserved capacity
+     available in the subscription. Minimum api-version: 2026-04-01. Known values are:
+     "NotEligible", "Targeted", "Open", "Disabled", and "Block".
+    :vartype capacity_reservation_type: str or ~azure.mgmt.compute.models.CapacityReservationType
     """
 
     platform_update_domain: Optional[int] = rest_field(
@@ -26665,6 +27430,14 @@ class VirtualMachineScaleSetVMInstanceView(_Model):
         name="interconnectInstanceView", visibility=["read"]
     )
     """The Interconnect runtime view of the Scale Set VM instance. Minimum api-version: 2026-03-01."""
+    capacity_reservation_type: Optional[Union[str, "_models.CapacityReservationType"]] = rest_field(
+        name="capacityReservationType", visibility=["read"]
+    )
+    """Specifies which type of capacity reservation the virtual machine scale set VM instance will
+     consume capacity from if eligible or whether it is explicitly opted out from being associated
+     and consuming capacity from any reserved capacity available in the subscription. Minimum
+     api-version: 2026-04-01. Known values are: \"NotEligible\", \"Targeted\", \"Open\",
+     \"Disabled\", and \"Block\"."""
 
     @overload
     def __init__(
@@ -26697,7 +27470,9 @@ class VirtualMachineScaleSetVMInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetVMNetworkProfileConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineScaleSetVMNetworkProfileConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set VM network profile.
 
     :ivar network_interface_configurations: The list of network configurations.
@@ -26737,7 +27512,7 @@ class VirtualMachineScaleSetVMNetworkProfileConfiguration(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetVMProfile(_Model):
+class VirtualMachineScaleSetVMProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a virtual machine scale set virtual machine profile.
 
     :ivar os_profile: Specifies the operating system settings for the virtual machines in the scale
@@ -26768,7 +27543,7 @@ class VirtualMachineScaleSetVMProfile(_Model):
      Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar priority: Specifies the priority for the virtual machines in the scale set. Minimum
-     api-version: 2017-10-30-preview. Known values are: "Regular", "Low", and "Spot".
+     api-version: 2017-10-30-preview. Known values are: "Regular", "Low", "Spot", and "SpotPlus".
     :vartype priority: str or ~azure.mgmt.compute.models.VirtualMachinePriorityTypes
     :ivar eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
      Azure Spot scale set. For Azure Spot virtual machines, both 'Deallocate' and 'Delete' are
@@ -26850,7 +27625,7 @@ class VirtualMachineScaleSetVMProfile(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the priority for the virtual machines in the scale set. Minimum api-version:
-     2017-10-30-preview. Known values are: \"Regular\", \"Low\", and \"Spot\"."""
+     2017-10-30-preview. Known values are: \"Regular\", \"Low\", \"Spot\", and \"SpotPlus\"."""
     eviction_policy: Optional[Union[str, "_models.VirtualMachineEvictionPolicyTypes"]] = rest_field(
         name="evictionPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -26937,7 +27712,7 @@ class VirtualMachineScaleSetVMProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetVMProperties(_Model):
+class VirtualMachineScaleSetVMProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a virtual machine scale set virtual machine.
 
     :ivar latest_model_applied: Specifies whether the latest model has been applied to the virtual
@@ -27013,6 +27788,11 @@ class VirtualMachineScaleSetVMProperties(_Model):
     :ivar interconnect_block_profile: Specifies the Interconnect Block related details of a Scale
      Set VM instance. Minimum api-version: 2026-03-01.
     :vartype interconnect_block_profile: ~azure.mgmt.compute.models.InterconnectBlockProfile
+    :ivar capacity_reservation: Specifies information about the capacity reservation that is used
+     to allocate the virtual machine scale set VM instance. The capacity reservation group is
+     inherited from the parent virtual machine scale set and cannot be changed on the individual
+     scale set VM instance. Minimum api-version: 2026-04-01.
+    :vartype capacity_reservation: ~azure.mgmt.compute.models.CapacityReservationProfile
     """
 
     latest_model_applied: Optional[bool] = rest_field(name="latestModelApplied", visibility=["read"])
@@ -27110,6 +27890,13 @@ class VirtualMachineScaleSetVMProperties(_Model):
     )
     """Specifies the Interconnect Block related details of a Scale Set VM instance. Minimum
      api-version: 2026-03-01."""
+    capacity_reservation: Optional["_models.CapacityReservationProfile"] = rest_field(
+        name="capacityReservation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies information about the capacity reservation that is used to allocate the virtual
+     machine scale set VM instance. The capacity reservation group is inherited from the parent
+     virtual machine scale set and cannot be changed on the individual scale set VM instance.
+     Minimum api-version: 2026-04-01."""
 
     @overload
     def __init__(
@@ -27129,6 +27916,7 @@ class VirtualMachineScaleSetVMProperties(_Model):
         protection_policy: Optional["_models.VirtualMachineScaleSetVMProtectionPolicy"] = None,
         user_data: Optional[str] = None,
         interconnect_block_profile: Optional["_models.InterconnectBlockProfile"] = None,
+        capacity_reservation: Optional["_models.CapacityReservationProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -27142,7 +27930,7 @@ class VirtualMachineScaleSetVMProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetVMProtectionPolicy(_Model):
+class VirtualMachineScaleSetVMProtectionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The protection policy of a virtual machine scale set VM.
 
     :ivar protect_from_scale_in: Indicates that the virtual machine scale set VM shouldn't be
@@ -27184,7 +27972,7 @@ class VirtualMachineScaleSetVMProtectionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineSize(_Model):
+class VirtualMachineSize(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a VM size.
 
     :ivar name: The name of the virtual machine size.
@@ -27335,7 +28123,7 @@ class VirtualMachineStatusCodeCount(_Model):
     """The number of instances having a particular status code."""
 
 
-class VirtualMachineUpdate(UpdateResource):
+class VirtualMachineUpdate(UpdateResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine Update.
 
     :ivar tags: Resource tags.
@@ -27443,7 +28231,7 @@ class VirtualMachineUpdate(UpdateResource):
             super().__setattr__(key, value)
 
 
-class VMDiskSecurityProfile(_Model):
+class VMDiskSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security profile settings for the managed disk. **Note:** It can only be set for
     Confidential VMs.
 
@@ -27493,7 +28281,7 @@ class VMDiskSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMGalleryApplication(_Model):
+class VMGalleryApplication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the required information to reference a compute gallery application version.
 
     :ivar tags: Optional, Specifies a passthrough value for more generic context.
@@ -27563,7 +28351,7 @@ class VMGalleryApplication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmImagesInEdgeZoneListResult(_Model):
+class VmImagesInEdgeZoneListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The List VmImages in EdgeZone operation response.
 
     :ivar value: The list of VMImages in EdgeZone.
@@ -27600,7 +28388,9 @@ class VmImagesInEdgeZoneListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMScaleSetConvertToSinglePlacementGroupInput(_Model):  # pylint: disable=name-too-long
+class VMScaleSetConvertToSinglePlacementGroupInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """VMScaleSetConvertToSinglePlacementGroupInput.
 
     :ivar active_placement_group_id: Id of the placement group in which you want future virtual
@@ -27635,7 +28425,7 @@ class VMScaleSetConvertToSinglePlacementGroupInput(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class VMScaleSetLifecycleHookEvent(ProxyResource):
+class VMScaleSetLifecycleHookEvent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a virtual machine scale set lifecycle hook event.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -27676,7 +28466,9 @@ class VMScaleSetLifecycleHookEvent(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class VMScaleSetLifecycleHookEventAdditionalContext(_Model):  # pylint: disable=name-too-long
+class VMScaleSetLifecycleHookEventAdditionalContext(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Additional key-value pairs set on the lifecycle hook event that gives customer some useful
     context/data. The keys in this dictionary are specific to the lifecycle hook type. Different
     lifecycle hook events can have different sets of keys in the additional context depending on
@@ -27713,7 +28505,7 @@ class VMScaleSetLifecycleHookEventAdditionalContext(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class VMScaleSetLifecycleHookEventProperties(_Model):
+class VMScaleSetLifecycleHookEventProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the virtual machine scale set lifecycle hook event properties.
 
     :ivar type: Defines the type or scenario for sending a virtual machine scale set lifecycle hook
@@ -27815,7 +28607,9 @@ class VMScaleSetLifecycleHookEventProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMScaleSetLifecycleHookEventTargetResource(_Model):  # pylint: disable=name-too-long
+class VMScaleSetLifecycleHookEventTargetResource(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Define a single target ARM resource in a virtual machine scale set lifecycle hook event.
     Currently, this can be a virtual machine scale set resource or an individual virtual machine
     resource within a VMScaleSet.
@@ -27860,7 +28654,7 @@ class VMScaleSetLifecycleHookEventTargetResource(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class VMScaleSetLifecycleHookEventUpdate(_Model):
+class VMScaleSetLifecycleHookEventUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the virtual machine scale set lifecycle hook event.
 
     :ivar properties: virtual machine scale set lifecycle hook event properties.
@@ -27919,7 +28713,7 @@ class VMScaleSetLifecycleHookEventUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class VMScaleSetScaleOutInput(_Model):
+class VMScaleSetScaleOutInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input for ScaleOut.
 
     :ivar capacity: Specifies the number of virtual machines in the scale set. Required.
@@ -27954,7 +28748,7 @@ class VMScaleSetScaleOutInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMScaleSetScaleOutInputProperties(_Model):
+class VMScaleSetScaleOutInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input properties for ScaleOut.
 
     :ivar zone: The zone in which the scale out is requested for the virtual machine scale set.
@@ -27982,7 +28776,7 @@ class VMScaleSetScaleOutInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMSizeProperties(_Model):
+class VMSizeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies VM Size Property settings on the virtual machine.
 
     :ivar v_cpus_available: Specifies the number of vCPUs available for the VM. When this property
@@ -28033,7 +28827,7 @@ class VMSizeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsConfiguration(_Model):
+class WindowsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies Windows operating system settings on the virtual machine.
 
     :ivar provision_vm_agent: Indicates whether virtual machine agent should be provisioned on the
@@ -28125,7 +28919,7 @@ class WindowsConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsParameters(_Model):
+class WindowsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for InstallPatches on a Windows VM, as directly received by the API.
 
     :ivar classifications_to_include: The update classifications to select when installing patches
@@ -28212,7 +29006,9 @@ class WindowsParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsVMGuestPatchAutomaticByPlatformSettings(_Model):  # pylint: disable=name-too-long
+class WindowsVMGuestPatchAutomaticByPlatformSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specifies additional settings to be applied when patch mode AutomaticByPlatform is selected in
     Windows patch settings.
 
@@ -28254,7 +29050,7 @@ class WindowsVMGuestPatchAutomaticByPlatformSettings(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class WinRMConfiguration(_Model):
+class WinRMConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes Windows Remote Management configuration of the VM.
 
     :ivar listeners: The list of Windows Remote Management listeners.
@@ -28284,7 +29080,7 @@ class WinRMConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WinRMListener(_Model):
+class WinRMListener(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes Protocol and thumbprint of Windows Remote Management listener.
 
     :ivar protocol: Specifies the protocol of WinRM listener. Possible values are: **http,**
@@ -28342,7 +29138,7 @@ class WinRMListener(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ZoneAllocationPolicy(_Model):
+class ZoneAllocationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters for zone allocation of a virtual machine scale set.
 
     :ivar max_zone_count: The maximum number of availability zones to use if the
@@ -28384,7 +29180,7 @@ class ZoneAllocationPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ZoneMovement(_Model):
+class ZoneMovement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes zone movement configuration. This allows VM to be moved across availability zones
     during an outage.
 

@@ -279,12 +279,9 @@ _CANONICAL_STATEMENTS: tuple[str, ...] = (
     # retry semantics
     "retry_attempt",
     "crash recovery does NOT consume",
-    # metadata facility
-    "callable namespace facade",
-    # _* convention
-    "reserved",
-    # explicit flush
-    "flush()",
+    # application state facility
+    "FoundryStateStore",
+    "State Store writes do not PATCH the task record",
 )
 
 

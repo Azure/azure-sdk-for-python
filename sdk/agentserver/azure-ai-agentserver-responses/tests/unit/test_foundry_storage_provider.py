@@ -16,6 +16,7 @@ from azure.ai.agentserver.core._platform_headers import (
 )
 
 from azure.ai.agentserver.responses._response_context import PlatformContext
+from azure.ai.agentserver.responses import ResponseEventStream
 from azure.ai.agentserver.responses.store._foundry_errors import (
     FoundryApiError,
     FoundryBadRequestError,
@@ -167,12 +168,16 @@ async def test_get_response__gets_correct_url(credential: Any, settings: Foundry
 
 @pytest.mark.asyncio
 async def test_get_response__returns_deserialized_response(credential: Any, settings: FoundryStorageSettings) -> None:
-    provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
+    response = dict(_RESPONSE_DICT)
+    response["metadata"] = {"_internal_metadata": '{"checkpoint_marker":"written-before-checkpoint"}'}
+    provider = _make_provider(credential, settings, _make_response(200, response))
 
     result = await provider.get_response("resp_abc123")
 
     assert result["id"] == "resp_abc123"
     assert result["status"] == "completed"
+    stream = ResponseEventStream(response_id="resp_abc123", response=result)
+    assert dict(stream.internal_metadata) == {"checkpoint_marker": "written-before-checkpoint"}
 
 
 @pytest.mark.asyncio
@@ -218,11 +223,13 @@ async def test_update_response__sends_serialized_response_body(
 ) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
     response = _response_object()
+    response["metadata"] = {"_internal_metadata": '{"checkpoint_marker":"written-before-checkpoint"}'}
     await provider.update_response(response)
 
     request = provider._client.send_request.call_args[0][0]
     payload = json.loads(request.content.decode("utf-8"))
     assert payload["id"] == "resp_abc123"
+    assert payload["metadata"]["_internal_metadata"] == '{"checkpoint_marker":"written-before-checkpoint"}'
 
 
 @pytest.mark.asyncio

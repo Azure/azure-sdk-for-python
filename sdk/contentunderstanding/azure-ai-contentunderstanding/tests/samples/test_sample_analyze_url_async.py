@@ -23,8 +23,15 @@ USAGE:
 import os
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
-from azure.ai.contentunderstanding.models import AnalysisInput, AudioVisualContent, DocumentContent
+from testpreparer_async import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBaseAsync,
+)
+from azure.ai.contentunderstanding.models import (
+    AnalysisInput,
+    AudioVisualContent,
+    DocumentContent,
+)
 
 
 class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
@@ -98,7 +105,9 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         # Analyze the video
         # Use 10-second polling interval for video analysis (longer processing time)
         poller = await client.begin_analyze(
-            analyzer_id="prebuilt-videoSearch", inputs=[AnalysisInput(url=url)], polling_interval=10
+            analyzer_id="prebuilt-videoSearch",
+            inputs=[AnalysisInput(url=url)],
+            polling_interval=10,
         )
 
         result = await poller.result()
@@ -143,7 +152,9 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         # Analyze the audio
         # Use 10-second polling interval for audio analysis (longer processing time)
         poller = await client.begin_analyze(
-            analyzer_id="prebuilt-audioSearch", inputs=[AnalysisInput(url=url)], polling_interval=10
+            analyzer_id="prebuilt-audioSearch",
+            inputs=[AnalysisInput(url=url)],
+            polling_interval=10,
         )
 
         result = await poller.result()
@@ -467,9 +478,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/mixed_financial_invoices.pdf"
 
         # Full analysis for comparison
-        full_poller = await client.begin_analyze(
-            analyzer_id="prebuilt-documentSearch", inputs=[AnalysisInput(url=url)]
-        )
+        full_poller = await client.begin_analyze(analyzer_id="prebuilt-documentSearch", inputs=[AnalysisInput(url=url)])
         full_result = await full_poller.result()
         full_doc = cast(DocumentContent, full_result.contents[0])
         full_page_count = len(full_doc.pages) if full_doc.pages else 0
@@ -490,12 +499,12 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         assert range_doc.end_page_number == 1, f"'1' should end at page 1, got {range_doc.end_page_number}"
 
         # Compare full vs range-limited
-        assert full_page_count > range_page_count, (
-            f"Full document ({full_page_count} pages) should have more pages than range-limited ({range_page_count})"
-        )
-        assert len(full_doc.markdown or '') > len(range_doc.markdown or ''), (
-            f"Full document markdown ({len(full_doc.markdown or '')} chars) should exceed range-limited ({len(range_doc.markdown or '')} chars)"
-        )
+        assert (
+            full_page_count > range_page_count
+        ), f"Full document ({full_page_count} pages) should have more pages than range-limited ({range_page_count})"
+        assert len(full_doc.markdown or "") > len(
+            range_doc.markdown or ""
+        ), f"Full document markdown ({len(full_doc.markdown or '')} chars) should exceed range-limited ({len(range_doc.markdown or '')} chars)"
         print(f"[PASS] '1': {range_page_count} page, {len(range_doc.markdown or '')} chars")
 
         # "1-3,5,9-" — combined disjoint page ranges
@@ -509,16 +518,19 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         combine_doc = cast(DocumentContent, combine_result.contents[0])
         combine_page_count = len(combine_doc.pages) if combine_doc.pages else 0
         assert combine_page_count == 6, f"'1-3,5,9-' should return 6 pages (1-3, 5, 9-10), got {combine_page_count}"
-        assert combine_doc.start_page_number == 1, (
-            f"'1-3,5,9-' should start at page 1, got {combine_doc.start_page_number}"
-        )
-        assert combine_doc.end_page_number == 10, (
-            f"'1-3,5,9-' should end at page 10, got {combine_doc.end_page_number}"
-        )
+        assert (
+            combine_doc.start_page_number == 1
+        ), f"'1-3,5,9-' should start at page 1, got {combine_doc.start_page_number}"
+        assert combine_doc.end_page_number == 10, f"'1-3,5,9-' should end at page 10, got {combine_doc.end_page_number}"
         actual_combine_pages = sorted([p.page_number for p in combine_doc.pages])
-        assert actual_combine_pages == [1, 2, 3, 5, 9, 10], (
-            f"'1-3,5,9-' page numbers should be [1, 2, 3, 5, 9, 10], got {actual_combine_pages}"
-        )
+        assert actual_combine_pages == [
+            1,
+            2,
+            3,
+            5,
+            9,
+            10,
+        ], f"'1-3,5,9-' page numbers should be [1, 2, 3, 5, 9, 10], got {actual_combine_pages}"
         print(f"[PASS] '1-3,5,9-': {combine_page_count} pages, page numbers: {actual_combine_pages}")
 
         await client.close()
@@ -527,9 +539,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
     @pytest.mark.live_test_only
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_video_url_with_content_ranges_async(
-        self, contentunderstanding_endpoint: str
-    ) -> None:
+    async def test_sample_analyze_video_url_with_content_ranges_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing a video URL with various content range string options (async version).
 
         This test validates:
@@ -556,9 +566,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         assert full_result.contents is not None
         assert len(full_result.contents) > 0
         full_segments = [cast(AudioVisualContent, c) for c in full_result.contents]
-        full_total_duration = sum(
-            (s.end_time_ms or 0) - (s.start_time_ms or 0) for s in full_segments
-        )
+        full_total_duration = sum((s.end_time_ms or 0) - (s.start_time_ms or 0) for s in full_segments)
         print(f"[PASS] Full video: {len(full_segments)} segment(s), {full_total_duration} ms")
 
         # "0-5000" — first 5 seconds
@@ -579,12 +587,12 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         assert len(range_segments) > 0, "'0-5000' should return segments"
         for seg in range_segments:
             assert (seg.end_time_ms or 0) > (seg.start_time_ms or 0), "Segment should have EndTime > StartTime"
-            assert (seg.start_time_ms or 0) >= 0, (
-                f"'0-5000' segment StartTime ({seg.start_time_ms} ms) should be >= 0 ms"
-            )
-            assert (seg.end_time_ms or 0) <= 5000, (
-                f"'0-5000' segment EndTime ({seg.end_time_ms} ms) should be <= 5000 ms"
-            )
+            assert (
+                seg.start_time_ms or 0
+            ) >= 0, f"'0-5000' segment StartTime ({seg.start_time_ms} ms) should be >= 0 ms"
+            assert (
+                seg.end_time_ms or 0
+            ) <= 5000, f"'0-5000' segment EndTime ({seg.end_time_ms} ms) should be <= 5000 ms"
         print(f"[PASS] '0-5000': {len(range_segments)} segment(s)")
 
         # "10000-" — from 10 seconds onward
@@ -606,9 +614,9 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         for seg in from_segments:
             assert (seg.end_time_ms or 0) > (seg.start_time_ms or 0), "Segment should have EndTime > StartTime"
             assert seg.markdown, "Segment should have markdown"
-            assert (seg.start_time_ms or 0) >= 10000, (
-                f"'10000-' segment StartTime ({seg.start_time_ms} ms) should be >= 10000 ms"
-            )
+            assert (
+                seg.start_time_ms or 0
+            ) >= 10000, f"'10000-' segment StartTime ({seg.start_time_ms} ms) should be >= 10000 ms"
         print(f"[PASS] '10000-': {len(from_segments)} segment(s)")
 
         # "1200-3651" — sub-second precision
@@ -629,12 +637,12 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         assert len(subsec_segments) > 0, "'1200-3651' should return segments"
         for seg in subsec_segments:
             assert (seg.end_time_ms or 0) > (seg.start_time_ms or 0), "Segment should have EndTime > StartTime"
-            assert (seg.start_time_ms or 0) >= 1200, (
-                f"'1200-3651' segment StartTime ({seg.start_time_ms} ms) should be >= 1200 ms"
-            )
-            assert (seg.end_time_ms or 0) <= 3651, (
-                f"'1200-3651' segment EndTime ({seg.end_time_ms} ms) should be <= 3651 ms"
-            )
+            assert (
+                seg.start_time_ms or 0
+            ) >= 1200, f"'1200-3651' segment StartTime ({seg.start_time_ms} ms) should be >= 1200 ms"
+            assert (
+                seg.end_time_ms or 0
+            ) <= 3651, f"'1200-3651' segment EndTime ({seg.end_time_ms} ms) should be <= 3651 ms"
         print(f"[PASS] '1200-3651': {len(subsec_segments)} segment(s)")
 
         # "0-3000,30000-" — combined time ranges
@@ -660,9 +668,9 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
             seg_end = seg.end_time_ms or 0
             in_first_range = seg_start >= 0 and seg_end <= 3000
             in_second_range = seg_start >= 30000
-            assert in_first_range or in_second_range, (
-                f"'0-3000,30000-' segment ({seg_start}-{seg_end} ms) should fall within 0-3000 ms or >= 30000 ms"
-            )
+            assert (
+                in_first_range or in_second_range
+            ), f"'0-3000,30000-' segment ({seg_start}-{seg_end} ms) should fall within 0-3000 ms or >= 30000 ms"
         print(f"[PASS] '0-3000,30000-': {len(combine_segments)} segment(s)")
 
         await client.close()
@@ -671,9 +679,7 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
     @pytest.mark.live_test_only
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_analyze_audio_url_with_content_ranges_async(
-        self, contentunderstanding_endpoint: str
-    ) -> None:
+    async def test_sample_analyze_audio_url_with_content_ranges_async(self, contentunderstanding_endpoint: str) -> None:
         """Test analyzing an audio URL with various content range string options (async version).
 
         This test validates:
@@ -717,21 +723,21 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         range_result = await range_poller.result()
         assert range_result.contents is not None
         range_audio = cast(AudioVisualContent, range_result.contents[0])
-        assert (range_audio.end_time_ms or 0) > (range_audio.start_time_ms or 0), (
-            "'0-5000' should have EndTime > StartTime"
-        )
-        assert (range_audio.start_time_ms or 0) >= 0, (
-            f"'0-5000' audio StartTime ({range_audio.start_time_ms} ms) should be >= 0 ms"
-        )
-        assert (range_audio.end_time_ms or 0) <= 5000, (
-            f"'0-5000' audio EndTime ({range_audio.end_time_ms} ms) should be <= 5000 ms"
-        )
+        assert (range_audio.end_time_ms or 0) > (
+            range_audio.start_time_ms or 0
+        ), "'0-5000' should have EndTime > StartTime"
+        assert (
+            range_audio.start_time_ms or 0
+        ) >= 0, f"'0-5000' audio StartTime ({range_audio.start_time_ms} ms) should be >= 0 ms"
+        assert (
+            range_audio.end_time_ms or 0
+        ) <= 5000, f"'0-5000' audio EndTime ({range_audio.end_time_ms} ms) should be <= 5000 ms"
         assert range_audio.markdown, "'0-5000' should have markdown"
         assert len(range_audio.markdown) > 0, "'0-5000' markdown should not be empty"
         range_duration = (range_audio.end_time_ms or 0) - (range_audio.start_time_ms or 0)
-        assert full_duration >= range_duration, (
-            f"Full audio duration ({full_duration} ms) should be >= range-limited duration ({range_duration} ms)"
-        )
+        assert (
+            full_duration >= range_duration
+        ), f"Full audio duration ({full_duration} ms) should be >= range-limited duration ({range_duration} ms)"
         print(f"[PASS] '0-5000': {len(range_audio.markdown)} chars, {range_duration} ms")
 
         # "10000-" — from 10 seconds onward
@@ -749,12 +755,12 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         from_result = await from_poller.result()
         assert from_result.contents is not None
         from_audio = cast(AudioVisualContent, from_result.contents[0])
-        assert (from_audio.end_time_ms or 0) > (from_audio.start_time_ms or 0), (
-            "'10000-' should have EndTime > StartTime"
-        )
-        assert (from_audio.start_time_ms or 0) >= 10000, (
-            f"'10000-' audio StartTime ({from_audio.start_time_ms} ms) should be >= 10000 ms"
-        )
+        assert (from_audio.end_time_ms or 0) > (
+            from_audio.start_time_ms or 0
+        ), "'10000-' should have EndTime > StartTime"
+        assert (
+            from_audio.start_time_ms or 0
+        ) >= 10000, f"'10000-' audio StartTime ({from_audio.start_time_ms} ms) should be >= 10000 ms"
         assert from_audio.markdown, "'10000-' should have markdown"
         print(f"[PASS] '10000-': {len(from_audio.markdown)} chars")
 
@@ -773,21 +779,21 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         subsec_result = await subsec_poller.result()
         assert subsec_result.contents is not None
         subsec_audio = cast(AudioVisualContent, subsec_result.contents[0])
-        assert (subsec_audio.end_time_ms or 0) > (subsec_audio.start_time_ms or 0), (
-            "'1200-3651' should have EndTime > StartTime"
-        )
-        assert (subsec_audio.start_time_ms or 0) >= 1200, (
-            f"'1200-3651' audio StartTime ({subsec_audio.start_time_ms} ms) should be >= 1200 ms"
-        )
-        assert (subsec_audio.end_time_ms or 0) <= 3651, (
-            f"'1200-3651' audio EndTime ({subsec_audio.end_time_ms} ms) should be <= 3651 ms"
-        )
+        assert (subsec_audio.end_time_ms or 0) > (
+            subsec_audio.start_time_ms or 0
+        ), "'1200-3651' should have EndTime > StartTime"
+        assert (
+            subsec_audio.start_time_ms or 0
+        ) >= 1200, f"'1200-3651' audio StartTime ({subsec_audio.start_time_ms} ms) should be >= 1200 ms"
+        assert (
+            subsec_audio.end_time_ms or 0
+        ) <= 3651, f"'1200-3651' audio EndTime ({subsec_audio.end_time_ms} ms) should be <= 3651 ms"
         assert subsec_audio.markdown, "'1200-3651' should have markdown"
         assert len(subsec_audio.markdown) > 0, "'1200-3651' markdown should not be empty"
         subsec_duration = (subsec_audio.end_time_ms or 0) - (subsec_audio.start_time_ms or 0)
-        assert full_duration >= subsec_duration, (
-            f"Full audio duration ({full_duration} ms) should be >= sub-second duration ({subsec_duration} ms)"
-        )
+        assert (
+            full_duration >= subsec_duration
+        ), f"Full audio duration ({full_duration} ms) should be >= sub-second duration ({subsec_duration} ms)"
         print(f"[PASS] '1200-3651': {len(subsec_audio.markdown)} chars, {subsec_duration} ms")
 
         # "0-3000,30000-" — combined time ranges
@@ -805,9 +811,9 @@ class TestSampleAnalyzeUrlAsync(ContentUnderstandingClientTestBaseAsync):
         combine_result = await combine_poller.result()
         assert combine_result.contents is not None
         combine_audio = cast(AudioVisualContent, combine_result.contents[0])
-        assert (combine_audio.end_time_ms or 0) > (combine_audio.start_time_ms or 0), (
-            "'0-3000,30000-' should have EndTime > StartTime"
-        )
+        assert (combine_audio.end_time_ms or 0) > (
+            combine_audio.start_time_ms or 0
+        ), "'0-3000,30000-' should have EndTime > StartTime"
         assert combine_audio.markdown, "'0-3000,30000-' should have markdown"
         print(f"[PASS] '0-3000,30000-': {len(combine_audio.markdown)} chars")
 

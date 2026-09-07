@@ -26,6 +26,11 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "capacityRecommendationParameters": {
+                        "availabilityZones": bool,
+                        "desiredLocations": ["str"],
+                        "desiredSizes": ["str"],
+                    },
                     "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
@@ -46,6 +51,11 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "capacityRecommendationParameters": {
+                        "availabilityZones": bool,
+                        "desiredLocations": ["str"],
+                        "desiredSizes": ["str"],
+                    },
                     "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
@@ -66,6 +76,11 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "capacityRecommendationParameters": {
+                        "availabilityZones": bool,
+                        "desiredLocations": ["str"],
+                        "desiredSizes": ["str"],
+                    },
                     "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
@@ -86,6 +101,11 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "capacityRecommendationParameters": {
+                        "availabilityZones": bool,
+                        "desiredLocations": ["str"],
+                        "desiredSizes": ["str"],
+                    },
                     "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
@@ -110,6 +130,11 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "capacityRecommendationParameters": {
+                        "availabilityZones": bool,
+                        "desiredLocations": ["str"],
+                        "desiredSizes": ["str"],
+                    },
                     "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
@@ -149,6 +174,11 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "capacityRecommendationParameters": {
+                        "availabilityZones": bool,
+                        "desiredLocations": ["str"],
+                        "desiredSizes": ["str"],
+                    },
                     "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
@@ -194,6 +224,11 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "capacityRecommendationParameters": {
+                        "availabilityZones": bool,
+                        "desiredLocations": ["str"],
+                        "desiredSizes": ["str"],
+                    },
                     "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,

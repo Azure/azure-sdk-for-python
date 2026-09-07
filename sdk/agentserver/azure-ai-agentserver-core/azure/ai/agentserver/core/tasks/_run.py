@@ -7,7 +7,6 @@
 
 Public surface:
 - attributes: ``task_id``, ``input_id``
-- property: ``metadata``
 - methods: ``result()`` (returns ``Output``), ``cancel()``
 - dunder: ``__await__``
 
@@ -24,8 +23,6 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Generic, TypeVar
 
 from azure.ai.agentserver.core._experimental import experimental
-
-from ._metadata import TaskMetadata
 
 Output = TypeVar("Output")
 
@@ -57,8 +54,6 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
     :type provider: TaskProvider
     :param result_future: Future that resolves with the task output.
     :type result_future: asyncio.Future[Output]
-    :param metadata: The task's metadata instance.
-    :type metadata: TaskMetadata
     :param cancel_event: Event to signal cancellation.
     :type cancel_event: asyncio.Event
     :param status: Initial task status.
@@ -69,7 +64,6 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         "task_id",
         "input_id",  #   — public read-only attribute
         "_result_future",
-        "_metadata",
         "_cancel_event",
         "_cancel_ctx_ref",
         "_execution_task",
@@ -82,7 +76,6 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         *,
         provider: Any = None,  # noqa: ARG002 — kept for ctor compat, no longer stored (Phase 5)
         result_future: asyncio.Future[Any],
-        metadata: TaskMetadata | None = None,
         cancel_event: asyncio.Event | None = None,
         status: Any = None,  # noqa: ARG002 — accepted but ignored (Phase 5)
         terminate_event: asyncio.Event | None = None,  # noqa: ARG002 — accepted but ignored (Phase 5)
@@ -100,7 +93,6 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         # separate GUID per turn  and sets it here.
         self.input_id: str = input_id if input_id is not None else task_id
         self._result_future = result_future
-        self._metadata = metadata or TaskMetadata()
         self._cancel_event = cancel_event or asyncio.Event()
         self._execution_task: asyncio.Task[Any] | None = execution_task
         #: weak reference to the TaskContext so
@@ -114,17 +106,6 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         # ``_steering.pending_inputs`` and resolves the future with
         # ``TaskCancelled``.
         self._queued_cancel_callback: Any = queued_cancel_callback
-
-    @property
-    def metadata(self) -> TaskMetadata:
-        """The task's metadata.
-
-        For in-process handles, this is the live metadata reference.
-
-        :return: The task metadata instance.
-        :rtype: TaskMetadata
-        """
-        return self._metadata
 
     @property
     def is_queued(self) -> bool:

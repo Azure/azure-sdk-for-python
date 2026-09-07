@@ -5,6 +5,10 @@ from typing import Any, Dict, List, TypeVar, Union, Optional
 
 from typing_extensions import override
 
+from azure.ai.evaluation._evaluators._common._conversation_input import (
+    hoist_messages_to_conversation,
+)
+
 from azure.ai.evaluation._common.constants import (
     EvaluationMetrics,
     _InternalEvaluationMetrics,
@@ -112,6 +116,11 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
     @override
     def _convert_kwargs_to_eval_input(self, **kwargs):
+        # Normalize a bare ``messages=[...]`` kwarg (plus optional scalar ``context``
+        # / ``ground_truth`` / ``tool_definitions``) into ``conversation={...}`` so
+        # RAI safety evaluators route messages-shape input through the
+        # ``_evaluate_conversation`` path instead of failing kwarg matching.
+        hoist_messages_to_conversation(kwargs)
         if self._use_legacy_endpoint and "conversation" in kwargs and kwargs["conversation"] is not None:
             # Legacy endpoint: pass conversation through intact so _evaluate_conversation
             # can send all messages in a single API call (pre-sync-migration behavior).

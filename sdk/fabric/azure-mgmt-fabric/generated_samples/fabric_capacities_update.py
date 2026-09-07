@@ -34,7 +34,10 @@ def main():
         resource_group_name="TestRG",
         capacity_name="azsdktest",
         properties={
-            "properties": {"administration": {"members": ["azsdktest2@microsoft.com"]}},
+            "properties": {
+                "administration": {"members": ["azsdktest2@microsoft.com"]},
+                "overage": {"state": "Enabled", "thresholdCapacityUnitHours": 4},
+            },
             "sku": {"name": "F8", "tier": "Fabric"},
             "tags": {"testKey": "testValue"},
         },
@@ -42,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2023-11-01/FabricCapacities_Update.json
+# x-ms-original-file: 2026-08-01-preview/FabricCapacities_Update.json
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -330,10 +331,16 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                     "capacityType": "str",
                     "createdTime": "2020-02-20 00:00:00",
                     "executionParameters": {
+                        "capacityRecommendationParameters": {
+                            "availabilityZones": bool,
+                            "desiredLocations": ["str"],
+                            "desiredSizes": ["str"],
+                        },
                         "optimizationPreference": "str",
                         "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                         "verifyVmAgentHealth": bool,
                     },
+                    "minCapacity": 0,
                     "overridesProfile": {
                         "overrides": [
                             {
@@ -624,7 +631,9 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                         ],
                         "virtualMachineNamePrefix": "str",
                     },
+                    "partialFulfillmentPolicy": {"fulfilledCapacity": 0, "mode": "str", "reason": "str"},
                     "provisioningState": "str",
+                    "resources": [{"virtualMachineInfo": {"name": "str", "vmSize": "str", "zone": "str"}}],
                     "vmSizesProfile": [
                         {
                             "name": "str",
@@ -957,6 +966,18 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
             location="str",
             name="str",
         ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_bulk_create_custom_virtual_machines_get_operation_status(self, resource_group):
+        response = self.client.bulk_create_custom.virtual_machines_get_operation_status(
+            resource_group_name=resource_group.name,
+            location="str",
+            name="str",
+        )
 
         # please add some check logic here by yourself
         # ...

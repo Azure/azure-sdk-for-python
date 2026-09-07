@@ -434,17 +434,19 @@ class TestSample20ResilientSteering:
 def _make_sample22_app() -> TestClient:
     options = ResponsesServerOptions(resilient_background=True, steerable_conversations=False)
     app = ResponsesAgentServerHost(options=options)
+    turn_count_by_chain: dict[str, int] = {}
 
     @app.response_handler
     async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         input_text = await context.get_input_text()
-        turn_count = context.conversation_chain_metadata.get("turn_count", 0) + 1
+        chain_id = context.conversation_chain_id
+        turn_count = turn_count_by_chain.get(chain_id, 0) + 1
         if input_text.strip().lower() == "done":
-            context.conversation_chain_metadata.clear()
+            turn_count_by_chain.pop(chain_id, None)
             return TextResponse(context, request, text=f"Done! Session complete after {turn_count - 1} turns.")
         history_items = await context.get_history()
         reply = f"Turn {turn_count}: '{input_text}', context={len(history_items)} items"
-        context.conversation_chain_metadata["turn_count"] = turn_count
+        turn_count_by_chain[chain_id] = turn_count
         return TextResponse(context, request, text=reply)
 
     return TestClient(app)

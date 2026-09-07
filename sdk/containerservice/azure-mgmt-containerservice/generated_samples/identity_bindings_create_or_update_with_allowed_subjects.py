@@ -57,6 +57,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-02-preview/IdentityBindings_Create_Or_UpdateWithAllowedSubjects.json
+# x-ms-original-file: 2026-06-02-preview/IdentityBindings_Create_Or_UpdateWithAllowedSubjects.json
 if __name__ == "__main__":
     main()

@@ -21,20 +21,11 @@ from pathlib import Path
 import pytest
 
 _HERE = Path(__file__).resolve().parent
-_SCRIPT_PATH = (
-    _HERE.parent
-    / ".github"
-    / "skills"
-    / "cu-sdk-author-analyzer"
-    / "scripts"
-    / "create_and_test.py"
-)
+_SCRIPT_PATH = _HERE.parent / ".github" / "skills" / "cu-sdk-author-analyzer" / "scripts" / "create_and_test.py"
 
 
 def _load_script():
-    spec = importlib.util.spec_from_file_location(
-        "_skill_create_and_test", _SCRIPT_PATH
-    )
+    spec = importlib.util.spec_from_file_location("_skill_create_and_test", _SCRIPT_PATH)
     assert spec and spec.loader, "could not load create_and_test.py"
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -80,9 +71,12 @@ def test_invalid_schema_exits_2_without_building_client(tmp_path, monkeypatch, c
 
     rc = script.main(
         [
-            "--schema", str(bad_schema),
-            "--input", str(fake_input),
-            "--output", str(out_dir),
+            "--schema",
+            str(bad_schema),
+            "--input",
+            str(fake_input),
+            "--output",
+            str(out_dir),
         ]
     )
     assert rc == 2

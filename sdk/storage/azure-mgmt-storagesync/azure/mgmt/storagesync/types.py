@@ -29,8 +29,8 @@ if TYPE_CHECKING:
 class BackupRequest(TypedDict, total=False):
     """Backup request.
 
-    :ivar azure_file_share: Azure File Share.
-    :vartype azure_file_share: str
+    :ivar azureFileShare: Azure File Share.
+    :vartype azureFileShare: str
     """
 
     azureFileShare: str
@@ -65,9 +65,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -93,9 +93,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -110,9 +110,9 @@ class CloudEndpointCreateParameters(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The parameters used to create the cloud endpoint.
     :vartype properties: "CloudEndpointCreateParametersProperties"
     """
@@ -124,14 +124,17 @@ class CloudEndpointCreateParameters(ProxyResource):
 class CloudEndpointCreateParametersProperties(TypedDict, total=False):
     """CloudEndpoint Properties object.
 
-    :ivar storage_account_resource_id: Storage Account Resource Id.
-    :vartype storage_account_resource_id: str
-    :ivar azure_file_share_name: Azure file share name.
-    :vartype azure_file_share_name: str
-    :ivar storage_account_tenant_id: Storage Account Tenant Id.
-    :vartype storage_account_tenant_id: str
-    :ivar friendly_name: Friendly Name.
-    :vartype friendly_name: str
+    :ivar storageAccountResourceId: Storage Account Resource Id.
+    :vartype storageAccountResourceId: str
+    :ivar azureFileShareName: Azure file share name.
+    :vartype azureFileShareName: str
+    :ivar storageAccountTenantId: Storage Account Tenant Id.
+    :vartype storageAccountTenantId: str
+    :ivar friendlyName: Friendly Name.
+    :vartype friendlyName: str
+    :ivar changeEnumerationIntervalDays: The interval for enumerating changes on the cloud
+     endpoint.
+    :vartype changeEnumerationIntervalDays: int
     """
 
     storageAccountResourceId: str
@@ -142,22 +145,47 @@ class CloudEndpointCreateParametersProperties(TypedDict, total=False):
     """Storage Account Tenant Id."""
     friendlyName: str
     """Friendly Name."""
+    changeEnumerationIntervalDays: int
+    """The interval for enumerating changes on the cloud endpoint."""
+
+
+class CloudEndpointUpdateParameters(TypedDict, total=False):
+    """The parameters used when updating a cloud endpoint.
+
+    :ivar properties: The properties of the cloud endpoint.
+    :vartype properties: "CloudEndpointUpdateProperties"
+    """
+
+    properties: "CloudEndpointUpdateProperties"
+    """The properties of the cloud endpoint."""
+
+
+class CloudEndpointUpdateProperties(TypedDict, total=False):
+    """CloudEndpoint Update Properties object.
+
+    :ivar changeEnumerationIntervalDays: The interval for enumerating changes on the cloud
+     endpoint.
+    :vartype changeEnumerationIntervalDays: int
+    """
+
+    changeEnumerationIntervalDays: int
+    """The interval for enumerating changes on the cloud endpoint."""
 
 
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -178,20 +206,20 @@ class PostRestoreRequest(TypedDict, total=False):
 
     :ivar partition: Post Restore partition.
     :vartype partition: str
-    :ivar replica_group: Post Restore replica group.
-    :vartype replica_group: str
-    :ivar request_id: Post Restore request id.
-    :vartype request_id: str
-    :ivar azure_file_share_uri: Post Restore Azure file share uri.
-    :vartype azure_file_share_uri: str
+    :ivar replicaGroup: Post Restore replica group.
+    :vartype replicaGroup: str
+    :ivar requestId: Post Restore request id.
+    :vartype requestId: str
+    :ivar azureFileShareUri: Post Restore Azure file share uri.
+    :vartype azureFileShareUri: str
     :ivar status: Post Restore Azure status.
     :vartype status: str
-    :ivar source_azure_file_share_uri: Post Restore Azure source azure file share uri.
-    :vartype source_azure_file_share_uri: str
-    :ivar failed_file_list: Post Restore Azure failed file list.
-    :vartype failed_file_list: str
-    :ivar restore_file_spec: Post Restore restore file spec array.
-    :vartype restore_file_spec: list["RestoreFileSpec"]
+    :ivar sourceAzureFileShareUri: Post Restore Azure source azure file share uri.
+    :vartype sourceAzureFileShareUri: str
+    :ivar failedFileList: Post Restore Azure failed file list.
+    :vartype failedFileList: str
+    :ivar restoreFileSpec: Post Restore restore file spec array.
+    :vartype restoreFileSpec: list["RestoreFileSpec"]
     """
 
     partition: str
@@ -217,23 +245,23 @@ class PreRestoreRequest(TypedDict, total=False):
 
     :ivar partition: Pre Restore partition.
     :vartype partition: str
-    :ivar replica_group: Pre Restore replica group.
-    :vartype replica_group: str
-    :ivar request_id: Pre Restore request id.
-    :vartype request_id: str
-    :ivar azure_file_share_uri: Pre Restore Azure file share uri.
-    :vartype azure_file_share_uri: str
+    :ivar replicaGroup: Pre Restore replica group.
+    :vartype replicaGroup: str
+    :ivar requestId: Pre Restore request id.
+    :vartype requestId: str
+    :ivar azureFileShareUri: Pre Restore Azure file share uri.
+    :vartype azureFileShareUri: str
     :ivar status: Pre Restore Azure status.
     :vartype status: str
-    :ivar source_azure_file_share_uri: Pre Restore Azure source azure file share uri.
-    :vartype source_azure_file_share_uri: str
-    :ivar backup_metadata_property_bag: Pre Restore backup metadata property bag.
-    :vartype backup_metadata_property_bag: str
-    :ivar restore_file_spec: Pre Restore restore file spec array.
-    :vartype restore_file_spec: list["RestoreFileSpec"]
-    :ivar pause_wait_for_sync_drain_time_period_in_seconds: Pre Restore pause wait for sync drain
-     time period in seconds.
-    :vartype pause_wait_for_sync_drain_time_period_in_seconds: int
+    :ivar sourceAzureFileShareUri: Pre Restore Azure source azure file share uri.
+    :vartype sourceAzureFileShareUri: str
+    :ivar backupMetadataPropertyBag: Pre Restore backup metadata property bag.
+    :vartype backupMetadataPropertyBag: str
+    :ivar restoreFileSpec: Pre Restore restore file spec array.
+    :vartype restoreFileSpec: list["RestoreFileSpec"]
+    :ivar pauseWaitForSyncDrainTimePeriodInSeconds: Pre Restore pause wait for sync drain time
+     period in seconds.
+    :vartype pauseWaitForSyncDrainTimePeriodInSeconds: int
     """
 
     partition: str
@@ -278,9 +306,9 @@ class PrivateEndpointConnection(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Resource properties.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -292,16 +320,16 @@ class PrivateEndpointConnection(Resource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Properties of the private endpoint connection.
 
-    :ivar group_ids: The group ids for the private endpoint resource.
-    :vartype group_ids: list[str]
-    :ivar private_endpoint: The private endpoint resource.
-    :vartype private_endpoint: "PrivateEndpoint"
-    :ivar private_link_service_connection_state: A collection of information about the state of the
+    :ivar groupIds: The group ids for the private endpoint resource.
+    :vartype groupIds: list[str]
+    :ivar privateEndpoint: The private endpoint resource.
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar privateLinkServiceConnectionState: A collection of information about the state of the
      connection between service consumer and provider. Required.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionState"
-    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
+    :ivar provisioningState: The provisioning state of the private endpoint connection resource.
      Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
-    :vartype provisioning_state: Union[str, "PrivateEndpointConnectionProvisioningState"]
+    :vartype provisioningState: Union[str, "PrivateEndpointConnectionProvisioningState"]
     """
 
     groupIds: list[str]
@@ -325,9 +353,9 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
     :vartype status: Union[str, "PrivateEndpointServiceConnectionStatus"]
     :ivar description: The reason for approval/rejection of the connection.
     :vartype description: str
-    :ivar actions_required: A message indicating if changes on the service provider require any
+    :ivar actionsRequired: A message indicating if changes on the service provider require any
      updates on the consumer.
-    :vartype actions_required: str
+    :vartype actionsRequired: str
     """
 
     status: Union[str, "PrivateEndpointServiceConnectionStatus"]
@@ -344,8 +372,8 @@ class RecallActionParameters(TypedDict, total=False):
 
     :ivar pattern: Pattern of the files.
     :vartype pattern: str
-    :ivar recall_path: Recall path.
-    :vartype recall_path: str
+    :ivar recallPath: Recall path.
+    :vartype recallPath: str
     """
 
     pattern: str
@@ -365,9 +393,9 @@ class RegisteredServerCreateParameters(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The parameters used to create the registered server.
     :vartype properties: "RegisteredServerCreateParametersProperties"
     """
@@ -379,26 +407,26 @@ class RegisteredServerCreateParameters(ProxyResource):
 class RegisteredServerCreateParametersProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """RegisteredServer Create Properties object.
 
-    :ivar server_certificate: Registered Server Certificate.
-    :vartype server_certificate: str
-    :ivar agent_version: Registered Server Agent Version.
-    :vartype agent_version: str
-    :ivar server_os_version: Registered Server OS Version.
-    :vartype server_os_version: str
-    :ivar last_heart_beat: Registered Server last heart beat.
-    :vartype last_heart_beat: str
-    :ivar server_role: Registered Server serverRole.
-    :vartype server_role: str
-    :ivar cluster_id: Registered Server clusterId.
-    :vartype cluster_id: str
-    :ivar cluster_name: Registered Server clusterName.
-    :vartype cluster_name: str
-    :ivar server_id: Registered Server serverId.
-    :vartype server_id: str
-    :ivar friendly_name: Friendly Name.
-    :vartype friendly_name: str
-    :ivar application_id: Server ServicePrincipal Id.
-    :vartype application_id: str
+    :ivar serverCertificate: Registered Server Certificate.
+    :vartype serverCertificate: str
+    :ivar agentVersion: Registered Server Agent Version.
+    :vartype agentVersion: str
+    :ivar serverOSVersion: Registered Server OS Version.
+    :vartype serverOSVersion: str
+    :ivar lastHeartBeat: Registered Server last heart beat.
+    :vartype lastHeartBeat: str
+    :ivar serverRole: Registered Server serverRole.
+    :vartype serverRole: str
+    :ivar clusterId: Registered Server clusterId.
+    :vartype clusterId: str
+    :ivar clusterName: Registered Server clusterName.
+    :vartype clusterName: str
+    :ivar serverId: Registered Server serverId.
+    :vartype serverId: str
+    :ivar friendlyName: Friendly Name.
+    :vartype friendlyName: str
+    :ivar applicationId: Server ServicePrincipal Id.
+    :vartype applicationId: str
     :ivar identity: Apply server with newly discovered ApplicationId if available.
     :vartype identity: bool
     """
@@ -438,9 +466,9 @@ class RegisteredServerUpdateParameters(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The parameters used to update the registered server.
     :vartype properties: "RegisteredServerUpdateProperties"
     """
@@ -454,8 +482,8 @@ class RegisteredServerUpdateProperties(TypedDict, total=False):
 
     :ivar identity: Apply server with newly discovered ApplicationId if available.
     :vartype identity: bool
-    :ivar application_id: Apply server with new ServicePrincipal Id.
-    :vartype application_id: str
+    :ivar applicationId: Apply server with new ServicePrincipal Id.
+    :vartype applicationId: str
     """
 
     identity: bool
@@ -490,9 +518,9 @@ class ServerEndpointCreateParameters(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The parameters used to create the server endpoint.
     :vartype properties: "ServerEndpointCreateParametersProperties"
     """
@@ -504,33 +532,33 @@ class ServerEndpointCreateParameters(ProxyResource):
 class ServerEndpointCreateParametersProperties(TypedDict, total=False):
     """ServerEndpoint Properties object.
 
-    :ivar server_local_path: Server Local path.
-    :vartype server_local_path: str
-    :ivar cloud_tiering: Cloud Tiering. Known values are: "on" and "off".
-    :vartype cloud_tiering: Union[str, "FeatureStatus"]
-    :ivar volume_free_space_percent: Level of free space to be maintained by Cloud Tiering if it is
+    :ivar serverLocalPath: Server Local path.
+    :vartype serverLocalPath: str
+    :ivar cloudTiering: Cloud Tiering. Known values are: "on" and "off".
+    :vartype cloudTiering: Union[str, "FeatureStatus"]
+    :ivar volumeFreeSpacePercent: Level of free space to be maintained by Cloud Tiering if it is
      enabled.
-    :vartype volume_free_space_percent: int
-    :ivar tier_files_older_than_days: Tier files older than days.
-    :vartype tier_files_older_than_days: int
-    :ivar friendly_name: Friendly Name.
-    :vartype friendly_name: str
-    :ivar server_resource_id: Server Resource Id.
-    :vartype server_resource_id: str
-    :ivar offline_data_transfer: Offline data transfer. Known values are: "on" and "off".
-    :vartype offline_data_transfer: Union[str, "FeatureStatus"]
-    :ivar offline_data_transfer_share_name: Offline data transfer share name.
-    :vartype offline_data_transfer_share_name: str
-    :ivar initial_download_policy: Policy for how namespace and files are recalled during FastDr.
+    :vartype volumeFreeSpacePercent: int
+    :ivar tierFilesOlderThanDays: Tier files older than days.
+    :vartype tierFilesOlderThanDays: int
+    :ivar friendlyName: Friendly Name.
+    :vartype friendlyName: str
+    :ivar serverResourceId: Server Resource Id.
+    :vartype serverResourceId: str
+    :ivar offlineDataTransfer: Offline data transfer. Known values are: "on" and "off".
+    :vartype offlineDataTransfer: Union[str, "FeatureStatus"]
+    :ivar offlineDataTransferShareName: Offline data transfer share name.
+    :vartype offlineDataTransferShareName: str
+    :ivar initialDownloadPolicy: Policy for how namespace and files are recalled during FastDr.
      Known values are: "NamespaceOnly", "NamespaceThenModifiedFiles", and "AvoidTieredFiles".
-    :vartype initial_download_policy: Union[str, "InitialDownloadPolicy"]
-    :ivar local_cache_mode: Policy for enabling follow-the-sun business models: link local cache to
+    :vartype initialDownloadPolicy: Union[str, "InitialDownloadPolicy"]
+    :ivar localCacheMode: Policy for enabling follow-the-sun business models: link local cache to
      cloud behavior to pre-populate before local access. Known values are:
      "DownloadNewAndModifiedFiles" and "UpdateLocallyCachedFiles".
-    :vartype local_cache_mode: Union[str, "LocalCacheMode"]
-    :ivar initial_upload_policy: Policy for how the initial upload sync session is performed. Known
+    :vartype localCacheMode: Union[str, "LocalCacheMode"]
+    :ivar initialUploadPolicy: Policy for how the initial upload sync session is performed. Known
      values are: "ServerAuthoritative" and "Merge".
-    :vartype initial_upload_policy: Union[str, "InitialUploadPolicy"]
+    :vartype initialUploadPolicy: Union[str, "InitialUploadPolicy"]
     """
 
     serverLocalPath: str
@@ -575,21 +603,21 @@ class ServerEndpointUpdateParameters(TypedDict, total=False):
 class ServerEndpointUpdateProperties(TypedDict, total=False):
     """ServerEndpoint Update Properties object.
 
-    :ivar cloud_tiering: Cloud Tiering. Known values are: "on" and "off".
-    :vartype cloud_tiering: Union[str, "FeatureStatus"]
-    :ivar volume_free_space_percent: Level of free space to be maintained by Cloud Tiering if it is
+    :ivar cloudTiering: Cloud Tiering. Known values are: "on" and "off".
+    :vartype cloudTiering: Union[str, "FeatureStatus"]
+    :ivar volumeFreeSpacePercent: Level of free space to be maintained by Cloud Tiering if it is
      enabled.
-    :vartype volume_free_space_percent: int
-    :ivar tier_files_older_than_days: Tier files older than days.
-    :vartype tier_files_older_than_days: int
-    :ivar offline_data_transfer: Offline data transfer. Known values are: "on" and "off".
-    :vartype offline_data_transfer: Union[str, "FeatureStatus"]
-    :ivar offline_data_transfer_share_name: Offline data transfer share name.
-    :vartype offline_data_transfer_share_name: str
-    :ivar local_cache_mode: Policy for enabling follow-the-sun business models: link local cache to
+    :vartype volumeFreeSpacePercent: int
+    :ivar tierFilesOlderThanDays: Tier files older than days.
+    :vartype tierFilesOlderThanDays: int
+    :ivar offlineDataTransfer: Offline data transfer. Known values are: "on" and "off".
+    :vartype offlineDataTransfer: Union[str, "FeatureStatus"]
+    :ivar offlineDataTransferShareName: Offline data transfer share name.
+    :vartype offlineDataTransferShareName: str
+    :ivar localCacheMode: Policy for enabling follow-the-sun business models: link local cache to
      cloud behavior to pre-populate before local access. Known values are:
      "DownloadNewAndModifiedFiles" and "UpdateLocallyCachedFiles".
-    :vartype local_cache_mode: Union[str, "LocalCacheMode"]
+    :vartype localCacheMode: Union[str, "LocalCacheMode"]
     """
 
     cloudTiering: Union[str, "FeatureStatus"]
@@ -619,9 +647,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -645,9 +673,9 @@ class StorageSyncServiceCreateParameters(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -669,12 +697,12 @@ class StorageSyncServiceCreateParameters(TrackedResource):
 class StorageSyncServiceCreateParametersProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """StorageSyncService Properties object.
 
-    :ivar incoming_traffic_policy: Incoming Traffic Policy. Known values are: "AllowAllTraffic" and
+    :ivar incomingTrafficPolicy: Incoming Traffic Policy. Known values are: "AllowAllTraffic" and
      "AllowVirtualNetworksOnly".
-    :vartype incoming_traffic_policy: Union[str, "IncomingTrafficPolicy"]
-    :ivar use_identity: Use Identity authorization when customer have finished setup RBAC
+    :vartype incomingTrafficPolicy: Union[str, "IncomingTrafficPolicy"]
+    :ivar useIdentity: Use Identity authorization when customer have finished setup RBAC
      permissions.
-    :vartype use_identity: bool
+    :vartype useIdentity: bool
     """
 
     incomingTrafficPolicy: Union[str, "IncomingTrafficPolicy"]
@@ -708,12 +736,12 @@ class StorageSyncServiceUpdateParameters(TypedDict, total=False):
 class StorageSyncServiceUpdateProperties(TypedDict, total=False):
     """StorageSyncService Properties object.
 
-    :ivar incoming_traffic_policy: Incoming Traffic Policy. Known values are: "AllowAllTraffic" and
+    :ivar incomingTrafficPolicy: Incoming Traffic Policy. Known values are: "AllowAllTraffic" and
      "AllowVirtualNetworksOnly".
-    :vartype incoming_traffic_policy: Union[str, "IncomingTrafficPolicy"]
-    :ivar use_identity: Use Identity authorization when customer have finished setup RBAC
+    :vartype incomingTrafficPolicy: Union[str, "IncomingTrafficPolicy"]
+    :ivar useIdentity: Use Identity authorization when customer have finished setup RBAC
      permissions.
-    :vartype use_identity: bool
+    :vartype useIdentity: bool
     """
 
     incomingTrafficPolicy: Union[str, "IncomingTrafficPolicy"]
@@ -734,9 +762,9 @@ class SyncGroupCreateParameters(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The parameters used to create the sync group.
     :vartype properties: Any
     """
@@ -748,20 +776,20 @@ class SyncGroupCreateParameters(ProxyResource):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -783,12 +811,12 @@ class SystemData(TypedDict, total=False):
 class TriggerChangeDetectionParameters(TypedDict, total=False):
     """The parameters used when calling trigger change detection action on cloud endpoint.
 
-    :ivar directory_path: Relative path to a directory Azure File share for which change detection
+    :ivar directoryPath: Relative path to a directory Azure File share for which change detection
      is to be performed.
-    :vartype directory_path: str
-    :ivar change_detection_mode: Change Detection Mode. Applies to a directory specified in
+    :vartype directoryPath: str
+    :ivar changeDetectionMode: Change Detection Mode. Applies to a directory specified in
      directoryPath parameter. Known values are: "Default" and "Recursive".
-    :vartype change_detection_mode: Union[str, "ChangeDetectionMode"]
+    :vartype changeDetectionMode: Union[str, "ChangeDetectionMode"]
     :ivar paths: Array of relative paths on the Azure File share to be included in the change
      detection. Can be files and directories.
     :vartype paths: list[str]
@@ -807,8 +835,8 @@ class TriggerChangeDetectionParameters(TypedDict, total=False):
 class TriggerRolloverRequest(TypedDict, total=False):
     """Trigger Rollover Request.
 
-    :ivar server_certificate: Certificate Data.
-    :vartype server_certificate: str
+    :ivar serverCertificate: Certificate Data.
+    :vartype serverCertificate: str
     """
 
     serverCertificate: str
@@ -818,10 +846,10 @@ class TriggerRolloverRequest(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str

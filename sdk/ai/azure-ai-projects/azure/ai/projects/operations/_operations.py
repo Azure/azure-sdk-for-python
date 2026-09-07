@@ -565,13 +565,101 @@ def build_agents_get_session_log_stream_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_agents_publish_to_microsoft365_request(  # pylint: disable=name-too-long
+    agent_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/microsoft365/publish"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_get_microsoft365_package_request(  # pylint: disable=name-too-long
+    agent_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/zip")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/microsoft365/zip"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_get_microsoft365_publish_defaults_request(  # pylint: disable=name-too-long
+    agent_name: str, *, publish_as_digital_worker: Optional[bool] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agents/{agent_name}/microsoft365/publishdefaults"
+    path_format_arguments = {
+        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if publish_as_digital_worker is not None:
+        _params["publishAsDigitalWorker"] = _SERIALIZER.query(
+            "publish_as_digital_worker", publish_as_digital_worker, "bool"
+        )
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_agents_upload_session_file_request(
     agent_name: str, session_id: str, *, path: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -589,7 +677,8 @@ def build_agents_upload_session_file_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1422,6 +1511,402 @@ def build_toolboxes_delete_version_request(name: str, version: str, **kwargs: An
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_beta_agent_insight_monitors_list_request(  # pylint: disable=name-too-long
+    *,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    agent_name: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors"
+
+    # Construct parameters
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if agent_name is not None:
+        _params["agent_name"] = _SERIALIZER.query("agent_name", agent_name, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_agent_insight_monitors_create_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_agent_insight_monitors_get_request(  # pylint: disable=name-too-long
+    monitor_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_agent_insight_monitors_delete_request(  # pylint: disable=name-too-long
+    monitor_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_beta_agent_insight_monitors_update_request(  # pylint: disable=name-too-long
+    monitor_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_agent_insight_monitors_reset_request(  # pylint: disable=name-too-long
+    monitor_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}:reset"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
+def build_beta_agent_insight_monitors_create_run_request(  # pylint: disable=name-too-long
+    monitor_id: str, *, operation_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/runs"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if operation_id is not None:
+        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_agent_insight_monitors_list_runs_request(  # pylint: disable=name-too-long
+    monitor_id: str,
+    *,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    status: Optional[Union[str, _models.JobStatus]] = None,
+    trigger: Optional[Union[str, _models.AgentInsightRunTrigger]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/runs"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if status is not None:
+        _params["status"] = _SERIALIZER.query("status", status, "str")
+    if trigger is not None:
+        _params["trigger"] = _SERIALIZER.query("trigger", trigger, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_agent_insight_monitors_get_run_request(  # pylint: disable=name-too-long
+    monitor_id: str, run_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/runs/{run_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+        "run_id": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_agent_insight_monitors_cancel_run_request(  # pylint: disable=name-too-long
+    monitor_id: str, run_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/runs/{run_id}:cancel"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+        "run_id": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_agent_insight_monitors_list_insights_request(  # pylint: disable=name-too-long
+    monitor_id: str,
+    *,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    category: Optional[str] = None,
+    severity: Optional[Union[str, _models.AgentInsightSeverity]] = None,
+    status: Optional[Union[str, _models.AgentInsightStatus]] = None,
+    include_details: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/insights"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if category is not None:
+        _params["category"] = _SERIALIZER.query("category", category, "str")
+    if severity is not None:
+        _params["severity"] = _SERIALIZER.query("severity", severity, "str")
+    if status is not None:
+        _params["status"] = _SERIALIZER.query("status", status, "str")
+    if include_details is not None:
+        _params["include_details"] = _SERIALIZER.query("include_details", include_details, "bool")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_agent_insight_monitors_get_insight_request(  # pylint: disable=name-too-long
+    monitor_id: str, insight_id: str, *, include_details: Optional[bool] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/insights/{insight_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+        "insight_id": _SERIALIZER.url("insight_id", insight_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if include_details is not None:
+        _params["include_details"] = _SERIALIZER.query("include_details", include_details, "bool")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_agent_insight_monitors_update_insight_request(  # pylint: disable=name-too-long
+    monitor_id: str, insight_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_insight_monitors/{monitor_id}/insights/{insight_id}"
+    path_format_arguments = {
+        "monitor_id": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+        "insight_id": _SERIALIZER.url("insight_id", insight_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_beta_evaluation_taxonomies_get_request(  # pylint: disable=name-too-long
@@ -2757,8 +3242,7 @@ def build_beta_routines_list_request(
     *,
     limit: Optional[int] = None,
     after: Optional[str] = None,
-    before: Optional[str] = None,
-    order: Optional[str] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2775,8 +3259,6 @@ def build_beta_routines_list_request(
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if after is not None:
         _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
     if order is not None:
         _params["order"] = _SERIALIZER.query("order", order, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2811,8 +3293,7 @@ def build_beta_routines_list_runs_request(
     filter: Optional[str] = None,
     limit: Optional[int] = None,
     after: Optional[str] = None,
-    before: Optional[str] = None,
-    order: Optional[str] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2836,8 +3317,6 @@ def build_beta_routines_list_runs_request(
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if after is not None:
         _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
     if order is not None:
         _params["order"] = _SERIALIZER.query("order", order, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3603,7 +4082,7 @@ def build_beta_agents_delete_optimization_job_request(  # pylint: disable=name-t
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-class BetaOperations:  # pylint: disable=too-many-instance-attributes
+class BetaOperations:  # pylint: disable=docstring-missing-param,too-many-instance-attributes
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3620,6 +4099,9 @@ class BetaOperations:  # pylint: disable=too-many-instance-attributes
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+        self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.evaluation_taxonomies = BetaEvaluationTaxonomiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -3635,7 +4117,7 @@ class BetaOperations:  # pylint: disable=too-many-instance-attributes
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
-class AgentsOperations:  # pylint: disable=too-many-public-methods
+class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3901,6 +4383,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
+        digital_worker_type: Optional[Union[str, _models.DigitalWorkerType]] = None,
         draft: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
@@ -3915,8 +4398,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
-         agent definition. Required.
+        :keyword definition: The agent definition. This can be a prompt, workflow, hosted, external, or
+         voice agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -3932,6 +4415,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
         :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
+        :keyword digital_worker_type: (Preview) The type of digital worker (previously known as
+         ``autopilot``). If omitted, it is not a digital worker. "m365" Default value is None.
+        :paramtype digital_worker_type: str or ~azure.ai.projects.models.DigitalWorkerType
         :keyword draft: (Preview) Whether this agent version is a draft (candidate) rather than a
          release. The service defaults to ``false`` if a value is not specified by the caller. Draft
          versions are recorded but excluded from default 'latest' resolution and are not auto-promoted.
@@ -4002,6 +4488,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
+        digital_worker_type: Optional[Union[str, _models.DigitalWorkerType]] = None,
         draft: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
@@ -4018,8 +4505,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
-         agent definition. Required.
+        :keyword definition: The agent definition. This can be a prompt, workflow, hosted, external, or
+         voice agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
@@ -4032,6 +4519,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
         :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
+        :keyword digital_worker_type: (Preview) The type of digital worker (previously known as
+         ``autopilot``). If omitted, it is not a digital worker. "m365" Default value is None.
+        :paramtype digital_worker_type: str or ~azure.ai.projects.models.DigitalWorkerType
         :keyword draft: (Preview) Whether this agent version is a draft (candidate) rather than a
          release. The service defaults to ``false`` if a value is not specified by the caller. Draft
          versions are recorded but excluded from default 'latest' resolution and are not auto-promoted.
@@ -4062,6 +4552,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 "blueprint_reference": blueprint_reference,
                 "definition": definition,
                 "description": description,
+                "digital_worker_type": digital_worker_type,
                 "draft": draft,
                 "metadata": metadata,
             }
@@ -5611,9 +6102,797 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
+    @overload
+    def publish_to_microsoft365(
+        self,
+        agent_name: str,
+        *,
+        publish_scope: Union[str, _models.Microsoft365PublishScope],
+        content_type: str = "application/json",
+        agent_display_name: Optional[str] = None,
+        bot_service_arm_id: Optional[str] = None,
+        publish_as_autopilot: Optional[bool] = None,
+        access_boundaries: Optional[List[Union[str, _models.ActivityProtocolAccessBoundary]]] = None,
+        optional_permission_scopes: Optional[List[_models.Microsoft365PermissionScopes]] = None,
+        can_respond_without_mention: Optional[bool] = None,
+        app_version: Optional[str] = None,
+        short_description: Optional[str] = None,
+        full_description: Optional[str] = None,
+        developer_name: Optional[str] = None,
+        developer_website_url: Optional[str] = None,
+        privacy_url: Optional[str] = None,
+        terms_of_use_url: Optional[str] = None,
+        color_icon_base64: Optional[str] = None,
+        outline_icon_base64: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.Microsoft365PublishResult:
+        """Publish an agent to Microsoft 365.
+
+        Publishes a Foundry agent to Microsoft 365 / Microsoft Teams and returns the published title
+        and Teams app ids.
+
+        :param agent_name: The name of the agent to publish. Required.
+        :type agent_name: str
+        :keyword publish_scope: Publish scope for the Teams app. Known values are: "Personal",
+         "Shared", and "Tenant". Required.
+        :paramtype publish_scope: str or ~azure.ai.projects.models.Microsoft365PublishScope
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword agent_display_name: Display name used as the published Teams app name. When omitted,
+         the agent name from the route is
+         used. Default value is None.
+        :paramtype agent_display_name: str
+        :keyword bot_service_arm_id: ARM resource id of the Azure Bot Service that fronts this agent in
+         Microsoft Teams. Required for
+         workspaces on the default bot-based Teams backend; optional for workspaces on the API-based
+         backend.
+         Must not be supplied when ``publishAsAutopilot`` is true. Default value is None.
+        :paramtype bot_service_arm_id: str
+        :keyword publish_as_autopilot: When true, the agent is published as an autopilot (digital
+         worker) agent: the bot id is taken from
+         the agent's blueprint identity and the generated Teams manifest is marked as a digital worker.
+         Default value is None.
+        :paramtype publish_as_autopilot: bool
+        :keyword access_boundaries: Activity-protocol access boundaries to apply to the agent when
+         publishing as an autopilot agent.
+         An empty list clears the existing boundaries. When omitted, the existing boundaries are left
+         unchanged. Default value is None.
+        :paramtype access_boundaries: list[str or
+         ~azure.ai.projects.models.ActivityProtocolAccessBoundary]
+        :keyword optional_permission_scopes: Exact selection of delegated permission scopes to grant to
+         the autopilot blueprint. May only be
+         supplied when ``publishAsAutopilot`` is true. When omitted or empty, the platform's default
+         permission set is used. Mandatory platform permissions are always granted and are not affected
+         by
+         this value. Default value is None.
+        :paramtype optional_permission_scopes:
+         list[~azure.ai.projects.models.Microsoft365PermissionScopes]
+        :keyword can_respond_without_mention: Controls how the published agent responds to Teams
+         messages: when true it responds to all messages
+         on its surfaces, when false only when it is at-mentioned. When omitted, the agent's existing
+         Teams
+         message-notification setting is left unchanged. Default value is None.
+        :paramtype can_respond_without_mention: bool
+        :keyword app_version: App version (for example ``1.2.3``) written into the Teams manifest. May
+         contain only digits and
+         periods, must not start with ``0``, and must end with a digit. When omitted, a platform
+         default is
+         used. Default value is None.
+        :paramtype app_version: str
+        :keyword short_description: Short, one-line description shown in the Teams app listing. Default
+         value is None.
+        :paramtype short_description: str
+        :keyword full_description: Full description shown on the Teams app details page. Default value
+         is None.
+        :paramtype full_description: str
+        :keyword developer_name: Display name of the developer / publisher shown in the Teams app
+         listing. Default value is None.
+        :paramtype developer_name: str
+        :keyword developer_website_url: Developer / publisher website URL shown in the Teams app
+         listing. Must be an https URL. Default value is None.
+        :paramtype developer_website_url: str
+        :keyword privacy_url: Privacy policy URL shown in the Teams app listing. Must be an http or
+         https URL. Default value is None.
+        :paramtype privacy_url: str
+        :keyword terms_of_use_url: Terms-of-use URL shown in the Teams app listing. Default value is
+         None.
+        :paramtype terms_of_use_url: str
+        :keyword color_icon_base64: Optional base64-encoded PNG used as the color (full-bleed) icon in
+         the Teams app package. Must be a
+         192x192 PNG (perfect square, no border or rounded corners). Max 1 MB after decode. When
+         omitted, the
+         platform default color icon is used. Default value is None.
+        :paramtype color_icon_base64: str
+        :keyword outline_icon_base64: Optional base64-encoded PNG used as the outline icon in the Teams
+         app package. Must be a 32x32 PNG.
+         Max 1 MB after decode. When omitted, the platform default outline icon is used. Default value
+         is None.
+        :paramtype outline_icon_base64: str
+        :return: Microsoft365PublishResult. The Microsoft365PublishResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.Microsoft365PublishResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def publish_to_microsoft365(
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Microsoft365PublishResult:
+        """Publish an agent to Microsoft 365.
+
+        Publishes a Foundry agent to Microsoft 365 / Microsoft Teams and returns the published title
+        and Teams app ids.
+
+        :param agent_name: The name of the agent to publish. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Microsoft365PublishResult. The Microsoft365PublishResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.Microsoft365PublishResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def publish_to_microsoft365(
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Microsoft365PublishResult:
+        """Publish an agent to Microsoft 365.
+
+        Publishes a Foundry agent to Microsoft 365 / Microsoft Teams and returns the published title
+        and Teams app ids.
+
+        :param agent_name: The name of the agent to publish. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Microsoft365PublishResult. The Microsoft365PublishResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.Microsoft365PublishResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
+    def publish_to_microsoft365(  # pylint: disable=too-many-locals
+        self,
+        agent_name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        publish_scope: Union[str, _models.Microsoft365PublishScope] = _Unset,
+        agent_display_name: Optional[str] = None,
+        bot_service_arm_id: Optional[str] = None,
+        publish_as_autopilot: Optional[bool] = None,
+        access_boundaries: Optional[List[Union[str, _models.ActivityProtocolAccessBoundary]]] = None,
+        optional_permission_scopes: Optional[List[_models.Microsoft365PermissionScopes]] = None,
+        can_respond_without_mention: Optional[bool] = None,
+        app_version: Optional[str] = None,
+        short_description: Optional[str] = None,
+        full_description: Optional[str] = None,
+        developer_name: Optional[str] = None,
+        developer_website_url: Optional[str] = None,
+        privacy_url: Optional[str] = None,
+        terms_of_use_url: Optional[str] = None,
+        color_icon_base64: Optional[str] = None,
+        outline_icon_base64: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.Microsoft365PublishResult:
+        """Publish an agent to Microsoft 365.
+
+        Publishes a Foundry agent to Microsoft 365 / Microsoft Teams and returns the published title
+        and Teams app ids.
+
+        :param agent_name: The name of the agent to publish. Required.
+        :type agent_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword publish_scope: Publish scope for the Teams app. Known values are: "Personal",
+         "Shared", and "Tenant". Required.
+        :paramtype publish_scope: str or ~azure.ai.projects.models.Microsoft365PublishScope
+        :keyword agent_display_name: Display name used as the published Teams app name. When omitted,
+         the agent name from the route is
+         used. Default value is None.
+        :paramtype agent_display_name: str
+        :keyword bot_service_arm_id: ARM resource id of the Azure Bot Service that fronts this agent in
+         Microsoft Teams. Required for
+         workspaces on the default bot-based Teams backend; optional for workspaces on the API-based
+         backend.
+         Must not be supplied when ``publishAsAutopilot`` is true. Default value is None.
+        :paramtype bot_service_arm_id: str
+        :keyword publish_as_autopilot: When true, the agent is published as an autopilot (digital
+         worker) agent: the bot id is taken from
+         the agent's blueprint identity and the generated Teams manifest is marked as a digital worker.
+         Default value is None.
+        :paramtype publish_as_autopilot: bool
+        :keyword access_boundaries: Activity-protocol access boundaries to apply to the agent when
+         publishing as an autopilot agent.
+         An empty list clears the existing boundaries. When omitted, the existing boundaries are left
+         unchanged. Default value is None.
+        :paramtype access_boundaries: list[str or
+         ~azure.ai.projects.models.ActivityProtocolAccessBoundary]
+        :keyword optional_permission_scopes: Exact selection of delegated permission scopes to grant to
+         the autopilot blueprint. May only be
+         supplied when ``publishAsAutopilot`` is true. When omitted or empty, the platform's default
+         permission set is used. Mandatory platform permissions are always granted and are not affected
+         by
+         this value. Default value is None.
+        :paramtype optional_permission_scopes:
+         list[~azure.ai.projects.models.Microsoft365PermissionScopes]
+        :keyword can_respond_without_mention: Controls how the published agent responds to Teams
+         messages: when true it responds to all messages
+         on its surfaces, when false only when it is at-mentioned. When omitted, the agent's existing
+         Teams
+         message-notification setting is left unchanged. Default value is None.
+        :paramtype can_respond_without_mention: bool
+        :keyword app_version: App version (for example ``1.2.3``) written into the Teams manifest. May
+         contain only digits and
+         periods, must not start with ``0``, and must end with a digit. When omitted, a platform
+         default is
+         used. Default value is None.
+        :paramtype app_version: str
+        :keyword short_description: Short, one-line description shown in the Teams app listing. Default
+         value is None.
+        :paramtype short_description: str
+        :keyword full_description: Full description shown on the Teams app details page. Default value
+         is None.
+        :paramtype full_description: str
+        :keyword developer_name: Display name of the developer / publisher shown in the Teams app
+         listing. Default value is None.
+        :paramtype developer_name: str
+        :keyword developer_website_url: Developer / publisher website URL shown in the Teams app
+         listing. Must be an https URL. Default value is None.
+        :paramtype developer_website_url: str
+        :keyword privacy_url: Privacy policy URL shown in the Teams app listing. Must be an http or
+         https URL. Default value is None.
+        :paramtype privacy_url: str
+        :keyword terms_of_use_url: Terms-of-use URL shown in the Teams app listing. Default value is
+         None.
+        :paramtype terms_of_use_url: str
+        :keyword color_icon_base64: Optional base64-encoded PNG used as the color (full-bleed) icon in
+         the Teams app package. Must be a
+         192x192 PNG (perfect square, no border or rounded corners). Max 1 MB after decode. When
+         omitted, the
+         platform default color icon is used. Default value is None.
+        :paramtype color_icon_base64: str
+        :keyword outline_icon_base64: Optional base64-encoded PNG used as the outline icon in the Teams
+         app package. Must be a 32x32 PNG.
+         Max 1 MB after decode. When omitted, the platform default outline icon is used. Default value
+         is None.
+        :paramtype outline_icon_base64: str
+        :return: Microsoft365PublishResult. The Microsoft365PublishResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.Microsoft365PublishResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Microsoft365PublishResult] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if publish_scope is _Unset:
+                raise TypeError("missing required argument: publish_scope")
+            body = {
+                "accessBoundaries": access_boundaries,
+                "agentDisplayName": agent_display_name,
+                "appVersion": app_version,
+                "botServiceArmId": bot_service_arm_id,
+                "canRespondWithoutMention": can_respond_without_mention,
+                "colorIconBase64": color_icon_base64,
+                "developerName": developer_name,
+                "developerWebsiteUrl": developer_website_url,
+                "fullDescription": full_description,
+                "optionalPermissionScopes": optional_permission_scopes,
+                "outlineIconBase64": outline_icon_base64,
+                "privacyUrl": privacy_url,
+                "publishAsAutopilot": publish_as_autopilot,
+                "publishScope": publish_scope,
+                "shortDescription": short_description,
+                "termsOfUseUrl": terms_of_use_url,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_publish_to_microsoft365_request(
+            agent_name=agent_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Microsoft365PublishResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def get_microsoft365_package(
+        self,
+        agent_name: str,
+        *,
+        publish_scope: Union[str, _models.Microsoft365PublishScope],
+        content_type: str = "application/json",
+        agent_display_name: Optional[str] = None,
+        bot_service_arm_id: Optional[str] = None,
+        publish_as_autopilot: Optional[bool] = None,
+        access_boundaries: Optional[List[Union[str, _models.ActivityProtocolAccessBoundary]]] = None,
+        optional_permission_scopes: Optional[List[_models.Microsoft365PermissionScopes]] = None,
+        can_respond_without_mention: Optional[bool] = None,
+        app_version: Optional[str] = None,
+        short_description: Optional[str] = None,
+        full_description: Optional[str] = None,
+        developer_name: Optional[str] = None,
+        developer_website_url: Optional[str] = None,
+        privacy_url: Optional[str] = None,
+        terms_of_use_url: Optional[str] = None,
+        color_icon_base64: Optional[str] = None,
+        outline_icon_base64: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        """Generate a Microsoft 365 app package.
+
+        Generates the Microsoft Teams app package (zip) for a Foundry agent from the supplied publish
+        request, without publishing it. Returns the app package as ``application/zip``.
+
+        :param agent_name: The name of the agent to generate the app package for. Required.
+        :type agent_name: str
+        :keyword publish_scope: Publish scope for the Teams app. Known values are: "Personal",
+         "Shared", and "Tenant". Required.
+        :paramtype publish_scope: str or ~azure.ai.projects.models.Microsoft365PublishScope
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword agent_display_name: Display name used as the published Teams app name. When omitted,
+         the agent name from the route is
+         used. Default value is None.
+        :paramtype agent_display_name: str
+        :keyword bot_service_arm_id: ARM resource id of the Azure Bot Service that fronts this agent in
+         Microsoft Teams. Required for
+         workspaces on the default bot-based Teams backend; optional for workspaces on the API-based
+         backend.
+         Must not be supplied when ``publishAsAutopilot`` is true. Default value is None.
+        :paramtype bot_service_arm_id: str
+        :keyword publish_as_autopilot: When true, the agent is published as an autopilot (digital
+         worker) agent: the bot id is taken from
+         the agent's blueprint identity and the generated Teams manifest is marked as a digital worker.
+         Default value is None.
+        :paramtype publish_as_autopilot: bool
+        :keyword access_boundaries: Activity-protocol access boundaries to apply to the agent when
+         publishing as an autopilot agent.
+         An empty list clears the existing boundaries. When omitted, the existing boundaries are left
+         unchanged. Default value is None.
+        :paramtype access_boundaries: list[str or
+         ~azure.ai.projects.models.ActivityProtocolAccessBoundary]
+        :keyword optional_permission_scopes: Exact selection of delegated permission scopes to grant to
+         the autopilot blueprint. May only be
+         supplied when ``publishAsAutopilot`` is true. When omitted or empty, the platform's default
+         permission set is used. Mandatory platform permissions are always granted and are not affected
+         by
+         this value. Default value is None.
+        :paramtype optional_permission_scopes:
+         list[~azure.ai.projects.models.Microsoft365PermissionScopes]
+        :keyword can_respond_without_mention: Controls how the published agent responds to Teams
+         messages: when true it responds to all messages
+         on its surfaces, when false only when it is at-mentioned. When omitted, the agent's existing
+         Teams
+         message-notification setting is left unchanged. Default value is None.
+        :paramtype can_respond_without_mention: bool
+        :keyword app_version: App version (for example ``1.2.3``) written into the Teams manifest. May
+         contain only digits and
+         periods, must not start with ``0``, and must end with a digit. When omitted, a platform
+         default is
+         used. Default value is None.
+        :paramtype app_version: str
+        :keyword short_description: Short, one-line description shown in the Teams app listing. Default
+         value is None.
+        :paramtype short_description: str
+        :keyword full_description: Full description shown on the Teams app details page. Default value
+         is None.
+        :paramtype full_description: str
+        :keyword developer_name: Display name of the developer / publisher shown in the Teams app
+         listing. Default value is None.
+        :paramtype developer_name: str
+        :keyword developer_website_url: Developer / publisher website URL shown in the Teams app
+         listing. Must be an https URL. Default value is None.
+        :paramtype developer_website_url: str
+        :keyword privacy_url: Privacy policy URL shown in the Teams app listing. Must be an http or
+         https URL. Default value is None.
+        :paramtype privacy_url: str
+        :keyword terms_of_use_url: Terms-of-use URL shown in the Teams app listing. Default value is
+         None.
+        :paramtype terms_of_use_url: str
+        :keyword color_icon_base64: Optional base64-encoded PNG used as the color (full-bleed) icon in
+         the Teams app package. Must be a
+         192x192 PNG (perfect square, no border or rounded corners). Max 1 MB after decode. When
+         omitted, the
+         platform default color icon is used. Default value is None.
+        :paramtype color_icon_base64: str
+        :keyword outline_icon_base64: Optional base64-encoded PNG used as the outline icon in the Teams
+         app package. Must be a 32x32 PNG.
+         Max 1 MB after decode. When omitted, the platform default outline icon is used. Default value
+         is None.
+        :paramtype outline_icon_base64: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def get_microsoft365_package(
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> Iterator[bytes]:
+        """Generate a Microsoft 365 app package.
+
+        Generates the Microsoft Teams app package (zip) for a Foundry agent from the supplied publish
+        request, without publishing it. Returns the app package as ``application/zip``.
+
+        :param agent_name: The name of the agent to generate the app package for. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def get_microsoft365_package(
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> Iterator[bytes]:
+        """Generate a Microsoft 365 app package.
+
+        Generates the Microsoft Teams app package (zip) for a Foundry agent from the supplied publish
+        request, without publishing it. Returns the app package as ``application/zip``.
+
+        :param agent_name: The name of the agent to generate the app package for. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def get_microsoft365_package(  # pylint: disable=too-many-locals
+        self,
+        agent_name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        publish_scope: Union[str, _models.Microsoft365PublishScope] = _Unset,
+        agent_display_name: Optional[str] = None,
+        bot_service_arm_id: Optional[str] = None,
+        publish_as_autopilot: Optional[bool] = None,
+        access_boundaries: Optional[List[Union[str, _models.ActivityProtocolAccessBoundary]]] = None,
+        optional_permission_scopes: Optional[List[_models.Microsoft365PermissionScopes]] = None,
+        can_respond_without_mention: Optional[bool] = None,
+        app_version: Optional[str] = None,
+        short_description: Optional[str] = None,
+        full_description: Optional[str] = None,
+        developer_name: Optional[str] = None,
+        developer_website_url: Optional[str] = None,
+        privacy_url: Optional[str] = None,
+        terms_of_use_url: Optional[str] = None,
+        color_icon_base64: Optional[str] = None,
+        outline_icon_base64: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        """Generate a Microsoft 365 app package.
+
+        Generates the Microsoft Teams app package (zip) for a Foundry agent from the supplied publish
+        request, without publishing it. Returns the app package as ``application/zip``.
+
+        :param agent_name: The name of the agent to generate the app package for. Required.
+        :type agent_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword publish_scope: Publish scope for the Teams app. Known values are: "Personal",
+         "Shared", and "Tenant". Required.
+        :paramtype publish_scope: str or ~azure.ai.projects.models.Microsoft365PublishScope
+        :keyword agent_display_name: Display name used as the published Teams app name. When omitted,
+         the agent name from the route is
+         used. Default value is None.
+        :paramtype agent_display_name: str
+        :keyword bot_service_arm_id: ARM resource id of the Azure Bot Service that fronts this agent in
+         Microsoft Teams. Required for
+         workspaces on the default bot-based Teams backend; optional for workspaces on the API-based
+         backend.
+         Must not be supplied when ``publishAsAutopilot`` is true. Default value is None.
+        :paramtype bot_service_arm_id: str
+        :keyword publish_as_autopilot: When true, the agent is published as an autopilot (digital
+         worker) agent: the bot id is taken from
+         the agent's blueprint identity and the generated Teams manifest is marked as a digital worker.
+         Default value is None.
+        :paramtype publish_as_autopilot: bool
+        :keyword access_boundaries: Activity-protocol access boundaries to apply to the agent when
+         publishing as an autopilot agent.
+         An empty list clears the existing boundaries. When omitted, the existing boundaries are left
+         unchanged. Default value is None.
+        :paramtype access_boundaries: list[str or
+         ~azure.ai.projects.models.ActivityProtocolAccessBoundary]
+        :keyword optional_permission_scopes: Exact selection of delegated permission scopes to grant to
+         the autopilot blueprint. May only be
+         supplied when ``publishAsAutopilot`` is true. When omitted or empty, the platform's default
+         permission set is used. Mandatory platform permissions are always granted and are not affected
+         by
+         this value. Default value is None.
+        :paramtype optional_permission_scopes:
+         list[~azure.ai.projects.models.Microsoft365PermissionScopes]
+        :keyword can_respond_without_mention: Controls how the published agent responds to Teams
+         messages: when true it responds to all messages
+         on its surfaces, when false only when it is at-mentioned. When omitted, the agent's existing
+         Teams
+         message-notification setting is left unchanged. Default value is None.
+        :paramtype can_respond_without_mention: bool
+        :keyword app_version: App version (for example ``1.2.3``) written into the Teams manifest. May
+         contain only digits and
+         periods, must not start with ``0``, and must end with a digit. When omitted, a platform
+         default is
+         used. Default value is None.
+        :paramtype app_version: str
+        :keyword short_description: Short, one-line description shown in the Teams app listing. Default
+         value is None.
+        :paramtype short_description: str
+        :keyword full_description: Full description shown on the Teams app details page. Default value
+         is None.
+        :paramtype full_description: str
+        :keyword developer_name: Display name of the developer / publisher shown in the Teams app
+         listing. Default value is None.
+        :paramtype developer_name: str
+        :keyword developer_website_url: Developer / publisher website URL shown in the Teams app
+         listing. Must be an https URL. Default value is None.
+        :paramtype developer_website_url: str
+        :keyword privacy_url: Privacy policy URL shown in the Teams app listing. Must be an http or
+         https URL. Default value is None.
+        :paramtype privacy_url: str
+        :keyword terms_of_use_url: Terms-of-use URL shown in the Teams app listing. Default value is
+         None.
+        :paramtype terms_of_use_url: str
+        :keyword color_icon_base64: Optional base64-encoded PNG used as the color (full-bleed) icon in
+         the Teams app package. Must be a
+         192x192 PNG (perfect square, no border or rounded corners). Max 1 MB after decode. When
+         omitted, the
+         platform default color icon is used. Default value is None.
+        :paramtype color_icon_base64: str
+        :keyword outline_icon_base64: Optional base64-encoded PNG used as the outline icon in the Teams
+         app package. Must be a 32x32 PNG.
+         Max 1 MB after decode. When omitted, the platform default outline icon is used. Default value
+         is None.
+        :paramtype outline_icon_base64: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if publish_scope is _Unset:
+                raise TypeError("missing required argument: publish_scope")
+            body = {
+                "accessBoundaries": access_boundaries,
+                "agentDisplayName": agent_display_name,
+                "appVersion": app_version,
+                "botServiceArmId": bot_service_arm_id,
+                "canRespondWithoutMention": can_respond_without_mention,
+                "colorIconBase64": color_icon_base64,
+                "developerName": developer_name,
+                "developerWebsiteUrl": developer_website_url,
+                "fullDescription": full_description,
+                "optionalPermissionScopes": optional_permission_scopes,
+                "outlineIconBase64": outline_icon_base64,
+                "privacyUrl": privacy_url,
+                "publishAsAutopilot": publish_as_autopilot,
+                "publishScope": publish_scope,
+                "shortDescription": short_description,
+                "termsOfUseUrl": terms_of_use_url,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_get_microsoft365_package_request(
+            agent_name=agent_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_microsoft365_publish_defaults(
+        self, agent_name: str, *, publish_as_digital_worker: Optional[bool] = None, **kwargs: Any
+    ) -> _models.Microsoft365PublishDefaults:
+        """Get Microsoft 365 publish defaults.
+
+        Returns default and previously-published values used to pre-populate a Microsoft 365 publish
+        request for a Foundry agent.
+
+        :param agent_name: The name of the agent to get publish defaults for. Required.
+        :type agent_name: str
+        :keyword publish_as_digital_worker: When true, returns defaults for publishing the agent as an
+         autopilot (digital worker) agent. Default value is None.
+        :paramtype publish_as_digital_worker: bool
+        :return: Microsoft365PublishDefaults. The Microsoft365PublishDefaults is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.Microsoft365PublishDefaults
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Microsoft365PublishDefaults] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_microsoft365_publish_defaults_request(
+            agent_name=agent_name,
+            publish_as_digital_worker=publish_as_digital_worker,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Microsoft365PublishDefaults, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
     def upload_session_file(
-        self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
+        self,
+        agent_name: str,
+        session_id: str,
+        content: bytes,
+        *,
+        path: str,
+        content_type: str = "application/octet-stream",
+        **kwargs: Any
     ) -> _models.SessionFileWriteResult:
         """Upload a session file.
 
@@ -5626,6 +6905,65 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type session_id: str
         :param content: Required.
         :type content: bytes
+        :keyword path: The destination file path within the sandbox, relative to the session home
+         directory. Required.
+        :paramtype path: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upload_session_file(
+        self,
+        agent_name: str,
+        session_id: str,
+        content: IO[bytes],
+        *,
+        path: str,
+        content_type: str = "application/octet-stream",
+        **kwargs: Any
+    ) -> _models.SessionFileWriteResult:
+        """Upload a session file.
+
+        Uploads binary file content to the specified path in the session sandbox. The service stores
+        the file relative to the session home directory and rejects payloads larger than 50 MB.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :param content: Required.
+        :type content: IO[bytes]
+        :keyword path: The destination file path within the sandbox, relative to the session home
+         directory. Required.
+        :paramtype path: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def upload_session_file(
+        self, agent_name: str, session_id: str, content: Union[bytes, IO[bytes]], *, path: str, **kwargs: Any
+    ) -> _models.SessionFileWriteResult:
+        """Upload a session file.
+
+        Uploads binary file content to the specified path in the session sandbox. The service stores
+        the file relative to the session home directory and rejects payloads larger than 50 MB.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :param content: Is either a bytes type or a IO[bytes] type. Required.
+        :type content: bytes or IO[bytes]
         :keyword path: The destination file path within the sandbox, relative to the session home
          directory. Required.
         :paramtype path: str
@@ -5644,9 +6982,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SessionFileWriteResult] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = content
 
         _request = build_agents_upload_session_file_request(
@@ -5943,7 +7282,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class EvaluationRulesOperations:
+class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6320,7 +7659,7 @@ class EvaluationRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ConnectionsOperations:
+class ConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6581,7 +7920,7 @@ class ConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DatasetsOperations:
+class DatasetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7304,7 +8643,7 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
 
-class DeploymentsOperations:
+class DeploymentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7499,7 +8838,7 @@ class DeploymentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class IndexesOperations:
+class IndexesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7980,7 +9319,7 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
 
-class ToolboxesOperations:
+class ToolboxesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8784,7 +10123,1372 @@ class ToolboxesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaEvaluationTaxonomiesOperations:
+class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`agent_insight_monitors` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        before: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        agent_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.AgentInsightMonitorListItem"]:
+        """List Agent Insights monitors, optionally filtered by agent name.
+
+        :keyword before: A cursor that identifies the first item in the next page. Default value is
+         None.
+        :paramtype before: str
+        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
+         and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword agent_name: Filter monitors by agent name. Default value is None.
+        :paramtype agent_name: str
+        :return: An iterator like instance of AgentInsightMonitorListItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentInsightMonitorListItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentInsightMonitorListItem]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_agent_insight_monitors_list_request(
+                after=_continuation_token,
+                before=before,
+                limit=limit,
+                order=order,
+                agent_name=agent_name,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentInsightMonitorListItem],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def create(
+        self, monitor: _models.AgentInsightMonitorCreate, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :param monitor: The monitor to create. Required.
+        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorCreate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, monitor: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :param monitor: The monitor to create. Required.
+        :type monitor: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, monitor: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :param monitor: The monitor to create. Required.
+        :type monitor: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(
+        self, monitor: Union[_models.AgentInsightMonitorCreate, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Create an Agent Insights monitor for an agent.
+
+        :param monitor: The monitor to create. Is one of the following types:
+         AgentInsightMonitorCreate, JSON, IO[bytes] Required.
+        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorCreate or JSON or IO[bytes]
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(monitor, (IOBase, bytes)):
+            _content = monitor
+        else:
+            _content = json.dumps(monitor, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_agent_insight_monitors_create_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get(self, monitor_id: str, **kwargs: Any) -> _models.AgentInsightMonitor:
+        """Get an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
+
+        _request = build_beta_agent_insight_monitors_get_request(
+            monitor_id=monitor_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete(self, monitor_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete an Agent Insights monitor and all of its runs, insights, and state.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_agent_insight_monitors_delete_request(
+            monitor_id=monitor_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    def update(
+        self,
+        monitor_id: str,
+        monitor: _models.AgentInsightMonitorUpdate,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param monitor: The monitor fields to update. Required.
+        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, monitor_id: str, monitor: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param monitor: The monitor fields to update. Required.
+        :type monitor: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, monitor_id: str, monitor: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param monitor: The monitor fields to update. Required.
+        :type monitor: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update(
+        self, monitor_id: str, monitor: Union[_models.AgentInsightMonitorUpdate, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.AgentInsightMonitor:
+        """Update an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param monitor: The monitor fields to update. Is one of the following types:
+         AgentInsightMonitorUpdate, JSON, IO[bytes] Required.
+        :type monitor: ~azure.ai.projects.models.AgentInsightMonitorUpdate or JSON or IO[bytes]
+        :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsightMonitor] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(monitor, (IOBase, bytes)):
+            _content = monitor
+        else:
+            _content = json.dumps(monitor, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_agent_insight_monitors_update_request(
+            monitor_id=monitor_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightMonitor, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def reset(self, monitor_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Reset an Agent Insights monitor's overview, checkpoint, and active insight state.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_agent_insight_monitors_reset_request(
+            monitor_id=monitor_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    def _create_run_initial(
+        self,
+        monitor_id: str,
+        run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(run, (IOBase, bytes)):
+            _content = run
+        else:
+            _content = json.dumps(run, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_agent_insight_monitors_create_run_request(
+            monitor_id=monitor_id,
+            operation_id=operation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_run(
+        self,
+        monitor_id: str,
+        run: _models.AgentInsightRunCreate,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
+         Required.
+        :type run: ~azure.ai.projects.models.AgentInsightRunCreate
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_run(
+        self,
+        monitor_id: str,
+        run: JSON,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
+         Required.
+        :type run: JSON
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_run(
+        self,
+        monitor_id: str,
+        run: IO[bytes],
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window.
+         Required.
+        :type run: IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_create_run(
+        self,
+        monitor_id: str,
+        run: Union[_models.AgentInsightRunCreate, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentInsightRunResult]:
+        """Start an Agent Insights run for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param run: Run inputs. Send an empty object to use the default 168-hour lookback window. Is
+         one of the following types: AgentInsightRunCreate, JSON, IO[bytes] Required.
+        :type run: ~azure.ai.projects.models.AgentInsightRunCreate or JSON or IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentInsightRunResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsightRunResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_run_initial(
+                monitor_id=monitor_id,
+                run=run,
+                operation_id=operation_id,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.AgentInsightRunResult, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.AgentInsightRunResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.AgentInsightRunResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    def list_runs(
+        self,
+        monitor_id: str,
+        *,
+        before: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        status: Optional[Union[str, _models.JobStatus]] = None,
+        trigger: Optional[Union[str, _models.AgentInsightRunTrigger]] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.AgentInsightRun"]:
+        """List Agent Insights runs for a monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :keyword before: A cursor that identifies the first item in the next page. Default value is
+         None.
+        :paramtype before: str
+        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
+         and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword status: Filter runs by status. Known values are: "queued", "in_progress", "succeeded",
+         "failed", and "cancelled". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.JobStatus
+        :keyword trigger: Filter runs by trigger. Known values are: "on_demand" and "scheduled".
+         Default value is None.
+        :paramtype trigger: str or ~azure.ai.projects.models.AgentInsightRunTrigger
+        :return: An iterator like instance of AgentInsightRun
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentInsightRun]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentInsightRun]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_agent_insight_monitors_list_runs_request(
+                monitor_id=monitor_id,
+                after=_continuation_token,
+                before=before,
+                limit=limit,
+                order=order,
+                status=status,
+                trigger=trigger,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentInsightRun],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_run(self, monitor_id: str, run_id: str, **kwargs: Any) -> _models.AgentInsightRun:
+        """Get an Agent Insights run.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param run_id: The identifier of the run. Required.
+        :type run_id: str
+        :return: AgentInsightRun. The AgentInsightRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsightRun] = kwargs.pop("cls", None)
+
+        _request = build_beta_agent_insight_monitors_get_run_request(
+            monitor_id=monitor_id,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def cancel_run(self, monitor_id: str, run_id: str, **kwargs: Any) -> _models.AgentInsightRun:
+        """Cancel an Agent Insights run.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param run_id: The identifier of the run. Required.
+        :type run_id: str
+        :return: AgentInsightRun. The AgentInsightRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsightRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsightRun] = kwargs.pop("cls", None)
+
+        _request = build_beta_agent_insight_monitors_cancel_run_request(
+            monitor_id=monitor_id,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsightRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_insights(
+        self,
+        monitor_id: str,
+        *,
+        before: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        category: Optional[str] = None,
+        severity: Optional[Union[str, _models.AgentInsightSeverity]] = None,
+        status: Optional[Union[str, _models.AgentInsightStatus]] = None,
+        include_details: Optional[bool] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.AgentInsight"]:
+        """List current insights for an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :keyword before: A cursor that identifies the first item in the next page. Default value is
+         None.
+        :paramtype before: str
+        :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
+         and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword category: Filter insights by category. Default value is None.
+        :paramtype category: str
+        :keyword severity: Filter insights by severity. Known values are: "high", "medium", and "low".
+         Default value is None.
+        :paramtype severity: str or ~azure.ai.projects.models.AgentInsightSeverity
+        :keyword status: Filter insights by lifecycle status. Known values are: "active", "resolved",
+         and "ignored". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.AgentInsightStatus
+        :keyword include_details: Whether to include expanded insight details such as evidence and run
+         links in the response. Defaults to false. Default value is None.
+        :paramtype include_details: bool
+        :return: An iterator like instance of AgentInsight
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentInsight]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentInsight]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_agent_insight_monitors_list_insights_request(
+                monitor_id=monitor_id,
+                after=_continuation_token,
+                before=before,
+                limit=limit,
+                order=order,
+                category=category,
+                severity=severity,
+                status=status,
+                include_details=include_details,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentInsight],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_insight(
+        self, monitor_id: str, insight_id: str, *, include_details: Optional[bool] = None, **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Get a full insight for an Agent Insights monitor.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :keyword include_details: Whether to include expanded insight details such as evidence and run
+         links in the response. Defaults to false. Default value is None.
+        :paramtype include_details: bool
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentInsight] = kwargs.pop("cls", None)
+
+        _request = build_beta_agent_insight_monitors_get_insight_request(
+            monitor_id=monitor_id,
+            insight_id=insight_id,
+            include_details=include_details,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsight, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        update: _models.AgentInsightUpdate,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :param update: The insight fields to update. Required.
+        :type update: ~azure.ai.projects.models.AgentInsightUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        update: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :param update: The insight fields to update. Required.
+        :type update: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        update: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :param update: The insight fields to update. Required.
+        :type update: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_insight(
+        self,
+        monitor_id: str,
+        insight_id: str,
+        update: Union[_models.AgentInsightUpdate, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.AgentInsight:
+        """Update the lifecycle status of an insight.
+
+        :param monitor_id: The identifier of the monitor. Required.
+        :type monitor_id: str
+        :param insight_id: The identifier of the insight. Required.
+        :type insight_id: str
+        :param update: The insight fields to update. Is one of the following types: AgentInsightUpdate,
+         JSON, IO[bytes] Required.
+        :type update: ~azure.ai.projects.models.AgentInsightUpdate or JSON or IO[bytes]
+        :return: AgentInsight. The AgentInsight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentInsight] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(update, (IOBase, bytes)):
+            _content = update
+        else:
+            _content = json.dumps(update, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_agent_insight_monitors_update_insight_request(
+            monitor_id=monitor_id,
+            insight_id=insight_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentInsight, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9290,7 +11994,7 @@ class BetaEvaluationTaxonomiesOperations:
         return deserialized  # type: ignore
 
 
-class BetaEvaluatorsOperations:
+class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10825,7 +13529,7 @@ class BetaEvaluatorsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaInsightsOperations:
+class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11164,7 +13868,7 @@ class BetaInsightsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BetaMemoryStoresOperations:
+class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12963,7 +15667,7 @@ class BetaMemoryStoresOperations:
         return deserialized  # type: ignore
 
 
-class BetaModelsOperations:
+class BetaModelsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13966,7 +16670,7 @@ class BetaModelsOperations:
         return deserialized  # type: ignore
 
 
-class BetaRedTeamsOperations:
+class BetaRedTeamsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14264,7 +16968,7 @@ class BetaRedTeamsOperations:
         return deserialized  # type: ignore
 
 
-class BetaRoutinesOperations:
+class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14291,6 +16995,7 @@ class BetaRoutinesOperations:
         enabled: Optional[bool] = None,
         triggers: Optional[dict[str, _models.RoutineTrigger]] = None,
         action: Optional[_models.RoutineAction] = None,
+        authorization: Optional[_models.RoutineAuthorization] = None,
         **kwargs: Any
     ) -> _models.Routine:
         """Create or update a routine.
@@ -14311,6 +17016,9 @@ class BetaRoutinesOperations:
         :paramtype triggers: dict[str, ~azure.ai.projects.models.RoutineTrigger]
         :keyword action: The action executed when the routine fires. Default value is None.
         :paramtype action: ~azure.ai.projects.models.RoutineAction
+        :keyword authorization: Optional authorization configuration for dispatching a newly created
+         routine. Ignored when updating an existing routine. Default value is None.
+        :paramtype authorization: ~azure.ai.projects.models.RoutineAuthorization
         :return: Routine. The Routine is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Routine
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14366,6 +17074,7 @@ class BetaRoutinesOperations:
         enabled: Optional[bool] = None,
         triggers: Optional[dict[str, _models.RoutineTrigger]] = None,
         action: Optional[_models.RoutineAction] = None,
+        authorization: Optional[_models.RoutineAuthorization] = None,
         **kwargs: Any
     ) -> _models.Routine:
         """Create or update a routine.
@@ -14385,6 +17094,9 @@ class BetaRoutinesOperations:
         :paramtype triggers: dict[str, ~azure.ai.projects.models.RoutineTrigger]
         :keyword action: The action executed when the routine fires. Default value is None.
         :paramtype action: ~azure.ai.projects.models.RoutineAction
+        :keyword authorization: Optional authorization configuration for dispatching a newly created
+         routine. Ignored when updating an existing routine. Default value is None.
+        :paramtype authorization: ~azure.ai.projects.models.RoutineAuthorization
         :return: Routine. The Routine is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Routine
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14404,7 +17116,13 @@ class BetaRoutinesOperations:
         cls: ClsType[_models.Routine] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"action": action, "description": description, "enabled": enabled, "triggers": triggers}
+            body = {
+                "action": action,
+                "authorization": authorization,
+                "description": description,
+                "enabled": enabled,
+                "triggers": triggers,
+            }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -14660,7 +17378,12 @@ class BetaRoutinesOperations:
 
     @distributed_trace
     def list(
-        self, *, limit: Optional[int] = None, before: Optional[str] = None, order: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        limit: Optional[int] = None,
+        after: Optional[str] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.Routine"]:
         """List routines.
 
@@ -14668,12 +17391,14 @@ class BetaRoutinesOperations:
 
         :keyword limit: The maximum number of routines to return. Default value is None.
         :paramtype limit: int
-        :keyword before: Unsupported. Reserved for future backward pagination support. Default value is
-         None.
-        :paramtype before: str
-        :keyword order: The ordering direction. Supported values are asc and desc. Default value is
-         None.
-        :paramtype order: str
+        :keyword after: An opaque continuation token identifying where to resume the list. Prefer
+         following the ``next_link`` returned by the previous response, which embeds this value. Default
+         value is None.
+        :paramtype after: str
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :return: An iterator like instance of Routine
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Routine]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14691,21 +17416,47 @@ class BetaRoutinesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(_continuation_token=None):
+        def prepare_request(next_link=None):
+            if not next_link:
 
-            _request = build_beta_routines_list_request(
-                limit=limit,
-                after=_continuation_token,
-                before=before,
-                order=order,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request = build_beta_routines_list_request(
+                    limit=limit,
+                    after=after,
+                    order=order,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
             return _request
 
         def extract_data(pipeline_response):
@@ -14716,10 +17467,10 @@ class BetaRoutinesOperations:
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
+            return deserialized.get("next_link") or None, iter(list_of_elem)
 
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -14800,8 +17551,8 @@ class BetaRoutinesOperations:
         *,
         filter: Optional[str] = None,
         limit: Optional[int] = None,
-        before: Optional[str] = None,
-        order: Optional[str] = None,
+        after: Optional[str] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.RoutineRun"]:
         """List prior runs for a routine.
@@ -14815,12 +17566,14 @@ class BetaRoutinesOperations:
         :paramtype filter: str
         :keyword limit: The maximum number of runs to return. Default value is None.
         :paramtype limit: int
-        :keyword before: Unsupported. Reserved for future backward pagination support. Default value is
-         None.
-        :paramtype before: str
-        :keyword order: The ordering direction. Supported values are asc and desc. Default value is
-         None.
-        :paramtype order: str
+        :keyword after: An opaque continuation token identifying where to resume the list. Prefer
+         following the ``next_link`` returned by the previous response, which embeds this value. Default
+         value is None.
+        :paramtype after: str
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :return: An iterator like instance of RoutineRun
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RoutineRun]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14838,23 +17591,49 @@ class BetaRoutinesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(_continuation_token=None):
+        def prepare_request(next_link=None):
+            if not next_link:
 
-            _request = build_beta_routines_list_runs_request(
-                routine_name=routine_name,
-                filter=filter,
-                limit=limit,
-                after=_continuation_token,
-                before=before,
-                order=order,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request = build_beta_routines_list_runs_request(
+                    routine_name=routine_name,
+                    filter=filter,
+                    limit=limit,
+                    after=after,
+                    order=order,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
             return _request
 
         def extract_data(pipeline_response):
@@ -14865,10 +17644,10 @@ class BetaRoutinesOperations:
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
+            return deserialized.get("next_link") or None, iter(list_of_elem)
 
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -15047,7 +17826,7 @@ class BetaRoutinesOperations:
         return deserialized  # type: ignore
 
 
-class BetaSchedulesOperations:
+class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15596,7 +18375,7 @@ class BetaSchedulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BetaSkillsOperations:
+class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16638,7 +19417,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
 
-class BetaDatasetsOperations:
+class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17169,7 +19948,7 @@ class BetaDatasetsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaAgentsOperations:
+class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17187,7 +19966,11 @@ class BetaAgentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     def _create_optimization_job_initial(
-        self, job: Union[_models.OptimizationJob, JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any
+        self,
+        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -17257,35 +20040,35 @@ class BetaAgentsOperations:
     @overload
     def begin_create_optimization_job(
         self,
-        job: _models.OptimizationJob,
+        job: _models.AgentOptimizationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OptimizationJobResult]:
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
         retry.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob
+        :type job: ~azure.ai.projects.models.AgentOptimizationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OptimizationJobResult. The OptimizationJobResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_create_optimization_job(
         self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.OptimizationJobResult]:
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
@@ -17299,9 +20082,9 @@ class BetaAgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OptimizationJobResult. The OptimizationJobResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -17313,7 +20096,7 @@ class BetaAgentsOperations:
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OptimizationJobResult]:
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
@@ -17327,37 +20110,41 @@ class BetaAgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OptimizationJobResult. The OptimizationJobResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def begin_create_optimization_job(
-        self, job: Union[_models.OptimizationJob, JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any
-    ) -> LROPoller[_models.OptimizationJobResult]:
+        self,
+        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
         """Create an agent optimization job.
 
         Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
         retry.
 
-        :param job: The job to create. Is one of the following types: OptimizationJob, JSON, IO[bytes]
-         Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob or JSON or IO[bytes]
+        :param job: The job to create. Is one of the following types: AgentOptimizationJob, JSON,
+         IO[bytes] Required.
+        :type job: ~azure.ai.projects.models.AgentOptimizationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
-        :return: An instance of LROPoller that returns OptimizationJobResult. The OptimizationJobResult
-         is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.OptimizationJobResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentOptimizationJobResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -17382,7 +20169,7 @@ class BetaAgentsOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-            deserialized = _deserialize(_models.OptimizationJobResult, response.json().get("result", {}))
+            deserialized = _deserialize(_models.AgentOptimizationJobResult, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -17400,26 +20187,26 @@ class BetaAgentsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.OptimizationJobResult].from_continuation_token(
+            return LROPoller[_models.AgentOptimizationJobResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.OptimizationJobResult](
+        return LROPoller[_models.AgentOptimizationJobResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace
-    def get_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
+    def get_optimization_job(self, job_id: str, **kwargs: Any) -> _models.AgentOptimizationJob:
         """Get an agent optimization job.
 
         Retrieves an optimization job by its identifier.
 
         :param job_id: The ID of the job. Required.
         :type job_id: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
+        :return: AgentOptimizationJob. The AgentOptimizationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -17433,7 +20220,7 @@ class BetaAgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OptimizationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentOptimizationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_agents_get_optimization_job_request(
             job_id=job_id,
@@ -17473,7 +20260,7 @@ class BetaAgentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.OptimizationJob, response.json())
+            deserialized = _deserialize(_models.AgentOptimizationJob, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17490,7 +20277,7 @@ class BetaAgentsOperations:
         status: Optional[Union[str, _models.JobStatus]] = None,
         agent_name: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_models.OptimizationJobListItem"]:
+    ) -> ItemPaged["_models.AgentOptimizationJobListItem"]:
         """List agent optimization jobs.
 
         Lists optimization jobs with cursor pagination and optional status or agent name filters.
@@ -17514,14 +20301,14 @@ class BetaAgentsOperations:
         :paramtype status: str or ~azure.ai.projects.models.JobStatus
         :keyword agent_name: Filter to jobs targeting this agent name. Default value is None.
         :paramtype agent_name: str
-        :return: An iterator like instance of OptimizationJobListItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.OptimizationJobListItem]
+        :return: An iterator like instance of AgentOptimizationJobListItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentOptimizationJobListItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OptimizationJobListItem]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AgentOptimizationJobListItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -17553,7 +20340,7 @@ class BetaAgentsOperations:
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.OptimizationJobListItem],
+                List[_models.AgentOptimizationJobListItem],
                 deserialized.get("data", []),
             )
             if cls:
@@ -17582,7 +20369,7 @@ class BetaAgentsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
+    def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _models.AgentOptimizationJob:
         """Cancel an agent optimization job.
 
         Requests cancellation of a running or queued job and returns an error if the job is already in
@@ -17590,8 +20377,8 @@ class BetaAgentsOperations:
 
         :param job_id: The ID of the job to cancel. Required.
         :type job_id: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
+        :return: AgentOptimizationJob. The AgentOptimizationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -17605,7 +20392,7 @@ class BetaAgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OptimizationJob] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentOptimizationJob] = kwargs.pop("cls", None)
 
         _request = build_beta_agents_cancel_optimization_job_request(
             job_id=job_id,
@@ -17642,7 +20429,7 @@ class BetaAgentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.OptimizationJob, response.json())
+            deserialized = _deserialize(_models.AgentOptimizationJob, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

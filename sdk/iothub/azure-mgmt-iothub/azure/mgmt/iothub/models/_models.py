@@ -461,8 +461,7 @@ class CloudToDeviceProperties(_Model):
 class DeviceRegistry(_Model):
     """Represents properties related to the Azure Device Registry (ADR).
 
-    :ivar namespace_resource_id: The identifier of the Azure Device Registry namespace associated
-     with the GEN2 SKU hub.
+    :ivar namespace_resource_id: The identifier of the Azure Device Registry namespace.
     :vartype namespace_resource_id: str
     :ivar identity_resource_id: The identity used to manage the ADR namespace from the data plane.
     :vartype identity_resource_id: str
@@ -471,7 +470,7 @@ class DeviceRegistry(_Model):
     namespace_resource_id: Optional[str] = rest_field(
         name="namespaceResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The identifier of the Azure Device Registry namespace associated with the GEN2 SKU hub."""
+    """The identifier of the Azure Device Registry namespace."""
     identity_resource_id: Optional[str] = rest_field(
         name="identityResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1828,10 +1827,10 @@ class IotHubSkuInfo(_Model):
     """Information about the SKU of the IoT hub.
 
     :ivar name: The name of the SKU. Required. Known values are: "F1", "S1", "S2", "S3", "B1",
-     "B2", "B3", and "GEN2".
+     "B2", and "B3".
     :vartype name: str or ~azure.mgmt.iothub.models.IotHubSku
-    :ivar tier: The billing tier for the IoT hub. Known values are: "Free", "Standard", "Basic",
-     and "Generation2".
+    :ivar tier: The billing tier for the IoT hub. Known values are: "Free", "Standard", and
+     "Basic".
     :vartype tier: str or ~azure.mgmt.iothub.models.IotHubSkuTier
     :ivar capacity: The number of provisioned IoT Hub units. See:
      `https://docs.microsoft.com/azure/azure-subscription-service-limits#iot-hub-limits
@@ -1841,10 +1840,9 @@ class IotHubSkuInfo(_Model):
 
     name: Union[str, "_models.IotHubSku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the SKU. Required. Known values are: \"F1\", \"S1\", \"S2\", \"S3\", \"B1\",
-     \"B2\", \"B3\", and \"GEN2\"."""
+     \"B2\", and \"B3\"."""
     tier: Optional[Union[str, "_models.IotHubSkuTier"]] = rest_field(visibility=["read"])
-    """The billing tier for the IoT hub. Known values are: \"Free\", \"Standard\", \"Basic\", and
-     \"Generation2\"."""
+    """The billing tier for the IoT hub. Known values are: \"Free\", \"Standard\", and \"Basic\"."""
     capacity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of provisioned IoT Hub units. See:
      `https://docs.microsoft.com/azure/azure-subscription-service-limits#iot-hub-limits
@@ -2863,6 +2861,9 @@ class RoutingEndpoints(_Model):
      messages to, based on the routing rules.
     :vartype cosmos_db_sql_containers:
      list[~azure.mgmt.iothub.models.RoutingCosmosDBSqlApiProperties]
+    :ivar event_streams: The list of event stream endpoints that IoT hub routes messages to, based
+     on the routing rules.
+    :vartype event_streams: list[~azure.mgmt.iothub.models.RoutingEventStreamProperties]
     """
 
     service_bus_queues: Optional[list["_models.RoutingServiceBusQueueEndpointProperties"]] = rest_field(
@@ -2890,6 +2891,10 @@ class RoutingEndpoints(_Model):
     )
     """The list of Cosmos DB container endpoints that IoT hub routes messages to, based on the routing
      rules."""
+    event_streams: Optional[list["_models.RoutingEventStreamProperties"]] = rest_field(
+        name="eventStreams", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of event stream endpoints that IoT hub routes messages to, based on the routing rules."""
 
     @overload
     def __init__(
@@ -2900,6 +2905,7 @@ class RoutingEndpoints(_Model):
         event_hubs: Optional[list["_models.RoutingEventHubProperties"]] = None,
         storage_containers: Optional[list["_models.RoutingStorageContainerProperties"]] = None,
         cosmos_db_sql_containers: Optional[list["_models.RoutingCosmosDBSqlApiProperties"]] = None,
+        event_streams: Optional[list["_models.RoutingEventStreamProperties"]] = None,
     ) -> None: ...
 
     @overload
@@ -2990,6 +2996,91 @@ class RoutingEventHubProperties(_Model):
         identity: Optional["_models.ManagedIdentity"] = None,
         subscription_id: Optional[str] = None,
         resource_group: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RoutingEventStreamProperties(_Model):
+    """The properties related to an event stream endpoint.
+
+    :ivar name: The name that identifies this endpoint. The name can only include alphanumeric
+     characters, periods, underscores, hyphens and has a maximum length of 64 characters. The
+     following names are reserved:  events, fileNotifications, $default. Endpoint names must be
+     unique across endpoint types. Required.
+    :vartype name: str
+    :ivar id: Id of the event stream endpoint.
+    :vartype id: str
+    :ivar endpoint_uri: The url of the underlying event hub namespace of the event stream endpoint.
+     It must include the protocol sb://. Required.
+    :vartype endpoint_uri: str
+    :ivar entity_path: Event hub name on the event hub namespace. Required.
+    :vartype entity_path: str
+    :ivar authentication_type: Method used to authenticate against the event stream endpoint.
+     "identityBased"
+    :vartype authentication_type: str or ~azure.mgmt.iothub.models.EventStreamAuthenticationType
+    :ivar identity: Managed identity properties of routing event stream endpoint.
+    :vartype identity: ~azure.mgmt.iothub.models.ManagedIdentity
+    :ivar workspace_id: The unique GUID of the target Microsoft Fabric workspace for the event
+     stream endpoint.
+    :vartype workspace_id: str
+    :ivar event_stream_id: The unique GUID of the target event stream under the workspace.
+    :vartype event_stream_id: str
+    :ivar source_id: The unique GUID of the custom source for the event stream.
+    :vartype source_id: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name that identifies this endpoint. The name can only include alphanumeric characters,
+     periods, underscores, hyphens and has a maximum length of 64 characters. The following names
+     are reserved:  events, fileNotifications, $default. Endpoint names must be unique across
+     endpoint types. Required."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Id of the event stream endpoint."""
+    endpoint_uri: str = rest_field(name="endpointUri", visibility=["read", "create", "update", "delete", "query"])
+    """The url of the underlying event hub namespace of the event stream endpoint. It must include the
+     protocol sb://. Required."""
+    entity_path: str = rest_field(name="entityPath", visibility=["read", "create", "update", "delete", "query"])
+    """Event hub name on the event hub namespace. Required."""
+    authentication_type: Optional[Union[str, "_models.EventStreamAuthenticationType"]] = rest_field(
+        name="authenticationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Method used to authenticate against the event stream endpoint. \"identityBased\""""
+    identity: Optional["_models.ManagedIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed identity properties of routing event stream endpoint."""
+    workspace_id: Optional[str] = rest_field(
+        name="workspaceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The unique GUID of the target Microsoft Fabric workspace for the event stream endpoint."""
+    event_stream_id: Optional[str] = rest_field(
+        name="eventStreamId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The unique GUID of the target event stream under the workspace."""
+    source_id: Optional[str] = rest_field(name="sourceId", visibility=["read", "create", "update", "delete", "query"])
+    """The unique GUID of the custom source for the event stream."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        endpoint_uri: str,
+        entity_path: str,
+        authentication_type: Optional[Union[str, "_models.EventStreamAuthenticationType"]] = None,
+        identity: Optional["_models.ManagedIdentity"] = None,
+        workspace_id: Optional[str] = None,
+        event_stream_id: Optional[str] = None,
+        source_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3432,12 +3523,12 @@ class RoutingTwin(_Model):
     """Twin reference input parameter. This is an optional parameter.
 
     :ivar tags: Twin Tags.
-    :vartype tags: any
+    :vartype tags: dict[str, any]
     :ivar properties:
     :vartype properties: ~azure.mgmt.iothub.models.RoutingTwinProperties
     """
 
-    tags: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Twin Tags."""
     properties: Optional["_models.RoutingTwinProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -3447,7 +3538,7 @@ class RoutingTwin(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Any] = None,
+        tags: Optional[dict[str, Any]] = None,
         properties: Optional["_models.RoutingTwinProperties"] = None,
     ) -> None: ...
 
@@ -3466,22 +3557,22 @@ class RoutingTwinProperties(_Model):
     """RoutingTwinProperties.
 
     :ivar desired: Twin desired properties.
-    :vartype desired: any
-    :ivar reported: Twin desired properties.
-    :vartype reported: any
+    :vartype desired: dict[str, any]
+    :ivar reported: Twin reported properties.
+    :vartype reported: dict[str, any]
     """
 
-    desired: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    desired: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Twin desired properties."""
-    reported: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Twin desired properties."""
+    reported: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Twin reported properties."""
 
     @overload
     def __init__(
         self,
         *,
-        desired: Optional[Any] = None,
-        reported: Optional[Any] = None,
+        desired: Optional[dict[str, Any]] = None,
+        reported: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload

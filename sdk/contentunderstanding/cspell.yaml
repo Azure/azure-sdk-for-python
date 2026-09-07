@@ -5,9 +5,11 @@ import:
 words:
   - Agentic
   - chartjs
+  - deser
   - llmstats
   - redef
   - UPCA
   - UPCE
+  - wordprocessingml
 ignorePaths:
   - sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_files/training_samples/*.json

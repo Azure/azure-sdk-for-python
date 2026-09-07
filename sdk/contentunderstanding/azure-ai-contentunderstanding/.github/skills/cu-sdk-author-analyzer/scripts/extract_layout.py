@@ -71,10 +71,7 @@ def _iter_inputs(input_path: Path) -> Iterable[Path]:
 def _build_client() -> ContentUnderstandingClient:
     endpoint = os.environ.get("CONTENTUNDERSTANDING_ENDPOINT")
     if not endpoint:
-        raise SystemExit(
-            "CONTENTUNDERSTANDING_ENDPOINT is not set. "
-            "Configure your .env file (see cu-sdk-setup)."
-        )
+        raise SystemExit("CONTENTUNDERSTANDING_ENDPOINT is not set. " "Configure your .env file (see cu-sdk-setup).")
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
     return ContentUnderstandingClient(endpoint=endpoint, credential=credential)
@@ -132,9 +129,7 @@ def extract_layout(
             json.dumps(_result_to_json(result), indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
-        (output_dir / f"{stem}.layout.md").write_text(
-            _extract_markdown(result), encoding="utf-8"
-        )
+        (output_dir / f"{stem}.layout.md").write_text(_extract_markdown(result), encoding="utf-8")
         ok += 1
 
     return ok, fail
@@ -178,8 +173,7 @@ def main(argv: List[str] | None = None) -> int:
     inputs = list(_iter_inputs(input_path))
     if not inputs:
         print(
-            f"no supported documents found under {input_path} "
-            f"(supported: {sorted(_SUPPORTED_SUFFIXES)})",
+            f"no supported documents found under {input_path} " f"(supported: {sorted(_SUPPORTED_SUFFIXES)})",
             file=sys.stderr,
         )
         return 2

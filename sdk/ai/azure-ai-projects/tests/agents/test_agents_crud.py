@@ -126,7 +126,7 @@ class TestAgentCrud(TestBase):
     # To run this test:
     # pytest tests\agents\test_agents_crud.py::TestAgentCrud::test_agent_disable_enable -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_disable_enable(self, **kwargs):
         """
         Test disable and enable operations for Agents.
@@ -216,7 +216,7 @@ class TestAgentCrud(TestBase):
     # To run this test:
     # pytest tests\agents\test_agents_crud.py::TestAgentCrud::test_prompt_agent_endpoint_responses -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_prompt_agent_endpoint_responses(self, **kwargs):
         """
         Test prompt-agent endpoint routing for the Responses protocol.

@@ -110,6 +110,38 @@ KV_CHALLENGE_RESPONSE = Mock(
 )
 
 
+@empty_challenge_cache
+def test_rejected_challenge_is_not_cached():
+    url = "https://example.net/keys/canary"
+    challenge = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'},
+    )
+
+    class Requests:
+        count = 0
+
+    def send(request):
+        Requests.count += 1
+        assert "Authorization" not in request.headers
+        assert not request.body
+        assert request.headers["Content-Length"] == "0"
+        return challenge
+
+    credential = Mock(spec_set=["get_token"], get_token=Mock(side_effect=AssertionError("unexpected token request")))
+    pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+
+    for _ in range(2):
+        request = HttpRequest("POST", url)
+        request.set_bytes_body(b"secret")
+        with pytest.raises(ValueError):
+            pipeline.run(request)
+
+    assert Requests.count == 2
+    assert not HttpChallengeCache.get_challenge_for_url(url)
+    assert credential.get_token.call_count == 0
+
+
 def add_url_port(url: str):
     """Like `get_random_url`, but includes a port number (comes after the domain, and before the path of the URL)."""
 

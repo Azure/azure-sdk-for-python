@@ -1,5 +1,28 @@
 # Release History
 
+## 4.12.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
+
+### Other Changes
+
+## 4.12.0b2 (2026-08-12)
+
+### Bugs Fixed
+
+- Fixed a replay bug in the challenge authentication policy where a request copy stashed on the shared policy
+  instance was never cleared, allowing one request's method, URL, and body to leak into a later, unrelated request
+  made by the same client (for example, after an Entra ID Continuous Access Evaluation challenge). The original
+  request is now stored per-request instead of on the policy instance. This mirrors the fix already applied to
+  `azure-keyvault-keys` and `azure-keyvault-administration` in
+  [#47742](https://github.com/Azure/azure-sdk-for-python/pull/47742).
+
 ## 4.12.0b1 (2026-06-04)
 
 ### Features Added

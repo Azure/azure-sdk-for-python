@@ -5,7 +5,8 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any
+from collections import UserDict
+from typing import Any, MutableMapping
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -25,6 +26,25 @@ class _TestStoreItem:
     @staticmethod
     def from_json_to_store_item(json_data: dict[str, Any]) -> "_TestStoreItem":
         return _TestStoreItem(json_data)
+
+
+class _MappingStoreItem:
+    """A store item whose payload is a non-``dict`` ``MutableMapping``.
+
+    M365's ``StoreItem.store_item_to_json()`` is annotated to return a
+    ``MutableMapping``, not a concrete ``dict``, and implementations are free to
+    honor that literally. ``FoundryStateStore.set_item()`` requires a ``dict``.
+    """
+
+    def __init__(self, value: dict[str, Any]) -> None:
+        self.value: MutableMapping[str, Any] = UserDict(value)
+
+    def store_item_to_json(self) -> MutableMapping[str, Any]:
+        return self.value
+
+    @staticmethod
+    def from_json_to_store_item(json_data: dict[str, Any]) -> "_MappingStoreItem":
+        return _MappingStoreItem(dict(json_data))
 
 
 def _fake_store() -> MagicMock:
@@ -110,6 +130,20 @@ async def test_write_creates_the_store_then_sets_the_item(monkeypatch: pytest.Mo
 
     mock_cls.get_or_create.assert_awaited_once()
     store.set_item.assert_awaited_once_with("k", {"turn": 4})
+
+
+@pytest.mark.asyncio
+async def test_write_materializes_a_dict_from_a_non_dict_mapping(monkeypatch: pytest.MonkeyPatch) -> None:
+    """``set_item()`` must receive a real ``dict``, not whatever ``Mapping`` the item returned."""
+    store = _fake_store()
+    _patch_stores(monkeypatch, {"k": store})
+    storage = FoundryStorage()
+
+    await storage.write({"k": _MappingStoreItem({"turn": 4})})
+
+    _, payload = store.set_item.await_args.args
+    assert type(payload) is dict
+    assert payload == {"turn": 4}
 
 
 @pytest.mark.asyncio

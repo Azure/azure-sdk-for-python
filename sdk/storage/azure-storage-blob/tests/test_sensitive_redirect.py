@@ -16,6 +16,10 @@ class TestStorageSensitiveHeaderCleanup:
         "x-ms-copy-source": "https://acct.blob.core.windows.net/c/src?sig=SECRET",
         "x-ms-copy-source-authorization": "Bearer copy-token",
         "x-ms-rename-source": "/c/old",
+        "x-ms-encryption-key": "encryption-key",
+        "x-ms-encryption-key-sha256": "encryption-key-sha256",
+        "x-ms-source-encryption-key": "source-encryption-key",
+        "x-ms-source-encryption-key-sha256": "source-encryption-key-sha256",
     }
 
     def test_storage_sensitive_cleanup_on_redirect(self):

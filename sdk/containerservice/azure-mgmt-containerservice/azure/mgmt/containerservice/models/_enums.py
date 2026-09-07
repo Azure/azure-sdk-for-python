@@ -107,6 +107,13 @@ class AgentPoolNetworkInterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     creation. ``vnetSubnetId`` must be set to an empty string (``""``) or omitted."""
 
 
+class AgentPoolNICPublicIPAddressVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IP version of the public IP allocated for a secondary NIC. ``IPv4`` is the only accepted value."""
+
+    I_PV4 = "IPv4"
+    """The public IP allocated for the NIC will be IPv4."""
+
+
 class AgentPoolSSHAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SSH access method of an agent pool."""
 
@@ -234,13 +241,10 @@ class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ContainerNetworkLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Configures container network logs ingestion with Azure Monitor. Which network logs to ingest is
-    controlled by the CRD found in the following links. No network logs are ingested by default.
-    More information on container network logs can be found at
-    `https://aka.ms/ContainerNetworkLogsDoc <https://aka.ms/ContainerNetworkLogsDoc>`_. More
-    information on configuring container network log can be found at
-    `https://aka.ms/acns/howtoenablecnl <https://aka.ms/acns/howtoenablecnl>`_. If not specified,
-    the default is Disabled.
+    """Allowed values for container network logs ingestion with Azure Monitor. When ``Enabled``, the
+    specific log types ingested are controlled by the associated CRD; defaults to ``Disabled``. See
+    `https://aka.ms/ContainerNetworkLogsDoc <https://aka.ms/ContainerNetworkLogsDoc>`_ and
+    `https://aka.ms/acns/howtoenablecnl <https://aka.ms/acns/howtoenablecnl>`_ for details.
     """
 
     DISABLED = "Disabled"
@@ -286,6 +290,15 @@ class DeletePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     label."""
     DELETE = "Delete"
     """Delete both the ARM resource and the Kubernetes namespace together."""
+
+
+class DRANETMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The DRANET mode for the agent pool."""
+
+    UNMANAGED = "Unmanaged"
+    """DRANET is not managed by AKS."""
+    MANAGED = "Managed"
+    """DRANET is managed by AKS."""
 
 
 class DriftAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -627,6 +640,16 @@ class LocalDNSState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """localDNS is disabled."""
 
 
+class ManagedClusterNATGatewaySku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU of a managed cluster NAT Gateway."""
+
+    STANDARD = "Standard"
+    """Use a Standard SKU NAT Gateway."""
+    STANDARD_V2 = "StandardV2"
+    """Use a StandardV2 SKU NAT Gateway. This is the default for new clusters in regions where it is
+    available."""
+
+
 class ManagedClusterPodIdentityProvisioningState(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
@@ -927,6 +950,17 @@ class NodeProvisioningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     (See aka.ms/aks/nap for more details)."""
 
 
+class NvidiaDriverMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NVIDIA GPU resource allocation mode."""
+
+    DEVICE_PLUGIN = "DevicePlugin"
+    """NVIDIA Kubernetes device plugin is installed on the nodes for resource allocation and
+    scheduling."""
+    DRA = "DRA"
+    """NVIDIA Device Resource Allocation (DRA) driver is installed on the nodes for resource
+    allocation and scheduling."""
+
+
 class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """operator represents a key's relationship to a set of values. Valid operators are In and NotIn."""
 
@@ -1014,6 +1048,10 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     proven container-first, immutable design, while adding Azure Linux packages, servicing, and
     deep integration with the Azure and AKS lifecycle. For more information, see
     `https://aka.ms/azurecontainerlinux <https://aka.ms/azurecontainerlinux>`_."""
+    UBUNTU2604 = "Ubuntu2604"
+    """Use Ubuntu2604 as the OS for node images. For limitations and supported Kubernetes versions,
+    see `https://aka.ms/aks/supported-ubuntu-versions
+    <https://aka.ms/aks/supported-ubuntu-versions>`_."""
 
 
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1042,8 +1080,6 @@ class OutboundType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     <https://docs.microsoft.com/azure/aks/egress-outboundtype#outbound-type-of-userdefinedrouting>`_."""
     MANAGED_NAT_GATEWAY = "managedNATGateway"
     """The AKS-managed NAT gateway is used for egress."""
-    MANAGED_NAT_GATEWAY_V2 = "managedNATGatewayV2"
-    """The AKS-managed NAT gateway V2 is used for egress."""
     USER_ASSIGNED_NAT_GATEWAY = "userAssignedNATGateway"
     """The user-assigned NAT gateway associated to the cluster subnet is used for egress. This is an
     advanced scenario and requires proper network configuration."""

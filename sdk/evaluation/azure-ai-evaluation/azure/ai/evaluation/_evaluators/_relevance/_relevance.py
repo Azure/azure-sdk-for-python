@@ -12,8 +12,12 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 from ..._common.utils import reformat_conversation_history, reformat_agent_response
 
 from azure.ai.evaluation._model_configurations import Conversation
-from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
+from azure.ai.evaluation._evaluators._common._validators import (
+    ConversationValidator,
+    MessagesOrQueryResponseInputValidator,
+    ValidatorInterface,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -91,8 +95,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
 
-        # Initialize input validator
-        self._validator = ConversationValidator(error_target=ErrorTarget.RELEVANCE_EVALUATOR)
+        # Initialize input validator — accepts messages OR query/response.
+        self._validator = MessagesOrQueryResponseInputValidator(error_target=ErrorTarget.RELEVANCE_EVALUATOR)
 
         super().__init__(
             model_config=model_config,
@@ -159,6 +163,16 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(*args, **kwargs)
+
+    @override
+    def _convert_kwargs_to_eval_input(self, **kwargs):
+        """Normalize a bare ``messages=[...]`` kwarg (plus optional scalar
+        ``context`` / ``ground_truth`` / ``tool_definitions``) into
+        ``conversation={...}`` so the base ``_derive_conversation_converter``
+        can extract per-turn q/r for the judge. Shared with other evaluators
+        via ``hoist_messages_to_conversation``."""
+        hoist_messages_to_conversation(kwargs)
+        return super()._convert_kwargs_to_eval_input(**kwargs)
 
     @override
     async def _real_call(self, **kwargs):

@@ -37,7 +37,10 @@ psycopg2 = [
     "psycopg2-binary>=2.9.0",
 ]
 sqlalchemy = [
-    "sqlalchemy>=2.0.0",
+    "sqlalchemy[asyncio]>=2.0.0",
+]
+asyncpg = [
+    "asyncpg>=0.29.0",
 ]
 
 [project.urls]

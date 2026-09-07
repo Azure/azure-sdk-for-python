@@ -41,9 +41,7 @@ KNOWN_BASE_ANALYZER_IDS = frozenset(
     }
 )
 
-_ALLOWED_FIELD_TYPES = frozenset(
-    {"string", "number", "integer", "boolean", "date", "time", "array", "object"}
-)
+_ALLOWED_FIELD_TYPES = frozenset({"string", "number", "integer", "boolean", "date", "time", "array", "object"})
 
 _ALLOWED_FIELD_METHODS = frozenset({"extract", "generate", "classify"})
 
@@ -77,10 +75,7 @@ def validate_schema(
     elif not isinstance(base, str):
         errors.append("baseAnalyzerId must be a string")
     elif base not in KNOWN_BASE_ANALYZER_IDS:
-        errors.append(
-            "unknown baseAnalyzerId: "
-            f"{base!r}. Known values: {sorted(KNOWN_BASE_ANALYZER_IDS)}"
-        )
+        errors.append("unknown baseAnalyzerId: " f"{base!r}. Known values: {sorted(KNOWN_BASE_ANALYZER_IDS)}")
 
     config = schema.get("config")
     if config is not None and not isinstance(config, Mapping):
@@ -91,9 +86,7 @@ def validate_schema(
         # rooted in the same problem.
         return False, errors
 
-    is_classify_route = (
-        isinstance(config, Mapping) and "contentCategories" in config
-    )
+    is_classify_route = isinstance(config, Mapping) and "contentCategories" in config
 
     if is_classify_route:
         errors.extend(_validate_classify_route(config))
@@ -122,6 +115,8 @@ def validate_schema_file(path: Union[str, Path]) -> Tuple[bool, List[str]]:
             schema = json.load(fp)
     except FileNotFoundError:
         return False, [f"schema file not found: {p}"]
+    except OSError as exc:
+        return False, [f"could not read schema file ({p}): {exc}"]
     except json.JSONDecodeError as exc:
         return False, [f"schema file is not valid JSON ({p}): {exc.msg} at line {exc.lineno}"]
 
@@ -140,10 +135,7 @@ def _validate_single_type(schema: Mapping[str, Any]) -> List[str]:
 
     field_schema = schema.get("fieldSchema")
     if field_schema is None:
-        errors.append(
-            "missing required key: fieldSchema "
-            "(single-type schemas must declare fields to extract)"
-        )
+        errors.append("missing required key: fieldSchema " "(single-type schemas must declare fields to extract)")
         return errors
 
     if not isinstance(field_schema, Mapping):
@@ -168,9 +160,7 @@ def _validate_single_type(schema: Mapping[str, Any]) -> List[str]:
     return errors
 
 
-def _validate_field_definition(
-    name: str, definition: Any, *, path: Optional[str] = None
-) -> List[str]:
+def _validate_field_definition(name: str, definition: Any, *, path: Optional[str] = None) -> List[str]:
     errors: List[str] = []
     prefix = path or f"fieldSchema.fields[{name!r}]"
 
@@ -181,15 +171,11 @@ def _validate_field_definition(
     if field_type is None:
         errors.append(f"{prefix}.type is required")
     elif field_type not in _ALLOWED_FIELD_TYPES:
-        errors.append(
-            f"{prefix}.type {field_type!r} is not one of {sorted(_ALLOWED_FIELD_TYPES)}"
-        )
+        errors.append(f"{prefix}.type {field_type!r} is not one of {sorted(_ALLOWED_FIELD_TYPES)}")
 
     method = definition.get("method")
     if method is not None and method not in _ALLOWED_FIELD_METHODS:
-        errors.append(
-            f"{prefix}.method {method!r} is not one of {sorted(_ALLOWED_FIELD_METHODS)}"
-        )
+        errors.append(f"{prefix}.method {method!r} is not one of {sorted(_ALLOWED_FIELD_METHODS)}")
 
     description = definition.get("description")
     if description is not None and not isinstance(description, str):
@@ -204,22 +190,14 @@ def _validate_field_definition(
                 errors.append(f"{prefix}.properties must be an object")
             else:
                 for child, child_def in props.items():
-                    errors.extend(
-                        _validate_field_definition(
-                            child, child_def, path=f"{prefix}.properties[{child!r}]"
-                        )
-                    )
+                    errors.extend(_validate_field_definition(child, child_def, path=f"{prefix}.properties[{child!r}]"))
     elif field_type == "array":
         items = definition.get("items")
         if items is not None:
             if not isinstance(items, Mapping):
                 errors.append(f"{prefix}.items must be an object")
             else:
-                errors.extend(
-                    _validate_field_definition(
-                        "items", items, path=f"{prefix}.items"
-                    )
-                )
+                errors.extend(_validate_field_definition("items", items, path=f"{prefix}.items"))
 
     return errors
 
@@ -231,9 +209,7 @@ def _validate_classify_route(config: Mapping[str, Any]) -> List[str]:
 
     enable_segment = config.get("enableSegment")
     if enable_segment is not True:
-        errors.append(
-            "classify-and-route schemas must set config.enableSegment = true"
-        )
+        errors.append("classify-and-route schemas must set config.enableSegment = true")
 
     categories = config.get("contentCategories")
     if not isinstance(categories, Mapping):

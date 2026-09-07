@@ -197,9 +197,8 @@ value that is stable across every turn of the chain.
 
 Since Spec 038 the chain id is a **native IdGenerator-convention id** — the
 prefix acts as the discriminator, the embedded partition key co-locates the
-chain with its responses, and a deterministic `(agent, session)` scope fills the
-"entropy" slot. `task_id == conversation_chain_id` exactly (no wrapper prefix).
-The three cases:
+chain with its responses, and a deterministic `(agent, public session)` scope
+fills the "entropy" slot. The three cases:
 
 1. `conversation_id` present → `cchain_{partition(conversation_id)}{scope}`
    (partition extracted from the id, or derived deterministically when it is not
@@ -230,15 +229,30 @@ API charset/limit (`^[a-zA-Z0-9_-]{1,128}$`).
 
 ### §4.2 — The `task_id`
 
-Since Spec 038 the chain id is itself a native, self-prefixed id, so the
-resilient task is keyed directly on it:
+The physical task ID uses the same chain selection and native shape. In hosted
+mode, when `FOUNDRY_AGENT_SESSION_GUID` is available, its session-incarnation
+scope replaces the public session scope:
 
 ```
-task_id = chain_id      # e.g. "rchain_<partitionKey><scope>" (see §4.1)
+task_scope = (
+    FOUNDRY_AGENT_SESSION_GUID + "\x1f" + public_session_id
+    if FOUNDRY_AGENT_SESSION_GUID
+    else public_session_id
+)
+task_id = derive_chain_id(agent_name, task_scope, chain_anchor)
 ```
 
-The task that backs a conversation and the handler-facing chain id therefore
-**are one and the same identity** and can never drift apart.
+This prevents a recreated same-name session from colliding with a task
+tombstone left by the deleted session. The handler-facing
+`conversation_chain_id` remains based on the public session identity. Including
+that public identity in the private scope also prevents two resolved logical
+sessions under one hosted process from collapsing onto the same task. One-shot
+task IDs remain the response ID.
+
+During migration, a multi-turn start computes both GUID-scoped and legacy
+public-session-scoped IDs. It prefers an existing GUID-scoped task, otherwise
+continues an existing pending/in-progress/suspended legacy task, and creates
+under the GUID-scoped ID only when neither exists.
 
 ### §4.3 — Public surface
 
@@ -359,7 +373,7 @@ single requests use a one-shot primitive; chain requests — and every
 turn (including the first) in a `steerable_conversations=true`
 deployment — use a multi-turn chain primitive. The choice is invisible
 to handlers (the flat recovery + steering surface — `is_recovery`,
-`is_steered_turn`, `pending_input_count`, `conversation_chain_metadata`
+`is_steered_turn`, `pending_input_count`
 — looks the same regardless) and to clients (the HTTP/SSE contract is
 identical). The full table is in §6.4.
 
@@ -487,13 +501,9 @@ store error (`FoundryBadRequestError`, `FoundryApiError`,
 class) is NOT a definitive absence and MUST NOT trigger a drop — recovery
 proceeds with `persisted_response = None`.
 
-The handler-facing `context.conversation_chain_metadata` carries whatever
-watermarks the previous attempt persisted (the framework auto-flushes
-the metadata namespaces it owns at lifecycle boundaries — start /
-suspend / complete / fail / cancel / terminate — so values written
-and forgotten are still visible after a clean recovery; the fence for
-at-most-once side-effect patterns is the handler's explicit
-`conversation_chain_metadata.flush()` call).
+The handler reloads application watermarks from an explicit
+`FoundryStateStore`. Those writes are independent from task lifecycle
+transitions and lease renewal.
 
 ### §7.2 — `disposition == "mark-failed"` (Rows 2, 3)
 
@@ -606,34 +616,19 @@ the response context:
 | `is_recovery` | `Bool` | True when this invocation is a re-entry after a crash; False on every other entry (including new turns in a multi-turn chain). |
 | `is_steered_turn` | `Bool` | True only on the drain re-entry that follows steering pressure — set when the queued steering input is being executed as its own turn. NOT set on the cancelled current turn that produced the steering pressure. |
 | `pending_input_count` | `Int` | Number of queued steering inputs visible to the handler (live count — decreases as the framework drains the queue). |
-| `conversation_chain_metadata` | Mapping + Callable | Cross-turn developer checkpoint store; see §8.1. Typed via the public `ConversationChainMetadataNamespace` Protocol. |
 | `persisted_response` | `ResponseObject` \| `None` | Entry-only — the last resiliently-persisted snapshot (last `stream.checkpoint()`, or `response.created`), or `None` if nothing persisted before the crash. See §8.4. |
 
 These fields are always present on the response context. For
 `store=true` rows the framework populates them from the underlying
 resilient task primitive; for `store=false` (Row 4) the fields
-default to a fresh, non-recovered, non-steered shape with an
-in-memory metadata backing (writes succeed at runtime but evaporate
-on restart).
+default to a fresh, non-recovered, non-steered shape.
 
-### §8.1 — `conversation_chain_metadata` semantics
+### §8.1 — Application state semantics
 
-- **Default namespace** — `context.conversation_chain_metadata["key"] = value`.
-- **Named namespace** — `context.conversation_chain_metadata("name")["key"] = value`.
-- **Reserved prefix** — keys and namespace names starting with `_` MUST
-  raise `ValueError` from the handler-facing wrapper.
-- **Persistence** — writes are resilient within the namespace's dirty
-  buffer. `await context.conversation_chain_metadata.flush()` (or the
-  namespace's `flush()`) is the at-most-once fence for side effects.
-  The framework auto-flushes at lifecycle boundaries (start, suspend,
-  complete, fail, cancel, terminate); a handler that never flushes
-  still sees its writes on a clean recovery — the fence is only for
-  side effects you cannot afford to repeat.
-- **Size discipline** — `conversation_chain_metadata` is a small key-value store
-  for *references and watermarks*, not a checkpoint *store*. Bulk
-  application state belongs in the handler's own upstream framework
-  (LLM-SDK session JSONL, checkpoint DB, files on disk).
-  Implementations MAY enforce a size cap on the resilient task payload.
+Cross-turn application state MUST use `FoundryStateStore` or another
+application-owned persistence layer keyed by `conversation_chain_id`.
+State writes MUST NOT update the resilient task record, renew its lease,
+or be implicitly flushed by lifecycle transitions.
 
 ### §8.2 — The recovery model
 
@@ -774,11 +769,14 @@ client-facing HTTP/SSE payload** — and symmetrically stripped on ingress, so
 clients can neither read nor inject it. Use it for lightweight per-turn
 watermarks, id mappings (upstream message id ↔ emitted item), or in-turn
 stale-message detection; read it back on recovery via
-`context.persisted_response`. It is distinct from the *public*
+`ResponseEventStream(response=context.persisted_response, ...)`. Response-level
+internal metadata is compact-JSON encoded into one string-valued reserved
+metadata entry and must fit that entry's 512-character limit. It is distinct
+from the *public*
 `ResponseObject.metadata` (the client's own metadata, never stripped) and
-from `context.conversation_chain_metadata` (cross-turn, named-scope,
-flush-controlled — §8.1). Rule of thumb: cross-turn state →
-`conversation_chain_metadata`; reconstruct *this* response on crash →
+from `FoundryStateStore` (cross-turn application state — §8.1).
+Rule of thumb: cross-turn state → `FoundryStateStore`; reconstruct
+*this* response on crash →
 `internal_metadata` + `stream.checkpoint()`.
 
 ---
@@ -1210,7 +1208,7 @@ HTTP   ──► POST /v1/responses { stream: true, store, background } ──�
        primitive: task lease expired → re-fire task body
        framework: task body entered with context.is_recovery=True
        framework: read input.disposition → "re-invoke"
-       framework: assign flat fields on response context (is_recovery=True, is_steered_turn=False, pending_input_count=0, conversation_chain_metadata=<rehydrated>)
+       framework: assign flat fields on response context (is_recovery=True, is_steered_turn=False, pending_input_count=0)
        framework: reconstruct ResponseExecution, ResponseContext from serialized params
        framework: re-invoke handler with flat-field assignment on context
        handler:   is_recovery == True
@@ -1335,11 +1333,8 @@ and `[]` only when none was ever persisted.
 
 The handler MUST observe the flat recovery + steering fields on the
 response context: `is_recovery: bool`, `is_steered_turn: bool`,
-`pending_input_count: int`, `conversation_chain_metadata: ConversationChainMetadataNamespace`
-(see §8). `conversation_chain_metadata.flush()` MUST act as a resilient-write
-fence; the framework MUST also auto-flush at lifecycle boundaries
-(§8.1). Handler keys/namespaces starting with `_` MUST raise
-`ValueError`.
+`pending_input_count: int` (see §8). Application state is explicitly
+persisted through `FoundryStateStore` (§8.1).
 
 ### C-RECOVERY-MODEL — Three-actor recovery contract
 
@@ -1441,19 +1436,20 @@ through to non-store behaviour per their stability policy.
 
 ## §15 — Worked storage timeline (worked example)
 
-A `(store=true, background=true, resilient_background=true, stream=true,
-steerable_conversations=true)` chain with two turns and a crash
-between them. Numbers are illustrative.
+A hosted `(store=true, background=true, resilient_background=true, stream=true,
+steerable_conversations=true)` chain with a session-incarnation GUID, two turns,
+and a crash between them. Numbers are illustrative.
 
 ```
 T=0   POST /v1/responses { input: "Hi", store: true, background: true }
-      → derive_task_id  = "rchain_AB12..."
-      → conversation_chain_id = "rchain_AB12..."  (== task_id; standalone first
-                                              turn, derived from resp_1's
-                                              embedded partition key)
+      → derive_task_id = "rchain_CD34..."  (private hosted task identity;
+                                             scoped by the session GUID and
+                                             public session identity)
+      → conversation_chain_id = "rchain_AB12..."  (stable public
+                                                     handler-facing identity)
 
 T=1   primitive: task_store.create({
-        id: "rchain_AB12...",
+        id: "rchain_CD34...",
         status: "in_progress",
         payload: { input: <serialized ResilientResponseInput> },
         ...
@@ -1477,7 +1473,7 @@ T=3   handler:   emit response.in_progress (seq=2)
 
 T=4   ═══════ SIGKILL ═══════
       
-T=5   process restarts; lease scanner sees "rchain_AB12..."
+T=5   process restarts; lease scanner sees "rchain_CD34..."
       with status="in_progress" and expired lease
 
 T=6   primitive: re-fire task body with ctx.context.is_recovery=True
@@ -1485,8 +1481,7 @@ T=6   primitive: re-fire task body with ctx.context.is_recovery=True
       framework: assign flat fields on response context
                  (is_recovery=True,
                   is_steered_turn=False,
-                  pending_input_count=0,
-                  conversation_chain_metadata=<rehydrated namespace facade>)
+                  pending_input_count=0)
       framework: reconstruct (ResponseExecution, ResponseContext)
                  from serialized params
       framework: re-invoke handler
@@ -1524,7 +1519,7 @@ T=10  task body returns Suspended (steerable_conversations=true)
 
 T=11  POST /v1/responses { input: "Now this", previous_response_id: resp_1,
                            store: true, background: true }
-      → derive_task_id = SAME "rchain_AB12..." (chain inherits)
+      → derive_task_id = SAME "rchain_CD34..." (chain inherits)
       framework: task_fn.start(task_id, input_id=resp_2,
                                if_last_input_id=resp_1)
       primitive: precondition holds (_framework.last_input_id == resp_1)

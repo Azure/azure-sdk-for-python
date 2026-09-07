@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -37,6 +37,7 @@ from .operations import (
     BackupUsageSummariesOperations,
     BackupWorkloadItemsOperations,
     BackupsOperations,
+    ConfigureSourceScanOperations,
     DeletedProtectionContainersOperations,
     ExportJobsOperationResultsOperations,
     FeatureSupportOperations,
@@ -75,6 +76,11 @@ from .operations import (
     _RecoveryServicesBackupClientOperationsMixin,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
@@ -82,7 +88,7 @@ if TYPE_CHECKING:
 
 class RecoveryServicesBackupClient(
     _RecoveryServicesBackupClientOperationsMixin
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Open API 2.0 Specs for Azure RecoveryServices Backup service.
 
     :ivar operations: Operations operations
@@ -106,6 +112,9 @@ class RecoveryServicesBackupClient(
      azure.mgmt.recoveryservicesbackup.aio.operations.ProtectedItemsOperations
     :ivar backups: BackupsOperations operations
     :vartype backups: azure.mgmt.recoveryservicesbackup.aio.operations.BackupsOperations
+    :ivar configure_source_scan: ConfigureSourceScanOperations operations
+    :vartype configure_source_scan:
+     azure.mgmt.recoveryservicesbackup.aio.operations.ConfigureSourceScanOperations
     :ivar recovery_points_recommended_for_move: RecoveryPointsRecommendedForMoveOperations
      operations
     :vartype recovery_points_recommended_for_move:
@@ -248,9 +257,9 @@ class RecoveryServicesBackupClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-31-preview". Default value is "2026-01-31-preview". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-07-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -320,6 +329,9 @@ class RecoveryServicesBackupClient(
         )
         self.protected_items = ProtectedItemsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.configure_source_scan = ConfigureSourceScanOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.recovery_points_recommended_for_move = RecoveryPointsRecommendedForMoveOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

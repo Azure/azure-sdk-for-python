@@ -138,9 +138,10 @@ class EventStream(Protocol):
 
         ``last_cursor()`` is the **emitter's** recovery primitive.
         It is NOT a workflow-recovery primitive — workflow
-        watermarks (what work is done) belong in ``ctx.metadata``,
+        watermarks (what work is done) belong in an application-owned
+        :class:`~azure.ai.agentserver.core.storage.FoundryStateStore`,
         batched per side-effecting operation. See
-        ``docs/streaming-guide.md`` for the metadata-vs-cursor
+        ``docs/streaming-guide.md`` for the state-vs-cursor
         antipattern note.
         """
         ...

@@ -1,5 +1,25 @@
 # Release History
 
+## 4.0.0b3 (2026-07-14)
+
+### Other Changes
+
+  - The two preceding preview releases (`4.0.0b1` and `4.0.0b2`) were published based on a preview API spec that contained a bug. The issue has been corrected in the `2026-06-01-preview` API version used by this release. Please upgrade to `4.0.0b3` and do not use `4.0.0b1` or `4.0.0b2`.
+
+### Features Added
+
+  - Model `AccessPolicyAssignmentProperties` added property `access_string`
+  - Model `AccessPolicyAssignmentProperties` added property `provisioning_error`
+  - Added model `AccessPolicyAssignmentProvisioningError`
+  - Operation group `MigrationsOperations` added method `begin_cancel`
+  - Operation group `MigrationsOperations` added method `begin_start`
+  - Operation group `MigrationsOperations` added method `list`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `RedisEnterpriseManagementClient.migration`
+  - Deleted or renamed operation group `MigrationOperations`
+
 ## 4.0.0b2 (2026-06-12)
 
 ### Features Added

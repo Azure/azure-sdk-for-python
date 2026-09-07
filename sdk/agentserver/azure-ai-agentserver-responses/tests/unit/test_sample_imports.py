@@ -39,10 +39,11 @@ _SAMPLE_FILES = sorted(p.name for p in _SAMPLES_DIR.glob("sample_*.py"))
 
 
 @pytest.mark.parametrize("sample_file", _SAMPLE_FILES)
-def test_sample_module_imports_and_registers(sample_file: str) -> None:
+def test_sample_module_imports_and_registers(sample_file: str, monkeypatch: pytest.MonkeyPatch) -> None:
     """Importing the sample must not raise (this is where ``@app.<decorator>``
     registration runs)."""
     path = _SAMPLES_DIR / sample_file
+    monkeypatch.syspath_prepend(str(_SAMPLES_DIR))
     spec = importlib.util.spec_from_file_location(f"_sample_{path.stem}", path)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)

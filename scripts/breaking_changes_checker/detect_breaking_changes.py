@@ -775,6 +775,15 @@ def build_report_from_apistub(
     return report
 
 
+def _uninstall_package(package_name: str, pkg_dir: str) -> None:
+    """Remove an installed package so APIStub cannot reuse a same-version distribution."""
+    subprocess.run(
+        [sys.executable, "-m", "pip", "uninstall", "-y", package_name],
+        cwd=pkg_dir,
+        check=False,
+    )
+
+
 def _resolve_pypi_version(package_name: str, latest_pypi_version: bool) -> str:
     """Resolve the PyPI version to compare against.
 
@@ -838,12 +847,16 @@ def main(
         # match "current", producing an empty changelog.
         if not version:
             version = _resolve_pypi_version(package_name, latest_pypi_version)
-        # "current" is generated from the local source, "stable" from the
-        # resolved PyPI version.
-        current = build_report_from_apistub(package_name, pkg_dir, debug=debug, label="current", from_pypi=False)
+        # APIStub installs each target into this Python environment, and pip skips
+        # replacement when local and PyPI distributions have the same name/version.
+        # Clear both snapshots for repeatable runs, then install local last so it
+        # remains available to downstream SDK generation steps.
+        _uninstall_package(package_name, pkg_dir)
         stable = build_report_from_apistub(
             package_name, pkg_dir, version=version, debug=debug, label="stable", from_pypi=True
         )
+        _uninstall_package(package_name, pkg_dir)
+        current = build_report_from_apistub(package_name, pkg_dir, debug=debug, label="current", from_pypi=False)
         checker = compare_report_dicts(stable, current, package_name, changelog)
         print(checker.report_changes())
         if not changelog and checker.breaking_changes:

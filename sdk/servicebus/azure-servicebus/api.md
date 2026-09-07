@@ -1328,6 +1328,7 @@ namespace azure.servicebus.management
     class azure.servicebus.management.ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         V2017_04 = "2017-04"
         V2021_05 = "2021-05"
+        V2024_05 = "2024-05"
 
 
     class azure.servicebus.management.AuthorizationRule:
@@ -2113,10 +2114,12 @@ namespace azure.servicebus.management
 
     class azure.servicebus.management.TopicRuntimeProperties:
         property accessed_at_utc: Optional[datetime]    # Read-only
+        property correlation_filter_count: Optional[int]    # Read-only
         property created_at_utc: Optional[datetime]    # Read-only
         property name: str    # Read-only
         property scheduled_message_count: Optional[int]    # Read-only
         property size_in_bytes: Optional[int]    # Read-only
+        property sql_filter_count: Optional[int]    # Read-only
         property subscription_count: Optional[int]    # Read-only
         property updated_at_utc: Optional[datetime]    # Read-only
 

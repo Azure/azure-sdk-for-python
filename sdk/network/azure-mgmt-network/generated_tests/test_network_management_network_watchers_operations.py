@@ -24,7 +24,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
         response = self.client.network_watchers.get(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
         response = self.client.network_watchers.begin_delete(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
     def test_network_watchers_list(self, resource_group):
         response = self.client.network_watchers.list(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -91,7 +91,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_network_watchers_list_all(self, resource_group):
         response = self.client.network_watchers.list_all(
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "targetSubnet": {"id": "str"},
                 "targetVirtualNetwork": {"id": "str"},
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -130,7 +130,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "targetResourceId": "str",
                 "targetNicResourceId": "str",
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -148,7 +148,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "targetResourceId": "str",
                 "targetNicResourceId": "str",
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -161,7 +161,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"targetResourceId": "str"},
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -174,7 +174,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"properties": {"storageId": "str", "storagePath": "str"}, "targetResourceId": "str"},
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -187,7 +187,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"targetResourceId": "str"},
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -225,7 +225,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -238,7 +238,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"targetResourceId": "str"},
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -263,7 +263,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                     }
                 },
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -282,7 +282,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "azureLocations": ["str"],
                 "providers": ["str"],
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -295,7 +295,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"azureLocations": ["str"], "city": "str", "country": "str", "state": "str"},
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -320,7 +320,123 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "targetResourceId": "str",
                 "verbosityLevel": "str",
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_network_watchers_begin_connection_analyzers_create(self, resource_group):
+        response = self.client.network_watchers.begin_connection_analyzers_create(
+            resource_group_name=resource_group.name,
+            network_watcher_name="str",
+            connection_analyzer_name="str",
+            body={
+                "location": "str",
+                "properties": {
+                    "destination": {"type": "str", "address": "str", "port": 0, "resourceId": "str"},
+                    "diagnosticOperations": ["str"],
+                    "source": {"type": "str", "address": "str", "port": 0, "resourceId": "str"},
+                    "diagnosticOperationsSettings": {
+                        "connectivityCheckSettings": {"generatePath": bool, "preferredIPVersion": "str"},
+                        "expressRouteDiagnosticsSettings": {"bandwidth": 0.0, "erCircuitResourceId": "str"},
+                    },
+                    "expiryInDays": 0,
+                    "outputSettings": {"storageAccountSettings": {"storageAccountId": "str", "path": "str"}},
+                    "protocolSettings": {
+                        "httpConfiguration": {
+                            "headers": [{"name": "str", "value": "str"}],
+                            "method": "str",
+                            "validStatusCodes": [0],
+                        },
+                        "protocol": "str",
+                    },
+                    "provisioningState": "str",
+                    "requestTime": "2020-02-20 00:00:00",
+                    "status": "str",
+                },
+                "etag": "str",
+                "id": "str",
+                "name": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "tags": {"str": "str"},
+                "type": "str",
+            },
+            api_version="2025-09-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_network_watchers_connection_analyzers_get(self, resource_group):
+        response = self.client.network_watchers.connection_analyzers_get(
+            resource_group_name=resource_group.name,
+            network_watcher_name="str",
+            connection_analyzer_name="str",
+            api_version="2025-09-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_network_watchers_begin_connection_analyzers_delete(self, resource_group):
+        response = self.client.network_watchers.begin_connection_analyzers_delete(
+            resource_group_name=resource_group.name,
+            network_watcher_name="str",
+            connection_analyzer_name="str",
+            api_version="2025-09-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_network_watchers_connection_analyzers_update_tags(self, resource_group):
+        response = self.client.network_watchers.connection_analyzers_update_tags(
+            resource_group_name=resource_group.name,
+            network_watcher_name="str",
+            connection_analyzer_name="str",
+            body={"tags": {"str": "str"}},
+            api_version="2025-09-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_network_watchers_connection_analyzers_list(self, resource_group):
+        response = self.client.network_watchers.connection_analyzers_list(
+            resource_group_name=resource_group.name,
+            network_watcher_name="str",
+            api_version="2025-09-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_network_watchers_begin_connection_analyzers_query(self, resource_group):
+        response = self.client.network_watchers.begin_connection_analyzers_query(
+            resource_group_name=resource_group.name,
+            network_watcher_name="str",
+            connection_analyzer_name="str",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

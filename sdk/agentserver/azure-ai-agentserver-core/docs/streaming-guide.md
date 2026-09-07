@@ -431,21 +431,20 @@ is "start over with a fresh stream". Without the explicit
 `delete(id)`, the next `get_or_create(id)` would re-hand-back the
 same expired stream. `delete(id)` lets you mint a fresh one.
 
-### Don't double-track in `@task` metadata
+### Don't double-track stream cursors
 
 Anti-pattern:
 
 ```python
 # Don't do this.
 await stream.emit({"n": n, ...})
-ctx.metadata.set("last_event_n", n)
-await ctx.metadata.flush()
+await state_store.set_item("last_event_n", {"value": n})
 ```
 
 The stream already persisted the event; `last_cursor()` will return
-`n` for you. `ctx.metadata` is for **workflow** watermarks — which
-units of side-effecting work (LLM calls, tool invocations) you've
-already completed — not for mirroring stream state.
+`n` for you. Use an application-owned `FoundryStateStore` only for
+workflow watermarks such as completed LLM calls or tool invocations,
+not for mirroring stream state.
 
 ---
 

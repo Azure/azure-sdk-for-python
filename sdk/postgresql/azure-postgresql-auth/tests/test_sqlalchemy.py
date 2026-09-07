@@ -39,10 +39,13 @@ class TestSqlalchemyEntraAuthentication:
 
         credential = MockTokenCredential(token)
         cparams = {"credential": credential}
-        handler(MagicMock(), MagicMock(), [], cparams)
+        dialect = MagicMock()
+        dbapi_connection = MagicMock()
+        dialect.connect.return_value = dbapi_connection
+        assert handler(dialect, MagicMock(), [], cparams) is dbapi_connection
         mock_get_conninfo.assert_called_once_with(credential)
-        assert cparams["user"] == TEST_USERS["ENTRA_USER"]
-        assert cparams["password"] == token
+        dialect.connect.assert_called_once_with(user=TEST_USERS["ENTRA_USER"], password=token)
+        assert cparams == {"credential": credential}
 
     def test_missing_credential_raises_error(self):
         """Test that the event handler raises CredentialValueError when no credential."""
@@ -62,8 +65,8 @@ class TestSqlalchemyEntraAuthentication:
             handler(MagicMock(), MagicMock(), [], {"credential": credential_value})
 
     @patch(f"{SYNC_MODULE}.get_entra_conninfo")
-    def test_credential_removed_from_cparams(self, mock_get_conninfo):
-        """Test that the credential parameter is removed before DBAPI connect."""
+    def test_credential_is_preserved_for_subsequent_connections(self, mock_get_conninfo):
+        """Test that pooled connections can reuse the credential configuration."""
         token = create_valid_jwt_token(TEST_USERS["ENTRA_USER"])
         mock_get_conninfo.return_value = {
             "user": TEST_USERS["ENTRA_USER"],
@@ -73,10 +76,13 @@ class TestSqlalchemyEntraAuthentication:
         cparams = {"credential": credential}
 
         handler, _, _ = capture_event_handler(enable_entra_authentication, SYNC_MODULE)
-        handler(MagicMock(), MagicMock(), [], cparams)
-        assert "credential" not in cparams
-        assert cparams["user"] == TEST_USERS["ENTRA_USER"]
-        assert cparams["password"] == token
+        dialect = MagicMock()
+        handler(dialect, MagicMock(), [], cparams)
+        handler(dialect, MagicMock(), [], cparams)
+
+        assert cparams == {"credential": credential}
+        assert mock_get_conninfo.call_count == 2
+        assert dialect.connect.call_count == 2
 
     @patch(f"{SYNC_MODULE}.get_entra_conninfo")
     def test_existing_credentials_preserved(self, mock_get_conninfo):
@@ -87,12 +93,12 @@ class TestSqlalchemyEntraAuthentication:
         handler, _, _ = capture_event_handler(enable_entra_authentication, SYNC_MODULE)
 
         cparams = {"credential": credential, "user": "existing", "password": "secret"}
-        handler(MagicMock(), MagicMock(), [], cparams)
+        dialect = MagicMock()
+        handler(dialect, MagicMock(), [], cparams)
 
         mock_get_conninfo.assert_not_called()
-        assert cparams["user"] == "existing"
-        assert cparams["password"] == "secret"
-        assert "credential" not in cparams
+        dialect.connect.assert_called_once_with(user="existing", password="secret")
+        assert cparams == {"credential": credential, "user": "existing", "password": "secret"}
 
     @pytest.mark.parametrize(
         "cparams_extra,should_call",

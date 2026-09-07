@@ -189,7 +189,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_workflow_non_streaming_with_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-statements
@@ -356,7 +356,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_workflow_non_streaming_without_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-statements
@@ -525,7 +525,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_workflow_streaming_with_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-statements
@@ -695,7 +695,7 @@ trigger:
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_workflow_streaming_without_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-statements

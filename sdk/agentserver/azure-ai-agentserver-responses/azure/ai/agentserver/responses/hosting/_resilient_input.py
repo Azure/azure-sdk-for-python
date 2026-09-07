@@ -43,6 +43,7 @@ _K_RESPONSE_ID = "response_id"
 _K_DISPOSITION = "disposition"
 _K_AGENT_REFERENCE = "agent_reference"
 _K_AGENT_SESSION_ID = "agent_session_id"
+_K_AGENT_SESSION_GUID = "agent_session_guid"
 _K_USER_ID_KEY = "user_id_key"
 _K_CALL_ID = "call_id"
 _K_CLIENT_HEADERS = "client_headers"
@@ -170,6 +171,7 @@ class ResilientResponseInput:
         disposition: str,
         agent_reference: Any = None,
         agent_session_id: str | None = None,
+        agent_session_guid: str | None = None,
         user_id_key: str | None = None,
         call_id: str | None = None,
         client_headers: dict[str, str] | None = None,
@@ -182,6 +184,7 @@ class ResilientResponseInput:
         # serialization-safe (no leaked ``AgentReference`` model).
         self.agent_reference: dict[str, Any] = _normalize_agent_reference(agent_reference)
         self.agent_session_id = agent_session_id
+        self.agent_session_guid = agent_session_guid
         self.user_id_key = user_id_key
         self.call_id = call_id
         self.client_headers: dict[str, str] = dict(client_headers or {})
@@ -216,6 +219,7 @@ class ResilientResponseInput:
             _K_REQUEST: _serialize_request(self.request),
             _K_AGENT_REFERENCE: _normalize_agent_reference(self.agent_reference),
             _K_AGENT_SESSION_ID: self.agent_session_id,
+            _K_AGENT_SESSION_GUID: self.agent_session_guid,
             _K_USER_ID_KEY: self.user_id_key,
             _K_CALL_ID: self.call_id,
             _K_CLIENT_HEADERS: dict(self.client_headers),
@@ -257,6 +261,7 @@ class ResilientResponseInput:
             disposition=params.get(_K_DISPOSITION) or "re-invoke",
             agent_reference=params.get(_K_AGENT_REFERENCE),
             agent_session_id=params.get(_K_AGENT_SESSION_ID),
+            agent_session_guid=params.get(_K_AGENT_SESSION_GUID),
             user_id_key=params.get(_K_USER_ID_KEY),
             call_id=params.get(_K_CALL_ID),
             client_headers=params.get(_K_CLIENT_HEADERS),

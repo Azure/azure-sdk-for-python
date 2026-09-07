@@ -26,7 +26,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -57,6 +57,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                 "name": "str",
                                 "properties": {
                                     "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                    "enableConnectionTracking": bool,
                                     "gatewayLoadBalancer": {"id": "str"},
                                     "inboundNatPools": [{"id": "str"}],
                                     "inboundNatRules": [{"id": "str"}],
@@ -1435,7 +1436,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     },
                                                 },
                                             },
-                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                            "ipTags": [
+                                                {"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}
+                                            ],
                                             "linkedPublicIPAddress": ...,
                                             "migrationPhase": "str",
                                             "natGateway": {
@@ -1467,6 +1470,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                             "publicIPPrefix": {"id": "str"},
                                             "resourceGuid": "str",
                                             "servicePublicIPAddress": ...,
+                                            "upgradedToV2": bool,
                                         },
                                         "sku": {"name": "str", "tier": "str"},
                                         "tags": {"str": "str"},
@@ -1545,7 +1549,13 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "idleTimeoutInMinutes": 0,
                                                                 "ipAddress": "str",
                                                                 "ipConfiguration": ...,
-                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "ipTags": [
+                                                                    {
+                                                                        "firstPartyServiceTagId": "str",
+                                                                        "ipTagType": "str",
+                                                                        "tag": "str",
+                                                                    }
+                                                                ],
                                                                 "linkedPublicIPAddress": ...,
                                                                 "migrationPhase": "str",
                                                                 "natGateway": {
@@ -1577,6 +1587,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "publicIPPrefix": {"id": "str"},
                                                                 "resourceGuid": "str",
                                                                 "servicePublicIPAddress": ...,
+                                                                "upgradedToV2": bool,
                                                             },
                                                             "sku": {"name": "str", "tier": "str"},
                                                             "tags": {"str": "str"},
@@ -1899,6 +1910,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -1946,6 +1958,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -2539,6 +2552,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -2588,6 +2602,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -3456,6 +3471,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                             "id": "str"
                                                                                                         }
                                                                                                     },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -4013,6 +4029,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                                 "id": "str"
                                                                                                             }
                                                                                                         },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -4226,7 +4243,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     },
                                                 },
                                             },
-                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                            "ipTags": [
+                                                {"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}
+                                            ],
                                             "linkedPublicIPAddress": ...,
                                             "migrationPhase": "str",
                                             "natGateway": {
@@ -4258,6 +4277,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                             "publicIPPrefix": {"id": "str"},
                                             "resourceGuid": "str",
                                             "servicePublicIPAddress": ...,
+                                            "upgradedToV2": bool,
                                         },
                                         "sku": {"name": "str", "tier": "str"},
                                         "tags": {"str": "str"},
@@ -4335,7 +4355,13 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "idleTimeoutInMinutes": 0,
                                                                 "ipAddress": "str",
                                                                 "ipConfiguration": ...,
-                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "ipTags": [
+                                                                    {
+                                                                        "firstPartyServiceTagId": "str",
+                                                                        "ipTagType": "str",
+                                                                        "tag": "str",
+                                                                    }
+                                                                ],
                                                                 "linkedPublicIPAddress": ...,
                                                                 "migrationPhase": "str",
                                                                 "natGateway": {
@@ -4367,6 +4393,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "publicIPPrefix": {"id": "str"},
                                                                 "resourceGuid": "str",
                                                                 "servicePublicIPAddress": ...,
+                                                                "upgradedToV2": bool,
                                                             },
                                                             "sku": {"name": "str", "tier": "str"},
                                                             "tags": {"str": "str"},
@@ -4635,6 +4662,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -4690,6 +4718,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -4741,6 +4770,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -5258,6 +5288,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -5319,6 +5350,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -5384,6 +5416,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -5585,7 +5618,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                 },
                 "type": "str",
             },
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5598,7 +5631,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5610,7 +5643,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
         response = self.client.network_interface_tap_configurations.list(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
