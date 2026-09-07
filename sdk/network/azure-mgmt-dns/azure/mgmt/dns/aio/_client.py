@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DnsManagementClient:
+class DnsManagementClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The DNS Management Client.
 
     :ivar dnssec_configs: DnssecConfigsOperations operations

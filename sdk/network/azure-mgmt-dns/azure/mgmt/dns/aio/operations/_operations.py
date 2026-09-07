@@ -64,7 +64,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class DnssecConfigsOperations:
+class DnssecConfigsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -554,7 +554,7 @@ class DnssecConfigsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RecordSetsOperations:
+class RecordSetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1590,7 +1590,7 @@ class RecordSetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ZonesOperations:
+class ZonesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2441,7 +2441,7 @@ class ZonesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DnsResourceReferenceOperations:
+class DnsResourceReferenceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

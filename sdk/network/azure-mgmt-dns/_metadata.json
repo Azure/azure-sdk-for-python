@@ -3,9 +3,9 @@
   "apiVersions": {
     "Microsoft.Network": "2023-07-01-preview"
   },
-  "commit": "bde4bb3dac2805590036bc8416474607914c8cd8",
+  "commit": "b538b995a2c241debc7419e09f5d187c2572ec30",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/dns/resource-manager/Microsoft.Network/Dns",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.34.1"
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }

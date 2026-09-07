@@ -1451,12 +1451,12 @@ namespace azure.mgmt.dns.types
 
     class azure.mgmt.dns.types.ARecord(TypedDict, total=False):
         key "ipv4Address": str
-        ipv4_address: str
+        ipv4Address: str
 
 
     class azure.mgmt.dns.types.AaaaRecord(TypedDict, total=False):
         key "ipv6Address": str
-        ipv6_address: str
+        ipv6Address: str
 
 
     class azure.mgmt.dns.types.CaaRecord(TypedDict, total=False):
@@ -1477,15 +1477,15 @@ namespace azure.mgmt.dns.types
         key "digestAlgorithmType": int
         key "digestValue": str
         key "record": str
-        digest_algorithm_type: int
-        digest_value: str
+        digestAlgorithmType: int
+        digestValue: str
         record: str
 
 
     class azure.mgmt.dns.types.Digest(TypedDict, total=False):
         key "algorithmType": int
         key "value": str
-        algorithm_type: int
+        algorithmType: int
         value: str
 
 
@@ -1496,7 +1496,6 @@ namespace azure.mgmt.dns.types
 
     class azure.mgmt.dns.types.DnsResourceReferenceRequestProperties(TypedDict, total=False):
         targetResources: list[SubResource]
-        target_resources: list[SubResource]
 
 
     class azure.mgmt.dns.types.DsRecord(TypedDict, total=False):
@@ -1505,7 +1504,7 @@ namespace azure.mgmt.dns.types
         key "keyTag": int
         algorithm: int
         digest: Digest
-        key_tag: int
+        keyTag: int
 
 
     class azure.mgmt.dns.types.MxRecord(TypedDict, total=False):
@@ -1542,7 +1541,7 @@ namespace azure.mgmt.dns.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1562,7 +1561,7 @@ namespace azure.mgmt.dns.types
         id: str
         name: str
         properties: RecordSetProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1576,34 +1575,23 @@ namespace azure.mgmt.dns.types
         key "trafficManagementProfile": ForwardRef('SubResource', module='types')
         AAAARecords: list[AaaaRecord]
         ARecords: list[ARecord]
+        CNAMERecord: CnameRecord
         DSRecords: list[DsRecord]
         MXRecords: list[MxRecord]
         NAPTRRecords: list[NaptrRecord]
         NSRecords: list[NsRecord]
         PTRRecords: list[PtrRecord]
+        SOARecord: SoaRecord
         SRVRecords: list[SrvRecord]
         TLSARecords: list[TlsaRecord]
+        TTL: int
         TXTRecords: list[TxtRecord]
-        a_records: list[ARecord]
-        aaaa_records: list[AaaaRecord]
         caaRecords: list[CaaRecord]
-        caa_records: list[CaaRecord]
-        cname_record: CnameRecord
-        ds_records: list[DsRecord]
         fqdn: str
         metadata: dict[str, str]
-        mx_records: list[MxRecord]
-        naptr_records: list[NaptrRecord]
-        ns_records: list[NsRecord]
-        provisioning_state: str
-        ptr_records: list[PtrRecord]
-        soa_record: SoaRecord
-        srv_records: list[SrvRecord]
-        target_resource: SubResource
-        tlsa_records: list[TlsaRecord]
-        traffic_management_profile: SubResource
-        ttl: int
-        txt_records: list[TxtRecord]
+        provisioningState: str
+        targetResource: SubResource
+        trafficManagementProfile: SubResource
 
 
     class azure.mgmt.dns.types.Resource(TypedDict, total=False):
@@ -1613,7 +1601,7 @@ namespace azure.mgmt.dns.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1624,12 +1612,11 @@ namespace azure.mgmt.dns.types
         key "publicKey": str
         key "securityAlgorithmType": int
         delegationSignerInfo: list[DelegationSignerInfo]
-        delegation_signer_info: list[DelegationSignerInfo]
         flags: int
-        key_tag: int
+        keyTag: int
         protocol: int
-        public_key: str
-        security_algorithm_type: int
+        publicKey: str
+        securityAlgorithmType: int
 
 
     class azure.mgmt.dns.types.SoaRecord(TypedDict, total=False):
@@ -1641,12 +1628,12 @@ namespace azure.mgmt.dns.types
         key "retryTime": int
         key "serialNumber": int
         email: str
-        expire_time: int
+        expireTime: int
         host: str
-        minimum_ttl: int
-        refresh_time: int
-        retry_time: int
-        serial_number: int
+        minimumTTL: int
+        refreshTime: int
+        retryTime: int
+        serialNumber: int
 
 
     class azure.mgmt.dns.types.SrvRecord(TypedDict, total=False):
@@ -1672,12 +1659,12 @@ namespace azure.mgmt.dns.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.dns.types.TlsaRecord(TypedDict, total=False):
@@ -1685,8 +1672,8 @@ namespace azure.mgmt.dns.types
         key "matchingType": int
         key "selector": int
         key "usage": int
-        cert_association_data: str
-        matching_type: int
+        certAssociationData: str
+        matchingType: int
         selector: int
         usage: int
 
@@ -1700,7 +1687,7 @@ namespace azure.mgmt.dns.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -1722,7 +1709,7 @@ namespace azure.mgmt.dns.types
         location: str
         name: str
         properties: ZoneProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -1732,18 +1719,14 @@ namespace azure.mgmt.dns.types
         key "maxNumberOfRecordsPerRecordSet": int
         key "numberOfRecordSets": int
         key "zoneType": Union[str, ZoneType]
-        max_number_of_record_sets: int
-        max_number_of_records_per_record_set: int
+        maxNumberOfRecordSets: int
+        maxNumberOfRecordsPerRecordSet: int
         nameServers: list[str]
-        name_servers: list[str]
-        number_of_record_sets: int
+        numberOfRecordSets: int
         registrationVirtualNetworks: list[SubResource]
-        registration_virtual_networks: list[SubResource]
         resolutionVirtualNetworks: list[SubResource]
-        resolution_virtual_networks: list[SubResource]
         signingKeys: list[SigningKey]
-        signing_keys: list[SigningKey]
-        zone_type: Union[str, ZoneType]
+        zoneType: Union[str, ZoneType]
 
 
     class azure.mgmt.dns.types.ZoneUpdate(TypedDict, total=False):

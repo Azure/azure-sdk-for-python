@@ -709,7 +709,7 @@ def build_dns_resource_reference_get_by_target_resources_request(  # pylint: dis
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class DnssecConfigsOperations:
+class DnssecConfigsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1199,7 +1199,7 @@ class DnssecConfigsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RecordSetsOperations:
+class RecordSetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2235,7 +2235,7 @@ class RecordSetsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ZonesOperations:
+class ZonesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3086,7 +3086,7 @@ class ZonesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DnsResourceReferenceOperations:
+class DnsResourceReferenceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

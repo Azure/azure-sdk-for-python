@@ -76,5 +76,5 @@
         "azure.mgmt.dns.operations.DnsResourceReferenceOperations.get_by_target_resources": "Microsoft.Network.DnsResourceReferenceOperationGroup.getByTargetResources",
         "azure.mgmt.dns.aio.operations.DnsResourceReferenceOperations.get_by_target_resources": "Microsoft.Network.DnsResourceReferenceOperationGroup.getByTargetResources"
     },
-    "CrossLanguageVersion": "1a63458febd7"
+    "CrossLanguageVersion": "73bd356a32b2"
 }

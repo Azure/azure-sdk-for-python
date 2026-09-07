@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AaaaRecord(_Model):
+class AaaaRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An AAAA record.
 
     :ivar ipv6_address: The IPv6 address of this AAAA record.
@@ -47,7 +47,7 @@ class AaaaRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ARecord(_Model):
+class ARecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An A record.
 
     :ivar ipv4_address: The IPv4 address of this A record.
@@ -77,7 +77,7 @@ class ARecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CaaRecord(_Model):
+class CaaRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A CAA record.
 
     :ivar flags: The flags for this CAA record as an integer between 0 and 255.
@@ -115,7 +115,7 @@ class CaaRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from the service.
 
     :ivar error: Cloud error body.
@@ -143,7 +143,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudErrorBody(_Model):
+class CloudErrorBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from the service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -192,7 +192,7 @@ class CloudErrorBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CnameRecord(_Model):
+class CnameRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A CNAME record.
 
     :ivar cname: The canonical name for this CNAME record.
@@ -245,7 +245,7 @@ class DelegationSignerInfo(_Model):
     """The record represents a delegation signer (DS) record."""
 
 
-class Digest(_Model):
+class Digest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A digest.
 
     :ivar algorithm_type: The digest algorithm type represents the standard digest algorithm number
@@ -286,7 +286,7 @@ class Digest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DnsResourceReference(_Model):
+class DnsResourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a single Azure resource and its referencing DNS records.
 
     :ivar dns_resources: A list of dns Records.
@@ -324,7 +324,7 @@ class DnsResourceReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DnsResourceReferenceRequest(_Model):
+class DnsResourceReferenceRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the properties of the Dns Resource Reference Request.
 
     :ivar properties: The properties of the Resource Reference Request.
@@ -374,7 +374,7 @@ class DnsResourceReferenceRequest(_Model):
             super().__setattr__(key, value)
 
 
-class DnsResourceReferenceRequestProperties(_Model):
+class DnsResourceReferenceRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the properties of the Dns Resource Reference Request.
 
     :ivar target_resources: A list of references to azure resources for which referencing dns
@@ -405,7 +405,7 @@ class DnsResourceReferenceRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DnsResourceReferenceResult(_Model):
+class DnsResourceReferenceResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the properties of the Dns Resource Reference Result.
 
     :ivar properties: The result of dns resource reference request. Returns a list of dns resource
@@ -457,7 +457,7 @@ class DnsResourceReferenceResult(_Model):
             super().__setattr__(key, value)
 
 
-class DnsResourceReferenceResultProperties(_Model):
+class DnsResourceReferenceResultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of dns resource reference request. Returns a list of dns resource references for
     each of the azure resource in the request.
 
@@ -535,7 +535,7 @@ class ProxyResource(Resource):
     """
 
 
-class DnssecConfig(ProxyResource):
+class DnssecConfig(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the DNSSEC configuration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -613,7 +613,7 @@ class DnssecProperties(_Model):
     """The list of signing keys."""
 
 
-class DsRecord(_Model):
+class DsRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A DS record. For more information about the DS record format, see RFC 4034:
     `https://www.rfc-editor.org/rfc/rfc4034 <https://www.rfc-editor.org/rfc/rfc4034>`_.
 
@@ -660,7 +660,7 @@ class DsRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MxRecord(_Model):
+class MxRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An MX record.
 
     :ivar preference: The preference value for this MX record.
@@ -693,7 +693,7 @@ class MxRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NaptrRecord(_Model):
+class NaptrRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A NAPTR record. For more information about the NAPTR record format, see RFC 3403:
     `https://www.rfc-editor.org/rfc/rfc3403 <https://www.rfc-editor.org/rfc/rfc3403>`_.
 
@@ -771,7 +771,7 @@ class NaptrRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NsRecord(_Model):
+class NsRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An NS record.
 
     :ivar nsdname: The name server name for this NS record.
@@ -799,7 +799,7 @@ class NsRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PtrRecord(_Model):
+class PtrRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A PTR record.
 
     :ivar ptrdname: The PTR target domain name for this PTR record.
@@ -827,7 +827,7 @@ class PtrRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecordSet(ProxyResource):
+class RecordSet(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a DNS record set (a collection of DNS records with the same name and type).
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -913,7 +913,7 @@ class RecordSet(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RecordSetProperties(_Model):
+class RecordSetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the properties of the records in the record set.
 
     :ivar metadata: The metadata attached to the record set.
@@ -1101,7 +1101,7 @@ class SigningKey(_Model):
      <https://www.iana.org/assignments/dns-sec-alg-numbers/dns-sec-alg-numbers.xhtml>`_."""
 
 
-class SoaRecord(_Model):
+class SoaRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An SOA record.
 
     :ivar host: The domain name of the authoritative name server for this SOA record.
@@ -1169,7 +1169,7 @@ class SoaRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SrvRecord(_Model):
+class SrvRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An SRV record.
 
     :ivar priority: The priority value for this SRV record.
@@ -1212,7 +1212,7 @@ class SrvRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubResource(_Model):
+class SubResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reference to a another resource.
 
     :ivar id: Resource Id.
@@ -1240,7 +1240,7 @@ class SubResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1307,7 +1307,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TlsaRecord(_Model):
+class TlsaRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A TLSA record. For more information about the TLSA record format, see RFC 6698:
     `https://www.rfc-editor.org/rfc/rfc6698 <https://www.rfc-editor.org/rfc/rfc6698>`_.
 
@@ -1359,7 +1359,7 @@ class TlsaRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1403,7 +1403,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class TxtRecord(_Model):
+class TxtRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A TXT record.
 
     :ivar value: The text value of this TXT record.
@@ -1431,7 +1431,7 @@ class TxtRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Zone(TrackedResource):
+class Zone(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a DNS zone.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1512,7 +1512,7 @@ class Zone(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ZoneProperties(_Model):
+class ZoneProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the properties of the zone.
 
     :ivar max_number_of_record_sets: The maximum number of record sets that can be created in this
@@ -1592,7 +1592,7 @@ class ZoneProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ZoneUpdate(_Model):
+class ZoneUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a request to update a DNS zone.
 
     :ivar tags: Resource tags.

@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 class AaaaRecord(TypedDict, total=False):
     """An AAAA record.
 
-    :ivar ipv6_address: The IPv6 address of this AAAA record.
-    :vartype ipv6_address: str
+    :ivar ipv6Address: The IPv6 address of this AAAA record.
+    :vartype ipv6Address: str
     """
 
     ipv6Address: str
@@ -28,8 +28,8 @@ class AaaaRecord(TypedDict, total=False):
 class ARecord(TypedDict, total=False):
     """An A record.
 
-    :ivar ipv4_address: The IPv4 address of this A record.
-    :vartype ipv4_address: str
+    :ivar ipv4Address: The IPv4 address of this A record.
+    :vartype ipv4Address: str
     """
 
     ipv4Address: str
@@ -69,14 +69,14 @@ class CnameRecord(TypedDict, total=False):
 class DelegationSignerInfo(TypedDict, total=False):
     """The delegation signer information.
 
-    :ivar digest_algorithm_type: The digest algorithm type represents the standard digest algorithm
+    :ivar digestAlgorithmType: The digest algorithm type represents the standard digest algorithm
      number used to construct the digest. See:
      `https://www.iana.org/assignments/ds-rr-types/ds-rr-types.xhtml
      <https://www.iana.org/assignments/ds-rr-types/ds-rr-types.xhtml>`_.
-    :vartype digest_algorithm_type: int
-    :ivar digest_value: The digest value is a cryptographic hash value of the referenced DNSKEY
+    :vartype digestAlgorithmType: int
+    :ivar digestValue: The digest value is a cryptographic hash value of the referenced DNSKEY
      Resource Record.
-    :vartype digest_value: str
+    :vartype digestValue: str
     :ivar record: The record represents a delegation signer (DS) record.
     :vartype record: str
     """
@@ -94,11 +94,11 @@ class DelegationSignerInfo(TypedDict, total=False):
 class Digest(TypedDict, total=False):
     """A digest.
 
-    :ivar algorithm_type: The digest algorithm type represents the standard digest algorithm number
+    :ivar algorithmType: The digest algorithm type represents the standard digest algorithm number
      used to construct the digest. See:
      `https://www.iana.org/assignments/ds-rr-types/ds-rr-types.xhtml
      <https://www.iana.org/assignments/ds-rr-types/ds-rr-types.xhtml>`_.
-    :vartype algorithm_type: int
+    :vartype algorithmType: int
     :ivar value: The digest value is a cryptographic hash value of the referenced DNSKEY Resource
      Record.
     :vartype value: str
@@ -126,9 +126,9 @@ class DnsResourceReferenceRequest(TypedDict, total=False):
 class DnsResourceReferenceRequestProperties(TypedDict, total=False):
     """Represents the properties of the Dns Resource Reference Request.
 
-    :ivar target_resources: A list of references to azure resources for which referencing dns
+    :ivar targetResources: A list of references to azure resources for which referencing dns
      records need to be queried.
-    :vartype target_resources: list["SubResource"]
+    :vartype targetResources: list["SubResource"]
     """
 
     targetResources: list["SubResource"]
@@ -146,9 +146,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -174,9 +174,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -184,9 +184,9 @@ class DsRecord(TypedDict, total=False):
     """A DS record. For more information about the DS record format, see RFC 4034:
     `https://www.rfc-editor.org/rfc/rfc4034 <https://www.rfc-editor.org/rfc/rfc4034>`_.
 
-    :ivar key_tag: The key tag value is used to determine which DNSKEY Resource Record is used for
+    :ivar keyTag: The key tag value is used to determine which DNSKEY Resource Record is used for
      signature verification.
-    :vartype key_tag: int
+    :vartype keyTag: int
     :ivar algorithm: The security algorithm type represents the standard security algorithm number
      of the DNSKEY Resource Record. See:
      `https://www.iana.org/assignments/dns-sec-alg-numbers/dns-sec-alg-numbers.xhtml
@@ -312,9 +312,9 @@ class RecordSet(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the record set.
     :vartype properties: "RecordSetProperties"
     :ivar etag: The etag of the record set.
@@ -332,44 +332,44 @@ class RecordSetProperties(TypedDict, total=False):
 
     :ivar metadata: The metadata attached to the record set.
     :vartype metadata: dict[str, str]
-    :ivar ttl: The TTL (time-to-live) of the records in the record set.
-    :vartype ttl: int
+    :ivar TTL: The TTL (time-to-live) of the records in the record set.
+    :vartype TTL: int
     :ivar fqdn: Fully qualified domain name of the record set.
     :vartype fqdn: str
-    :ivar provisioning_state: provisioning State of the record set.
-    :vartype provisioning_state: str
-    :ivar target_resource: A reference to an azure resource from where the dns resource value is
+    :ivar provisioningState: provisioning State of the record set.
+    :vartype provisioningState: str
+    :ivar targetResource: A reference to an azure resource from where the dns resource value is
      taken.
-    :vartype target_resource: "SubResource"
-    :ivar traffic_management_profile: A reference to an azure traffic manager profile resource from
+    :vartype targetResource: "SubResource"
+    :ivar trafficManagementProfile: A reference to an azure traffic manager profile resource from
      where the dns resource value is taken.
-    :vartype traffic_management_profile: "SubResource"
-    :ivar a_records: The list of A records in the record set.
-    :vartype a_records: list["ARecord"]
-    :ivar aaaa_records: The list of AAAA records in the record set.
-    :vartype aaaa_records: list["AaaaRecord"]
-    :ivar mx_records: The list of MX records in the record set.
-    :vartype mx_records: list["MxRecord"]
-    :ivar ns_records: The list of NS records in the record set.
-    :vartype ns_records: list["NsRecord"]
-    :ivar ptr_records: The list of PTR records in the record set.
-    :vartype ptr_records: list["PtrRecord"]
-    :ivar srv_records: The list of SRV records in the record set.
-    :vartype srv_records: list["SrvRecord"]
-    :ivar txt_records: The list of TXT records in the record set.
-    :vartype txt_records: list["TxtRecord"]
-    :ivar cname_record: The CNAME record in the  record set.
-    :vartype cname_record: "CnameRecord"
-    :ivar soa_record: The SOA record in the record set.
-    :vartype soa_record: "SoaRecord"
-    :ivar caa_records: The list of CAA records in the record set.
-    :vartype caa_records: list["CaaRecord"]
-    :ivar ds_records: The list of DS records in the record set.
-    :vartype ds_records: list["DsRecord"]
-    :ivar tlsa_records: The list of TLSA records in the record set.
-    :vartype tlsa_records: list["TlsaRecord"]
-    :ivar naptr_records: The list of NAPTR records in the record set.
-    :vartype naptr_records: list["NaptrRecord"]
+    :vartype trafficManagementProfile: "SubResource"
+    :ivar ARecords: The list of A records in the record set.
+    :vartype ARecords: list["ARecord"]
+    :ivar AAAARecords: The list of AAAA records in the record set.
+    :vartype AAAARecords: list["AaaaRecord"]
+    :ivar MXRecords: The list of MX records in the record set.
+    :vartype MXRecords: list["MxRecord"]
+    :ivar NSRecords: The list of NS records in the record set.
+    :vartype NSRecords: list["NsRecord"]
+    :ivar PTRRecords: The list of PTR records in the record set.
+    :vartype PTRRecords: list["PtrRecord"]
+    :ivar SRVRecords: The list of SRV records in the record set.
+    :vartype SRVRecords: list["SrvRecord"]
+    :ivar TXTRecords: The list of TXT records in the record set.
+    :vartype TXTRecords: list["TxtRecord"]
+    :ivar CNAMERecord: The CNAME record in the  record set.
+    :vartype CNAMERecord: "CnameRecord"
+    :ivar SOARecord: The SOA record in the record set.
+    :vartype SOARecord: "SoaRecord"
+    :ivar caaRecords: The list of CAA records in the record set.
+    :vartype caaRecords: list["CaaRecord"]
+    :ivar DSRecords: The list of DS records in the record set.
+    :vartype DSRecords: list["DsRecord"]
+    :ivar TLSARecords: The list of TLSA records in the record set.
+    :vartype TLSARecords: list["TlsaRecord"]
+    :ivar NAPTRRecords: The list of NAPTR records in the record set.
+    :vartype NAPTRRecords: list["NaptrRecord"]
     """
 
     metadata: dict[str, str]
@@ -416,21 +416,21 @@ class RecordSetProperties(TypedDict, total=False):
 class SigningKey(TypedDict, total=False):
     """Represents the signing key.
 
-    :ivar delegation_signer_info: The delegation signer information.
-    :vartype delegation_signer_info: list["DelegationSignerInfo"]
+    :ivar delegationSignerInfo: The delegation signer information.
+    :vartype delegationSignerInfo: list["DelegationSignerInfo"]
     :ivar flags: The flags specifies how the key is used.
     :vartype flags: int
-    :ivar key_tag: The key tag value of the DNSKEY Resource Record.
-    :vartype key_tag: int
+    :ivar keyTag: The key tag value of the DNSKEY Resource Record.
+    :vartype keyTag: int
     :ivar protocol: The protocol value. The value is always 3.
     :vartype protocol: int
-    :ivar public_key: The public key, represented as a Base64 encoding.
-    :vartype public_key: str
-    :ivar security_algorithm_type: The security algorithm type represents the standard security
+    :ivar publicKey: The public key, represented as a Base64 encoding.
+    :vartype publicKey: str
+    :ivar securityAlgorithmType: The security algorithm type represents the standard security
      algorithm number of the DNSKEY Resource Record. See:
      `https://www.iana.org/assignments/dns-sec-alg-numbers/dns-sec-alg-numbers.xhtml
      <https://www.iana.org/assignments/dns-sec-alg-numbers/dns-sec-alg-numbers.xhtml>`_.
-    :vartype security_algorithm_type: int
+    :vartype securityAlgorithmType: int
     """
 
     delegationSignerInfo: list["DelegationSignerInfo"]
@@ -457,17 +457,17 @@ class SoaRecord(TypedDict, total=False):
     :vartype host: str
     :ivar email: The email contact for this SOA record.
     :vartype email: str
-    :ivar serial_number: The serial number for this SOA record.
-    :vartype serial_number: int
-    :ivar refresh_time: The refresh value for this SOA record.
-    :vartype refresh_time: int
-    :ivar retry_time: The retry time for this SOA record.
-    :vartype retry_time: int
-    :ivar expire_time: The expire time for this SOA record.
-    :vartype expire_time: int
-    :ivar minimum_ttl: The minimum value for this SOA record. By convention this is used to
+    :ivar serialNumber: The serial number for this SOA record.
+    :vartype serialNumber: int
+    :ivar refreshTime: The refresh value for this SOA record.
+    :vartype refreshTime: int
+    :ivar retryTime: The retry time for this SOA record.
+    :vartype retryTime: int
+    :ivar expireTime: The expire time for this SOA record.
+    :vartype expireTime: int
+    :ivar minimumTTL: The minimum value for this SOA record. By convention this is used to
      determine the negative caching duration.
-    :vartype minimum_ttl: int
+    :vartype minimumTTL: int
     """
 
     host: str
@@ -524,20 +524,20 @@ class SubResource(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -566,10 +566,10 @@ class TlsaRecord(TypedDict, total=False):
     :ivar selector: The selector specifies which part of the TLS certificate presented by the
      server will be matched against the association data.
     :vartype selector: int
-    :ivar matching_type: The matching type specifies how the certificate association is presented.
-    :vartype matching_type: int
-    :ivar cert_association_data: This specifies the certificate association data to be matched.
-    :vartype cert_association_data: str
+    :ivar matchingType: The matching type specifies how the certificate association is presented.
+    :vartype matchingType: int
+    :ivar certAssociationData: This specifies the certificate association data to be matched.
+    :vartype certAssociationData: str
     """
 
     usage: int
@@ -595,9 +595,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -632,9 +632,9 @@ class Zone(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -654,30 +654,30 @@ class Zone(TrackedResource):
 class ZoneProperties(TypedDict, total=False):
     """Represents the properties of the zone.
 
-    :ivar max_number_of_record_sets: The maximum number of record sets that can be created in this
-     DNS zone.  This is a read-only property and any attempt to set this value will be ignored.
-    :vartype max_number_of_record_sets: int
-    :ivar max_number_of_records_per_record_set: The maximum number of records per record set that
-     can be created in this DNS zone.  This is a read-only property and any attempt to set this
-     value will be ignored.
-    :vartype max_number_of_records_per_record_set: int
-    :ivar number_of_record_sets: The current number of record sets in this DNS zone.  This is a
+    :ivar maxNumberOfRecordSets: The maximum number of record sets that can be created in this DNS
+     zone.  This is a read-only property and any attempt to set this value will be ignored.
+    :vartype maxNumberOfRecordSets: int
+    :ivar maxNumberOfRecordsPerRecordSet: The maximum number of records per record set that can be
+     created in this DNS zone.  This is a read-only property and any attempt to set this value will
+     be ignored.
+    :vartype maxNumberOfRecordsPerRecordSet: int
+    :ivar numberOfRecordSets: The current number of record sets in this DNS zone.  This is a
      read-only property and any attempt to set this value will be ignored.
-    :vartype number_of_record_sets: int
-    :ivar name_servers: The name servers for this DNS zone. This is a read-only property and any
+    :vartype numberOfRecordSets: int
+    :ivar nameServers: The name servers for this DNS zone. This is a read-only property and any
      attempt to set this value will be ignored.
-    :vartype name_servers: list[str]
-    :ivar zone_type: The type of this DNS zone (Public or Private). Known values are: "Public" and
+    :vartype nameServers: list[str]
+    :ivar zoneType: The type of this DNS zone (Public or Private). Known values are: "Public" and
      "Private".
-    :vartype zone_type: Union[str, "ZoneType"]
-    :ivar registration_virtual_networks: A list of references to virtual networks that register
+    :vartype zoneType: Union[str, "ZoneType"]
+    :ivar registrationVirtualNetworks: A list of references to virtual networks that register
      hostnames in this DNS zone. This is a only when ZoneType is Private.
-    :vartype registration_virtual_networks: list["SubResource"]
-    :ivar resolution_virtual_networks: A list of references to virtual networks that resolve
-     records in this DNS zone. This is a only when ZoneType is Private.
-    :vartype resolution_virtual_networks: list["SubResource"]
-    :ivar signing_keys: The list of signing keys.
-    :vartype signing_keys: list["SigningKey"]
+    :vartype registrationVirtualNetworks: list["SubResource"]
+    :ivar resolutionVirtualNetworks: A list of references to virtual networks that resolve records
+     in this DNS zone. This is a only when ZoneType is Private.
+    :vartype resolutionVirtualNetworks: list["SubResource"]
+    :ivar signingKeys: The list of signing keys.
+    :vartype signingKeys: list["SigningKey"]
     """
 
     maxNumberOfRecordSets: int
