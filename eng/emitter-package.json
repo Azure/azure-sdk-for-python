@@ -1,7 +1,7 @@
 {
   "name": "dist/src/index.js",
   "dependencies": {
-    "@azure-tools/typespec-python": "0.63.5"
+    "@azure-tools/typespec-python": "0.63.6"
   },
   "devDependencies": {
     "@typespec/compiler": "^1.15.0",
@@ -14,7 +14,7 @@
     "@typespec/streams": "~0.85.0",
     "@typespec/xml": "~0.85.0",
     "@typespec/openapi3": "^1.15.0",
-    "@typespec/http-client-python": "^0.36.0",
+    "@typespec/http-client-python": "^0.37.1",
     "@azure-tools/typespec-autorest": "~0.71.0",
     "@azure-tools/typespec-azure-core": "~0.71.0",
     "@azure-tools/typespec-azure-resource-manager": "~0.71.0",
