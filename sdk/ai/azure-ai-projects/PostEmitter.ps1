@@ -89,3 +89,11 @@ foreach ($f in $files) {
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .
+
+# Regenerate API review artifacts and the public method inventory.
+azpysdk apistub .
+$apiStubExitCode = $LASTEXITCODE
+.\GeneratePublicMethods.ps1
+if ($apiStubExitCode -ne 0) {
+    throw "API stub generation failed with exit code $apiStubExitCode."
+}

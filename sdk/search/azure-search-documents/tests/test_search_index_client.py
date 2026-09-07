@@ -213,14 +213,15 @@ class TestKnowledgeSourceFileOperations:
 def test_custom_list_wrappers_forward_search_paging(public_method, generated_method):
     from azure.search.documents.indexes import SearchIndexerClient
 
-    client = _client() if public_method == "get_synonym_maps" else SearchIndexerClient(ENDPOINT, AzureKeyCredential(KEY))
+    client = (
+        _client() if public_method == "get_synonym_maps" else SearchIndexerClient(ENDPOINT, AzureKeyCredential(KEY))
+    )
     generated_owner = (
-        "_SearchIndexClientOperationsMixin" if public_method == "get_synonym_maps" else "_SearchIndexerClientOperationsMixin"
+        "_SearchIndexClientOperationsMixin"
+        if public_method == "get_synonym_maps"
+        else "_SearchIndexerClientOperationsMixin"
     )
-    patch_target = (
-        "azure.search.documents.indexes._operations._operations."
-        f"{generated_owner}.{generated_method}"
-    )
+    patch_target = "azure.search.documents.indexes._operations._operations." f"{generated_owner}.{generated_method}"
 
     with mock.patch(patch_target, return_value=[]) as mock_list:
         result = getattr(client, public_method)(

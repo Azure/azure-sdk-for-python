@@ -215,11 +215,7 @@ def create_private_blob_knowledge_source():  # pylint: disable=too-many-locals
         assert indexer_client.get_data_source_connection(data_source_name).name == data_source_name
         assert indexer_client.get_indexer_status(indexer_name).status is not None
         generated_index = index_client.get_index(generated_index_name)
-        analyzers = {
-            str(field.analyzer_name)
-            for field in generated_index.fields
-            if field.analyzer_name is not None
-        }
+        analyzers = {str(field.analyzer_name) for field in generated_index.fields if field.analyzer_name is not None}
         assert os.environ["AZURE_SEARCH_EXPECTED_ANALYZER"] in analyzers
         assert os.environ["AZURE_SEARCH_EXPECTED_FALLBACK_ANALYZER"] in analyzers
         print(f"Verified generated resources and analyzers: {sorted(analyzers)}")

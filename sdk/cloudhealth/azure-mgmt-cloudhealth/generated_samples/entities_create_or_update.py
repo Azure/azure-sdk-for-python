@@ -58,6 +58,23 @@ def main():
                 "healthObjective": 99.9,
                 "icon": {"iconName": "Kubernetes"},
                 "impact": "Standard",
+                "signalAggregationGroups": [
+                    {
+                        "aggregationType": "WorstOf",
+                        "displayName": "Latency and errors",
+                        "members": ["error-rate", "p95-latency"],
+                        "name": "latency-and-errors",
+                    },
+                    {
+                        "aggregationType": "MinHealthy",
+                        "displayName": "Compute utilization",
+                        "ignoreUnknown": True,
+                        "members": ["node-cpu", "pod-cpu"],
+                        "name": "compute-utilization",
+                        "unhealthyThreshold": 50,
+                        "unit": "Percentage",
+                    },
+                ],
                 "signalGroups": {
                     "azureLogAnalytics": {
                         "authenticationSetting": "default-auth",
@@ -163,6 +180,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/Entities_CreateOrUpdate.json
+# x-ms-original-file: 2026-09-01-preview/Entities_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

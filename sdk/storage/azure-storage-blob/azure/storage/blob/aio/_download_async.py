@@ -30,6 +30,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
+from azure.core import MatchConditions
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError, ServiceResponseError
 
 from .._shared.request_handlers import validate_and_format_range_headers
@@ -175,8 +176,8 @@ class _AsyncChunkDownloader(_ChunkDownloader):
 
             # This makes sure that if_match is set so that we can validate
             # that subsequent downloads are to an unmodified blob
-            if self.request_options.get("modified_access_conditions"):
-                self.request_options["modified_access_conditions"].if_match = response.properties.etag
+            self.request_options["etag"] = response.properties.etag
+            self.request_options["match_condition"] = MatchConditions.IfNotModified
 
         return chunk_data, content_length
 
@@ -483,8 +484,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 pass
 
         self._is_structured_message = response.response.headers.get("x-ms-structured-body") is not None
-        if not self._download_complete and self._request_options.get("modified_access_conditions"):
-            self._request_options["modified_access_conditions"].if_match = response.properties.etag
+        if not self._download_complete:
+            self._request_options["etag"] = response.properties.etag
+            self._request_options["match_condition"] = MatchConditions.IfNotModified
 
         return response
 

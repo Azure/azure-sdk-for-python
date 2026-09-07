@@ -75,7 +75,7 @@ def create_index():
         SearchableField(name="Description", type=SearchFieldDataType.STRING),
         SearchField(
             name="DescriptionVector",
-            type=SearchFieldDataType.Collection(SearchFieldDataType.SINGLE),  # type: ignore[operator]
+            type=SearchFieldDataType.Collection(SearchFieldDataType.SINGLE),
             searchable=True,
             vector_search_dimensions=1536,
             vector_search_profile_name="hotels-sample-vector-profile",
@@ -89,7 +89,7 @@ def create_index():
         ),
         SearchField(
             name="Tags",
-            type=SearchFieldDataType.Collection(SearchFieldDataType.STRING),  # type: ignore[operator]
+            type=SearchFieldDataType.Collection(SearchFieldDataType.STRING),
             searchable=True,
             filterable=True,
             facetable=True,

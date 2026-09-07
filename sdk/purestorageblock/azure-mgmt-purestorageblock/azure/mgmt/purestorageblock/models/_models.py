@@ -9,12 +9,48 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .._utils.model_base import Model as _Model, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from ._enums import PlatformConsoleAuthType
 
 if TYPE_CHECKING:
     from .. import models as _models
+
+
+class ActivateSaaSRequest(_Model):
+    """SaaS guid for Activate SaaS Resource.
+
+    :ivar saas_guid: SaaS guid for Activate SaaS Resource. Required.
+    :vartype saas_guid: str
+    :ivar publisher_id: Publisher Id for PureStorage resource.
+    :vartype publisher_id: str
+    """
+
+    saas_guid: str = rest_field(name="saasGuid", visibility=["read", "create", "update", "delete", "query"])
+    """SaaS guid for Activate SaaS Resource. Required."""
+    publisher_id: Optional[str] = rest_field(
+        name="publisherId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Publisher Id for PureStorage resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        saas_guid: str,
+        publisher_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class Address(_Model):
@@ -849,6 +885,101 @@ class AzureVmwareService(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AzureVolumeProperties(_Model):
+    """Properties of an Azure volume.
+
+    :ivar space: Storage space usage for the volume.
+    :vartype space: ~azure.mgmt.purestorageblock.models.Space
+    :ivar provisioned_size: Currently provisioned size of the volume, in bytes.
+    :vartype provisioned_size: int
+    :ivar serial_number: Serial number of the volume.
+    :vartype serial_number: str
+    :ivar created_at: Volume creation date, as an RFC 3339 timestamp.
+    :vartype created_at: ~datetime.datetime
+    :ivar source_volume_resource_id: Azure resource ID of the source volume for cloning.
+    :vartype source_volume_resource_id: str
+    :ivar source_volume_group_resource_id: Azure Resource ID of the source volume group to clone
+     from.
+    :vartype source_volume_group_resource_id: str
+    :ivar source_type: Indicates the source type for volume creation. Known values are: "none",
+     "volume", "serialNumber", "snapshot", and "recoverableVolume".
+    :vartype source_type: str or ~azure.mgmt.purestorageblock.models.VolumeSourceType
+    :ivar source_volume_snapshot: Source volume group snapshot and volume snapshot name to restore
+     from.
+    :vartype source_volume_snapshot: ~azure.mgmt.purestorageblock.models.VolumeSnapshotSource
+    :ivar source_serial_number: Serial number of the source volume to import.
+    :vartype source_serial_number: str
+    :ivar source_recoverable_volume_resource_id: Azure resource ID of the soft-deleted volume to
+     recover within the same volume group.
+    :vartype source_recoverable_volume_resource_id: str
+    :ivar soft_deletion: Soft-deletion state of the volume.
+    :vartype soft_deletion: ~azure.mgmt.purestorageblock.models.DestroyedStateProperties
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.purestorageblock.models.ProvisioningState
+    """
+
+    space: Optional["_models.Space"] = rest_field(visibility=["read"])
+    """Storage space usage for the volume."""
+    provisioned_size: Optional[int] = rest_field(
+        name="provisionedSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Currently provisioned size of the volume, in bytes."""
+    serial_number: Optional[str] = rest_field(name="serialNumber", visibility=["read"])
+    """Serial number of the volume."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """Volume creation date, as an RFC 3339 timestamp."""
+    source_volume_resource_id: Optional[str] = rest_field(name="sourceVolumeResourceId", visibility=["create"])
+    """Azure resource ID of the source volume for cloning."""
+    source_volume_group_resource_id: Optional[str] = rest_field(
+        name="sourceVolumeGroupResourceId", visibility=["create"]
+    )
+    """Azure Resource ID of the source volume group to clone from."""
+    source_type: Optional[Union[str, "_models.VolumeSourceType"]] = rest_field(name="sourceType", visibility=["create"])
+    """Indicates the source type for volume creation. Known values are: \"none\", \"volume\",
+     \"serialNumber\", \"snapshot\", and \"recoverableVolume\"."""
+    source_volume_snapshot: Optional["_models.VolumeSnapshotSource"] = rest_field(
+        name="sourceVolumeSnapshot", visibility=["create"]
+    )
+    """Source volume group snapshot and volume snapshot name to restore from."""
+    source_serial_number: Optional[str] = rest_field(name="sourceSerialNumber", visibility=["create"])
+    """Serial number of the source volume to import."""
+    source_recoverable_volume_resource_id: Optional[str] = rest_field(
+        name="sourceRecoverableVolumeResourceId", visibility=["create"]
+    )
+    """Azure resource ID of the soft-deleted volume to recover within the same volume group."""
+    soft_deletion: Optional["_models.DestroyedStateProperties"] = rest_field(name="softDeletion", visibility=["read"])
+    """Soft-deletion state of the volume."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Deleting\", and \"Accepted\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provisioned_size: Optional[int] = None,
+        source_volume_resource_id: Optional[str] = None,
+        source_volume_group_resource_id: Optional[str] = None,
+        source_type: Optional[Union[str, "_models.VolumeSourceType"]] = None,
+        source_volume_snapshot: Optional["_models.VolumeSnapshotSource"] = None,
+        source_serial_number: Optional[str] = None,
+        source_recoverable_volume_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BandwidthUsage(_Model):
     """Bandwidth usage metrics.
 
@@ -928,7 +1059,7 @@ class BillingUsageProperty(_Model):
         name="statusMessage", visibility=["read", "create", "update", "delete", "query"]
     )
     """Status message for the billing usage against a property."""
-    sub_properties: Optional[List["_models.BillingUsageProperty"]] = rest_field(
+    sub_properties: Optional[list["_models.BillingUsageProperty"]] = rest_field(
         name="subProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional list of sub-properties providing additional details."""
@@ -943,7 +1074,7 @@ class BillingUsageProperty(_Model):
         severity: Union[str, "_models.UsageSeverity"],
         previous_value: Optional[str] = None,
         status_message: Optional[str] = None,
-        sub_properties: Optional[List["_models.BillingUsageProperty"]] = None,
+        sub_properties: Optional[list["_models.BillingUsageProperty"]] = None,
     ) -> None: ...
 
     @overload
@@ -990,6 +1121,63 @@ class CompanyDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ConnectionParametersResponse(_Model):
+    """Connection parameters response.
+
+    :ivar iscsi: ISCSI connection parameters. Required.
+    :vartype iscsi: ~azure.mgmt.purestorageblock.models.IscsiConnectionParameters
+    """
+
+    iscsi: "_models.IscsiConnectionParameters" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ISCSI connection parameters. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        iscsi: "_models.IscsiConnectionParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DestroyedStateProperties(_Model):
+    """Soft-deletion (destroyed) state of a resource.
+
+    :ivar destroyed: If false, the resource is active; if true, the resource has been destroyed.
+     Required.
+    :vartype destroyed: bool
+    :ivar destroyed_at: Date and time at which the resource was destroyed, as an RFC 3339
+     timestamp.
+    :vartype destroyed_at: ~datetime.datetime
+    :ivar previous_name: Name of the resource before it was destroyed.
+    :vartype previous_name: str
+    :ivar eradication_timestamp: Date at which the resource will be eradicated and impossible to
+     recover, as an RFC 3339 timestamp.
+    :vartype eradication_timestamp: ~datetime.datetime
+    """
+
+    destroyed: bool = rest_field(visibility=["read"])
+    """If false, the resource is active; if true, the resource has been destroyed. Required."""
+    destroyed_at: Optional[datetime.datetime] = rest_field(name="destroyedAt", visibility=["read"], format="rfc3339")
+    """Date and time at which the resource was destroyed, as an RFC 3339 timestamp."""
+    previous_name: Optional[str] = rest_field(name="previousName", visibility=["read"])
+    """Name of the resource before it was destroyed."""
+    eradication_timestamp: Optional[datetime.datetime] = rest_field(
+        name="eradicationTimestamp", visibility=["read"], format="rfc3339"
+    )
+    """Date at which the resource will be eradicated and impossible to recover, as an RFC 3339
+     timestamp."""
+
+
 class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
@@ -1026,9 +1214,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -1167,6 +1355,109 @@ class IopsUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
+class IscsiConnectionParameters(_Model):
+    """ISCSI connection parameters.
+
+    :ivar endpoints: List of ISCSI endpoints for connection. Required.
+    :vartype endpoints: list[~azure.mgmt.purestorageblock.models.IscsiEndpoint]
+    """
+
+    endpoints: list["_models.IscsiEndpoint"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of ISCSI endpoints for connection. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoints: list["_models.IscsiEndpoint"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IscsiEndpoint(_Model):
+    """ISCSI connection endpoint details.
+
+    :ivar ip: IP address of the endpoint. Required.
+    :vartype ip: str
+    :ivar port: Port number of the endpoint. Required.
+    :vartype port: int
+    :ivar iqn: IQN (iSCSI Qualified Name) of the endpoint. Required.
+    :vartype iqn: str
+    """
+
+    ip: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """IP address of the endpoint. Required."""
+    port: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Port number of the endpoint. Required."""
+    iqn: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """IQN (iSCSI Qualified Name) of the endpoint. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ip: str,
+        port: int,
+        iqn: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LatestLinkedSaaSResponse(_Model):
+    """Response of get latest linked SaaS resource operation.
+
+    :ivar saa_s_resource_id: SaaS resource id.
+    :vartype saa_s_resource_id: str
+    :ivar is_hidden_saa_s: Flag indicating if the SaaS resource is hidden.
+    :vartype is_hidden_saa_s: bool
+    """
+
+    saa_s_resource_id: Optional[str] = rest_field(
+        name="saaSResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SaaS resource id."""
+    is_hidden_saa_s: Optional[bool] = rest_field(
+        name="isHiddenSaaS", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag indicating if the SaaS resource is hidden."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        saa_s_resource_id: Optional[str] = None,
+        is_hidden_saa_s: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class LimitDetails(_Model):
     """Limits constraining certain resource properties.
 
@@ -1216,6 +1507,36 @@ class LimitDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
+class LinkSaaSRequest(_Model):
+    """SaaS details for linking to a reservation.
+
+    :ivar saa_s_resource_id: SaaS resource id. Required.
+    :vartype saa_s_resource_id: str
+    """
+
+    saa_s_resource_id: str = rest_field(
+        name="saaSResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SaaS resource id. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        saa_s_resource_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ManagedServiceIdentity(_Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
@@ -1244,7 +1565,7 @@ class ManagedServiceIdentity(_Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -1254,7 +1575,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -1277,8 +1598,11 @@ class MarketplaceDetails(_Model):
      "PendingFulfillmentStart", "Subscribed", "Suspended", and "Unsubscribed".
     :vartype subscription_status: str or
      ~azure.mgmt.purestorageblock.models.MarketplaceSubscriptionStatus
-    :ivar offer_details: Offer details of the marketplace subscription. Required.
+    :ivar offer_details: Offer details of the marketplace subscription.
     :vartype offer_details: ~azure.mgmt.purestorageblock.models.OfferDetails
+    :ivar saa_s_resource_id: ARM ID of the Marketplace SaaS resource. Only used in Create
+     operations.
+    :vartype saa_s_resource_id: str
     """
 
     subscription_id: Optional[str] = rest_field(name="subscriptionId", visibility=["read"])
@@ -1288,17 +1612,20 @@ class MarketplaceDetails(_Model):
     )
     """Marketplace subscription status. Known values are: \"PendingFulfillmentStart\", \"Subscribed\",
      \"Suspended\", and \"Unsubscribed\"."""
-    offer_details: "_models.OfferDetails" = rest_field(
+    offer_details: Optional["_models.OfferDetails"] = rest_field(
         name="offerDetails", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Offer details of the marketplace subscription. Required."""
+    """Offer details of the marketplace subscription."""
+    saa_s_resource_id: Optional[str] = rest_field(name="saaSResourceId", visibility=["create"])
+    """ARM ID of the Marketplace SaaS resource. Only used in Create operations."""
 
     @overload
     def __init__(
         self,
         *,
-        offer_details: "_models.OfferDetails",
         subscription_status: Optional[Union[str, "_models.MarketplaceSubscriptionStatus"]] = None,
+        offer_details: Optional["_models.OfferDetails"] = None,
+        saa_s_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1423,7 +1750,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -1453,6 +1780,41 @@ class OperationDisplay(_Model):
      views."""
 
 
+class PerformanceParameters(_Model):
+    """Performance parameters for volume group.
+
+    :ivar bandwidth_limit_mb_per_sec: Bandwidth limit in MB per second.
+    :vartype bandwidth_limit_mb_per_sec: int
+    :ivar iops_limit: IOPS limit.
+    :vartype iops_limit: int
+    """
+
+    bandwidth_limit_mb_per_sec: Optional[int] = rest_field(
+        name="bandwidthLimitMbPerSec", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Bandwidth limit in MB per second."""
+    iops_limit: Optional[int] = rest_field(name="iopsLimit", visibility=["read", "create", "update", "delete", "query"])
+    """IOPS limit."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        bandwidth_limit_mb_per_sec: Optional[int] = None,
+        iops_limit: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PerformancePolicyLimits(_Model):
     """internal.
 
@@ -1477,6 +1839,272 @@ class PerformancePolicyLimits(_Model):
         *,
         iops_limit: "_models.RangeLimits",
         bandwidth_limit: "_models.RangeLimits",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformConsoleAccessSettings(_Model):
+    """Access settings for a platform console interface.
+
+    :ivar enabled: Whether this console interface access is enabled. Required.
+    :vartype enabled: bool
+    """
+
+    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this console interface access is enabled. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformConsoleActivationCode(_Model):
+    """One-time activation code for platform console access.
+
+    :ivar username: Username to use when activating the console session. Required.
+    :vartype username: str
+    :ivar activation_code: One-time activation code for platform console access. Required.
+    :vartype activation_code: str
+    :ivar expires_at: Expiry time of the activation code in RFC3339 format. Required.
+    :vartype expires_at: ~datetime.datetime
+    """
+
+    username: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Username to use when activating the console session. Required."""
+    activation_code: str = rest_field(name="activationCode", visibility=["read", "create", "update", "delete", "query"])
+    """One-time activation code for platform console access. Required."""
+    expires_at: datetime.datetime = rest_field(
+        name="expiresAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Expiry time of the activation code in RFC3339 format. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        username: str,
+        activation_code: str,
+        expires_at: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformConsoleAuthConfig(_Model):
+    """Base model for platform console authentication configuration. Extend with a type-specific
+    subtype for each auth mechanism.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SshPlatformConsoleAuthConfig
+
+    :ivar auth_type: Authentication type discriminator. Required. "ssh"
+    :vartype auth_type: str or ~azure.mgmt.purestorageblock.models.PlatformConsoleAuthType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    auth_type: str = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])
+    """Authentication type discriminator. Required. \"ssh\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auth_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformConsoleAuthResult(_Model):
+    """Base model for platform console authentication result. Actual type depends on the authType used
+    in the request.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SshPlatformConsoleAuthResult
+
+    :ivar auth_type: Authentication type discriminator. Required. "ssh"
+    :vartype auth_type: str or ~azure.mgmt.purestorageblock.models.PlatformConsoleAuthType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    auth_type: str = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])
+    """Authentication type discriminator. Required. \"ssh\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auth_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformConsoleSettings(_Model):
+    """Settings for platform console access to the storage pool.
+
+    :ivar enabled: Whether platform console access is enabled for the storage pool or not.When
+     enabled is false, all console access is disabled regardless of individual interface settings.
+    :vartype enabled: bool
+    :ivar gui: GUI access settings.
+    :vartype gui: ~azure.mgmt.purestorageblock.models.PlatformConsoleAccessSettings
+    :ivar api: API access settings.
+    :vartype api: ~azure.mgmt.purestorageblock.models.PlatformConsoleAccessSettings
+    :ivar cli: CLI access settings.
+    :vartype cli: ~azure.mgmt.purestorageblock.models.PlatformConsoleAccessSettings
+    :ivar subnets: Subnets configured for platform console access.
+    :vartype subnets: list[~azure.mgmt.purestorageblock.models.PlatformConsoleSubnet]
+    :ivar default_username: Default username for console access (system-populated).
+    :vartype default_username: str
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether platform console access is enabled for the storage pool or not.When enabled is false,
+     all console access is disabled regardless of individual interface settings."""
+    gui: Optional["_models.PlatformConsoleAccessSettings"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GUI access settings."""
+    api: Optional["_models.PlatformConsoleAccessSettings"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """API access settings."""
+    cli: Optional["_models.PlatformConsoleAccessSettings"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """CLI access settings."""
+    subnets: Optional[list["_models.PlatformConsoleSubnet"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Subnets configured for platform console access."""
+    default_username: Optional[str] = rest_field(name="defaultUsername", visibility=["read"])
+    """Default username for console access (system-populated)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        gui: Optional["_models.PlatformConsoleAccessSettings"] = None,
+        api: Optional["_models.PlatformConsoleAccessSettings"] = None,
+        cli: Optional["_models.PlatformConsoleAccessSettings"] = None,
+        subnets: Optional[list["_models.PlatformConsoleSubnet"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformConsoleSubnet(_Model):
+    """Subnet configuration for platform console access.
+
+    :ivar id: Azure resource ID of the subnet. Required.
+    :vartype id: str
+    :ivar management_ip_address: Management IP address assigned to the subnet (system-populated).
+    :vartype management_ip_address: str
+    :ivar service_backend_ips: Service backend IP addresses assigned to the subnet
+     (system-populated).
+    :vartype service_backend_ips: list[str]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Azure resource ID of the subnet. Required."""
+    management_ip_address: Optional[str] = rest_field(name="managementIpAddress", visibility=["read"])
+    """Management IP address assigned to the subnet (system-populated)."""
+    service_backend_ips: Optional[list[str]] = rest_field(name="serviceBackendIps", visibility=["read"])
+    """Service backend IP addresses assigned to the subnet (system-populated)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProtectionParameters(_Model):
+    """Protection parameters for volume group.
+
+    :ivar retention: Retention period for snapshots in ISO 8601 duration format.
+    :vartype retention: ~datetime.timedelta
+    :ivar frequency: Snapshot frequency in ISO 8601 duration format.
+    :vartype frequency: ~datetime.timedelta
+    """
+
+    retention: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Retention period for snapshots in ISO 8601 duration format."""
+    frequency: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Snapshot frequency in ISO 8601 duration format."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        retention: Optional[datetime.timedelta] = None,
+        frequency: Optional[datetime.timedelta] = None,
     ) -> None: ...
 
     @overload
@@ -1556,6 +2184,87 @@ class RangeLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RecoverableVolumeGroup(ProxyResource):
+    """A destroyed volume group that is pending eradication.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.purestorageblock.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.purestorageblock.models.RecoverableVolumeGroupProperties
+    """
+
+    properties: Optional["_models.RecoverableVolumeGroupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.RecoverableVolumeGroupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RecoverableVolumeGroupProperties(_Model):
+    """Properties of a recoverable volume group.
+
+    :ivar created_at: Date and time at which the volume group was created, as an RFC 3339
+     timestamp.
+    :vartype created_at: ~datetime.datetime
+    :ivar soft_deletion: Soft-deletion state of the recoverable volume group.
+    :vartype soft_deletion: ~azure.mgmt.purestorageblock.models.DestroyedStateProperties
+    :ivar performance_parameters: Performance parameters of the volume group.
+    :vartype performance_parameters: ~azure.mgmt.purestorageblock.models.PerformanceParameters
+    :ivar protection_parameters: Protection parameters of the volume group.
+    :vartype protection_parameters: ~azure.mgmt.purestorageblock.models.ProtectionParameters
+    :ivar space: Storage space usage of the volume group.
+    :vartype space: ~azure.mgmt.purestorageblock.models.Space
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.purestorageblock.models.ProvisioningState
+    """
+
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """Date and time at which the volume group was created, as an RFC 3339 timestamp."""
+    soft_deletion: Optional["_models.DestroyedStateProperties"] = rest_field(name="softDeletion", visibility=["read"])
+    """Soft-deletion state of the recoverable volume group."""
+    performance_parameters: Optional["_models.PerformanceParameters"] = rest_field(
+        name="performanceParameters", visibility=["read"]
+    )
+    """Performance parameters of the volume group."""
+    protection_parameters: Optional["_models.ProtectionParameters"] = rest_field(
+        name="protectionParameters", visibility=["read"]
+    )
+    """Protection parameters of the volume group."""
+    space: Optional["_models.Space"] = rest_field(visibility=["read"])
+    """Storage space usage of the volume group."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Deleting\", and \"Accepted\"."""
+
+
 class TrackedResource(Resource):
     """Tracked Resource.
 
@@ -1576,7 +2285,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -1586,7 +2295,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1633,7 +2342,7 @@ class Reservation(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ReservationPropertiesBaseResourceProperties"] = None,
     ) -> None: ...
 
@@ -1796,7 +2505,7 @@ class ReservationBillingUsageReport(_Model):
 
     timestamp: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Latest formatted billing report for this reservation. Required."""
-    billing_usage_properties: List["_models.BillingUsageProperty"] = rest_field(
+    billing_usage_properties: list["_models.BillingUsageProperty"] = rest_field(
         name="billingUsageProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of detailed billing usage properties. Required."""
@@ -1810,7 +2519,7 @@ class ReservationBillingUsageReport(_Model):
         self,
         *,
         timestamp: str,
-        billing_usage_properties: List["_models.BillingUsageProperty"],
+        billing_usage_properties: list["_models.BillingUsageProperty"],
         overall_status_message: str,
     ) -> None: ...
 
@@ -1832,7 +2541,7 @@ class ReservationPropertiesBaseResourceProperties(_Model):  # pylint: disable=na
     :vartype reservation_internal_id: str
     :ivar marketplace: Marketplace details. Required.
     :vartype marketplace: ~azure.mgmt.purestorageblock.models.MarketplaceDetails
-    :ivar user: User details. Required.
+    :ivar user: User details.
     :vartype user: ~azure.mgmt.purestorageblock.models.UserDetails
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
      "Failed", "Canceled", "Deleting", and "Accepted".
@@ -1843,8 +2552,8 @@ class ReservationPropertiesBaseResourceProperties(_Model):  # pylint: disable=na
     """Pure Storage's internal ID for the reservation."""
     marketplace: "_models.MarketplaceDetails" = rest_field(visibility=["read", "create"])
     """Marketplace details. Required."""
-    user: "_models.UserDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """User details. Required."""
+    user: Optional["_models.UserDetails"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User details."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -1856,7 +2565,7 @@ class ReservationPropertiesBaseResourceProperties(_Model):  # pylint: disable=na
         self,
         *,
         marketplace: "_models.MarketplaceDetails",
-        user: "_models.UserDetails",
+        user: Optional["_models.UserDetails"] = None,
     ) -> None: ...
 
     @overload
@@ -1879,7 +2588,7 @@ class ReservationUpdate(_Model):
     :vartype properties: ~azure.mgmt.purestorageblock.models.ReservationUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.ReservationUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1890,7 +2599,7 @@ class ReservationUpdate(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ReservationUpdateProperties"] = None,
     ) -> None: ...
 
@@ -1920,6 +2629,45 @@ class ReservationUpdateProperties(_Model):
         self,
         *,
         user: Optional["_models.UserDetails"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SaaSResourceDetailsResponse(ProxyResource):
+    """Marketplace SaaS resource details.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.purestorageblock.models.SystemData
+    :ivar saas_id: Id of the Marketplace SaaS Resource.
+    :vartype saas_id: str
+    """
+
+    saas_id: Optional[str] = rest_field(name="saasId", visibility=["read", "create", "update", "delete", "query"])
+    """Id of the Marketplace SaaS Resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        saas_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2108,6 +2856,95 @@ class Space(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SshPlatformConsoleAuthConfig(PlatformConsoleAuthConfig, discriminator="ssh"):
+    """SSH-based platform console authentication configuration.
+
+    :ivar auth_type: Required. SSH public key authentication.
+    :vartype auth_type: str or ~azure.mgmt.purestorageblock.models.SSH
+    :ivar username: Username to associate with the SSH public key. Required.
+    :vartype username: str
+    :ivar public_key: SSH public key in OpenSSH authorized_keys format. Required.
+    :vartype public_key: str
+    :ivar role: Role to assign to the user on the platform console. Required. Known values are:
+     "array_admin", "storage_admin", and "read_only".
+    :vartype role: str or ~azure.mgmt.purestorageblock.models.PlatformConsoleRole
+    """
+
+    auth_type: Literal[PlatformConsoleAuthType.SSH] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. SSH public key authentication."""
+    username: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Username to associate with the SSH public key. Required."""
+    public_key: str = rest_field(name="publicKey", visibility=["read", "create", "update", "delete", "query"])
+    """SSH public key in OpenSSH authorized_keys format. Required."""
+    role: Union[str, "_models.PlatformConsoleRole"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Role to assign to the user on the platform console. Required. Known values are:
+     \"array_admin\", \"storage_admin\", and \"read_only\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        username: str,
+        public_key: str,
+        role: Union[str, "_models.PlatformConsoleRole"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.auth_type = PlatformConsoleAuthType.SSH  # type: ignore
+
+
+class SshPlatformConsoleAuthResult(PlatformConsoleAuthResult, discriminator="ssh"):
+    """SSH-based platform console authentication result.
+
+    :ivar auth_type: Required. SSH public key authentication.
+    :vartype auth_type: str or ~azure.mgmt.purestorageblock.models.SSH
+    :ivar username: Username that was configured for the console session. Required.
+    :vartype username: str
+    :ivar role: Role assigned to the user on the platform console. Required. Known values are:
+     "array_admin", "storage_admin", and "read_only".
+    :vartype role: str or ~azure.mgmt.purestorageblock.models.PlatformConsoleRole
+    """
+
+    auth_type: Literal[PlatformConsoleAuthType.SSH] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. SSH public key authentication."""
+    username: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Username that was configured for the console session. Required."""
+    role: Union[str, "_models.PlatformConsoleRole"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Role assigned to the user on the platform console. Required. Known values are: \"array_admin\",
+     \"storage_admin\", and \"read_only\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        username: str,
+        role: Union[str, "_models.PlatformConsoleRole"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.auth_type = PlatformConsoleAuthType.SSH  # type: ignore
+
+
 class StoragePool(TrackedResource):
     """Storage pool resource.
 
@@ -2146,7 +2983,7 @@ class StoragePool(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.StoragePoolProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
@@ -2241,7 +3078,7 @@ class StoragePoolHealthInfo(_Model):
 
     health: "_models.HealthDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Health metrics. Required."""
-    alerts: List["_models.Alert"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    alerts: list["_models.Alert"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of health alerts. Required."""
 
     @overload
@@ -2249,7 +3086,7 @@ class StoragePoolHealthInfo(_Model):
         self,
         *,
         health: "_models.HealthDetails",
-        alerts: List["_models.Alert"],
+        alerts: list["_models.Alert"],
     ) -> None: ...
 
     @overload
@@ -2286,7 +3123,7 @@ class StoragePoolLimits(_Model):
         name="provisionedIops", visibility=["read", "create", "update", "delete", "query"]
     )
     """Allowed provisioned IOPS range for a storage pool, as a number of operations. Required."""
-    physical_availability_zones: List[str] = rest_field(
+    physical_availability_zones: list[str] = rest_field(
         name="physicalAvailabilityZones", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of physical availability zones in the region in which storage pools can be deployed; some
@@ -2298,7 +3135,7 @@ class StoragePoolLimits(_Model):
         *,
         provisioned_bandwidth_mb_per_sec: "_models.RangeLimits",
         provisioned_iops: "_models.RangeLimits",
-        physical_availability_zones: List[str],
+        physical_availability_zones: list[str],
     ) -> None: ...
 
     @overload
@@ -2337,6 +3174,8 @@ class StoragePoolProperties(_Model):
     :ivar reservation_resource_id: Azure resource ID of the Pure Storage Cloud service (reservation
      resource) this storage pool belongs to. Required.
     :vartype reservation_resource_id: str
+    :ivar platform_console_settings: Platform console access settings for the storage pool.
+    :vartype platform_console_settings: ~azure.mgmt.purestorageblock.models.PlatformConsoleSettings
     """
 
     storage_pool_internal_id: Optional[str] = rest_field(name="storagePoolInternalId", visibility=["read"])
@@ -2363,6 +3202,10 @@ class StoragePoolProperties(_Model):
     reservation_resource_id: str = rest_field(name="reservationResourceId", visibility=["read", "create"])
     """Azure resource ID of the Pure Storage Cloud service (reservation resource) this storage pool
      belongs to. Required."""
+    platform_console_settings: Optional["_models.PlatformConsoleSettings"] = rest_field(
+        name="platformConsoleSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Platform console access settings for the storage pool."""
 
     @overload
     def __init__(
@@ -2372,6 +3215,7 @@ class StoragePoolProperties(_Model):
         vnet_injection: "_models.VnetInjection",
         provisioned_bandwidth_mb_per_sec: int,
         reservation_resource_id: str,
+        platform_console_settings: Optional["_models.PlatformConsoleSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -2400,7 +3244,7 @@ class StoragePoolUpdate(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identities assigned to this resource."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.StoragePoolUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2412,7 +3256,7 @@ class StoragePoolUpdate(_Model):
         self,
         *,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.StoragePoolUpdateProperties"] = None,
     ) -> None: ...
 
@@ -2432,18 +3276,25 @@ class StoragePoolUpdateProperties(_Model):
 
     :ivar provisioned_bandwidth_mb_per_sec: Total bandwidth provisioned for the pool, in MB/s.
     :vartype provisioned_bandwidth_mb_per_sec: int
+    :ivar platform_console_settings: Platform console access settings for the storage pool.
+    :vartype platform_console_settings: ~azure.mgmt.purestorageblock.models.PlatformConsoleSettings
     """
 
     provisioned_bandwidth_mb_per_sec: Optional[int] = rest_field(
         name="provisionedBandwidthMbPerSec", visibility=["read", "create", "update", "delete", "query"]
     )
     """Total bandwidth provisioned for the pool, in MB/s."""
+    platform_console_settings: Optional["_models.PlatformConsoleSettings"] = rest_field(
+        name="platformConsoleSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Platform console access settings for the storage pool."""
 
     @overload
     def __init__(
         self,
         *,
         provisioned_bandwidth_mb_per_sec: Optional[int] = None,
+        platform_console_settings: Optional["_models.PlatformConsoleSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -2632,6 +3483,509 @@ class VnetInjection(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Volume(ProxyResource):
+    """Azure Volume resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.purestorageblock.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.purestorageblock.models.AzureVolumeProperties
+    """
+
+    properties: Optional["_models.AzureVolumeProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AzureVolumeProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeGroup(TrackedResource):
+    """Volume Group resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.purestorageblock.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.purestorageblock.models.VolumeGroupProperties
+    """
+
+    properties: Optional["_models.VolumeGroupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.VolumeGroupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeGroupOverwriteRequest(_Model):
+    """Request to overwrite all volumes in a volume group from a snapshot.
+
+    :ivar source_snapshot_resource_id: Azure resource ID of the volume group snapshot to restore
+     from. Required.
+    :vartype source_snapshot_resource_id: str
+    :ivar source_volume_group_resource_id: Azure resource ID of the source volume group. Required.
+    :vartype source_volume_group_resource_id: str
+    """
+
+    source_snapshot_resource_id: str = rest_field(
+        name="sourceSnapshotResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource ID of the volume group snapshot to restore from. Required."""
+    source_volume_group_resource_id: str = rest_field(
+        name="sourceVolumeGroupResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource ID of the source volume group. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_snapshot_resource_id: str,
+        source_volume_group_resource_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeGroupProperties(_Model):
+    """Properties of a volume group.
+
+    :ivar storage_pool_internal_id: Pure Storage's internal ID of the storage pool.
+    :vartype storage_pool_internal_id: str
+    :ivar volume_group_internal_id: Pure Storage's internal ID of the volume group.
+    :vartype volume_group_internal_id: str
+    :ivar source_volume_group_resource_id: Azure resource ID of the source volume group for
+     cloning.
+    :vartype source_volume_group_resource_id: str
+    :ivar source_type: Indicates the source type for volume group creation. Known values are:
+     "none", "volumeGroup", "snapshot", and "recoverableVolumeGroup".
+    :vartype source_type: str or ~azure.mgmt.purestorageblock.models.VolumeGroupSourceType
+    :ivar source_snapshot_resource_id: Azure resource ID of the volume group snapshot to restore
+     from.
+    :vartype source_snapshot_resource_id: str
+    :ivar source_recoverable_volume_group_resource_id: Azure resource ID of the soft-deleted volume
+     group to recover.
+    :vartype source_recoverable_volume_group_resource_id: str
+    :ivar performance_parameters: Performance parameters for the volume group.
+    :vartype performance_parameters: ~azure.mgmt.purestorageblock.models.PerformanceParameters
+    :ivar protection_parameters: Protection parameters for the volume group.
+    :vartype protection_parameters: ~azure.mgmt.purestorageblock.models.ProtectionParameters
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.purestorageblock.models.ProvisioningState
+    """
+
+    storage_pool_internal_id: Optional[str] = rest_field(name="storagePoolInternalId", visibility=["read"])
+    """Pure Storage's internal ID of the storage pool."""
+    volume_group_internal_id: Optional[str] = rest_field(name="volumeGroupInternalId", visibility=["read"])
+    """Pure Storage's internal ID of the volume group."""
+    source_volume_group_resource_id: Optional[str] = rest_field(
+        name="sourceVolumeGroupResourceId", visibility=["create"]
+    )
+    """Azure resource ID of the source volume group for cloning."""
+    source_type: Optional[Union[str, "_models.VolumeGroupSourceType"]] = rest_field(
+        name="sourceType", visibility=["create"]
+    )
+    """Indicates the source type for volume group creation. Known values are: \"none\",
+     \"volumeGroup\", \"snapshot\", and \"recoverableVolumeGroup\"."""
+    source_snapshot_resource_id: Optional[str] = rest_field(name="sourceSnapshotResourceId", visibility=["create"])
+    """Azure resource ID of the volume group snapshot to restore from."""
+    source_recoverable_volume_group_resource_id: Optional[str] = rest_field(
+        name="sourceRecoverableVolumeGroupResourceId", visibility=["create"]
+    )
+    """Azure resource ID of the soft-deleted volume group to recover."""
+    performance_parameters: Optional["_models.PerformanceParameters"] = rest_field(
+        name="performanceParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Performance parameters for the volume group."""
+    protection_parameters: Optional["_models.ProtectionParameters"] = rest_field(
+        name="protectionParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Protection parameters for the volume group."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Deleting\", and \"Accepted\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_volume_group_resource_id: Optional[str] = None,
+        source_type: Optional[Union[str, "_models.VolumeGroupSourceType"]] = None,
+        source_snapshot_resource_id: Optional[str] = None,
+        source_recoverable_volume_group_resource_id: Optional[str] = None,
+        performance_parameters: Optional["_models.PerformanceParameters"] = None,
+        protection_parameters: Optional["_models.ProtectionParameters"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeGroupSnapshot(ProxyResource):
+    """A snapshot of a volume group.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.purestorageblock.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.purestorageblock.models.VolumeGroupSnapshotProperties
+    """
+
+    properties: Optional["_models.VolumeGroupSnapshotProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VolumeGroupSnapshotProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeGroupSnapshotListRequest(_Model):
+    """Request payload for listing volume group snapshots.
+
+    :ivar filter: OData filter expression (e.g. filter=substringof('sna', name) and space/unique gt
+     1000).
+    :vartype filter: str
+    :ivar orderby: OData order-by expression (e.g. orderby=name asc).
+    :vartype orderby: str
+    :ivar top: Maximum number of results to return per page.
+    :vartype top: int
+    :ivar skip: Number of results to skip (page offset).
+    :vartype skip: int
+    """
+
+    filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """OData filter expression (e.g. filter=substringof('sna', name) and space/unique gt 1000)."""
+    orderby: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """OData order-by expression (e.g. orderby=name asc)."""
+    top: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of results to return per page."""
+    skip: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of results to skip (page offset)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+        orderby: Optional[str] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeGroupSnapshotPostListResult(_Model):
+    """List result for volume group snapshots returned by the listSnapshots POST action.
+
+    :ivar value: Array of volume group snapshots. Required.
+    :vartype value: list[~azure.mgmt.purestorageblock.models.VolumeGroupSnapshot]
+    :ivar count: Number of snapshots in this response page.
+    :vartype count: int
+    :ivar total_count: Total number of snapshots.
+    :vartype total_count: int
+    """
+
+    value: list["_models.VolumeGroupSnapshot"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Array of volume group snapshots. Required."""
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of snapshots in this response page."""
+    total_count: Optional[int] = rest_field(
+        name="totalCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of snapshots."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.VolumeGroupSnapshot"],
+        count: Optional[int] = None,
+        total_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeGroupSnapshotProperties(_Model):
+    """Properties of a volume group snapshot.
+
+    :ivar source_snapshot_resource_id: Azure resource ID of the source snapshot to recover from;
+     omit for a new manual snapshot.
+    :vartype source_snapshot_resource_id: str
+    :ivar created_at: Date and time at which the snapshot was created, as an RFC 3339 timestamp.
+    :vartype created_at: ~datetime.datetime
+    :ivar created_by_policy: Whether the snapshot was created by a protection policy.
+    :vartype created_by_policy: bool
+    :ivar soft_deletion: Soft-deletion state of the snapshot.
+    :vartype soft_deletion: ~azure.mgmt.purestorageblock.models.DestroyedStateProperties
+    :ivar space: Storage space usage of the snapshot.
+    :vartype space: ~azure.mgmt.purestorageblock.models.Space
+    :ivar volume_snapshots: List of individual volume snapshots included in this volume group
+     snapshot; populated on single-get, empty or omitted on list for performance.
+    :vartype volume_snapshots: list[~azure.mgmt.purestorageblock.models.VolumeSnapshotInfo]
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.purestorageblock.models.ProvisioningState
+    """
+
+    source_snapshot_resource_id: Optional[str] = rest_field(name="sourceSnapshotResourceId", visibility=["create"])
+    """Azure resource ID of the source snapshot to recover from; omit for a new manual snapshot."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """Date and time at which the snapshot was created, as an RFC 3339 timestamp."""
+    created_by_policy: Optional[bool] = rest_field(name="createdByPolicy", visibility=["read"])
+    """Whether the snapshot was created by a protection policy."""
+    soft_deletion: Optional["_models.DestroyedStateProperties"] = rest_field(name="softDeletion", visibility=["read"])
+    """Soft-deletion state of the snapshot."""
+    space: Optional["_models.Space"] = rest_field(visibility=["read"])
+    """Storage space usage of the snapshot."""
+    volume_snapshots: Optional[list["_models.VolumeSnapshotInfo"]] = rest_field(
+        name="volumeSnapshots", visibility=["read"]
+    )
+    """List of individual volume snapshots included in this volume group snapshot; populated on
+     single-get, empty or omitted on list for performance."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Deleting\", and \"Accepted\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_snapshot_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeGroupStatus(_Model):
+    """Volume group status information.
+
+    :ivar space: Storage space usage for the volume group. Required.
+    :vartype space: ~azure.mgmt.purestorageblock.models.Space
+    :ivar connected_host_count: Number of hosts currently connected to the volume group. Required.
+    :vartype connected_host_count: int
+    """
+
+    space: "_models.Space" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Storage space usage for the volume group. Required."""
+    connected_host_count: int = rest_field(
+        name="connectedHostCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of hosts currently connected to the volume group. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        space: "_models.Space",
+        connected_host_count: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeGroupUpdate(_Model):
+    """The type used for update operations of the VolumeGroup.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.purestorageblock.models.VolumeGroupUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.VolumeGroupUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.VolumeGroupUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeGroupUpdateProperties(_Model):
+    """The updatable properties of the VolumeGroup.
+
+    :ivar performance_parameters: Performance parameters for the volume group.
+    :vartype performance_parameters: ~azure.mgmt.purestorageblock.models.PerformanceParameters
+    :ivar protection_parameters: Protection parameters for the volume group.
+    :vartype protection_parameters: ~azure.mgmt.purestorageblock.models.ProtectionParameters
+    """
+
+    performance_parameters: Optional["_models.PerformanceParameters"] = rest_field(
+        name="performanceParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Performance parameters for the volume group."""
+    protection_parameters: Optional["_models.ProtectionParameters"] = rest_field(
+        name="protectionParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Protection parameters for the volume group."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        performance_parameters: Optional["_models.PerformanceParameters"] = None,
+        protection_parameters: Optional["_models.ProtectionParameters"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VolumeLimits(_Model):
     """Limits used for volumes.
 
@@ -2649,6 +4003,73 @@ class VolumeLimits(_Model):
         self,
         *,
         provisioned_size: "_models.RangeLimits",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeOverwriteRequest(_Model):
+    """Request to overwrite a volume's content from another volume or a snapshot.
+
+    :ivar source_type: Source type for the overwrite operation. Required. Known values are: "none",
+     "volume", "serialNumber", "snapshot", and "recoverableVolume".
+    :vartype source_type: str or ~azure.mgmt.purestorageblock.models.VolumeSourceType
+    :ivar source_volume_group_resource_id: Azure resource ID of the source volume group. Required
+     when sourceType is 'snapshot' or when the source volume belongs to a different volume group
+     than the target.
+    :vartype source_volume_group_resource_id: str
+    :ivar source_volume_snapshot: Source volume group snapshot and volume snapshot name to restore
+     from. Used when sourceType is 'snapshot'.
+    :vartype source_volume_snapshot: ~azure.mgmt.purestorageblock.models.VolumeSnapshotSource
+    :ivar source_serial_number: Serial number of the source volume to overwrite from. Used when
+     sourceType is 'serialNumber'.
+    :vartype source_serial_number: str
+    :ivar source_volume_resource_id: Azure resource ID of the source volume to clone from. Used
+     when sourceType is 'volume'.
+    :vartype source_volume_resource_id: str
+    """
+
+    source_type: Union[str, "_models.VolumeSourceType"] = rest_field(
+        name="sourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Source type for the overwrite operation. Required. Known values are: \"none\", \"volume\",
+     \"serialNumber\", \"snapshot\", and \"recoverableVolume\"."""
+    source_volume_group_resource_id: Optional[str] = rest_field(
+        name="sourceVolumeGroupResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource ID of the source volume group. Required when sourceType is 'snapshot' or when
+     the source volume belongs to a different volume group than the target."""
+    source_volume_snapshot: Optional["_models.VolumeSnapshotSource"] = rest_field(
+        name="sourceVolumeSnapshot", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Source volume group snapshot and volume snapshot name to restore from. Used when sourceType is
+     'snapshot'."""
+    source_serial_number: Optional[str] = rest_field(
+        name="sourceSerialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Serial number of the source volume to overwrite from. Used when sourceType is 'serialNumber'."""
+    source_volume_resource_id: Optional[str] = rest_field(
+        name="sourceVolumeResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource ID of the source volume to clone from. Used when sourceType is 'volume'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_type: Union[str, "_models.VolumeSourceType"],
+        source_volume_group_resource_id: Optional[str] = None,
+        source_volume_snapshot: Optional["_models.VolumeSnapshotSource"] = None,
+        source_serial_number: Optional[str] = None,
+        source_volume_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2723,6 +4144,125 @@ class VolumeProperties(_Model):
         self,
         *,
         soft_deletion: "_models.SoftDeletion",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeSnapshotInfo(_Model):
+    """Information about an individual volume snapshot within a volume group snapshot.
+
+    :ivar name: Name of the volume snapshot. Required.
+    :vartype name: str
+    :ivar space: Storage space usage of the volume snapshot.
+    :vartype space: ~azure.mgmt.purestorageblock.models.Space
+    :ivar provisioned_size: Provisioned size of the volume, in bytes.
+    :vartype provisioned_size: int
+    :ivar serial_number: Serial number of the volume.
+    :vartype serial_number: str
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """Name of the volume snapshot. Required."""
+    space: Optional["_models.Space"] = rest_field(visibility=["read"])
+    """Storage space usage of the volume snapshot."""
+    provisioned_size: Optional[int] = rest_field(name="provisionedSize", visibility=["read"])
+    """Provisioned size of the volume, in bytes."""
+    serial_number: Optional[str] = rest_field(name="serialNumber", visibility=["read"])
+    """Serial number of the volume."""
+
+
+class VolumeSnapshotSource(_Model):
+    """Identifies the specific volume snapshot within a volume group snapshot to restore from.
+
+    :ivar volume_group_snapshot_resource_id: Azure resource ID of the volume group snapshot
+     containing the desired volume snapshot. Required.
+    :vartype volume_group_snapshot_resource_id: str
+    :ivar volume_snapshot_name: Name of the volume snapshot within the volume group snapshot.
+     Required.
+    :vartype volume_snapshot_name: str
+    """
+
+    volume_group_snapshot_resource_id: str = rest_field(name="volumeGroupSnapshotResourceId", visibility=["create"])
+    """Azure resource ID of the volume group snapshot containing the desired volume snapshot.
+     Required."""
+    volume_snapshot_name: str = rest_field(name="volumeSnapshotName", visibility=["create"])
+    """Name of the volume snapshot within the volume group snapshot. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        volume_group_snapshot_resource_id: str,
+        volume_snapshot_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeUpdate(_Model):
+    """The type used for update operations of the Volume.
+
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.purestorageblock.models.VolumeUpdateProperties
+    """
+
+    properties: Optional["_models.VolumeUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VolumeUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeUpdateProperties(_Model):
+    """The updatable properties of the Volume.
+
+    :ivar provisioned_size: Currently provisioned size of the volume, in bytes.
+    :vartype provisioned_size: int
+    """
+
+    provisioned_size: Optional[int] = rest_field(
+        name="provisionedSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Currently provisioned size of the volume, in bytes."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provisioned_size: Optional[int] = None,
     ) -> None: ...
 
     @overload

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b57 (Unreleased)
+## 1.0.0b58 (Unreleased)
 
 ### Features Added
 
@@ -9,9 +9,24 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b57 (2026-09-02)
+
+### Features Added
+- Remove `microsoft.availability.testTimestamp` and use the LogRecord timestamp instead for availability data
+  ([#48841](https://github.com/Azure/azure-sdk-for-python/pull/48841))
+- Add the required `force_flush` method to the log exporter to align with upstream OpenTelemetry changes in [LogRecordExporter](https://github.com/open-telemetry/opentelemetry-python/pull/5294)
+  ([#48823](https://github.com/Azure/azure-sdk-for-python/pull/48823))
+- Populate `measurements` on telemetry from the `microsoft.custom_measurements` attribute
+  ([#48750](https://github.com/Azure/azure-sdk-for-python/pull/48750))
+- Add support for availability telemetry from `microsoft.availability.*` log attributes
+  ([#48812](https://github.com/Azure/azure-sdk-for-python/pull/48812))
+
+### Other Changes
 - Extend OneSettings configuration evaluation to parse JSON-encoded feature settings and support explicit string
   override values, list-valued matching conditions, and caller-specified value conversion while preserving existing
   boolean feature-flag behavior.
+  ([#48595](https://github.com/Azure/azure-sdk-for-python/pull/48595))
 
 ## 1.0.0b56 (2026-08-06)
 

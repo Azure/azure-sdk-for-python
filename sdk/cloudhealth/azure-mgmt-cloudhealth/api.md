@@ -114,7 +114,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> AsyncLROPoller[AuthenticationSetting]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'authentication_setting_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'authentication_setting_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -186,7 +186,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> AsyncLROPoller[DiscoveryRule]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'discovery_rule_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'discovery_rule_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -296,7 +296,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> AsyncLROPoller[Entity]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -423,7 +423,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> SignalHistoryResponse: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-09-01-preview'])
         async def get_signal_recommendations(
                 self, 
                 resource_group_name: str, 
@@ -637,7 +637,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> AsyncLROPoller[Relationship]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'relationship_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'relationship_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -711,7 +711,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> AsyncLROPoller[SignalDefinition]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'signal_definition_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'signal_definition_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -760,6 +760,18 @@ namespace azure.mgmt.cloudhealth.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cloudhealth.models.AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BEST_OF = "BestOf"
+        MAX_NOT_HEALTHY = "MaxNotHealthy"
+        MIN_HEALTHY = "MinHealthy"
+        WORST_OF = "WorstOf"
+
+
+    class azure.mgmt.cloudhealth.models.AggregationUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ABSOLUTE = "Absolute"
+        PERCENTAGE = "Percentage"
 
 
     class azure.mgmt.cloudhealth.models.AlertConfiguration(_Model):
@@ -984,33 +996,22 @@ namespace azure.mgmt.cloudhealth.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.cloudhealth.models.DependenciesAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        MAX_NOT_HEALTHY = "MaxNotHealthy"
-        MIN_HEALTHY = "MinHealthy"
-        WORST_OF = "WorstOf"
-
-
-    class azure.mgmt.cloudhealth.models.DependenciesAggregationUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ABSOLUTE = "Absolute"
-        PERCENTAGE = "Percentage"
-
-
     class azure.mgmt.cloudhealth.models.DependenciesSignalGroupV2(_Model):
-        aggregation_type: Union[str, DependenciesAggregationType]
+        aggregation_type: Union[str, AggregationType]
         degraded_threshold: Optional[float]
         ignore_unknown: Optional[bool]
         unhealthy_threshold: Optional[float]
-        unit: Optional[Union[str, DependenciesAggregationUnit]]
+        unit: Optional[Union[str, AggregationUnit]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                aggregation_type: Union[str, DependenciesAggregationType], 
+                aggregation_type: Union[str, AggregationType], 
                 degraded_threshold: Optional[float] = ..., 
                 ignore_unknown: Optional[bool] = ..., 
                 unhealthy_threshold: Optional[float] = ..., 
-                unit: Optional[Union[str, DependenciesAggregationUnit]] = ...
+                unit: Optional[Union[str, AggregationUnit]] = ...
             ) -> None: ...
 
         @overload
@@ -1051,7 +1052,7 @@ namespace azure.mgmt.cloudhealth.models
         authentication_setting: str
         discover_relationships: Union[str, DiscoveryRuleRelationshipDiscoveryBehavior]
         display_name: Optional[str]
-        entity_name: str
+        entity_name: Optional[str]
         error: Optional[DiscoveryError]
         provisioning_state: Optional[Union[str, HealthModelProvisioningState]]
         specification: DiscoveryRuleSpecification
@@ -1206,6 +1207,7 @@ namespace azure.mgmt.cloudhealth.models
         icon: Optional[IconDefinition]
         impact: Optional[Union[str, EntityImpact]]
         provisioning_state: Optional[Union[str, HealthModelProvisioningState]]
+        signal_aggregation_groups: Optional[list[SignalAggregationGroup]]
         signal_groups: Optional[SignalGroups]
         tags: Optional[dict[str, str]]
 
@@ -1219,6 +1221,7 @@ namespace azure.mgmt.cloudhealth.models
                 health_objective: Optional[float] = ..., 
                 icon: Optional[IconDefinition] = ..., 
                 impact: Optional[Union[str, EntityImpact]] = ..., 
+                signal_aggregation_groups: Optional[list[SignalAggregationGroup]] = ..., 
                 signal_groups: Optional[SignalGroups] = ..., 
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...
@@ -1442,7 +1445,6 @@ namespace azure.mgmt.cloudhealth.models
 
     class azure.mgmt.cloudhealth.models.HealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DEGRADED = "Degraded"
-        DELETED = "Deleted"
         HEALTHY = "Healthy"
         UNHEALTHY = "Unhealthy"
         UNKNOWN = "Unknown"
@@ -1562,13 +1564,6 @@ namespace azure.mgmt.cloudhealth.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.cloudhealth.models.LookBackWindow(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        PT15_M = "PT15M"
-        PT1_H = "PT1H"
-        PT30_M = "PT30M"
-        PT5_M = "PT5M"
 
 
     class azure.mgmt.cloudhealth.models.ManagedIdentityAuthenticationSettingProperties(AuthenticationSettingProperties, discriminator='ManagedIdentity'):
@@ -1853,6 +1848,36 @@ namespace azure.mgmt.cloudhealth.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cloudhealth.models.SignalAggregationGroup(_Model):
+        aggregated_health_state: Optional[Union[str, HealthState]]
+        aggregation_type: Optional[Union[str, AggregationType]]
+        degraded_threshold: Optional[float]
+        display_name: Optional[str]
+        ignore_unknown: Optional[bool]
+        members: list[str]
+        name: str
+        unhealthy_threshold: Optional[float]
+        unit: Optional[Union[str, AggregationUnit]]
+        unresolved_members: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                aggregation_type: Optional[Union[str, AggregationType]] = ..., 
+                degraded_threshold: Optional[float] = ..., 
+                display_name: Optional[str] = ..., 
+                ignore_unknown: Optional[bool] = ..., 
+                members: list[str], 
+                name: str, 
+                unhealthy_threshold: Optional[float] = ..., 
+                unit: Optional[Union[str, AggregationUnit]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cloudhealth.models.SignalConfiguration(_Model):
         aggregation_type: Optional[Union[str, MetricAggregationType]]
         dimension_filter: Optional[str]
@@ -2086,7 +2111,6 @@ namespace azure.mgmt.cloudhealth.models
 
 
     class azure.mgmt.cloudhealth.models.ThresholdRuleV2(_Model):
-        look_back_window: Optional[Union[str, LookBackWindow]]
         operator: Union[str, SignalOperator]
         sensitivity: Optional[Union[str, DynamicThresholdSensitivity]]
         threshold: Optional[float]
@@ -2095,7 +2119,6 @@ namespace azure.mgmt.cloudhealth.models
         def __init__(
                 self, 
                 *, 
-                look_back_window: Optional[Union[str, LookBackWindow]] = ..., 
                 operator: Union[str, SignalOperator], 
                 sensitivity: Optional[Union[str, DynamicThresholdSensitivity]] = ..., 
                 threshold: Optional[float] = ...
@@ -2177,7 +2200,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> LROPoller[AuthenticationSetting]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'authentication_setting_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'authentication_setting_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2249,7 +2272,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> LROPoller[DiscoveryRule]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'discovery_rule_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'discovery_rule_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2359,7 +2382,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> LROPoller[Entity]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2486,7 +2509,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> SignalHistoryResponse: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-09-01-preview'])
         def get_signal_recommendations(
                 self, 
                 resource_group_name: str, 
@@ -2700,7 +2723,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> LROPoller[Relationship]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'relationship_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'relationship_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2774,7 +2797,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> LROPoller[SignalDefinition]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'signal_definition_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'signal_definition_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2808,7 +2831,7 @@ namespace azure.mgmt.cloudhealth.types
     class azure.mgmt.cloudhealth.types.AddDataAnnotationRequest(TypedDict, total=False):
         key "annotationDetails": Required[dict[str, str]]
         key "description": str
-        annotation_details: dict[str, str]
+        annotationDetails: dict[str, str]
         description: str
 
 
@@ -2816,7 +2839,6 @@ namespace azure.mgmt.cloudhealth.types
         key "description": str
         key "severity": Required[Union[str, AlertSeverity]]
         actionGroupIds: list[str]
-        action_group_ids: list[str]
         description: str
         severity: Union[str, AlertSeverity]
 
@@ -2824,7 +2846,7 @@ namespace azure.mgmt.cloudhealth.types
     class azure.mgmt.cloudhealth.types.ApplicationInsightsTopologySpecification(TypedDict, total=False):
         key "applicationInsightsResourceId": Required[str]
         key "kind": Required[Literal[DiscoveryRuleKind.APPLICATION_INSIGHTS_TOPOLOGY]]
-        application_insights_resource_id: str
+        applicationInsightsResourceId: str
         kind: Literal[DiscoveryRuleKind.APPLICATION_INSIGHTS_TOPOLOGY]
 
 
@@ -2841,7 +2863,7 @@ namespace azure.mgmt.cloudhealth.types
         id: str
         name: str
         properties: AuthenticationSettingProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2850,17 +2872,17 @@ namespace azure.mgmt.cloudhealth.types
         key "displayName": str
         key "managedIdentityName": Required[str]
         key "provisioningState": Union[str, HealthModelProvisioningState]
-        authentication_kind: Literal[AuthenticationKind.MANAGED_IDENTITY]
-        display_name: str
-        managed_identity_name: str
-        provisioning_state: Union[str, HealthModelProvisioningState]
+        authenticationKind: Literal[AuthenticationKind.MANAGED_IDENTITY]
+        displayName: str
+        managedIdentityName: str
+        provisioningState: Union[str, HealthModelProvisioningState]
 
 
     class azure.mgmt.cloudhealth.types.AzureMonitorWorkspaceSignals(TypedDict, total=False):
         key "authenticationSetting": Required[str]
         key "azureMonitorWorkspaceResourceId": Required[str]
-        authentication_setting: str
-        azure_monitor_workspace_resource_id: str
+        authenticationSetting: str
+        azureMonitorWorkspaceResourceId: str
         signals: list[PrometheusMetricsSignal]
 
 
@@ -2869,7 +2891,7 @@ namespace azure.mgmt.cloudhealth.types
         key "signalName": str
         key "status": ForwardRef('AzureResourceHealthSignalStatus', module='types')
         enabled: Union[str, ResourceHealthAvailabilityStateSignalBehavior]
-        signal_name: str
+        signalName: str
         status: AzureResourceHealthSignalStatus
 
 
@@ -2886,16 +2908,16 @@ namespace azure.mgmt.cloudhealth.types
         key "reportedAt": str
         key "summary": str
         key "value": float
-        additional_context: str
-        availability_reported_time: str
-        availability_state: Union[str, ResourceHealthAvailabilityState]
+        additionalContext: str
+        availabilityReportedTime: str
+        availabilityState: Union[str, ResourceHealthAvailabilityState]
         category: Union[str, ResourceHealthCategory]
-        detailed_status: str
+        detailedStatus: str
         error: str
-        health_state: Union[str, HealthState]
-        reason_chronicity: Union[str, ResourceHealthReasonChronicity]
-        reason_type: Union[str, ResourceHealthReasonType]
-        reported_at: str
+        healthState: Union[str, HealthState]
+        reasonChronicity: Union[str, ResourceHealthReasonChronicity]
+        reasonType: Union[str, ResourceHealthReasonType]
+        reportedAt: str
         summary: str
         value: float
 
@@ -2914,19 +2936,19 @@ namespace azure.mgmt.cloudhealth.types
         key "signalKind": Required[Literal[SignalKind.AZURE_RESOURCE_METRIC]]
         key "status": ForwardRef('SignalStatus', module='types')
         key "timeGrain": str
-        aggregation_type: Union[str, MetricAggregationType]
-        data_unit: str
-        dimension_filter: str
-        display_name: str
-        evaluation_rules: EvaluationRule
-        metric_name: str
-        metric_namespace: str
+        aggregationType: Union[str, MetricAggregationType]
+        dataUnit: str
+        dimensionFilter: str
+        displayName: str
+        evaluationRules: EvaluationRule
+        metricName: str
+        metricNamespace: str
         name: str
-        refresh_interval: Union[str, RefreshInterval]
-        signal_definition_name: str
-        signal_kind: Literal[SignalKind.AZURE_RESOURCE_METRIC]
+        refreshInterval: Union[str, RefreshInterval]
+        signalDefinitionName: str
+        signalKind: Literal[SignalKind.AZURE_RESOURCE_METRIC]
         status: SignalStatus
-        time_grain: str
+        timeGrain: str
 
 
     class azure.mgmt.cloudhealth.types.AzureResourceSignals(TypedDict, total=False):
@@ -2934,24 +2956,24 @@ namespace azure.mgmt.cloudhealth.types
         key "azureResourceId": Required[str]
         key "azureResourceKind": str
         key "resourceHealth": ForwardRef('AzureResourceHealthSignal', module='types')
-        authentication_setting: str
-        azure_resource_id: str
-        azure_resource_kind: str
-        resource_health: AzureResourceHealthSignal
+        authenticationSetting: str
+        azureResourceId: str
+        azureResourceKind: str
+        resourceHealth: AzureResourceHealthSignal
         signals: list[AzureResourceSignal]
 
 
     class azure.mgmt.cloudhealth.types.DependenciesSignalGroupV2(TypedDict, total=False):
-        key "aggregationType": Required[Union[str, DependenciesAggregationType]]
+        key "aggregationType": Required[Union[str, AggregationType]]
         key "degradedThreshold": float
         key "ignoreUnknown": bool
         key "unhealthyThreshold": float
-        key "unit": Union[str, DependenciesAggregationUnit]
-        aggregation_type: Union[str, DependenciesAggregationType]
-        degraded_threshold: float
-        ignore_unknown: bool
-        unhealthy_threshold: float
-        unit: Union[str, DependenciesAggregationUnit]
+        key "unit": Union[str, AggregationUnit]
+        aggregationType: Union[str, AggregationType]
+        degradedThreshold: float
+        ignoreUnknown: bool
+        unhealthyThreshold: float
+        unit: Union[str, AggregationUnit]
 
 
     class azure.mgmt.cloudhealth.types.DiscoveryError(TypedDict, total=False):
@@ -2969,7 +2991,7 @@ namespace azure.mgmt.cloudhealth.types
         id: str
         name: str
         properties: DiscoveryRuleProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2984,18 +3006,18 @@ namespace azure.mgmt.cloudhealth.types
         key "authenticationSetting": Required[str]
         key "discoverRelationships": Required[Union[str, DiscoveryRuleRelationshipDiscoveryBehavior]]
         key "displayName": str
-        key "entityName": Required[str]
+        key "entityName": str
         key "error": ForwardRef('DiscoveryError', module='types')
         key "provisioningState": Union[str, HealthModelProvisioningState]
         key "specification": Required[DiscoveryRuleSpecification]
-        add_recommended_signals: Union[str, DiscoveryRuleRecommendedSignalsBehavior]
-        add_resource_health_signal: Union[str, ResourceHealthAvailabilityStateSignalBehavior]
-        authentication_setting: str
-        discover_relationships: Union[str, DiscoveryRuleRelationshipDiscoveryBehavior]
-        display_name: str
-        entity_name: str
+        addRecommendedSignals: Union[str, DiscoveryRuleRecommendedSignalsBehavior]
+        addResourceHealthSignal: Union[str, ResourceHealthAvailabilityStateSignalBehavior]
+        authenticationSetting: str
+        discoverRelationships: Union[str, DiscoveryRuleRelationshipDiscoveryBehavior]
+        displayName: str
+        entityName: str
         error: DiscoveryError
-        provisioning_state: Union[str, HealthModelProvisioningState]
+        provisioningState: Union[str, HealthModelProvisioningState]
         specification: DiscoveryRuleSpecification
 
 
@@ -3008,7 +3030,7 @@ namespace azure.mgmt.cloudhealth.types
         id: str
         name: str
         properties: EntityProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3031,9 +3053,9 @@ namespace azure.mgmt.cloudhealth.types
         key "nextMarker": str
         key "startAt": str
         key "top": int
-        end_at: str
-        next_marker: str
-        start_at: str
+        endAt: str
+        nextMarker: str
+        startAt: str
         top: int
 
 
@@ -3049,23 +3071,24 @@ namespace azure.mgmt.cloudhealth.types
         key "provisioningState": Union[str, HealthModelProvisioningState]
         key "signalGroups": ForwardRef('SignalGroups', module='types')
         alerts: EntityAlerts
-        canvas_position: EntityCoordinates
-        discovered_by: str
-        display_name: str
-        health_objective: float
-        health_state: Union[str, HealthState]
+        canvasPosition: EntityCoordinates
+        discoveredBy: str
+        displayName: str
+        healthObjective: float
+        healthState: Union[str, HealthState]
         icon: IconDefinition
         impact: Union[str, EntityImpact]
-        provisioning_state: Union[str, HealthModelProvisioningState]
-        signal_groups: SignalGroups
+        provisioningState: Union[str, HealthModelProvisioningState]
+        signalAggregationGroups: list[SignalAggregationGroup]
+        signalGroups: SignalGroups
         tags: dict[str, str]
 
 
     class azure.mgmt.cloudhealth.types.EvaluationRule(TypedDict, total=False):
         key "degradedRule": ForwardRef('ThresholdRuleV2', module='types')
         key "unhealthyRule": Required[ThresholdRuleV2]
-        degraded_rule: ThresholdRuleV2
-        unhealthy_rule: ThresholdRuleV2
+        degradedRule: ThresholdRuleV2
+        unhealthyRule: ThresholdRuleV2
 
 
     class azure.mgmt.cloudhealth.types.ExternalSignal(TypedDict, total=False):
@@ -3074,10 +3097,10 @@ namespace azure.mgmt.cloudhealth.types
         key "signalDefinitionName": str
         key "signalKind": Required[Literal[SignalKind.EXTERNAL_SIGNAL]]
         key "status": ForwardRef('SignalStatus', module='types')
-        evaluation_rules: EvaluationRule
+        evaluationRules: EvaluationRule
         name: str
-        signal_definition_name: str
-        signal_kind: Literal[SignalKind.EXTERNAL_SIGNAL]
+        signalDefinitionName: str
+        signalKind: Literal[SignalKind.EXTERNAL_SIGNAL]
         status: SignalStatus
 
 
@@ -3090,9 +3113,9 @@ namespace azure.mgmt.cloudhealth.types
         key "nextMarker": str
         key "startAt": str
         key "top": int
-        end_at: str
-        next_marker: str
-        start_at: str
+        endAt: str
+        nextMarker: str
+        startAt: str
         top: int
 
 
@@ -3109,14 +3132,14 @@ namespace azure.mgmt.cloudhealth.types
         location: str
         name: str
         properties: HealthModelProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.cloudhealth.types.HealthModelProperties(TypedDict, total=False):
         key "provisioningState": Union[str, HealthModelProvisioningState]
-        provisioning_state: Union[str, HealthModelProvisioningState]
+        provisioningState: Union[str, HealthModelProvisioningState]
 
 
     class azure.mgmt.cloudhealth.types.HealthModelUpdate(TypedDict, total=False):
@@ -3128,8 +3151,8 @@ namespace azure.mgmt.cloudhealth.types
     class azure.mgmt.cloudhealth.types.HealthReportEvaluationRule(TypedDict, total=False):
         key "degradedRule": ForwardRef('ThresholdRuleV2', module='types')
         key "unhealthyRule": Required[ThresholdRuleV2]
-        degraded_rule: ThresholdRuleV2
-        unhealthy_rule: ThresholdRuleV2
+        degradedRule: ThresholdRuleV2
+        unhealthyRule: ThresholdRuleV2
 
 
     class azure.mgmt.cloudhealth.types.HealthReportRequest(TypedDict, total=False):
@@ -3139,19 +3162,19 @@ namespace azure.mgmt.cloudhealth.types
         key "healthState": Required[Union[str, HealthState]]
         key "signalName": Required[str]
         key "value": float
-        additional_context: str
-        evaluation_rules: HealthReportEvaluationRule
-        expires_in_minutes: int
-        health_state: Union[str, HealthState]
-        signal_name: str
+        additionalContext: str
+        evaluationRules: HealthReportEvaluationRule
+        expiresInMinutes: int
+        healthState: Union[str, HealthState]
+        signalName: str
         value: float
 
 
     class azure.mgmt.cloudhealth.types.IconDefinition(TypedDict, total=False):
         key "customData": str
         key "iconName": Required[str]
-        custom_data: str
-        icon_name: str
+        customData: str
+        iconName: str
 
 
     class azure.mgmt.cloudhealth.types.LogAnalyticsQuerySignalDefinitionProperties(TypedDict, total=False):
@@ -3164,16 +3187,16 @@ namespace azure.mgmt.cloudhealth.types
         key "signalKind": Required[Literal[SignalKind.LOG_ANALYTICS_QUERY]]
         key "timeGrain": str
         key "valueColumnName": str
-        data_unit: str
-        display_name: str
-        evaluation_rules: EvaluationRule
-        provisioning_state: Union[str, HealthModelProvisioningState]
-        query_text: str
-        refresh_interval: Union[str, RefreshInterval]
-        signal_kind: Literal[SignalKind.LOG_ANALYTICS_QUERY]
+        dataUnit: str
+        displayName: str
+        evaluationRules: EvaluationRule
+        provisioningState: Union[str, HealthModelProvisioningState]
+        queryText: str
+        refreshInterval: Union[str, RefreshInterval]
+        signalKind: Literal[SignalKind.LOG_ANALYTICS_QUERY]
         tags: dict[str, str]
-        time_grain: str
-        value_column_name: str
+        timeGrain: str
+        valueColumnName: str
 
 
     class azure.mgmt.cloudhealth.types.LogAnalyticsSignal(TypedDict, total=False):
@@ -3188,24 +3211,24 @@ namespace azure.mgmt.cloudhealth.types
         key "status": ForwardRef('SignalStatus', module='types')
         key "timeGrain": str
         key "valueColumnName": str
-        data_unit: str
-        display_name: str
-        evaluation_rules: EvaluationRule
+        dataUnit: str
+        displayName: str
+        evaluationRules: EvaluationRule
         name: str
-        query_text: str
-        refresh_interval: Union[str, RefreshInterval]
-        signal_definition_name: str
-        signal_kind: Literal[SignalKind.LOG_ANALYTICS_QUERY]
+        queryText: str
+        refreshInterval: Union[str, RefreshInterval]
+        signalDefinitionName: str
+        signalKind: Literal[SignalKind.LOG_ANALYTICS_QUERY]
         status: SignalStatus
-        time_grain: str
-        value_column_name: str
+        timeGrain: str
+        valueColumnName: str
 
 
     class azure.mgmt.cloudhealth.types.LogAnalyticsSignals(TypedDict, total=False):
         key "authenticationSetting": Required[str]
         key "logAnalyticsWorkspaceResourceId": Required[str]
-        authentication_setting: str
-        log_analytics_workspace_resource_id: str
+        authenticationSetting: str
+        logAnalyticsWorkspaceResourceId: str
         signals: list[LogAnalyticsSignal]
 
 
@@ -3214,21 +3237,20 @@ namespace azure.mgmt.cloudhealth.types
         key "displayName": str
         key "managedIdentityName": Required[str]
         key "provisioningState": Union[str, HealthModelProvisioningState]
-        authentication_kind: Literal[AuthenticationKind.MANAGED_IDENTITY]
-        display_name: str
-        managed_identity_name: str
-        provisioning_state: Union[str, HealthModelProvisioningState]
+        authenticationKind: Literal[AuthenticationKind.MANAGED_IDENTITY]
+        displayName: str
+        managedIdentityName: str
+        provisioningState: Union[str, HealthModelProvisioningState]
 
 
     class azure.mgmt.cloudhealth.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.cloudhealth.types.PrometheusMetricsSignal(TypedDict, total=False):
@@ -3242,16 +3264,16 @@ namespace azure.mgmt.cloudhealth.types
         key "signalKind": Required[Literal[SignalKind.PROMETHEUS_METRICS_QUERY]]
         key "status": ForwardRef('SignalStatus', module='types')
         key "timeGrain": str
-        data_unit: str
-        display_name: str
-        evaluation_rules: EvaluationRule
+        dataUnit: str
+        displayName: str
+        evaluationRules: EvaluationRule
         name: str
-        query_text: str
-        refresh_interval: Union[str, RefreshInterval]
-        signal_definition_name: str
-        signal_kind: Literal[SignalKind.PROMETHEUS_METRICS_QUERY]
+        queryText: str
+        refreshInterval: Union[str, RefreshInterval]
+        signalDefinitionName: str
+        signalKind: Literal[SignalKind.PROMETHEUS_METRICS_QUERY]
         status: SignalStatus
-        time_grain: str
+        timeGrain: str
 
 
     class azure.mgmt.cloudhealth.types.PrometheusMetricsSignalDefinitionProperties(TypedDict, total=False):
@@ -3263,15 +3285,15 @@ namespace azure.mgmt.cloudhealth.types
         key "refreshInterval": Union[str, RefreshInterval]
         key "signalKind": Required[Literal[SignalKind.PROMETHEUS_METRICS_QUERY]]
         key "timeGrain": str
-        data_unit: str
-        display_name: str
-        evaluation_rules: EvaluationRule
-        provisioning_state: Union[str, HealthModelProvisioningState]
-        query_text: str
-        refresh_interval: Union[str, RefreshInterval]
-        signal_kind: Literal[SignalKind.PROMETHEUS_METRICS_QUERY]
+        dataUnit: str
+        displayName: str
+        evaluationRules: EvaluationRule
+        provisioningState: Union[str, HealthModelProvisioningState]
+        queryText: str
+        refreshInterval: Union[str, RefreshInterval]
+        signalKind: Literal[SignalKind.PROMETHEUS_METRICS_QUERY]
         tags: dict[str, str]
-        time_grain: str
+        timeGrain: str
 
 
     class azure.mgmt.cloudhealth.types.ProxyResource(Resource):
@@ -3281,7 +3303,7 @@ namespace azure.mgmt.cloudhealth.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3294,7 +3316,7 @@ namespace azure.mgmt.cloudhealth.types
         id: str
         name: str
         properties: RelationshipProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3304,11 +3326,11 @@ namespace azure.mgmt.cloudhealth.types
         key "displayName": str
         key "parentEntityName": Required[str]
         key "provisioningState": Union[str, HealthModelProvisioningState]
-        child_entity_name: str
-        discovered_by: str
-        display_name: str
-        parent_entity_name: str
-        provisioning_state: Union[str, HealthModelProvisioningState]
+        childEntityName: str
+        discoveredBy: str
+        displayName: str
+        parentEntityName: str
+        provisioningState: Union[str, HealthModelProvisioningState]
         tags: dict[str, str]
 
 
@@ -3319,7 +3341,7 @@ namespace azure.mgmt.cloudhealth.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3327,7 +3349,7 @@ namespace azure.mgmt.cloudhealth.types
         key "kind": Required[Literal[DiscoveryRuleKind.RESOURCE_GRAPH_QUERY]]
         key "resourceGraphQuery": Required[str]
         kind: Literal[DiscoveryRuleKind.RESOURCE_GRAPH_QUERY]
-        resource_graph_query: str
+        resourceGraphQuery: str
 
 
     class azure.mgmt.cloudhealth.types.ResourceMetricSignalDefinitionProperties(TypedDict, total=False):
@@ -3342,18 +3364,40 @@ namespace azure.mgmt.cloudhealth.types
         key "refreshInterval": Union[str, RefreshInterval]
         key "signalKind": Required[Literal[SignalKind.AZURE_RESOURCE_METRIC]]
         key "timeGrain": Required[str]
-        aggregation_type: Union[str, MetricAggregationType]
-        data_unit: str
-        dimension_filter: str
-        display_name: str
-        evaluation_rules: EvaluationRule
-        metric_name: str
-        metric_namespace: str
-        provisioning_state: Union[str, HealthModelProvisioningState]
-        refresh_interval: Union[str, RefreshInterval]
-        signal_kind: Literal[SignalKind.AZURE_RESOURCE_METRIC]
+        aggregationType: Union[str, MetricAggregationType]
+        dataUnit: str
+        dimensionFilter: str
+        displayName: str
+        evaluationRules: EvaluationRule
+        metricName: str
+        metricNamespace: str
+        provisioningState: Union[str, HealthModelProvisioningState]
+        refreshInterval: Union[str, RefreshInterval]
+        signalKind: Literal[SignalKind.AZURE_RESOURCE_METRIC]
         tags: dict[str, str]
-        time_grain: str
+        timeGrain: str
+
+
+    class azure.mgmt.cloudhealth.types.SignalAggregationGroup(TypedDict, total=False):
+        key "aggregatedHealthState": Union[str, HealthState]
+        key "aggregationType": Union[str, AggregationType]
+        key "degradedThreshold": float
+        key "displayName": str
+        key "ignoreUnknown": bool
+        key "members": Required[list[str]]
+        key "name": Required[str]
+        key "unhealthyThreshold": float
+        key "unit": Union[str, AggregationUnit]
+        aggregatedHealthState: Union[str, HealthState]
+        aggregationType: Union[str, AggregationType]
+        degradedThreshold: float
+        displayName: str
+        ignoreUnknown: bool
+        members: list[str]
+        name: str
+        unhealthyThreshold: float
+        unit: Union[str, AggregationUnit]
+        unresolvedMembers: list[str]
 
 
     class azure.mgmt.cloudhealth.types.SignalDefinition(ProxyResource):
@@ -3365,7 +3409,7 @@ namespace azure.mgmt.cloudhealth.types
         id: str
         name: str
         properties: SignalDefinitionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3375,9 +3419,9 @@ namespace azure.mgmt.cloudhealth.types
         key "azureResource": ForwardRef('AzureResourceSignals', module='types')
         key "dependencies": ForwardRef('DependenciesSignalGroupV2', module='types')
         key "external": ForwardRef('ExternalSignalGroup', module='types')
-        azure_log_analytics: LogAnalyticsSignals
-        azure_monitor_workspace: AzureMonitorWorkspaceSignals
-        azure_resource: AzureResourceSignals
+        azureLogAnalytics: LogAnalyticsSignals
+        azureMonitorWorkspace: AzureMonitorWorkspaceSignals
+        azureResource: AzureResourceSignals
         dependencies: DependenciesSignalGroupV2
         external: ExternalSignalGroup
 
@@ -3388,10 +3432,10 @@ namespace azure.mgmt.cloudhealth.types
         key "signalName": Required[str]
         key "startAt": str
         key "top": int
-        end_at: str
-        next_marker: str
-        signal_name: str
-        start_at: str
+        endAt: str
+        nextMarker: str
+        signalName: str
+        startAt: str
         top: int
 
 
@@ -3408,10 +3452,10 @@ namespace azure.mgmt.cloudhealth.types
         key "healthState": Union[str, HealthState]
         key "reportedAt": str
         key "value": float
-        additional_context: str
+        additionalContext: str
         error: str
-        health_state: Union[str, HealthState]
-        reported_at: str
+        healthState: Union[str, HealthState]
+        reportedAt: str
         value: float
 
 
@@ -3422,20 +3466,18 @@ namespace azure.mgmt.cloudhealth.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.cloudhealth.types.ThresholdRuleV2(TypedDict, total=False):
-        key "lookBackWindow": Union[str, LookBackWindow]
         key "operator": Required[Union[str, SignalOperator]]
         key "sensitivity": Union[str, DynamicThresholdSensitivity]
         key "threshold": float
-        look_back_window: Union[str, LookBackWindow]
         operator: Union[str, SignalOperator]
         sensitivity: Union[str, DynamicThresholdSensitivity]
         threshold: float
@@ -3450,7 +3492,7 @@ namespace azure.mgmt.cloudhealth.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -3458,8 +3500,8 @@ namespace azure.mgmt.cloudhealth.types
     class azure.mgmt.cloudhealth.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
 ```

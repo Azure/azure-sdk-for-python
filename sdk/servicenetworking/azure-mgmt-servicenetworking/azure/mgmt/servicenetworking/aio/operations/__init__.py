@@ -16,6 +16,8 @@ from ._operations import AssociationsInterfaceOperations  # type: ignore
 from ._operations import FrontendsInterfaceOperations  # type: ignore
 from ._operations import SecurityPoliciesInterfaceOperations  # type: ignore
 from ._operations import TrafficControllerInterfaceOperations  # type: ignore
+from ._operations import PrivateEndpointConnectionsInterfaceOperations  # type: ignore
+from ._operations import PrivateLinkResourcesInterfaceOperations  # type: ignore
 from ._operations import Operations  # type: ignore
 
 from ._patch import __all__ as _patch_all
@@ -27,6 +29,8 @@ __all__ = [
     "FrontendsInterfaceOperations",
     "SecurityPoliciesInterfaceOperations",
     "TrafficControllerInterfaceOperations",
+    "PrivateEndpointConnectionsInterfaceOperations",
+    "PrivateLinkResourcesInterfaceOperations",
     "Operations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

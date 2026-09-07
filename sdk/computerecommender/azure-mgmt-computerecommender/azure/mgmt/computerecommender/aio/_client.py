@@ -52,7 +52,7 @@ class RecommenderMgmtClient:  # pylint: disable=docstring-keyword-should-match-k
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-05-05-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-09-05-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str

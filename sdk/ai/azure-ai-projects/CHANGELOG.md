@@ -1,6 +1,25 @@
 # Release History
 
-## 2.6.0 (Unreleased)
+## 2.6.0 (2026-09-04)
+
+### Features Added
+
+* Added supporting AgentInsight* models and enums covering monitors, runs, generated insights, proposed fixes, highlighted and linked traces, costs, token usage, severity, status, and run triggers.
+* Added Microsoft 365 agent publishing.
+* Added optional Hosted Agent session defaults through `HostedAgentDefinition.session_configuration` and `SessionConfiguration`, including idle-timeout configuration.
+* Added content-safety moderation support for custom request, response, and streaming invocation body formats.
+* Added the optional `authorization` argument to `.beta.routines.create_or_update`, with `RoutineAuthorization` and `RoutineDispatchIdentity` for selecting the agent or routine creator identity.
+* Added `ShellToolboxTool` and supporting container environment and network policy models, with the new `ToolboxToolType.SHELL` enum member.
+* Added `WebIQPreviewTool` and `WebIQPreviewToolboxTool`, with new `ToolType.WEB_IQ_PREVIEW` and `ToolboxToolType.WEB_IQ_PREVIEW` enum members.
+* Added the optional `external_web_access` property to `WebSearchTool` and `WebSearchToolboxTool` for disabling live internet access.
+
+### Sample updates
+
+* Added `sample_toolbox_with_shell.py` under `samples/agents/tools/`, demonstrating a Prompt Agent invoking a `ShellToolboxTool`.
+* Added `sample_toolbox_with_shipping_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using a skill through a Toolbox MCP endpoint.
+* Added `sample_toolbox_with_shell_and_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using a skill with a `ShellToolboxTool` through a Toolbox MCP endpoint.
+* Added `sample_synthetic_multiturn_evaluation.py` under `samples/evaluations/`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+* Added `sample_responses_model_router.py` under `samples/responses/`, demonstrating a Responses API request to a model router deployment and selection of a model by the router.
 
 ### Bugs Fixed
 

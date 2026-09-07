@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-05-preview/GetSkuMixPlacementScores.json
+# x-ms-original-file: 2026-09-05-preview/GetSkuMixPlacementScores.json
 if __name__ == "__main__":
     main()

@@ -52,6 +52,14 @@ class TestPureStorageBlockMgmtStoragePoolsOperations(AzureMgmtRecordedTestCase):
                     "vnetInjection": {"subnetId": "str", "vnetId": "str"},
                     "avs": {"avsEnabled": bool, "sddcResourceId": "str"},
                     "dataRetentionPeriod": 0,
+                    "platformConsoleSettings": {
+                        "api": {"enabled": bool},
+                        "cli": {"enabled": bool},
+                        "defaultUsername": "str",
+                        "enabled": bool,
+                        "gui": {"enabled": bool},
+                        "subnets": [{"id": "str", "managementIpAddress": "str", "serviceBackendIps": ["str"]}],
+                    },
                     "provisionedIops": 0,
                     "provisioningState": "str",
                     "storagePoolInternalId": "str",
@@ -85,7 +93,17 @@ class TestPureStorageBlockMgmtStoragePoolsOperations(AzureMgmtRecordedTestCase):
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-                "properties": {"provisionedBandwidthMbPerSec": 0},
+                "properties": {
+                    "platformConsoleSettings": {
+                        "api": {"enabled": bool},
+                        "cli": {"enabled": bool},
+                        "defaultUsername": "str",
+                        "enabled": bool,
+                        "gui": {"enabled": bool},
+                        "subnets": [{"id": "str", "managementIpAddress": "str", "serviceBackendIps": ["str"]}],
+                    },
+                    "provisionedBandwidthMbPerSec": 0,
+                },
                 "tags": {"str": "str"},
             },
         ).result()  # call '.result()' to poll until service return final result
@@ -205,6 +223,29 @@ class TestPureStorageBlockMgmtStoragePoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             storage_pool_name="str",
         ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storage_pools_list_platform_console_activation_code(self, resource_group):
+        response = self.client.storage_pools.list_platform_console_activation_code(
+            resource_group_name=resource_group.name,
+            storage_pool_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_storage_pools_configure_platform_console_auth(self, resource_group):
+        response = self.client.storage_pools.configure_platform_console_auth(
+            resource_group_name=resource_group.name,
+            storage_pool_name="str",
+            config={"authType": "ssh", "publicKey": "str", "role": "str", "username": "str"},
+        )
 
         # please add some check logic here by yourself
         # ...

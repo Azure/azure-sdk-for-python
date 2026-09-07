@@ -358,6 +358,8 @@ _INPUT_ITEM_TYPES = frozenset(
         "memory_search_call",
         "message",
         "output_message",
+        "program",
+        "program_output",
         "reasoning",
         "shell_call",
         "shell_call_output",

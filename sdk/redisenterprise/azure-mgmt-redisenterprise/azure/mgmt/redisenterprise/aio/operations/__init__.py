@@ -19,7 +19,6 @@ from ._operations import MigrationsOperations  # type: ignore
 from ._operations import RedisEnterpriseOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import AccessPolicyAssignmentOperations  # type: ignore
-from ._operations import MigrationOperations  # type: ignore
 from ._operations import OperationsStatusOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
@@ -34,7 +33,6 @@ __all__ = [
     "RedisEnterpriseOperations",
     "PrivateLinkResourcesOperations",
     "AccessPolicyAssignmentOperations",
-    "MigrationOperations",
     "OperationsStatusOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
