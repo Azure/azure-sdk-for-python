@@ -101,6 +101,19 @@ class TestGetPackageWheelPath:
 
     @patch("azpysdk.apistub.ParsedSetup")
     @patch("azpysdk.apistub.find_whl")
+    def test_no_prebuilt_dir_returns_staging_whl(self, mock_find_whl, mock_parsed, monkeypatch):
+        monkeypatch.delenv("PREBUILT_WHEEL_DIR", raising=False)
+        mock_parsed.from_path.return_value.name = "azure-core"
+        mock_parsed.from_path.return_value.version = "1.0.0"
+        mock_find_whl.return_value = "azure_core-1.0.0-py3-none-any.whl"
+
+        result = get_package_wheel_path("/my/pkg", "/staging")
+
+        assert result == os.path.join("/staging", "azure_core-1.0.0-py3-none-any.whl")
+        mock_find_whl.assert_called_once_with("/staging", "azure-core", "1.0.0")
+
+    @patch("azpysdk.apistub.ParsedSetup")
+    @patch("azpysdk.apistub.find_whl")
     def test_no_prebuilt_dir_falls_back_to_pkg_root(self, mock_find_whl, mock_parsed, monkeypatch):
         """Without PREBUILT_WHEEL_DIR and no wheel found, fall back to pkg_root path."""
         monkeypatch.delenv("PREBUILT_WHEEL_DIR", raising=False)

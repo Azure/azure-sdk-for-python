@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-03-01",
+  "apiVersions": {
+    "Microsoft.ServiceNetworking": "2026-03-01"
+  },
+  "commit": "3fbff828a405632668f197b4c30466a0b8dc2cef",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/servicenetworking/resource-manager/Microsoft.ServiceNetworking/ServiceNetworking",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
+}

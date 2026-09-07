@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2025-05-01-preview",
+  "apiVersion": "2026-06-01",
   "apiVersions": {
-    "NewRelic.Observability": "2025-05-01-preview"
+    "NewRelic.Observability": "2026-06-01"
   },
-  "commit": "a7bdbe741c0ef1f1b159d8569b173757bd823ae9",
+  "commit": "c8e1ea0817257e22c9bea05882feecdb78a3ef96",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/newrelic/NewRelicObservability.Management",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.34.0"
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.35.1"
 }
