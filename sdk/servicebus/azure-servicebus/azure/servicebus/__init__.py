@@ -11,6 +11,7 @@ from ._servicebus_client import ServiceBusClient
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session import ServiceBusSession
+from ._models import DeleteMessagesResult, PurgeMessagesResult
 from ._common.message import (
     ServiceBusMessage,
     ServiceBusMessageBatch,
@@ -43,6 +44,8 @@ __all__ = [
     "ServiceBusReceiver",
     "ServiceBusSession",
     "ServiceBusSender",
+    "DeleteMessagesResult",
+    "PurgeMessagesResult",
     "TransportType",
     "AutoLockRenewer",
     "parse_connection_string",

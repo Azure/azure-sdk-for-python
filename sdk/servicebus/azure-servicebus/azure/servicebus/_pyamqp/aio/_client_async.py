@@ -368,28 +368,49 @@ class AMQPClientAsync(AMQPClientSync):
         :rtype: ~pyamqp.message.Message
         """
 
-        # The method also takes "status_code_field" and "status_description_field"
-        # keyword arguments as alternate names for the status code and description
-        # in the response body. Those two keyword arguments are used in Azure services only.
-        async with self._mgmt_link_lock_async:
-            try:
-                mgmt_link = self._mgmt_links[node]
-            except KeyError:
-                mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-                self._mgmt_links[node] = mgmt_link
-                await mgmt_link.open()
-
-        while not await self.client_ready_async():
-            await asyncio.sleep(0.05)
-
-        while not await mgmt_link.ready():
-            await self._connection.listen(wait=False)
+        mgmt_link = await self.open_mgmt_link_async(node=node, timeout=timeout, **kwargs)
 
         operation_type = operation_type or b"empty"
         status, description, response = await mgmt_link.execute(
             message, operation=operation, operation_type=operation_type, timeout=timeout
         )
         return status, description, response
+
+    async def open_mgmt_link_async(self, node: str = "$management", timeout: float = 0, **kwargs):
+        """Open and wait for a management link without dispatching a request.
+
+        :param str node: Management target.
+        :param float timeout: Timeout in seconds.
+        :returns: The opened management link.
+        :rtype: ~pyamqp.aio.management_link_async.ManagementOperation
+        """
+        start_time = time.monotonic()
+        mgmt_link = None
+        try:
+            async with self._mgmt_link_lock_async:
+                try:
+                    mgmt_link = self._mgmt_links[node]
+                except KeyError:
+                    mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                    self._mgmt_links[node] = mgmt_link
+                    await mgmt_link.open()
+            while not await self.client_ready_async():
+                if timeout and time.monotonic() - start_time >= timeout:
+                    raise TimeoutError("Management link setup timed out.")
+                await asyncio.sleep(0.05)
+
+            while not await mgmt_link.ready():
+                if timeout and time.monotonic() - start_time >= timeout:
+                    raise TimeoutError("Management link setup timed out.")
+                await self._connection.listen(wait=False)
+            return mgmt_link
+        except BaseException:
+            if mgmt_link is not None:
+                async with self._mgmt_link_lock_async:
+                    if self._mgmt_links.get(node) is mgmt_link:
+                        self._mgmt_links.pop(node, None)
+                await mgmt_link.close()
+            raise
 
 
 class SendClientAsync(SendClientSync, AMQPClientAsync):
