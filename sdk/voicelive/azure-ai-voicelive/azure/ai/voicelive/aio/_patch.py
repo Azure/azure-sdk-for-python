@@ -778,7 +778,9 @@ class _VoiceLiveConnectionManager(
             self.__connection_options.setdefault("heartbeat", 30)
 
             auth_headers = await self._get_auth_headers()
-            headers = {"User-Agent": _USER_AGENT, **auth_headers, **dict(self.__extra_headers)}
+            headers = {**auth_headers, **dict(self.__extra_headers)}
+            if not any(name.lower() == "user-agent" for name in headers):
+                headers["User-Agent"] = _USER_AGENT
 
             session = aiohttp.ClientSession()
             try:

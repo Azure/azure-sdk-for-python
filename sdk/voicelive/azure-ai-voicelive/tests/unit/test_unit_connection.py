@@ -237,11 +237,13 @@ class TestConnectionIdentification:
         assert "azsdk-python-ai-voicelive" in headers["User-Agent"]
         assert VERSION in headers["User-Agent"]
 
-    async def test_connection_preserves_caller_user_agent(self):
-        """Test a caller-supplied User-Agent overrides the SDK default."""
-        headers = await self._connect_and_get_headers({"User-Agent": "custom-user-agent"})
+    @pytest.mark.parametrize("header_name", ["User-Agent", "user-agent", "USER-AGENT", "uSeR-aGeNt"])
+    async def test_connection_preserves_caller_user_agent(self, header_name):
+        """Test caller User-Agent overrides are case-insensitive and do not create duplicates."""
+        headers = await self._connect_and_get_headers({header_name: "custom-user-agent"})
 
-        assert headers["User-Agent"] == "custom-user-agent"
+        assert headers[header_name] == "custom-user-agent"
+        assert [value for name, value in headers.items() if name.lower() == "user-agent"] == ["custom-user-agent"]
 
 
 class TestVoiceLiveConnectionIntegration:
