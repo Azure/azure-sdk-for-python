@@ -45,6 +45,7 @@ def _assert_upload_limit_schedule(agent):
     assert recurrence.end_time.minute == 0
 
 
+@pytest.mark.live_test_only
 class TestStorageMoverMgmtAgentsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient)

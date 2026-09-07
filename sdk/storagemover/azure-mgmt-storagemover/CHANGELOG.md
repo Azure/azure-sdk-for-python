@@ -1,5 +1,34 @@
 # Release History
 
+## 3.2.0 (2026-07-23)
+
+### Features Added
+
+  - Model `AzureStorageBlobContainerEndpointProperties` added property `allowed_storage_accounts`
+  - Model `AzureStorageBlobContainerEndpointProperties` added property `enable_cross_tenant_transfer`
+  - Model `AzureStorageBlobContainerEndpointUpdateProperties` added property `allowed_storage_accounts`
+  - Model `AzureStorageBlobContainerEndpointUpdateProperties` added property `enable_cross_tenant_transfer`
+  - Model `AzureStorageSmbFileShareEndpointProperties` added property `allowed_storage_accounts`
+  - Model `AzureStorageSmbFileShareEndpointProperties` added property `enable_cross_tenant_transfer`
+  - Model `AzureStorageSmbFileShareEndpointUpdateProperties` added property `allowed_storage_accounts`
+  - Model `AzureStorageSmbFileShareEndpointUpdateProperties` added property `enable_cross_tenant_transfer`
+  - Enum `Frequency` added member `HOURLY`
+  - Model `JobDefinitionProperties` added property `cross_tenant_endpoint_resource_id`
+  - Model `JobDefinitionProperties` added property `cross_tenant_endpoint_tenant_id`
+  - Model `JobDefinitionProperties` added property `is_cross_tenant_job`
+  - Model `JobDefinitionProperties` added property `mover_synced_until`
+  - Model `JobDefinitionProperties` added property `sync_mode`
+  - Model `JobDefinitionUpdateProperties` added property `mover_synced_until`
+  - Model `JobDefinitionUpdateProperties` added property `sync_mode`
+  - Enum `JobType` added member `ON_PREM_TO_CLOUD_AGENT_LESS`
+  - Model `NfsMountEndpointProperties` added property `source_type`
+  - Enum `NfsVersion` added member `NF_SV4_1`
+  - Model `ScheduleInfo` added property `repeat_interval`
+  - Model `SmbMountEndpointProperties` added property `source_type`
+  - Added enum `NfsMountSourceType`
+  - Added enum `SmbMountSourceType`
+  - Operation group `JobDefinitionsOperations` added method `reconcile_job`
+
 ## 3.1.0 (2026-04-06)
 
 ### Features Added
