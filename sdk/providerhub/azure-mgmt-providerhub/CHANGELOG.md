@@ -64,6 +64,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed client operation group `ProviderHubMgmtClient.new_region_frontload_release`
   - Model `FanoutLinkedNotificationRule` deleted or renamed its instance variable `dsts_configuration`
   - Model `ProviderRegistrationProperties` deleted or renamed its instance variable `dsts_configuration`
