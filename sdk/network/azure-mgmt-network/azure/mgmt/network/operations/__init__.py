@@ -95,6 +95,8 @@ from ._operations import VirtualNetworkTapsOperations  # type: ignore
 from ._operations import VirtualRoutersOperations  # type: ignore
 from ._operations import VirtualRouterPeeringsOperations  # type: ignore
 from ._operations import VirtualWansOperations  # type: ignore
+from ._operations import VmssNetworkInterfacesOperations  # type: ignore
+from ._operations import VmssPublicIPAddressesOperations  # type: ignore
 from ._operations import VpnSitesOperations  # type: ignore
 from ._operations import VpnSiteLinksOperations  # type: ignore
 from ._operations import VpnServerConfigurationsOperations  # type: ignore
@@ -268,6 +270,8 @@ __all__ = [
     "VirtualRoutersOperations",
     "VirtualRouterPeeringsOperations",
     "VirtualWansOperations",
+    "VmssNetworkInterfacesOperations",
+    "VmssPublicIPAddressesOperations",
     "VpnSitesOperations",
     "VpnSiteLinksOperations",
     "VpnServerConfigurationsOperations",

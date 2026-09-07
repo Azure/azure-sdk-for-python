@@ -48,33 +48,6 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network_interfaces_get_virtual_machine_scale_set_network_interface(self, resource_group):
-        response = self.client.network_interfaces.get_virtual_machine_scale_set_network_interface(
-            resource_group_name=resource_group.name,
-            virtual_machine_scale_set_name="str",
-            virtualmachine_index="str",
-            network_interface_name="str",
-            api_version="2018-10-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_network_interfaces_list_virtual_machine_scale_set_vm_network_interfaces(self, resource_group):
-        response = self.client.network_interfaces.list_virtual_machine_scale_set_vm_network_interfaces(
-            resource_group_name=resource_group.name,
-            virtual_machine_scale_set_name="str",
-            virtualmachine_index="str",
-            api_version="2018-10-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_network_interfaces_get(self, resource_group):
         response = self.client.network_interfaces.get(
             resource_group_name=resource_group.name,
@@ -7583,11 +7556,11 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network_interfaces_list_cloud_service_network_interfaces(self, resource_group):
-        response = self.client.network_interfaces.list_cloud_service_network_interfaces(
+    def test_network_interfaces_list_virtual_machine_scale_set_network_interfaces(self, resource_group):
+        response = self.client.network_interfaces.list_virtual_machine_scale_set_network_interfaces(
             resource_group_name=resource_group.name,
-            cloud_service_name="str",
-            api_version="2025-09-01",
+            virtual_machine_scale_set_name="str",
+            api_version="2018-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7595,11 +7568,11 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_network_interfaces_list_virtual_machine_scale_set_network_interfaces(self, resource_group):
-        response = self.client.network_interfaces.list_virtual_machine_scale_set_network_interfaces(
+    def test_network_interfaces_list_cloud_service_network_interfaces(self, resource_group):
+        response = self.client.network_interfaces.list_cloud_service_network_interfaces(
             resource_group_name=resource_group.name,
-            virtual_machine_scale_set_name="str",
-            api_version="2018-10-01",
+            cloud_service_name="str",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

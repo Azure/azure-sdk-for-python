@@ -176,6 +176,8 @@ from .operations import (
     VirtualRouterPeeringsOperations,
     VirtualRoutersOperations,
     VirtualWansOperations,
+    VmssNetworkInterfacesOperations,
+    VmssPublicIPAddressesOperations,
     VpnConnectionsOperations,
     VpnGatewaysOperations,
     VpnLinkConnectionsOperations,
@@ -427,6 +429,12 @@ class NetworkManagementClient(
      azure.mgmt.network.aio.operations.VirtualRouterPeeringsOperations
     :ivar virtual_wans: VirtualWansOperations operations
     :vartype virtual_wans: azure.mgmt.network.aio.operations.VirtualWansOperations
+    :ivar vmss_network_interfaces: VmssNetworkInterfacesOperations operations
+    :vartype vmss_network_interfaces:
+     azure.mgmt.network.aio.operations.VmssNetworkInterfacesOperations
+    :ivar vmss_public_ip_addresses: VmssPublicIPAddressesOperations operations
+    :vartype vmss_public_ip_addresses:
+     azure.mgmt.network.aio.operations.VmssPublicIPAddressesOperations
     :ivar vpn_sites: VpnSitesOperations operations
     :vartype vpn_sites: azure.mgmt.network.aio.operations.VpnSitesOperations
     :ivar vpn_site_links: VpnSiteLinksOperations operations
@@ -934,6 +942,12 @@ class NetworkManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_wans = VirtualWansOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vmss_network_interfaces = VmssNetworkInterfacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vmss_public_ip_addresses = VmssPublicIPAddressesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.vpn_sites = VpnSitesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.vpn_site_links = VpnSiteLinksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.vpn_server_configurations = VpnServerConfigurationsOperations(

@@ -7023,7 +7023,7 @@ class ExpressRouteLag(Resource):
     """The identity of ExpressRouteLag, if configured."""
 
 
-class ExpressRouteLagLink(SubResource):
+class ExpressRouteLagLink(TypedDict, total=False):
     """ExpressRouteLagLink.
 
     :ivar properties: ExpressRouteLagLink properties.
@@ -7084,7 +7084,7 @@ class ExpressRouteLagLinkPropertiesFormat(TypedDict, total=False):
     """ExpressRouteLagMember Sub-Resources."""
 
 
-class ExpressRouteLagMember(SubResource):
+class ExpressRouteLagMember(TypedDict, total=False):
     """ExpressRouteLagMember.
 
     :ivar properties: ExpressRouteLagMember properties.
