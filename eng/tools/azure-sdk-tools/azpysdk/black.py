@@ -12,8 +12,11 @@ from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.logging import logger
 
 from .Check import Check
+from ._tool_reqs import load_requirements, pinned_version
 
-BLACK_VERSION = "24.4.0"
+# Tool version is pinned in eng/tool_requirements/black.txt (single source of
+# truth). Constant is derived for backwards compatibility.
+BLACK_VERSION = pinned_version("black", "black")
 REPO_ROOT = discover_repo_root()
 
 
@@ -115,7 +118,7 @@ class black(Check):
         issues without modifying files.
         """
         try:
-            install_into_venv(executable, [f"black=={BLACK_VERSION}"], target_dir)
+            install_into_venv(executable, load_requirements("black"), target_dir)
         except CalledProcessError as e:
             logger.error(f"Failed to install black, skipping formatting: {e}")
             return None
