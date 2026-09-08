@@ -7,11 +7,9 @@ HTTP responses and do not call Azure.
 ## Prepare the environment
 
 Use a subscription and region where the current Agent Insights API is available.
-Before recording, confirm that monitor and run timestamps are integer Unix
-epochs on the wire and deserialize to Python `datetime` values. The deployment
-identity must be able to create Foundry and telemetry resources, assign roles,
-and read keys from the existing analysis-model account. The template creates
-the required roles by default.
+The deployment identity must be able to create Foundry and telemetry resources,
+assign roles, and read keys from the existing analysis-model account. The template
+creates the required roles by default.
 
 An existing analysis-model deployment is required. The template defaults to
 GPT-5.4, model version `2026-03-05`, and the `GlobalStandard` SKU. The
