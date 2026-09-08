@@ -12,6 +12,8 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed sync and async item PATCH requests to explicitly send the registered `application/json-patch+json`
+  content type. See [PR 48914](https://github.com/Azure/azure-sdk-for-python/pull/48914).
 
 #### Other Changes
 

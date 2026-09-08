@@ -146,9 +146,14 @@ class TestEncodingAsync(unittest.IsolatedAsyncioTestCase):
             captured['body'] = request.http_request.body
 
         def assert_compact_body(expected_content):
-            self.assertIsInstance(captured['body'], str)
-            self.assertIn(expected_content, captured['body'])
-            self.assertNotIn('\\u65e5', captured['body'])
+            # Compact bodies are handed to the transport as UTF-8 bytes, not str,
+            # so that no transport layer can re-encode them (urllib3 1.x would
+            # otherwise Latin-1 encode a str body via http.client).
+            body = captured['body']
+            self.assertIsInstance(body, bytes)
+            decoded = body.decode('utf-8')
+            self.assertIn(expected_content, decoded)
+            self.assertNotIn('\\u65e5', decoded)
 
         async with test_config.TestConfig.create_data_client_async(
             enable_compact_utf8_item_writes=True

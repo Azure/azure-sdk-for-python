@@ -246,7 +246,12 @@ async def AsynchronousRequest(
         request_data,
         ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params, request_data)
     )
-    if request.data and isinstance(request.data, str):
+    if isinstance(request.data, (bytes, bytearray)):
+        # Compact UTF-8 bodies reach the transport as the exact bytes that were
+        # measured, so Content-Length is simply their length and no encoding
+        # step can make the header disagree with the wire body.
+        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
+    elif request.data and isinstance(request.data, str):
         # Use UTF-8 byte length, not str length (code-point count), so the
         # header matches the bytes the transport actually writes for any
         # non-ASCII payload.

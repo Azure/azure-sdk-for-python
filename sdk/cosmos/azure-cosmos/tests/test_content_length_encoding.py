@@ -6,6 +6,8 @@ UTF-8 byte count of the body, not the number of characters."""
 import unittest
 from unittest import mock
 
+import pytest
+
 from azure.cosmos import _synchronized_request, http_constants
 from azure.cosmos.aio import _asynchronous_request
 from azure.cosmos.documents import _OperationType
@@ -55,6 +57,10 @@ class _DummyClient:
     _enable_compact_utf8_item_writes = False
 
 
+# These tests need no emulator, but the Cosmos CI lane selects tests with
+# "-m cosmosEmulator" (see eng/pipelines/templates/stages/cosmos-sdk-client.yml),
+# so an unmarked test is silently deselected and would never run.
+@pytest.mark.cosmosEmulator
 class TestContentLengthWiringSync(unittest.TestCase):
     """Checks the sync request path sets Content-Length to the byte
     count of the body."""
@@ -125,6 +131,7 @@ class TestContentLengthWiringSync(unittest.TestCase):
         self.assertEqual(captured["content_length"], 0)
 
 
+@pytest.mark.cosmosEmulator
 class TestContentLengthWiringAsync(unittest.IsolatedAsyncioTestCase):
     """Async version of the sync class above. Same checks."""
 

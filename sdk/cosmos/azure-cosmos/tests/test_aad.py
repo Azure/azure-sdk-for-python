@@ -151,9 +151,11 @@ class TestAAD(unittest.TestCase):
                 )
 
                 self.assertEqual(created['content'], document['content'])
-                self.assertIsInstance(captured['body'], str)
-                self.assertIn('日本🎉', captured['body'])
-                self.assertNotIn('\\u65e5', captured['body'])
+                # Compact bodies reach the transport as UTF-8 bytes, not str.
+                self.assertIsInstance(captured['body'], bytes)
+                decoded_body = captured['body'].decode('utf-8')
+                self.assertIn('日本🎉', decoded_body)
+                self.assertNotIn('\\u65e5', decoded_body)
             finally:
                 if created is not None:
                     container.delete_item(document['id'], partition_key='pk')

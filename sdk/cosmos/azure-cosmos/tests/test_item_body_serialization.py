@@ -8,6 +8,8 @@ import json
 import unittest
 from unittest import mock
 
+import pytest
+
 from azure.cosmos import (
     _base,
     _global_endpoint_manager,
@@ -93,6 +95,19 @@ class _EncodingCountingStr(str):
         return super().encode(encoding, errors)
 
 
+def _compact_text(body):
+    """Decode a compact request body for text assertions.
+
+    Compact UTF-8 bodies are handed to the transport as ``bytes`` (never
+    ``str``) so no transport layer can re-encode them: urllib3 1.x routes
+    ``str`` bodies through ``http.client``, which Latin-1 encodes them. Asserting
+    the type here means a regression back to ``str`` fails loudly rather than
+    silently reintroducing that bug.
+    """
+    assert isinstance(body, bytes), f"compact body must be bytes, got {type(body).__name__}"
+    return body.decode("utf-8")
+
+
 def _capture_sync_body(
     request_data,
     *,
@@ -162,6 +177,10 @@ async def _capture_async_body(
     return captured
 
 
+# These tests need no emulator, but the Cosmos CI lane selects tests with
+# "-m cosmosEmulator" (see eng/pipelines/templates/stages/cosmos-sdk-client.yml),
+# so an unmarked test is silently deselected and would never run.
+@pytest.mark.cosmosEmulator
 class TestItemBodySerialization(unittest.TestCase):
     """Sync path: how item write bodies are serialized on and off the option."""
 
@@ -200,7 +219,7 @@ class TestItemBodySerialization(unittest.TestCase):
                     resource_type=http_constants.ResourceType.Document,
                     operation_type=operation_type,
                 )
-                self.assertEqual(captured["body"], expected)
+                self.assertEqual(captured["body"], expected.encode("utf-8"))
                 self.assertEqual(captured["content_length"], len(expected.encode("utf-8")))
 
     def test_batch_wire_shape_is_what_the_detector_keys_off(self):
@@ -279,7 +298,7 @@ class TestItemBodySerialization(unittest.TestCase):
                     operation_type=_OperationType.Batch,
                 )
                 expected = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
-                self.assertEqual(captured["body"], expected)
+                self.assertEqual(captured["body"], expected.encode("utf-8"))
                 self.assertEqual(captured["content_length"], len(expected.encode("utf-8")))
 
     def test_compact_body_reuses_encoded_byte_length(self):
@@ -360,13 +379,13 @@ class TestItemBodySerialization(unittest.TestCase):
             resource_type=http_constants.ResourceType.Document,
             operation_type=_OperationType.Create,
         )
-        body = captured["body"]
+        body = _compact_text(captured["body"])
 
         self.assertIn("\\ud800", body)
         self.assertIn("\\udfff", body)
         self.assertIn("🎉", body)
         self.assertEqual(json.loads(body), data)
-        self.assertEqual(captured["content_length"], len(body.encode("utf-8")))
+        self.assertEqual(captured["content_length"], len(captured["body"]))
 
     def test_json_required_escapes_are_preserved(self):
         """Turning off ASCII escaping must not turn off JSON escaping. Quotes,
@@ -380,7 +399,7 @@ class TestItemBodySerialization(unittest.TestCase):
             resource_type=http_constants.ResourceType.Document,
             operation_type=_OperationType.Create,
         )
-        body = captured["body"]
+        body = _compact_text(captured["body"])
 
         self.assertIn('\\"', body)
         self.assertIn("\\\\", body)
@@ -402,7 +421,8 @@ class TestItemBodySerialization(unittest.TestCase):
             resource_type=http_constants.ResourceType.Document,
             operation_type=_OperationType.Create,
         )
-        compact = captured["body"].encode("utf-8")
+        compact = captured["body"]
+        self.assertIsInstance(compact, bytes)
 
         self.assertGreater(len(escaped), 2 * 1024 * 1024)
         self.assertLess(len(compact), 2 * 1024 * 1024)
@@ -425,6 +445,7 @@ class TestItemBodySerialization(unittest.TestCase):
         self.assertEqual(headers[HttpHeaders.PartitionKey], '["\\u65e5\\u672c"]')
 
 
+@pytest.mark.cosmosEmulator
 class TestItemBodySerializationAsync(unittest.IsolatedAsyncioTestCase):
     """Async path: mirrors the sync coverage so both stacks stay in step."""
 
@@ -457,7 +478,7 @@ class TestItemBodySerializationAsync(unittest.IsolatedAsyncioTestCase):
             operation_type=_OperationType.Upsert,
         )
 
-        self.assertEqual(captured["body"], expected)
+        self.assertEqual(captured["body"], expected.encode("utf-8"))
         self.assertEqual(captured["content_length"], len(expected.encode("utf-8")))
 
     async def test_write_containing_batch_uses_compact_utf8(self):
@@ -477,10 +498,9 @@ class TestItemBodySerializationAsync(unittest.IsolatedAsyncioTestCase):
             operation_type=_OperationType.Batch,
         )
 
-        self.assertEqual(captured["body"], expected)
-        self.assertIn("existing-日本", captured["body"])
+        self.assertEqual(captured["body"], expected.encode("utf-8"))
+        self.assertIn("existing-日本", _compact_text(captured["body"]))
         self.assertEqual(captured["content_length"], len(expected.encode("utf-8")))
-
 
     async def test_body_free_batches_remain_ascii_escaped(self):
         """Async twin: read-only, delete-only, and mixed read/delete batches
@@ -536,13 +556,13 @@ class TestItemBodySerializationAsync(unittest.IsolatedAsyncioTestCase):
             resource_type=http_constants.ResourceType.Document,
             operation_type=_OperationType.Create,
         )
-        body = captured["body"]
+        body = _compact_text(captured["body"])
 
         self.assertIn("\\ud800", body)
         self.assertIn("\\udfff", body)
         self.assertIn("🎉", body)
         self.assertEqual(json.loads(body), data)
-        self.assertEqual(captured["content_length"], len(body.encode("utf-8")))
+        self.assertEqual(captured["content_length"], len(captured["body"]))
 
     async def test_query_body_remains_ascii_escaped(self):
         """Query bodies stay escaped on the async path even with the option
@@ -559,6 +579,7 @@ class TestItemBodySerializationAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(captured["body"], json.dumps(data, separators=(",", ":")))
 
 
+@pytest.mark.cosmosEmulator
 class TestClientOptionWiring(unittest.IsolatedAsyncioTestCase):
     """How the keyword travels from the client constructor to the serializer,
     and how bad values are rejected."""

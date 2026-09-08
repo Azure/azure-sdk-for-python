@@ -67,10 +67,26 @@ def _request_body_from_data(data, ensure_ascii=True):
     Dictionaries, lists, and tuples are serialized as compact JSON. Other
     supported body types are returned unchanged.
 
+    When ``ensure_ascii`` is False the serialized body is returned as UTF-8
+    ``bytes``. The escaped default and caller-supplied pre-serialized strings
+    keep returning ``str``, preserving existing behavior.
+
+    Returning bytes is required for correctness, not just convenience. The sync
+    Requests transport forwards the body to ``requests`` unchanged, and the
+    supported dependency range still permits urllib3 1.x, whose connection path
+    hands ``str`` bodies to ``http.client``. ``http.client`` encodes them as
+    Latin-1, so a compact body would be sent with the wrong encoding: text that
+    has no Latin-1 representation (any CJK or emoji) raises ``UnicodeEncodeError``
+    before the request is sent, and text that does have one is written in Latin-1
+    rather than UTF-8, so 'é' goes out as the single byte 0xE9 instead of
+    0xC3 0xA9 and the service receives different characters than the caller
+    supplied. Handing the transport the exact bytes we measured removes every
+    re-encoding step.
+
     :param Union[str, unicode, file-like stream object, dict, list, None] data:
     :param bool ensure_ascii: Whether non-ASCII characters should be escaped.
     :returns: the request body and its known UTF-8 byte length, if already calculated.
-    :rtype: tuple[Union[str, unicode, file-like stream object, None], Optional[int]]
+    :rtype: tuple[Union[str, bytes, file-like stream object, None], Optional[int]]
 
     """
     if data is None or isinstance(data, str) or _is_readable_stream(data):
@@ -89,8 +105,8 @@ def _request_body_from_data(data, ensure_ascii=True):
             # only ever occur inside a string literal, so valid Unicode elsewhere
             # in the body stays compact.
             encoded_body = json_dumped.encode("utf-8", "backslashreplace")
-            json_dumped = encoded_body.decode("utf-8")
-        return json_dumped, len(encoded_body)
+        # Send exactly the bytes that were measured, so no transport re-encodes them.
+        return encoded_body, len(encoded_body)
     return None, None
 
 
@@ -360,7 +376,12 @@ def SynchronizedRequest(
         request_data,
         ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params, request_data)
     )
-    if request.data and isinstance(request.data, str):
+    if isinstance(request.data, (bytes, bytearray)):
+        # Compact UTF-8 bodies reach the transport as the exact bytes that were
+        # measured, so Content-Length is simply their length and no encoding
+        # step can make the header disagree with the wire body.
+        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
+    elif request.data and isinstance(request.data, str):
         # Use UTF-8 byte length, not str length (code-point count), so the
         # header matches the bytes the transport actually writes for any
         # non-ASCII payload.
