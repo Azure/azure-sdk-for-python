@@ -1046,7 +1046,7 @@ class StorageSessionPolicy(HTTPPolicy):
             return None
 
         # Kept so a 401 can serve this request with bearer instead of re-signing.
-        request.context.options[SESSION_BEARER_AUTH_KEY] = request.http_request.headers.get("Authorization")
+        request.context[SESSION_BEARER_AUTH_KEY] = request.http_request.headers.get("Authorization")
         _apply_session_auth(request, session.session_token, session.session_key, self._account_name)
         return session
 
@@ -1074,7 +1074,7 @@ class StorageSessionPolicy(HTTPPolicy):
         if status == 401:
             _LOGGER.info("Session authentication: HTTP 401; invalidating session and retrying with bearer.")
             self._session_provider.invalidate_session(request, session)
-            bearer = request.context.options.get(SESSION_BEARER_AUTH_KEY)
+            bearer = request.context.get(SESSION_BEARER_AUTH_KEY)
             if bearer:
                 request.http_request.headers["Authorization"] = bearer
                 return self.next.send(request)

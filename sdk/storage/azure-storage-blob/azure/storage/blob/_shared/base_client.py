@@ -343,6 +343,7 @@ class StorageAccountHostsMixin(object):
                 sub_kwargs = dict(kwargs)
                 sub_kwargs.pop("_configuration", None)
                 sub_kwargs.pop("pipeline", None)
+                sub_kwargs.pop("sdk_moniker", None)
                 sub_kwargs["transport"] = transport
                 session_provider = ContainerSessionProvider(
                     f"{self.scheme}://{self.primary_hostname}",

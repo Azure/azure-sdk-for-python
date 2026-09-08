@@ -61,7 +61,7 @@ def _to_service_url(url: str) -> str:
 def _is_cooldown_error(status: Optional[int], error_code: str) -> bool:
     if status is None:
         return False
-    if status >= 500 or status == 403:
+    if status >= 500 and status != 503 or status == 403:
         return True
     return status == 400 and error_code == StorageErrorCode.FEATURE_NOT_ENABLED
 
