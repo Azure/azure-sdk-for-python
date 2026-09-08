@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.dps_certificate.get(
+        certificate_name="cert",
         resource_group_name="myResourceGroup",
         provisioning_service_name="myFirstProvisioningService",
-        certificate_name="cert",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-02-01-preview/DPSGetCertificate.json
+# x-ms-original-file: 2026-08-31/DPSGetCertificate.json
 if __name__ == "__main__":
     main()

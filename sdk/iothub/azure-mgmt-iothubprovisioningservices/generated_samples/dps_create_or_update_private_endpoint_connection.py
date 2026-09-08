@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-02-01-preview/DPSCreateOrUpdatePrivateEndpointConnection.json
+# x-ms-original-file: 2026-08-31/DPSCreateOrUpdatePrivateEndpointConnection.json
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@ from azure.mgmt.iothubprovisioningservices import IotDpsClient
     pip install azure-identity
     pip install azure-mgmt-iothubprovisioningservices
 # USAGE
-    python dps_list_keys.py
+    python dps_patch_disable_local_auth.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.iot_dps_resource.list_keys(
-        provisioning_service_name="myFirstProvisioningService",
+    response = client.iot_dps_resource.begin_update(
         resource_group_name="myResourceGroup",
-    )
-    for item in response:
-        print(item)
+        provisioning_service_name="myFirstProvisioningService",
+        provisioning_service_tags={"tags": {"foo": "bar"}},
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-08-31/DPSListKeys.json
+# x-ms-original-file: 2026-08-31/DPSPatch_DisableLocalAuth.json
 if __name__ == "__main__":
     main()

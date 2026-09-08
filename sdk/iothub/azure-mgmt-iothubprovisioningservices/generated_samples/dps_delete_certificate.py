@@ -15,7 +15,7 @@ from azure.mgmt.iothubprovisioningservices import IotDpsClient
     pip install azure-identity
     pip install azure-mgmt-iothubprovisioningservices
 # USAGE
-    python dps_list_keys.py
+    python dps_delete_certificate.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.iot_dps_resource.list_keys(
-        provisioning_service_name="myFirstProvisioningService",
+    client.dps_certificate.delete(
         resource_group_name="myResourceGroup",
+        provisioning_service_name="myFirstProvisioningService",
+        certificate_name="cert",
+        etag="AAAAAAAADGk=",
+        match_condition=~azure.core.MatchConditions,
     )
-    for item in response:
-        print(item)
 
 
-# x-ms-original-file: 2026-08-31/DPSListKeys.json
+# x-ms-original-file: 2026-08-31/DPSDeleteCertificate.json
 if __name__ == "__main__":
     main()
