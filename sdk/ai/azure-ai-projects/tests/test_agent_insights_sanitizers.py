@@ -1,12 +1,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import importlib.util
+import os
 import re
 from unittest.mock import DEFAULT, patch
 
 import pytest
 
-import conftest
+# Load the top-level "tests/conftest.py" module explicitly. A plain "import conftest" is
+# ambiguous because pytest also collects "tests/agents/telemetry/conftest.py" (which has no
+# package __init__.py either), and whichever conftest module pytest imports first gets cached
+# in sys.modules under the bare name "conftest". Loading by explicit file path avoids that
+# collision and guarantees we patch the module that actually defines add_general_regex_sanitizer.
+_conftest_spec = importlib.util.spec_from_file_location(
+    "agent_insights_root_conftest", os.path.join(os.path.dirname(__file__), "conftest.py")
+)
+conftest = importlib.util.module_from_spec(_conftest_spec)
+_conftest_spec.loader.exec_module(conftest)
 
 
 @pytest.fixture

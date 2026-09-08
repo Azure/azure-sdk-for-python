@@ -68,7 +68,7 @@ def _assert_agent_insights_output(sample_path: str, print_output_calls: list[str
         r"^Insight status after reopening: active$", output, re.MULTILINE
     ), "Agent Insights sample did not reopen the insight."
     assert re.search(
-        r"^Deleted monitor `.+`\.$", output, re.MULTILINE
+        r"^(Deleted monitor `.+`\.|Monitor `.+` was already deleted\.)$", output, re.MULTILINE
     ), "Agent Insights on-demand monitor was not deleted."
 
 

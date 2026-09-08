@@ -100,7 +100,7 @@ def main() -> None:
                 raise RuntimeError("The enabled monitor did not return its next scheduled run time.")
             print(f"Scheduled monitor enabled: {scheduled_monitor.enabled}")
             print(f"Run interval hours: {scheduled_monitor.run_interval_hours}")
-            print(f"Next scheduled run: {next_run.isoformat()}")
+            print(f"Next scheduled run: {next_run}")
         finally:
             if monitor is not None:
                 _delete_monitor(monitor_operations, monitor.id, "Scheduled")
