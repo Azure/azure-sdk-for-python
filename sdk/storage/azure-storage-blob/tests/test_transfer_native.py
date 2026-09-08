@@ -119,13 +119,13 @@ class TestCanUseNativeUpload(unittest.TestCase):
             )
         self.assertFalse(result)
 
-    def test_accepts_in_memory_buffers(self):
-        """bytes/bytearray/memoryview/str payloads should be eligible for native upload."""
+    def test_accepts_immutable_in_memory_data(self):
+        """bytes/str payloads should be eligible for zero-copy native upload."""
         with patch(
             "azure.storage.blob._transfer_native._is_native_available",
             return_value=True,
         ):
-            for data in (b"test", bytearray(b"test"), memoryview(b"test"), "test"):
+            for data in (b"test", "test"):
                 result = _can_use_native_upload(
                     blob_type="BlockBlob",
                     encryption_options={},
@@ -134,6 +134,22 @@ class TestCanUseNativeUpload(unittest.TestCase):
                     credential=self._make_credential(),
                 )
                 self.assertTrue(result, f"expected {type(data).__name__} to be eligible")
+
+    def test_rejects_mutable_buffers_and_buffer_views(self):
+        """Mutable buffers and potentially aliased views must use the Python path."""
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ):
+            for data in (bytearray(b"test"), memoryview(b"test")):
+                result = _can_use_native_upload(
+                    blob_type="BlockBlob",
+                    encryption_options={},
+                    validate_content=None,
+                    data=data,
+                    credential=self._make_credential(),
+                )
+                self.assertFalse(result, f"expected {type(data).__name__} to use the Python path")
 
 
 class TestCanUseNativeDownload(unittest.TestCase):
