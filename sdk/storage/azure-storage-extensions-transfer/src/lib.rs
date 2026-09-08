@@ -30,6 +30,25 @@ use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict};
 use tokio::runtime::Runtime;
 
+/// An immutable Python buffer retained as the owner of a zero-copy [`Bytes`] value.
+///
+/// `PyBuffer` keeps the exporter and its allocation alive until it is dropped. Uploads only
+/// construct this owner from Python `bytes`, whose contents cannot be mutated while Rust reads
+/// them without the GIL.
+struct PythonBytesOwner {
+    buffer: PyBuffer<u8>,
+}
+
+impl AsRef<[u8]> for PythonBytesOwner {
+    fn as_ref(&self) -> &[u8] {
+        // SAFETY: construction requires a C-contiguous Python `bytes` object. Its allocation is
+        // immutable and remains exported (and therefore alive) through `self.buffer`.
+        unsafe {
+            std::slice::from_raw_parts(self.buffer.buf_ptr().cast::<u8>(), self.buffer.len_bytes())
+        }
+    }
+}
+
 /// Shared tokio runtime — created once, reused across all calls to avoid
 /// per-call overhead of spawning a new runtime.
 static RUNTIME: Lazy<Runtime> =
@@ -262,25 +281,22 @@ fn upload_blob<'py>(
 ) -> PyResult<Bound<'py, PyDict>> {
     let blob_client = build_blob_client(url, token_provider, credential_id)?;
 
-    // We copy the payload once into a Rust-owned `Bytes` here, while the interpreter is attached.
-    //
-    // This single copy is required (not merely convenient): the upload below detaches the
-    // current thread from the interpreter via `detach`, so we must not hold a borrow into
-    // Python-owned memory that another Python thread could mutate or free. Accepting any
-    // buffer-protocol object (bytes, bytearray, contiguous memoryview) via `PyBuffer` lets
-    // the caller avoid a separate Python-side `bytes()` conversion.
-    //
-    // We intentionally do NOT stream across the FFI boundary: the Rust crate buffers each
-    // partition into memory regardless, and a Python-backed stream would require per-chunk
-    // re-attachment from parallel tasks — more complex and slower than one bulk copy.
-    // For the buffered path, the crate partitions via zero-copy `Bytes::slice`.
+    // Export the Python allocation and make it the owner of `Bytes`. This passes its address
+    // across the FFI boundary without copying; `Bytes` keeps the export alive while the Rust SDK
+    // clones and slices the body across asynchronous upload tasks.
+    if !data.is_instance_of::<PyBytes>() {
+        return Err(PyValueError::new_err(
+            "Native zero-copy upload requires an immutable bytes object.",
+        ));
+    }
     let buffer = PyBuffer::<u8>::get(data)?;
     if !buffer.is_c_contiguous() {
         return Err(PyValueError::new_err(
             "Native upload requires a C-contiguous buffer.",
         ));
     }
-    let content: RequestContent<Bytes, NoFormat> = Bytes::from(buffer.to_vec(py)?).into();
+    let content: RequestContent<Bytes, NoFormat> =
+        Bytes::from_owner(PythonBytesOwner { buffer }).into();
 
     let mut options = BlockBlobClientUploadOptions::default();
 
