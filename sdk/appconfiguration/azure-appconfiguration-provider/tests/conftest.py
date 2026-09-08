@@ -125,12 +125,12 @@ def add_sanitizers(test_proxy):
         value="sanitized",
         regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "https://sanitized.azconfig.io"),
     )
-    add_uri_string_sanitizer()
     for target, value in key_vault_references:
         target = target.rstrip("/") + "/"
         value = value.rstrip("/") + "/"
         add_uri_string_sanitizer(target=target, value=value)
         add_general_string_sanitizer(target=target, value=value)
+    add_uri_string_sanitizer()
     add_remove_header_sanitizer(headers="Correlation-Context")
 
     add_general_regex_sanitizer(value="api-version=1970-01-01", regex="api-version=.+")
