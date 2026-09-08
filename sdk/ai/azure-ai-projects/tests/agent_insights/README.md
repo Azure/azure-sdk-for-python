@@ -80,8 +80,8 @@ second model or require Code Interpreter to validate the samples.
 Review the recordings for secrets and live identifiers before publishing:
 
 ```bash
-python ../../../../scripts/manage_recordings.py locate
-python ../../../../scripts/manage_recordings.py push
+python ../../../scripts/manage_recordings.py locate
+python ../../../scripts/manage_recordings.py push
 python -m pytest -q tests/samples/test_samples.py::TestSamples::test_agent_insights_samples
 ```
 
