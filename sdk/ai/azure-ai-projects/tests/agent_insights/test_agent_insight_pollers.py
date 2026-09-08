@@ -136,6 +136,7 @@ def test_run_poller_stops_at_terminal_status(terminal_status: str) -> None:
         with pytest.raises(HttpResponseError):
             poller.result(timeout=5)
     assert poller.done()
+    assert poller.status() == ("cancelled" if terminal_status == "canceled" else terminal_status)
     assert operation._client.send_request.call_count == 2
 
 
@@ -151,4 +152,5 @@ async def test_async_run_poller_stops_at_terminal_status(terminal_status: str) -
         with pytest.raises(HttpResponseError):
             await asyncio.wait_for(poller.result(), timeout=5)
     assert poller.polling_method().finished()
+    assert poller.status() == ("cancelled" if terminal_status == "canceled" else terminal_status)
     assert operation._client.send_request.call_count == 2
