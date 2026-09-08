@@ -98,7 +98,9 @@ client = CosmosClient(
 ```
 
 The option is disabled by default and applies to create, upsert, replace, patch, and transactional batch item
-bodies. Queries, control-plane requests, headers, and responses are unchanged. Both representations describe the
+bodies. Queries, control-plane requests, and responses are unchanged. Semantic request headers - including the
+partition-key header - are also unchanged; body-derived headers such as `Content-Length` necessarily reflect the
+compact byte count and are recalculated accordingly. Both representations describe the
 same JSON document, so the values stored in the service and returned on reads are identical - only the encoding of
 the outgoing request body differs. See the [synchronous][sample_compact_utf8_item_writes] and
 [asynchronous][sample_compact_utf8_item_writes_async] samples for complete examples.

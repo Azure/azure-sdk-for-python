@@ -54,8 +54,10 @@ DATABASE_ID = config.settings['database_id']
 
 # A dedicated container for this sample. The shared container id from config is created by other
 # samples with a '/id' partition key path, so this sample uses its own container to stay
-# independent of the order in which the samples are run.
-CONTAINER_ID = 'compact-utf8-item-writes-async'
+# independent of the order in which the samples are run. The id is made unique per run and the
+# container is created with `create_container` (not `create_container_if_not_exists`) so this
+# sample can never take over - and then delete - a container it did not create.
+CONTAINER_ID = 'compact-utf8-item-writes-async-' + str(uuid.uuid4())
 PARTITION_KEY_VALUE = 'compact-utf8-sample-async'
 
 
@@ -106,8 +108,9 @@ async def run_sample():
         try:
             # setup database for this sample
             db = await client.create_database_if_not_exists(id=DATABASE_ID)
-            # setup container for this sample
-            container = await db.create_container_if_not_exists(
+            # setup container for this sample - a uniquely named container created by this run
+            # only, so the cleanup below can never delete a pre-existing container or its data
+            container = await db.create_container(
                 id=CONTAINER_ID,
                 partition_key=PartitionKey(path='/pk', kind='Hash'),
             )
