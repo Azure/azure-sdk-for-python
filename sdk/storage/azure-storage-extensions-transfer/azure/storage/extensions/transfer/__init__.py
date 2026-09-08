@@ -34,7 +34,7 @@ def is_available() -> bool:
 
 def upload_blob(
     url: str,
-    data: "bytes | bytearray | memoryview",
+    data: bytes,
     *,
     token_provider: "Callable[[list], tuple] | None" = None,
     credential_id: "int | None" = None,
@@ -50,12 +50,11 @@ def upload_blob(
     :param str url: The fully-qualified blob URL
         (e.g. https://account.blob.core.windows.net/container/blob). Must be correctly
         percent-encoded and may include a SAS token in the query string.
-    :param data: The blob content to upload. Accepts any C-contiguous buffer-protocol
-        object (``bytes``, ``bytearray``, or ``memoryview``); no copy to ``bytes`` is required.
-        The payload must already be fully in memory — this function does not accept
-        file-like streams. Large or streamed uploads should use the ``azure-storage-blob``
-        Python upload path, which streams data in fixed-size chunks.
-    :type data: bytes or bytearray or memoryview
+    :param bytes data: The blob content to upload. Rust reads the immutable Python ``bytes``
+        allocation directly without copying it across the FFI boundary. The payload must
+        already be fully in memory; this function does not accept mutable buffers or file-like
+        streams. Large or streamed uploads should use the ``azure-storage-blob`` Python upload
+        path, which streams data in fixed-size chunks.
     :keyword token_provider: A callable invoked on demand to obtain an OAuth bearer token.
         It is called as ``token_provider(scopes: list[str])`` and must return a
         ``(token: str, expires_on: int)`` tuple, where ``expires_on`` is a Unix timestamp in
