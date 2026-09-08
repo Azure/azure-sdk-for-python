@@ -146,13 +146,14 @@ def _can_use_native_upload(
     if kwargs.get("standard_blob_tier") or kwargs.get("premium_page_blob_tier"):
         return False
 
-    # Native acceleration only handles data that is already fully in memory
-    # (bytes/bytearray/memoryview, or str which encodes to in-memory bytes).
+    # Native acceleration only handles immutable data that is already fully in memory
+    # (bytes, or str which encodes to bytes). The Rust upload reads the Python allocation
+    # without the GIL, so mutable buffers must use the Python upload path.
     # File-like streams are intentionally NOT eligible: reading them would
     # materialize the entire payload in memory, which is unsafe for large blobs.
     # The Python upload path streams such inputs in fixed-size chunks, so we
     # fall back to it for anything that isn't already resident in memory.
-    if isinstance(data, (bytes, bytearray, memoryview, str)):
+    if isinstance(data, (bytes, str)):
         return True
 
     _LOGGER.debug(
@@ -246,16 +247,15 @@ def try_native_upload(
             upload_blob as native_upload,
         )
 
-        # Prepare data as a buffer-protocol object. The native module accepts bytes,
-        # bytearray, and contiguous memoryview directly (via PyBuffer), so we avoid an
-        # extra Python-side copy for the non-bytes buffer types. Only str needs encoding.
+        # Prepare immutable bytes whose allocation can be read by Rust without copying or
+        # holding the GIL. Only str needs encoding.
         # File-like streams are rejected by _can_use_native_upload (they use the Python
         # path to avoid materializing large payloads in memory), so we don't handle them
         # here.
         if isinstance(data, str):
             encoding = kwargs.get("encoding", "UTF-8")
             upload_data = data.encode(encoding)
-        elif isinstance(data, (bytes, bytearray, memoryview)):
+        elif isinstance(data, bytes):
             upload_data = data
         else:
             _LOGGER.debug("Native upload data type unsupported; using Python upload path.")
