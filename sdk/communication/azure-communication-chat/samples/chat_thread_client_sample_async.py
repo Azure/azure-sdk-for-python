@@ -86,14 +86,14 @@ class ChatThreadClientSamplesAsync(object):
             chat_thread_client = chat_client.get_chat_thread_client(thread_id)
 
             async with chat_thread_client:
-                chat_thread_properties = chat_thread_client.get_properties()
+                chat_thread_properties = await chat_thread_client.get_properties()
                 print("Expected Thread Id: ", thread_id, " Actual Value: ", chat_thread_properties.id)
             # [END get_thread]
             print(
                 "get_chat_thread_properties_async succeeded, thread id: "
-                + chat_thread.id
+                + chat_thread_properties.id
                 + ", thread topic: "
-                + chat_thread.topic
+                + chat_thread_properties.topic
             )
 
     async def update_topic_async(self):

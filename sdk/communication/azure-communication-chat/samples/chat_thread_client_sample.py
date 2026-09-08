@@ -52,6 +52,7 @@ class ChatThreadClientSamples(object):
     def create_chat_thread_client(self):
         token = self.token
         endpoint = self.endpoint
+        assert endpoint is not None
         user = self.user
         # [START create_chat_thread_client]
         from datetime import datetime
@@ -79,6 +80,7 @@ class ChatThreadClientSamples(object):
         thread_id = self._thread_id
         token = self.token
         endpoint = self.endpoint
+        assert endpoint is not None
         # [START get_thread]
         from azure.communication.chat import ChatClient, CommunicationTokenCredential
 
@@ -91,9 +93,9 @@ class ChatThreadClientSamples(object):
 
         print(
             "get_chat_thread_properties succeeded, thread id: "
-            + chat_thread.id
+            + chat_thread_properties.id
             + ", thread topic: "
-            + chat_thread.topic
+            + chat_thread_properties.topic
         )
 
     def update_topic(self):

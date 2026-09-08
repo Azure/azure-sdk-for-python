@@ -20,6 +20,7 @@ USAGE:
 
 
 import os
+from azure.core.credentials import AccessToken
 from azure.communication.chat import CommunicationTokenCredential
 from azure.communication.identity import CommunicationIdentityClient
 
@@ -46,7 +47,7 @@ class CommunicationTokenCredentialSamples(object):
         # Alternatively, for long-lived clients, you can create a `CommunicationTokenCredential` with a callback to renew tokens if expired.
         # Here we assume that we have a function `fetch_token_from_server` that makes a network request to retrieve a token string for a user.
         # It's necessary that the `fetch_token_from_server` function returns a valid token (with an expiration date set in the future) at all times.
-        fetch_token_from_server = lambda: None
+        fetch_token_from_server = lambda: AccessToken("some_new_token", 9999999999)
         with CommunicationTokenCredential(self.token, token_refresher=fetch_token_from_server) as credential:
             token_response = credential.get_token()
             print("Token issued with value: " + token_response.token)
@@ -54,7 +55,7 @@ class CommunicationTokenCredentialSamples(object):
     def create_credential_with_proactive_refreshing_callback(self):
         # Optionally, you can enable proactive token refreshing where a fresh token will be acquired as soon as the
         # previous token approaches expiry. Using this method, your requests are less likely to be blocked to acquire a fresh token
-        fetch_token_from_server = lambda: None
+        fetch_token_from_server = lambda: AccessToken("some_new_token", 9999999999)
         with CommunicationTokenCredential(
             self.token, token_refresher=fetch_token_from_server, proactive_refresh=True
         ) as credential:
