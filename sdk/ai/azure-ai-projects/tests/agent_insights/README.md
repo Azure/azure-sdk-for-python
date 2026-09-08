@@ -9,7 +9,8 @@ HTTP responses and do not call Azure.
 Use a subscription and region where the current Agent Insights API is available.
 The deployment identity must be able to create Foundry and telemetry resources,
 assign roles, and read keys from the existing analysis-model account. The template
-creates the required roles by default.
+creates Foundry User and Monitoring Reader assignments by default. Protected
+trace content requires the additional assignment described below.
 
 An existing analysis-model deployment is required. The template defaults to
 GPT-5.4, model version `2026-03-05`, and the `GlobalStandard` SKU. The
@@ -45,6 +46,36 @@ The script writes an ignored `.env` file in the package directory. It contains
 the project endpoint, external-agent name, analysis-model name, and telemetry
 resource IDs. Use the same test identity for the following steps, authenticated
 through Azure CLI or Azure PowerShell.
+
+### Access to protected trace content
+
+If the connected Application Insights resource uses the protected
+`AppGenAIContent` table, grant **Privileged Monitoring Data Reader** to the
+Foundry project's managed identity at the **Application Insights resource**
+scope. Use the project's principal ID, not the parent account's identity or the
+identity running the sample. Keep its existing read/query role: Monitoring
+Reader and Privileged Monitoring Data Reader provide different permissions.
+
+An administrator authorized to create role assignments at that resource can run:
+
+```bash
+az role assignment create \
+    --assignee-object-id "<project-managed-identity-principal-id>" \
+    --assignee-principal-type ServicePrincipal \
+    --role "Privileged Monitoring Data Reader" \
+    --scope "<application-insights-resource-id>"
+```
+
+Use the resource scope, not the subscription scope. If the command fails with
+`Microsoft.Authorization/roleAssignments/write`, an authorized role
+administrator must apply it, or the operator must activate an existing eligible
+administrative role. Allow the assignment to propagate before retrying.
+
+This grant lets the service read protected message/tool content; it does not
+grant the maintainer's own identity access to that content. Trace spans can be
+queryable while their referenced protected content is unavailable. A query
+returning no content rows does not by itself distinguish missing ingestion from
+missing access.
 
 ## Create trace data and record the samples
 
