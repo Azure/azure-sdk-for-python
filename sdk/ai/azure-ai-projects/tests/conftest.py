@@ -383,6 +383,16 @@ def add_sanitizers(test_proxy, sanitized_values):
     # header-injection behavior itself.
     add_remove_header_sanitizer(headers="Foundry-Features")
 
+    # Strip Accept from record/playback matching. It's a content-negotiation hint set by the
+    # HTTP client/transport layer, not something the tests are validating, and its value has been
+    # observed to drift across environments independent of any SDK code change here (e.g. the
+    # azure-storage-blob generated client hardcodes "application/xml" for blob uploads, but some
+    # environments send "*/*" instead depending on transport/dependency versions). Exact-matching
+    # it would otherwise cause spurious playback failures on samples like
+    # sample_models_create_and_poll.py and sample_datasets*.py that upload blobs via
+    # container_client.upload_blob(), unrelated to what those samples actually validate.
+    add_remove_header_sanitizer(headers="Accept")
+
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name
     #  - AZSDK3430: $..id
