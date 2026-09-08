@@ -15,17 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerServiceFleetMgmtFleetMembersOperationsAsync(AzureMgmtRecordedTestCase):
+class TestContainerServiceFleetMgmtClusterMeshProfilesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ContainerServiceFleetMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_fleet_members_get(self, resource_group):
-        response = await self.client.fleet_members.get(
+    async def test_cluster_mesh_profiles_get(self, resource_group):
+        response = await self.client.cluster_mesh_profiles.get(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            fleet_member_name="str",
+            cluster_mesh_profile_name="str",
         )
 
         # please add some check logic here by yourself
@@ -33,38 +33,22 @@ class TestContainerServiceFleetMgmtFleetMembersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_fleet_members_begin_create(self, resource_group):
+    async def test_cluster_mesh_profiles_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.fleet_members.begin_create(
+            await self.client.cluster_mesh_profiles.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 fleet_name="str",
-                fleet_member_name="str",
+                cluster_mesh_profile_name="str",
                 resource={
                     "eTag": "str",
                     "id": "str",
                     "name": "str",
                     "properties": {
-                        "clusterResourceId": "str",
-                        "group": "str",
-                        "labels": {"str": "str"},
-                        "meshProperties": {
-                            "ciliumProperties": {"id": 0, "name": "str"},
-                            "clusterMeshProfileResourceId": "str",
-                            "status": {
-                                "state": "str",
-                                "error": {
-                                    "additionalInfo": [{"info": {}, "type": "str"}],
-                                    "code": "str",
-                                    "details": [...],
-                                    "message": "str",
-                                    "target": "str",
-                                },
-                                "lastOperationId": "str",
-                                "lastUpdatedAt": "2020-02-20 00:00:00",
-                            },
-                        },
+                        "memberSelector": {"byLabel": "str"},
                         "provisioningState": "str",
                         "status": {
+                            "state": "str",
+                            "lastAppliedMemberSelector": {"byLabel": "str"},
                             "lastOperationError": {
                                 "additionalInfo": [{"info": {}, "type": "str"}],
                                 "code": "str",
@@ -93,13 +77,12 @@ class TestContainerServiceFleetMgmtFleetMembersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_fleet_members_begin_update(self, resource_group):
+    async def test_cluster_mesh_profiles_begin_delete(self, resource_group):
         response = await (
-            await self.client.fleet_members.begin_update(
+            await self.client.cluster_mesh_profiles.begin_delete(
                 resource_group_name=resource_group.name,
                 fleet_name="str",
-                fleet_member_name="str",
-                properties={"properties": {"group": "str", "labels": {"str": "str"}}},
+                cluster_mesh_profile_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -108,25 +91,25 @@ class TestContainerServiceFleetMgmtFleetMembersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_fleet_members_begin_delete(self, resource_group):
-        response = await (
-            await self.client.fleet_members.begin_delete(
-                resource_group_name=resource_group.name,
-                fleet_name="str",
-                fleet_member_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_fleet_members_list_by_fleet(self, resource_group):
-        response = self.client.fleet_members.list_by_fleet(
+    async def test_cluster_mesh_profiles_list_by_fleet(self, resource_group):
+        response = self.client.cluster_mesh_profiles.list_by_fleet(
             resource_group_name=resource_group.name,
             fleet_name="str",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_cluster_mesh_profiles_begin_apply(self, resource_group):
+        response = await (
+            await self.client.cluster_mesh_profiles.begin_apply(
+                resource_group_name=resource_group.name,
+                fleet_name="str",
+                cluster_mesh_profile_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...
