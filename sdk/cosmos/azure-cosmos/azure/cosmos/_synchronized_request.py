@@ -42,6 +42,9 @@ _ITEM_BODY_WRITE_OPERATIONS = frozenset((
     _OperationType.Upsert,
     _OperationType.Replace,
     _OperationType.Patch,
+    # Batch membership is necessary but not sufficient: a batch made up only of
+    # read and delete operations carries no item body. _should_escape_non_ascii_
+    # in_request_body refines this entry with _batch_contains_item_body below.
     _OperationType.Batch,
 ))
 
@@ -91,15 +94,37 @@ def _request_body_from_data(data, ensure_ascii=True):
     return None, None
 
 
-def _should_escape_non_ascii_in_request_body(client, request_params):
+def _batch_contains_item_body(batch_operations):
+    """Return whether a formatted transactional batch contains an item body.
+
+    Read and delete batch operations contain only an item ID. Create, upsert,
+    replace, and patch operations contain a resourceBody.
+
+    :param list[dict[str, object]] batch_operations: The formatted batch operations.
+    :returns: Whether at least one operation contains an item body.
+    :rtype: bool
+    """
+    return (
+        isinstance(batch_operations, (list, tuple))
+        and any(
+            isinstance(operation, dict) and "resourceBody" in operation
+            for operation in batch_operations
+        )
+    )
+
+
+def _should_escape_non_ascii_in_request_body(client, request_params, request_data):
     """Decide whether a request body must keep non-ASCII characters escaped.
 
     Compact UTF-8 is only used when the client opted in and the request is one
-    of the item write operations the option is scoped to. Every other request,
-    including control-plane bodies and queries, keeps the escaped form.
+    of the item write operations the option is scoped to. A transactional batch
+    uses compact UTF-8 only when at least one operation contains an item body;
+    read/delete-only batches keep the escaped form. Every other request,
+    including control-plane bodies and queries, also keeps the escaped form.
 
     :param object client: the client connection issuing the request.
     :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
+    :param object request_data: The body data that will be serialized.
     :returns: whether non-ASCII characters should be escaped in the body.
     :rtype: bool
     """
@@ -109,6 +134,10 @@ def _should_escape_non_ascii_in_request_body(client, request_params):
         not getattr(client, "_enable_compact_utf8_item_writes", False)
         or request_params.resource_type != http_constants.ResourceType.Document
         or request_params.operation_type not in _ITEM_BODY_WRITE_OPERATIONS
+        or (
+            request_params.operation_type == _OperationType.Batch
+            and not _batch_contains_item_body(request_data)
+        )
     )
 
 
@@ -329,7 +358,7 @@ def SynchronizedRequest(
     """
     request.data, utf8_byte_length = _request_body_from_data(
         request_data,
-        ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params)
+        ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params, request_data)
     )
     if request.data and isinstance(request.data, str):
         # Use UTF-8 byte length, not str length (code-point count), so the

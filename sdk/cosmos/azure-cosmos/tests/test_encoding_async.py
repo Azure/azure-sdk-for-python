@@ -145,6 +145,11 @@ class TestEncodingAsync(unittest.IsolatedAsyncioTestCase):
         def capture_body(request):
             captured['body'] = request.http_request.body
 
+        def assert_compact_body(expected_content):
+            self.assertIsInstance(captured['body'], str)
+            self.assertIn(expected_content, captured['body'])
+            self.assertNotIn('\\u65e5', captured['body'])
+
         async with test_config.TestConfig.create_data_client_async(
             enable_compact_utf8_item_writes=True
         ) as client:
@@ -167,17 +172,24 @@ class TestEncodingAsync(unittest.IsolatedAsyncioTestCase):
             # Round-tripping alone cannot detect a regression to escaped
             # output, since escaped JSON round-trips identically. Assert on
             # the bytes actually put on the wire.
-            self.assertIsInstance(captured['body'], str)
-            self.assertIn('日本', captured['body'])
-            self.assertNotIn('\\u65e5', captured['body'])
+            assert_compact_body(created['content'])
 
             created['content'] = 'upsert مرحبا 日本 🚀'  # cspell:disable-line
-            upserted = await container.upsert_item(created)
+            upserted = await container.upsert_item(
+                created,
+                raw_request_hook=capture_body,
+            )
             self.assertEqual(upserted['content'], created['content'])
+            assert_compact_body(upserted['content'])
 
             upserted['content'] = 'replace नमस्ते 日本 🌍'  # cspell:disable-line
-            replaced = await container.replace_item(doc_id, upserted)
+            replaced = await container.replace_item(
+                doc_id,
+                upserted,
+                raw_request_hook=capture_body,
+            )
             self.assertEqual(replaced['content'], upserted['content'])
+            assert_compact_body(replaced['content'])
 
             patched = await container.patch_item(
                 doc_id,
@@ -189,18 +201,63 @@ class TestEncodingAsync(unittest.IsolatedAsyncioTestCase):
                         'value': 'patch שלום 日本 🎊',  # cspell:disable-line
                     },
                 ],
+                raw_request_hook=capture_body,
             )
             self.assertEqual(patched['content'], 'patch שלום 日本 🎊')  # cspell:disable-line
+            assert_compact_body(patched['content'])
 
-            batch_id = 'utf8-batch-async-' + str(uuid.uuid4())
+            # A patch filter predicate travels in the same request body as the
+            # patch operations, so a non-ASCII predicate is affected by the
+            # option too and must be sent compact and accepted by the service.
+            conditional = await container.patch_item(
+                doc_id,
+                partition_key='日本',
+                patch_operations=[
+                    {
+                        'op': 'set',
+                        'path': '/content',
+                        'value': 'conditional patch 日本 ✅',
+                    },
+                ],
+                filter_predicate="FROM c WHERE c.pk = '日本'",
+                raw_request_hook=capture_body,
+            )
+            self.assertEqual(conditional['content'], 'conditional patch 日本 ✅')
+            assert_compact_body("FROM c WHERE c.pk = '日本'")
+
+            batch_id = 'utf8-batch-async-日本-' + str(uuid.uuid4())
             batch_result = await container.execute_item_batch(
                 [(
                     'create',
                     ({'id': batch_id, 'pk': '日本', 'content': 'batch ไทย 日本 🎉'},),  # cspell:disable-line
                 )],
                 partition_key='日本',
+                raw_request_hook=capture_body,
             )
             self.assertEqual(batch_result[0]['statusCode'], 201)
+            assert_compact_body('batch ไทย 日本 🎉')  # cspell:disable-line
+
+            read_batch_result = await container.execute_item_batch(
+                [('read', (batch_id,))],
+                partition_key='日本',
+                raw_request_hook=capture_body,
+            )
+            self.assertEqual(read_batch_result[0]['statusCode'], 200)
+            self.assertEqual(read_batch_result[0]['resourceBody']['content'], 'batch ไทย 日本 🎉')  # cspell:disable-line
+            self.assertNotIn('日本', captured['body'])
+            self.assertIn('\\u65e5', captured['body'])
+
+            # A delete-only batch is the other body-free shape: like read, the
+            # operation carries just an id, so the item-write option must leave
+            # it escaped. The service must still accept that escaped form.
+            delete_batch_result = await container.execute_item_batch(
+                [('delete', (batch_id,))],
+                partition_key='日本',
+                raw_request_hook=capture_body,
+            )
+            self.assertEqual(delete_batch_result[0]['statusCode'], 204)
+            self.assertNotIn('日本', captured['body'])
+            self.assertIn('\\u65e5', captured['body'])
 
             queried = []
             async for item in container.query_items(
@@ -209,7 +266,8 @@ class TestEncodingAsync(unittest.IsolatedAsyncioTestCase):
                     partition_key='日本'):
                 queried.append(item)
             self.assertEqual(len(queried), 1)
-            self.assertEqual(queried[0]['content'], patched['content'])
+            # The conditional patch is the last write to touch this item.
+            self.assertEqual(queried[0]['content'], conditional['content'])
 
     async def test_default_ascii_escaping_rejects_large_cjk_item_async(self):
         """Verify the backend rejects the escaped async request body because it exceeds 2 MiB."""

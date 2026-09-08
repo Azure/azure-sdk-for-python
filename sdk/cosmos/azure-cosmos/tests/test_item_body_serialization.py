@@ -182,7 +182,7 @@ class TestItemBodySerialization(unittest.TestCase):
 
     def test_enabled_item_write_operations_use_compact_utf8(self):
         """With the option on, every operation the feature is scoped to
-        (create, upsert, replace, patch, batch) sends unescaped UTF-8, and
+        (create, upsert, replace, patch) sends unescaped UTF-8, and
         Content-Length matches the body's real byte count."""
         data = {"text": "café 日本 🎉"}
         expected = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
@@ -192,7 +192,6 @@ class TestItemBodySerialization(unittest.TestCase):
             _OperationType.Upsert,
             _OperationType.Replace,
             _OperationType.Patch,
-            _OperationType.Batch,
         ):
             with self.subTest(operation_type=operation_type):
                 captured = _capture_sync_body(
@@ -201,6 +200,85 @@ class TestItemBodySerialization(unittest.TestCase):
                     resource_type=http_constants.ResourceType.Document,
                     operation_type=operation_type,
                 )
+                self.assertEqual(captured["body"], expected)
+                self.assertEqual(captured["content_length"], len(expected.encode("utf-8")))
+
+    def test_batch_wire_shape_is_what_the_detector_keys_off(self):
+        """Pin the service's batch wire contract independently of the SDK.
+
+        _batch_contains_item_body decides on the presence of a resourceBody
+        key. The formatter-driven tests below would still pass if the
+        formatter and the detector were renamed together, so hard-code the
+        shape the service actually expects here: write operations carry a
+        resourceBody, read and delete carry only an id."""
+        item = {"id": "item-日本", "text": "ไทย 🎉"}
+        with_body = _base._format_batch_operations([
+            ("create", (item,)),
+            ("upsert", (item,)),
+            ("replace", ("item-日本", item)),
+            ("patch", ("item-日本", [{"op": "add", "path": "/text", "value": "ไทย"}])),
+        ])
+        without_body = _base._format_batch_operations([
+            ("read", ("item-日本",)),
+            ("delete", ("item-日本",)),
+        ])
+
+        for operation in with_body:
+            with self.subTest(operation=operation["operationType"]):
+                self.assertIn("resourceBody", operation)
+        for operation in without_body:
+            with self.subTest(operation=operation["operationType"]):
+                self.assertNotIn("resourceBody", operation)
+                self.assertIn("id", operation)
+
+    def test_body_free_batches_remain_ascii_escaped(self):
+        """Read and delete operations both carry only an id, so any batch made
+        up solely of them has no item body and must keep the escaped form."""
+        body_free_batches = (
+            [("read", ("item-日本",)), ("read", ("item-ไทย",))],
+            [("delete", ("item-日本",)), ("delete", ("item-ไทย",))],
+            [("read", ("item-日本",)), ("delete", ("item-ไทย",))],
+            [],
+        )
+
+        for batch in body_free_batches:
+            with self.subTest(batch=batch):
+                data = _base._format_batch_operations(batch)
+                captured = _capture_sync_body(
+                    data,
+                    enable_compact_utf8_item_writes=True,
+                    resource_type=http_constants.ResourceType.Document,
+                    operation_type=_OperationType.Batch,
+                )
+                self.assertEqual(captured["body"], json.dumps(data, separators=(",", ":")))
+                self.assertNotIn("日本", captured["body"])
+
+    def test_batches_built_by_the_sdk_are_detected_as_item_writes(self):
+        """Drive the real batch formatter rather than a hand-written payload,
+        so renaming the resourceBody key can never silently disable compact
+        UTF-8 while these tests still pass. Patch is included because its body
+        is nested one level deeper than the others."""
+        item = {"id": "item-日本", "text": "ไทย 🎉"}
+        write_batches = (
+            [("create", (item,))],
+            [("upsert", (item,))],
+            [("replace", ("item-日本", item))],
+            [("patch", ("item-日本", [{"op": "add", "path": "/text", "value": "ไทย"}]))],
+            [("read", ("item-日本",)), ("create", (item,))],
+        )
+
+        for batch in write_batches:
+            with self.subTest(batch=batch[0][0]):
+                data = _base._format_batch_operations(batch)
+                self.assertTrue(_synchronized_request._batch_contains_item_body(data))
+
+                captured = _capture_sync_body(
+                    data,
+                    enable_compact_utf8_item_writes=True,
+                    resource_type=http_constants.ResourceType.Document,
+                    operation_type=_OperationType.Batch,
+                )
+                expected = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
                 self.assertEqual(captured["body"], expected)
                 self.assertEqual(captured["content_length"], len(expected.encode("utf-8")))
 
@@ -382,6 +460,50 @@ class TestItemBodySerializationAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(captured["body"], expected)
         self.assertEqual(captured["content_length"], len(expected.encode("utf-8")))
 
+    async def test_write_containing_batch_uses_compact_utf8(self):
+        """Async mixed batches use compact UTF-8 when one operation contains
+        an item body. The read operation's id is compact too, since the whole
+        batch body is serialized in one pass."""
+        data = _base._format_batch_operations([
+            ("read", ("existing-日本",)),
+            ("create", ({"id": "new-日本", "text": "ไทย 🎉"},)),
+        ])
+        expected = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+
+        captured = await _capture_async_body(
+            data,
+            enable_compact_utf8_item_writes=True,
+            resource_type=http_constants.ResourceType.Document,
+            operation_type=_OperationType.Batch,
+        )
+
+        self.assertEqual(captured["body"], expected)
+        self.assertIn("existing-日本", captured["body"])
+        self.assertEqual(captured["content_length"], len(expected.encode("utf-8")))
+
+
+    async def test_body_free_batches_remain_ascii_escaped(self):
+        """Async twin: read-only, delete-only, and mixed read/delete batches
+        all lack an item body and stay escaped."""
+        body_free_batches = (
+            [("read", ("item-日本",)), ("read", ("item-ไทย",))],
+            [("delete", ("item-日本",)), ("delete", ("item-ไทย",))],
+            [("read", ("item-日本",)), ("delete", ("item-ไทย",))],
+            [],
+        )
+
+        for batch in body_free_batches:
+            with self.subTest(batch=batch):
+                data = _base._format_batch_operations(batch)
+                captured = await _capture_async_body(
+                    data,
+                    enable_compact_utf8_item_writes=True,
+                    resource_type=http_constants.ResourceType.Document,
+                    operation_type=_OperationType.Batch,
+                )
+                self.assertEqual(captured["body"], json.dumps(data, separators=(",", ":")))
+                self.assertNotIn("日本", captured["body"])
+
     async def test_compact_body_reuses_encoded_byte_length(self):
         """Async twin of the single-encode check, so the memory fix is
         pinned on both stacks."""
@@ -531,6 +653,7 @@ class TestClientOptionWiring(unittest.IsolatedAsyncioTestCase):
                 _synchronized_request._should_escape_non_ascii_in_request_body(
                     client.client_connection,
                     _DummyRequestParams(),
+                    {"text": "日本"},
                 )
             )
         finally:
@@ -610,6 +733,7 @@ class TestClientOptionWiring(unittest.IsolatedAsyncioTestCase):
                 _synchronized_request._should_escape_non_ascii_in_request_body(
                     client.client_connection,
                     _DummyRequestParams(),
+                    {"text": "日本"},
                 )
             )
         finally:

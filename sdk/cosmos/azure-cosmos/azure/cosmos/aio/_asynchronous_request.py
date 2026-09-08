@@ -244,7 +244,7 @@ async def AsynchronousRequest(
     """
     request.data, utf8_byte_length = _request_body_from_data(
         request_data,
-        ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params)
+        ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params, request_data)
     )
     if request.data and isinstance(request.data, str):
         # Use UTF-8 byte length, not str length (code-point count), so the
