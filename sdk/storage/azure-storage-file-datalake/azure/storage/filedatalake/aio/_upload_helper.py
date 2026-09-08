@@ -99,6 +99,8 @@ async def upload_datalake_file(  # pylint: disable=too-many-locals
             # Set etag-based conditions to ensure no other flush between create and the current flush
             etag = response["etag"]
             match_condition = MatchConditions.IfNotModified
+            if_modified_since = None
+            if_unmodified_since = None
 
         use_original_upload_path = (
             file_settings.use_byte_buffer
