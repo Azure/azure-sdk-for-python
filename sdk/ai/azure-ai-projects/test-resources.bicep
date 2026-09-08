@@ -239,8 +239,6 @@ resource projectMonitoringReader 'Microsoft.Authorization/roleAssignments@2022-0
 output FOUNDRY_PROJECT_ENDPOINT string = foundryProject.properties.endpoints['AI Foundry API']
 output FOUNDRY_AGENT_NAME string = fixtureAgentName
 output FOUNDRY_MODEL_NAME string = '${analysisModelConnection.name}/${analysisModelDeploymentName}'
-output LLM_VALIDATION_PROJECT_ENDPOINT string = foundryProject.properties.endpoints['AI Foundry API']
-output LLM_VALIDATION_MODEL string = '${analysisModelConnection.name}/${analysisModelDeploymentName}'
 output AGENT_INSIGHTS_OTEL_AGENT_ID string = fixtureOtelAgentId
 output AGENT_INSIGHTS_APPLICATION_INSIGHTS_RESOURCE_ID string = applicationInsights.id
 output AGENT_INSIGHTS_LOG_ANALYTICS_WORKSPACE_ID string = logAnalytics.id

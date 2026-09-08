@@ -82,6 +82,12 @@ def start_proxy(test_proxy):
     return
 
 
+@pytest.fixture
+def sanitizer_configuration():
+    """Expose this package's sanitizer setup without importing a conftest module."""
+    return add_sanitizers.__wrapped__
+
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy, sanitized_values):
 
@@ -272,8 +278,6 @@ def add_sanitizers(test_proxy, sanitized_values):
         for value in (
             os.environ.get("FOUNDRY_MODEL_NAME"),
             os.environ.get("foundry_model_name"),
-            os.environ.get("LLM_VALIDATION_MODEL"),
-            os.environ.get("llm_validation_model"),
             os.environ.get("MODEL_DEPLOYMENT_NAME"),
             os.environ.get("model_deployment_name"),
             os.environ.get("MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME"),
@@ -393,7 +397,7 @@ def add_sanitizers(test_proxy, sanitized_values):
     add_remove_header_sanitizer(
         headers="x-stainless-arch, x-stainless-async, x-stainless-lang, x-stainless-os, x-stainless-package-version, x-stainless-read-timeout, x-stainless-retry-count, x-stainless-runtime, x-stainless-runtime-version"
     )
-    add_remove_header_sanitizer(headers="openai-organization, openai-project")
+    add_remove_header_sanitizer(headers="openai-organization, openai-project, azureml-served-by-cluster")
 
     # Strip Content-Encoding so playback doesn't try to decompress a body that the test-proxy
     # has already stored decoded (notably brotli responses from openai endpoints which httpx

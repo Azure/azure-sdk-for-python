@@ -56,10 +56,11 @@ python tests/agent_insights/recording_fixture.py
 ```
 
 The helper creates or reuses one external-agent version. It emits eight
-fictional destructive-tool traces and two non-destructive control traces, then
-waits until all ten are queryable. No tool is actually executed. Run this helper
-again before refreshing recordings; the on-demand sample analyzes a recent
-three-hour window.
+fictional destructive-tool traces and two non-destructive control traces that
+decline to guess workspace status without a read tool. It waits until all ten
+traces, including their chat and tool spans, are queryable. No tool is actually
+executed. Run this helper again before refreshing recordings; the on-demand
+sample analyzes a recent three-hour window.
 
 Record both samples:
 
@@ -70,9 +71,11 @@ AZURE_TEST_RUN_LIVE=true python -m pytest -q \
 
 The on-demand recording must show a successful run with at least one analyzed
 trace and one insight, then a resolved and reopened insight. The scheduled
-sample checks the schedule without waiting for analysis. Both samples delete
-their monitors; scheduled cleanup disables the schedule and cancels any active
-run first.
+sample checks the schedule without waiting for analysis. Both samples disable
+scheduling, cancel any active run, and delete their monitors during cleanup.
+
+Tests check these outcomes directly from the sample output. They do not call a
+second model or require Code Interpreter to validate the samples.
 
 Review the recordings for secrets and live identifiers before publishing:
 

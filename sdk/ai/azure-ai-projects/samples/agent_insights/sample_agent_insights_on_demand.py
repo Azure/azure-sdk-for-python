@@ -25,6 +25,17 @@ DESCRIPTION:
     Deleting a monitor also deletes its runs, insights, and state. Use a test
     agent that does not have Agent Insights data that you need to keep.
 
+    The project must have a connected Application Insights resource, and the
+    project's managed identity must have permission to query it. The selected
+    agent must have ingested traces from the last three hours. For an external
+    agent, the emitted OpenTelemetry agent ID must match its registered ID.
+    This sample does not create traces. Without recent traces that show an
+    issue, there may be no insights to resolve and reopen.
+    Tracing setup:
+    https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python
+
+    Run only one Agent Insights sample at a time for a given test agent.
+
 USAGE:
     python sample_agent_insights_on_demand.py
 
@@ -195,18 +206,33 @@ def _delete_monitor(operations: BetaAgentInsightMonitorsOperations, monitor_id: 
     cancellation_requested: set[str] = set()
     active_statuses = {"queued", "in_progress"}
     for attempt in range(30):
-        active_runs = [
-            run
-            for run in operations.list_runs(monitor_id, limit=20)
-            if str(getattr(run.status, "value", run.status)).lower() in active_statuses
-        ]
+        try:
+            active_runs = [
+                run
+                for run in operations.list_runs(monitor_id, limit=20)
+                if str(getattr(run.status, "value", run.status)).lower() in active_statuses
+            ]
+        except ResourceNotFoundError:
+            # Confirm the monitor disappeared, rather than hiding a missing run endpoint.
+            try:
+                operations.get(monitor_id)
+            except ResourceNotFoundError:
+                print(f"{monitor_label} `{monitor_id}` was already deleted.")
+                return
+            raise
         for run in active_runs:
             if run.id in cancellation_requested:
                 continue
             try:
                 operations.cancel_run(monitor_id, run.id)
+            except ResourceNotFoundError:
+                # Re-list before deciding whether the run or monitor has disappeared.
+                continue
             except ResourceExistsError:
-                current_run = operations.get_run(monitor_id, run.id)
+                try:
+                    current_run = operations.get_run(monitor_id, run.id)
+                except ResourceNotFoundError:
+                    continue
                 if str(getattr(current_run.status, "value", current_run.status)).lower() in active_statuses:
                     raise
             cancellation_requested.add(run.id)

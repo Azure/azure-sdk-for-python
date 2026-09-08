@@ -64,6 +64,7 @@ def _batch() -> TraceBatch:
     return TraceBatch(
         marker="fixture-marker",
         trace_ids=("trace-1", "trace-2"),
+        span_ids=("root-1", "chat-1", "tool-1", "root-2", "chat-2"),
         window_start=datetime(2026, 9, 1, 1, tzinfo=timezone.utc),
         window_end=datetime(2026, 9, 1, 2, tzinfo=timezone.utc),
     )
@@ -147,6 +148,8 @@ def test_emit_fixture_traces_builds_defects_and_controls() -> None:
     assert operations.count("execute_tool") == 2
     assert len(batch.trace_ids) == 3
     assert len(set(batch.trace_ids)) == 3
+    assert set(batch.span_ids) == {f"{span.context.span_id:016x}" for span in spans}
+    assert len(batch.span_ids) == 8
     assert batch.marker == "agent-insights-recording-marker"
     assert all(span.attributes["gen_ai.agent.id"] == "fixture-otel" for span in spans)
 
@@ -156,6 +159,14 @@ def test_emit_fixture_traces_builds_defects_and_controls() -> None:
         if span.attributes["gen_ai.operation.name"] == "execute_tool"
     ]
     assert all('"deleted":true' in result for result in tool_results)
+    control_chat = next(
+        span
+        for span in spans
+        if span.attributes["gen_ai.operation.name"] == "chat"
+        and span.attributes["gen_ai.conversation.id"] == "recording-conversation-conversation-3"
+    )
+    assert "cannot verify" in control_chat.attributes["gen_ai.output.messages"]
+    assert "is active" not in control_chat.attributes["gen_ai.output.messages"]
 
 
 def test_wait_for_trace_ingestion_retries_until_all_traces_are_visible() -> None:
@@ -165,8 +176,18 @@ def test_wait_for_trace_ingestion_retries_until_all_traces_are_visible() -> None
 
         def query_resource(self, *_args: Any, **_kwargs: Any) -> Any:
             self.calls += 1
-            rows = [["trace-1"]] if self.calls == 1 else [["trace-1"], ["trace-2"]]
-            table = SimpleNamespace(columns=["trace_id"], rows=rows)
+            rows = (
+                [["trace-1", "root-1"]]
+                if self.calls == 1
+                else [
+                    ["trace-1", "root-1"],
+                    ["trace-1", "chat-1"],
+                    ["trace-1", "tool-1"],
+                    ["trace-2", "root-2"],
+                    ["trace-2", "chat-2"],
+                ]
+            )
+            table = SimpleNamespace(columns=["trace_id", "span_id"], rows=rows)
             return SimpleNamespace(status=LogsQueryStatus.SUCCESS, tables=[table])
 
         def close(self) -> None:
@@ -196,7 +217,16 @@ def test_wait_for_trace_ingestion_retries_role_propagation_failure() -> None:
                 error = HttpResponseError(message="Forbidden")
                 error.status_code = 403
                 raise error
-            table = SimpleNamespace(columns=["trace_id"], rows=[["trace-1"], ["trace-2"]])
+            table = SimpleNamespace(
+                columns=["trace_id", "span_id"],
+                rows=[
+                    ["trace-1", "root-1"],
+                    ["trace-1", "chat-1"],
+                    ["trace-1", "tool-1"],
+                    ["trace-2", "root-2"],
+                    ["trace-2", "chat-2"],
+                ],
+            )
             return SimpleNamespace(status=LogsQueryStatus.SUCCESS, tables=[table])
 
         def close(self) -> None:
@@ -242,3 +272,40 @@ def test_ingestion_query_escapes_values() -> None:
 
     assert "marker''\\\\value" in query
     assert "agent''\\\\value" in query
+    assert 'operation_name == "invoke_agent"' not in query
+    assert "span_id = tostring(id)" in query
+
+
+def test_wait_for_trace_ingestion_waits_for_chat_and_tool_spans() -> None:
+    responses = [
+        [["trace-1", "root-1"], ["trace-2", "root-2"]],
+        [["trace-1", "root-1"], ["trace-2", "root-2"], ["trace-1", "chat-1"], ["trace-2", "chat-2"]],
+        [
+            ["trace-1", "root-1"],
+            ["trace-2", "root-2"],
+            ["trace-1", "chat-1"],
+            ["trace-2", "chat-2"],
+            ["trace-1", "tool-1"],
+        ],
+    ]
+
+    class LogsClient:
+        def __init__(self):
+            self.calls = 0
+
+        def query_resource(self, *_args, **_kwargs):
+            rows = responses[self.calls]
+            self.calls += 1
+            table = SimpleNamespace(columns=["trace_id", "span_id"], rows=rows)
+            return SimpleNamespace(status=LogsQueryStatus.SUCCESS, tables=[table])
+
+    client = LogsClient()
+    wait_for_trace_ingestion(
+        client,
+        "application-insights-resource",
+        "fixture-otel",
+        _batch(),
+        timeout_seconds=1,
+        sleep=lambda _seconds: None,
+    )
+    assert client.calls == 3

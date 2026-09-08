@@ -2,29 +2,44 @@
 # Licensed under the MIT License.
 
 import re
-from unittest.mock import DEFAULT, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-import conftest
 
-
-@pytest.fixture
-def regex_sanitizers(monkeypatch, sanitized_values):
+@pytest.fixture(name="sanitizer_calls")
+def _sanitizer_calls(monkeypatch, sanitized_values, sanitizer_configuration):
     monkeypatch.setenv("FOUNDRY_MODEL_NAME", "test-connection/gpt-5.4")
     monkeypatch.setenv("MODEL_DEPLOYMENT_NAME", "gpt-5.4")
-    with patch.multiple(
-        conftest,
-        add_general_regex_sanitizer=DEFAULT,
-        add_header_regex_sanitizer=DEFAULT,
-        add_body_regex_sanitizer=DEFAULT,
-        add_body_string_sanitizer=DEFAULT,
-        add_body_key_sanitizer=DEFAULT,
-        add_remove_header_sanitizer=DEFAULT,
-        remove_batch_sanitizers=DEFAULT,
-    ) as mocks:
-        conftest.add_sanitizers.__wrapped__(None, sanitized_values)
-        return [call.kwargs for call in mocks["add_general_regex_sanitizer"].call_args_list]
+    mocks = {
+        name: MagicMock()
+        for name in (
+            "add_general_regex_sanitizer",
+            "add_header_regex_sanitizer",
+            "add_body_regex_sanitizer",
+            "add_body_string_sanitizer",
+            "add_body_key_sanitizer",
+            "add_remove_header_sanitizer",
+            "remove_batch_sanitizers",
+        )
+    }
+    with patch.dict(sanitizer_configuration.__globals__, mocks):
+        sanitizer_configuration(None, sanitized_values)
+    return mocks
+
+
+@pytest.fixture(name="regex_sanitizers")
+def _regex_sanitizers(sanitizer_calls):
+    return [call.kwargs for call in sanitizer_calls["add_general_regex_sanitizer"].call_args_list]
+
+
+def test_recordings_remove_private_response_headers(sanitizer_calls):
+    headers = {
+        header.strip()
+        for call in sanitizer_calls["add_remove_header_sanitizer"].call_args_list
+        for header in call.kwargs["headers"].split(",")
+    }
+    assert {"azureml-served-by-cluster", "openai-organization", "openai-project"} <= headers
 
 
 @pytest.mark.parametrize(

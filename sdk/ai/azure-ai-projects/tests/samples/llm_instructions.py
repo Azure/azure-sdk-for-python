@@ -18,8 +18,7 @@ from __future__ import annotations
 
 from typing import Final
 
-agent_tools_instructions: Final[str] = (
-    """
+agent_tools_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a tool-driven assistant workflow.
 
@@ -44,11 +43,9 @@ even if it also asks follow-up questions.
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-memories_instructions: Final[str] = (
-    """
+memories_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a memories workflow.
 
@@ -73,11 +70,9 @@ memory behavior, even if no memory matches are found.
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-agents_instructions: Final[str] = (
-    """
+agents_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct.
 
@@ -108,11 +103,9 @@ agent behavior, including reasonable correspondence between input prompt(s) and 
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-chat_completions_instructions: Final[str] = (
-    """
+chat_completions_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for Chat Completions scenarios.
 
@@ -131,11 +124,9 @@ responds to the printed prompt, even if the exact wording varies.
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-resource_management_instructions: Final[str] = (
-    """
+resource_management_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for resource-management samples (for example
 connections, files, and deployments).
@@ -161,51 +152,9 @@ resource-management behavior.
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-agent_insights_instructions: Final[str] = (
-    """
-We just ran Python code and captured print/log output in an attached log file (TXT).
-Validate whether the Agent Insights sample completed either an on-demand analysis workflow or
-scheduled-monitor setup.
-
-For the on-demand sample, successful output must show all of the following:
-- A monitor was created for the selected agent.
-- An on-demand run reached the `succeeded` status.
-- The run analyzed at least one trace.
-- The run created, updated, or reopened at least one insight.
-- Listing the monitor's insights returned at least one insight with a title, severity, status,
-  trace count, and proposed-fix kind.
-- One insight was updated to `resolved` and then reopened as `active`.
-- The monitor was deleted during cleanup.
-
-For the scheduled sample, successful output must show all of the following:
-- A scheduled monitor was created for the selected agent.
-- The retrieved monitor is enabled.
-- The run interval is a positive number of hours.
-- The service returned a next scheduled run time.
-- Any active scheduled run was cancelled during cleanup.
-- The scheduled monitor was deleted during cleanup.
-
-Mark `correct = false` for:
-- Exceptions, stack traces, authentication, authorization, timeout, connection, or service errors.
-- Output that does not complete either workflow described above.
-- A failed, cancelled, queued, or still-running on-demand analysis run.
-- Zero analyzed traces or zero changed insights in the on-demand workflow.
-- An on-demand insight that is not resolved and reopened.
-- A disabled scheduled monitor, a missing next scheduled run, or cleanup failure.
-
-The wording, generated insight titles, remediation text, and scheduled time can vary. Judge the
-explicit status and count fields, not exact generated text.
-
-Always include `reason` with a concise explanation tied to the observed print output.
-""".strip()
-)
-
-
-fine_tuning_instructions: Final[str] = (
-    """
+fine_tuning_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a fine-tuning workflow.
 
@@ -229,11 +178,9 @@ the intended fine-tuning workflow.
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-evaluations_instructions: Final[str] = (
-    """
+evaluations_instructions: Final[str] = """
 We just ran Python code for an evaluation sample and captured print/log output in an attached log file (TXT).
 Your job: determine if the sample code executed to completion WITHOUT throwing an unhandled exception.
 
@@ -255,11 +202,9 @@ Respond FALSE (correct=false) ONLY if:
 
 Always respond with `reason` indicating the reason for the response.
 """.strip()
-)
 
 
-hosted_agents_instructions: Final[str] = (
-    """
+hosted_agents_instructions: Final[str] = """
 We just ran Python code for a hosted-agent sample and captured print/log output in an attached log file (TXT).
 Validate whether the sample executed correctly.
 
@@ -281,14 +226,12 @@ Mark `correct = true` when execution succeeds and output is consistent with the 
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
 # Folder (under samples/) -> instructions.
 # Keys intentionally mirror the folder names used by sample test discovery.
 # Use the most specific key possible (e.g. "agents/tools" should win over "agents").
 INSTRUCTIONS_BY_FOLDER: Final[dict[str, str]] = {
-    "agent_insights": agent_insights_instructions,
     "agents/tools": agent_tools_instructions,
     "agents": agents_instructions,
     "hosted_agents": hosted_agents_instructions,

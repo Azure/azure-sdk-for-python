@@ -10,6 +10,7 @@
 
 * Fixed Agent Insights run pollers to return the completed operation response without following the service's relative `Location` header.
 * Fixed Agent Insights run pollers to stop and raise an error when the service reports a cancelled run.
+* Preserved the Agent Insights run ID when resuming a poller from an Azure Core continuation token.
 
 ## 2.6.0 (2026-09-04)
 

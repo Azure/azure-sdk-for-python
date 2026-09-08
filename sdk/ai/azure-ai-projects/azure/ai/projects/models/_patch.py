@@ -632,6 +632,11 @@ class AgentInsightRunLROPoller(LROPoller[AgentInsightRunResult]):
 
     def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
         self._run_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+        if self._run_id is None:
+            # Core's restored continuation response can expose its JSON only through the context.
+            data = initial_response.context.get("deserialized_data")
+            if isinstance(data, Mapping):
+                self._run_id = data.get("id")
         super().__init__(client, initial_response, deserialization_callback, polling_method)
 
     def status(self) -> str:
@@ -680,6 +685,11 @@ class AsyncAgentInsightRunLROPoller(AsyncLROPoller[AgentInsightRunResult]):
     def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
         super().__init__(client, initial_response, deserialization_callback, polling_method)
         self._run_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+        if self._run_id is None:
+            # Core's restored continuation response can expose its JSON only through the context.
+            data = initial_response.context.get("deserialized_data")
+            if isinstance(data, Mapping):
+                self._run_id = data.get("id")
 
     def status(self) -> str:
         """Return the run status using the Agent Insights spelling ``cancelled``.

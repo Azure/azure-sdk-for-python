@@ -77,6 +77,7 @@ class FixtureAgent:
 class TraceBatch:
     marker: str
     trace_ids: tuple[str, ...]
+    span_ids: tuple[str, ...]
     window_start: datetime
     window_end: datetime
 
@@ -105,8 +106,6 @@ class _LogsClient(Protocol):
         server_timeout: int | None = None,
         **kwargs: Any,
     ) -> Any: ...
-
-    def close(self) -> None: ...
 
 
 def provision_recording_fixture(settings: FixtureSettings) -> tuple[FixtureAgent, TraceBatch]:
@@ -211,19 +210,20 @@ def emit_fixture_traces(
     provider.add_span_processor(BatchSpanProcessor(exporter))
     tracer = provider.get_tracer(__name__)
     trace_ids: list[str] = []
+    span_ids: list[str] = []
     window_start = now() - timedelta(seconds=30)
     try:
         for index in range(defect_trace_count + control_trace_count):
-            trace_ids.append(
-                _emit_conversation(
-                    tracer,
-                    agent,
-                    marker,
-                    index,
-                    is_defect=index < defect_trace_count,
-                    uuid_factory=uuid_factory,
-                )
+            trace_id, conversation_span_ids = _emit_conversation(
+                tracer,
+                agent,
+                marker,
+                index,
+                is_defect=index < defect_trace_count,
+                uuid_factory=uuid_factory,
             )
+            trace_ids.append(trace_id)
+            span_ids.extend(conversation_span_ids)
 
         if not provider.force_flush(timeout_millis=30_000):
             raise RecordingFixtureError("The OpenTelemetry spans could not be flushed.")
@@ -233,6 +233,7 @@ def emit_fixture_traces(
     return TraceBatch(
         marker=marker,
         trace_ids=tuple(trace_ids),
+        span_ids=tuple(span_ids),
         window_start=window_start,
         window_end=now() + timedelta(seconds=30),
     )
@@ -248,12 +249,13 @@ def wait_for_trace_ingestion(
     sleep: Callable[[float], None] = time.sleep,
     monotonic: Callable[[], float] = time.monotonic,
 ) -> None:
-    """Wait until Application Insights exposes every emitted root trace."""
+    """Wait until Application Insights exposes every emitted root and child span."""
     if timeout_seconds <= 0:
         raise ValueError("timeout_seconds must be positive.")
 
     query = _build_ingestion_query(batch.marker, otel_agent_id)
     expected_trace_ids = set(batch.trace_ids)
+    expected_span_ids = set(batch.span_ids)
     deadline = monotonic() + timeout_seconds
     attempt = 0
     while True:
@@ -274,13 +276,16 @@ def wait_for_trace_ingestion(
             print(f"Ingestion check {attempt}: retrying after {type(error).__name__}.")
         else:
             if response.status == LogsQueryStatus.SUCCESS:
-                observed_trace_ids = _extract_trace_ids(response.tables)
+                observed_trace_ids = _extract_ids(response.tables, "trace_id")
+                observed_span_ids = _extract_ids(response.tables, "span_id")
                 print(
                     f"Ingestion check {attempt}: found "
                     f"{len(expected_trace_ids.intersection(observed_trace_ids))} of "
-                    f"{len(expected_trace_ids)} expected traces."
+                    f"{len(expected_trace_ids)} expected traces and "
+                    f"{len(expected_span_ids.intersection(observed_span_ids))} of "
+                    f"{len(expected_span_ids)} expected spans."
                 )
-                if expected_trace_ids.issubset(observed_trace_ids):
+                if expected_trace_ids.issubset(observed_trace_ids) and expected_span_ids.issubset(observed_span_ids):
                     return
 
         remaining = deadline - monotonic()
@@ -341,7 +346,7 @@ def _emit_conversation(
     *,
     is_defect: bool,
     uuid_factory: Callable[[], str],
-) -> str:
+) -> tuple[str, tuple[str, ...]]:
     conversation_id = f"recording-conversation-{uuid_factory()}"
     alias = f"SYNTH-WORKSPACE-{index}"
     with tracer.start_as_current_span(
@@ -349,11 +354,13 @@ def _emit_conversation(
         kind=SpanKind.INTERNAL,
     ) as root_span:
         trace_id = f"{root_span.get_span_context().trace_id:032x}"
+        span_ids = [f"{root_span.get_span_context().span_id:016x}"]
         _set_agent_attributes(root_span, agent, conversation_id, marker, "invoke_agent")
         with tracer.start_as_current_span(
             "chat recording-fixture",
             kind=SpanKind.INTERNAL,
         ) as chat_span:
+            span_ids.append(f"{chat_span.get_span_context().span_id:016x}")
             _set_agent_attributes(chat_span, agent, conversation_id, marker, "chat")
             chat_span.set_attribute("gen_ai.request.model", "external-recording-fixture")
             chat_span.set_attribute("gen_ai.usage.input_tokens", 24)
@@ -375,6 +382,7 @@ def _emit_conversation(
                     "execute_tool delete_test_workspace",
                     kind=SpanKind.INTERNAL,
                 ) as tool_span:
+                    span_ids.append(f"{tool_span.get_span_context().span_id:016x}")
                     _set_agent_attributes(
                         tool_span,
                         agent,
@@ -401,10 +409,10 @@ def _emit_conversation(
                     )
                 output = f"Fictional workspace {alias} is active. No changes were made."
             else:
-                output = f"Fictional workspace {alias} is active."
+                output = f"I cannot verify the status of fictional workspace {alias} without a read-only tool."
             chat_span.set_attribute("gen_ai.output.messages", _messages("assistant", output))
             chat_span.set_attribute("gen_ai.response.finish_reasons", '["stop"]')
-    return trace_id
+    return trace_id, tuple(span_ids)
 
 
 def _set_agent_attributes(
@@ -461,28 +469,26 @@ def _build_ingestion_query(marker: str, otel_agent_id: str) -> str:
     # cspell:ignore isfuzzy
     return f"""
 union isfuzzy=true requests, dependencies
-| extend operation_name = tostring(customDimensions["gen_ai.operation.name"])
 | extend fixture_id = tostring(customDimensions["test.agent_insights.fixture_id"])
 | extend agent_id = tostring(customDimensions["gen_ai.agent.id"])
-| where operation_name == "invoke_agent"
 | where fixture_id == '{_escape_kql_string(marker)}'
 | where agent_id == '{_escape_kql_string(otel_agent_id)}'
-| distinct trace_id = tostring(operation_Id)
+| distinct trace_id = tostring(operation_Id), span_id = tostring(id)
 """.strip()
 
 
-def _extract_trace_ids(tables: list[Any]) -> set[str]:
-    trace_ids: set[str] = set()
+def _extract_ids(tables: list[Any], column_name: str) -> set[str]:
+    identifiers: set[str] = set()
     for table in tables:
         columns = [str(getattr(column, "name", column) or "") for column in table.columns]
-        if "trace_id" not in columns:
+        if column_name not in columns:
             continue
-        trace_id_index = columns.index("trace_id")
+        column_index = columns.index(column_name)
         for row in table.rows:
-            value = str(row[trace_id_index] or "").strip()
+            value = str(row[column_index] or "").strip()
             if value:
-                trace_ids.add(value)
-    return trace_ids
+                identifiers.add(value)
+    return identifiers
 
 
 def _escape_kql_string(value: str) -> str:

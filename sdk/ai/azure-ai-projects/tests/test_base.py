@@ -107,8 +107,6 @@ agentInsightsServicePreparer = functools.partial(
     foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     foundry_agent_name="sanitized-agent-name",
     foundry_model_name="sanitized-model-deployment-name",
-    llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    llm_validation_model="sanitized-model-deployment-name",
 )
 
 # Fine-tuning job type constants
