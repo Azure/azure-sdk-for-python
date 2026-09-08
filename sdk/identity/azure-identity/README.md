@@ -256,7 +256,7 @@ If you encounter bugs or have suggestions, [open an issue](https://github.com/Az
 
 ## Contributing
 
-For deeper context on why the library is designed the way it is, see the [architecture decision log](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/design-decisions.md), a chronological record of key design decisions and the reasoning behind them.
+For deeper context on why the library is designed the way it is, see the [architecture decision log](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/DESIGN_DECISIONS.md), a chronological record of key design decisions and the reasoning behind them.
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [https://cla.microsoft.com](https://cla.microsoft.com).
 
