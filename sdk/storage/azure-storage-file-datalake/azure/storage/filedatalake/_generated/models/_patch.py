@@ -6,10 +6,11 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import sys
 from typing import Any, Callable, Dict, List, Optional
 
-from .._utils.serialization import JSON, Model
+from .._utils.serialization import JSON, Model, attribute_transformer
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -34,14 +35,26 @@ class _BackCompatMixin:
         """
         return Model.serialize(self, keep_readonly=keep_readonly, **kwargs)  # type: ignore[arg-type]
 
-    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> JSON:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = attribute_transformer,
+        **kwargs: Any,
+    ) -> JSON:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes.
+        :param key_transformer: A function that takes an attribute name, the attribute map, and the value, and returns
+         the key to use in the output dict.
         :returns: A dict JSON compatible object.
         :rtype: JSON
         """
-        return Model.as_dict(self, keep_readonly=keep_readonly, **kwargs)  # type: ignore[arg-type]
+        return Model.as_dict(
+            self,  # type: ignore[arg-type]
+            keep_readonly=keep_readonly,
+            key_transformer=key_transformer,
+            **kwargs,
+        )
 
     @classmethod
     def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:

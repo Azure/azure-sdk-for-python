@@ -64,8 +64,10 @@ def upload_datalake_file(  # pylint: disable=too-many-locals
         if not overwrite:
             # if customers didn't specify access conditions, they cannot flush data to existing file
             if not _any_conditions(
-                if_modified_since=if_modified_since, if_unmodified_since=if_unmodified_since,
-                etag=etag, match_condition=match_condition
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
             ):
                 match_condition = MatchConditions.IfMissing
             if properties or umask or permissions:

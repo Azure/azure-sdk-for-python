@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DataLakeClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class DataLakeClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for DataLakeClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -28,8 +29,9 @@ class DataLakeClientConfiguration:  # pylint: disable=too-many-instance-attribut
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword version: Specifies the version of the operation to use for this request. Known values
-     are "2026-06-06". Default value is "2026-06-06". Note that overriding this default value may
-     result in unsupported behavior.
+     are "2026-06-06" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype version: str
     """
 

@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, TYPE_CHECKING
-from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -18,11 +18,16 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import DataLakeClientConfiguration
 from .operations import FileSystemOperations, PathOperations, ServiceOperations
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DataLakeClient:  # pylint: disable=client-accepts-api-version-keyword
+class DataLakeClient:  # pylint: disable=client-accepts-api-version-keyword,docstring-keyword-should-match-keyword-only
     """DataLakeClient.
 
     :ivar file_system: FileSystemOperations operations
@@ -37,8 +42,9 @@ class DataLakeClient:  # pylint: disable=client-accepts-api-version-keyword
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword version: Specifies the version of the operation to use for this request. Known values
-     are "2026-06-06". Default value is "2026-06-06". Note that overriding this default value may
-     result in unsupported behavior.
+     are "2026-06-06" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype version: str
     """
 

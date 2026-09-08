@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, AsyncIterator, Callable, Optional, TypeVar, Union
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import AsyncPipelineClient, MatchConditions
 from azure.core.exceptions import (
@@ -57,7 +57,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class FileSystemOperations:
+class FileSystemOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -664,7 +664,7 @@ class FileSystemOperations:
         return deserialized  # type: ignore
 
 
-class PathOperations:
+class PathOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -955,12 +955,13 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
+    @overload
     async def update(  # pylint: disable=too-many-locals
         self,
         body: bytes,
         *,
         action: Union[str, _models.PathUpdateAction],
+        content_type: str = "application/octet-stream",
         max_records: Optional[int] = None,
         continuation: Optional[str] = None,
         mode: Optional[Union[str, _models.PathSetAccessControlRecursiveMode]] = None,
@@ -998,6 +999,353 @@ class PathOperations:
 
         :param body: Initial data. Required.
         :type body: bytes
+        :keyword action: The action must be "append" to upload data to be appended to a file, "flush"
+         to flush previously uploaded data to a file, "setProperties" to set the properties of a file or
+         directory, "setAccessControl" to set the owner, group, permissions, or access control list for
+         a file or directory, or "setAccessControlRecursive" to set the access control list for a
+         directory recursively. Note that Hierarchical Namespace must be enabled for the account in
+         order to use access control. Also note that the Access Control List (ACL) includes permissions
+         for the owner, owning group, and others, so the x-ms-permissions and x-ms-acl request headers
+         are mutually exclusive. Known values are: "append", "flush", "setProperties",
+         "setAccessControl", and "setAccessControlRecursive". Required.
+        :paramtype action: str or ~azure.storage.filedatalake.models.PathUpdateAction
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword max_records: Optional. Valid for "SetAccessControlRecursive" operation. It specifies
+         the maximum number of files or directories on which the acl change will be applied. If omitted
+         or greater than 2,000, the request will process up to 2,000 items. Default value is None.
+        :paramtype max_records: int
+        :keyword continuation: Optional. The number of paths processed with each invocation is limited.
+         If the number of paths to be processed exceeds this limit, a continuation token is returned in
+         the response header x-ms-continuation. When a continuation token is returned in the response,
+         it must be percent-encoded and specified in a subsequent invocation of
+         setAccessControlRecursive operation. Default value is None.
+        :paramtype continuation: str
+        :keyword mode: Mode for set access control recursive. Known values are: "set", "modify", and
+         "remove". Default value is None.
+        :paramtype mode: str or ~azure.storage.filedatalake.models.PathSetAccessControlRecursiveMode
+        :keyword force_flag: Optional. Valid for "SetAccessControlRecursive" operation. If set to
+         false, the operation will terminate quickly on encountering user errors (4XX). If true, the
+         operation will ignore user errors and proceed with the operation on other sub-entities of the
+         directory. Continuation token will only be returned when forceFlag is true in case of user
+         errors. If not set the default value is false for this. Default value is None.
+        :paramtype force_flag: bool
+        :keyword position: This parameter allows the caller to upload data in parallel and control the
+         order in which it is appended to the file. It is required when uploading data to be appended to
+         the file and when flushing previously uploaded data to the file. The value must be the position
+         where the data is to be appended. Uploaded data is not immediately flushed, or written, to the
+         file. To flush, the previously uploaded data must be contiguous, the position parameter must be
+         specified and equal to the length of the file after all data has been written, and there must
+         not be a request entity body included with the request. Default value is None.
+        :paramtype position: int
+        :keyword retain_uncommitted_data: Valid only for flush operations. If "true", uncommitted data
+         is retained after the flush operation completes; otherwise, the uncommitted data is deleted
+         after the flush operation. The default is false. Data at offsets less than the specified
+         position are written to the file when flush succeeds, but this optional parameter allows data
+         after the flush position to be retained for a future flush operation. Default value is None.
+        :paramtype retain_uncommitted_data: bool
+        :keyword close: Azure Storage Events allow applications to receive notifications when files
+         change. When Azure Storage Events are enabled, a file changed event is raised. This event has a
+         property indicating whether this is the final change to distinguish the difference between an
+         intermediate flush to a file stream and the final close of a file stream. The close query
+         parameter is valid only when the action is "flush" and change notifications are enabled. If the
+         value of close is "true" and the flush operation completes successfully, the service raises a
+         file change notification with a property indicating that this is the final update (the file
+         stream has been closed). If "false" a change notification is raised indicating the file has
+         changed. The default is false. This query parameter is set to true by the Hadoop ABFS driver to
+         indicate that the file stream has been closed. Default value is None.
+        :paramtype close: bool
+        :keyword content_length: Required for "Append Data" and "Flush Data". Must be 0 for "Flush
+         Data". Must be the length of the request content in bytes for "Append Data". Default value is
+         None.
+        :paramtype content_length: int
+        :keyword content_md5: Specify the transactional md5 for the body, to be validated by the
+         service. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword cache_control: Optional. Sets the blob's cache control. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
+        :paramtype cache_control: str
+        :keyword content_disposition: Optional. Sets the blob's Content-Disposition header. Default
+         value is None.
+        :paramtype content_disposition: str
+        :keyword content_encoding: Optional. Sets the blob's content encoding. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype content_encoding: str
+        :keyword content_language: Optional. Set the blob's content language. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype content_language: str
+        :keyword properties: Optional. User-defined properties to be stored with the filesystem, in the
+         format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
+         is a base64 encoded string. Note that the string may only contain ASCII characters in the
+         ISO-8859-1 character set. If the filesystem exists, any properties not included in the list
+         will be removed. All properties are removed if the header is omitted. To merge new and existing
+         properties, first get all existing properties and the current E-Tag, then make a conditional
+         request with the E-Tag and include values for all properties. Default value is None.
+        :paramtype properties: str
+        :keyword owner: Optional. The owner of the blob or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional. The owning group of the blob or directory. Default value is None.
+        :paramtype group: str
+        :keyword permissions: Optional and only valid if Hierarchical Namespace is enabled for the
+         account. Sets POSIX access permissions for the file owner, the file owning group, and others.
+         Each class may be granted read, write, or execute permission. The sticky bit is also supported.
+         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported. Default value
+         is None.
+        :paramtype permissions: str
+        :keyword acl: Sets POSIX access control rights on files and directories. The value is a
+         comma-separated list of access control entries. Each access control entry (ACE) consists of a
+         scope, a type, a user or group identifier, and permissions in the format
+         "[scope:][type]:[id]:[permissions]". Default value is None.
+        :paramtype acl: str
+        :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
+         modified since the specified date/time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this header value to operate only on a blob if it has not
+         been modified since the specified date/time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SetAccessControlRecursiveResponse. The SetAccessControlRecursiveResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.storage.filedatalake._generated.models.SetAccessControlRecursiveResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(  # pylint: disable=too-many-locals
+        self,
+        body: IO[bytes],
+        *,
+        action: Union[str, _models.PathUpdateAction],
+        content_type: str = "application/octet-stream",
+        max_records: Optional[int] = None,
+        continuation: Optional[str] = None,
+        mode: Optional[Union[str, _models.PathSetAccessControlRecursiveMode]] = None,
+        force_flag: Optional[bool] = None,
+        position: Optional[int] = None,
+        retain_uncommitted_data: Optional[bool] = None,
+        close: Optional[bool] = None,
+        content_length: Optional[int] = None,
+        content_md5: Optional[bytes] = None,
+        lease_id: Optional[str] = None,
+        cache_control: Optional[str] = None,
+        content_disposition: Optional[str] = None,
+        content_encoding: Optional[str] = None,
+        content_language: Optional[str] = None,
+        properties: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        permissions: Optional[str] = None,
+        acl: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        timeout: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.SetAccessControlRecursiveResponse:
+        """Uploads data to be appended to a file, flushes (writes) previously uploaded data to a file,
+        sets properties for a file or directory, or sets access control for a file or directory. Data
+        can only be appended to a file. Concurrent writes to the same file using multiple clients are
+        not supported. This operation supports conditional HTTP requests. For more information, see
+        `Specifying Conditional Headers for Blob Service Operations
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+
+        :param body: Initial data. Required.
+        :type body: IO[bytes]
+        :keyword action: The action must be "append" to upload data to be appended to a file, "flush"
+         to flush previously uploaded data to a file, "setProperties" to set the properties of a file or
+         directory, "setAccessControl" to set the owner, group, permissions, or access control list for
+         a file or directory, or "setAccessControlRecursive" to set the access control list for a
+         directory recursively. Note that Hierarchical Namespace must be enabled for the account in
+         order to use access control. Also note that the Access Control List (ACL) includes permissions
+         for the owner, owning group, and others, so the x-ms-permissions and x-ms-acl request headers
+         are mutually exclusive. Known values are: "append", "flush", "setProperties",
+         "setAccessControl", and "setAccessControlRecursive". Required.
+        :paramtype action: str or ~azure.storage.filedatalake.models.PathUpdateAction
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword max_records: Optional. Valid for "SetAccessControlRecursive" operation. It specifies
+         the maximum number of files or directories on which the acl change will be applied. If omitted
+         or greater than 2,000, the request will process up to 2,000 items. Default value is None.
+        :paramtype max_records: int
+        :keyword continuation: Optional. The number of paths processed with each invocation is limited.
+         If the number of paths to be processed exceeds this limit, a continuation token is returned in
+         the response header x-ms-continuation. When a continuation token is returned in the response,
+         it must be percent-encoded and specified in a subsequent invocation of
+         setAccessControlRecursive operation. Default value is None.
+        :paramtype continuation: str
+        :keyword mode: Mode for set access control recursive. Known values are: "set", "modify", and
+         "remove". Default value is None.
+        :paramtype mode: str or ~azure.storage.filedatalake.models.PathSetAccessControlRecursiveMode
+        :keyword force_flag: Optional. Valid for "SetAccessControlRecursive" operation. If set to
+         false, the operation will terminate quickly on encountering user errors (4XX). If true, the
+         operation will ignore user errors and proceed with the operation on other sub-entities of the
+         directory. Continuation token will only be returned when forceFlag is true in case of user
+         errors. If not set the default value is false for this. Default value is None.
+        :paramtype force_flag: bool
+        :keyword position: This parameter allows the caller to upload data in parallel and control the
+         order in which it is appended to the file. It is required when uploading data to be appended to
+         the file and when flushing previously uploaded data to the file. The value must be the position
+         where the data is to be appended. Uploaded data is not immediately flushed, or written, to the
+         file. To flush, the previously uploaded data must be contiguous, the position parameter must be
+         specified and equal to the length of the file after all data has been written, and there must
+         not be a request entity body included with the request. Default value is None.
+        :paramtype position: int
+        :keyword retain_uncommitted_data: Valid only for flush operations. If "true", uncommitted data
+         is retained after the flush operation completes; otherwise, the uncommitted data is deleted
+         after the flush operation. The default is false. Data at offsets less than the specified
+         position are written to the file when flush succeeds, but this optional parameter allows data
+         after the flush position to be retained for a future flush operation. Default value is None.
+        :paramtype retain_uncommitted_data: bool
+        :keyword close: Azure Storage Events allow applications to receive notifications when files
+         change. When Azure Storage Events are enabled, a file changed event is raised. This event has a
+         property indicating whether this is the final change to distinguish the difference between an
+         intermediate flush to a file stream and the final close of a file stream. The close query
+         parameter is valid only when the action is "flush" and change notifications are enabled. If the
+         value of close is "true" and the flush operation completes successfully, the service raises a
+         file change notification with a property indicating that this is the final update (the file
+         stream has been closed). If "false" a change notification is raised indicating the file has
+         changed. The default is false. This query parameter is set to true by the Hadoop ABFS driver to
+         indicate that the file stream has been closed. Default value is None.
+        :paramtype close: bool
+        :keyword content_length: Required for "Append Data" and "Flush Data". Must be 0 for "Flush
+         Data". Must be the length of the request content in bytes for "Append Data". Default value is
+         None.
+        :paramtype content_length: int
+        :keyword content_md5: Specify the transactional md5 for the body, to be validated by the
+         service. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword cache_control: Optional. Sets the blob's cache control. If specified, this property is
+         stored with the blob and returned with a read request. Default value is None.
+        :paramtype cache_control: str
+        :keyword content_disposition: Optional. Sets the blob's Content-Disposition header. Default
+         value is None.
+        :paramtype content_disposition: str
+        :keyword content_encoding: Optional. Sets the blob's content encoding. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype content_encoding: str
+        :keyword content_language: Optional. Set the blob's content language. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype content_language: str
+        :keyword properties: Optional. User-defined properties to be stored with the filesystem, in the
+         format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
+         is a base64 encoded string. Note that the string may only contain ASCII characters in the
+         ISO-8859-1 character set. If the filesystem exists, any properties not included in the list
+         will be removed. All properties are removed if the header is omitted. To merge new and existing
+         properties, first get all existing properties and the current E-Tag, then make a conditional
+         request with the E-Tag and include values for all properties. Default value is None.
+        :paramtype properties: str
+        :keyword owner: Optional. The owner of the blob or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional. The owning group of the blob or directory. Default value is None.
+        :paramtype group: str
+        :keyword permissions: Optional and only valid if Hierarchical Namespace is enabled for the
+         account. Sets POSIX access permissions for the file owner, the file owning group, and others.
+         Each class may be granted read, write, or execute permission. The sticky bit is also supported.
+         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported. Default value
+         is None.
+        :paramtype permissions: str
+        :keyword acl: Sets POSIX access control rights on files and directories. The value is a
+         comma-separated list of access control entries. Each access control entry (ACE) consists of a
+         scope, a type, a user or group identifier, and permissions in the format
+         "[scope:][type]:[id]:[permissions]". Default value is None.
+        :paramtype acl: str
+        :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
+         modified since the specified date/time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this header value to operate only on a blob if it has not
+         been modified since the specified date/time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SetAccessControlRecursiveResponse. The SetAccessControlRecursiveResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.storage.filedatalake._generated.models.SetAccessControlRecursiveResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update(  # pylint: disable=too-many-locals
+        self,
+        body: Union[bytes, IO[bytes]],
+        *,
+        action: Union[str, _models.PathUpdateAction],
+        max_records: Optional[int] = None,
+        continuation: Optional[str] = None,
+        mode: Optional[Union[str, _models.PathSetAccessControlRecursiveMode]] = None,
+        force_flag: Optional[bool] = None,
+        position: Optional[int] = None,
+        retain_uncommitted_data: Optional[bool] = None,
+        close: Optional[bool] = None,
+        content_length: Optional[int] = None,
+        content_md5: Optional[bytes] = None,
+        lease_id: Optional[str] = None,
+        cache_control: Optional[str] = None,
+        content_disposition: Optional[str] = None,
+        content_encoding: Optional[str] = None,
+        content_language: Optional[str] = None,
+        properties: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        permissions: Optional[str] = None,
+        acl: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        timeout: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.SetAccessControlRecursiveResponse:
+        """Uploads data to be appended to a file, flushes (writes) previously uploaded data to a file,
+        sets properties for a file or directory, or sets access control for a file or directory. Data
+        can only be appended to a file. Concurrent writes to the same file using multiple clients are
+        not supported. This operation supports conditional HTTP requests. For more information, see
+        `Specifying Conditional Headers for Blob Service Operations
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+
+        :param body: Initial data. Is either a bytes type or a IO[bytes] type. Required.
+        :type body: bytes or IO[bytes]
         :keyword action: The action must be "append" to upload data to be appended to a file, "flush"
          to flush previously uploaded data to a file, "setProperties" to set the properties of a file or
          directory, "setAccessControl" to set the owner, group, permissions, or access control list for
@@ -1141,9 +1489,10 @@ class PathOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SetAccessControlRecursiveResponse] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = body
 
         _request = build_path_update_request(
@@ -1786,7 +2135,7 @@ class PathOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.StorageError,
@@ -2258,11 +2607,12 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def append_data(  # pylint: disable=too-many-locals
+    @overload
+    async def append_data(
         self,
         body: bytes,
         *,
+        content_type: str = "application/octet-stream",
         position: Optional[int] = None,
         content_length: Optional[int] = None,
         transactional_content_hash: Optional[bytes] = None,
@@ -2284,6 +2634,191 @@ class PathOperations:
 
         :param body: Initial data. Required.
         :type body: bytes
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword position: This parameter allows the caller to upload data in parallel and control the
+         order in which it is appended to the file. It is required when uploading data to be appended to
+         the file and when flushing previously uploaded data to the file. The value must be the position
+         where the data is to be appended. Uploaded data is not immediately flushed, or written, to the
+         file. To flush, the previously uploaded data must be contiguous, the position parameter must be
+         specified and equal to the length of the file after all data has been written, and there must
+         not be a request entity body included with the request. Default value is None.
+        :paramtype position: int
+        :keyword content_length: Required for "Append Data" and "Flush Data". Must be 0 for "Flush
+         Data". Must be the length of the request content in bytes for "Append Data". Default value is
+         None.
+        :paramtype content_length: int
+        :keyword transactional_content_hash: Specify the transactional md5 for the body, to be
+         validated by the service. Default value is None.
+        :paramtype transactional_content_hash: bytes
+        :keyword transactional_content_crc64: Specify the transactional crc64 for the body, to be
+         validated by the service. Default value is None.
+        :paramtype transactional_content_crc64: bytes
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword lease_action: Optional. If "acquire" it will acquire the lease. If "auto-renew" it
+         will renew the lease. If "release" it will release the lease only on flush. If
+         "acquire-release" it will acquire & complete the operation & release the lease once operation
+         is done. Known values are: "acquire", "auto-renew", "release", and "acquire-release". Default
+         value is None.
+        :paramtype lease_action: str or ~azure.storage.filedatalake.models.LeaseAction
+        :keyword lease_duration: The lease duration is required to acquire a lease, and specifies the
+         duration of the lease in seconds. The lease duration must be between 15 and 60 seconds or -1
+         for infinite lease. Default value is None.
+        :paramtype lease_duration: int
+        :keyword proposed_lease_id: Proposed lease ID, in a GUID string format. Default value is None.
+        :paramtype proposed_lease_id: str
+        :keyword encryption_key: Optional. Specifies the encryption key to use to encrypt the data
+         provided in the request. If not specified, encryption is performed with the root account
+         encryption key. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the x-ms-encryption-key header is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash.
+         Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
+         header is provided. "AES256" Default value is None.
+        :paramtype encryption_algorithm: str or
+         ~azure.storage.filedatalake.models.EncryptionAlgorithmType
+        :keyword flush: If file should be flushed after the append. Default value is None.
+        :paramtype flush: bool
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def append_data(
+        self,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/octet-stream",
+        position: Optional[int] = None,
+        content_length: Optional[int] = None,
+        transactional_content_hash: Optional[bytes] = None,
+        transactional_content_crc64: Optional[bytes] = None,
+        lease_id: Optional[str] = None,
+        lease_action: Optional[Union[str, _models.LeaseAction]] = None,
+        lease_duration: Optional[int] = None,
+        proposed_lease_id: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        flush: Optional[bool] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Append data to the file.
+
+        :param body: Initial data. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword position: This parameter allows the caller to upload data in parallel and control the
+         order in which it is appended to the file. It is required when uploading data to be appended to
+         the file and when flushing previously uploaded data to the file. The value must be the position
+         where the data is to be appended. Uploaded data is not immediately flushed, or written, to the
+         file. To flush, the previously uploaded data must be contiguous, the position parameter must be
+         specified and equal to the length of the file after all data has been written, and there must
+         not be a request entity body included with the request. Default value is None.
+        :paramtype position: int
+        :keyword content_length: Required for "Append Data" and "Flush Data". Must be 0 for "Flush
+         Data". Must be the length of the request content in bytes for "Append Data". Default value is
+         None.
+        :paramtype content_length: int
+        :keyword transactional_content_hash: Specify the transactional md5 for the body, to be
+         validated by the service. Default value is None.
+        :paramtype transactional_content_hash: bytes
+        :keyword transactional_content_crc64: Specify the transactional crc64 for the body, to be
+         validated by the service. Default value is None.
+        :paramtype transactional_content_crc64: bytes
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword lease_action: Optional. If "acquire" it will acquire the lease. If "auto-renew" it
+         will renew the lease. If "release" it will release the lease only on flush. If
+         "acquire-release" it will acquire & complete the operation & release the lease once operation
+         is done. Known values are: "acquire", "auto-renew", "release", and "acquire-release". Default
+         value is None.
+        :paramtype lease_action: str or ~azure.storage.filedatalake.models.LeaseAction
+        :keyword lease_duration: The lease duration is required to acquire a lease, and specifies the
+         duration of the lease in seconds. The lease duration must be between 15 and 60 seconds or -1
+         for infinite lease. Default value is None.
+        :paramtype lease_duration: int
+        :keyword proposed_lease_id: Proposed lease ID, in a GUID string format. Default value is None.
+        :paramtype proposed_lease_id: str
+        :keyword encryption_key: Optional. Specifies the encryption key to use to encrypt the data
+         provided in the request. If not specified, encryption is performed with the root account
+         encryption key. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the x-ms-encryption-key header is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash.
+         Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
+         header is provided. "AES256" Default value is None.
+        :paramtype encryption_algorithm: str or
+         ~azure.storage.filedatalake.models.EncryptionAlgorithmType
+        :keyword flush: If file should be flushed after the append. Default value is None.
+        :paramtype flush: bool
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def append_data(  # pylint: disable=too-many-locals
+        self,
+        body: Union[bytes, IO[bytes]],
+        *,
+        position: Optional[int] = None,
+        content_length: Optional[int] = None,
+        transactional_content_hash: Optional[bytes] = None,
+        transactional_content_crc64: Optional[bytes] = None,
+        lease_id: Optional[str] = None,
+        lease_action: Optional[Union[str, _models.LeaseAction]] = None,
+        lease_duration: Optional[int] = None,
+        proposed_lease_id: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        flush: Optional[bool] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Append data to the file.
+
+        :param body: Initial data. Is either a bytes type or a IO[bytes] type. Required.
+        :type body: bytes or IO[bytes]
         :keyword position: This parameter allows the caller to upload data in parallel and control the
          order in which it is appended to the file. It is required when uploading data to be appended to
          the file and when flushing previously uploaded data to the file. The value must be the position
@@ -2357,9 +2892,10 @@ class PathOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream"
         _content = body
 
         _request = build_path_append_data_request(
@@ -2578,7 +3114,7 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class ServiceOperations:
+class ServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

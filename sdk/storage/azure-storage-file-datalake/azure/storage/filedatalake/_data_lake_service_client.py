@@ -123,9 +123,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         self._hosts[LocationMode.SECONDARY] = ""
 
         self._api_version = get_api_version(kwargs)
-        self._client = AzureDataLakeStorageRESTAPI(
-            self.url, version=self._api_version, pipeline=self._pipeline
-        )
+        self._client = AzureDataLakeStorageRESTAPI(self.url, version=self._api_version, pipeline=self._pipeline)
 
     def __enter__(self) -> Self:
         self._client.__enter__()
