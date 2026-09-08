@@ -301,8 +301,17 @@ class TestEncodingAsync(unittest.IsolatedAsyncioTestCase):
                 test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
             )
             created = await container.create_item(document)
-
-            self.assertEqual(created['content'], document['content'])
+            try:
+                self.assertEqual(created['content'], document['content'])
+            finally:
+                # This item is roughly 1.2 MiB and lives in a shared container that is reused by
+                # the emulator, key-live, and AAD-live lanes. Delete it in a finally block so
+                # repeated CI runs cannot accumulate large indexed documents, and so an assertion
+                # failure above does not leak one either.
+                try:
+                    await container.delete_item(document['id'], partition_key=document['pk'])
+                except exceptions.CosmosResourceNotFoundError:
+                    pass
 
 
 if __name__ == "__main__":
