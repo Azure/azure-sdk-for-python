@@ -46,8 +46,8 @@ def _assert_agent_insights_output(sample_path: str, print_output_calls: list[str
             r"^Next scheduled run: (?!None$).+$", output, re.MULTILINE
         ), "Agent Insights sample did not return the next scheduled run."
         assert re.search(
-            r"^The scheduled monitor remains enabled\.$", output, re.MULTILINE
-        ), "Agent Insights scheduled monitor was not left enabled."
+            r"^Deleted scheduled monitor `.+`\.$", output, re.MULTILINE
+        ), "Agent Insights scheduled monitor was not deleted."
         return
 
     assert sample_name == "sample_agent_insights_on_demand.py", f"Unexpected Agent Insights sample: {sample_name}"
@@ -67,6 +67,9 @@ def _assert_agent_insights_output(sample_path: str, print_output_calls: list[str
     assert re.search(
         r"^Insight status after reopening: active$", output, re.MULTILINE
     ), "Agent Insights sample did not reopen the insight."
+    assert re.search(
+        r"^Deleted monitor `.+`\.$", output, re.MULTILINE
+    ), "Agent Insights on-demand monitor was not deleted."
 
 
 class TestSamples(AzureRecordedTestCase):

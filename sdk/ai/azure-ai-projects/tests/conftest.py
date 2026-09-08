@@ -141,15 +141,15 @@ def add_sanitizers(test_proxy, sanitized_values):
         value="00000000-0000-0000-0000-000000000000",
     )
     add_general_regex_sanitizer(
-        regex=r"monitor_[0-9a-f-]{32,36}",
+        regex=r"\bmonitor_[0-9a-f-]{32,36}\b",
         value="monitor_00000000000000000000000000000000",
     )
     add_general_regex_sanitizer(
-        regex=r"run_[0-9a-f-]{32,36}",
+        regex=r"\brun_[0-9a-f-]{32,36}\b",
         value="run_00000000000000000000000000000000",
     )
     add_general_regex_sanitizer(
-        regex=r"insight_[0-9a-f]{24,64}",
+        regex=r"\binsight_[0-9a-f]{24,64}\b",
         value="insight_000000000000000000000000",
     )
     add_body_key_sanitizer(
@@ -281,7 +281,8 @@ def add_sanitizers(test_proxy, sanitized_values):
         )
         if value and value != sanitized_values["model_deployment_name"]
     }
-    for model_deployment_name in model_deployment_names:
+    # Replace connection-qualified names before their unqualified deployment names.
+    for model_deployment_name in sorted(model_deployment_names, key=len, reverse=True):
         add_general_regex_sanitizer(
             regex=re.escape(model_deployment_name),
             value=sanitized_values["model_deployment_name"],

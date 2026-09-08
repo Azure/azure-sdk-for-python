@@ -5,11 +5,6 @@
 
 [CmdletBinding()]
 param (
-    [hashtable] $DeploymentOutputs,
-    [string] $ResourceGroupName,
-    [string] $TenantId,
-    [string] $TestApplicationId,
-    [string] $TestApplicationSecret,
     [hashtable] $AdditionalParameters = @{},
     [Parameter(ValueFromRemainingArguments = $true)]
     $RemainingArguments

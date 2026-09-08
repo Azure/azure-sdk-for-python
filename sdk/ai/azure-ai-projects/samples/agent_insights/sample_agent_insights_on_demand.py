@@ -26,7 +26,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.6.0" python-dotenv
+    pip install "azure-ai-projects>=2.6.1" python-dotenv
+
+    Version 2.6.1 contains the required run-poller fixes. Until it is published,
+    install this package from the repository root instead:
+
+    pip install -e sdk/ai/azure-ai-projects python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found on the Overview
@@ -90,17 +95,6 @@ def main() -> None:
                 f"(enabled={monitor.enabled}, run interval={monitor.run_interval_hours} hours)."
             )
 
-            retrieved_monitor = monitor_operations.get(monitor.id)
-            print(
-                f"Retrieved monitor `{retrieved_monitor.id}` using model "
-                f"`{retrieved_monitor.model_deployment_name}`."
-            )
-
-            print(
-                f"Found {len(list(monitor_operations.list(agent_name=agent_name)))} "
-                f"monitor(s) for agent `{agent_name}`."
-            )
-
             poller = monitor_operations.begin_create_run(
                 monitor.id,
                 AgentInsightRunCreate(lookback_hours=3),
@@ -155,7 +149,7 @@ def main() -> None:
                 selected_status = getattr(selected_insight.status, "value", selected_insight.status)
                 print(f"Retrieved insight `{selected_insight.id}` with status {selected_status}.")
 
-                # Resolve the insight, then reopen it so the lifecycle change is visible.
+                # Status changes track review decisions; they do not apply the proposed fix.
                 monitor_operations.update_insight(
                     monitor.id,
                     selected_insight.id,

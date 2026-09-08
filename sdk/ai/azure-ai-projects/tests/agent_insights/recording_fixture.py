@@ -15,11 +15,12 @@ import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Any, Protocol, cast
+from typing import Any, Protocol
+
+from dotenv import load_dotenv
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ExternalAgentDefinition
-from azure.core.credentials import TokenCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -94,20 +95,6 @@ class _AgentOperations(Protocol):
     ) -> Any: ...
 
 
-class _TelemetryOperations(Protocol):
-    def get_application_insights_connection_string(self) -> str: ...
-
-
-class _ProjectClient(Protocol):
-    @property
-    def agents(self) -> _AgentOperations: ...
-
-    @property
-    def telemetry(self) -> _TelemetryOperations: ...
-
-    def close(self) -> None: ...
-
-
 class _LogsClient(Protocol):
     def query_resource(
         self,
@@ -122,80 +109,41 @@ class _LogsClient(Protocol):
     def close(self) -> None: ...
 
 
-ProjectClientFactory = Callable[[str, TokenCredential], _ProjectClient]
-LogsClientFactory = Callable[[TokenCredential], _LogsClient]
-TraceEmitter = Callable[[str, FixtureAgent, int, int], TraceBatch]
-
-
-def _default_project_client_factory(endpoint: str, credential: TokenCredential) -> _ProjectClient:
-    return cast(
-        _ProjectClient,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True),
-    )
-
-
-def _default_logs_client_factory(credential: TokenCredential) -> _LogsClient:
-    return cast(_LogsClient, LogsQueryClient(credential))
-
-
-def provision_recording_fixture(
-    settings: FixtureSettings,
-    *,
-    credential: TokenCredential | None = None,
-    project_client_factory: ProjectClientFactory = _default_project_client_factory,
-    logs_client_factory: LogsClientFactory = _default_logs_client_factory,
-    trace_emitter: TraceEmitter | None = None,
-    sleep: Callable[[float], None] = time.sleep,
-    monotonic: Callable[[], float] = time.monotonic,
-) -> tuple[FixtureAgent, TraceBatch]:
+def provision_recording_fixture(settings: FixtureSettings) -> tuple[FixtureAgent, TraceBatch]:
     """Reconcile the fixture agent, emit traces, and wait for ingestion."""
-    owns_credential = credential is None
-    selected_credential = credential or DefaultAzureCredential()
-    project: _ProjectClient | None = None
-    logs: _LogsClient | None = None
-    try:
+    with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(
+            endpoint=settings.project_endpoint,
+            credential=credential,
+            allow_preview=True,
+        ) as project,
+        LogsQueryClient(credential) as logs,
+    ):
         print("Reconciling the Agent Insights external-agent fixture.")
-        project = project_client_factory(settings.project_endpoint, selected_credential)
         agent, connection_string = _wait_for_foundry_access(
             project,
             settings.agent_name,
             settings.otel_agent_id,
             timeout_seconds=DEFAULT_ACCESS_TIMEOUT_SECONDS,
-            sleep=sleep,
-            monotonic=monotonic,
+            sleep=time.sleep,
+            monotonic=time.monotonic,
         )
-        emitter = trace_emitter or emit_fixture_traces
-        batch = emitter(
+        batch = emit_fixture_traces(
             connection_string,
             agent,
             settings.defect_trace_count,
             settings.control_trace_count,
         )
         print(f"Exported {len(batch.trace_ids)} fixture traces. Waiting for ingestion.")
-        logs = logs_client_factory(selected_credential)
         wait_for_trace_ingestion(
             logs,
             settings.application_insights_resource_id,
             agent.otel_agent_id,
             batch,
             timeout_seconds=settings.ingestion_timeout_seconds,
-            sleep=sleep,
-            monotonic=monotonic,
         )
         return agent, batch
-    finally:
-        try:
-            if logs is not None:
-                logs.close()
-        finally:
-            try:
-                if project is not None:
-                    project.close()
-            finally:
-                if owns_credential:
-                    close = getattr(selected_credential, "close", None)
-                    if callable(close):
-                        close()
 
 
 def reconcile_external_agent(
@@ -237,7 +185,7 @@ def emit_fixture_traces(
     uuid_factory: Callable[[], str] = lambda: uuid.uuid4().hex,
     now: Callable[[], datetime] = lambda: datetime.now(timezone.utc),
 ) -> TraceBatch:
-    """Emit fictional destructive-tool defects and healthy control traces."""
+    """Emit fictional destructive-tool defects and non-destructive control traces."""
     if defect_trace_count <= 0:
         raise ValueError("defect_trace_count must be positive.")
     if control_trace_count < 0:
@@ -321,8 +269,9 @@ def wait_for_trace_ingestion(
             status_code = getattr(error, "status_code", None)
             if status_code not in (403, 408, 429) and not (isinstance(status_code, int) and status_code >= 500):
                 raise RecordingFixtureError("Application Insights rejected the recording-fixture query.") from error
-        except (ServiceRequestError, ServiceResponseError):
-            pass
+            print(f"Ingestion check {attempt}: retrying after HTTP {status_code}.")
+        except (ServiceRequestError, ServiceResponseError) as error:
+            print(f"Ingestion check {attempt}: retrying after {type(error).__name__}.")
         else:
             if response.status == LogsQueryStatus.SUCCESS:
                 observed_trace_ids = _extract_trace_ids(response.tables)
@@ -343,7 +292,7 @@ def wait_for_trace_ingestion(
 
 
 def _wait_for_foundry_access(
-    project: _ProjectClient,
+    project: AIProjectClient,
     agent_name: str,
     otel_agent_id: str,
     *,
@@ -368,6 +317,7 @@ def _wait_for_foundry_access(
                 raise RecordingFixtureError(
                     "Foundry access did not become available before the role-propagation timeout."
                 ) from error
+            print(f"Waiting for Foundry access after HTTP {status_code}.")
             sleep(min(10.0, remaining))
 
 
@@ -552,6 +502,7 @@ def _required_environment(name: str) -> str:
 
 def main() -> None:
     """Provision the recording fixture from environment variables."""
+    load_dotenv()
     settings = FixtureSettings.from_environment()
     agent, batch = provision_recording_fixture(settings)
     print(f"Reconciled external agent version {agent.version}.")

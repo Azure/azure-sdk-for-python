@@ -185,15 +185,16 @@ For the scheduled sample, successful output must show all of the following:
 - The retrieved monitor is enabled.
 - The run interval is a positive number of hours.
 - The service returned a next scheduled run time.
-- The sample states that the scheduled monitor remains enabled.
+- Any active scheduled run was cancelled during cleanup.
+- The scheduled monitor was deleted during cleanup.
 
 Mark `correct = false` for:
 - Exceptions, stack traces, authentication, authorization, timeout, connection, or service errors.
 - Output that does not complete either workflow described above.
-- A failed, cancelled, queued, or still-running Agent Insights run.
+- A failed, cancelled, queued, or still-running on-demand analysis run.
 - Zero analyzed traces or zero changed insights in the on-demand workflow.
 - An on-demand insight that is not resolved and reopened.
-- A disabled scheduled monitor or a missing next scheduled run.
+- A disabled scheduled monitor, a missing next scheduled run, or cleanup failure.
 
 The wording, generated insight titles, remediation text, and scheduled time can vary. Judge the
 explicit status and count fields, not exact generated text.

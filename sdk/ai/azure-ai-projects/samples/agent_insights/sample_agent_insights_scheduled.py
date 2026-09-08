@@ -15,11 +15,14 @@ DESCRIPTION:
     operations through `project_client.beta.agent_insight_monitors`.
 
     The service supports one monitor per agent. To make this sample safe to run
-    more than once, it reuses an existing monitor for `FOUNDRY_AGENT_NAME`.
+    more than once, it deletes any existing monitor for `FOUNDRY_AGENT_NAME`
+    before it creates a monitor.
 
-    The sample leaves the monitor enabled so that scheduled analysis can run.
-    Delete or disable the monitor when you no longer need scheduled analysis.
-    Deleting a monitor also deletes its runs, insights, and state.
+    The sample disables and deletes the scheduled monitor during cleanup. If
+    enabling the monitor starts a run, cleanup cancels that run instead of
+    waiting for analysis to finish. Deleting a monitor also deletes its runs,
+    insights, and state. Use a test agent that does not have Agent Insights data
+    that you need to keep.
 
 USAGE:
     python sample_agent_insights_scheduled.py
@@ -37,13 +40,16 @@ USAGE:
 """
 
 import os
+import time
 
 from dotenv import load_dotenv
 
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import AgentInsightMonitorCreate, AgentInsightMonitorUpdate
+from azure.ai.projects.operations import BetaAgentInsightMonitorsOperations
 
 
 ANALYSIS_INTERVAL_HOURS = 6
@@ -64,35 +70,85 @@ def main() -> None:
 
         # Agent Insights supports only one monitor for each agent.
         existing_monitors = list(monitor_operations.list(agent_name=agent_name))
-        if existing_monitors:
-            monitor_id = existing_monitors[0].id
-            print(f"Using existing monitor `{monitor_id}` for agent `{agent_name}`.")
-        else:
-            created_monitor = monitor_operations.create(
+        for existing_monitor in existing_monitors:
+            _delete_monitor(monitor_operations, existing_monitor.id, "Existing")
+
+        monitor = None
+        try:
+            monitor = monitor_operations.create(
                 AgentInsightMonitorCreate(
                     agent_name=agent_name,
                     model_deployment_name=model_deployment_name,
                     enabled=False,
                 )
             )
-            monitor_id = created_monitor.id
-            print(f"Created disabled monitor `{monitor_id}` for agent `{created_monitor.agent_name}`.")
+            print(f"Created disabled monitor `{monitor.id}` for agent `{monitor.agent_name}`.")
 
-        # Set the analysis frequency and enable recurring runs in one update.
-        monitor_operations.update(
-            monitor_id,
-            AgentInsightMonitorUpdate(
-                enabled=True,
-                run_interval_hours=ANALYSIS_INTERVAL_HOURS,
-                model_deployment_name=model_deployment_name,
-            ),
-        )
+            # Set the analysis frequency and enable recurring runs in one update.
+            monitor_operations.update(
+                monitor.id,
+                AgentInsightMonitorUpdate(
+                    enabled=True,
+                    run_interval_hours=ANALYSIS_INTERVAL_HOURS,
+                    model_deployment_name=model_deployment_name,
+                ),
+            )
 
-        scheduled_monitor = monitor_operations.get(monitor_id)
-        print(f"Scheduled monitor enabled: {scheduled_monitor.enabled}")
-        print(f"Run interval hours: {scheduled_monitor.run_interval_hours}")
-        print(f"Next scheduled run: {scheduled_monitor.next_scheduled_run_at}")
-        print("The scheduled monitor remains enabled.")
+            scheduled_monitor = monitor_operations.get(monitor.id)
+            next_run = scheduled_monitor.next_scheduled_run_at
+            if next_run is None:
+                raise RuntimeError("The enabled monitor did not return its next scheduled run time.")
+            print(f"Scheduled monitor enabled: {scheduled_monitor.enabled}")
+            print(f"Run interval hours: {scheduled_monitor.run_interval_hours}")
+            print(f"Next scheduled run: {next_run.isoformat()}")
+        finally:
+            if monitor is not None:
+                _delete_monitor(monitor_operations, monitor.id, "Scheduled")
+
+
+def _delete_monitor(operations: BetaAgentInsightMonitorsOperations, monitor_id: str, label: str) -> None:
+    # Disabling stops future scheduling, but a run may already have started.
+    try:
+        operations.update(monitor_id, AgentInsightMonitorUpdate(enabled=False))
+    except ResourceNotFoundError:
+        print(f"{label} monitor `{monitor_id}` was already deleted.")
+        return
+
+    cancellation_requested: set[str] = set()
+    active_statuses = {"queued", "in_progress"}
+    for attempt in range(30):
+        active_runs = [
+            run
+            for run in operations.list_runs(monitor_id, limit=20)
+            if str(getattr(run.status, "value", run.status)).lower() in active_statuses
+        ]
+        for run in active_runs:
+            if run.id in cancellation_requested:
+                continue
+            try:
+                operations.cancel_run(monitor_id, run.id)
+            except ResourceExistsError:
+                current_run = operations.get_run(monitor_id, run.id)
+                if str(getattr(current_run.status, "value", current_run.status)).lower() in active_statuses:
+                    raise
+            cancellation_requested.add(run.id)
+            print(f"Requested cancellation of run `{run.id}`.")
+
+        if not active_runs:
+            try:
+                operations.delete(monitor_id)
+                print(f"Deleted {label.lower()} monitor `{monitor_id}`.")
+                return
+            except ResourceNotFoundError:
+                print(f"{label} monitor `{monitor_id}` was already deleted.")
+                return
+            except ResourceExistsError:
+                # A previously dispatched run can appear after the list request.
+                print(f"Monitor `{monitor_id}` still has an active run; retrying cleanup.")
+
+        if attempt < 29:
+            time.sleep(2)
+    raise TimeoutError(f"Monitor `{monitor_id}` could not be deleted after stopping its scheduled runs.")
 
 
 if __name__ == "__main__":
