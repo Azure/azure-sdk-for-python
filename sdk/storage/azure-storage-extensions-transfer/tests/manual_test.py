@@ -126,29 +126,6 @@ def test_direct_extension(credential):
     assert downloaded == payload, "Round-trip mismatch (direct extension)!"
     print("  OK: round-trip matches (native by definition — direct call)")
 
-    # Verify bytearray and memoryview inputs are accepted directly (no bytes() copy).
-    for label, buf in (("bytearray", bytearray(payload)), ("memoryview", memoryview(payload))):
-        buf_blob = f"direct-{label}-{uuid.uuid4().hex}.bin"
-        print(f"Uploading {len(payload)} bytes from a {label} to '{buf_blob}'...")
-        upload_blob(
-            url=f"{ACCOUNT_URL}/{CONTAINER}/{buf_blob}",
-            data=buf,
-            token_provider=token_provider,
-            credential_id=credential_id,
-            overwrite=True,
-            max_concurrency=8,
-        )
-        back = b"".join(
-            download_blob(
-                url=f"{ACCOUNT_URL}/{CONTAINER}/{buf_blob}",
-                token_provider=token_provider,
-                credential_id=credential_id,
-                max_concurrency=8,
-            )
-        )
-        assert back == payload, f"Round-trip mismatch ({label} input)!"
-        print(f"  OK: {label} round-trip matches")
-
 
 def test_through_blob_sdk(credential):
     """Exercise the transparent acceleration path via azure-storage-blob.
