@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+from urllib.parse import urlparse
 
 from devtools_testutils import (
     add_general_regex_sanitizer,
@@ -128,7 +129,7 @@ def add_sanitizers(test_proxy):
     for target, value in key_vault_references:
         target = target.rstrip("/") + "/"
         value = value.rstrip("/") + "/"
-        add_uri_string_sanitizer(target=target, value=value)
+        add_uri_string_sanitizer(target=urlparse(target).path, value=urlparse(value).path)
         add_general_string_sanitizer(target=target, value=value)
     add_uri_string_sanitizer()
     add_remove_header_sanitizer(headers="Correlation-Context")
