@@ -111,6 +111,65 @@ KV_CHALLENGE_RESPONSE = Mock(
 
 
 @empty_challenge_cache
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+def test_valid_challenge_is_cached(token_type):
+    """After a valid challenge, later requests to the same vault are authorized immediately from the
+    cached challenge, without eliciting another 401.
+
+    This is the positive-path counterpart to test_rejected_challenge_is_not_cached. That test would
+    still pass if challenge caching were removed entirely, so this test guards that a validated
+    challenge is cached and reused for subsequent requests.
+    """
+
+    expected_token = "expected_token"
+    url = get_random_url()
+    challenge = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": 'Bearer authorization="https://authority.net/tenant", resource=https://vault.azure.net'},
+    )
+
+    class Requests:
+        count = 0
+
+    def send(request):
+        Requests.count += 1
+        if Requests.count == 1:
+            # first request is stripped and unauthenticated to elicit the challenge
+            assert "Authorization" not in request.headers
+            assert not request.body
+            assert request.headers["Content-Length"] == "0"
+            return challenge
+        # the retried first request and the entire second request must already be authorized from the
+        # cached challenge; no further challenge is expected
+        assert expected_token in request.headers["Authorization"]
+        return Mock(status_code=200)
+
+    def get_token(*_, **__):
+        return token_type(expected_token, time.time() + 3600)
+
+    if token_type == AccessToken:
+        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    else:
+        credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
+
+    pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+
+    for _ in range(2):
+        request = HttpRequest("POST", url)
+        request.set_bytes_body(b"secret")
+        pipeline.run(request)
+
+    # three sends total: challenge + retry for the first request, then a single cached-auth send for the
+    # second request, which must not trigger another challenge
+    assert Requests.count == 3
+    assert HttpChallengeCache.get_challenge_for_url(url)
+    if token_type == AccessToken:
+        assert credential.get_token.call_count == 1
+    else:
+        assert credential.get_token_info.call_count == 1
+
+
+@empty_challenge_cache
 def test_rejected_challenge_is_not_cached():
     url = "https://example.net/keys/canary"
     challenge = Mock(
