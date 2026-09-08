@@ -18,6 +18,10 @@ DESCRIPTION:
     more than once, it deletes any existing monitor for `FOUNDRY_AGENT_NAME`
     before it creates a monitor. It also deletes the new monitor during cleanup.
 
+    Cleanup disables scheduling and cancels active runs before deleting a
+    monitor. It waits for cancellation for up to 30 checks, two seconds apart,
+    and raises an error if the monitor still cannot be deleted.
+
     Deleting a monitor also deletes its runs, insights, and state. Use a test
     agent that does not have Agent Insights data that you need to keep.
 
@@ -42,20 +46,23 @@ USAGE:
 """
 
 import os
+import time
 import uuid
 
 from dotenv import load_dotenv
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentInsightMonitorCreate,
+    AgentInsightMonitorUpdate,
     AgentInsightRunCreate,
     AgentInsightStatus,
     AgentInsightUpdate,
 )
+from azure.ai.projects.operations import BetaAgentInsightMonitorsOperations
 
 
 def main() -> None:
@@ -74,11 +81,7 @@ def main() -> None:
         # Agent Insights supports only one monitor for each agent.
         existing_monitors = list(monitor_operations.list(agent_name=agent_name))
         for existing_monitor in existing_monitors:
-            try:
-                monitor_operations.delete(existing_monitor.id)
-                print(f"Deleted existing monitor `{existing_monitor.id}` for agent `{agent_name}`.")
-            except ResourceNotFoundError:
-                print(f"Existing monitor `{existing_monitor.id}` was already deleted.")
+            _delete_monitor(monitor_operations, existing_monitor.id, "Existing")
 
         monitor = None
         try:
@@ -177,11 +180,53 @@ def main() -> None:
                 print("No insights were available to demonstrate lifecycle updates.")
         finally:
             if monitor is not None:
-                try:
-                    monitor_operations.delete(monitor.id)
-                    print(f"Deleted monitor `{monitor.id}`.")
-                except ResourceNotFoundError:
-                    print(f"Monitor `{monitor.id}` was already deleted.")
+                _delete_monitor(monitor_operations, monitor.id)
+
+
+def _delete_monitor(operations: BetaAgentInsightMonitorsOperations, monitor_id: str, label: str = "") -> None:
+    monitor_label = f"{label} monitor" if label else "Monitor"
+    # Disabling stops future scheduling, but a run may already have started.
+    try:
+        operations.update(monitor_id, AgentInsightMonitorUpdate(enabled=False))
+    except ResourceNotFoundError:
+        print(f"{monitor_label} `{monitor_id}` was already deleted.")
+        return
+
+    cancellation_requested: set[str] = set()
+    active_statuses = {"queued", "in_progress"}
+    for attempt in range(30):
+        active_runs = [
+            run
+            for run in operations.list_runs(monitor_id, limit=20)
+            if str(getattr(run.status, "value", run.status)).lower() in active_statuses
+        ]
+        for run in active_runs:
+            if run.id in cancellation_requested:
+                continue
+            try:
+                operations.cancel_run(monitor_id, run.id)
+            except ResourceExistsError:
+                current_run = operations.get_run(monitor_id, run.id)
+                if str(getattr(current_run.status, "value", current_run.status)).lower() in active_statuses:
+                    raise
+            cancellation_requested.add(run.id)
+            print(f"Requested cancellation of run `{run.id}`.")
+
+        if not active_runs:
+            try:
+                operations.delete(monitor_id)
+                print(f"Deleted {monitor_label.lower()} `{monitor_id}`.")
+                return
+            except ResourceNotFoundError:
+                print(f"{monitor_label} `{monitor_id}` was already deleted.")
+                return
+            except ResourceExistsError:
+                # A previously dispatched run can appear after the list request.
+                print(f"Monitor `{monitor_id}` still has an active run; retrying cleanup.")
+
+        if attempt < 29:
+            time.sleep(2)
+    raise TimeoutError(f"Monitor `{monitor_id}` could not be deleted after stopping its active runs.")
 
 
 if __name__ == "__main__":
