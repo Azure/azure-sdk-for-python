@@ -221,6 +221,7 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'backup_instance_name']}, api_versions_list=['2026-06-01'])
         async def begin_resume_protection(
                 self, 
                 resource_group_name: str, 
@@ -944,7 +945,7 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01'])
         async def get(
                 self, 
                 location: str, 
@@ -953,7 +954,7 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> DeletedBackupVaultResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01'])
         def list_by_location(
                 self, 
                 location: str, 
@@ -2304,6 +2305,7 @@ namespace azure.mgmt.dataprotection.models
 
     class azure.mgmt.dataprotection.models.BackupVault(_Model):
         bcdr_security_level: Optional[Union[str, BCDRSecurityLevel]]
+        cost_management_settings: Optional[CostManagementSettings]
         feature_settings: Optional[FeatureSettings]
         is_vault_protected_by_resource_guard: Optional[bool]
         monitoring_settings: Optional[MonitoringSettings]
@@ -2320,6 +2322,7 @@ namespace azure.mgmt.dataprotection.models
         def __init__(
                 self, 
                 *, 
+                cost_management_settings: Optional[CostManagementSettings] = ..., 
                 feature_settings: Optional[FeatureSettings] = ..., 
                 monitoring_settings: Optional[MonitoringSettings] = ..., 
                 replicated_regions: Optional[list[str]] = ..., 
@@ -2609,6 +2612,20 @@ namespace azure.mgmt.dataprotection.models
                 self, 
                 *, 
                 object_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.CostManagementSettings(_Model):
+        granularity_level: Optional[Union[str, GranularityLevel]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                granularity_level: Optional[Union[str, GranularityLevel]] = ...
             ) -> None: ...
 
         @overload
@@ -2958,6 +2975,7 @@ namespace azure.mgmt.dataprotection.models
 
     class azure.mgmt.dataprotection.models.DeletedBackupVault(_Model):
         bcdr_security_level: Optional[Union[str, BCDRSecurityLevel]]
+        cost_management_settings: Optional[CostManagementSettings]
         feature_settings: Optional[FeatureSettings]
         is_vault_protected_by_resource_guard: Optional[bool]
         monitoring_settings: Optional[MonitoringSettings]
@@ -2978,6 +2996,7 @@ namespace azure.mgmt.dataprotection.models
         def __init__(
                 self, 
                 *, 
+                cost_management_settings: Optional[CostManagementSettings] = ..., 
                 feature_settings: Optional[FeatureSettings] = ..., 
                 monitoring_settings: Optional[MonitoringSettings] = ..., 
                 replicated_regions: Optional[list[str]] = ..., 
@@ -3254,6 +3273,42 @@ namespace azure.mgmt.dataprotection.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.GenericBackupDatasourceParameters(BackupDatasourceParameters, discriminator='GenericBackupDatasourceParameters'):
+        object_type: Literal["GenericBackupDatasourceParameters"]
+        resource_selectors: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource_selectors: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.GenericRestoreDatasourceCriteria(ItemLevelRestoreCriteria, discriminator='GenericRestoreDatasourceCriteria'):
+        object_type: Literal["GenericRestoreDatasourceCriteria"]
+        resource_selectors: ResourceListSelectionCriteria
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource_selectors: ResourceListSelectionCriteria
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.GranularityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PROTECTED_ITEM_LEVEL = "ProtectedItemLevel"
+        PROTECTED_ITEM_WITH_PARENT_TAG = "ProtectedItemWithParentTag"
+        VAULT_LEVEL = "VaultLevel"
 
 
     class azure.mgmt.dataprotection.models.IdentityDetails(_Model):
@@ -3703,6 +3758,7 @@ namespace azure.mgmt.dataprotection.models
 
 
     class azure.mgmt.dataprotection.models.PatchBackupVaultInput(_Model):
+        cost_management_settings: Optional[CostManagementSettings]
         feature_settings: Optional[FeatureSettings]
         monitoring_settings: Optional[MonitoringSettings]
         resource_guard_operation_requests: Optional[list[str]]
@@ -3712,6 +3768,7 @@ namespace azure.mgmt.dataprotection.models
         def __init__(
                 self, 
                 *, 
+                cost_management_settings: Optional[CostManagementSettings] = ..., 
                 feature_settings: Optional[FeatureSettings] = ..., 
                 monitoring_settings: Optional[MonitoringSettings] = ..., 
                 resource_guard_operation_requests: Optional[list[str]] = ..., 
@@ -3999,6 +4056,24 @@ namespace azure.mgmt.dataprotection.models
                 location: str, 
                 properties: Optional[ResourceGuard] = ..., 
                 tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.ResourceListSelectionCriteria(_Model):
+        object_type: str
+        resource_identifiers: list[str]
+        resource_name_overrides: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                object_type: str, 
+                resource_identifiers: list[str], 
+                resource_name_overrides: Optional[dict[str, str]] = ...
             ) -> None: ...
 
         @overload
@@ -4823,6 +4898,7 @@ namespace azure.mgmt.dataprotection.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'backup_instance_name']}, api_versions_list=['2026-06-01'])
         def begin_resume_protection(
                 self, 
                 resource_group_name: str, 
@@ -5546,7 +5622,7 @@ namespace azure.mgmt.dataprotection.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01'])
         def get(
                 self, 
                 location: str, 
@@ -5555,7 +5631,7 @@ namespace azure.mgmt.dataprotection.operations
             ) -> DeletedBackupVaultResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01'])
         def list_by_location(
                 self, 
                 location: str, 
@@ -6223,68 +6299,68 @@ namespace azure.mgmt.dataprotection.types
         key "duration": Required[str]
         key "objectType": Required[Literal["AbsoluteDeleteOption"]]
         duration: str
-        object_type: Literal[AbsoluteDeleteOption]
+        objectType: Literal[AbsoluteDeleteOption]
 
 
     class azure.mgmt.dataprotection.types.AdHocBackupRuleOptions(TypedDict, total=False):
         key "ruleName": Required[str]
         key "triggerOption": Required[AdhocBackupTriggerOption]
-        rule_name: str
-        trigger_option: AdhocBackupTriggerOption
+        ruleName: str
+        triggerOption: AdhocBackupTriggerOption
 
 
     class azure.mgmt.dataprotection.types.AdhocBackupTriggerOption(TypedDict, total=False):
         key "retentionTagOverride": str
-        retention_tag_override: str
+        retentionTagOverride: str
 
 
     class azure.mgmt.dataprotection.types.AdhocBasedTaggingCriteria(TypedDict, total=False):
         key "tagInfo": ForwardRef('RetentionTag', module='types')
-        tag_info: RetentionTag
+        tagInfo: RetentionTag
 
 
     class azure.mgmt.dataprotection.types.AdhocBasedTriggerContext(TypedDict, total=False):
         key "objectType": Required[Literal["AdhocBasedTriggerContext"]]
         key "taggingCriteria": Required[AdhocBasedTaggingCriteria]
-        object_type: Literal[AdhocBasedTriggerContext]
-        tagging_criteria: AdhocBasedTaggingCriteria
+        objectType: Literal[AdhocBasedTriggerContext]
+        taggingCriteria: AdhocBasedTaggingCriteria
 
 
     class azure.mgmt.dataprotection.types.AdlsBlobBackupDatasourceParameters(TypedDict, total=False):
         key "containersList": Required[list[str]]
         key "objectType": Required[Literal["AdlsBlobBackupDatasourceParameters"]]
-        containers_list: list[str]
-        object_type: Literal[AdlsBlobBackupDatasourceParameters]
+        containersList: list[str]
+        objectType: Literal[AdlsBlobBackupDatasourceParameters]
 
 
     class azure.mgmt.dataprotection.types.AdlsBlobBackupDatasourceParametersForAutoProtection(TypedDict, total=False):
         key "autoProtectionSettings": Required[BlobBackupRuleBasedAutoProtectionSettings]
         key "objectType": Required[Literal["AdlsBlobBackupDatasourceParametersForAutoProtection"]]
-        auto_protection_settings: BlobBackupRuleBasedAutoProtectionSettings
-        object_type: Literal[AdlsBlobBackupDatasourceParametersForAutoProtection]
+        autoProtectionSettings: BlobBackupRuleBasedAutoProtectionSettings
+        objectType: Literal[AdlsBlobBackupDatasourceParametersForAutoProtection]
 
 
     class azure.mgmt.dataprotection.types.AuthCredentials(TypedDict, total=False):
         key "objectType": Required[Literal["SecretStoreBasedAuthCredentials"]]
         key "secretStoreResource": ForwardRef('SecretStoreResource', module='types')
-        object_type: Literal[SecretStoreBasedAuthCredentials]
-        secret_store_resource: SecretStoreResource
+        objectType: Literal[SecretStoreBasedAuthCredentials]
+        secretStoreResource: SecretStoreResource
 
 
     class azure.mgmt.dataprotection.types.AzureBackupFindRestorableTimeRangesRequest(TypedDict, total=False):
         key "endTime": str
         key "sourceDataStoreType": Required[Union[str, RestoreSourceDataStoreType]]
         key "startTime": str
-        end_time: str
-        source_data_store_type: Union[str, RestoreSourceDataStoreType]
-        start_time: str
+        endTime: str
+        sourceDataStoreType: Union[str, RestoreSourceDataStoreType]
+        startTime: str
 
 
     class azure.mgmt.dataprotection.types.AzureBackupParams(TypedDict, total=False):
         key "backupType": Required[str]
         key "objectType": Required[Literal["AzureBackupParams"]]
-        backup_type: str
-        object_type: Literal[AzureBackupParams]
+        backupType: str
+        objectType: Literal[AzureBackupParams]
 
 
     class azure.mgmt.dataprotection.types.AzureBackupRecoveryPointBasedRestoreRequest(TypedDict, total=False):
@@ -6296,16 +6372,15 @@ namespace azure.mgmt.dataprotection.types
         key "restoreTargetInfo": Required[RestoreTargetInfoBase]
         key "sourceDataStoreType": Required[Union[str, SourceDataStoreType]]
         key "sourceResourceId": str
-        identity_details: IdentityDetails
-        object_type: Literal[AzureBackupRestoreWithRehydrationRequest]
-        recovery_point_id: str
-        rehydration_priority: Union[str, RehydrationPriority]
-        rehydration_retention_duration: str
+        identityDetails: IdentityDetails
+        objectType: Literal[AzureBackupRestoreWithRehydrationRequest]
+        recoveryPointId: str
+        rehydrationPriority: Union[str, RehydrationPriority]
+        rehydrationRetentionDuration: str
         resourceGuardOperationRequests: list[str]
-        resource_guard_operation_requests: list[str]
-        restore_target_info: RestoreTargetInfoBase
-        source_data_store_type: Union[str, SourceDataStoreType]
-        source_resource_id: str
+        restoreTargetInfo: RestoreTargetInfoBase
+        sourceDataStoreType: Union[str, SourceDataStoreType]
+        sourceResourceId: str
 
 
     class azure.mgmt.dataprotection.types.AzureBackupRecoveryTimeBasedRestoreRequest(TypedDict, total=False):
@@ -6315,23 +6390,22 @@ namespace azure.mgmt.dataprotection.types
         key "restoreTargetInfo": Required[RestoreTargetInfoBase]
         key "sourceDataStoreType": Required[Union[str, SourceDataStoreType]]
         key "sourceResourceId": str
-        identity_details: IdentityDetails
-        object_type: Literal[AzureBackupRecoveryTimeBasedRestoreRequest]
-        recovery_point_time: str
+        identityDetails: IdentityDetails
+        objectType: Literal[AzureBackupRecoveryTimeBasedRestoreRequest]
+        recoveryPointTime: str
         resourceGuardOperationRequests: list[str]
-        resource_guard_operation_requests: list[str]
-        restore_target_info: RestoreTargetInfoBase
-        source_data_store_type: Union[str, SourceDataStoreType]
-        source_resource_id: str
+        restoreTargetInfo: RestoreTargetInfoBase
+        sourceDataStoreType: Union[str, SourceDataStoreType]
+        sourceResourceId: str
 
 
     class azure.mgmt.dataprotection.types.AzureBackupRehydrationRequest(TypedDict, total=False):
         key "recoveryPointId": Required[str]
         key "rehydrationPriority": Union[str, RehydrationPriority]
         key "rehydrationRetentionDuration": Required[str]
-        recovery_point_id: str
-        rehydration_priority: Union[str, RehydrationPriority]
-        rehydration_retention_duration: str
+        recoveryPointId: str
+        rehydrationPriority: Union[str, RehydrationPriority]
+        rehydrationRetentionDuration: str
 
 
     class azure.mgmt.dataprotection.types.AzureBackupRestoreWithRehydrationRequest(TypedDict, total=False):
@@ -6343,16 +6417,15 @@ namespace azure.mgmt.dataprotection.types
         key "restoreTargetInfo": Required[RestoreTargetInfoBase]
         key "sourceDataStoreType": Required[Union[str, SourceDataStoreType]]
         key "sourceResourceId": str
-        identity_details: IdentityDetails
-        object_type: Literal[AzureBackupRestoreWithRehydrationRequest]
-        recovery_point_id: str
-        rehydration_priority: Union[str, RehydrationPriority]
-        rehydration_retention_duration: str
+        identityDetails: IdentityDetails
+        objectType: Literal[AzureBackupRestoreWithRehydrationRequest]
+        recoveryPointId: str
+        rehydrationPriority: Union[str, RehydrationPriority]
+        rehydrationRetentionDuration: str
         resourceGuardOperationRequests: list[str]
-        resource_guard_operation_requests: list[str]
-        restore_target_info: RestoreTargetInfoBase
-        source_data_store_type: Union[str, SourceDataStoreType]
-        source_resource_id: str
+        restoreTargetInfo: RestoreTargetInfoBase
+        sourceDataStoreType: Union[str, SourceDataStoreType]
+        sourceResourceId: str
 
 
     class azure.mgmt.dataprotection.types.AzureBackupRule(TypedDict, total=False):
@@ -6361,25 +6434,25 @@ namespace azure.mgmt.dataprotection.types
         key "name": Required[str]
         key "objectType": Required[Literal["AzureBackupRule"]]
         key "trigger": Required[TriggerContext]
-        backup_parameters: BackupParameters
-        data_store: DataStoreInfoBase
+        backupParameters: BackupParameters
+        dataStore: DataStoreInfoBase
         name: str
-        object_type: Literal[AzureBackupRule]
+        objectType: Literal[AzureBackupRule]
         trigger: TriggerContext
 
 
     class azure.mgmt.dataprotection.types.AzureMonitorAlertSettings(TypedDict, total=False):
         key "alertsForAllJobFailures": Union[str, AlertsState]
-        alerts_for_all_job_failures: Union[str, AlertsState]
+        alertsForAllJobFailures: Union[str, AlertsState]
 
 
     class azure.mgmt.dataprotection.types.AzureOperationalStoreParameters(TypedDict, total=False):
         key "dataStoreType": Required[Union[str, DataStoreTypes]]
         key "objectType": Required[Literal["AzureOperationalStoreParameters"]]
         key "resourceGroupId": str
-        data_store_type: Union[str, DataStoreTypes]
-        object_type: Literal[AzureOperationalStoreParameters]
-        resource_group_id: str
+        dataStoreType: Union[str, DataStoreTypes]
+        objectType: Literal[AzureOperationalStoreParameters]
+        resourceGroupId: str
 
 
     class azure.mgmt.dataprotection.types.AzureRetentionRule(TypedDict, total=False):
@@ -6387,27 +6460,21 @@ namespace azure.mgmt.dataprotection.types
         key "lifecycles": Required[list[SourceLifeCycle]]
         key "name": Required[str]
         key "objectType": Required[Literal["AzureRetentionRule"]]
-        is_default: bool
+        isDefault: bool
         lifecycles: list[SourceLifeCycle]
         name: str
-        object_type: Literal[AzureRetentionRule]
+        objectType: Literal[AzureRetentionRule]
 
 
     class azure.mgmt.dataprotection.types.BackupCriteria(TypedDict, total=False):
         key "objectType": Required[Literal["ScheduleBasedBackupCriteria"]]
         absoluteCriteria: list[Union[str, AbsoluteMarker]]
-        absolute_criteria: list[Union[str, AbsoluteMarker]]
         daysOfMonth: list[Day]
         daysOfTheWeek: list[Union[str, DayOfWeek]]
-        days_of_month: list[Day]
-        days_of_the_week: list[Union[str, DayOfWeek]]
         monthsOfYear: list[Union[str, Month]]
-        months_of_year: list[Union[str, Month]]
-        object_type: Literal[ScheduleBasedBackupCriteria]
+        objectType: Literal[ScheduleBasedBackupCriteria]
         scheduleTimes: list[str]
-        schedule_times: list[str]
         weeksOfTheMonth: list[Union[str, WeekNumber]]
-        weeks_of_the_month: list[Union[str, WeekNumber]]
 
 
     class azure.mgmt.dataprotection.types.BackupInstance(TypedDict, total=False):
@@ -6423,20 +6490,19 @@ namespace azure.mgmt.dataprotection.types
         key "protectionStatus": ForwardRef('ProtectionStatusDetails', module='types')
         key "provisioningState": str
         key "validationType": Union[str, ValidationType]
-        current_protection_state: Union[str, CurrentProtectionState]
-        data_source_info: Datasource
-        data_source_set_info: DatasourceSet
-        datasource_auth_credentials: AuthCredentials
-        friendly_name: str
-        identity_details: IdentityDetails
-        object_type: str
-        policy_info: PolicyInfo
-        protection_error_details: UserFacingError
-        protection_status: ProtectionStatusDetails
-        provisioning_state: str
+        currentProtectionState: Union[str, CurrentProtectionState]
+        dataSourceInfo: Datasource
+        dataSourceSetInfo: DatasourceSet
+        datasourceAuthCredentials: AuthCredentials
+        friendlyName: str
+        identityDetails: IdentityDetails
+        objectType: str
+        policyInfo: PolicyInfo
+        protectionErrorDetails: UserFacingError
+        protectionStatus: ProtectionStatusDetails
+        provisioningState: str
         resourceGuardOperationRequests: list[str]
-        resource_guard_operation_requests: list[str]
-        validation_type: Union[str, ValidationType]
+        validationType: Union[str, ValidationType]
 
 
     class azure.mgmt.dataprotection.types.BackupInstanceResource(ProxyResource):
@@ -6448,7 +6514,7 @@ namespace azure.mgmt.dataprotection.types
         id: str
         name: str
         properties: BackupInstance
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -6456,28 +6522,29 @@ namespace azure.mgmt.dataprotection.types
     class azure.mgmt.dataprotection.types.BackupParameters(TypedDict, total=False):
         key "backupType": Required[str]
         key "objectType": Required[Literal["AzureBackupParams"]]
-        backup_type: str
-        object_type: Literal[AzureBackupParams]
+        backupType: str
+        objectType: Literal[AzureBackupParams]
 
 
     class azure.mgmt.dataprotection.types.BackupPolicy(TypedDict, total=False):
         key "datasourceTypes": Required[list[str]]
         key "objectType": Required[Literal["BackupPolicy"]]
         key "policyRules": Required[list[BasePolicyRule]]
-        datasource_types: list[str]
-        object_type: Literal[BackupPolicy]
-        policy_rules: list[BasePolicyRule]
+        datasourceTypes: list[str]
+        objectType: Literal[BackupPolicy]
+        policyRules: list[BasePolicyRule]
 
 
     class azure.mgmt.dataprotection.types.BackupSchedule(TypedDict, total=False):
         key "repeatingTimeIntervals": Required[list[str]]
         key "timeZone": str
-        repeating_time_intervals: list[str]
-        time_zone: str
+        repeatingTimeIntervals: list[str]
+        timeZone: str
 
 
     class azure.mgmt.dataprotection.types.BackupVault(TypedDict, total=False):
         key "bcdrSecurityLevel": Union[str, BCDRSecurityLevel]
+        key "costManagementSettings": ForwardRef('CostManagementSettings', module='types')
         key "featureSettings": ForwardRef('FeatureSettings', module='types')
         key "isVaultProtectedByResourceGuard": bool
         key "monitoringSettings": ForwardRef('MonitoringSettings', module='types')
@@ -6486,21 +6553,19 @@ namespace azure.mgmt.dataprotection.types
         key "resourceMoveState": Union[str, ResourceMoveState]
         key "secureScore": Union[str, SecureScoreLevel]
         key "securitySettings": ForwardRef('SecuritySettings', module='types')
-        bcdr_security_level: Union[str, BCDRSecurityLevel]
-        feature_settings: FeatureSettings
-        is_vault_protected_by_resource_guard: bool
-        monitoring_settings: MonitoringSettings
-        provisioning_state: Union[str, ProvisioningState]
+        bcdrSecurityLevel: Union[str, BCDRSecurityLevel]
+        costManagementSettings: CostManagementSettings
+        featureSettings: FeatureSettings
+        isVaultProtectedByResourceGuard: bool
+        monitoringSettings: MonitoringSettings
+        provisioningState: Union[str, ProvisioningState]
         replicatedRegions: list[str]
-        replicated_regions: list[str]
         resourceGuardOperationRequests: list[str]
-        resource_guard_operation_requests: list[str]
-        resource_move_details: ResourceMoveDetails
-        resource_move_state: Union[str, ResourceMoveState]
-        secure_score: Union[str, SecureScoreLevel]
-        security_settings: SecuritySettings
+        resourceMoveDetails: ResourceMoveDetails
+        resourceMoveState: Union[str, ResourceMoveState]
+        secureScore: Union[str, SecureScoreLevel]
+        securitySettings: SecuritySettings
         storageSettings: list[StorageSetting]
-        storage_settings: list[StorageSetting]
 
 
     class azure.mgmt.dataprotection.types.BackupVaultResource(TrackedResource):
@@ -6512,13 +6577,13 @@ namespace azure.mgmt.dataprotection.types
         key "properties": Required[BackupVault]
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         identity: DppIdentityDetails
         location: str
         name: str
         properties: BackupVault
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -6527,9 +6592,9 @@ namespace azure.mgmt.dataprotection.types
         key "datasourceTypes": Required[list[str]]
         key "objectType": Required[Literal["BackupPolicy"]]
         key "policyRules": Required[list[BasePolicyRule]]
-        datasource_types: list[str]
-        object_type: Literal[BackupPolicy]
-        policy_rules: list[BasePolicyRule]
+        datasourceTypes: list[str]
+        objectType: Literal[BackupPolicy]
+        policyRules: list[BasePolicyRule]
 
 
     class azure.mgmt.dataprotection.types.BaseBackupPolicyResource(ProxyResource):
@@ -6541,13 +6606,13 @@ namespace azure.mgmt.dataprotection.types
         id: str
         name: str
         properties: BaseBackupPolicy
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.dataprotection.types.BaseResourceProperties(TypedDict, total=False):
         key "objectType": Required[Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES]]
-        object_type: Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES]
+        objectType: Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES]
 
 
     class azure.mgmt.dataprotection.types.BlobBackupAutoProtectionRule(TypedDict, total=False):
@@ -6556,7 +6621,7 @@ namespace azure.mgmt.dataprotection.types
         key "pattern": Required[str]
         key "type": Required[Union[str, BlobBackupPatternType]]
         mode: Union[str, BlobBackupRuleMode]
-        object_type: str
+        objectType: str
         pattern: str
         type: Union[str, BlobBackupPatternType]
 
@@ -6565,29 +6630,29 @@ namespace azure.mgmt.dataprotection.types
         key "enabled": Required[bool]
         key "objectType": Required[Literal["BlobBackupRuleBasedAutoProtectionSettings"]]
         enabled: bool
-        object_type: Literal[BlobBackupRuleBasedAutoProtectionSettings]
+        objectType: Literal[BlobBackupRuleBasedAutoProtectionSettings]
         rules: list[BlobBackupAutoProtectionRule]
 
 
     class azure.mgmt.dataprotection.types.BlobBackupDatasourceParameters(TypedDict, total=False):
         key "containersList": Required[list[str]]
         key "objectType": Required[Literal["AdlsBlobBackupDatasourceParameters"]]
-        containers_list: list[str]
-        object_type: Literal[AdlsBlobBackupDatasourceParameters]
+        containersList: list[str]
+        objectType: Literal[AdlsBlobBackupDatasourceParameters]
 
 
     class azure.mgmt.dataprotection.types.BlobBackupDatasourceParametersForAutoProtection(TypedDict, total=False):
         key "autoProtectionSettings": Required[BlobBackupRuleBasedAutoProtectionSettings]
         key "objectType": Required[Literal["BlobBackupDatasourceParametersForAutoProtection"]]
-        auto_protection_settings: BlobBackupRuleBasedAutoProtectionSettings
-        object_type: Literal[BlobBackupDatasourceParametersForAutoProtection]
+        autoProtectionSettings: BlobBackupRuleBasedAutoProtectionSettings
+        objectType: Literal[BlobBackupDatasourceParametersForAutoProtection]
 
 
     class azure.mgmt.dataprotection.types.BlobBackupRuleBasedAutoProtectionSettings(TypedDict, total=False):
         key "enabled": Required[bool]
         key "objectType": Required[Literal["BlobBackupRuleBasedAutoProtectionSettings"]]
         enabled: bool
-        object_type: Literal[BlobBackupRuleBasedAutoProtectionSettings]
+        objectType: Literal[BlobBackupRuleBasedAutoProtectionSettings]
         rules: list[BlobBackupAutoProtectionRule]
 
 
@@ -6601,48 +6666,53 @@ namespace azure.mgmt.dataprotection.types
     class azure.mgmt.dataprotection.types.CmkKekIdentity(TypedDict, total=False):
         key "identityId": str
         key "identityType": Union[str, IdentityType]
-        identity_id: str
-        identity_type: Union[str, IdentityType]
+        identityId: str
+        identityType: Union[str, IdentityType]
 
 
     class azure.mgmt.dataprotection.types.CmkKeyVaultProperties(TypedDict, total=False):
         key "keyUri": str
-        key_uri: str
+        keyUri: str
 
 
     class azure.mgmt.dataprotection.types.CopyOnExpiryOption(TypedDict, total=False):
         key "objectType": Required[Literal["CopyOnExpiryOption"]]
-        object_type: Literal[CopyOnExpiryOption]
+        objectType: Literal[CopyOnExpiryOption]
+
+
+    class azure.mgmt.dataprotection.types.CostManagementSettings(TypedDict, total=False):
+        key "granularityLevel": Union[str, GranularityLevel]
+        granularityLevel: Union[str, GranularityLevel]
 
 
     class azure.mgmt.dataprotection.types.CrossRegionRestoreDetails(TypedDict, total=False):
         key "sourceBackupInstanceId": Required[str]
         key "sourceRegion": Required[str]
-        source_backup_instance_id: str
-        source_region: str
+        sourceBackupInstanceId: str
+        sourceRegion: str
 
 
     class azure.mgmt.dataprotection.types.CrossRegionRestoreJobRequest(TypedDict, total=False):
         key "jobId": Required[str]
         key "sourceBackupVaultId": Required[str]
         key "sourceRegion": Required[str]
-        job_id: str
-        source_backup_vault_id: str
-        source_region: str
+        jobId: str
+        sourceBackupVaultId: str
+        sourceRegion: str
 
 
     class azure.mgmt.dataprotection.types.CrossRegionRestoreJobsRequest(TypedDict, total=False):
         key "sourceBackupVaultId": Required[str]
         key "sourceRegion": Required[str]
-        source_backup_vault_id: str
-        source_region: str
+        sourceBackupVaultId: str
+        sourceRegion: str
 
 
     class azure.mgmt.dataprotection.types.CrossRegionRestoreRequestObject(TypedDict, total=False):
         key "crossRegionRestoreDetails": Required[CrossRegionRestoreDetails]
         key "restoreRequestObject": Required[AzureBackupRestoreRequest]
-        cross_region_restore_details: CrossRegionRestoreDetails
-        restore_request_object: AzureBackupRestoreRequest
+        crossRegionRestoreDetails: CrossRegionRestoreDetails
+        restoreRequestObject: AzureBackupRestoreRequest
 
 
     class azure.mgmt.dataprotection.types.CrossRegionRestoreSettings(TypedDict, total=False):
@@ -6659,23 +6729,23 @@ namespace azure.mgmt.dataprotection.types
         key "duration": str
         key "objectType": Required[Literal["CustomCopyOption"]]
         duration: str
-        object_type: Literal[CustomCopyOption]
+        objectType: Literal[CustomCopyOption]
 
 
     class azure.mgmt.dataprotection.types.DataStoreInfoBase(TypedDict, total=False):
         key "dataStoreType": Required[Union[str, DataStoreTypes]]
         key "objectType": Required[str]
-        data_store_type: Union[str, DataStoreTypes]
-        object_type: str
+        dataStoreType: Union[str, DataStoreTypes]
+        objectType: str
 
 
     class azure.mgmt.dataprotection.types.DataStoreParameters(TypedDict, total=False):
         key "dataStoreType": Required[Union[str, DataStoreTypes]]
         key "objectType": Required[Literal["AzureOperationalStoreParameters"]]
         key "resourceGroupId": str
-        data_store_type: Union[str, DataStoreTypes]
-        object_type: Literal[AzureOperationalStoreParameters]
-        resource_group_id: str
+        dataStoreType: Union[str, DataStoreTypes]
+        objectType: Literal[AzureOperationalStoreParameters]
+        resourceGroupId: str
 
 
     class azure.mgmt.dataprotection.types.Datasource(TypedDict, total=False):
@@ -6687,14 +6757,14 @@ namespace azure.mgmt.dataprotection.types
         key "resourceProperties": ForwardRef('BaseResourceProperties', module='types')
         key "resourceType": str
         key "resourceUri": str
-        datasource_type: str
-        object_type: str
-        resource_id: str
-        resource_location: str
-        resource_name: str
-        resource_properties: BaseResourceProperties
-        resource_type: str
-        resource_uri: str
+        datasourceType: str
+        objectType: str
+        resourceID: str
+        resourceLocation: str
+        resourceName: str
+        resourceProperties: BaseResourceProperties
+        resourceType: str
+        resourceUri: str
 
 
     class azure.mgmt.dataprotection.types.DatasourceSet(TypedDict, total=False):
@@ -6706,44 +6776,43 @@ namespace azure.mgmt.dataprotection.types
         key "resourceProperties": ForwardRef('BaseResourceProperties', module='types')
         key "resourceType": str
         key "resourceUri": str
-        datasource_type: str
-        object_type: str
-        resource_id: str
-        resource_location: str
-        resource_name: str
-        resource_properties: BaseResourceProperties
-        resource_type: str
-        resource_uri: str
+        datasourceType: str
+        objectType: str
+        resourceID: str
+        resourceLocation: str
+        resourceName: str
+        resourceProperties: BaseResourceProperties
+        resourceType: str
+        resourceUri: str
 
 
     class azure.mgmt.dataprotection.types.Day(TypedDict, total=False):
         key "date": int
         key "isLast": bool
         date: int
-        is_last: bool
+        isLast: bool
 
 
     class azure.mgmt.dataprotection.types.DefaultResourceProperties(TypedDict, total=False):
         key "objectType": Required[Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES]]
-        object_type: Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES]
+        objectType: Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES]
 
 
     class azure.mgmt.dataprotection.types.DeleteOption(TypedDict, total=False):
         key "duration": Required[str]
         key "objectType": Required[Literal["AbsoluteDeleteOption"]]
         duration: str
-        object_type: Literal[AbsoluteDeleteOption]
+        objectType: Literal[AbsoluteDeleteOption]
 
 
     class azure.mgmt.dataprotection.types.DppIdentityDetails(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": str
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: str
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.dataprotection.types.EncryptionSettings(TypedDict, total=False):
@@ -6751,54 +6820,68 @@ namespace azure.mgmt.dataprotection.types
         key "kekIdentity": ForwardRef('CmkKekIdentity', module='types')
         key "keyVaultProperties": ForwardRef('CmkKeyVaultProperties', module='types')
         key "state": Union[str, EncryptionState]
-        infrastructure_encryption: Union[str, InfrastructureEncryptionState]
-        kek_identity: CmkKekIdentity
-        key_vault_properties: CmkKeyVaultProperties
+        infrastructureEncryption: Union[str, InfrastructureEncryptionState]
+        kekIdentity: CmkKekIdentity
+        keyVaultProperties: CmkKeyVaultProperties
         state: Union[str, EncryptionState]
 
 
     class azure.mgmt.dataprotection.types.FeatureSettings(TypedDict, total=False):
         key "crossRegionRestoreSettings": ForwardRef('CrossRegionRestoreSettings', module='types')
         key "crossSubscriptionRestoreSettings": ForwardRef('CrossSubscriptionRestoreSettings', module='types')
-        cross_region_restore_settings: CrossRegionRestoreSettings
-        cross_subscription_restore_settings: CrossSubscriptionRestoreSettings
+        crossRegionRestoreSettings: CrossRegionRestoreSettings
+        crossSubscriptionRestoreSettings: CrossSubscriptionRestoreSettings
 
 
     class azure.mgmt.dataprotection.types.FeatureValidationRequest(TypedDict, total=False):
         key "featureName": str
         key "featureType": Union[str, FeatureType]
         key "objectType": Required[Literal["FeatureValidationRequest"]]
-        feature_name: str
-        feature_type: Union[str, FeatureType]
-        object_type: Literal[FeatureValidationRequest]
+        featureName: str
+        featureType: Union[str, FeatureType]
+        objectType: Literal[FeatureValidationRequest]
 
 
     class azure.mgmt.dataprotection.types.FeatureValidationRequestBase(TypedDict, total=False):
         key "featureName": str
         key "featureType": Union[str, FeatureType]
         key "objectType": Required[Literal["FeatureValidationRequest"]]
-        feature_name: str
-        feature_type: Union[str, FeatureType]
-        object_type: Literal[FeatureValidationRequest]
+        featureName: str
+        featureType: Union[str, FeatureType]
+        objectType: Literal[FeatureValidationRequest]
 
 
     class azure.mgmt.dataprotection.types.FetchSecondaryRPsRequestParameters(TypedDict, total=False):
         key "sourceBackupInstanceId": str
         key "sourceRegion": str
-        source_backup_instance_id: str
-        source_region: str
+        sourceBackupInstanceId: str
+        sourceRegion: str
+
+
+    class azure.mgmt.dataprotection.types.GenericBackupDatasourceParameters(TypedDict, total=False):
+        key "objectType": Required[Literal["GenericBackupDatasourceParameters"]]
+        key "resourceSelectors": Required[list[str]]
+        objectType: Literal[GenericBackupDatasourceParameters]
+        resourceSelectors: list[str]
+
+
+    class azure.mgmt.dataprotection.types.GenericRestoreDatasourceCriteria(TypedDict, total=False):
+        key "objectType": Required[Literal["GenericRestoreDatasourceCriteria"]]
+        key "resourceSelectors": Required[ResourceListSelectionCriteria]
+        objectType: Literal[GenericRestoreDatasourceCriteria]
+        resourceSelectors: ResourceListSelectionCriteria
 
 
     class azure.mgmt.dataprotection.types.IdentityDetails(TypedDict, total=False):
         key "useSystemAssignedIdentity": bool
         key "userAssignedIdentityArmUrl": str
-        use_system_assigned_identity: bool
-        user_assigned_identity_arm_url: str
+        useSystemAssignedIdentity: bool
+        userAssignedIdentityArmUrl: str
 
 
     class azure.mgmt.dataprotection.types.ImmediateCopyOption(TypedDict, total=False):
         key "objectType": Required[Literal["ImmediateCopyOption"]]
-        object_type: Literal[ImmediateCopyOption]
+        objectType: Literal[ImmediateCopyOption]
 
 
     class azure.mgmt.dataprotection.types.ImmutabilitySettings(TypedDict, total=False):
@@ -6810,9 +6893,8 @@ namespace azure.mgmt.dataprotection.types
         key "code": str
         key "embeddedInnerError": ForwardRef('InnerError', module='types')
         additionalInfo: dict[str, str]
-        additional_info: dict[str, str]
         code: str
-        embedded_inner_error: InnerError
+        embeddedInnerError: InnerError
 
 
     class azure.mgmt.dataprotection.types.ItemLevelRestoreTargetInfo(TypedDict, total=False):
@@ -6823,13 +6905,13 @@ namespace azure.mgmt.dataprotection.types
         key "recoveryOption": Required[Union[str, RecoveryOption]]
         key "restoreCriteria": Required[list[ItemLevelRestoreCriteria]]
         key "restoreLocation": str
-        datasource_auth_credentials: AuthCredentials
-        datasource_info: Datasource
-        datasource_set_info: DatasourceSet
-        object_type: Literal[ItemLevelRestoreTargetInfo]
-        recovery_option: Union[str, RecoveryOption]
-        restore_criteria: list[ItemLevelRestoreCriteria]
-        restore_location: str
+        datasourceAuthCredentials: AuthCredentials
+        datasourceInfo: Datasource
+        datasourceSetInfo: DatasourceSet
+        objectType: Literal[ItemLevelRestoreTargetInfo]
+        recoveryOption: Union[str, RecoveryOption]
+        restoreCriteria: list[ItemLevelRestoreCriteria]
+        restoreLocation: str
 
 
     class azure.mgmt.dataprotection.types.ItemPathBasedRestoreCriteria(TypedDict, total=False):
@@ -6837,12 +6919,11 @@ namespace azure.mgmt.dataprotection.types
         key "itemPath": Required[str]
         key "objectType": Required[Literal["ItemPathBasedRestoreCriteria"]]
         key "renameTo": str
-        is_path_relative_to_backup_item: bool
-        item_path: str
-        object_type: Literal[ItemPathBasedRestoreCriteria]
-        rename_to: str
+        isPathRelativeToBackupItem: bool
+        itemPath: str
+        objectType: Literal[ItemPathBasedRestoreCriteria]
+        renameTo: str
         subItemPathPrefix: list[str]
-        sub_item_path_prefix: list[str]
 
 
     class azure.mgmt.dataprotection.types.KubernetesClusterBackupDatasourceParameters(TypedDict, total=False):
@@ -6850,22 +6931,15 @@ namespace azure.mgmt.dataprotection.types
         key "objectType": Required[Literal["KubernetesClusterBackupDatasourceParameters"]]
         key "snapshotVolumes": Required[bool]
         backupHookReferences: list[NamespacedNameResource]
-        backup_hook_references: list[NamespacedNameResource]
         excludedNamespaces: list[str]
         excludedResourceTypes: list[str]
-        excluded_namespaces: list[str]
-        excluded_resource_types: list[str]
-        include_cluster_scope_resources: bool
+        includeClusterScopeResources: bool
         includedNamespaces: list[str]
         includedResourceTypes: list[str]
         includedVolumeTypes: list[Union[str, AKSVolumeTypes]]
-        included_namespaces: list[str]
-        included_resource_types: list[str]
-        included_volume_types: list[Union[str, AKSVolumeTypes]]
         labelSelectors: list[str]
-        label_selectors: list[str]
-        object_type: Literal[KubernetesClusterBackupDatasourceParameters]
-        snapshot_volumes: bool
+        objectType: Literal[KubernetesClusterBackupDatasourceParameters]
+        snapshotVolumes: bool
 
 
     class azure.mgmt.dataprotection.types.KubernetesClusterRestoreCriteria(TypedDict, total=False):
@@ -6874,25 +6948,18 @@ namespace azure.mgmt.dataprotection.types
         key "objectType": Required[Literal["KubernetesClusterRestoreCriteria"]]
         key "persistentVolumeRestoreMode": Union[str, PersistentVolumeRestoreMode]
         key "resourceModifierReference": ForwardRef('NamespacedNameResource', module='types')
-        conflict_policy: Union[str, ExistingResourcePolicy]
+        conflictPolicy: Union[str, ExistingResourcePolicy]
         excludedNamespaces: list[str]
         excludedResourceTypes: list[str]
-        excluded_namespaces: list[str]
-        excluded_resource_types: list[str]
-        include_cluster_scope_resources: bool
+        includeClusterScopeResources: bool
         includedNamespaces: list[str]
         includedResourceTypes: list[str]
-        included_namespaces: list[str]
-        included_resource_types: list[str]
         labelSelectors: list[str]
-        label_selectors: list[str]
         namespaceMappings: dict[str, str]
-        namespace_mappings: dict[str, str]
-        object_type: Literal[KubernetesClusterRestoreCriteria]
-        persistent_volume_restore_mode: Union[str, PersistentVolumeRestoreMode]
-        resource_modifier_reference: NamespacedNameResource
+        objectType: Literal[KubernetesClusterRestoreCriteria]
+        persistentVolumeRestoreMode: Union[str, PersistentVolumeRestoreMode]
+        resourceModifierReference: NamespacedNameResource
         restoreHookReferences: list[NamespacedNameResource]
-        restore_hook_references: list[NamespacedNameResource]
 
 
     class azure.mgmt.dataprotection.types.KubernetesClusterVaultTierRestoreCriteria(TypedDict, total=False):
@@ -6903,27 +6970,20 @@ namespace azure.mgmt.dataprotection.types
         key "resourceModifierReference": ForwardRef('NamespacedNameResource', module='types')
         key "stagingResourceGroupId": str
         key "stagingStorageAccountId": str
-        conflict_policy: Union[str, ExistingResourcePolicy]
+        conflictPolicy: Union[str, ExistingResourcePolicy]
         excludedNamespaces: list[str]
         excludedResourceTypes: list[str]
-        excluded_namespaces: list[str]
-        excluded_resource_types: list[str]
-        include_cluster_scope_resources: bool
+        includeClusterScopeResources: bool
         includedNamespaces: list[str]
         includedResourceTypes: list[str]
-        included_namespaces: list[str]
-        included_resource_types: list[str]
         labelSelectors: list[str]
-        label_selectors: list[str]
         namespaceMappings: dict[str, str]
-        namespace_mappings: dict[str, str]
-        object_type: Literal[KubernetesClusterVaultTierRestoreCriteria]
-        persistent_volume_restore_mode: Union[str, PersistentVolumeRestoreMode]
-        resource_modifier_reference: NamespacedNameResource
+        objectType: Literal[KubernetesClusterVaultTierRestoreCriteria]
+        persistentVolumeRestoreMode: Union[str, PersistentVolumeRestoreMode]
+        resourceModifierReference: NamespacedNameResource
         restoreHookReferences: list[NamespacedNameResource]
-        restore_hook_references: list[NamespacedNameResource]
-        staging_resource_group_id: str
-        staging_storage_account_id: str
+        stagingResourceGroupId: str
+        stagingStorageAccountId: str
 
 
     class azure.mgmt.dataprotection.types.KubernetesPVRestoreCriteria(TypedDict, total=False):
@@ -6931,22 +6991,22 @@ namespace azure.mgmt.dataprotection.types
         key "objectType": Required[Literal["KubernetesPVRestoreCriteria"]]
         key "storageClassName": str
         name: str
-        object_type: Literal[KubernetesPVRestoreCriteria]
-        storage_class_name: str
+        objectType: Literal[KubernetesPVRestoreCriteria]
+        storageClassName: str
 
 
     class azure.mgmt.dataprotection.types.KubernetesStorageClassRestoreCriteria(TypedDict, total=False):
         key "objectType": Required[Literal["KubernetesStorageClassRestoreCriteria"]]
         key "provisioner": str
         key "selectedStorageClassName": str
-        object_type: Literal[KubernetesStorageClassRestoreCriteria]
+        objectType: Literal[KubernetesStorageClassRestoreCriteria]
         provisioner: str
-        selected_storage_class_name: str
+        selectedStorageClassName: str
 
 
     class azure.mgmt.dataprotection.types.MonitoringSettings(TypedDict, total=False):
         key "azureMonitorAlertSettings": ForwardRef('AzureMonitorAlertSettings', module='types')
-        azure_monitor_alert_settings: AzureMonitorAlertSettings
+        azureMonitorAlertSettings: AzureMonitorAlertSettings
 
 
     class azure.mgmt.dataprotection.types.NamespacedNameResource(TypedDict, total=False):
@@ -6957,14 +7017,15 @@ namespace azure.mgmt.dataprotection.types
 
 
     class azure.mgmt.dataprotection.types.PatchBackupVaultInput(TypedDict, total=False):
+        key "costManagementSettings": ForwardRef('CostManagementSettings', module='types')
         key "featureSettings": ForwardRef('FeatureSettings', module='types')
         key "monitoringSettings": ForwardRef('MonitoringSettings', module='types')
         key "securitySettings": ForwardRef('SecuritySettings', module='types')
-        feature_settings: FeatureSettings
-        monitoring_settings: MonitoringSettings
+        costManagementSettings: CostManagementSettings
+        featureSettings: FeatureSettings
+        monitoringSettings: MonitoringSettings
         resourceGuardOperationRequests: list[str]
-        resource_guard_operation_requests: list[str]
-        security_settings: SecuritySettings
+        securitySettings: SecuritySettings
 
 
     class azure.mgmt.dataprotection.types.PatchResourceGuardInput(TypedDict, total=False):
@@ -6983,22 +7044,20 @@ namespace azure.mgmt.dataprotection.types
         key "policyId": Required[str]
         key "policyParameters": ForwardRef('PolicyParameters', module='types')
         key "policyVersion": str
-        policy_id: str
-        policy_parameters: PolicyParameters
-        policy_version: str
+        policyId: str
+        policyParameters: PolicyParameters
+        policyVersion: str
 
 
     class azure.mgmt.dataprotection.types.PolicyParameters(TypedDict, total=False):
         backupDatasourceParametersList: list[BackupDatasourceParameters]
-        backup_datasource_parameters_list: list[BackupDatasourceParameters]
         dataStoreParametersList: list[DataStoreParameters]
-        data_store_parameters_list: list[DataStoreParameters]
 
 
     class azure.mgmt.dataprotection.types.ProtectionStatusDetails(TypedDict, total=False):
         key "errorDetails": ForwardRef('UserFacingError', module='types')
         key "status": Union[str, Status]
-        error_details: UserFacingError
+        errorDetails: UserFacingError
         status: Union[str, Status]
 
 
@@ -7009,7 +7068,7 @@ namespace azure.mgmt.dataprotection.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7017,9 +7076,9 @@ namespace azure.mgmt.dataprotection.types
         key "maxMatchingValue": str
         key "minMatchingValue": str
         key "objectType": Required[Literal["RangeBasedItemLevelRestoreCriteria"]]
-        max_matching_value: str
-        min_matching_value: str
-        object_type: Literal[RangeBasedItemLevelRestoreCriteria]
+        maxMatchingValue: str
+        minMatchingValue: str
+        objectType: Literal[RangeBasedItemLevelRestoreCriteria]
 
 
     class azure.mgmt.dataprotection.types.Resource(TypedDict, total=False):
@@ -7029,7 +7088,7 @@ namespace azure.mgmt.dataprotection.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7037,27 +7096,25 @@ namespace azure.mgmt.dataprotection.types
         key "allowAutoApprovals": bool
         key "description": str
         key "provisioningState": Union[str, ProvisioningState]
-        allow_auto_approvals: bool
+        allowAutoApprovals: bool
         description: str
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         resourceGuardOperations: list[ResourceGuardOperation]
-        resource_guard_operations: list[ResourceGuardOperation]
         vaultCriticalOperationExclusionList: list[str]
-        vault_critical_operation_exclusion_list: list[str]
 
 
     class azure.mgmt.dataprotection.types.ResourceGuardOperation(TypedDict, total=False):
         key "requestResourceType": str
         key "vaultCriticalOperation": str
-        request_resource_type: str
-        vault_critical_operation: str
+        requestResourceType: str
+        vaultCriticalOperation: str
 
 
     class azure.mgmt.dataprotection.types.ResourceGuardOperationDetail(TypedDict, total=False):
         key "defaultResourceRequest": str
         key "vaultCriticalOperation": str
-        default_resource_request: str
-        vault_critical_operation: str
+        defaultResourceRequest: str
+        vaultCriticalOperation: str
 
 
     class azure.mgmt.dataprotection.types.ResourceGuardProxyBase(TypedDict, total=False):
@@ -7065,10 +7122,9 @@ namespace azure.mgmt.dataprotection.types
         key "lastUpdatedTime": str
         key "resourceGuardResourceId": str
         description: str
-        last_updated_time: str
+        lastUpdatedTime: str
         resourceGuardOperationDetails: list[ResourceGuardOperationDetail]
-        resource_guard_operation_details: list[ResourceGuardOperationDetail]
-        resource_guard_resource_id: str
+        resourceGuardResourceId: str
 
 
     class azure.mgmt.dataprotection.types.ResourceGuardProxyBaseResource(ProxyResource):
@@ -7080,7 +7136,7 @@ namespace azure.mgmt.dataprotection.types
         id: str
         name: str
         properties: ResourceGuardProxyBase
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7092,14 +7148,22 @@ namespace azure.mgmt.dataprotection.types
         key "properties": ForwardRef('ResourceGuard', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         location: str
         name: str
         properties: ResourceGuard
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
+
+
+    class azure.mgmt.dataprotection.types.ResourceListSelectionCriteria(TypedDict, total=False):
+        key "objectType": Required[str]
+        key "resourceIdentifiers": Required[list[str]]
+        objectType: str
+        resourceIdentifiers: list[str]
+        resourceNameOverrides: dict[str, str]
 
 
     class azure.mgmt.dataprotection.types.ResourceMoveDetails(TypedDict, total=False):
@@ -7108,11 +7172,11 @@ namespace azure.mgmt.dataprotection.types
         key "sourceResourcePath": str
         key "startTimeUtc": str
         key "targetResourcePath": str
-        completion_time_utc: str
-        operation_id: str
-        source_resource_path: str
-        start_time_utc: str
-        target_resource_path: str
+        completionTimeUtc: str
+        operationId: str
+        sourceResourcePath: str
+        startTimeUtc: str
+        targetResourcePath: str
 
 
     class azure.mgmt.dataprotection.types.ResourcePropertiesObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -7124,10 +7188,10 @@ namespace azure.mgmt.dataprotection.types
         key "recoveryOption": Required[Union[str, RecoveryOption]]
         key "restoreLocation": str
         key "targetDetails": Required[TargetDetails]
-        object_type: Literal[RestoreFilesTargetInfo]
-        recovery_option: Union[str, RecoveryOption]
-        restore_location: str
-        target_details: TargetDetails
+        objectType: Literal[RestoreFilesTargetInfo]
+        recoveryOption: Union[str, RecoveryOption]
+        restoreLocation: str
+        targetDetails: TargetDetails
 
 
     class azure.mgmt.dataprotection.types.RestoreTargetInfo(TypedDict, total=False):
@@ -7137,61 +7201,55 @@ namespace azure.mgmt.dataprotection.types
         key "objectType": Required[Literal["RestoreTargetInfo"]]
         key "recoveryOption": Required[Union[str, RecoveryOption]]
         key "restoreLocation": str
-        datasource_auth_credentials: AuthCredentials
-        datasource_info: Datasource
-        datasource_set_info: DatasourceSet
-        object_type: Literal[RestoreTargetInfo]
-        recovery_option: Union[str, RecoveryOption]
-        restore_location: str
+        datasourceAuthCredentials: AuthCredentials
+        datasourceInfo: Datasource
+        datasourceSetInfo: DatasourceSet
+        objectType: Literal[RestoreTargetInfo]
+        recoveryOption: Union[str, RecoveryOption]
+        restoreLocation: str
 
 
     class azure.mgmt.dataprotection.types.RetentionTag(TypedDict, total=False):
         key "eTag": str
         key "id": str
         key "tagName": Required[str]
-        e_tag: str
+        eTag: str
         id: str
-        tag_name: str
+        tagName: str
 
 
     class azure.mgmt.dataprotection.types.ScheduleBasedBackupCriteria(TypedDict, total=False):
         key "objectType": Required[Literal["ScheduleBasedBackupCriteria"]]
         absoluteCriteria: list[Union[str, AbsoluteMarker]]
-        absolute_criteria: list[Union[str, AbsoluteMarker]]
         daysOfMonth: list[Day]
         daysOfTheWeek: list[Union[str, DayOfWeek]]
-        days_of_month: list[Day]
-        days_of_the_week: list[Union[str, DayOfWeek]]
         monthsOfYear: list[Union[str, Month]]
-        months_of_year: list[Union[str, Month]]
-        object_type: Literal[ScheduleBasedBackupCriteria]
+        objectType: Literal[ScheduleBasedBackupCriteria]
         scheduleTimes: list[str]
-        schedule_times: list[str]
         weeksOfTheMonth: list[Union[str, WeekNumber]]
-        weeks_of_the_month: list[Union[str, WeekNumber]]
 
 
     class azure.mgmt.dataprotection.types.ScheduleBasedTriggerContext(TypedDict, total=False):
         key "objectType": Required[Literal["ScheduleBasedTriggerContext"]]
         key "schedule": Required[BackupSchedule]
         key "taggingCriteria": Required[list[TaggingCriteria]]
-        object_type: Literal[ScheduleBasedTriggerContext]
+        objectType: Literal[ScheduleBasedTriggerContext]
         schedule: BackupSchedule
-        tagging_criteria: list[TaggingCriteria]
+        taggingCriteria: list[TaggingCriteria]
 
 
     class azure.mgmt.dataprotection.types.SecretStoreBasedAuthCredentials(TypedDict, total=False):
         key "objectType": Required[Literal["SecretStoreBasedAuthCredentials"]]
         key "secretStoreResource": ForwardRef('SecretStoreResource', module='types')
-        object_type: Literal[SecretStoreBasedAuthCredentials]
-        secret_store_resource: SecretStoreResource
+        objectType: Literal[SecretStoreBasedAuthCredentials]
+        secretStoreResource: SecretStoreResource
 
 
     class azure.mgmt.dataprotection.types.SecretStoreResource(TypedDict, total=False):
         key "secretStoreType": Required[Union[str, SecretStoreType]]
         key "uri": str
         key "value": str
-        secret_store_type: Union[str, SecretStoreType]
+        secretStoreType: Union[str, SecretStoreType]
         uri: str
         value: str
 
@@ -7200,47 +7258,44 @@ namespace azure.mgmt.dataprotection.types
         key "encryptionSettings": ForwardRef('EncryptionSettings', module='types')
         key "immutabilitySettings": ForwardRef('ImmutabilitySettings', module='types')
         key "softDeleteSettings": ForwardRef('SoftDeleteSettings', module='types')
-        encryption_settings: EncryptionSettings
-        immutability_settings: ImmutabilitySettings
-        soft_delete_settings: SoftDeleteSettings
+        encryptionSettings: EncryptionSettings
+        immutabilitySettings: ImmutabilitySettings
+        softDeleteSettings: SoftDeleteSettings
 
 
     class azure.mgmt.dataprotection.types.SoftDeleteSettings(TypedDict, total=False):
         key "retentionDurationInDays": float
         key "state": Union[str, SoftDeleteState]
-        retention_duration_in_days: float
+        retentionDurationInDays: float
         state: Union[str, SoftDeleteState]
 
 
     class azure.mgmt.dataprotection.types.SourceLifeCycle(TypedDict, total=False):
         key "deleteAfter": Required[DeleteOption]
         key "sourceDataStore": Required[DataStoreInfoBase]
-        delete_after: DeleteOption
-        source_data_store: DataStoreInfoBase
+        deleteAfter: DeleteOption
+        sourceDataStore: DataStoreInfoBase
         targetDataStoreCopySettings: list[TargetCopySetting]
-        target_data_store_copy_settings: list[TargetCopySetting]
 
 
     class azure.mgmt.dataprotection.types.StopProtectionRequest(TypedDict, total=False):
         resourceGuardOperationRequests: list[str]
-        resource_guard_operation_requests: list[str]
 
 
     class azure.mgmt.dataprotection.types.StorageSetting(TypedDict, total=False):
         key "datastoreType": Union[str, StorageSettingStoreTypes]
         key "type": Union[str, StorageSettingTypes]
-        datastore_type: Union[str, StorageSettingStoreTypes]
+        datastoreType: Union[str, StorageSettingStoreTypes]
         type: Union[str, StorageSettingTypes]
 
 
     class azure.mgmt.dataprotection.types.SuspendBackupRequest(TypedDict, total=False):
         resourceGuardOperationRequests: list[str]
-        resource_guard_operation_requests: list[str]
 
 
     class azure.mgmt.dataprotection.types.SyncBackupInstanceRequest(TypedDict, total=False):
         key "syncType": Union[str, SyncType]
-        sync_type: Union[str, SyncType]
+        syncType: Union[str, SyncType]
 
 
     class azure.mgmt.dataprotection.types.SystemData(TypedDict, total=False):
@@ -7250,12 +7305,12 @@ namespace azure.mgmt.dataprotection.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.dataprotection.types.TaggingCriteria(TypedDict, total=False):
@@ -7263,16 +7318,16 @@ namespace azure.mgmt.dataprotection.types
         key "tagInfo": Required[RetentionTag]
         key "taggingPriority": Required[int]
         criteria: list[BackupCriteria]
-        is_default: bool
-        tag_info: RetentionTag
-        tagging_priority: int
+        isDefault: bool
+        tagInfo: RetentionTag
+        taggingPriority: int
 
 
     class azure.mgmt.dataprotection.types.TargetCopySetting(TypedDict, total=False):
         key "copyAfter": Required[CopyOption]
         key "dataStore": Required[DataStoreInfoBase]
-        copy_after: CopyOption
-        data_store: DataStoreInfoBase
+        copyAfter: CopyOption
+        dataStore: DataStoreInfoBase
 
 
     class azure.mgmt.dataprotection.types.TargetDetails(TypedDict, total=False):
@@ -7280,9 +7335,9 @@ namespace azure.mgmt.dataprotection.types
         key "restoreTargetLocationType": Required[Union[str, RestoreTargetLocationType]]
         key "targetResourceArmId": str
         key "url": Required[str]
-        file_prefix: str
-        restore_target_location_type: Union[str, RestoreTargetLocationType]
-        target_resource_arm_id: str
+        filePrefix: str
+        restoreTargetLocationType: Union[str, RestoreTargetLocationType]
+        targetResourceArmId: str
         url: str
 
 
@@ -7295,28 +7350,27 @@ namespace azure.mgmt.dataprotection.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.dataprotection.types.TriggerBackupRequest(TypedDict, total=False):
         key "backupRuleOptions": Required[AdHocBackupRuleOptions]
-        backup_rule_options: AdHocBackupRuleOptions
+        backupRuleOptions: AdHocBackupRuleOptions
 
 
     class azure.mgmt.dataprotection.types.UnlockDeleteRequest(TypedDict, total=False):
         key "resourceToBeDeleted": str
         resourceGuardOperationRequests: list[str]
-        resource_guard_operation_requests: list[str]
-        resource_to_be_deleted: str
+        resourceToBeDeleted: str
 
 
     class azure.mgmt.dataprotection.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.dataprotection.types.UserFacingError(TypedDict, total=False):
@@ -7328,36 +7382,35 @@ namespace azure.mgmt.dataprotection.types
         key "target": str
         code: str
         details: list[UserFacingError]
-        inner_error: InnerError
-        is_retryable: bool
-        is_user_error: bool
+        innerError: InnerError
+        isRetryable: bool
+        isUserError: bool
         message: str
         properties: dict[str, str]
         recommendedAction: list[str]
-        recommended_action: list[str]
         target: str
 
 
     class azure.mgmt.dataprotection.types.ValidateCrossRegionRestoreRequestObject(TypedDict, total=False):
         key "crossRegionRestoreDetails": Required[CrossRegionRestoreDetails]
         key "restoreRequestObject": Required[AzureBackupRestoreRequest]
-        cross_region_restore_details: CrossRegionRestoreDetails
-        restore_request_object: AzureBackupRestoreRequest
+        crossRegionRestoreDetails: CrossRegionRestoreDetails
+        restoreRequestObject: AzureBackupRestoreRequest
 
 
     class azure.mgmt.dataprotection.types.ValidateForBackupRequest(TypedDict, total=False):
         key "backupInstance": Required[BackupInstance]
-        backup_instance: BackupInstance
+        backupInstance: BackupInstance
 
 
     class azure.mgmt.dataprotection.types.ValidateForModifyBackupRequest(TypedDict, total=False):
         key "backupInstance": Required[BackupInstance]
-        backup_instance: BackupInstance
+        backupInstance: BackupInstance
 
 
     class azure.mgmt.dataprotection.types.ValidateRestoreRequestObject(TypedDict, total=False):
         key "restoreRequestObject": Required[AzureBackupRestoreRequest]
-        restore_request_object: AzureBackupRestoreRequest
+        restoreRequestObject: AzureBackupRestoreRequest
 
 
 ```
