@@ -1,0 +1,24 @@
+{
+    "CrossLanguagePackageId": "Microsoft.EdgeOperator",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.edgeoperator.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.mgmt.edgeoperator.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.edgeoperator.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.mgmt.edgeoperator.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
+        "azure.mgmt.edgeoperator.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.edgeoperator.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.mgmt.edgeoperator.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
+        "azure.mgmt.edgeoperator.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.edgeoperator.models.SystemReadiness": "Microsoft.EdgeOperator.SystemReadiness",
+        "azure.mgmt.edgeoperator.models.SystemReadinessCategory": "Microsoft.EdgeOperator.SystemReadinessCategory",
+        "azure.mgmt.edgeoperator.models.SystemReadinessProperties": "Microsoft.EdgeOperator.SystemReadinessProperties",
+        "azure.mgmt.edgeoperator.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
+        "azure.mgmt.edgeoperator.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
+        "azure.mgmt.edgeoperator.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.edgeoperator.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.edgeoperator.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.edgeoperator.operations.SystemReadinessOperationsOperations.get": "Microsoft.EdgeOperator.SystemReadinessOperations.get",
+        "azure.mgmt.edgeoperator.aio.operations.SystemReadinessOperationsOperations.get": "Microsoft.EdgeOperator.SystemReadinessOperations.get"
+    },
+    "CrossLanguageVersion": "8328da92a0f7"
+}
