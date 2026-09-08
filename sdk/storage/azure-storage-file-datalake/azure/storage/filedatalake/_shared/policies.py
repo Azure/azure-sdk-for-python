@@ -485,15 +485,10 @@ def _validate_content_response(
                     if hasattr(iterator, "response"):
                         decoder.response = iterator.response  # type: ignore
                     return decoder
-
                 return wrapped
 
             # Patch response to return response iterator wrapped in structured message decoder.
-            # Different generated code paths consume the response via different methods:
-            #  * Legacy generated code (e.g. azure-storage-blob) calls `stream_download(...)`.
-            #  * Modern generated code (filedatalake) calls `iter_bytes()`.
-            # Since filedatalake's pipeline is shared with the inner BlobClient, we must wrap
-            # whichever method ends up being called.
+            # TypeSpec-generated code calls iter_bytes()/iter_raw() instead of stream_download().
             if hasattr(response.http_response, "iter_bytes"):
                 response.http_response.iter_bytes = _make_wrapper(response.http_response.iter_bytes)
             if hasattr(response.http_response, "iter_raw"):
@@ -880,6 +875,10 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
         "x-ms-copy-source",
         "x-ms-copy-source-authorization",
         "x-ms-rename-source",
+        "x-ms-encryption-key",
+        "x-ms-encryption-key-sha256",
+        "x-ms-source-encryption-key",
+        "x-ms-source-encryption-key-sha256",
     }
 
     DEFAULT_SENSITIVE_QUERY_PARAMS = {"sig"}

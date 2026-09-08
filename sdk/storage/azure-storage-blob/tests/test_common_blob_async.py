@@ -3812,6 +3812,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         content = await (await identity_blob.download_blob()).readall()
         assert content == data
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_smart_rehydrate(self, **kwargs):

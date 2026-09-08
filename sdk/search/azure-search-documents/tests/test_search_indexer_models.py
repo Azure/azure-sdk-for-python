@@ -29,7 +29,6 @@ from azure.search.documents.indexes.models import (
 
 from _capabilities import require_capability
 
-
 DATA_SOURCE_NAME = "hotel-data-source"
 CONNECTION_STRING = (
     "ResourceId=/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/search/"

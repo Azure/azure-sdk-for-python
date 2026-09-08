@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ApprovalActionRequest(_Model):
+class ApprovalActionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for calling post-action.
 
     :ivar approval_status: Approval status indicating 'Approved' or 'Rejected'. Required. Is one of
@@ -49,7 +49,7 @@ class ApprovalActionRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApprovalActionResponse(_Model):
+class ApprovalActionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response body after handling of approvalCallbackRequest.
 
     :ivar message: Confirmation message indicating the result of the operation. Required.
@@ -77,7 +77,7 @@ class ApprovalActionResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApprovalCallbackRequest(_Model):
+class ApprovalCallbackRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for calling post-action.
 
     :ivar resource_request_action: Resource request action indicating action which needed to be
@@ -127,7 +127,7 @@ class ApprovalCallbackRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApprovalDeletionCallbackRequest(_Model):
+class ApprovalDeletionCallbackRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for calling post-action.
 
     :ivar resource_request_action: Resource request action indicating action which needed to be
@@ -161,7 +161,7 @@ class ApprovalDeletionCallbackRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApprovalPatchModel(_Model):
+class ApprovalPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Approvals patch model.
 
     :ivar properties: Approval Patch properties.
@@ -191,7 +191,7 @@ class ApprovalPatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApprovalPatchProperties(_Model):
+class ApprovalPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Approvals patch properties.
 
     :ivar parent_resource_id: Parameter for optimizing query results.
@@ -263,7 +263,7 @@ class ApprovalPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApprovalProperties(_Model):
+class ApprovalProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Approval Base model.
 
     :ivar provisioning_state: Provisioning State. Known values are: "Succeeded", "Failed",
@@ -415,7 +415,7 @@ class ExtensionResource(Resource):
     """
 
 
-class ApprovalResource(ExtensionResource):
+class ApprovalResource(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Approval Model Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -456,7 +456,7 @@ class ApprovalResource(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class ApprovalSettingConfiguration(_Model):
+class ApprovalSettingConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Granular approval setting configuration with policy, minimum approvers, and mandatory
     approvers.
 
@@ -503,7 +503,7 @@ class ApprovalSettingConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApprovalSettings(_Model):
+class ApprovalSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Granular ApprovalSettings Properties for 2025-11-01-preview and later versions.
 
     :ivar community_endpoint_update: Approval configuration for community endpoint updates.
@@ -575,7 +575,7 @@ class ApprovalSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApprovalSettingsPatchProperties(_Model):
+class ApprovalSettingsPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Granular ApprovalSettings Patch Properties.
 
     :ivar community_endpoint_update: Approval configuration for community endpoint updates.
@@ -647,7 +647,7 @@ class ApprovalSettingsPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Approver(_Model):
+class Approver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Approver Metadata for approvals request.
 
     :ivar approver_entra_id: Entra ObjectID of the approver. Required.
@@ -699,7 +699,7 @@ class Approver(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckAddressSpaceAvailabilityRequest(_Model):
+class CheckAddressSpaceAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to the action call to check address space availability.
 
     :ivar community_resource_id: Resource Id of the Community. Required.
@@ -736,7 +736,7 @@ class CheckAddressSpaceAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckAddressSpaceAvailabilityResponse(_Model):
+class CheckAddressSpaceAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response of availability of the requested address space.
 
     :ivar value: Boolean representing whether the address space is available. Required.
@@ -764,7 +764,7 @@ class CheckAddressSpaceAvailabilityResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityEndpointDestinationRule(_Model):
+class CommunityEndpointDestinationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for destination rules.
 
     :ivar destination_type: Destination Type. Known values are: "FQDN", "FQDNTag", "IPAddress",
@@ -830,7 +830,7 @@ class CommunityEndpointDestinationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityEndpointPatchModel(_Model):
+class CommunityEndpointPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Community Endpoint Patch Resource.
 
     :ivar properties: Community Endpoint Patch properties.
@@ -865,7 +865,7 @@ class CommunityEndpointPatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityEndpointPatchProperties(_Model):
+class CommunityEndpointPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Community Endpoint patchable Properties.
 
     :ivar rule_collection: Community Endpoint Rule Collection. Required.
@@ -903,7 +903,7 @@ class CommunityEndpointPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityEndpointProperties(_Model):
+class CommunityEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Community Endpoint Resource properties.
 
     :ivar rule_collection: Community Endpoint Rule Collection. Required.
@@ -953,7 +953,7 @@ class CommunityEndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -997,7 +997,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class CommunityEndpointResource(TrackedResource):
+class CommunityEndpointResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CommunityEndpoint Model Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1044,7 +1044,7 @@ class CommunityEndpointResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class CommunityPatchModel(_Model):
+class CommunityPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Community Patch Resource.
 
     :ivar properties: Community Patch properties.
@@ -1086,7 +1086,7 @@ class CommunityPatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityPatchProperties(_Model):
+class CommunityPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Community Resource Properties without default values.
 
     :ivar dns_servers: DNS Servers.
@@ -1181,7 +1181,7 @@ class CommunityPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityProperties(_Model):
+class CommunityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Community Resource Properties.
 
     :ivar address_space: Address Space.
@@ -1310,7 +1310,7 @@ class CommunityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommunityResource(TrackedResource):
+class CommunityResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Community Model Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1364,7 +1364,7 @@ class CommunityResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHubPatchModel(_Model):
+class DedicatedHubPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dedicated Hub Patch Resource.
 
     :ivar properties: The DedicatedHub resource.
@@ -1399,7 +1399,7 @@ class DedicatedHubPatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHubPatchProperties(_Model):
+class DedicatedHubPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dedicated Hub patchable Properties.
 
     :ivar designation: Designation of hub resource allocation (Pooled or Reserved). Known values
@@ -1431,7 +1431,7 @@ class DedicatedHubPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHubProperties(_Model):
+class DedicatedHubProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Dedicated Hub.
 
     :ivar v_hub_resource_id: Virtual Hub Resource ID.
@@ -1484,7 +1484,7 @@ class DedicatedHubProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DedicatedHubResource(TrackedResource):
+class DedicatedHubResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DedicatedHub Model Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1531,7 +1531,7 @@ class DedicatedHubResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveAddressSpacesModel(_Model):
+class EnclaveAddressSpacesModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enclave Address Spaces.
 
     :ivar enclave_address_space: Enclave Address Space.
@@ -1568,7 +1568,7 @@ class EnclaveAddressSpacesModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveConnectionPatchModel(_Model):
+class EnclaveConnectionPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enclave Connection Patch Resource.
 
     :ivar properties: Enclave Connection Patch properties.
@@ -1603,7 +1603,7 @@ class EnclaveConnectionPatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveConnectionPatchProperties(_Model):
+class EnclaveConnectionPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enclave Connection patchable Properties.
 
     :ivar source_cidr: Source CIDR.
@@ -1633,7 +1633,7 @@ class EnclaveConnectionPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveConnectionProperties(_Model):
+class EnclaveConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enclave Connection Resource properties.
 
     :ivar state: The state of the enclaveConnection. Known values are: "PendingApproval",
@@ -1702,7 +1702,7 @@ class EnclaveConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveConnectionResource(TrackedResource):
+class EnclaveConnectionResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EnclaveConnection Model Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1749,7 +1749,7 @@ class EnclaveConnectionResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveDefaultSettingsModel(_Model):
+class EnclaveDefaultSettingsModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Enclave Default Settings.
 
     :ivar key_vault_resource_id: Key Vault Resource Id.
@@ -1794,7 +1794,7 @@ class EnclaveDefaultSettingsModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveDefaultSettingsPatchModel(_Model):
+class EnclaveDefaultSettingsPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Enclave Default Settings.
 
     :ivar diagnostic_destination: Diagnostic Destination. Known values are: "CommunityOnly",
@@ -1825,7 +1825,7 @@ class EnclaveDefaultSettingsPatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveEndpointDestinationRule(_Model):
+class EnclaveEndpointDestinationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enclave Endpoint Rule Properties.
 
     :ivar protocols: Protocols. Options specified by Endpoint Protocol Enum.
@@ -1875,7 +1875,7 @@ class EnclaveEndpointDestinationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveEndpointPatchModel(_Model):
+class EnclaveEndpointPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enclave Endpoint Patch Resource.
 
     :ivar properties: Enclave Endpoint Patch properties.
@@ -1910,7 +1910,7 @@ class EnclaveEndpointPatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveEndpointPatchProperties(_Model):
+class EnclaveEndpointPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enclave Endpoint patchable Properties.
 
     :ivar rule_collection: Enclave Endpoint Rule Collection. Required.
@@ -1948,7 +1948,7 @@ class EnclaveEndpointPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveEndpointProperties(_Model):
+class EnclaveEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enclave Endpoint Resource properties.
 
     :ivar rule_collection: Enclave Endpoint Rule Collection. Required.
@@ -1998,7 +1998,7 @@ class EnclaveEndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveEndpointResource(TrackedResource):
+class EnclaveEndpointResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EnclaveEndpoint Model Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2045,7 +2045,7 @@ class EnclaveEndpointResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveResource(TrackedResource):
+class EnclaveResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Enclave Model Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2099,7 +2099,7 @@ class EnclaveResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class EnclaveVirtualNetworkModel(_Model):
+class EnclaveVirtualNetworkModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enclave Virtual Network Properties.
 
     :ivar network_name: Network Name.
@@ -2197,7 +2197,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -2225,7 +2225,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GovernedServiceItem(_Model):
+class GovernedServiceItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GovernedServiceItem Properties.
 
     :ivar service_id: Service ID. Required. Known values are: "AKS", "AppService",
@@ -2300,7 +2300,7 @@ class GovernedServiceItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceModeConfigurationModel(_Model):
+class MaintenanceModeConfigurationModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance Mode.
 
     :ivar mode: Current mode of Maintenance Mode Configuration. Required. Is one of the following
@@ -2352,7 +2352,7 @@ class MaintenanceModeConfigurationModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceModeConfigurationPatchModel(_Model):
+class MaintenanceModeConfigurationPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance Mode Patch Model.
 
     :ivar mode: Current mode of Maintenance Mode Configuration. Required. Is one of the following
@@ -2418,7 +2418,7 @@ class ManagedOnBehalfOfConfiguration(_Model):
     """Managed-On-Behalf-Of broker resources."""
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -2469,7 +2469,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MandatoryApprover(_Model):
+class MandatoryApprover(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Approver Metadata for approvals request.
 
     :ivar approver_entra_id: EntraId of the approver. Required.
@@ -2499,7 +2499,7 @@ class MandatoryApprover(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MoboBrokerResource(_Model):
+class MoboBrokerResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed-On-Behalf-Of broker resource. This resource is created by the Resource Provider to
     manage some resources on behalf of the user.
 
@@ -2528,7 +2528,7 @@ class MoboBrokerResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitoringDestination(_Model):
+class MonitoringDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monitoring destination configuration with multiple workspaces.
 
     :ivar destination_type: The type of monitoring workspace destination. Required. Known values
@@ -2574,7 +2574,7 @@ class MonitoringDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitoringDestinationPatchModel(_Model):
+class MonitoringDestinationPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monitoring Destination Patch Model.
 
     :ivar destination_type: The type of monitoring workspace destination. Required. Known values
@@ -2620,7 +2620,7 @@ class MonitoringDestinationPatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitoringSettingsModel(_Model):
+class MonitoringSettingsModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monitoring Settings.
 
     :ivar diagnostic_destinations: Log Analytics workspace destinations where diagnostic logs will
@@ -2659,7 +2659,7 @@ class MonitoringSettingsModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitoringSettingsPatchModel(_Model):
+class MonitoringSettingsPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monitoring Settings Patch Model.
 
     :ivar diagnostic_destinations: Log Analytics workspace destinations where diagnostic logs will
@@ -2699,7 +2699,7 @@ class MonitoringSettingsPatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -2787,7 +2787,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class Principal(_Model):
+class Principal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Principal for maintenance mode or role assignments.
 
     :ivar id: The object id associated with the principal. Required.
@@ -2826,7 +2826,7 @@ class Principal(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequestMetadata(_Model):
+class RequestMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request Metadata for approvals request.
 
     :ivar resource_action: Resource Action of the item being approved or declined. Required.
@@ -2877,7 +2877,7 @@ class RequestMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequestMetadataUpdatableProperties(_Model):
+class RequestMetadataUpdatableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request Metadata patch properties.
 
     :ivar resource_action: Resource Action of the item being approved or declined. Required.
@@ -2928,7 +2928,7 @@ class RequestMetadataUpdatableProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleAssignmentItem(_Model):
+class RoleAssignmentItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Role assignment item that indicates which principals should be assigned this role definition.
 
     :ivar role_definition_id: Role definition identifier. Required.
@@ -2970,7 +2970,7 @@ class RoleAssignmentItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubnetConfiguration(_Model):
+class SubnetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subnet Configuration.
 
     :ivar subnet_name: Subnet name. Required.
@@ -3026,7 +3026,7 @@ class SubnetConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3093,7 +3093,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TransitHubPatchModel(_Model):
+class TransitHubPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TH Patch Resource.
 
     :ivar properties: The TransitHub resource.
@@ -3128,7 +3128,7 @@ class TransitHubPatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TransitHubPatchProperties(_Model):
+class TransitHubPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Transit Hub patchable Properties.
 
     :ivar state: The state of the transitHub. Known values are: "PendingApproval", "Approved",
@@ -3176,7 +3176,7 @@ class TransitHubPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TransitHubProperties(_Model):
+class TransitHubProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of an Transit Hub.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -3237,7 +3237,7 @@ class TransitHubProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TransitHubResource(TrackedResource):
+class TransitHubResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TransitHub Model Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3284,7 +3284,7 @@ class TransitHubResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class TransitOption(_Model):
+class TransitOption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TransitOption Properties.
 
     :ivar type: Transit Option Type. Known values are: "ExpressRoute", "Gateway", and "Peering".
@@ -3321,7 +3321,7 @@ class TransitOption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TransitOptionParams(_Model):
+class TransitOptionParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TransitOptionParams Properties.
 
     :ivar scale_units: Transit Option Params scaleUnits.
@@ -3373,7 +3373,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class VirtualEnclaveApprovalSettings(_Model):
+class VirtualEnclaveApprovalSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Enclave ApprovalSettings Properties for 2025-11-01-preview and later versions.
 
     :ivar enclave_endpoint_update: Approval configuration for enclave endpoint updates.
@@ -3424,7 +3424,9 @@ class VirtualEnclaveApprovalSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualEnclaveApprovalSettingsPatchProperties(_Model):  # pylint: disable=name-too-long
+class VirtualEnclaveApprovalSettingsPatchProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Virtual Enclave ApprovalSettings Patch Properties.
 
     :ivar enclave_endpoint_update: Approval configuration for enclave endpoint updates.
@@ -3475,7 +3477,7 @@ class VirtualEnclaveApprovalSettingsPatchProperties(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class VirtualEnclavePatchModel(_Model):
+class VirtualEnclavePatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Enclave Patch Model.
 
     :ivar properties: Virtual Enclave Patch properties.
@@ -3517,7 +3519,7 @@ class VirtualEnclavePatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualEnclavePatchProperties(_Model):
+class VirtualEnclavePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Enclave Patchable Properties.
 
     :ivar enclave_virtual_network: Virtual Network. Required.
@@ -3631,7 +3633,7 @@ class VirtualEnclavePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualEnclaveProperties(_Model):
+class VirtualEnclaveProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Enclave Resource properties.
 
     :ivar provisioning_state: Provisioning State. Known values are: "Succeeded", "Failed",
@@ -3778,7 +3780,7 @@ class VirtualEnclaveProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadPatchModel(_Model):
+class WorkloadPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload Patch Resource.
 
     :ivar properties: Workload Patch properties.
@@ -3813,7 +3815,7 @@ class WorkloadPatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadPatchProperties(_Model):
+class WorkloadPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload patchable Properties.
 
     :ivar resource_group_collection: List of resource group ids.
@@ -3843,7 +3845,7 @@ class WorkloadPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadProperties(_Model):
+class WorkloadProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload Resource properties.
 
     :ivar provisioning_state: Provisioning State. Known values are: "Succeeded", "Failed",
@@ -3888,7 +3890,7 @@ class WorkloadProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadResource(TrackedResource):
+class WorkloadResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload Model Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -

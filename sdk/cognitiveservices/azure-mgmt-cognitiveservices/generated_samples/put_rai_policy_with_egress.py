@@ -37,6 +37,7 @@ def main():
         rai_policy={
             "properties": {
                 "basePolicyName": "Microsoft.Default",
+                "contentFilters": [],
                 "egressPolicy": {
                     "defaultAction": "Deny",
                     "description": "Corporate baseline egress policy for sandboxed agents",
@@ -91,6 +92,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-15-preview/PutRaiPolicyWithEgress.json
+# x-ms-original-file: 2026-07-15-preview/PutRaiPolicyWithEgress.json
 if __name__ == "__main__":
     main()

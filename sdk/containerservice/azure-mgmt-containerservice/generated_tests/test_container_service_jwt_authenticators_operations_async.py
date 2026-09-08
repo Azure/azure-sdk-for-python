@@ -48,6 +48,7 @@ class TestContainerServiceJWTAuthenticatorsOperationsAsync(AzureMgmtRecordedTest
                             "uid": {"expression": "str"},
                         },
                         "issuer": {"audiences": ["str"], "url": "str"},
+                        "certificateAuthorityBundle": "str",
                         "claimValidationRules": [{"expression": "str", "message": "str"}],
                         "provisioningState": "str",
                         "userValidationRules": [{"expression": "str", "message": "str"}],

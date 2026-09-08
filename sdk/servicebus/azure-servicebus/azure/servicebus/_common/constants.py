@@ -68,6 +68,8 @@ DEFAULT_SERVER_TIMEOUT_MS = 60000
 SERVER_TIMEOUT_BUFFER_MS = 1000
 # The property is encoded as an AMQP uint, so cap at its maximum (about 49.7 days).
 MAX_SERVER_TIMEOUT_MS = 2**32 - 1
+# Bounds a receive when neither the call nor the receiver supplied a wait time.
+DEFAULT_RECEIVE_WAIT_TIME_SECS = 60
 
 MANAGEMENT_PATH_SUFFIX = "/$management"
 

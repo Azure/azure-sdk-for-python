@@ -4,6 +4,9 @@
 
 ### Features Added
 
+### Bugs Fixed
+- Fixed an issue where a SAS generated for a path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
+
 ### Other Changes
 - Content-Type for append_data has changed from application/json to octet-stream
 - Dropped support for legacy transports

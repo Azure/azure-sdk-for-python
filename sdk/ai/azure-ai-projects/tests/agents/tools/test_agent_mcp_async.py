@@ -17,7 +17,7 @@ class TestAgentMCPAsync(TestBase):
     # To run only this test:
     # pytest tests/agents/tools/test_agent_mcp_async.py::TestAgentMCPAsync::test_agent_mcp_basic_async -s
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_mcp_basic_async(self, **kwargs):
 
         model = kwargs.get("foundry_model_name")

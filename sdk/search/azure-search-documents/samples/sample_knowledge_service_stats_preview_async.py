@@ -34,6 +34,12 @@ async def main():
         stats = await index_client.get_service_statistics()
     print(f"Knowledge bases: {stats.counters.knowledge_base_counter.usage}")
     print(f"Knowledge sources: {stats.counters.knowledge_source_counter.usage}")
+    vector_limit = stats.limits.max_vector_index_size_per_index_in_bytes
+    if vector_limit is None:
+        print("Maximum vector index size per index: not reported by this service tier")
+    else:
+        print(f"Maximum vector index size per index: {vector_limit} bytes")
+    print("This is a per-index limit, not current usage or a per-partition quota.")
     # [END sample_knowledge_service_stats_preview_async]
 
 

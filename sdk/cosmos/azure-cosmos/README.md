@@ -963,7 +963,7 @@ may have additional latencies associated with searching in the service.
 
 You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well for additional guidance.
 
-### Public Preview - Throughput Buckets
+### Throughput Buckets
 When multiple workloads share the same Azure Cosmos DB container, resource contention can lead to throttling, increased latency, and potential business impact.
 To address this, Cosmos DB allows you to allocate throughput buckets, which help manage resource consumption for workloads sharing a Cosmos DB container by limiting the maximum throughput a bucket can consume.
 However, throughput isn't reserved for any bucket, it remains shared across all workloads.
