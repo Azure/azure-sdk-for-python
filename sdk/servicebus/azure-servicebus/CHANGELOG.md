@@ -4,9 +4,15 @@
 
 ### Features Added
 
+- Added an opt-in `try_timeout` client keyword that bounds a single attempt rather than the whole operation. Applies to sending, management operations, and AMQP link acquisition, where the wait for the link to become ready was previously unbounded. Each attempt gets a fresh `try_timeout`, still capped by the caller's remaining time; exceeding it raises a retryable `OperationTimeoutError` and retries. Must be greater than 0 if specified, and defaults to `None` (off), preserving existing behavior. It also caps the link acquisition performed by `receive_messages()` and by receiver iteration, but does not bound the `receive_messages()` long poll, the iterator's own wait, or message settlement. Opening, closing and error-path cleanup of the AMQP handler are bounded on the async client, where a slow call is cancelled once the budget is spent and a cleanup failure never replaces the error that triggered it; the sync client cannot interrupt a blocking call and so detects the overrun only once it returns. Mirrors `TryTimeout` in the .NET, Java and Go SDKs.
+
 ### Breaking Changes
 
+- `receive_messages()` now returns an empty list after 60 seconds when no wait time was given on the call or the receiver; it previously had no deadline and blocked until a message arrived or the connection closed. An explicit `max_wait_time` still wins, and receiver iteration is unchanged. On a receiver that has not been opened yet, this wait now also bounds the initial link acquisition, including connecting to a `NEXT_AVAILABLE_SESSION`; open the receiver first (for example with a context manager) to keep that governed solely by the constructor's `max_wait_time`.
+
 ### Bugs Fixed
+
+- Management, send and receive operations now bound AMQP link acquisition by the caller's timeout, rather than timing only the operation that follows it. Previously a link that never became ready could block indefinitely even when a timeout was supplied. Management and send deduct the time spent from the operation itself, so one attempt shares a single budget.
 
 ### Other Changes
 
