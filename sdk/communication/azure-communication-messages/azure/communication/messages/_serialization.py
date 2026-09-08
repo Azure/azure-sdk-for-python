@@ -186,7 +186,7 @@ except NameError:
     _long_type = int
 
 
-class UTC(datetime.tzinfo):
+class UTC(datetime.tzinfo):  # pylint: disable=unused-argument
     """Time Zone info for handling UTC"""
 
     def utcoffset(self, dt):
@@ -221,7 +221,7 @@ try:
     from datetime import timezone as _FixedOffset  # type: ignore
 except ImportError:  # Python 2.7
 
-    class _FixedOffset(datetime.tzinfo):  # type: ignore
+    class _FixedOffset(datetime.tzinfo):  # type: ignore  # pylint: disable=unused-argument
         """Fixed offset in minutes east from UTC.
         Copy/pasted from Python doc
         :param datetime.timedelta offset: offset in timedelta format
