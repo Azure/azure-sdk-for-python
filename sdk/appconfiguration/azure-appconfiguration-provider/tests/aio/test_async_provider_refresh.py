@@ -45,10 +45,14 @@ try:
             feature_id = f"{test_prefix}-alpha"
             setting = ConfigurationSetting(key=refresh_key, value="original value")
             feature_flag = FeatureFlagConfigurationSetting(feature_id=feature_id, enabled=False)
-            await appconfig_client.set_configuration_setting(setting)
-            await appconfig_client.set_configuration_setting(feature_flag)
-
+            setting_created = False
+            feature_flag_created = False
             try:
+                await appconfig_client.set_configuration_setting(setting)
+                setting_created = True
+                await appconfig_client.set_configuration_setting(feature_flag)
+                feature_flag_created = True
+
                 async with await self.create_client(
                     endpoint=appconfiguration_endpoint_string,
                     keyvault_secret_url=appconfiguration_keyvault_secret_url,
@@ -98,8 +102,12 @@ try:
                     assert has_feature_flag(client, feature_id, False)
                     assert mock_callback.call_count == 2
             finally:
-                await appconfig_client.delete_configuration_setting(key=refresh_key)
-                await appconfig_client.delete_configuration_setting(key=feature_flag.key)
+                try:
+                    if feature_flag_created:
+                        await appconfig_client.delete_configuration_setting(key=feature_flag.key)
+                finally:
+                    if setting_created:
+                        await appconfig_client.delete_configuration_setting(key=refresh_key)
 
         # method: refresh
         @AppConfigProviderPreparer()
@@ -113,11 +121,15 @@ try:
             watch_key_name = f"{test_prefix}-watch-key"
             setting = ConfigurationSetting(key=refresh_key, value="original value")
             watch_key = ConfigurationSetting(key=watch_key_name, value="0")
-            await appconfig_client.set_configuration_setting(setting)
-            await appconfig_client.set_configuration_setting(watch_key)
-
             mock_callback = Mock()
+            setting_created = False
+            watch_key_created = False
             try:
+                await appconfig_client.set_configuration_setting(setting)
+                setting_created = True
+                await appconfig_client.set_configuration_setting(watch_key)
+                watch_key_created = True
+
                 async with await self.create_client(
                     endpoint=appconfiguration_endpoint_string,
                     keyvault_secret_url=appconfiguration_keyvault_secret_url,
@@ -142,8 +154,12 @@ try:
                     assert client[refresh_key] == "updated value"
                     assert mock_callback.call_count == 1
             finally:
-                await appconfig_client.delete_configuration_setting(key=refresh_key)
-                await appconfig_client.delete_configuration_setting(key=watch_key_name)
+                try:
+                    if watch_key_created:
+                        await appconfig_client.delete_configuration_setting(key=watch_key_name)
+                finally:
+                    if setting_created:
+                        await appconfig_client.delete_configuration_setting(key=refresh_key)
 
         @AppConfigProviderPreparer()
         @recorded_by_proxy_async
@@ -154,9 +170,11 @@ try:
             appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
             refresh_key = f"{self.get_resource_name('test')}-refresh-message"
             setting = ConfigurationSetting(key=refresh_key, value="original value")
-            await appconfig_client.set_configuration_setting(setting)
-
+            setting_created = False
             try:
+                await appconfig_client.set_configuration_setting(setting)
+                setting_created = True
+
                 async with await self.create_client(
                     endpoint=appconfiguration_endpoint_string,
                     keyvault_secret_url=appconfiguration_keyvault_secret_url,
@@ -175,7 +193,8 @@ try:
                     assert client[refresh_key] == "original value"
                     assert mock_callback.call_count == 0
             finally:
-                await appconfig_client.delete_configuration_setting(key=refresh_key)
+                if setting_created:
+                    await appconfig_client.delete_configuration_setting(key=refresh_key)
 
 except ImportError:
     pass

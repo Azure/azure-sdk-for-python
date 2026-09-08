@@ -86,9 +86,11 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         secret_key = f"{self.get_resource_name('test')}-secret"
         appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
         kv_setting = create_secret_config_setting(secret_key, "prod", appconfiguration_keyvault_secret_url)
-        await appconfig_client.set_configuration_setting(kv_setting)
-
+        secret_created = False
         try:
+            await appconfig_client.set_configuration_setting(kv_setting)
+            secret_created = True
+
             client = await self.create_client(
                 endpoint=appconfiguration_endpoint_string,
                 selects={SettingSelector(key_filter=secret_key, label_filter="prod")},
@@ -116,7 +118,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
             assert client[secret_key] == "Very secret value 2"
             assert mock_callback.call_count >= 1
         finally:
-            await appconfig_client.delete_configuration_setting(key=secret_key, label="prod")
+            if secret_created:
+                await appconfig_client.delete_configuration_setting(key=secret_key, label="prod")
 
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
