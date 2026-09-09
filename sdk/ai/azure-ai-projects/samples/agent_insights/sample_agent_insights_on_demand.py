@@ -21,6 +21,7 @@ DESCRIPTION:
     Cleanup disables scheduling and cancels active runs before deleting a
     monitor. It waits for cancellation for up to 30 checks, two seconds apart,
     and raises an error if the monitor still cannot be deleted.
+    Missing monitors or runs and other service errors are reported, not recovered.
 
     Deleting a monitor also deletes its runs, insights, and state. Use a test
     agent that does not have Agent Insights data that you need to keep.
@@ -62,7 +63,7 @@ import uuid
 
 from dotenv import load_dotenv
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
@@ -72,6 +73,7 @@ from azure.ai.projects.models import (
     AgentInsightRunCreate,
     AgentInsightStatus,
     AgentInsightUpdate,
+    JobStatus,
 )
 from azure.ai.projects.operations import BetaAgentInsightMonitorsOperations
 
@@ -95,6 +97,7 @@ def main() -> None:
             _delete_monitor(monitor_operations, existing_monitor.id, "Existing")
 
         monitor = None
+        original_error: BaseException | None = None
         try:
             # Keep scheduling disabled because this sample starts one explicit run.
             monitor = monitor_operations.create(
@@ -189,51 +192,41 @@ def main() -> None:
                 print(f"Insight status after reopening: {reopened_status}")
             else:
                 print("No insights were available to demonstrate lifecycle updates.")
+        except BaseException as error:
+            original_error = error
+            raise
         finally:
             if monitor is not None:
-                _delete_monitor(monitor_operations, monitor.id)
+                try:
+                    _delete_monitor(monitor_operations, monitor.id)
+                except Exception as cleanup_error:
+                    if original_error is None:
+                        raise
+                    message = f"Monitor cleanup also failed: {cleanup_error!r}"
+                    if hasattr(original_error, "add_note"):
+                        original_error.add_note(message)
+                    else:
+                        print(message)  # Python 3.10 does not support exception notes.
 
 
 def _delete_monitor(operations: BetaAgentInsightMonitorsOperations, monitor_id: str, label: str = "") -> None:
     monitor_label = f"{label} monitor" if label else "Monitor"
     # Disabling stops future scheduling, but a run may already have started.
-    try:
-        operations.update(monitor_id, AgentInsightMonitorUpdate(enabled=False))
-    except ResourceNotFoundError:
-        print(f"{monitor_label} `{monitor_id}` was already deleted.")
-        return
+    operations.update(monitor_id, AgentInsightMonitorUpdate(enabled=False))
 
     cancellation_requested: set[str] = set()
-    active_statuses = {"queued", "in_progress"}
+    active_statuses = {JobStatus.QUEUED, JobStatus.IN_PROGRESS}
     for attempt in range(30):
-        try:
-            active_runs = [
-                run
-                for run in operations.list_runs(monitor_id, limit=20)
-                if str(getattr(run.status, "value", run.status)).lower() in active_statuses
-            ]
-        except ResourceNotFoundError:
-            # Confirm the monitor disappeared, rather than hiding a missing run endpoint.
-            try:
-                operations.get(monitor_id)
-            except ResourceNotFoundError:
-                print(f"{monitor_label} `{monitor_id}` was already deleted.")
-                return
-            raise
+        active_runs = [run for run in operations.list_runs(monitor_id, limit=20) if run.status in active_statuses]
         for run in active_runs:
             if run.id in cancellation_requested:
                 continue
             try:
                 operations.cancel_run(monitor_id, run.id)
-            except ResourceNotFoundError:
-                # Re-list before deciding whether the run or monitor has disappeared.
-                continue
             except ResourceExistsError:
-                try:
-                    current_run = operations.get_run(monitor_id, run.id)
-                except ResourceNotFoundError:
-                    continue
-                if str(getattr(current_run.status, "value", current_run.status)).lower() in active_statuses:
+                # The run may have finished between listing and cancellation.
+                current_run = operations.get_run(monitor_id, run.id)
+                if current_run.status not in {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}:
                     raise
             cancellation_requested.add(run.id)
             print(f"Requested cancellation of run `{run.id}`.")
@@ -243,11 +236,10 @@ def _delete_monitor(operations: BetaAgentInsightMonitorsOperations, monitor_id: 
                 operations.delete(monitor_id)
                 print(f"Deleted {monitor_label.lower()} `{monitor_id}`.")
                 return
-            except ResourceNotFoundError:
-                print(f"{monitor_label} `{monitor_id}` was already deleted.")
-                return
             except ResourceExistsError:
                 # A previously dispatched run can appear after the list request.
+                if attempt == 29:
+                    raise
                 print(f"Monitor `{monitor_id}` still has an active run; retrying cleanup.")
 
         if attempt < 29:

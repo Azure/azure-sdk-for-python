@@ -7,7 +7,13 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock, call
 
 import pytest
-from azure.ai.projects.models import AgentInsight, AgentInsightMonitor, AgentInsightRunResult
+from azure.ai.projects.models import (
+    AgentInsight,
+    AgentInsightMonitor,
+    AgentInsightRun,
+    AgentInsightRunResult,
+    JobStatus,
+)
 from azure.ai.projects.operations import BetaAgentInsightMonitorsOperations
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 
@@ -33,11 +39,12 @@ def cleanup_sample(request):
     return request.getfixturevalue(request.param)
 
 
-def test_cleanup_cancels_active_run(cleanup_sample):
+@pytest.mark.parametrize("status", ["queued", "in_progress", JobStatus.QUEUED, JobStatus.IN_PROGRESS])
+def test_cleanup_cancels_active_run(cleanup_sample, status):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list_runs.side_effect = [
-        [SimpleNamespace(id="run-test", status="in_progress")],
-        [SimpleNamespace(id="run-test", status="cancelled")],
+        [AgentInsightRun({"id": "run-test", "status": status})],
+        [AgentInsightRun({"id": "run-test", "status": "cancelled"})],
     ]
 
     cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
@@ -46,6 +53,13 @@ def test_cleanup_cancels_active_run(cleanup_sample):
     operations.cancel_run.assert_called_once_with("monitor-test", "run-test")
     operations.delete.assert_called_once_with("monitor-test")
     cleanup_sample["time"].sleep.assert_called_once_with(2)
+    assert [method[0] for method in operations.method_calls] == [
+        "update",
+        "list_runs",
+        "cancel_run",
+        "list_runs",
+        "delete",
+    ]
 
 
 def test_cleanup_does_not_cancel_completed_run(cleanup_sample):
@@ -59,11 +73,12 @@ def test_cleanup_does_not_cancel_completed_run(cleanup_sample):
     cleanup_sample["time"].sleep.assert_not_called()
 
 
-def test_cleanup_handles_already_deleted_monitor(cleanup_sample):
+def test_cleanup_reports_already_deleted_monitor(cleanup_sample):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.update.side_effect = ResourceNotFoundError()
 
-    cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+    with pytest.raises(ResourceNotFoundError):
+        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
 
     operations.list_runs.assert_not_called()
     operations.delete.assert_not_called()
@@ -97,12 +112,14 @@ def test_cleanup_handles_run_dispatch_during_delete(cleanup_sample):
     assert operations.delete.call_count == 2
 
 
-@pytest.mark.parametrize("status", ["succeeded", "failed", "cancelled"])
+@pytest.mark.parametrize(
+    "status", ["succeeded", "failed", "cancelled", JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED]
+)
 def test_cleanup_handles_run_finishing_during_cancel(cleanup_sample, status):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
-    terminal_run = SimpleNamespace(id="run-test", status=SimpleNamespace(value=status))
+    terminal_run = AgentInsightRun({"id": "run-test", "status": status})
     operations.list_runs.side_effect = [
-        [SimpleNamespace(id="run-test", status=SimpleNamespace(value="queued"))],
+        [AgentInsightRun({"id": "run-test", "status": JobStatus.QUEUED})],
         [terminal_run],
     ]
     operations.cancel_run.side_effect = ResourceExistsError()
@@ -115,12 +132,13 @@ def test_cleanup_handles_run_finishing_during_cancel(cleanup_sample, status):
     operations.delete.assert_called_once_with("monitor-test")
 
 
-def test_cleanup_raises_cancel_conflict_for_active_run(cleanup_sample):
+@pytest.mark.parametrize("status", ["queued", "in_progress", "unknown"])
+def test_cleanup_raises_cancel_conflict_unless_run_finished(cleanup_sample, status):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     active_run = SimpleNamespace(id="run-test", status="in_progress")
     operations.list_runs.return_value = [active_run]
     operations.cancel_run.side_effect = ResourceExistsError()
-    operations.get_run.return_value = active_run
+    operations.get_run.return_value = SimpleNamespace(id="run-test", status=status)
 
     with pytest.raises(ResourceExistsError):
         cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
@@ -128,36 +146,46 @@ def test_cleanup_raises_cancel_conflict_for_active_run(cleanup_sample):
     operations.delete.assert_not_called()
 
 
-def test_cleanup_handles_monitor_deleted_during_delete(cleanup_sample):
+def test_cleanup_reports_monitor_deleted_during_delete(cleanup_sample):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list_runs.return_value = []
     operations.delete.side_effect = ResourceNotFoundError()
 
-    cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+    with pytest.raises(ResourceNotFoundError):
+        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
 
     operations.delete.assert_called_once_with("monitor-test")
     cleanup_sample["time"].sleep.assert_not_called()
 
 
-def test_cleanup_does_not_hide_delete_error(cleanup_sample):
+@pytest.mark.parametrize("stage", ["update", "list_runs", "cancel_run", "get_run", "delete"])
+def test_cleanup_does_not_hide_service_error(cleanup_sample, stage):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
-    operations.list_runs.return_value = []
-    operations.delete.side_effect = HttpResponseError("Delete failed")
+    operations.list_runs.return_value = (
+        [SimpleNamespace(id="run-test", status="queued")] if stage in {"cancel_run", "get_run"} else []
+    )
+    if stage == "get_run":
+        operations.cancel_run.side_effect = ResourceExistsError()
+    error = HttpResponseError("Service failed")
+    getattr(operations, stage).side_effect = error
 
-    with pytest.raises(HttpResponseError, match="Delete failed"):
+    with pytest.raises(HttpResponseError, match="Service failed") as exc_info:
         cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+    assert exc_info.value is error
+    cleanup_sample["time"].sleep.assert_not_called()
 
 
-def test_cleanup_confirms_monitor_disappeared_during_list(cleanup_sample, capsys):
+def test_cleanup_reports_monitor_disappeared_during_list(cleanup_sample, capsys):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list_runs.side_effect = ResourceNotFoundError()
     operations.get.side_effect = ResourceNotFoundError()
 
-    cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+    with pytest.raises(ResourceNotFoundError):
+        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
 
-    operations.get.assert_called_once_with("monitor-test")
+    operations.get.assert_not_called()
     operations.delete.assert_not_called()
-    assert "was already deleted." in capsys.readouterr().out
+    assert "deleted" not in capsys.readouterr().out
 
 
 def test_cleanup_does_not_hide_missing_list_endpoint(cleanup_sample):
@@ -171,16 +199,17 @@ def test_cleanup_does_not_hide_missing_list_endpoint(cleanup_sample):
 
 
 @pytest.mark.parametrize("stage", ["cancel", "get_run"])
-def test_cleanup_relists_when_run_disappears(cleanup_sample, stage):
+def test_cleanup_reports_run_disappearing(cleanup_sample, stage):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list_runs.side_effect = [[SimpleNamespace(id="run-test", status="in_progress")], []]
     operations.cancel_run.side_effect = ResourceNotFoundError() if stage == "cancel" else ResourceExistsError()
     operations.get_run.side_effect = ResourceNotFoundError()
 
-    cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+    with pytest.raises(ResourceNotFoundError):
+        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
 
-    assert operations.list_runs.call_count == 2
-    operations.delete.assert_called_once_with("monitor-test")
+    operations.list_runs.assert_called_once_with("monitor-test", limit=20)
+    operations.delete.assert_not_called()
 
 
 def test_cleanup_does_not_report_success_when_cancel_endpoint_is_missing(cleanup_sample):
@@ -188,9 +217,38 @@ def test_cleanup_does_not_report_success_when_cancel_endpoint_is_missing(cleanup
     operations.list_runs.return_value = [SimpleNamespace(id="run-test", status="in_progress")]
     operations.cancel_run.side_effect = ResourceNotFoundError()
 
-    with pytest.raises(TimeoutError):
+    with pytest.raises(ResourceNotFoundError):
         cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
     operations.delete.assert_not_called()
+    cleanup_sample["time"].sleep.assert_not_called()
+
+
+def test_cleanup_repeated_delete_conflict_is_bounded(cleanup_sample):
+    operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
+    operations.list_runs.return_value = []
+    error = ResourceExistsError("Monitor still has an active run")
+    operations.delete.side_effect = error
+
+    with pytest.raises(ResourceExistsError) as exc_info:
+        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+
+    assert exc_info.value is error
+    assert operations.list_runs.call_count == operations.delete.call_count == 30
+    assert cleanup_sample["time"].sleep.call_args_list == [call(2)] * 29
+
+
+@pytest.mark.parametrize("stage", ["update", "list_runs"])
+def test_cleanup_does_not_retry_unrelated_conflicts(cleanup_sample, stage):
+    operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
+    error = ResourceExistsError("Unexpected conflict")
+    getattr(operations, stage).side_effect = error
+
+    with pytest.raises(ResourceExistsError) as exc_info:
+        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+
+    assert exc_info.value is error
+    operations.delete.assert_not_called()
+    cleanup_sample["time"].sleep.assert_not_called()
 
 
 @pytest.fixture
@@ -295,6 +353,37 @@ def test_on_demand_allows_no_insights_for_customer_data(on_demand_main, capsys):
     assert "No insights were available to demonstrate lifecycle updates." in capsys.readouterr().out
 
 
+@pytest.mark.parametrize("original_error", [None, RuntimeError("Polling failed"), KeyboardInterrupt()])
+def test_on_demand_reports_cleanup_error_without_replacing_original(on_demand_main, original_error, capsys):
+    main, operations = on_demand_main
+    operations.begin_create_run.return_value.result.side_effect = original_error
+    cleanup_error = HttpResponseError("Cleanup failed")
+    operations.delete.side_effect = [None, cleanup_error]
+
+    expected_error = original_error if original_error is not None else cleanup_error
+    with pytest.raises(type(expected_error)) as exc_info:
+        main()
+
+    assert exc_info.value is expected_error
+    if original_error is not None:
+        if hasattr(original_error, "add_note"):
+            assert any("Cleanup failed" in note for note in original_error.__notes__)
+        else:
+            assert "Cleanup failed" in capsys.readouterr().out
+    assert operations.delete.call_args_list == [call("old-monitor"), call("new-monitor")]
+
+
+def test_cleanup_error_is_not_hidden_by_callers_exception(on_demand_main):
+    main, operations = on_demand_main
+    operations.delete.side_effect = [None, HttpResponseError("Cleanup failed")]
+
+    try:
+        raise ValueError("Caller is handling an unrelated error")
+    except ValueError:
+        with pytest.raises(HttpResponseError, match="Cleanup failed"):
+            main()
+
+
 @pytest.mark.parametrize("cleanup_stage", ["before", "after"])
 def test_on_demand_cleanup_timeout_is_reported(on_demand_main, cleanup_stage, capsys):
     main, operations = on_demand_main
@@ -303,19 +392,25 @@ def test_on_demand_cleanup_timeout_is_reported(on_demand_main, cleanup_stage, ca
     active_runs = [SimpleNamespace(id="run-test", status="in_progress")]
     operations.list_runs.side_effect = ([[]] if cleanup_stage == "after" else []) + [active_runs] * 30
 
-    with pytest.raises(TimeoutError, match="could not be deleted") as exc_info:
+    expected_error = TimeoutError if cleanup_stage == "before" else RuntimeError
+    with pytest.raises(expected_error) as exc_info:
         main()
 
     if cleanup_stage == "before":
         operations.create.assert_not_called()
         operations.delete.assert_not_called()
     else:
-        assert exc_info.value.__context__ is polling_error
+        assert exc_info.value is polling_error
+        if hasattr(polling_error, "add_note"):
+            assert any("could not be deleted" in note for note in polling_error.__notes__)
+        else:
+            assert "could not be deleted" in capsys.readouterr().out
         operations.delete.assert_called_once_with("old-monitor")
     assert "Deleted monitor `new-monitor`." not in capsys.readouterr().out
 
 
-def test_scheduled_sample_cleans_up_after_configuration_error(scheduled_sample, monkeypatch):
+@pytest.mark.parametrize("cleanup_error", [None, ResourceNotFoundError("Cleanup failed")])
+def test_scheduled_sample_cleans_up_after_configuration_error(scheduled_sample, monkeypatch, cleanup_error, capsys):
     main = scheduled_sample["main"]
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list.return_value = [SimpleNamespace(id="old-monitor")]
@@ -323,7 +418,7 @@ def test_scheduled_sample_cleans_up_after_configuration_error(scheduled_sample, 
     operations.update.side_effect = RuntimeError("Schedule configuration failed")
     client = MagicMock()
     client.return_value.__enter__.return_value.beta.agent_insight_monitors = operations
-    cleanup = MagicMock()
+    cleanup = MagicMock(side_effect=[None, cleanup_error])
     monkeypatch.setitem(main.__globals__, "AIProjectClient", client)
     monkeypatch.setitem(main.__globals__, "DefaultAzureCredential", MagicMock())
     monkeypatch.setitem(main.__globals__, "load_dotenv", MagicMock())
@@ -332,8 +427,14 @@ def test_scheduled_sample_cleans_up_after_configuration_error(scheduled_sample, 
     monkeypatch.setenv("FOUNDRY_AGENT_NAME", "test-agent")
     monkeypatch.setenv("FOUNDRY_MODEL_NAME", "test-model")
 
-    with pytest.raises(RuntimeError, match="Schedule configuration failed"):
+    with pytest.raises(RuntimeError, match="Schedule configuration failed") as exc_info:
         main()
+    assert exc_info.value is operations.update.side_effect
+    if cleanup_error is not None:
+        if hasattr(exc_info.value, "add_note"):
+            assert any("Cleanup failed" in note for note in exc_info.value.__notes__)
+        else:
+            assert "Cleanup failed" in capsys.readouterr().out
 
     assert cleanup.call_args_list == [
         call(operations, "old-monitor", "Existing"),

@@ -43,11 +43,14 @@ SCHEDULED_OUTPUT = [
     ],
 )
 @pytest.mark.parametrize("already_deleted", [False, True])
-def test_accepts_successful_sample_output(sample_name, output, label, already_deleted):
+def test_sample_output_requires_successful_deletion(sample_name, output, label, already_deleted):
     output = list(output)
     if already_deleted:
         output[-1] = f"{label} `monitor-test` was already deleted."
-    assert_agent_insights_output(f"sample_agent_insights_{sample_name}.py", output)
+        with pytest.raises(AssertionError, match="did not clean up"):
+            assert_agent_insights_output(f"sample_agent_insights_{sample_name}.py", output)
+    else:
+        assert_agent_insights_output(f"sample_agent_insights_{sample_name}.py", output)
 
 
 @pytest.mark.parametrize("removed_line", range(len(ON_DEMAND_OUTPUT)))

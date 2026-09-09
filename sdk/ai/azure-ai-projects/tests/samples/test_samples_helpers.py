@@ -39,7 +39,7 @@ def assert_agent_insights_output(sample_path: str, print_output_calls: list[str]
     monitor_id = re.escape(created.group(1))
     label = "scheduled monitor" if scheduled else "monitor"
     assert re.search(
-        rf"^(?:Deleted {label} `{monitor_id}`\.|{label.capitalize()} `{monitor_id}` was already deleted\.)$",
+        rf"^Deleted {label} `{monitor_id}`\.$",
         output,
         re.MULTILINE,
     ), "The sample did not clean up its new monitor."
