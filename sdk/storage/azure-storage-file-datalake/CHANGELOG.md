@@ -10,6 +10,7 @@
 ### Other Changes
 - Content-Type for append_data has changed from application/json to octet-stream
 - Dropped support for legacy transports
+- Removed support for Python 3.9; Python 3.10 or later is now required.
 
 ## 12.26.0b1 (2026-08-10)
 
