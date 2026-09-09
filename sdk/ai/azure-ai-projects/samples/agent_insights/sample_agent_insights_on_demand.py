@@ -6,28 +6,18 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create an Agent Insights monitor, run
-    on-demand trace analysis, inspect run statistics, list generated insights,
-    resolve an insight, and delete the monitor using the
-    synchronous AIProjectClient.
+    This sample uses the synchronous AIProjectClient to create an Agent Insights
+    monitor, analyze traces from the last three hours on demand, read run results,
+    and resolve one insight.
 
     Agent Insights is a preview feature. In the Python SDK, you access these
     operations through `project_client.beta.agent_insight_monitors`.
 
-    Use a disposable test agent. The service allows one monitor per agent, so
-    this sample deletes its existing monitor before starting and its new monitor
-    when finished. Deletion also removes the monitor's runs, insights, and state.
+    The sample replaces the selected agent's existing monitor and deletes its
+    monitor and data during cleanup.
 
     The project must have a connected Application Insights resource, and the
-    project's managed identity must have permission to query it. The selected
-    agent must have ingested traces from the last three hours. For an external
-    agent, the emitted OpenTelemetry agent ID must match its registered ID.
-    This sample does not create traces. Without recent traces that show an
-    issue, there may be no insights to resolve.
-    Tracing setup:
-    https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python
-
-    Run only one Agent Insights sample at a time for a given test agent.
+    project's managed identity must have permission to query it.
 
 USAGE:
     python sample_agent_insights_on_demand.py
@@ -36,17 +26,10 @@ USAGE:
 
     pip install "azure-ai-projects>=2.7.0" python-dotenv
 
-    Version 2.7.0 contains the required run-poller fixes. Until it is published,
-    install this package from the repository root instead:
-
-    pip install -e sdk/ai/azure-ai-projects python-dotenv
-
     Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found on the Overview
-       page of your Microsoft Foundry project.
-    2) FOUNDRY_AGENT_NAME - The name of an existing test agent to monitor.
-    3) FOUNDRY_MODEL_NAME - The deployment name of the AI model that Agent Insights
-       uses to analyze traces.
+    1) FOUNDRY_PROJECT_ENDPOINT - Your Microsoft Foundry project endpoint.
+    2) FOUNDRY_AGENT_NAME - The name of an existing agent to monitor.
+    3) FOUNDRY_MODEL_NAME - The model deployment name for trace analysis.
 """
 
 import os

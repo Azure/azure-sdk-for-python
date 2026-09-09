@@ -6,40 +6,30 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create a scheduled Agent Insights monitor
-    using the synchronous AIProjectClient. The monitor is enabled with a
-    six-hour run interval, and the sample retrieves the next scheduled run time.
-    It does not wait for a scheduled run or fetch the run's results.
+    This sample uses the synchronous AIProjectClient to configure an Agent
+    Insights monitor with a six-hour run interval and read the next scheduled
+    run time. It does not wait for scheduled analysis.
 
     Agent Insights is a preview feature. In the Python SDK, you access these
     operations through `project_client.beta.agent_insight_monitors`.
 
-    Use a disposable test agent. The service allows one monitor per agent, so
-    this sample deletes its existing monitor before starting. At the end, it
-    disables scheduling, cancels active runs, and deletes the new monitor.
-    Deletion also removes the monitor's runs, insights, and state.
+    The sample replaces the selected agent's existing monitor and deletes its
+    monitor and data during cleanup.
 
-    The project must have a connected Application Insights resource, and its
-    managed identity must have permission to query the agent's traces. This
-    sample configures scheduling; it does not create traces.
-    Tracing setup:
-    https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python
-
-    Run only one Agent Insights sample at a time for a given test agent.
+    The project must have a connected Application Insights resource, and the
+    project's managed identity must have permission to query it.
 
 USAGE:
     python sample_agent_insights_scheduled.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.6.0" python-dotenv
+    pip install "azure-ai-projects>=2.7.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found on the Overview
-       page of your Microsoft Foundry project.
-    2) FOUNDRY_AGENT_NAME - The name of an existing test agent to monitor.
-    3) FOUNDRY_MODEL_NAME - The deployment name of the AI model that Agent Insights
-       uses to analyze traces.
+    1) FOUNDRY_PROJECT_ENDPOINT - Your Microsoft Foundry project endpoint.
+    2) FOUNDRY_AGENT_NAME - The name of an existing agent to monitor.
+    3) FOUNDRY_MODEL_NAME - The model deployment name for trace analysis.
 """
 
 import os
