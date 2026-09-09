@@ -57,7 +57,7 @@ DATABASE_ID = config.settings['database_id']
 # independent of the order in which the samples are run. The id is made unique per run and the
 # container is created with `create_container` (not `create_container_if_not_exists`) so this
 # sample can never take over - and then delete - a container it did not create.
-CONTAINER_ID = 'compact-utf8-item-writes-async-' + str(uuid.uuid4())
+CONTAINER_ID_PREFIX = 'compact-utf8-item-writes-async-'
 PARTITION_KEY_VALUE = 'compact-utf8-sample-async'
 
 
@@ -96,6 +96,7 @@ async def write_compact_utf8_item(container):
 
 async def run_sample():
     """Run the compact UTF-8 item write sample."""
+    container_id = CONTAINER_ID_PREFIX + str(uuid.uuid4())
     # The option is set once at client construction and applies to every item
     # write issued by this client. It is disabled by default.
     async with CosmosClient(
@@ -111,7 +112,7 @@ async def run_sample():
             # setup container for this sample - a uniquely named container created by this run
             # only, so the cleanup below can never delete a pre-existing container or its data
             container = await db.create_container(
-                id=CONTAINER_ID,
+                id=container_id,
                 partition_key=PartitionKey(path='/pk', kind='Hash'),
             )
 
@@ -126,10 +127,11 @@ async def run_sample():
                 try:
                     await db.delete_container(container)
 
-                except exceptions.CosmosHttpResponseError:
-                    pass
+                except exceptions.CosmosHttpResponseError as cleanup_error:
+                    print('\nFailed to delete the sample container. {0}'.format(
+                        cleanup_error.message))
 
-            print("\nrun_sample done")
+    print("\nrun_sample done")
 
 
 if __name__ == '__main__':

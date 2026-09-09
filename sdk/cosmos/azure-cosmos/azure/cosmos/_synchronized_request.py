@@ -21,6 +21,7 @@
 
 """Synchronized request in the Azure Cosmos database service.
 """
+# cspell:ignore surrogatepass
 import copy
 import json
 import time
@@ -80,7 +81,7 @@ def _request_body_from_data(data, ensure_ascii=True):
     before the request is sent, and text that does have one is written in Latin-1
     rather than UTF-8, so 'é' goes out as the single byte 0xE9 instead of
     0xC3 0xA9 and the service receives different characters than the caller
-    supplied. Handing the transport the exact bytes we measured removes every
+    supplied. Handing the transport the encoded bytes removes every subsequent
     re-encoding step.
 
     :param Union[str, unicode, file-like stream object, dict, list, None] data:
@@ -99,12 +100,14 @@ def _request_body_from_data(data, ensure_ascii=True):
             # Encode once; callers derive Content-Length directly from these bytes.
             encoded_body = json_dumped.encode("utf-8")
         except UnicodeEncodeError:
-            # Rare path: the body contains surrogate code units, which
-            # have no UTF-8 representation. backslashreplace rewrites only those
-            # code points as \uXXXX, which is valid JSON escape syntax and can
-            # only ever occur inside a string literal, so valid Unicode elsewhere
-            # in the body stays compact.
-            encoded_body = json_dumped.encode("utf-8", "backslashreplace")
+            # Rare path for text originating from UTF-16 APIs. Combine adjacent
+            # high/low surrogate pairs into their Unicode scalar while preserving
+            # unpaired surrogates, then escape only those remaining invalid code
+            # units as valid JSON \uXXXX sequences.
+            normalized_body = json_dumped.encode(
+                "utf-16-le", "surrogatepass"
+            ).decode("utf-16-le", "surrogatepass")
+            encoded_body = normalized_body.encode("utf-8", "backslashreplace")
         # Send exactly these bytes, so no transport re-encodes them.
         return encoded_body
     return None
@@ -377,9 +380,8 @@ def SynchronizedRequest(
         ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params, request_data)
     )
     if isinstance(request.data, (bytes, bytearray)):
-        # Compact UTF-8 bodies reach the transport as the exact bytes that were
-        # measured, so Content-Length is simply their length and no encoding
-        # step can make the header disagree with the wire body.
+        # Compact UTF-8 bodies reach the transport as their final bytes, so
+        # Content-Length cannot drift from the wire body.
         request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
     elif request.data and isinstance(request.data, str):
         # Use UTF-8 byte length, not str length (code-point count), so the

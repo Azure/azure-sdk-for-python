@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 """Tests for opt-in compact UTF-8 serialization of item write bodies."""
-# cspell:ignore udfff
+# cspell:ignore d83d de00 udfff
 
 import json
 import unittest
@@ -487,18 +487,36 @@ class TestItemBodySerialization(unittest.TestCase):
 
         self.assertEqual(captured["body"], data)
 
-    def test_surrogates_remain_escaped_and_utf8_encodable(self):
-        """Documents containing lone surrogates (which have no UTF-8 form)
-        fall back to escaping just those code points. The rest of the body
-        stays compact, the result is still valid JSON that round-trips to the
-        original data, and Content-Length matches the rewritten body."""
+    def test_surrogate_pairs_are_compact_and_lone_surrogates_are_escaped(self):
+        """Adjacent surrogate pairs become compact scalars while unpaired
+        surrogates remain valid JSON escapes."""
         data = {
+            "paired": "\ud83d\ude00",
             "lone_high": "\ud800",
             "lone_low": "\udfff",
-            "embedded": "before\ud800after",
+            "mixed": "before\ud800\ud83d\ude00\udfffafter",
+            "reverse_lone": "\udfff\ud800",
+            "literal_escape": "\\ud83d\\ude00",
             "key\ud800": "value",
+            "key\ud83d\ude00": "paired key",
             "emoji": "🎉",
         }
+        expected = {
+            "paired": "😀",
+            "lone_high": "\ud800",
+            "lone_low": "\udfff",
+            "mixed": "before\ud800😀\udfffafter",
+            "reverse_lone": "\udfff\ud800",
+            "literal_escape": "\\ud83d\\ude00",
+            "key\ud800": "value",
+            "key😀": "paired key",
+            "emoji": "🎉",
+        }
+        expected_body = json.dumps(
+            expected,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode("utf-8", "backslashreplace")
 
         captured = _capture_sync_body(
             data,
@@ -510,8 +528,10 @@ class TestItemBodySerialization(unittest.TestCase):
 
         self.assertIn("\\ud800", body)
         self.assertIn("\\udfff", body)
+        self.assertIn("😀", body)
         self.assertIn("🎉", body)
-        self.assertEqual(json.loads(body), data)
+        self.assertEqual(captured["body"], expected_body)
+        self.assertEqual(json.loads(body), expected)
         self.assertEqual(captured["content_length"], len(captured["body"]))
 
     def test_json_required_escapes_are_preserved(self):
@@ -554,6 +574,29 @@ class TestItemBodySerialization(unittest.TestCase):
         self.assertGreater(len(escaped), 2 * 1024 * 1024)
         self.assertLess(len(compact), 2 * 1024 * 1024)
         self.assertEqual(captured["content_length"], len(compact))
+
+    def test_large_surrogate_pair_item_stays_below_two_mib(self):
+        """UTF-16-derived supplementary characters are compacted rather than
+        remaining as 12-byte surrogate-pair escapes."""
+        data = {"text": "\ud83d\ude00" * 175000}
+        escaped = json.dumps(data, separators=(",", ":")).encode("utf-8")
+        expected = json.dumps(
+            {"text": "😀" * 175000},
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode("utf-8")
+
+        captured = _capture_sync_body(
+            data,
+            enable_compact_utf8_item_writes=True,
+            resource_type=http_constants.ResourceType.Document,
+            operation_type=_OperationType.Create,
+        )
+
+        self.assertGreater(len(escaped), 2 * 1024 * 1024)
+        self.assertLess(len(captured["body"]), 2 * 1024 * 1024)
+        self.assertEqual(captured["body"], expected)
+        self.assertEqual(captured["content_length"], len(expected))
 
     def test_partition_key_header_remains_ascii_escaped(self):
         """The partition key header is unaffected by the option and stays
@@ -667,15 +710,35 @@ class TestItemBodySerializationAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(serialized.encode_calls, 1)
         self.assertEqual(captured["content_length"], len('{"text":"日本"}'.encode("utf-8")))
 
-    async def test_surrogates_remain_escaped_and_utf8_encodable(self):
-        """Async twin of the surrogate fallback check."""
+    async def test_surrogate_pairs_are_compact_and_lone_surrogates_are_escaped(self):
+        """Async twin of the mixed paired and unpaired surrogate check."""
         data = {
+            "paired": "\ud83d\ude00",
             "lone_high": "\ud800",
             "lone_low": "\udfff",
-            "embedded": "before\ud800after",
+            "mixed": "before\ud800\ud83d\ude00\udfffafter",
+            "reverse_lone": "\udfff\ud800",
+            "literal_escape": "\\ud83d\\ude00",
             "key\ud800": "value",
+            "key\ud83d\ude00": "paired key",
             "emoji": "🎉",
         }
+        expected = {
+            "paired": "😀",
+            "lone_high": "\ud800",
+            "lone_low": "\udfff",
+            "mixed": "before\ud800😀\udfffafter",
+            "reverse_lone": "\udfff\ud800",
+            "literal_escape": "\\ud83d\\ude00",
+            "key\ud800": "value",
+            "key😀": "paired key",
+            "emoji": "🎉",
+        }
+        expected_body = json.dumps(
+            expected,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode("utf-8", "backslashreplace")
 
         captured = await _capture_async_body(
             data,
@@ -687,8 +750,10 @@ class TestItemBodySerializationAsync(unittest.IsolatedAsyncioTestCase):
 
         self.assertIn("\\ud800", body)
         self.assertIn("\\udfff", body)
+        self.assertIn("😀", body)
         self.assertIn("🎉", body)
-        self.assertEqual(json.loads(body), data)
+        self.assertEqual(captured["body"], expected_body)
+        self.assertEqual(json.loads(body), expected)
         self.assertEqual(captured["content_length"], len(captured["body"]))
 
     async def test_query_body_remains_ascii_escaped(self):

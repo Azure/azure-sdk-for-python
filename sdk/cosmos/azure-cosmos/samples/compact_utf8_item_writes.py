@@ -55,7 +55,7 @@ DATABASE_ID = config.settings['database_id']
 # independent of the order in which the samples are run. The id is made unique per run and the
 # container is created with `create_container` (not `create_container_if_not_exists`) so this
 # sample can never take over - and then delete - a container it did not create.
-CONTAINER_ID = 'compact-utf8-item-writes-' + str(uuid.uuid4())
+CONTAINER_ID_PREFIX = 'compact-utf8-item-writes-'
 PARTITION_KEY_VALUE = 'compact-utf8-sample'
 
 
@@ -94,40 +94,42 @@ def write_compact_utf8_item(container):
 
 def run_sample():
     """Run the compact UTF-8 item write sample."""
+    container_id = CONTAINER_ID_PREFIX + str(uuid.uuid4())
     # The option is set once at client construction and applies to every item
     # write issued by this client. It is disabled by default.
-    client = cosmos_client.CosmosClient(
+    with cosmos_client.CosmosClient(
         HOST,
         {'masterKey': MASTER_KEY},
         enable_compact_utf8_item_writes=True,
-    )
-    db = None
-    container = None
-    try:
-        # setup database for this sample
-        db = client.create_database_if_not_exists(id=DATABASE_ID)
-        # setup container for this sample - a uniquely named container created by this run only,
-        # so the cleanup below can never delete a pre-existing container or its data
-        container = db.create_container(
-            id=CONTAINER_ID,
-            partition_key=PartitionKey(path='/pk', kind='Hash'),
-        )
+    ) as client:
+        db = None
+        container = None
+        try:
+            # setup database for this sample
+            db = client.create_database_if_not_exists(id=DATABASE_ID)
+            # setup container for this sample - a uniquely named container created by this run only,
+            # so the cleanup below can never delete a pre-existing container or its data
+            container = db.create_container(
+                id=container_id,
+                partition_key=PartitionKey(path='/pk', kind='Hash'),
+            )
 
-        write_compact_utf8_item(container)
+            write_compact_utf8_item(container)
 
-    except exceptions.CosmosHttpResponseError as e:
-        print('\nrun_sample has caught an error. {0}'.format(e.message))
+        except exceptions.CosmosHttpResponseError as e:
+            print('\nrun_sample has caught an error. {0}'.format(e.message))
 
-    finally:
-        # cleanup container after sample, even if the sample failed part way through
-        if db is not None and container is not None:
-            try:
-                db.delete_container(container)
+        finally:
+            # cleanup container after sample, even if the sample failed part way through
+            if db is not None and container is not None:
+                try:
+                    db.delete_container(container)
 
-            except exceptions.CosmosHttpResponseError:
-                pass
+                except exceptions.CosmosHttpResponseError as cleanup_error:
+                    print('\nFailed to delete the sample container. {0}'.format(
+                        cleanup_error.message))
 
-        print("\nrun_sample done")
+    print("\nrun_sample done")
 
 
 if __name__ == '__main__':
