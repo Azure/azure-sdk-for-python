@@ -16,7 +16,7 @@ from azure.mgmt.containerregistry import ContainerRegistryManagementClient
     pip install azure-identity
     pip install azure-mgmt-containerregistry
 # USAGE
-    python import_pipeline_create.py
+    python connected_registry_create_managed_identity.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,25 +31,31 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.import_pipelines.begin_create(
+    response = client.connected_registries.begin_create(
         resource_group_name="myResourceGroup",
         registry_name="myRegistry",
-        import_pipeline_name="myImportPipeline",
-        import_pipeline_create_parameters={
+        connected_registry_name="myConnectedRegistry",
+        connected_registry_create_parameters={
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                    "/subscriptions/f9d7ebed-adbd-4cb4-b973-aaf82c136138/resourcegroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity2": {}
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myUserAssignedIdentity": {}
                 },
             },
-            "location": "westus",
             "properties": {
-                "options": ["OverwriteTags", "DeleteSourceBlobOnSuccess", "ContinueOnErrors"],
-                "source": {
-                    "keyVaultUri": "https://myvault.vault.azure.net/secrets/acrimportsas",
-                    "storageAccessMode": "SasToken",
-                    "type": "AzureStorageBlobContainer",
-                    "uri": "https://accountname.blob.core.windows.net/containername",
+                "clientTokenIds": [
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.ContainerRegistry/registries/myRegistry/tokens/client1Token"
+                ],
+                "garbageCollection": {"enabled": True, "schedule": "0 5 * * *"},
+                "mode": "ReadWrite",
+                "notificationsList": ["hello-world:*:*", "sample/repo/*:1.0:*"],
+                "parent": {
+                    "syncProperties": {
+                        "authType": "ManagedIdentity",
+                        "messageTtl": "P2D",
+                        "schedule": "0 9 * * *",
+                        "syncWindow": "PT3H",
+                    }
                 },
             },
         },
@@ -57,6 +63,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/ImportPipelineCreate.json
+# x-ms-original-file: 2026-09-01-preview/ConnectedRegistryCreateManagedIdentity.json
 if __name__ == "__main__":
     main()
