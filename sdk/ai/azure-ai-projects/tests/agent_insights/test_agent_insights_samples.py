@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cspell:ignore capsys
 
 from pathlib import Path
 import runpy
@@ -12,6 +13,7 @@ from azure.ai.projects.models import (
     AgentInsightMonitor,
     AgentInsightRun,
     AgentInsightRunResult,
+    AgentInsightStatus,
     JobStatus,
 )
 from azure.ai.projects.operations import BetaAgentInsightMonitorsOperations
@@ -332,10 +334,10 @@ def test_on_demand_cleanup_after_success(on_demand_main, capsys, severity):
     output = capsys.readouterr().out.splitlines()
     assert "Deleted monitor `new-monitor`." in output
     assert "Traces analyzed: 10" in output
-    assert "Run status: JobStatus.SUCCEEDED" in output
+    assert f"Run status: {JobStatus.SUCCEEDED}" in output
     displayed_severity = operations.list_insights.return_value[0].severity
-    assert any(f"severity={displayed_severity}, status=AgentInsightStatus.ACTIVE," in line for line in output)
-    assert "Insight status after update: AgentInsightStatus.RESOLVED" in output
+    assert any(f"severity={displayed_severity}, status={AgentInsightStatus.ACTIVE}," in line for line in output)
+    assert f"Insight status after update: {AgentInsightStatus.RESOLVED}" in output
     assert "Recommended action: Check approval first." in output
     operations.get_insight.assert_not_called()
     operations.update_insight.assert_called_once()
@@ -362,7 +364,7 @@ def test_on_demand_allows_insight_without_optional_details(on_demand_main, capsy
     output = capsys.readouterr().out
     assert "Insight `insight-test`:" in output
     assert "Recommended action:" not in output
-    assert "Insight status after update: AgentInsightStatus.RESOLVED" in output
+    assert f"Insight status after update: {AgentInsightStatus.RESOLVED}" in output
 
 
 def test_on_demand_reports_creation_failure(on_demand_main):

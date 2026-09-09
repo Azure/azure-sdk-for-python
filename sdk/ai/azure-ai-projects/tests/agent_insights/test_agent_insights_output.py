@@ -5,12 +5,13 @@
 
 import pytest
 
+from azure.ai.projects.models import AgentInsightSeverity, AgentInsightStatus, JobStatus
 from agent_insights.sample_test_helpers import assert_agent_insights_output
 
 
 ON_DEMAND_OUTPUT = [
     "Created monitor `monitor-test` for agent `test-agent` (enabled=False, run interval=6 hours).",
-    "Run status: JobStatus.SUCCEEDED",
+    f"Run status: {JobStatus.SUCCEEDED}",
     "Traces in window: 10",
     "Traces analyzed: 10",
     "Insights created: 1",
@@ -18,9 +19,9 @@ ON_DEMAND_OUTPUT = [
     "Insights reopened: 0",
     "Listed runs: 1",
     "Listed insights: 1",
-    "Insight `insight-test`: title=`Require `approval``, severity=AgentInsightSeverity.HIGH, status=AgentInsightStatus.ACTIVE, traces=8.",
+    f"Insight `insight-test`: title=`Require `approval``, severity={AgentInsightSeverity.HIGH}, status={AgentInsightStatus.ACTIVE}, traces=8.",
     "Recommended action: Check approval first.",
-    "Insight status after update: AgentInsightStatus.RESOLVED",
+    f"Insight status after update: {AgentInsightStatus.RESOLVED}",
     "Deleted monitor `monitor-test`.",
 ]
 
@@ -65,14 +66,14 @@ def test_rejects_missing_on_demand_contract_fields(removed_line):
         ("Traces analyzed: 10", "Traces analyzed: 11"),
         ("Insights created: 1", "Insights created: 0"),
         ("Listed insights: 1", "Listed insights: 2"),
-        ("severity=AgentInsightSeverity.HIGH", "severity=None"),
+        (f"severity={AgentInsightSeverity.HIGH}", "severity=None"),
         ("traces=8", "traces=0"),
         ("Check approval first.", "None"),
         ("Deleted monitor `monitor-test`.", "Deleted monitor `old-monitor`."),
-        ("Run status: JobStatus.SUCCEEDED", "Run status: JobStatus.CANCELLED"),
+        (f"Run status: {JobStatus.SUCCEEDED}", f"Run status: {JobStatus.CANCELLED}"),
         (
-            "Insight status after update: AgentInsightStatus.RESOLVED",
-            "Insight status after update: AgentInsightStatus.ACTIVE",
+            f"Insight status after update: {AgentInsightStatus.RESOLVED}",
+            f"Insight status after update: {AgentInsightStatus.ACTIVE}",
         ),
     ],
 )
