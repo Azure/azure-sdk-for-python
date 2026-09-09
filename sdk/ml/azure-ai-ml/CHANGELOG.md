@@ -3,6 +3,7 @@
 ## 1.36.0 (unreleased)
 
 ### Features Added
+- Added support for asset-backed default values on non-primitive component inputs of type `uri_file`, `uri_folder` and `mltable`. A default such as `default: azureml:my_data_asset:1` is now accepted by `load_component()` instead of failing with `Non-primitive type Input has no default value`, and is preserved through YAML, SDK and REST serialization. Defaults for these types must be a string asset or path reference.
 
 ### Bugs Fixed
 

@@ -1,0 +1,30 @@
+$schema: https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json
+type: pipeline
+
+name: dsp_pcp_test_use_case_pcp1
+display_name: "Test Use Case: pipeline component"
+description: Pipeline component with an asset-backed default on a uri_file input
+
+version: 1
+
+inputs:
+  year:
+    type: integer
+  spaceship_data:
+    type: uri_file
+    mode: ro_mount
+    default: azureml:dsp_da_test_use_case_spaceships_uri_file:50322a7173b6976c
+
+outputs:
+  ship_data:
+    type: uri_folder
+
+jobs:
+  component_a_job:
+    type: command
+    component: file:./input_asset_defaults_component.yml
+    inputs:
+      year: ${{parent.inputs.year}}
+      spaceship_data: ${{parent.inputs.spaceship_data}}
+    outputs:
+      output_path: ${{parent.outputs.ship_data}}
