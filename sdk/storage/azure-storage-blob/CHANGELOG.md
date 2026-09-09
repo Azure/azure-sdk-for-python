@@ -1,6 +1,6 @@
 # Release History
 
-## 12.32.0b1 (Unreleased)
+## 12.33.0b1 (Unreleased)
 
 ### Features Added
 - Added `list` support to `BlobSasPermissions` for use with directory-scoped SAS tokens.
