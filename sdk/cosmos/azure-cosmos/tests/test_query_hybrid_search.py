@@ -150,6 +150,11 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
         assert len(result_list) == 13
+        # Captured so the OFFSET query below can be validated against the ranking this same
+        # container produced, instead of against a hard coded order. Equal RRF scores are broken by
+        # _rid, which is assigned by the service and differs between containers, so the absolute
+        # order is not stable across runs - but the offset window must always be a slice of it.
+        full_rrf_ranking = [res['index'] for res in result_list]
         for res in result_list:
             assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
 
@@ -169,8 +174,10 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
         result_list = list(results)
         assert len(result_list) == 8
-        for res in result_list:
-            assert res['index'] in [24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
+        # Same query as the ranking captured above, only with OFFSET/LIMIT applied. The SDK must
+        # return exactly that window of the ranking - this still fails if offset handling or the
+        # RRF ordering regresses, while tolerating service side score/_rid differences.
+        assert [res['index'] for res in result_list] == full_rrf_ranking[5:15]
 
         query = "SELECT TOP 10 c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'))"
@@ -248,6 +255,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         # If some scores rank the same the order of the results may change
         for result in result_list:
             assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
+        equal_weights_ranking = result_list
 
         # Test case 2
         query = """
@@ -261,6 +269,11 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         # If some scores rank the same the order of the results may change
         for result in result_list:
             assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
+        # [10, 10] is a positive uniform scaling of [1, 1], so every RRF score is multiplied by the
+        # same constant and the ranking must be identical. This is an SDK invariant that holds
+        # regardless of the scores the service returns, so it catches weight handling regressions
+        # without depending on a specific backend score distribution.
+        assert result_list == equal_weights_ranking
 
         # Test case 3
         query = """
@@ -290,13 +303,18 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         # Test case 5
         item_vector = self.test_container.read_item('50', '1')['vector']
         query = "SELECT c.index, c.title FROM c " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) " \
+                "OFFSET 0 LIMIT 10".format(item_vector)
+        results = self.test_container.query_items(query, enable_cross_partition_query=True)
+        result_list_without_weights = [res['index'] for res in results]
+
+        query = "SELECT c.index, c.title FROM c " \
                 "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {}), [1,1]) " \
                 "OFFSET 0 LIMIT 10".format(item_vector)
         results = self.test_container.query_items(query, enable_cross_partition_query=True)
-        result_list = list(results)
-        assert len(result_list) == 10
-        result_list = [res['index'] for res in result_list]
-        assert result_list == [51, 54, 28, 70, 56, 24, 26, 61, 58, 68]
+        result_list_with_equal_weights = [res['index'] for res in results]
+        assert len(result_list_with_equal_weights) == 10
+        assert result_list_with_equal_weights == result_list_without_weights
 
     def test_invalid_hybrid_search_queries_weighted_reciprocal_rank_fusion(self):
         try:
@@ -598,4 +616,3 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

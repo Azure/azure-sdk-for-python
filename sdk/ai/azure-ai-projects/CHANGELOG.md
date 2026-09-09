@@ -35,6 +35,7 @@
   * `sample_voice_agent_live_function_tool.py` demonstrating handling a client-executed function tool during a live voice-agent session.
   * `sample_voice_agent_read_conversation.py` demonstrating reading a persisted voice conversation's transcript back via `agent_endpoint_conversations`.
   * `sample_voice_agent_read_conversation_audio.py` demonstrating reading a persisted voice conversation's audio, both the merged whole-call recording and a single turn's segment, via `agent_endpoint_conversations`.
+* Added `sample_agent_web_iq.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using the `WebIQPreviewTool`.
 
 ## 2.6.0 (2026-09-04)
 
