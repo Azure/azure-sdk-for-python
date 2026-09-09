@@ -12,7 +12,7 @@ import json
 import base64
 from dataclasses import dataclass, is_dataclass, fields
 from logging import Logger
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import (
     Any,
     AsyncGenerator,
@@ -371,16 +371,27 @@ def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str,
     :rtype: Mapping[str, Any]"""
 
     def local_to_base64(local_file: str, mime_type: Optional[str]) -> str:
-        path = Path(local_file)
-        if not path.is_absolute():
-            path = working_dir / local_file
-        if not path.exists():
-            # TODO ralphe logging?
-            # logger.warning(f"Cannot find the image path {image_content},
-            #                  it will be regarded as {type(image_str)}.")
-            raise InvalidInputError(f"Cannot find the image path '{path.as_posix()}'")
+        try:
+            normalized_path = Path(local_file.replace("\\", os.sep).replace("/", os.sep))
+            if normalized_path.is_absolute() or PureWindowsPath(local_file).drive:
+                raise InvalidInputError("Absolute local image paths are not allowed.")
 
-        base64_encoded = base64.b64encode(path.read_bytes()).decode("utf-8")
+            working_dir_resolved = working_dir.resolve()
+            path = (working_dir_resolved / normalized_path).resolve()
+            try:
+                path.relative_to(working_dir_resolved)
+            except ValueError as ex:
+                raise InvalidInputError("Local image paths must resolve within the Prompty directory.") from ex
+
+            if not path.is_file():
+                raise InvalidInputError(f"Cannot find the image path '{path.as_posix()}'")
+            file_contents = path.read_bytes()
+        except InvalidInputError:
+            raise
+        except (OSError, RuntimeError, ValueError) as ex:
+            raise InvalidInputError(f"Cannot read the local image path '{local_file}'.") from ex
+
+        base64_encoded = base64.b64encode(file_contents).decode("utf-8")
         if not mime_type:
             mime_type = FILE_EXT_TO_MIME.get(path.suffix.lower(), DEFAULT_IMAGE_MIME_TYPE)
         return f"data:{mime_type};base64,{base64_encoded}"
@@ -421,29 +432,16 @@ def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str,
         # assume it's a file path
         local_file = (match.group("link") or "").strip()
         try:
-            path = Path(local_file)
-            if not path.is_absolute():
-                path = working_dir / local_file
-            if not path.exists():
-                # The link could not be resolved to an existing local file. This can happen when markdown
-                # image syntax (e.g. ![alt](figures/1.1)) originates from Document Intelligence or similar
-                # services where the paths are relative references that are not actual files on disk.
-                # Treat the original markdown as plain text instead of crashing.
-                logger.debug(
-                    "Image reference '%s' could not be resolved to an existing file. Treating as plain text.",
-                    image,
-                )
-                return {"type": "text", "text": image}
-        except (OSError, ValueError) as e:
-            # Path operations can fail when the filename exceeds OS limits (e.g., Linux 255-char name limit)
-            # or contains invalid characters. Treat as plain text rather than crashing.
+            inlined_uri = local_to_base64(local_file, mime_type)
+        except InvalidInputError as e:
+            # Local references can be unresolvable Document Intelligence output or unsafe paths. Preserve
+            # the original markdown as text instead of failing the evaluation or reading outside the Prompty directory.
             logger.debug(
                 "Image reference '%s' could not be resolved to a valid path (%s). Treating as plain text.",
                 image,
                 e,
             )
             return {"type": "text", "text": image}
-        inlined_uri = local_to_base64(local_file, mime_type)
 
     if not inlined_uri:
         raise InvalidInputError(f"Failed to determine how to inline the following image URL '{image}'")
