@@ -7,6 +7,26 @@
 from datetime import timedelta
 from typing import Any, Dict, List, Optional, Union
 from azure.core.credentials import AccessToken
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+
+# Headers the AutoRest-generated client sent that the TypeSpec DPG emitter does not.
+#
+# Restoring them keeps the request black-box identical to the previously published SDK. The
+# service itself is indifferent -- measured against a live resource, `Accept` makes no
+# difference to either the success or the error path -- but a proxy, gateway or request log
+# keying on headers would observe the change, so the difference is customer-visible even
+# though the service ignores it.
+#
+# Why the emitter drops them:
+#   - `delete` and `revoke_access_tokens` return 204 with no response body, so the emitter
+#     emits no `Accept` header for them at all.
+#   - `create` declares `content_type` only as a body-parameter keyword, so with no body
+#     passed it is never applied.
+#
+# These are request headers only. Sending `Content-Type` does not cause a body to be sent;
+# the body remains absent for `create_user`, as it was under AutoRest.
+_ACCEPT_JSON = {"Accept": "application/json"}
+_CONTENT_TYPE_JSON = {"Content-Type": "application/json"}
 
 
 def to_access_token(access_token: Any) -> AccessToken:
@@ -64,6 +84,80 @@ def build_token_request_body(
     if expires_in_minutes is not None:
         request_body["expiresInMinutes"] = expires_in_minutes
     return request_body
+
+
+def extract_create_content_type(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Preserve a caller-supplied ``Content-Type`` across the generated create operation.
+
+    The operation discards it when no body is present, so it is moved into the
+    request context for :class:`BodylessCreateContentTypePolicy` to reapply.
+
+    :param kwargs: Keyword arguments destined for the create operation.
+    :type kwargs: dict[str, any]
+    :return: The keyword arguments, with any Content-Type moved to the context.
+    :rtype: dict[str, any]
+    """
+    headers = kwargs.get("headers") or {}
+    override = kwargs.pop("content_type", None)
+    for name in list(headers):
+        if name.lower() == "content-type":
+            override = headers.pop(name)
+    if override:
+        kwargs[BodylessCreateContentTypePolicy.CONTEXT_KEY] = override
+    return kwargs
+
+
+def merge_headers(kwargs: Dict[str, Any], defaults: Dict[str, str]) -> Dict[str, Any]:
+    """Add default request headers without overriding any the caller supplied.
+
+    :param kwargs: Keyword arguments destined for a generated operation.
+    :type kwargs: dict[str, any]
+    :param defaults: Headers to apply when the caller has not set them.
+    :type defaults: dict[str, str]
+    :return: The keyword arguments, with a merged ``headers`` entry.
+    :rtype: dict[str, any]
+    """
+    headers = dict(kwargs.pop("headers", None) or {})
+    existing = {name.lower() for name in headers}
+    for name, value in defaults.items():
+        if name.lower() not in existing:
+            headers[name] = value
+    kwargs["headers"] = headers
+    return kwargs
+
+
+class BodylessCreateContentTypePolicy(SansIOHTTPPolicy):
+    """Restores ``Content-Type`` on the bodyless identity-create request.
+
+    The generated ``create`` operation discards ``content_type`` whenever no body
+    is present -- twice, via ``content_type if body else None`` and again via
+    ``content_type or "application/json" if body else None`` -- so no argument
+    passed to the operation can survive. A policy is therefore the only way to
+    restore the header without editing generated code.
+
+    The same discard also drops a caller-supplied ``Content-Type``, which the
+    AutoRest client honoured. ``CommunicationIdentityClient.create_user``
+    consequently stashes any caller value on the request context under
+    ``_acs_create_content_type`` and this policy reapplies it, so an explicit
+    override still reaches the wire.
+
+    The match is deliberately narrow: a POST to the identities collection with no
+    body. ``create_user_and_token`` sends a body and so already carries the header
+    from the generated code, and is left untouched.
+    """
+
+    CONTEXT_KEY = "_acs_create_content_type"
+
+    def on_request(self, request) -> None:
+        http_request = request.http_request
+        if http_request.method != "POST":
+            return
+        if not http_request.url.split("?")[0].endswith("/identities"):
+            return
+        if http_request.body:
+            return
+        override = request.context.options.pop(self.CONTEXT_KEY, None)
+        http_request.headers["Content-Type"] = override or "application/json"
 
 
 def convert_timedelta_to_mins(

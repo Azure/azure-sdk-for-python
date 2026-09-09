@@ -170,6 +170,52 @@ class TestAccessTokenExpiry:
         assert token.expires_on == WIRE_EXPIRY
 
 
+class TestRequestHeaders:
+    """Request headers must match what the AutoRest-generated client sent.
+
+    The TypeSpec DPG emitter drops three headers the previous client sent:
+    ``Content-Type`` on the bodyless ``create_user`` POST, and ``Accept`` on
+    ``revoke_tokens`` and ``delete_user`` (both typed as 204-no-content, for
+    which the emitter produces no ``Accept``).
+
+    The service is indifferent to these -- measured against a live resource --
+    but a proxy, gateway or request log keying on headers would observe the
+    change, so they are restored in the convenience layer.
+
+    Expected values are literals rather than references to the constants that
+    produce them: asserting against ``_ACCEPT_JSON`` would compare the wire to
+    the same value that set it and would pass even if both were wrong.
+    """
+
+    def test_create_user_sends_content_type(self, client, transport):
+        client.create_user()
+        assert transport.requests[-1].headers["Content-Type"] == "application/json"
+
+    def test_create_user_sends_no_body_despite_content_type(self, client, transport):
+        """Content-Type must not cause a body to be sent -- AutoRest sent none."""
+        client.create_user()
+        assert transport.requests[-1].content is None
+
+    def test_revoke_tokens_sends_accept(self, client, transport):
+        client.revoke_tokens(CommunicationUserIdentifier("8:acs:u"))
+        assert transport.requests[-1].headers["Accept"] == "application/json"
+
+    def test_delete_user_sends_accept(self, client, transport):
+        client.delete_user(CommunicationUserIdentifier("8:acs:u"))
+        assert transport.requests[-1].headers["Accept"] == "application/json"
+
+    def test_body_bearing_operations_still_send_both_headers(self, client, transport):
+        client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
+        headers = transport.requests[-1].headers
+        assert headers["Accept"] == "application/json"
+        assert headers["Content-Type"] == "application/json"
+
+    def test_caller_supplied_content_type_is_not_overridden(self, client, transport):
+        """The policy must defer to a Content-Type already on the request."""
+        client.create_user(headers={"Content-Type": "application/custom"})
+        assert transport.requests[-1].headers["Content-Type"] == "application/custom"
+
+
 class TestApiVersion:
     """Every request must carry the api-version the package targets.
 

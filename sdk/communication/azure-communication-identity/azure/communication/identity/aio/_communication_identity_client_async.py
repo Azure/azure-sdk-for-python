@@ -18,8 +18,15 @@ from .._shared.utils import parse_connection_str
 from .._shared.models import CommunicationUserIdentifier
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
-from .._utils import build_token_request_body, to_access_token
-from .._generated.models import CommunicationIdentityTokenScope as CommunicationTokenScope
+from .._utils import (
+    _ACCEPT_JSON,
+    BodylessCreateContentTypePolicy,
+    build_token_request_body,
+    extract_create_content_type,
+    merge_headers,
+    to_access_token,
+)
+from .._generated.models import CommunicationTokenScope
 
 
 class CommunicationIdentityClient:
@@ -51,11 +58,14 @@ class CommunicationIdentityClient:
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+        per_call_policies = list(kwargs.pop("per_call_policies", None) or [])
+        per_call_policies.append(BodylessCreateContentTypePolicy())
         self._identity_service_client = CommunicationIdentityClientGen(
             self._endpoint,
             api_version=self._api_version,
             authentication_policy=get_authentication_policy(endpoint, credential, decode_url=True, is_async=True),
             sdk_moniker=SDK_MONIKER,
+            per_call_policies=per_call_policies,
             **kwargs
         )
 
@@ -81,13 +91,17 @@ class CommunicationIdentityClient:
         :return: CommunicationUserIdentifier
         :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
-        identity_access_token = await self._identity_service_client.identity_operations.create(**kwargs)
+        identity_access_token = await self._identity_service_client.identity_operations.create(
+            **extract_create_content_type(kwargs)
+        )
 
         return CommunicationUserIdentifier(identity_access_token.identity.id, raw_id=identity_access_token.identity.id)
 
     @distributed_trace_async
     async def create_user_and_token(
-        self, scopes: List[Union[str, CommunicationTokenScope]], *,
+        self,
+        scopes: List[Union[str, CommunicationTokenScope]],
+        *,
         token_expires_in: Optional[timedelta] = None,
         **kwargs
     ) -> Tuple["CommunicationUserIdentifier", AccessToken]:
@@ -125,12 +139,16 @@ class CommunicationIdentityClient:
         :return: None
         :rtype: None
         """
-        await self._identity_service_client.identity_operations.delete(user.properties["id"], **kwargs)
+        await self._identity_service_client.identity_operations.delete(
+            user.properties["id"], **merge_headers(kwargs, _ACCEPT_JSON)
+        )
 
     @distributed_trace_async
     async def get_token(
-        self, user: CommunicationUserIdentifier,
-        scopes: List[Union[str, CommunicationTokenScope]], *,
+        self,
+        user: CommunicationUserIdentifier,
+        scopes: List[Union[str, CommunicationTokenScope]],
+        *,
         token_expires_in: Optional[timedelta] = None,
         **kwargs
     ) -> AccessToken:
@@ -164,7 +182,7 @@ class CommunicationIdentityClient:
         :rtype: None
         """
         return await self._identity_service_client.identity_operations.revoke_access_tokens(
-            user.properties["id"] if user else None, **kwargs  # type: ignore
+            user.properties["id"] if user else None, **merge_headers(kwargs, _ACCEPT_JSON)  # type: ignore
         )
 
     @distributed_trace_async
