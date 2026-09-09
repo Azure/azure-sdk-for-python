@@ -32,13 +32,13 @@ from azure.cosmos.http_constants import HttpHeaders, ResourceType, StatusCodes
 
 
 def _compact_request():
-    body, length = _synchronized_request._request_body_from_data(
+    body = _synchronized_request._request_body_from_data(
         {"id": "item", "pk": "日本", "text": "café 🎉"},
         ensure_ascii=False,
     )
     request = HttpRequest("POST", "https://example.test/dbs/db/colls/container/docs")
     request.body = body
-    request.headers[HttpHeaders.ContentLength] = str(length)
+    request.headers[HttpHeaders.ContentLength] = str(len(body))
     return request
 
 

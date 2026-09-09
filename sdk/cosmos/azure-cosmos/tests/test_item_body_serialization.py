@@ -177,6 +177,116 @@ async def _capture_async_body(
     return captured
 
 
+def _capture_sync_query_builder(query):
+    """Build a real sync QueryFeed request and capture its serialized body."""
+    # Bypass __init__ because it builds the full connection infrastructure and
+    # performs account discovery. These assignments are the minimal QueryFeed
+    # fixture; add an attribute here if QueryFeed gains another dependency.
+    connection = object.__new__(cosmos_client.CosmosClientConnection)
+    connection.default_headers = {}
+    connection.last_response_headers = {}
+    connection._query_compatibility_mode = (
+        cosmos_client.CosmosClientConnection._QueryCompatibilityMode.Default
+    )
+    connection.availability_strategy = None
+    connection.availability_strategy_executor = None
+    connection._global_endpoint_manager = _DummyGlobalEndpointManager()
+    connection.connection_policy = object()
+    connection.pipeline_client = mock.Mock()
+    connection.pipeline_client.post.return_value = _DummyRequest()
+    connection._enable_compact_utf8_item_writes = True
+    connection._UpdateSessionIfRequired = mock.Mock()
+    captured = {}
+
+    def _fake_execute(  # pylint: disable=too-many-arguments,too-many-positional-arguments
+        _client,
+        _global_endpoint_manager,
+        _request_function,
+        request_params,
+        _connection_policy,
+        _pipeline_client,
+        request,
+        **_kwargs,
+    ):
+        captured["resource_type"] = request_params.resource_type
+        captured["operation_type"] = request_params.operation_type
+        captured["body"] = request.data
+        captured["content_length"] = request.headers.get(HttpHeaders.ContentLength)
+        return {"Documents": []}, {}
+
+    with (
+        mock.patch.object(_base, "GetHeaders", return_value={}),
+        mock.patch.object(_base, "set_session_token_header"),
+        mock.patch.object(
+            _synchronized_request._retry_utility,
+            "Execute",
+            side_effect=_fake_execute,
+        ),
+    ):
+        connection.QueryFeed(
+            "dbs/db/colls/container/docs",
+            "container-rid",
+            query,
+            {},
+        )
+    return captured
+
+
+async def _capture_async_query_builder(query):
+    """Build a real async QueryFeed request and capture its serialized body."""
+    # Bypass __init__ because it builds the full async connection infrastructure.
+    # These assignments are the minimal QueryFeed fixture; add an attribute here
+    # if QueryFeed gains another dependency.
+    connection = object.__new__(_cosmos_client.CosmosClientConnection)
+    connection.default_headers = {}
+    connection.last_response_headers = {}
+    connection._query_compatibility_mode = (
+        _cosmos_client.CosmosClientConnection._QueryCompatibilityMode.Default
+    )
+    connection.availability_strategy = None
+    connection.availability_strategy_max_concurrency = None
+    connection._global_endpoint_manager = _DummyGlobalEndpointManager()
+    connection.connection_policy = object()
+    connection.pipeline_client = mock.Mock()
+    connection.pipeline_client.post.return_value = _DummyRequest()
+    connection._enable_compact_utf8_item_writes = True
+    connection._UpdateSessionIfRequired = mock.Mock()
+    captured = {}
+
+    async def _fake_execute(  # pylint: disable=too-many-arguments,too-many-positional-arguments
+        _client,
+        _global_endpoint_manager,
+        _request_function,
+        request_params,
+        _connection_policy,
+        _pipeline_client,
+        request,
+        **_kwargs,
+    ):
+        captured["resource_type"] = request_params.resource_type
+        captured["operation_type"] = request_params.operation_type
+        captured["body"] = request.data
+        captured["content_length"] = request.headers.get(HttpHeaders.ContentLength)
+        return {"Documents": []}, {}
+
+    with (
+        mock.patch.object(_base, "GetHeaders", return_value={}),
+        mock.patch.object(_base, "set_session_token_header_async"),
+        mock.patch.object(
+            _asynchronous_request._retry_utility_async,
+            "ExecuteAsync",
+            side_effect=_fake_execute,
+        ),
+    ):
+        await connection.QueryFeed(
+            "dbs/db/colls/container/docs",
+            "container-rid",
+            query,
+            {},
+        )
+    return captured
+
+
 # These tests need no emulator, but the Cosmos CI lane selects tests with
 # "-m cosmosEmulator" (see eng/pipelines/templates/stages/cosmos-sdk-client.yml),
 # so an unmarked test is silently deselected and would never run.
@@ -333,7 +443,7 @@ class TestItemBodySerialization(unittest.TestCase):
             (http_constants.ResourceType.StoredProcedure, _OperationType.ExecuteJavaScript),
             (http_constants.ResourceType.Trigger, _OperationType.Create),
             (http_constants.ResourceType.UserDefinedFunction, _OperationType.Create),
-            (http_constants.ResourceType.Document, _OperationType.Query),
+            (http_constants.ResourceType.Document, _OperationType.SqlQuery),
         )
 
         for resource_type, operation_type in unaffected_requests:
@@ -345,6 +455,23 @@ class TestItemBodySerialization(unittest.TestCase):
                     operation_type=operation_type,
                 )
                 self.assertEqual(captured["body"], expected)
+
+    def test_query_builder_keeps_non_ascii_parameters_escaped(self):
+        """The real QueryFeed builder uses SqlQuery metadata and keeps query
+        parameters on the historical escaped-string serialization path."""
+        data = {
+            "query": "SELECT * FROM c WHERE c.name = @name",
+            "parameters": [{"name": "@name", "value": "日本"}],
+        }
+        expected = json.dumps(data, separators=(",", ":"))
+
+        captured = _capture_sync_query_builder(data)
+
+        self.assertEqual(captured["resource_type"], http_constants.ResourceType.Document)
+        self.assertEqual(captured["operation_type"], _OperationType.SqlQuery)
+        self.assertEqual(captured["body"], expected)
+        self.assertNotIn("日本", captured["body"])
+        self.assertEqual(captured["content_length"], len(expected.encode("utf-8")))
 
     def test_pre_serialized_string_is_unchanged(self):
         """A body the caller already serialized to a str is passed through
@@ -573,10 +700,27 @@ class TestItemBodySerializationAsync(unittest.IsolatedAsyncioTestCase):
             data,
             enable_compact_utf8_item_writes=True,
             resource_type=http_constants.ResourceType.Document,
-            operation_type=_OperationType.Query,
+            operation_type=_OperationType.SqlQuery,
         )
 
         self.assertEqual(captured["body"], json.dumps(data, separators=(",", ":")))
+
+    async def test_query_builder_keeps_non_ascii_parameters_escaped(self):
+        """The real async QueryFeed builder uses SqlQuery metadata and keeps
+        query parameters on the historical escaped-string serialization path."""
+        data = {
+            "query": "SELECT * FROM c WHERE c.name = @name",
+            "parameters": [{"name": "@name", "value": "日本"}],
+        }
+        expected = json.dumps(data, separators=(",", ":"))
+
+        captured = await _capture_async_query_builder(data)
+
+        self.assertEqual(captured["resource_type"], http_constants.ResourceType.Document)
+        self.assertEqual(captured["operation_type"], _OperationType.SqlQuery)
+        self.assertEqual(captured["body"], expected)
+        self.assertNotIn("日本", captured["body"])
+        self.assertEqual(captured["content_length"], len(expected.encode("utf-8")))
 
 
 @pytest.mark.cosmosEmulator

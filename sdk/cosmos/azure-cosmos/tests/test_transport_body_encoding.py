@@ -110,7 +110,8 @@ def _compact_body(document):
     :returns: The serialized body and its UTF-8 byte length.
     :rtype: tuple
     """
-    return _request_body_from_data(document, ensure_ascii=False)
+    body = _request_body_from_data(document, ensure_ascii=False)
+    return body, len(body)
 
 
 class _DummyHeaderClient:

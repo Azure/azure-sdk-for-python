@@ -62,7 +62,7 @@ def _is_readable_stream(obj):
 
 
 def _request_body_from_data(data, ensure_ascii=True):
-    """Convert supported request data into an HTTP body and optional UTF-8 byte length.
+    """Convert supported request data into an HTTP body.
 
     Dictionaries, lists, and tuples are serialized as compact JSON. Other
     supported body types are returned unchanged.
@@ -85,18 +85,18 @@ def _request_body_from_data(data, ensure_ascii=True):
 
     :param Union[str, unicode, file-like stream object, dict, list, None] data:
     :param bool ensure_ascii: Whether non-ASCII characters should be escaped.
-    :returns: the request body and its known UTF-8 byte length, if already calculated.
-    :rtype: tuple[Union[str, bytes, file-like stream object, None], Optional[int]]
+    :returns: The serialized or unchanged request body.
+    :rtype: Union[str, bytes, file-like stream object, None]
 
     """
     if data is None or isinstance(data, str) or _is_readable_stream(data):
-        return data, None
+        return data
     if isinstance(data, (dict, list, tuple)):
         if ensure_ascii:
-            return json.dumps(data, separators=(",", ":")), None
+            return json.dumps(data, separators=(",", ":"))
         json_dumped = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
         try:
-            # Validate the compact body once and retain its byte length for Content-Length.
+            # Encode once; callers derive Content-Length directly from these bytes.
             encoded_body = json_dumped.encode("utf-8")
         except UnicodeEncodeError:
             # Rare path: the body contains surrogate code units, which
@@ -105,9 +105,9 @@ def _request_body_from_data(data, ensure_ascii=True):
             # only ever occur inside a string literal, so valid Unicode elsewhere
             # in the body stays compact.
             encoded_body = json_dumped.encode("utf-8", "backslashreplace")
-        # Send exactly the bytes that were measured, so no transport re-encodes them.
-        return encoded_body, len(encoded_body)
-    return None, None
+        # Send exactly these bytes, so no transport re-encodes them.
+        return encoded_body
+    return None
 
 
 def _batch_contains_item_body(batch_operations):
@@ -372,7 +372,7 @@ def SynchronizedRequest(
     :return: tuple of (result, headers)
     :rtype: tuple of (dict dict)
     """
-    request.data, utf8_byte_length = _request_body_from_data(
+    request.data = _request_body_from_data(
         request_data,
         ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params, request_data)
     )
@@ -385,10 +385,8 @@ def SynchronizedRequest(
         # Use UTF-8 byte length, not str length (code-point count), so the
         # header matches the bytes the transport actually writes for any
         # non-ASCII payload.
-        request.headers[http_constants.HttpHeaders.ContentLength] = (
-            utf8_byte_length
-            if utf8_byte_length is not None
-            else len(request.data.encode("utf-8"))
+        request.headers[http_constants.HttpHeaders.ContentLength] = len(
+            request.data.encode("utf-8")
         )
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0

@@ -242,7 +242,7 @@ async def AsynchronousRequest(
     :return: tuple of (result, headers)
     :rtype: tuple of (dict dict)
     """
-    request.data, utf8_byte_length = _request_body_from_data(
+    request.data = _request_body_from_data(
         request_data,
         ensure_ascii=_should_escape_non_ascii_in_request_body(client, request_params, request_data)
     )
@@ -255,10 +255,8 @@ async def AsynchronousRequest(
         # Use UTF-8 byte length, not str length (code-point count), so the
         # header matches the bytes the transport actually writes for any
         # non-ASCII payload.
-        request.headers[http_constants.HttpHeaders.ContentLength] = (
-            utf8_byte_length
-            if utf8_byte_length is not None
-            else len(request.data.encode("utf-8"))
+        request.headers[http_constants.HttpHeaders.ContentLength] = len(
+            request.data.encode("utf-8")
         )
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
