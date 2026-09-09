@@ -37,6 +37,7 @@ from .._configuration import ProviderHubMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -50,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +72,7 @@ def build_operations_list_by_provider_registration_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +100,7 @@ def build_operations_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -125,7 +126,7 @@ def build_operations_create_or_update_request(  # pylint: disable=name-too-long
 def build_operations_delete_request(provider_namespace: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/operations/default"
     path_format_arguments = {
@@ -147,7 +148,7 @@ def build_custom_rollouts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -176,7 +177,7 @@ def build_custom_rollouts_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -205,7 +206,7 @@ def build_custom_rollouts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/customRollouts/{rolloutName}"
     path_format_arguments = {
@@ -228,7 +229,7 @@ def build_custom_rollouts_list_by_provider_registration_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -254,7 +255,7 @@ def build_custom_rollouts_stop_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/customRollouts/{rolloutName}/stop"
     path_format_arguments = {
@@ -277,7 +278,7 @@ def build_new_region_frontload_release_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -306,7 +307,7 @@ def build_new_region_frontload_release_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -335,7 +336,7 @@ def build_new_region_frontload_release_stop_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/newRegionFrontloadRelease/{releaseName}/stop"
     path_format_arguments = {
@@ -359,7 +360,7 @@ def build_new_region_frontload_release_generate_manifest_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -388,7 +389,7 @@ def build_provider_registrations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -416,7 +417,7 @@ def build_provider_registrations_create_or_update_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -444,7 +445,7 @@ def build_provider_registrations_delete_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}"
     path_format_arguments = {
@@ -466,7 +467,7 @@ def build_provider_registrations_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -492,7 +493,7 @@ def build_provider_registrations_generate_operations_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -519,7 +520,7 @@ def build_default_rollouts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -548,7 +549,7 @@ def build_default_rollouts_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -577,7 +578,7 @@ def build_default_rollouts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/defaultRollouts/{rolloutName}"
     path_format_arguments = {
@@ -600,7 +601,7 @@ def build_default_rollouts_list_by_provider_registration_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -626,7 +627,7 @@ def build_default_rollouts_stop_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/defaultRollouts/{rolloutName}/stop"
     path_format_arguments = {
@@ -649,7 +650,7 @@ def build_notification_registrations_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -680,7 +681,7 @@ def build_notification_registrations_create_or_update_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -711,7 +712,7 @@ def build_notification_registrations_delete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/notificationRegistrations/{notificationRegistrationName}"
     path_format_arguments = {
@@ -736,7 +737,7 @@ def build_notification_registrations_list_by_provider_registration_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -763,7 +764,7 @@ def build_resource_type_registrations_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -792,7 +793,7 @@ def build_resource_type_registrations_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -821,7 +822,7 @@ def build_resource_type_registrations_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}"
     path_format_arguments = {
@@ -844,7 +845,7 @@ def build_resource_type_registrations_list_by_provider_registration_request(  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -876,7 +877,7 @@ def build_skus_get_nested_resource_type_first_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -912,7 +913,7 @@ def build_skus_create_or_update_nested_resource_type_first_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -948,7 +949,7 @@ def build_skus_delete_nested_resource_type_first_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/skus/{sku}"
     path_format_arguments = {
@@ -973,7 +974,7 @@ def build_skus_list_by_resource_type_registrations_nested_resource_type_first_re
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1002,7 +1003,7 @@ def build_skus_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1032,7 +1033,7 @@ def build_skus_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1062,7 +1063,7 @@ def build_skus_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/skus/{sku}"
     path_format_arguments = {
@@ -1086,7 +1087,7 @@ def build_skus_list_by_resource_type_registrations_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1120,7 +1121,7 @@ def build_skus_get_nested_resource_type_second_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1158,7 +1159,7 @@ def build_skus_create_or_update_nested_resource_type_second_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1196,7 +1197,7 @@ def build_skus_delete_nested_resource_type_second_request(  # pylint: disable=na
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/skus/{sku}"
     path_format_arguments = {
@@ -1227,7 +1228,7 @@ def build_skus_list_by_resource_type_registrations_nested_resource_type_second_r
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1264,7 +1265,7 @@ def build_skus_get_nested_resource_type_third_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1304,7 +1305,7 @@ def build_skus_create_or_update_nested_resource_type_third_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1344,7 +1345,7 @@ def build_skus_delete_nested_resource_type_third_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/resourcetypeRegistrations/{nestedResourceTypeThird}/skus/{sku}"
     path_format_arguments = {
@@ -1377,7 +1378,7 @@ def build_skus_list_by_resource_type_registrations_nested_resource_type_third_re
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1408,7 +1409,7 @@ def build_authorized_applications_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1437,7 +1438,7 @@ def build_authorized_applications_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1466,7 +1467,7 @@ def build_authorized_applications_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/authorizedApplications/{applicationId}"
     path_format_arguments = {
@@ -1489,7 +1490,7 @@ def build_authorized_applications_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1516,7 +1517,7 @@ def build_provider_monitor_settings_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1547,7 +1548,7 @@ def build_provider_monitor_settings_create_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1579,7 +1580,7 @@ def build_provider_monitor_settings_update_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1608,7 +1609,7 @@ def build_provider_monitor_settings_delete_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ProviderHub/providerMonitorSettings/{providerMonitorSettingName}"
     path_format_arguments = {
@@ -1633,7 +1634,7 @@ def build_provider_monitor_settings_list_by_resource_group_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1660,7 +1661,7 @@ def build_provider_monitor_settings_list_by_subscription_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1680,6 +1681,65 @@ def build_provider_monitor_settings_list_by_subscription_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_manifests_get_request(
+    provider_namespace: str, environment: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/manifests/{environment}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "environment": _SERIALIZER.url("environment", environment, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_manifests_create_or_update_request(
+    provider_namespace: str, environment: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/manifests/{environment}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "environment": _SERIALIZER.url("environment", environment, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_resource_actions_delete_resources_request(  # pylint: disable=name-too-long
     provider_namespace: str, resource_action_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
@@ -1687,7 +1747,7 @@ def build_resource_actions_delete_resources_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourceActions/{resourceActionName}/deleteResources"
     path_format_arguments = {
@@ -1714,7 +1774,7 @@ def build_provider_hub_mgmt_generate_manifest_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1742,7 +1802,7 @@ def build_provider_hub_mgmt_checkin_manifest_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1765,7 +1825,7 @@ def build_provider_hub_mgmt_checkin_manifest_request(  # pylint: disable=name-to
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1875,16 +1935,14 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_provider_registration(
-        self, provider_namespace: str, **kwargs: Any
-    ) -> List[_models.OperationsDefinition]:
+    def list_by_provider_registration(self, provider_namespace: str, **kwargs: Any) -> _models.OperationsPutContent:
         """Gets the operations supported by the given provider.
 
         :param provider_namespace: The name of the resource provider hosted within ProviderHub.
          Required.
         :type provider_namespace: str
-        :return: list of OperationsDefinition
-        :rtype: list[~azure.mgmt.providerhub.models.OperationsDefinition]
+        :return: OperationsPutContent. The OperationsPutContent is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.OperationsPutContent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1898,7 +1956,7 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OperationsDefinition]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationsPutContent] = kwargs.pop("cls", None)
 
         _request = build_operations_list_by_provider_registration_request(
             provider_namespace=provider_namespace,
@@ -1936,7 +1994,7 @@ class Operations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(List[_models.OperationsDefinition], response.json())
+            deserialized = _deserialize(_models.OperationsPutContent, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2147,7 +2205,7 @@ class Operations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ErrorResponse,
@@ -2159,7 +2217,7 @@ class Operations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class CustomRolloutsOperations:
+class CustomRolloutsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2704,7 +2762,7 @@ class CustomRolloutsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class NewRegionFrontloadReleaseOperations:
+class NewRegionFrontloadReleaseOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3177,7 +3235,7 @@ class NewRegionFrontloadReleaseOperations:
         return deserialized  # type: ignore
 
 
-class ProviderRegistrationsOperations:
+class ProviderRegistrationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3696,7 +3754,7 @@ class ProviderRegistrationsOperations:
         return deserialized  # type: ignore
 
 
-class DefaultRolloutsOperations:
+class DefaultRolloutsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4241,7 +4299,7 @@ class DefaultRolloutsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class NotificationRegistrationsOperations:
+class NotificationRegistrationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4668,7 +4726,7 @@ class NotificationRegistrationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ResourceTypeRegistrationsOperations:
+class ResourceTypeRegistrationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5213,7 +5271,7 @@ class ResourceTypeRegistrationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SkusOperations:
+class SkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7102,7 +7160,7 @@ class SkusOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AuthorizedApplicationsOperations:
+class AuthorizedApplicationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7586,7 +7644,7 @@ class AuthorizedApplicationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProviderMonitorSettingsOperations:
+class ProviderMonitorSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8240,7 +8298,287 @@ class ProviderMonitorSettingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ResourceActionsOperations:
+class ManifestsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.providerhub.ProviderHubMgmtClient`'s
+        :attr:`manifests` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ProviderHubMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01",
+        params_added_on={
+            "2025-10-01": ["api_version", "subscription_id", "provider_namespace", "environment", "accept"]
+        },
+        api_versions_list=["2025-10-01"],
+    )
+    def get(self, provider_namespace: str, environment: str, **kwargs: Any) -> _models.ManifestInfo:
+        """Gets the manifest from the manifest repository.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param environment: The environment supplied to the manifests operation. Required.
+        :type environment: str
+        :return: ManifestInfo. The ManifestInfo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.ManifestInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ManifestInfo] = kwargs.pop("cls", None)
+
+        _request = build_manifests_get_request(
+            provider_namespace=provider_namespace,
+            environment=environment,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ManifestInfo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update(
+        self,
+        provider_namespace: str,
+        environment: str,
+        properties: _models.ManifestInfo,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ManifestInfo:
+        """Creates or Updates a manifest in manifest repository.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param environment: The environment supplied to the manifests operation. Required.
+        :type environment: str
+        :param properties: The manifest supplied to the CreateOrUpdate manifests operation. Required.
+        :type properties: ~azure.mgmt.providerhub.models.ManifestInfo
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManifestInfo. The ManifestInfo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.ManifestInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        provider_namespace: str,
+        environment: str,
+        properties: _types.ManifestInfo,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ManifestInfo:
+        """Creates or Updates a manifest in manifest repository.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param environment: The environment supplied to the manifests operation. Required.
+        :type environment: str
+        :param properties: The manifest supplied to the CreateOrUpdate manifests operation. Required.
+        :type properties: ~azure.mgmt.providerhub.types.ManifestInfo
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManifestInfo. The ManifestInfo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.ManifestInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        provider_namespace: str,
+        environment: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ManifestInfo:
+        """Creates or Updates a manifest in manifest repository.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param environment: The environment supplied to the manifests operation. Required.
+        :type environment: str
+        :param properties: The manifest supplied to the CreateOrUpdate manifests operation. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManifestInfo. The ManifestInfo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.ManifestInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01",
+        params_added_on={
+            "2025-10-01": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "environment",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01"],
+    )
+    def create_or_update(
+        self,
+        provider_namespace: str,
+        environment: str,
+        properties: Union[_models.ManifestInfo, _types.ManifestInfo, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ManifestInfo:
+        """Creates or Updates a manifest in manifest repository.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param environment: The environment supplied to the manifests operation. Required.
+        :type environment: str
+        :param properties: The manifest supplied to the CreateOrUpdate manifests operation. Is either a
+         ManifestInfo type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.providerhub.models.ManifestInfo or
+         ~azure.mgmt.providerhub.types.ManifestInfo or IO[bytes]
+        :return: ManifestInfo. The ManifestInfo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.ManifestInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ManifestInfo] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_manifests_create_or_update_request(
+            provider_namespace=provider_namespace,
+            environment=environment,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ManifestInfo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ResourceActionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

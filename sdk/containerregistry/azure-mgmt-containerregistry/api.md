@@ -94,7 +94,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         async def begin_create(
                 self, 
                 resource_group_name: str, 
@@ -106,7 +106,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[ArchiveVersion]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name']}, api_versions_list=['2026-09-01-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -118,7 +118,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -130,7 +130,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> ArchiveVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -189,7 +189,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[Archive]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name']}, api_versions_list=['2026-09-01-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -200,7 +200,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -211,7 +211,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> Archive: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -485,7 +485,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncItemPaged[ConnectedRegistry]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'connected_registry_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'connected_registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         async def resync(
                 self, 
                 resource_group_name: str, 
@@ -647,7 +647,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[ExportPipeline]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name']}, api_versions_list=['2026-09-01-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -657,7 +657,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -667,7 +667,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> ExportPipeline: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -721,7 +721,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[ImportPipeline]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name']}, api_versions_list=['2026-09-01-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -731,7 +731,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -741,7 +741,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> ImportPipeline: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -807,7 +807,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[PipelineRun]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name']}, api_versions_list=['2026-09-01-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -817,7 +817,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -827,7 +827,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> PipelineRun: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1837,6 +1837,11 @@ namespace azure.mgmt.containerregistry.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerregistry.models.AuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MANAGED_IDENTITY = "ManagedIdentity"
+        SYNC_TOKEN = "SyncToken"
+
+
     class azure.mgmt.containerregistry.models.AutoGeneratedDomainNameLabelScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         NO_REUSE = "NoReuse"
         RESOURCE_GROUP_REUSE = "ResourceGroupReuse"
@@ -1976,6 +1981,7 @@ namespace azure.mgmt.containerregistry.models
 
     class azure.mgmt.containerregistry.models.ConnectedRegistry(ProxyResource):
         id: str
+        identity: Optional[ManagedServiceIdentity]
         name: str
         properties: Optional[ConnectedRegistryProperties]
         system_data: SystemData
@@ -1987,6 +1993,7 @@ namespace azure.mgmt.containerregistry.models
         def __init__(
                 self, 
                 *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
                 properties: Optional[ConnectedRegistryProperties] = ...
             ) -> None: ...
 
@@ -2042,6 +2049,7 @@ namespace azure.mgmt.containerregistry.models
 
 
     class azure.mgmt.containerregistry.models.ConnectedRegistryUpdateParameters(_Model):
+        identity: Optional[ManagedServiceIdentity]
         properties: Optional[ConnectedRegistryUpdateProperties]
 
         def __getattr__(self, name: str) -> Any: ...
@@ -2050,6 +2058,7 @@ namespace azure.mgmt.containerregistry.models
         def __init__(
                 self, 
                 *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
                 properties: Optional[ConnectedRegistryUpdateProperties] = ...
             ) -> None: ...
 
@@ -2746,6 +2755,31 @@ namespace azure.mgmt.containerregistry.models
     class azure.mgmt.containerregistry.models.LoginServerProperties(_Model):
         host: Optional[str]
         tls: Optional[TlsProperties]
+
+
+    class azure.mgmt.containerregistry.models.ManagedServiceIdentity(_Model):
+        principal_id: Optional[str]
+        tenant_id: Optional[str]
+        type: Union[str, ManagedServiceIdentityType]
+        user_assigned_identities: Optional[dict[str, UserAssignedIdentity]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: Union[str, ManagedServiceIdentityType], 
+                user_assigned_identities: Optional[dict[str, UserAssignedIdentity]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerregistry.models.ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NONE = "None"
+        SYSTEM_ASSIGNED = "SystemAssigned"
+        SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+        USER_ASSIGNED = "UserAssigned"
 
 
     class azure.mgmt.containerregistry.models.MetadataSearch(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3922,10 +3956,12 @@ namespace azure.mgmt.containerregistry.models
 
 
     class azure.mgmt.containerregistry.models.StatusDetailProperties(_Model):
+        available_gib: Optional[float]
         code: Optional[str]
         correlation_id: Optional[str]
         description: Optional[str]
         timestamp: Optional[datetime]
+        total_gib: Optional[float]
         type: Optional[str]
 
 
@@ -3935,21 +3971,23 @@ namespace azure.mgmt.containerregistry.models
 
 
     class azure.mgmt.containerregistry.models.SyncProperties(_Model):
+        auth_type: Optional[Union[str, AuthType]]
         gateway_endpoint: Optional[str]
         last_sync_time: Optional[datetime]
         message_ttl: timedelta
         schedule: Optional[str]
         sync_window: Optional[timedelta]
-        token_id: str
+        token_id: Optional[str]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                auth_type: Optional[Union[str, AuthType]] = ..., 
                 message_ttl: timedelta, 
                 schedule: Optional[str] = ..., 
                 sync_window: Optional[timedelta] = ..., 
-                token_id: str
+                token_id: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -3973,6 +4011,7 @@ namespace azure.mgmt.containerregistry.models
 
 
     class azure.mgmt.containerregistry.models.SyncUpdateProperties(_Model):
+        auth_type: Optional[Union[str, AuthType]]
         message_ttl: Optional[timedelta]
         schedule: Optional[str]
         sync_window: Optional[timedelta]
@@ -3981,6 +4020,7 @@ namespace azure.mgmt.containerregistry.models
         def __init__(
                 self, 
                 *, 
+                auth_type: Optional[Union[str, AuthType]] = ..., 
                 message_ttl: Optional[timedelta] = ..., 
                 schedule: Optional[str] = ..., 
                 sync_window: Optional[timedelta] = ...
@@ -4260,6 +4300,11 @@ namespace azure.mgmt.containerregistry.models
         NOTARY = "Notary"
 
 
+    class azure.mgmt.containerregistry.models.UserAssignedIdentity(_Model):
+        client_id: Optional[str]
+        principal_id: Optional[str]
+
+
     class azure.mgmt.containerregistry.models.UserIdentityProperties(_Model):
         client_id: Optional[str]
         principal_id: Optional[str]
@@ -4458,7 +4503,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def begin_create(
                 self, 
                 resource_group_name: str, 
@@ -4470,7 +4515,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[ArchiveVersion]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name']}, api_versions_list=['2026-09-01-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4482,7 +4527,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4494,7 +4539,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> ArchiveVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -4553,7 +4598,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[Archive]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name']}, api_versions_list=['2026-09-01-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4564,7 +4609,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4575,7 +4620,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> Archive: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -4849,7 +4894,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> ItemPaged[ConnectedRegistry]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'connected_registry_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'connected_registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def resync(
                 self, 
                 resource_group_name: str, 
@@ -5011,7 +5056,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[ExportPipeline]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name']}, api_versions_list=['2026-09-01-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5021,7 +5066,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5031,7 +5076,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> ExportPipeline: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -5085,7 +5130,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[ImportPipeline]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name']}, api_versions_list=['2026-09-01-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5095,7 +5140,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5105,7 +5150,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> ImportPipeline: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -5171,7 +5216,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[PipelineRun]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name']}, api_versions_list=['2026-09-01-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5181,7 +5226,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5191,7 +5236,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> PipelineRun: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-03-01-preview'])
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -5993,20 +6038,15 @@ namespace azure.mgmt.containerregistry.types
         status: Union[str, ActivationStatus]
 
 
-    class azure.mgmt.containerregistry.types.Actor(TypedDict, total=False):
-        key "name": str
-        name: str
-
-
     class azure.mgmt.containerregistry.types.AdditionalAuthenticationProperties(TypedDict, total=False):
         key "authenticationType": Required[Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]]
         key "projectNumber": Required[str]
         key "workloadIdentityPool": Required[str]
         key "workloadIdentityProvider": Required[str]
-        authentication_type: Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]
-        project_number: str
-        workload_identity_pool: str
-        workload_identity_provider: str
+        authenticationType: Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]
+        projectNumber: str
+        workloadIdentityPool: str
+        workloadIdentityProvider: str
 
 
     class azure.mgmt.containerregistry.types.AdditionalAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -6022,7 +6062,7 @@ namespace azure.mgmt.containerregistry.types
         id: str
         name: str
         properties: ArchiveProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6039,11 +6079,11 @@ namespace azure.mgmt.containerregistry.types
         key "publishedVersion": str
         key "repositoryEndpoint": str
         key "repositoryEndpointPrefix": str
-        package_source: ArchivePackageSourceProperties
-        provisioning_state: Union[str, ProvisioningState]
-        published_version: str
-        repository_endpoint: str
-        repository_endpoint_prefix: str
+        packageSource: ArchivePackageSourceProperties
+        provisioningState: Union[str, ProvisioningState]
+        publishedVersion: str
+        repositoryEndpoint: str
+        repositoryEndpointPrefix: str
 
 
     class azure.mgmt.containerregistry.types.ArchiveUpdateParameters(TypedDict, total=False):
@@ -6053,27 +6093,7 @@ namespace azure.mgmt.containerregistry.types
 
     class azure.mgmt.containerregistry.types.ArchiveUpdateProperties(TypedDict, total=False):
         key "publishedVersion": str
-        published_version: str
-
-
-    class azure.mgmt.containerregistry.types.ArchiveVersion(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('ArchiveVersionProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: ArchiveVersionProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.containerregistry.types.ArchiveVersionProperties(TypedDict, total=False):
-        key "archiveVersionErrorMessage": str
-        key "provisioningState": Union[str, ProvisioningState]
-        archive_version_error_message: str
-        provisioning_state: Union[str, ProvisioningState]
+        publishedVersion: str
 
 
     class azure.mgmt.containerregistry.types.AuthCredential(TypedDict, total=False):
@@ -6081,10 +6101,10 @@ namespace azure.mgmt.containerregistry.types
         key "name": Union[str, CredentialName]
         key "passwordSecretIdentifier": str
         key "usernameSecretIdentifier": str
-        credential_health: CredentialHealth
+        credentialHealth: CredentialHealth
         name: Union[str, CredentialName]
-        password_secret_identifier: str
-        username_secret_identifier: str
+        passwordSecretIdentifier: str
+        usernameSecretIdentifier: str
 
 
     class azure.mgmt.containerregistry.types.AzureADAuthenticationAsArmPolicy(TypedDict, total=False):
@@ -6103,7 +6123,7 @@ namespace azure.mgmt.containerregistry.types
         identity: IdentityProperties
         name: str
         properties: CacheRuleProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6114,12 +6134,12 @@ namespace azure.mgmt.containerregistry.types
         key "provisioningState": Union[str, ProvisioningState]
         key "sourceRepository": str
         key "targetRepository": str
-        additional_authentication_properties: AdditionalAuthenticationProperties
-        creation_date: str
-        credential_set_resource_id: str
-        provisioning_state: Union[str, ProvisioningState]
-        source_repository: str
-        target_repository: str
+        additionalAuthenticationProperties: AdditionalAuthenticationProperties
+        creationDate: str
+        credentialSetResourceId: str
+        provisioningState: Union[str, ProvisioningState]
+        sourceRepository: str
+        targetRepository: str
 
 
     class azure.mgmt.containerregistry.types.CacheRuleUpdateParameters(TypedDict, total=False):
@@ -6132,27 +6152,22 @@ namespace azure.mgmt.containerregistry.types
     class azure.mgmt.containerregistry.types.CacheRuleUpdateProperties(TypedDict, total=False):
         key "additionalAuthenticationProperties": ForwardRef('AdditionalAuthenticationProperties', module='types')
         key "credentialSetResourceId": str
-        additional_authentication_properties: AdditionalAuthenticationProperties
-        credential_set_resource_id: str
-
-
-    class azure.mgmt.containerregistry.types.CallbackConfig(TypedDict, total=False):
-        key "serviceUri": Required[str]
-        customHeaders: dict[str, str]
-        custom_headers: dict[str, str]
-        service_uri: str
+        additionalAuthenticationProperties: AdditionalAuthenticationProperties
+        credentialSetResourceId: str
 
 
     class azure.mgmt.containerregistry.types.ConnectedRegistry(ProxyResource):
         key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "name": str
         key "properties": ForwardRef('ConnectedRegistryProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
+        identity: ManagedServiceIdentity
         name: str
         properties: ConnectedRegistryProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6170,25 +6185,24 @@ namespace azure.mgmt.containerregistry.types
         key "version": str
         activation: ActivationProperties
         clientTokenIds: list[str]
-        client_token_ids: list[str]
-        connection_state: Union[str, ConnectionState]
-        garbage_collection: GarbageCollectionProperties
-        last_activity_time: str
+        connectionState: Union[str, ConnectionState]
+        garbageCollection: GarbageCollectionProperties
+        lastActivityTime: str
         logging: LoggingProperties
-        login_server: LoginServerProperties
+        loginServer: LoginServerProperties
         mode: Union[str, ConnectedRegistryMode]
         notificationsList: list[str]
-        notifications_list: list[str]
         parent: ParentProperties
-        provisioning_state: Union[str, ProvisioningState]
-        registry_sync_result: RegistrySyncResult
+        provisioningState: Union[str, ProvisioningState]
+        registrySyncResult: RegistrySyncResult
         statusDetails: list[StatusDetailProperties]
-        status_details: list[StatusDetailProperties]
         version: str
 
 
     class azure.mgmt.containerregistry.types.ConnectedRegistryUpdateParameters(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "properties": ForwardRef('ConnectedRegistryUpdateProperties', module='types')
+        identity: ManagedServiceIdentity
         properties: ConnectedRegistryUpdateProperties
 
 
@@ -6197,20 +6211,18 @@ namespace azure.mgmt.containerregistry.types
         key "logging": ForwardRef('LoggingProperties', module='types')
         key "syncProperties": ForwardRef('SyncUpdateProperties', module='types')
         clientTokenIds: list[str]
-        client_token_ids: list[str]
-        garbage_collection: GarbageCollectionProperties
+        garbageCollection: GarbageCollectionProperties
         logging: LoggingProperties
         notificationsList: list[str]
-        notifications_list: list[str]
-        sync_properties: SyncUpdateProperties
+        syncProperties: SyncUpdateProperties
 
 
     class azure.mgmt.containerregistry.types.CredentialHealth(TypedDict, total=False):
         key "errorCode": str
         key "errorMessage": str
         key "status": Union[str, CredentialHealthStatus]
-        error_code: str
-        error_message: str
+        errorCode: str
+        errorMessage: str
         status: Union[str, CredentialHealthStatus]
 
 
@@ -6225,7 +6237,7 @@ namespace azure.mgmt.containerregistry.types
         identity: IdentityProperties
         name: str
         properties: CredentialSetProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6234,10 +6246,9 @@ namespace azure.mgmt.containerregistry.types
         key "loginServer": str
         key "provisioningState": Union[str, ProvisioningState]
         authCredentials: list[AuthCredential]
-        auth_credentials: list[AuthCredential]
-        creation_date: str
-        login_server: str
-        provisioning_state: Union[str, ProvisioningState]
+        creationDate: str
+        loginServer: str
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.containerregistry.types.CredentialSetUpdateParameters(TypedDict, total=False):
@@ -6249,93 +6260,13 @@ namespace azure.mgmt.containerregistry.types
 
     class azure.mgmt.containerregistry.types.CredentialSetUpdateProperties(TypedDict, total=False):
         authCredentials: list[AuthCredential]
-        auth_credentials: list[AuthCredential]
 
 
     class azure.mgmt.containerregistry.types.EncryptionProperty(TypedDict, total=False):
         key "keyVaultProperties": ForwardRef('KeyVaultProperties', module='types')
         key "status": Union[str, EncryptionStatus]
-        key_vault_properties: KeyVaultProperties
+        keyVaultProperties: KeyVaultProperties
         status: Union[str, EncryptionStatus]
-
-
-    class azure.mgmt.containerregistry.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.containerregistry.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.containerregistry.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
-
-
-    class azure.mgmt.containerregistry.types.Event(EventInfo):
-        key "eventRequestMessage": ForwardRef('EventRequestMessage', module='types')
-        key "eventResponseMessage": ForwardRef('EventResponseMessage', module='types')
-        key "id": str
-        event_request_message: EventRequestMessage
-        event_response_message: EventResponseMessage
-        id: str
-
-
-    class azure.mgmt.containerregistry.types.EventContent(TypedDict, total=False):
-        key "action": str
-        key "actor": ForwardRef('Actor', module='types')
-        key "id": str
-        key "request": ForwardRef('Request', module='types')
-        key "source": ForwardRef('Source', module='types')
-        key "target": ForwardRef('Target', module='types')
-        key "timestamp": str
-        action: str
-        actor: Actor
-        id: str
-        request: Request
-        source: Source
-        target: Target
-        timestamp: str
-
-
-    class azure.mgmt.containerregistry.types.EventInfo(TypedDict, total=False):
-        key "id": str
-        id: str
-
-
-    class azure.mgmt.containerregistry.types.EventRequestMessage(TypedDict, total=False):
-        key "content": ForwardRef('EventContent', module='types')
-        key "method": str
-        key "requestUri": str
-        key "version": str
-        content: EventContent
-        headers: dict[str, str]
-        method: str
-        request_uri: str
-        version: str
-
-
-    class azure.mgmt.containerregistry.types.EventResponseMessage(TypedDict, total=False):
-        key "content": str
-        key "reasonPhrase": str
-        key "statusCode": str
-        key "version": str
-        content: str
-        headers: dict[str, str]
-        reason_phrase: str
-        status_code: str
-        version: str
 
 
     class azure.mgmt.containerregistry.types.ExportPipeline(ProxyResource):
@@ -6351,7 +6282,7 @@ namespace azure.mgmt.containerregistry.types
         location: str
         name: str
         properties: ExportPipelineProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6359,7 +6290,7 @@ namespace azure.mgmt.containerregistry.types
         key "provisioningState": Union[str, ProvisioningState]
         key "target": Required[ExportPipelineTargetProperties]
         options: list[Union[str, PipelineOptions]]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         target: ExportPipelineTargetProperties
 
 
@@ -6368,8 +6299,8 @@ namespace azure.mgmt.containerregistry.types
         key "storageAccessMode": Union[str, StorageAccessMode]
         key "type": str
         key "uri": str
-        key_vault_uri: str
-        storage_access_mode: Union[str, StorageAccessMode]
+        keyVaultUri: str
+        storageAccessMode: Union[str, StorageAccessMode]
         type: str
         uri: str
 
@@ -6384,10 +6315,10 @@ namespace azure.mgmt.containerregistry.types
         key "projectNumber": Required[str]
         key "workloadIdentityPool": Required[str]
         key "workloadIdentityProvider": Required[str]
-        authentication_type: Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]
-        project_number: str
-        workload_identity_pool: str
-        workload_identity_provider: str
+        authenticationType: Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]
+        projectNumber: str
+        workloadIdentityPool: str
+        workloadIdentityProvider: str
 
 
     class azure.mgmt.containerregistry.types.GarbageCollectionProperties(TypedDict, total=False):
@@ -6403,31 +6334,24 @@ namespace azure.mgmt.containerregistry.types
         key "tokenId": str
         expiry: str
         name: Union[str, TokenPasswordName]
-        token_id: str
-
-
-    class azure.mgmt.containerregistry.types.GenerateCredentialsResult(TypedDict, total=False):
-        key "username": str
-        passwords: list[TokenPassword]
-        username: str
+        tokenId: str
 
 
     class azure.mgmt.containerregistry.types.IPRule(TypedDict, total=False):
         key "action": Union[str, Action]
         key "value": Required[str]
         action: Union[str, Action]
-        ip_address_or_range: str
+        value: str
 
 
     class azure.mgmt.containerregistry.types.IdentityProperties(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Union[str, ResourceIdentityType]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ResourceIdentityType]
         userAssignedIdentities: dict[str, UserIdentityProperties]
-        user_assigned_identities: dict[str, UserIdentityProperties]
 
 
     class azure.mgmt.containerregistry.types.ImportImageParameters(TypedDict, total=False):
@@ -6436,9 +6360,7 @@ namespace azure.mgmt.containerregistry.types
         mode: Union[str, ImportMode]
         source: ImportSource
         targetTags: list[str]
-        target_tags: list[str]
         untaggedTargetRepositories: list[str]
-        untagged_target_repositories: list[str]
 
 
     class azure.mgmt.containerregistry.types.ImportPipeline(ProxyResource):
@@ -6454,7 +6376,7 @@ namespace azure.mgmt.containerregistry.types
         location: str
         name: str
         properties: ImportPipelineProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6463,7 +6385,7 @@ namespace azure.mgmt.containerregistry.types
         key "source": Required[ImportPipelineSourceProperties]
         key "trigger": ForwardRef('PipelineTriggerProperties', module='types')
         options: list[Union[str, PipelineOptions]]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         source: ImportPipelineSourceProperties
         trigger: PipelineTriggerProperties
 
@@ -6473,8 +6395,8 @@ namespace azure.mgmt.containerregistry.types
         key "storageAccessMode": Union[str, StorageAccessMode]
         key "type": Union[str, PipelineSourceType]
         key "uri": str
-        key_vault_uri: str
-        storage_access_mode: Union[str, StorageAccessMode]
+        keyVaultUri: str
+        storageAccessMode: Union[str, StorageAccessMode]
         type: Union[str, PipelineSourceType]
         uri: str
 
@@ -6485,9 +6407,9 @@ namespace azure.mgmt.containerregistry.types
         key "resourceId": str
         key "sourceImage": Required[str]
         credentials: ImportSourceCredentials
-        registry_uri: str
-        resource_id: str
-        source_image: str
+        registryUri: str
+        resourceId: str
+        sourceImage: str
 
 
     class azure.mgmt.containerregistry.types.ImportSourceCredentials(TypedDict, total=False):
@@ -6504,17 +6426,17 @@ namespace azure.mgmt.containerregistry.types
         key "lastKeyRotationTimestamp": str
         key "versionedKeyIdentifier": str
         identity: str
-        key_identifier: str
-        key_rotation_enabled: bool
-        last_key_rotation_timestamp: str
-        versioned_key_identifier: str
+        keyIdentifier: str
+        keyRotationEnabled: bool
+        lastKeyRotationTimestamp: str
+        versionedKeyIdentifier: str
 
 
     class azure.mgmt.containerregistry.types.LoggingProperties(TypedDict, total=False):
         key "auditLogStatus": Union[str, AuditLogStatus]
         key "logLevel": Union[str, LogLevel]
-        audit_log_status: Union[str, AuditLogStatus]
-        log_level: Union[str, LogLevel]
+        auditLogStatus: Union[str, AuditLogStatus]
+        logLevel: Union[str, LogLevel]
 
 
     class azure.mgmt.containerregistry.types.LoginServerProperties(TypedDict, total=False):
@@ -6524,80 +6446,28 @@ namespace azure.mgmt.containerregistry.types
         tls: TlsProperties
 
 
+    class azure.mgmt.containerregistry.types.ManagedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, ManagedServiceIdentityType]]
+        principalId: str
+        tenantId: str
+        type: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentity]
+
+
     class azure.mgmt.containerregistry.types.NetworkRuleSet(TypedDict, total=False):
         key "defaultAction": Required[Union[str, DefaultAction]]
-        default_action: Union[str, DefaultAction]
+        defaultAction: Union[str, DefaultAction]
         ipRules: list[IPRule]
-        ip_rules: list[IPRule]
         virtualNetworkRules: list[VirtualNetworkRule]
-        virtual_network_rules: list[VirtualNetworkRule]
-
-
-    class azure.mgmt.containerregistry.types.OperationDefinition(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplayDefinition', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": str
-        key "properties": ForwardRef('OperationPropertiesDefinition', module='types')
-        display: OperationDisplayDefinition
-        is_data_action: bool
-        name: str
-        origin: str
-        properties: OperationPropertiesDefinition
-
-
-    class azure.mgmt.containerregistry.types.OperationDisplayDefinition(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
-    class azure.mgmt.containerregistry.types.OperationLogSpecificationDefinition(TypedDict, total=False):
-        key "blobDuration": str
-        key "displayName": str
-        key "name": str
-        blob_duration: str
-        display_name: str
-        name: str
-
-
-    class azure.mgmt.containerregistry.types.OperationMetricSpecificationDefinition(TypedDict, total=False):
-        key "aggregationType": str
-        key "displayDescription": str
-        key "displayName": str
-        key "internalMetricName": str
-        key "name": str
-        key "unit": str
-        aggregation_type: str
-        display_description: str
-        display_name: str
-        internal_metric_name: str
-        name: str
-        unit: str
-
-
-    class azure.mgmt.containerregistry.types.OperationPropertiesDefinition(TypedDict, total=False):
-        key "serviceSpecification": ForwardRef('OperationServiceSpecificationDefinition', module='types')
-        service_specification: OperationServiceSpecificationDefinition
-
-
-    class azure.mgmt.containerregistry.types.OperationServiceSpecificationDefinition(TypedDict, total=False):
-        logSpecifications: list[OperationLogSpecificationDefinition]
-        log_specifications: list[OperationLogSpecificationDefinition]
-        metricSpecifications: list[OperationMetricSpecificationDefinition]
-        metric_specifications: list[OperationMetricSpecificationDefinition]
 
 
     class azure.mgmt.containerregistry.types.ParentProperties(TypedDict, total=False):
         key "id": str
         key "syncProperties": Required[SyncProperties]
         id: str
-        sync_properties: SyncProperties
+        syncProperties: SyncProperties
 
 
     class azure.mgmt.containerregistry.types.PipelineRun(ProxyResource):
@@ -6609,7 +6479,7 @@ namespace azure.mgmt.containerregistry.types
         id: str
         name: str
         properties: PipelineRunProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6618,8 +6488,8 @@ namespace azure.mgmt.containerregistry.types
         key "provisioningState": Union[str, ProvisioningState]
         key "request": ForwardRef('PipelineRunRequest', module='types')
         key "response": ForwardRef('PipelineRunResponse', module='types')
-        force_update_tag: str
-        provisioning_state: Union[str, ProvisioningState]
+        forceUpdateTag: str
+        provisioningState: Union[str, ProvisioningState]
         request: PipelineRunRequest
         response: PipelineRunResponse
 
@@ -6630,8 +6500,8 @@ namespace azure.mgmt.containerregistry.types
         key "source": ForwardRef('PipelineRunSourceProperties', module='types')
         key "target": ForwardRef('PipelineRunTargetProperties', module='types')
         artifacts: list[str]
-        catalog_digest: str
-        pipeline_resource_id: str
+        catalogDigest: str
+        pipelineResourceId: str
         source: PipelineRunSourceProperties
         target: PipelineRunTargetProperties
 
@@ -6646,14 +6516,13 @@ namespace azure.mgmt.containerregistry.types
         key "status": str
         key "target": ForwardRef('ExportPipelineTargetProperties', module='types')
         key "trigger": ForwardRef('PipelineTriggerDescriptor', module='types')
-        catalog_digest: str
-        finish_time: str
+        catalogDigest: str
+        finishTime: str
         importedArtifacts: list[str]
-        imported_artifacts: list[str]
-        pipeline_run_error_message: str
+        pipelineRunErrorMessage: str
         progress: ProgressProperties
         source: ImportPipelineSourceProperties
-        start_time: str
+        startTime: str
         status: str
         target: ExportPipelineTargetProperties
         trigger: PipelineTriggerDescriptor
@@ -6685,12 +6554,12 @@ namespace azure.mgmt.containerregistry.types
 
     class azure.mgmt.containerregistry.types.PipelineTriggerDescriptor(TypedDict, total=False):
         key "sourceTrigger": ForwardRef('PipelineSourceTriggerDescriptor', module='types')
-        source_trigger: PipelineSourceTriggerDescriptor
+        sourceTrigger: PipelineSourceTriggerDescriptor
 
 
     class azure.mgmt.containerregistry.types.PipelineTriggerProperties(TypedDict, total=False):
         key "sourceTrigger": ForwardRef('PipelineSourceTriggerProperties', module='types')
-        source_trigger: PipelineSourceTriggerProperties
+        sourceTrigger: PipelineSourceTriggerProperties
 
 
     class azure.mgmt.containerregistry.types.Policies(TypedDict, total=False):
@@ -6700,12 +6569,12 @@ namespace azure.mgmt.containerregistry.types
         key "retentionPolicy": ForwardRef('RetentionPolicy', module='types')
         key "softDeletePolicy": ForwardRef('SoftDeletePolicy', module='types')
         key "trustPolicy": ForwardRef('TrustPolicy', module='types')
-        azure_ad_authentication_as_arm_policy: AzureADAuthenticationAsArmPolicy
-        export_policy: ExportPolicy
-        quarantine_policy: QuarantinePolicy
-        retention_policy: RetentionPolicy
-        soft_delete_policy: SoftDeletePolicy
-        trust_policy: TrustPolicy
+        azureADAuthenticationAsArmPolicy: AzureADAuthenticationAsArmPolicy
+        exportPolicy: ExportPolicy
+        quarantinePolicy: QuarantinePolicy
+        retentionPolicy: RetentionPolicy
+        softDeletePolicy: SoftDeletePolicy
+        trustPolicy: TrustPolicy
 
 
     class azure.mgmt.containerregistry.types.PrivateEndpoint(TypedDict, total=False):
@@ -6722,7 +6591,7 @@ namespace azure.mgmt.containerregistry.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6730,38 +6599,16 @@ namespace azure.mgmt.containerregistry.types
         key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
         key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionState', module='types')
         key "provisioningState": Union[str, ProvisioningState]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, ProvisioningState]
-
-
-    class azure.mgmt.containerregistry.types.PrivateLinkResource(Resource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateLinkResourceProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PrivateLinkResourceProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.containerregistry.types.PrivateLinkResourceProperties(TypedDict, total=False):
-        key "groupId": str
-        group_id: str
-        requiredMembers: list[str]
-        requiredZoneNames: list[str]
-        required_members: list[str]
-        required_zone_names: list[str]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.containerregistry.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
         key "actionsRequired": Union[str, ActionsRequired]
         key "description": str
         key "status": Union[str, ConnectionStatus]
-        actions_required: Union[str, ActionsRequired]
+        actionsRequired: Union[str, ActionsRequired]
         description: str
         status: Union[str, ConnectionStatus]
 
@@ -6778,7 +6625,7 @@ namespace azure.mgmt.containerregistry.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6807,15 +6654,9 @@ namespace azure.mgmt.containerregistry.types
         name: str
         properties: RegistryProperties
         sku: Sku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
-
-
-    class azure.mgmt.containerregistry.types.RegistryListCredentialsResult(TypedDict, total=False):
-        key "username": str
-        passwords: list[RegistryPassword]
-        username: str
 
 
     class azure.mgmt.containerregistry.types.RegistryNameCheckRequest(TypedDict, total=False):
@@ -6823,28 +6664,10 @@ namespace azure.mgmt.containerregistry.types
         key "name": Required[str]
         key "resourceGroupName": str
         key "type": Required[Union[str, ContainerRegistryResourceType]]
-        auto_generated_domain_name_label_scope: Union[str, AutoGeneratedDomainNameLabelScope]
+        autoGeneratedDomainNameLabelScope: Union[str, AutoGeneratedDomainNameLabelScope]
         name: str
-        resource_group_name: str
+        resourceGroupName: str
         type: Union[str, ContainerRegistryResourceType]
-
-
-    class azure.mgmt.containerregistry.types.RegistryNameStatus(TypedDict, total=False):
-        key "availableLoginServerName": str
-        key "message": str
-        key "nameAvailable": bool
-        key "reason": str
-        available_login_server_name: str
-        message: str
-        name_available: bool
-        reason: str
-
-
-    class azure.mgmt.containerregistry.types.RegistryPassword(TypedDict, total=False):
-        key "name": Union[str, PasswordName]
-        key "value": str
-        name: Union[str, PasswordName]
-        value: str
 
 
     class azure.mgmt.containerregistry.types.RegistryProperties(TypedDict, total=False):
@@ -6868,32 +6691,29 @@ namespace azure.mgmt.containerregistry.types
         key "status": ForwardRef('Status', module='types')
         key "writableCacheRepos": Union[str, WritableCacheRepos]
         key "zoneRedundancy": Union[str, ZoneRedundancy]
-        admin_user_enabled: bool
-        anonymous_pull_enabled: bool
-        auto_generated_domain_name_label_scope: Union[str, AutoGeneratedDomainNameLabelScope]
-        creation_date: str
+        adminUserEnabled: bool
+        anonymousPullEnabled: bool
+        autoGeneratedDomainNameLabelScope: Union[str, AutoGeneratedDomainNameLabelScope]
+        creationDate: str
+        dataEndpointEnabled: bool
         dataEndpointHostNames: list[str]
-        data_endpoint_enabled: bool
-        data_endpoint_host_names: list[str]
         encryption: EncryptionProperty
-        endpoint_protocol: Union[str, EndpointProtocol]
-        login_server: str
-        metadata_search: Union[str, MetadataSearch]
-        network_rule_bypass_allowed_for_tasks: bool
-        network_rule_bypass_options: Union[str, NetworkRuleBypassOptions]
-        network_rule_set: NetworkRuleSet
+        endpointProtocol: Union[str, EndpointProtocol]
+        loginServer: str
+        metadataSearch: Union[str, MetadataSearch]
+        networkRuleBypassAllowedForTasks: bool
+        networkRuleBypassOptions: Union[str, NetworkRuleBypassOptions]
+        networkRuleSet: NetworkRuleSet
         policies: Policies
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: Union[str, ProvisioningState]
-        public_network_access: Union[str, PublicNetworkAccess]
+        provisioningState: Union[str, ProvisioningState]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
         regionalEndpointHostNames: list[str]
-        regional_endpoint_host_names: list[str]
-        regional_endpoints: Union[str, RegionalEndpoints]
-        role_assignment_mode: Union[str, RoleAssignmentMode]
+        regionalEndpoints: Union[str, RegionalEndpoints]
+        roleAssignmentMode: Union[str, RoleAssignmentMode]
         status: Status
-        writable_cache_repos: Union[str, WritableCacheRepos]
-        zone_redundancy: Union[str, ZoneRedundancy]
+        writableCacheRepos: Union[str, WritableCacheRepos]
+        zoneRedundancy: Union[str, ZoneRedundancy]
 
 
     class azure.mgmt.containerregistry.types.RegistryPropertiesUpdateParameters(TypedDict, total=False):
@@ -6911,20 +6731,20 @@ namespace azure.mgmt.containerregistry.types
         key "regionalEndpoints": Union[str, RegionalEndpoints]
         key "roleAssignmentMode": Union[str, RoleAssignmentMode]
         key "writableCacheRepos": Union[str, WritableCacheRepos]
-        admin_user_enabled: bool
-        anonymous_pull_enabled: bool
-        data_endpoint_enabled: bool
+        adminUserEnabled: bool
+        anonymousPullEnabled: bool
+        dataEndpointEnabled: bool
         encryption: EncryptionProperty
-        endpoint_protocol: Union[str, EndpointProtocol]
-        metadata_search: Union[str, MetadataSearch]
-        network_rule_bypass_allowed_for_tasks: bool
-        network_rule_bypass_options: Union[str, NetworkRuleBypassOptions]
-        network_rule_set: NetworkRuleSet
+        endpointProtocol: Union[str, EndpointProtocol]
+        metadataSearch: Union[str, MetadataSearch]
+        networkRuleBypassAllowedForTasks: bool
+        networkRuleBypassOptions: Union[str, NetworkRuleBypassOptions]
+        networkRuleSet: NetworkRuleSet
         policies: Policies
-        public_network_access: Union[str, PublicNetworkAccess]
-        regional_endpoints: Union[str, RegionalEndpoints]
-        role_assignment_mode: Union[str, RoleAssignmentMode]
-        writable_cache_repos: Union[str, WritableCacheRepos]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        regionalEndpoints: Union[str, RegionalEndpoints]
+        roleAssignmentMode: Union[str, RoleAssignmentMode]
+        writableCacheRepos: Union[str, WritableCacheRepos]
 
 
     class azure.mgmt.containerregistry.types.RegistrySyncResult(TypedDict, total=False):
@@ -6933,11 +6753,11 @@ namespace azure.mgmt.containerregistry.types
         key "lastSyncStartTime": str
         key "syncState": Required[Union[str, SyncState]]
         key "syncTrigger": Required[Union[str, SyncTrigger]]
-        last_successful_sync_end_time: str
-        last_sync_end_time: str
-        last_sync_start_time: str
-        sync_state: Union[str, SyncState]
-        sync_trigger: Union[str, SyncTrigger]
+        lastSuccessfulSyncEndTime: str
+        lastSyncEndTime: str
+        lastSyncStartTime: str
+        syncState: Union[str, SyncState]
+        syncTrigger: Union[str, SyncTrigger]
 
 
     class azure.mgmt.containerregistry.types.RegistryUpdateParameters(TypedDict, total=False):
@@ -6948,21 +6768,6 @@ namespace azure.mgmt.containerregistry.types
         properties: RegistryPropertiesUpdateParameters
         sku: Sku
         tags: dict[str, str]
-
-
-    class azure.mgmt.containerregistry.types.RegistryUsage(TypedDict, total=False):
-        key "currentValue": int
-        key "limit": int
-        key "name": str
-        key "unit": Union[str, RegistryUsageUnit]
-        current_value: int
-        limit: int
-        name: str
-        unit: Union[str, RegistryUsageUnit]
-
-
-    class azure.mgmt.containerregistry.types.RegistryUsageListResult(TypedDict, total=False):
-        value: list[RegistryUsage]
 
 
     class azure.mgmt.containerregistry.types.Replication(TrackedResource):
@@ -6976,7 +6781,7 @@ namespace azure.mgmt.containerregistry.types
         location: str
         name: str
         properties: ReplicationProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -6986,10 +6791,10 @@ namespace azure.mgmt.containerregistry.types
         key "regionEndpointEnabled": bool
         key "status": ForwardRef('Status', module='types')
         key "zoneRedundancy": Union[str, ZoneRedundancy]
-        provisioning_state: Union[str, ProvisioningState]
-        region_endpoint_enabled: bool
+        provisioningState: Union[str, ProvisioningState]
+        regionEndpointEnabled: bool
         status: Status
-        zone_redundancy: Union[str, ZoneRedundancy]
+        zoneRedundancy: Union[str, ZoneRedundancy]
 
 
     class azure.mgmt.containerregistry.types.ReplicationUpdateParameters(TypedDict, total=False):
@@ -7000,20 +6805,7 @@ namespace azure.mgmt.containerregistry.types
 
     class azure.mgmt.containerregistry.types.ReplicationUpdateParametersProperties(TypedDict, total=False):
         key "regionEndpointEnabled": bool
-        region_endpoint_enabled: bool
-
-
-    class azure.mgmt.containerregistry.types.Request(TypedDict, total=False):
-        key "addr": str
-        key "host": str
-        key "id": str
-        key "method": str
-        key "useragent": str
-        addr: str
-        host: str
-        id: str
-        method: str
-        useragent: str
+        regionEndpointEnabled: bool
 
 
     class azure.mgmt.containerregistry.types.Resource(TypedDict, total=False):
@@ -7023,7 +6815,7 @@ namespace azure.mgmt.containerregistry.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7032,7 +6824,7 @@ namespace azure.mgmt.containerregistry.types
         key "lastUpdatedTime": str
         key "status": Union[str, PolicyStatus]
         days: int
-        last_updated_time: str
+        lastUpdatedTime: str
         status: Union[str, PolicyStatus]
 
 
@@ -7045,7 +6837,7 @@ namespace azure.mgmt.containerregistry.types
         id: str
         name: str
         properties: ScopeMapProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7056,9 +6848,9 @@ namespace azure.mgmt.containerregistry.types
         key "provisioningState": Union[str, ProvisioningState]
         key "type": str
         actions: list[str]
-        creation_date: str
+        creationDate: str
         description: str
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         type: str
 
 
@@ -7084,62 +6876,63 @@ namespace azure.mgmt.containerregistry.types
         key "lastUpdatedTime": str
         key "retentionDays": int
         key "status": Union[str, PolicyStatus]
-        last_updated_time: str
-        retention_days: int
+        lastUpdatedTime: str
+        retentionDays: int
         status: Union[str, PolicyStatus]
-
-
-    class azure.mgmt.containerregistry.types.Source(TypedDict, total=False):
-        key "addr": str
-        key "instanceID": str
-        addr: str
-        instance_id: str
 
 
     class azure.mgmt.containerregistry.types.Status(TypedDict, total=False):
         key "displayStatus": str
         key "message": str
         key "timestamp": str
-        display_status: str
+        displayStatus: str
         message: str
         timestamp: str
 
 
     class azure.mgmt.containerregistry.types.StatusDetailProperties(TypedDict, total=False):
+        key "availableGib": float
         key "code": str
         key "correlationId": str
         key "description": str
         key "timestamp": str
+        key "totalGib": float
         key "type": str
+        availableGib: float
         code: str
-        correlation_id: str
+        correlationId: str
         description: str
         timestamp: str
+        totalGib: float
         type: str
 
 
     class azure.mgmt.containerregistry.types.SyncProperties(TypedDict, total=False):
+        key "authType": Union[str, AuthType]
         key "gatewayEndpoint": str
         key "lastSyncTime": str
         key "messageTtl": Required[str]
         key "schedule": str
         key "syncWindow": str
-        key "tokenId": Required[str]
-        gateway_endpoint: str
-        last_sync_time: str
-        message_ttl: str
+        key "tokenId": str
+        authType: Union[str, AuthType]
+        gatewayEndpoint: str
+        lastSyncTime: str
+        messageTtl: str
         schedule: str
-        sync_window: str
-        token_id: str
+        syncWindow: str
+        tokenId: str
 
 
     class azure.mgmt.containerregistry.types.SyncUpdateProperties(TypedDict, total=False):
+        key "authType": Union[str, AuthType]
         key "messageTtl": str
         key "schedule": str
         key "syncWindow": str
-        message_ttl: str
+        authType: Union[str, AuthType]
+        messageTtl: str
         schedule: str
-        sync_window: str
+        syncWindow: str
 
 
     class azure.mgmt.containerregistry.types.SystemData(TypedDict, total=False):
@@ -7149,33 +6942,12 @@ namespace azure.mgmt.containerregistry.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
-
-
-    class azure.mgmt.containerregistry.types.Target(TypedDict, total=False):
-        key "digest": str
-        key "length": int
-        key "mediaType": str
-        key "name": str
-        key "repository": str
-        key "size": int
-        key "tag": str
-        key "url": str
-        key "version": str
-        digest: str
-        length: int
-        media_type: str
-        name: str
-        repository: str
-        size: int
-        tag: str
-        url: str
-        version: str
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.containerregistry.types.TlsCertificateProperties(TypedDict, total=False):
@@ -7201,7 +6973,7 @@ namespace azure.mgmt.containerregistry.types
         id: str
         name: str
         properties: TokenProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7210,7 +6982,7 @@ namespace azure.mgmt.containerregistry.types
         key "expiry": str
         key "name": Union[str, TokenCertificateName]
         key "thumbprint": str
-        encoded_pem_certificate: str
+        encodedPemCertificate: str
         expiry: str
         name: Union[str, TokenCertificateName]
         thumbprint: str
@@ -7226,7 +6998,7 @@ namespace azure.mgmt.containerregistry.types
         key "expiry": str
         key "name": Union[str, TokenPasswordName]
         key "value": str
-        creation_time: str
+        creationTime: str
         expiry: str
         name: Union[str, TokenPasswordName]
         value: str
@@ -7238,10 +7010,10 @@ namespace azure.mgmt.containerregistry.types
         key "provisioningState": Union[str, ProvisioningState]
         key "scopeMapId": str
         key "status": Union[str, TokenStatus]
-        creation_date: str
+        creationDate: str
         credentials: TokenCredentialsProperties
-        provisioning_state: Union[str, ProvisioningState]
-        scope_map_id: str
+        provisioningState: Union[str, ProvisioningState]
+        scopeMapId: str
         status: Union[str, TokenStatus]
 
 
@@ -7255,7 +7027,7 @@ namespace azure.mgmt.containerregistry.types
         key "scopeMapId": str
         key "status": Union[str, TokenStatus]
         credentials: TokenCredentialsProperties
-        scope_map_id: str
+        scopeMapId: str
         status: Union[str, TokenStatus]
 
 
@@ -7268,7 +7040,7 @@ namespace azure.mgmt.containerregistry.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -7280,34 +7052,25 @@ namespace azure.mgmt.containerregistry.types
         type: Union[str, TrustPolicyType]
 
 
+    class azure.mgmt.containerregistry.types.UserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
     class azure.mgmt.containerregistry.types.UserIdentityProperties(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.containerregistry.types.VirtualNetworkRule(TypedDict, total=False):
         key "action": Union[str, Action]
         key "virtualNetworkSubnetResourceId": Required[str]
         action: Union[str, Action]
-        virtual_network_subnet_resource_id: str
-
-
-    class azure.mgmt.containerregistry.types.Webhook(TrackedResource):
-        key "id": str
-        key "location": Required[str]
-        key "name": str
-        key "properties": ForwardRef('WebhookProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        location: str
-        name: str
-        properties: WebhookProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
+        virtualNetworkSubnetResourceId: str
 
 
     class azure.mgmt.containerregistry.types.WebhookCreateParameters(TypedDict, total=False):
@@ -7318,17 +7081,6 @@ namespace azure.mgmt.containerregistry.types
         tags: dict[str, str]
 
 
-    class azure.mgmt.containerregistry.types.WebhookProperties(TypedDict, total=False):
-        key "actions": Required[list[Union[str, WebhookAction]]]
-        key "provisioningState": Union[str, ProvisioningState]
-        key "scope": str
-        key "status": Union[str, WebhookStatus]
-        actions: list[Union[str, WebhookAction]]
-        provisioning_state: Union[str, ProvisioningState]
-        scope: str
-        status: Union[str, WebhookStatus]
-
-
     class azure.mgmt.containerregistry.types.WebhookPropertiesCreateParameters(TypedDict, total=False):
         key "actions": Required[list[Union[str, WebhookAction]]]
         key "scope": str
@@ -7336,9 +7088,8 @@ namespace azure.mgmt.containerregistry.types
         key "status": Union[str, WebhookStatus]
         actions: list[Union[str, WebhookAction]]
         customHeaders: dict[str, str]
-        custom_headers: dict[str, str]
         scope: str
-        service_uri: str
+        serviceUri: str
         status: Union[str, WebhookStatus]
 
 
@@ -7348,9 +7099,8 @@ namespace azure.mgmt.containerregistry.types
         key "status": Union[str, WebhookStatus]
         actions: list[Union[str, WebhookAction]]
         customHeaders: dict[str, str]
-        custom_headers: dict[str, str]
         scope: str
-        service_uri: str
+        serviceUri: str
         status: Union[str, WebhookStatus]
 
 
