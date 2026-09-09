@@ -11,6 +11,7 @@ import pytest
 def _sanitizer_calls(monkeypatch, sanitized_values, sanitizer_configuration):
     monkeypatch.setenv("FOUNDRY_MODEL_NAME", "test-connection/gpt-5.4")
     monkeypatch.setenv("MODEL_DEPLOYMENT_NAME", "gpt-5.4")
+    monkeypatch.setenv("FOUNDRY_AGENT_NAME", "test-connection/gpt-5.4-agent")
     mocks = {
         name: MagicMock()
         for name in (
@@ -66,3 +67,15 @@ def test_qualified_model_name_is_sanitized_before_its_suffix(regex_sanitizers, s
         if rule["value"] == placeholder:
             value = re.sub(rule["regex"], placeholder, value)
     assert value == placeholder
+
+
+@pytest.mark.parametrize("sanitizer_name", ["add_general_regex_sanitizer", "add_body_string_sanitizer"])
+def test_agent_name_is_sanitized_before_its_model_prefix(sanitizer_calls, sanitized_values, sanitizer_name):
+    value = "test-connection/gpt-5.4-agent"
+    for call in sanitizer_calls[sanitizer_name].call_args_list:
+        rule = call.kwargs
+        if sanitizer_name == "add_general_regex_sanitizer":
+            value = re.sub(rule["regex"], rule["value"], value)
+        else:
+            value = value.replace(rule["target"], rule["value"])
+    assert value == sanitized_values["agent_name"]
