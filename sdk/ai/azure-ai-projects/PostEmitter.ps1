@@ -86,6 +86,12 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
+# Wrap forward-reference-only aliases in Union so they are valid runtime type aliases.
+$f = 'azure\ai\projects\_unions.py'
+$c = Get-Content $f -Raw
+$c = $c -replace '(?m)^([A-Za-z_][A-Za-z0-9_]*\s*=\s*)"([^"\r\n]+)"\s*$', '$1Union["$2"]'
+Set-Content $f $c -NoNewline
+
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .
