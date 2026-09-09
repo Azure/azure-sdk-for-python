@@ -12,7 +12,6 @@ import os
 import re
 import logging
 from typing import Any, IO, Tuple, Optional, Union, cast, overload
-from collections.abc import MutableMapping
 from pathlib import Path
 from urllib.parse import urlsplit
 from azure.storage.blob.aio import ContainerClient
@@ -24,6 +23,7 @@ from azure.core.utils import case_insensitive_dict
 from ._operations import (
     BetaDatasetsOperations as BetaDatasetsOperationsGenerated,
     DatasetsOperations as DatasetsOperationsGenerated,
+    JSON,
 )
 from ... import models as _models
 from ..._utils.model_base import _deserialize
@@ -38,13 +38,11 @@ from ...models._models import (
 
 logger = logging.getLogger(__name__)
 
-JSON = MutableMapping[str, Any]
-
 
 class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
     """Custom async operations for beta data generation jobs."""
 
-    @overload
+    @overload  # type: ignore[override]
     async def begin_create_generation_job(
         self,
         job: _models.DataGenerationJob,
@@ -75,7 +73,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
     ) -> AsyncDatasetGenerationLROPoller: ...
 
     @distributed_trace_async
-    async def begin_create_generation_job(
+    async def begin_create_generation_job(  # type: ignore[reportIncompatibleMethodOverride, override]
         self,
         job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
         *,
@@ -104,7 +102,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
         raw_result = None
         if continuation_token is None:
             raw_result = await self._create_generation_job_initial(
-                job=job,
+                job=job,  # type: ignore[reportArgumentType, arg-type]
                 operation_id=operation_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,

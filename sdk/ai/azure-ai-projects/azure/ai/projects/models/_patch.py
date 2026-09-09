@@ -56,6 +56,7 @@ _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
     [
         _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.DRAFT_AGENTS_V1_PREVIEW.value,
         _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V2_PREVIEW.value,
         _FoundryFeaturesOptInKeys.MODEL_ROUTER_CONTROLS_V1_PREVIEW.value,
@@ -75,6 +76,13 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
     "datasets": _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value,
     "agents": _AGENT_OPERATION_FEATURE_HEADERS,
+    # NOTE: `agent_endpoint_conversations` used to need an entry here (it lived as a nested
+    # `.beta` sub-client). Upstream has since merged it entirely into the top-level, stable
+    # `agent_endpoint_conversations` client attribute (all methods that used to live under
+    # `.beta.agent_endpoint_conversations` moved there), so it's no longer part of `.beta` at
+    # all and must NOT have an entry in this dict -- `BetaOperations.__init__` would raise
+    # AttributeError trying to `getattr(self, "agent_endpoint_conversations")` otherwise, since
+    # that attribute no longer exists on the generated `BetaOperations` base class.
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
 

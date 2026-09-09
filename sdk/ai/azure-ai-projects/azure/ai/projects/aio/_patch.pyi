@@ -32,6 +32,14 @@ from openai.types.graders.string_check_grader_param import StringCheckGraderPara
 from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
 from ._client import AIProjectClient as AIProjectClientGenerated
+from ._realtime import (
+    AsyncRealtime,
+    AsyncRealtimeConnection,
+    AsyncRealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 from .operations import TelemetryOperations
 from ..models import (
     AzureAIBenchmarkPreviewEvalRunDataSource,
@@ -45,7 +53,7 @@ from ..models import (
 )
 
 class _AzureAsyncEvalRuns(AsyncRuns):
-    async def create(
+    async def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         eval_id: str,
         *,
@@ -69,7 +77,7 @@ class _AzureAsyncEvalRuns(AsyncRuns):
     ) -> RunCreateResponse: ...
 
 class _AzureAsyncEvals(AsyncEvals):
-    async def create(
+    async def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         *,
         data_source_config: Union[
@@ -101,6 +109,8 @@ class AsyncOpenAI(AsyncOpenAIClient):
 
 class AIProjectClient(AIProjectClientGenerated):
     telemetry: TelemetryOperations
+    @property
+    def realtime(self) -> AsyncRealtime: ...
     def get_openai_client(
         self, agent_name: Optional[str] = None, **kwargs: Any  # pylint: disable=unused-argument
     ) -> AsyncOpenAI: ...
@@ -114,6 +124,14 @@ class _LoggingAsyncByteStream(httpx2.AsyncByteStream): ...
 def _log_streaming_response_notice(logging_enabled: bool) -> bool: ...
 
 # To make mypy happy... otherwise imports of the below result in mypy "attr-defined" error
-__all__: List[str] = ["AIProjectClient"]
+__all__: List[str] = [
+    "AIProjectClient",
+    "AsyncRealtime",
+    "AsyncRealtimeConnection",
+    "AsyncRealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
+]
 
 def patch_sdk() -> None: ...

@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import os
 import logging
+from functools import wraps
 from typing import List, Any, Optional, cast
 import httpx2  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import AsyncOpenAI, DefaultAsyncHttpxClient
@@ -28,10 +29,71 @@ from .._patch import (
 )
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
+from ..operations._patch import _OperationMethodHeaderProxy, _method_accepts_keyword_headers
+from ..models._enums import _AgentDefinitionOptInKeys
+from ..models._patch import _has_header_case_insensitive
+from ._realtime import (
+    AsyncRealtime,
+    AsyncRealtimeConnection,
+    AsyncRealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 
 _OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
 logger = logging.getLogger(__name__)
 _openai_transport_logger = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
+
+# Workaround for a known azure-core/aiohttp issue where compressed (e.g. gzip/brotli) response
+# bodies on some non-2xx or write (POST/PATCH/DELETE) calls can reach text/JSON deserialization
+# before being decompressed, causing a spurious UnicodeDecodeError. Forcing "Accept-Encoding:
+# identity" disables response compression for the affected operation groups so the response body
+# is never compressed in the first place. This is scoped narrowly (not applied client-wide) to
+# avoid unnecessarily disabling compression on unaffected operations.
+_ACCEPT_ENCODING_HEADER_NAME = "Accept-Encoding"
+_ACCEPT_ENCODING_IDENTITY_VALUE = "identity"
+
+
+class _AcceptEncodingIdentityProxy:
+    """Proxy that forces 'Accept-Encoding: identity' on public operation method calls.
+
+    Works around a known async aiohttp transport issue where compressed response bodies can be
+    handed to text/JSON deserialization before decompression, raising a spurious
+    UnicodeDecodeError.
+    """
+
+    def __init__(self, operation: Any):
+        object.__setattr__(self, "_operation", operation)
+
+    def __getattr__(self, name: str) -> Any:
+        attribute = getattr(self._operation, name)
+
+        if name.startswith("_") or not callable(attribute) or not _method_accepts_keyword_headers(attribute):
+            return attribute
+
+        @wraps(attribute)
+        def _wrapped(*args: Any, **kwargs: Any) -> Any:
+            headers = kwargs.get("headers")
+            if headers is None:
+                kwargs["headers"] = {_ACCEPT_ENCODING_HEADER_NAME: _ACCEPT_ENCODING_IDENTITY_VALUE}
+            elif not _has_header_case_insensitive(headers, _ACCEPT_ENCODING_HEADER_NAME):
+                try:
+                    headers[_ACCEPT_ENCODING_HEADER_NAME] = _ACCEPT_ENCODING_IDENTITY_VALUE
+                except Exception:  # pylint: disable=broad-except
+                    # `headers` may be an immutable mapping; merge into a fresh mutable dict
+                    # instead of discarding the caller-supplied entries.
+                    kwargs["headers"] = {**headers, _ACCEPT_ENCODING_HEADER_NAME: _ACCEPT_ENCODING_IDENTITY_VALUE}
+
+            return attribute(*args, **kwargs)
+
+        return _wrapped
+
+    def __dir__(self) -> list:
+        return dir(self._operation)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        setattr(self._operation, name, value)
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -119,7 +181,49 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
 
+        if allow_preview:
+            setattr(
+                self,
+                "agent_telephony",
+                _OperationMethodHeaderProxy(
+                    self.agent_telephony,
+                    _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
+                ),
+            )
+
         self.telemetry = TelemetryOperations(self)  # type: ignore
+        self._realtime: Optional[AsyncRealtime] = None
+        # NOTE: voice-agent conversation reads (`agent_endpoint_conversations`) have round-tripped
+        # between living directly on `self` (top-level) and being nested under `self.beta` across
+        # several upstream TypeSpec regenerations. It is currently back to being a top-level,
+        # stable client attribute again -- its VoiceAgents=V1Preview opt-in header injection is
+        # handled per-method (gated behind `allow_preview`) in
+        # `operations/_patch_agent_endpoint_conversations_async.py`, not by
+        # `_BETA_OPERATION_FEATURE_HEADERS`/`BetaOperations.__init__` (which only applies to
+        # `.beta`'s sub-clients). If this moves back under `.beta` in a future regeneration, update
+        # both that file and the `_AcceptEncodingIdentityProxy` wiring below together.
+        # Work around a known async aiohttp transport issue (spurious UnicodeDecodeError caused by
+        # compressed response bodies reaching text/JSON deserialization before decompression) by
+        # disabling response compression for these two operation groups only.
+        # Guarded with hasattr since some tests mock out the generated __init__ entirely, in which
+        # case none of the generated operation-group attributes may be set.
+        if hasattr(self, "agents"):
+            self.agents = _AcceptEncodingIdentityProxy(self.agents)  # type: ignore
+        if hasattr(self, "agent_endpoint_conversations"):
+            self.agent_endpoint_conversations = _AcceptEncodingIdentityProxy(  # type: ignore
+                self.agent_endpoint_conversations
+            )
+
+    @property
+    def realtime(self) -> AsyncRealtime:
+        """Realtime streaming entry point for voice agents.
+
+        :return: The realtime namespace, exposing ``connect(...)``.
+        :rtype: ~azure.ai.projects.aio.AsyncRealtime
+        """
+        if self._realtime is None:
+            self._realtime = AsyncRealtime(self)
+        return self._realtime
 
     def _get_openai_api_key(self, kwargs: dict):
         """Resolve the API key for the AsyncOpenAI client.
@@ -149,7 +253,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         logging_kwargs = getattr(self, "_kwargs", {})
         logging_enabled = bool(logging_kwargs.get("logging_enable", False))
-        return DefaultAsyncHttpxClient(transport=_OpenAILoggingTransport(logging_enabled=logging_enabled))
+        return DefaultAsyncHttpxClient(
+            transport=_OpenAILoggingTransport(logging_enabled=logging_enabled)
+        )  # type: ignore[arg-type]
 
     @distributed_trace
     def get_openai_client(
@@ -346,7 +452,15 @@ class _OpenAILoggingTransport(httpx2.AsyncHTTPTransport):
             _openai_transport_logger.debug("Body: [Content exists]")
 
 
-__all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "AIProjectClient",
+    "AsyncRealtime",
+    "AsyncRealtimeConnection",
+    "AsyncRealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
