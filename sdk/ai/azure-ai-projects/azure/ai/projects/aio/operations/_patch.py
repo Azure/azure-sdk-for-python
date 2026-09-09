@@ -20,6 +20,8 @@ from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (
+    BetaAgentEndpointConversationsOperations,
+    BetaAgentTelephonyOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
@@ -27,6 +29,7 @@ from ._operations import (
     BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
+    BetaVoiceAgentWebSocketOperations,
 )
 
 
@@ -42,8 +45,12 @@ class BetaOperations(GeneratedBetaOperations):
 
     agents: BetaAgentsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaAgentsOperations` operations"""
+    agent_endpoint_conversations: BetaAgentEndpointConversationsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaAgentEndpointConversationsOperations` operations"""
     agent_insight_monitors: BetaAgentInsightMonitorsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations` operations"""
+    agent_telephony: BetaAgentTelephonyOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaAgentTelephonyOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations` operations"""
     evaluators: BetaEvaluatorsOperations
@@ -64,6 +71,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
     datasets: BetaDatasetsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaDatasetsOperations` operations"""
+    voice_agent_web_socket: BetaVoiceAgentWebSocketOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentWebSocketOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -92,7 +101,9 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
+    "BetaAgentEndpointConversationsOperations",
     "BetaAgentInsightMonitorsOperations",
+    "BetaAgentTelephonyOperations",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",
     "BetaEvaluationTaxonomiesOperations",
@@ -105,6 +116,7 @@ __all__: List[str] = [
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
+    "BetaVoiceAgentWebSocketOperations",
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",
