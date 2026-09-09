@@ -66,6 +66,7 @@ class RetentionPolicy(_BackCompatMixin):
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         self.enabled = enabled
         self.days = days
+        self.allow_permanent_delete = None
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -1048,7 +1049,7 @@ class PathProperties(DictMixin):
         path_prop.permissions = generated.permissions
         path_prop.last_modified = _rfc_1123_to_datetime(generated.last_modified)
         path_prop.is_directory = bool(generated.is_directory)
-        path_prop.etag = generated.get("etag")
+        path_prop.etag = generated.etag
         path_prop.content_length = generated.content_length
         path_prop.creation_time = _filetime_to_datetime(generated.creation_time)
         path_prop.expiry_time = _filetime_to_datetime(generated.expiry_time)
