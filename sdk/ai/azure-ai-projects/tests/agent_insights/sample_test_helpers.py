@@ -63,14 +63,12 @@ def assert_agent_insights_output(sample_path: str, print_output_calls: list[str]
     assert insight_count > 0
     insights = re.findall(
         r"^Insight `([^`]+)`: title=`(.+)`, severity=(low|medium|high), "
-        r"status=(active|resolved|ignored), traces=([1-9]\d*), fix kind=(prose|code_change|prompt_change)\.$",
+        r"status=(active|resolved|ignored), traces=([1-9]\d*)\.$",
         output,
         re.MULTILINE,
     )
     assert len(insights) == insight_count, "Every listed insight must have populated detail fields."
     assert all(title.strip() for _, title, *_ in insights)
     assert len(re.findall(r"^Recommended action: (?!None$)\S.*$", output, re.MULTILINE)) == insight_count
-    selected = re.search(r"^Retrieved insight `([^`]+)` with status (active|resolved|ignored)\.$", output, re.MULTILINE)
-    assert selected is not None and selected.group(1) in {insight[0] for insight in insights}
     assert re.search(r"^Insight status after update: resolved$", output, re.MULTILINE)
     assert re.search(r"^Insight status after reopening: active$", output, re.MULTILINE)

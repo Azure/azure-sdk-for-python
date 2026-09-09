@@ -92,7 +92,7 @@ def test_cleanup_has_bounded_wait(cleanup_sample):
         cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
 
     assert operations.list_runs.call_count == 30
-    operations.cancel_run.assert_called_once_with("monitor-test", "run-test")
+    assert operations.cancel_run.call_args_list == [call("monitor-test", "run-test")] * 30
     operations.delete.assert_not_called()
     assert cleanup_sample["time"].sleep.call_args_list == [call(2)] * 29
 
@@ -123,26 +123,27 @@ def test_cleanup_handles_run_finishing_during_cancel(cleanup_sample, status):
         [terminal_run],
     ]
     operations.cancel_run.side_effect = ResourceExistsError()
-    operations.get_run.return_value = terminal_run
 
     cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
 
     operations.cancel_run.assert_called_once_with("monitor-test", "run-test")
-    operations.get_run.assert_called_once_with("monitor-test", "run-test")
+    operations.get_run.assert_not_called()
     operations.delete.assert_called_once_with("monitor-test")
 
 
-@pytest.mark.parametrize("status", ["queued", "in_progress", "unknown"])
-def test_cleanup_raises_cancel_conflict_unless_run_finished(cleanup_sample, status):
+def test_cleanup_repeated_cancel_conflict_is_bounded(cleanup_sample):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     active_run = SimpleNamespace(id="run-test", status="in_progress")
     operations.list_runs.return_value = [active_run]
-    operations.cancel_run.side_effect = ResourceExistsError()
-    operations.get_run.return_value = SimpleNamespace(id="run-test", status=status)
+    error = ResourceExistsError("Cancellation conflict")
+    operations.cancel_run.side_effect = error
 
-    with pytest.raises(ResourceExistsError):
+    with pytest.raises(ResourceExistsError) as exc_info:
         cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
 
+    assert exc_info.value is error
+    assert operations.cancel_run.call_count == 30
+    assert cleanup_sample["time"].sleep.call_args_list == [call(2)] * 29
     operations.delete.assert_not_called()
 
 
@@ -158,14 +159,12 @@ def test_cleanup_reports_monitor_deleted_during_delete(cleanup_sample):
     cleanup_sample["time"].sleep.assert_not_called()
 
 
-@pytest.mark.parametrize("stage", ["update", "list_runs", "cancel_run", "get_run", "delete"])
+@pytest.mark.parametrize("stage", ["update", "list_runs", "cancel_run", "delete"])
 def test_cleanup_does_not_hide_service_error(cleanup_sample, stage):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list_runs.return_value = (
-        [SimpleNamespace(id="run-test", status="queued")] if stage in {"cancel_run", "get_run"} else []
+        [SimpleNamespace(id="run-test", status="queued")] if stage == "cancel_run" else []
     )
-    if stage == "get_run":
-        operations.cancel_run.side_effect = ResourceExistsError()
     error = HttpResponseError("Service failed")
     getattr(operations, stage).side_effect = error
 
@@ -198,12 +197,10 @@ def test_cleanup_does_not_hide_missing_list_endpoint(cleanup_sample):
     operations.delete.assert_not_called()
 
 
-@pytest.mark.parametrize("stage", ["cancel", "get_run"])
-def test_cleanup_reports_run_disappearing(cleanup_sample, stage):
+def test_cleanup_reports_run_disappearing(cleanup_sample):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list_runs.side_effect = [[SimpleNamespace(id="run-test", status="in_progress")], []]
-    operations.cancel_run.side_effect = ResourceNotFoundError() if stage == "cancel" else ResourceExistsError()
-    operations.get_run.side_effect = ResourceNotFoundError()
+    operations.cancel_run.side_effect = ResourceNotFoundError()
 
     with pytest.raises(ResourceNotFoundError):
         cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
@@ -281,8 +278,7 @@ def on_demand_main(on_demand_sample, monkeypatch):
         "details": {"recommended_actions": {"proposed_fix": {"kind": "prose", "text": "Check approval first."}}},
     }
     operations.list_insights.return_value = [AgentInsight(insight)]
-    operations.get_insight.side_effect = [
-        AgentInsight(insight),
+    operations.update_insight.side_effect = [
         AgentInsight({**insight, "status": "resolved"}),
         AgentInsight(insight),
     ]
@@ -316,6 +312,7 @@ def test_on_demand_cleans_up_active_runs_after_polling_error(on_demand_main, pol
     assert operations.cancel_run.call_args_list == [
         call("old-monitor", "old-run"),
         call("new-monitor", "new-run"),
+        call("new-monitor", "new-run"),
     ]
     assert operations.delete.call_args_list == [call("old-monitor"), call("new-monitor")]
     assert [args.args[0] for args in operations.update.call_args_list] == ["old-monitor", "new-monitor"]
@@ -343,6 +340,7 @@ def test_on_demand_cleanup_after_success(on_demand_main, capsys, severity):
     assert "Insight status after update: resolved" in output
     assert "Insight status after reopening: active" in output
     assert "Recommended action: Check approval first." in output
+    operations.get_insight.assert_not_called()
     assert [args.args[2].status for args in operations.update_insight.call_args_list] == ["resolved", "active"]
     assert all(args.args[:2] == ("new-monitor", "insight-test") for args in operations.update_insight.call_args_list)
 
@@ -355,6 +353,31 @@ def test_on_demand_allows_no_insights_for_customer_data(on_demand_main, capsys):
 
     operations.update_insight.assert_not_called()
     assert "No insights were available to demonstrate lifecycle updates." in capsys.readouterr().out
+
+
+def test_on_demand_allows_insight_without_optional_details(on_demand_main, capsys):
+    main, operations = on_demand_main
+    operations.list_insights.return_value[0].details = None
+
+    main()
+
+    output = capsys.readouterr().out
+    assert "Insight `insight-test`:" in output
+    assert "Recommended action:" not in output
+    assert "Insight status after reopening: active" in output
+
+
+def test_on_demand_reports_creation_failure(on_demand_main):
+    main, operations = on_demand_main
+    error = HttpResponseError("Monitor creation failed")
+    operations.create.side_effect = error
+
+    with pytest.raises(HttpResponseError) as exc_info:
+        main()
+
+    assert exc_info.value is error
+    operations.delete.assert_called_once_with("old-monitor")
+    operations.begin_create_run.assert_not_called()
 
 
 @pytest.mark.parametrize("original_error", [None, RuntimeError("Polling failed"), KeyboardInterrupt()])
@@ -443,7 +466,7 @@ def test_scheduled_sample_reads_timestamp_and_cleans_up(scheduled_sample, monkey
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list.return_value = []
     operations.create.return_value = SimpleNamespace(id="new-monitor", agent_name="test-agent")
-    operations.get.return_value = AgentInsightMonitor(
+    operations.update.return_value = AgentInsightMonitor(
         {"id": "new-monitor", "enabled": True, "run_interval_hours": 6, "next_scheduled_run_at": next_run}
     )
     operations.list_runs.side_effect = [
@@ -459,15 +482,11 @@ def test_scheduled_sample_reads_timestamp_and_cleans_up(scheduled_sample, monkey
     monkeypatch.setenv("FOUNDRY_AGENT_NAME", "test-agent")
     monkeypatch.setenv("FOUNDRY_MODEL_NAME", "test-model")
 
-    if next_run is None:
-        with pytest.raises(RuntimeError, match="next scheduled run"):
-            main()
-    else:
-        main()
+    main()
     output = capsys.readouterr().out
-    if next_run is not None:
-        assert f"Next scheduled run: {operations.get.return_value.next_scheduled_run_at.isoformat()}" in output
-        assert "Scheduled monitor enabled: True" in output
+    assert f"Next scheduled run: {operations.update.return_value.next_scheduled_run_at}" in output
+    assert "Scheduled monitor enabled: True" in output
+    operations.get.assert_not_called()
     assert "Deleted scheduled monitor `new-monitor`." in output
     operations.cancel_run.assert_called_once_with("new-monitor", "scheduled-run")
     operations.delete.assert_called_once_with("new-monitor")

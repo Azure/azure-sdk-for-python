@@ -14,17 +14,10 @@ DESCRIPTION:
     Agent Insights is a preview feature. In the Python SDK, you access these
     operations through `project_client.beta.agent_insight_monitors`.
 
-    The service supports one monitor per agent. To make this sample safe to run
-    more than once, it deletes any existing monitor for `FOUNDRY_AGENT_NAME`
-    before it creates a monitor.
-
-    The sample disables and deletes the scheduled monitor during cleanup. If
-    enabling the monitor starts a run, cleanup cancels that run instead of
-    waiting for analysis to finish. Deleting a monitor also deletes its runs,
-    insights, and state. Use a test agent that does not have Agent Insights data
-    that you need to keep.
-    Cleanup waits for up to 30 checks, two seconds apart. Missing monitors or
-    runs and other service errors are reported, not recovered.
+    Use a disposable test agent. The service allows one monitor per agent, so
+    this sample deletes its existing monitor before starting. At the end, it
+    disables scheduling, cancels active runs, and deletes the new monitor.
+    Deletion also removes the monitor's runs, insights, and state.
 
     The project must have a connected Application Insights resource, and its
     managed identity must have permission to query the agent's traces. This
@@ -79,74 +72,55 @@ def main() -> None:
         monitor_operations = project_client.beta.agent_insight_monitors
 
         # Agent Insights supports only one monitor for each agent.
-        existing_monitors = list(monitor_operations.list(agent_name=agent_name))
-        for existing_monitor in existing_monitors:
+        for existing_monitor in monitor_operations.list(agent_name=agent_name):
             _delete_monitor(monitor_operations, existing_monitor.id, "Existing")
 
-        monitor = None
-        try:
-            monitor = monitor_operations.create(
-                AgentInsightMonitorCreate(
-                    agent_name=agent_name,
-                    model_deployment_name=model_deployment_name,
-                    enabled=False,
-                )
+        monitor = monitor_operations.create(
+            AgentInsightMonitorCreate(
+                agent_name=agent_name,
+                model_deployment_name=model_deployment_name,
+                enabled=False,
             )
+        )
+        try:
             print(f"Created disabled monitor `{monitor.id}` for agent `{monitor.agent_name}`.")
 
             # Set the analysis frequency and enable recurring runs in one update.
-            monitor_operations.update(
+            scheduled_monitor = monitor_operations.update(
                 monitor.id,
                 AgentInsightMonitorUpdate(
                     enabled=True,
                     run_interval_hours=ANALYSIS_INTERVAL_HOURS,
-                    model_deployment_name=model_deployment_name,
                 ),
             )
 
-            scheduled_monitor = monitor_operations.get(monitor.id)
-            next_run = scheduled_monitor.next_scheduled_run_at
-            if next_run is None:
-                raise RuntimeError("The enabled monitor did not return its next scheduled run time.")
             print(f"Scheduled monitor enabled: {scheduled_monitor.enabled}")
             print(f"Run interval hours: {scheduled_monitor.run_interval_hours}")
-            print(f"Next scheduled run: {next_run.isoformat()}")
+            print(f"Next scheduled run: {scheduled_monitor.next_scheduled_run_at}")
         finally:
-            if monitor is not None:
-                _delete_monitor(monitor_operations, monitor.id, "Scheduled")
+            _delete_monitor(monitor_operations, monitor.id, "Scheduled")
 
 
 def _delete_monitor(operations: BetaAgentInsightMonitorsOperations, monitor_id: str, label: str) -> None:
     # Disabling stops future scheduling, but a run may already have started.
     operations.update(monitor_id, AgentInsightMonitorUpdate(enabled=False))
 
-    cancellation_requested: set[str] = set()
     active_statuses = {JobStatus.QUEUED, JobStatus.IN_PROGRESS}
     for attempt in range(30):
         active_runs = [run for run in operations.list_runs(monitor_id, limit=20) if run.status in active_statuses]
-        for run in active_runs:
-            if run.id in cancellation_requested:
-                continue
-            try:
+        try:
+            for run in active_runs:
                 operations.cancel_run(monitor_id, run.id)
-            except ResourceExistsError:
-                # The run may have finished between listing and cancellation.
-                current_run = operations.get_run(monitor_id, run.id)
-                if current_run.status not in {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}:
-                    raise
-            cancellation_requested.add(run.id)
-            print(f"Requested cancellation of run `{run.id}`.")
 
-        if not active_runs:
-            try:
+            if not active_runs:
                 operations.delete(monitor_id)
                 print(f"Deleted {label.lower()} monitor `{monitor_id}`.")
                 return
-            except ResourceExistsError:
-                # A previously dispatched run can appear after the list request.
-                if attempt == 29:
-                    raise
-                print(f"Monitor `{monitor_id}` still has an active run; retrying cleanup.")
+        except ResourceExistsError:
+            # A run can start or finish between listing, cancellation, and deletion.
+            if attempt == 29:
+                raise
+            print(f"Monitor `{monitor_id}` changed during cleanup; retrying.")
 
         if attempt < 29:
             time.sleep(2)
