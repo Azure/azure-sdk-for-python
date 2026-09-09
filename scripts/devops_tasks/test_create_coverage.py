@@ -6,11 +6,13 @@
 # --------------------------------------------------------------------------------------------
 
 import os
+import xml.etree.ElementTree as ET
 from subprocess import CalledProcessError
 from unittest import mock
 
 from coverage import CoverageData
 
+import code_cov_report
 import create_coverage
 
 
@@ -210,3 +212,63 @@ def test_normalize_venv_paths_leaves_unknown_packages_unchanged(tmp_path, monkey
     coverage_xml = '<class filename=".venv/unknown/.venv_whl/lib/python3.11/' 'site-packages/unknown/__init__.py" />'
 
     assert create_coverage.normalize_venv_paths(coverage_xml) == coverage_xml
+
+
+def test_create_coverage_report_dedupes_by_full_origin(tmp_path, monkeypatch):
+    """End-to-end assertion: identically-named distributions under different
+    service directories must produce disjoint class sets in the final XML,
+    not duplicated class entries."""
+    coverage_xml = tmp_path / "coverage.xml"
+    coverage_xml.write_text(
+        """<?xml version="1.0" ?>
+<coverage>
+  <sources><source>.</source></sources>
+  <packages>
+    <package name="sdk.textanalytics.azure-ai-textanalytics.azure.ai.textanalytics">
+      <classes>
+        <class filename="sdk/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_client.py" name="_client.py">
+          <lines><line number="1" hits="1"/></lines>
+        </class>
+      </classes>
+    </package>
+    <package name="sdk.cognitivelanguage.azure-ai-textanalytics.azure.ai.textanalytics">
+      <classes>
+        <class filename="sdk/cognitivelanguage/azure-ai-textanalytics/azure/ai/textanalytics/_client.py" name="_client.py">
+          <lines><line number="2" hits="1"/></lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>
+""",
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(code_cov_report, "coverage_file", os.fspath(coverage_xml))
+
+    code_cov_report.create_coverage_report()
+
+    tree = ET.parse(os.fspath(coverage_xml))
+
+    # For each surviving <package>, verify all of its classes come from the
+    # same service origin as the package. Under the old bare-name match,
+    # condensation moved classes across origins, so a "textanalytics" package
+    # would contain a class filename beginning with sdk/cognitivelanguage.
+    for package in tree.getroot().iter("package"):
+        pkg_name = package.attrib["name"]
+        class_files = [c.attrib["filename"] for c in package.iter("class")]
+        assert class_files, "package {} has no classes".format(pkg_name)
+        # If the package name still carries its origin prefix, verify the
+        # classes match that prefix.
+        parts = pkg_name.split(".")
+        if len(parts) >= 3 and parts[0] == "sdk":
+            expected_prefix = "sdk/{}/{}/".format(parts[1], parts[2])
+            for filename in class_files:
+                assert filename.startswith(expected_prefix), (
+                    "class {} was cross-attributed to package {}".format(filename, pkg_name)
+                )
+
+    # Both origins must still be represented in the final XML.
+    all_files = {c.attrib["filename"] for c in tree.getroot().iter("class")}
+    assert "sdk/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_client.py" in all_files
+    assert "sdk/cognitivelanguage/azure-ai-textanalytics/azure/ai/textanalytics/_client.py" in all_files
