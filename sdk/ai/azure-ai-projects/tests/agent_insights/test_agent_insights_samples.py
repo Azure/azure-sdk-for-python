@@ -268,7 +268,7 @@ def on_demand_main(on_demand_sample, monkeypatch):
         insights_reopened=0,
         token_usage={"input_tokens": 10, "output_tokens": 5, "total_tokens": 15},
     )
-    operations.get_run.return_value = SimpleNamespace(status="succeeded")
+    operations.get_run.return_value = AgentInsightRun(status="succeeded")
     operations.list_runs.side_effect = lambda _monitor_id, *, limit: (
         [SimpleNamespace(id="new-run", status="succeeded")] if limit == 5 else []
     )
@@ -326,8 +326,10 @@ def test_on_demand_cleans_up_active_runs_after_polling_error(on_demand_main, pol
     assert "Deleted monitor `new-monitor`." in capsys.readouterr().out.splitlines()
 
 
-def test_on_demand_cleanup_after_success(on_demand_main, capsys):
+@pytest.mark.parametrize("severity", ["high", "future-severity"])
+def test_on_demand_cleanup_after_success(on_demand_main, capsys, severity):
     main, operations = on_demand_main
+    operations.list_insights.return_value[0].severity = severity
 
     main()
 
@@ -336,6 +338,8 @@ def test_on_demand_cleanup_after_success(on_demand_main, capsys):
     output = capsys.readouterr().out.splitlines()
     assert "Deleted monitor `new-monitor`." in output
     assert "Traces analyzed: 10" in output
+    assert "Run status: succeeded" in output
+    assert any(f"severity={severity}, status=active," in line for line in output)
     assert "Insight status after update: resolved" in output
     assert "Insight status after reopening: active" in output
     assert "Recommended action: Check approval first." in output

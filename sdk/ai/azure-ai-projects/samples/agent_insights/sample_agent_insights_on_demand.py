@@ -121,8 +121,8 @@ def main() -> None:
 
             run_result = poller.result()
             completed_run = monitor_operations.get_run(monitor.id, run_id)
-            run_status = getattr(completed_run.status, "value", completed_run.status)
-            print(f"Run status: {run_status}")
+            # Dictionary access returns enum values as plain strings.
+            print(f"Run status: {completed_run['status']}")
             print(f"Traces in window: {run_result.traces_in_window}")
             print(f"Traces analyzed: {run_result.traces_analyzed}")
             print(f"Insights created: {run_result.insights_created}")
@@ -141,17 +141,11 @@ def main() -> None:
             insights = list(monitor_operations.list_insights(monitor.id, include_details=True))
             print(f"Listed insights: {len(insights)}")
             for insight in insights:
-                severity = getattr(insight.severity, "value", insight.severity)
-                status = getattr(insight.status, "value", insight.status)
                 proposed_fix = insight.details.recommended_actions.proposed_fix if insight.details is not None else None
-                fix_kind = (
-                    getattr(proposed_fix.kind, "value", proposed_fix.kind)
-                    if proposed_fix is not None
-                    else "not returned"
-                )
+                fix_kind = proposed_fix["kind"] if proposed_fix is not None else "not returned"
                 print(
-                    f"Insight `{insight.id}`: title=`{insight.title}`, severity={severity}, "
-                    f"status={status}, traces={insight.trace_count}, fix kind={fix_kind}."
+                    f"Insight `{insight.id}`: title=`{insight.title}`, severity={insight['severity']}, "
+                    f"status={insight['status']}, traces={insight.trace_count}, fix kind={fix_kind}."
                 )
                 if proposed_fix is not None:
                     print(f"Recommended action: {proposed_fix.text}")
@@ -162,8 +156,7 @@ def main() -> None:
                     insights[0].id,
                     include_details=True,
                 )
-                selected_status = getattr(selected_insight.status, "value", selected_insight.status)
-                print(f"Retrieved insight `{selected_insight.id}` with status {selected_status}.")
+                print(f"Retrieved insight `{selected_insight.id}` with status {selected_insight['status']}.")
 
                 # Status changes track review decisions; they do not apply the proposed fix.
                 monitor_operations.update_insight(
@@ -175,8 +168,7 @@ def main() -> None:
                     monitor.id,
                     selected_insight.id,
                 )
-                resolved_status = getattr(resolved_insight.status, "value", resolved_insight.status)
-                print(f"Insight status after update: {resolved_status}")
+                print(f"Insight status after update: {resolved_insight['status']}")
 
                 monitor_operations.update_insight(
                     monitor.id,
@@ -187,8 +179,7 @@ def main() -> None:
                     monitor.id,
                     selected_insight.id,
                 )
-                reopened_status = getattr(reopened_insight.status, "value", reopened_insight.status)
-                print(f"Insight status after reopening: {reopened_status}")
+                print(f"Insight status after reopening: {reopened_insight['status']}")
             else:
                 print("No insights were available to demonstrate lifecycle updates.")
         finally:
