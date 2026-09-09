@@ -281,7 +281,6 @@ def try_native_upload(
             content_type=content_type,
             metadata=metadata,
             max_concurrency=max_concurrency,
-            max_single_put_size=config.max_single_put_size,
             max_block_size=config.max_block_size,
         )
         _LOGGER.info("Used native Rust extension for blob upload.")

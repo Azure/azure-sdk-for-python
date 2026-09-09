@@ -60,11 +60,12 @@ from azure.storage.extensions.transfer import is_available
 
 _DISABLE_ENV_VAR = "AZURE_STORAGE_DISABLE_NATIVE_TRANSFER"
 _DISPATCH_LOGGER = "azure.storage.blob._transfer_native"
+_NATIVE_UPLOAD_MARKER = "Used native Rust extension for blob upload."
 
 _MIB = 1024 * 1024
 
 _DEFAULT_SIZES = "10KiB,1MiB,100MiB,1GiB"
-_DEFAULT_ITERATIONS = 10
+_DEFAULT_ITERATIONS = 20
 _DEFAULT_WARMUPS = 3
 _DEFAULT_MAX_CONCURRENCY = 32
 _DEFAULT_CONTAINER = "transfer-ext-perf"
@@ -150,6 +151,49 @@ class _RecordCapture(logging.Handler):
         self.records.clear()
 
 
+class _CountingSink:
+    """A seekable, write-only sink that discards data but tracks how many bytes were written.
+
+    The Python parallel download path seeks to per-chunk offsets and writes there, so the sink
+    must support seek/tell/seekable; the native path writes windows sequentially. Bytes are
+    discarded and the highest offset reached equals the total downloaded size. Using this with
+    readinto() keeps the extra ``b"".join`` copy that readall() performs out of the measured time.
+    """
+
+    def __init__(self):
+        self._pos = 0
+        self._max = 0
+
+    def writable(self):
+        return True
+
+    def seekable(self):
+        return True
+
+    def seek(self, offset, whence=os.SEEK_SET):
+        if whence == os.SEEK_SET:
+            self._pos = offset
+        elif whence == os.SEEK_CUR:
+            self._pos += offset
+        elif whence == os.SEEK_END:
+            self._pos = self._max + offset
+        return self._pos
+
+    def tell(self):
+        return self._pos
+
+    def write(self, data):
+        count = len(data)
+        self._pos += count
+        if self._pos > self._max:
+            self._max = self._pos
+        return count
+
+    @property
+    def total(self):
+        return self._max
+
+
 def ensure_container(credential, account_url, container):
     """Create the test container if it does not already exist."""
     client = ContainerClient(account_url, container, credential=credential)
@@ -187,7 +231,7 @@ def create_user_delegation_sas(credential, account_name, account_url, container,
     )
 
 
-def verify_paths(auth, account_url, container):
+def verify_paths(auth, account_url, container, client_kwargs):
     """Sanity-check that the native path is used when enabled and Python when disabled.
 
     Raises if the observed behavior doesn't match, so that a benchmark isn't silently
@@ -199,7 +243,7 @@ def verify_paths(auth, account_url, container):
         raise RuntimeError("Native extension not available — build it with `maturin develop`.")
 
     blob_name = f"verify-{uuid.uuid4().hex}.bin"
-    blob_client = BlobClient(account_url, container, blob_name, credential=auth)
+    blob_client = BlobClient(account_url, container, blob_name, credential=auth, **client_kwargs)
     payload = os.urandom(4 * _MIB)
 
     capture = _RecordCapture()
@@ -244,35 +288,69 @@ def _summarize(times, size_bytes):
     }
 
 
+def _assert_upload_path(capture, enabled):
+    """Assert the intended upload path was taken, so a silent fallback can't turn the
+    comparison into python-vs-python. Native upload has no distinguishing return value, so we
+    rely on the dispatch logger's marker record."""
+    used_native = any(_NATIVE_UPLOAD_MARKER in message for message in capture.messages())
+    if enabled and not used_native:
+        raise AssertionError(
+            f"Native upload path was not taken when enabled. Dispatch log: {capture.messages()}"
+        )
+    if not enabled and used_native:
+        raise AssertionError(
+            f"Native upload path was taken even though it was disabled. Dispatch log: {capture.messages()}"
+        )
+
+
 def bench_upload(blob_client, payload, enabled, iterations, warmups, max_concurrency):
-    """Time repeated uploads of *payload* on the selected path. Returns per-iteration seconds."""
+    """Time repeated uploads of *payload* on the selected path. Returns per-iteration seconds.
+
+    Asserts on every measured iteration, via the dispatch logger, that the intended path
+    (native when enabled, Python when disabled) was actually taken.
+    """
     times = []
-    with native_path(enabled):
-        for _ in range(warmups):
-            blob_client.upload_blob(payload, overwrite=True, max_concurrency=max_concurrency)
-        for _ in range(iterations):
-            start = time.perf_counter()
-            blob_client.upload_blob(payload, overwrite=True, max_concurrency=max_concurrency)
-            times.append(time.perf_counter() - start)
+    capture = _RecordCapture()
+    dispatch_logger = logging.getLogger(_DISPATCH_LOGGER)
+    previous_level = dispatch_logger.level
+    dispatch_logger.setLevel(logging.DEBUG)
+    dispatch_logger.addHandler(capture)
+    try:
+        with native_path(enabled):
+            for _ in range(warmups):
+                blob_client.upload_blob(payload, overwrite=True, max_concurrency=max_concurrency)
+            for _ in range(iterations):
+                capture.clear()
+                start = time.perf_counter()
+                blob_client.upload_blob(payload, overwrite=True, max_concurrency=max_concurrency)
+                times.append(time.perf_counter() - start)
+                _assert_upload_path(capture, enabled)
+    finally:
+        dispatch_logger.removeHandler(capture)
+        dispatch_logger.setLevel(previous_level)
     return times
 
 
 def bench_download(blob_client, expected_len, enabled, iterations, warmups, max_concurrency):
-    """Time repeated full downloads (download_blob + readall) on the selected path.
+    """Time repeated full downloads (download_blob + readinto) on the selected path.
 
-    Timing spans the whole operation, including the native path's eager first-window fetch,
-    so both paths are compared end-to-end. Returns per-iteration seconds.
+    Reads into a discarding sink via readinto() so timing reflects transfer cost rather than the
+    allocation and ``b"".join`` copy that readall() incurs. Timing spans the whole operation,
+    including the native path's eager first-window fetch, so both paths are compared end-to-end.
+    Returns per-iteration seconds.
     """
     times = []
     with native_path(enabled):
         for _ in range(warmups):
-            data = blob_client.download_blob(max_concurrency=max_concurrency).readall()
-            assert len(data) == expected_len, "Download length mismatch during warmup!"
+            sink = _CountingSink()
+            blob_client.download_blob(max_concurrency=max_concurrency).readinto(sink)
+            assert sink.total == expected_len, "Download length mismatch during warmup!"
         for _ in range(iterations):
+            sink = _CountingSink()
             start = time.perf_counter()
-            data = blob_client.download_blob(max_concurrency=max_concurrency).readall()
+            blob_client.download_blob(max_concurrency=max_concurrency).readinto(sink)
             times.append(time.perf_counter() - start)
-            assert len(data) == expected_len, "Download length mismatch during measurement!"
+            assert sink.total == expected_len, "Download length mismatch during measurement!"
     return times
 
 
@@ -299,6 +377,7 @@ def run_benchmarks(auth, args):
     print(
         f"sizes={[format_size(s) for s in args.sizes]}  iterations={args.iterations}  "
         f"warmups={args.warmups}  max_concurrency={args.max_concurrency}  "
+        f"max_block_size={format_size(args.max_block_size) if args.max_block_size else 'SDK default'}  "
         f"auth={'user-delegation-SAS' if args.sas else 'AAD'}"
     )
     summary = []
@@ -306,7 +385,7 @@ def run_benchmarks(auth, args):
         print(f"\n--- Blob size: {format_size(size_bytes)} ({size_bytes} bytes) ---")
         payload = os.urandom(size_bytes)
         blob_name = f"perf-{_size_label(size_bytes)}-{uuid.uuid4().hex}.bin"
-        blob_client = BlobClient(args.account_url, args.container, blob_name, credential=auth)
+        blob_client = BlobClient(args.account_url, args.container, blob_name, credential=auth, **args.client_kwargs)
 
         try:
             # Upload benchmark (this also leaves a blob in place for the download benchmark).
@@ -393,6 +472,21 @@ def parse_args(argv=None):
         help="max_concurrency passed to upload/download.",
     )
     parser.add_argument(
+        "--max-block-size",
+        type=parse_size,
+        default=None,
+        help="Block/partition size for chunked transfers, e.g. '16MiB'. Set on the BlobClient, so "
+        "it applies to both paths (the native path uses it as the upload partition size). The SDK "
+        "default is 4MiB; larger blocks cut per-request overhead and help saturate fast links.",
+    )
+    parser.add_argument(
+        "--max-single-put-size",
+        type=parse_size,
+        default=None,
+        help="Blobs at or below this size upload in a single PUT (SDK default 64MiB). Mainly "
+        "affects the Python path; the native path one-shots when the blob fits in one block.",
+    )
+    parser.add_argument(
         "--sas",
         action="store_true",
         help="Authenticate blob clients with a client-side user delegation SAS instead of the "
@@ -414,6 +508,10 @@ def parse_args(argv=None):
         parser.error("--warmups must be non-negative.")
     if args.max_concurrency < 1:
         parser.error("--max-concurrency must be at least 1.")
+    if args.max_block_size is not None and args.max_block_size < 1:
+        parser.error("--max-block-size must be at least 1 byte.")
+    if args.max_single_put_size is not None and args.max_single_put_size < 1:
+        parser.error("--max-single-put-size must be at least 1 byte.")
     if args.sas and args.sas_expiry_hours <= 0:
         parser.error("--sas-expiry-hours must be greater than 0.")
 
@@ -421,6 +519,12 @@ def parse_args(argv=None):
     if not args.sizes:
         parser.error("--sizes must contain at least one size.")
     args.account_url = f"https://{args.account_name}.blob.core.windows.net"
+    # Client-level transfer config shared by the native and Python paths.
+    args.client_kwargs = {}
+    if args.max_block_size is not None:
+        args.client_kwargs["max_block_size"] = args.max_block_size
+    if args.max_single_put_size is not None:
+        args.client_kwargs["max_single_put_size"] = args.max_single_put_size
     return args
 
 
@@ -441,7 +545,7 @@ def main(argv=None):
         auth = credential
         print("  Blob clients will authenticate via AAD credential.")
 
-    verify_paths(auth, args.account_url, args.container)
+    verify_paths(auth, args.account_url, args.container, args.client_kwargs)
     run_benchmarks(auth, args)
 
     print("\nAll benchmarks complete.")

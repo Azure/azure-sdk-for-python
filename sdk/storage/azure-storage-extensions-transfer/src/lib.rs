@@ -263,7 +263,6 @@ impl TokenCredential for PyCallbackCredential {
     content_type = None,
     metadata = None,
     max_concurrency = None,
-    _max_single_put_size = None,
     max_block_size = None,
 ))]
 fn upload_blob<'py>(
@@ -276,7 +275,6 @@ fn upload_blob<'py>(
     content_type: Option<&str>,
     metadata: Option<HashMap<String, String>>,
     max_concurrency: Option<usize>,
-    _max_single_put_size: Option<u64>,
     max_block_size: Option<u64>,
 ) -> PyResult<Bound<'py, PyDict>> {
     let blob_client = build_blob_client(url, token_provider, credential_id)?;
