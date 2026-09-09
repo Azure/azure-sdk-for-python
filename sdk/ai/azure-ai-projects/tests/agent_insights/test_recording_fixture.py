@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
@@ -22,6 +23,15 @@ from recording_fixture import (
     reconcile_external_agent,
     wait_for_trace_ingestion,
 )
+
+
+def test_recording_resources_are_not_auto_discovered() -> None:
+    resources = Path(__file__).parent / "resources"
+    assert (resources / "recording-resources.bicep").is_file()
+    assert (resources / "validate-recording-model.ps1").is_file()
+    assert not list(resources.rglob("test-resources.bicep"))
+    assert not list(resources.rglob("test-resources.json"))
+    assert not list(resources.rglob("test-resources-post.ps1"))
 
 
 class _AgentOperations:

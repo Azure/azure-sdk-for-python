@@ -8,7 +8,7 @@
 DESCRIPTION:
     This sample demonstrates how to create an Agent Insights monitor, run
     on-demand trace analysis, inspect run statistics, list generated insights,
-    update an insight's lifecycle status, and delete the monitor using the
+    resolve an insight, and delete the monitor using the
     synchronous AIProjectClient.
 
     Agent Insights is a preview feature. In the Python SDK, you access these
@@ -23,7 +23,7 @@ DESCRIPTION:
     agent must have ingested traces from the last three hours. For an external
     agent, the emitted OpenTelemetry agent ID must match its registered ID.
     This sample does not create traces. Without recent traces that show an
-    issue, there may be no insights to resolve and reopen.
+    issue, there may be no insights to resolve.
     Tracing setup:
     https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python
 
@@ -111,8 +111,7 @@ def main() -> None:
 
             run_result = poller.result()
             completed_run = monitor_operations.get_run(monitor.id, run_id)
-            # Dictionary access returns enum values as plain strings.
-            print(f"Run status: {completed_run['status']}")
+            print(f"Run status: {completed_run.status}")
             print(f"Traces in window: {run_result.traces_in_window}")
             print(f"Traces analyzed: {run_result.traces_analyzed}")
             print(f"Insights created: {run_result.insights_created}")
@@ -132,31 +131,22 @@ def main() -> None:
             print(f"Listed insights: {len(insights)}")
             for insight in insights:
                 print(
-                    f"Insight `{insight.id}`: title=`{insight.title}`, severity={insight['severity']}, "
-                    f"status={insight['status']}, traces={insight.trace_count}."
+                    f"Insight `{insight.id}`: title=`{insight.title}`, severity={insight.severity}, "
+                    f"status={insight.status}, traces={insight.trace_count}."
                 )
                 if insight.details:
                     print(f"Recommended action: {insight.details.recommended_actions.proposed_fix.text}")
 
             if insights:
-                insight_id = insights[0].id
-
                 # Status changes track review decisions; they do not apply the proposed fix.
                 resolved_insight = monitor_operations.update_insight(
                     monitor.id,
-                    insight_id,
+                    insights[0].id,
                     AgentInsightUpdate(status=AgentInsightStatus.RESOLVED),
                 )
-                print(f"Insight status after update: {resolved_insight['status']}")
-
-                reopened_insight = monitor_operations.update_insight(
-                    monitor.id,
-                    insight_id,
-                    AgentInsightUpdate(status=AgentInsightStatus.ACTIVE),
-                )
-                print(f"Insight status after reopening: {reopened_insight['status']}")
+                print(f"Insight status after update: {resolved_insight.status}")
             else:
-                print("No insights were available to demonstrate lifecycle updates.")
+                print("No insights were available to resolve.")
         finally:
             _delete_monitor(monitor_operations, monitor.id)
 

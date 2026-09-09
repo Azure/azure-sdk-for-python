@@ -49,7 +49,7 @@ def assert_agent_insights_output(sample_path: str, print_output_calls: list[str]
         assert timestamp.utcoffset() is not None, "The next run time must include a time zone."
         return
 
-    assert re.search(r"^Run status: succeeded$", output, re.MULTILINE), "The run did not succeed."
+    assert re.search(r"^Run status: JobStatus\.SUCCEEDED$", output, re.MULTILINE), "The run did not succeed."
 
     def read_count(label: str) -> int:
         match = re.search(rf"^{re.escape(label)}: (\d+)$", output, re.MULTILINE)
@@ -62,13 +62,12 @@ def assert_agent_insights_output(sample_path: str, print_output_calls: list[str]
     insight_count = read_count("Listed insights")
     assert insight_count > 0
     insights = re.findall(
-        r"^Insight `([^`]+)`: title=`(.+)`, severity=(low|medium|high), "
-        r"status=(active|resolved|ignored), traces=([1-9]\d*)\.$",
+        r"^Insight `([^`]+)`: title=`(.+)`, severity=AgentInsightSeverity\.(LOW|MEDIUM|HIGH), "
+        r"status=AgentInsightStatus\.(ACTIVE|RESOLVED|IGNORED), traces=([1-9]\d*)\.$",
         output,
         re.MULTILINE,
     )
     assert len(insights) == insight_count, "Every listed insight must have populated detail fields."
     assert all(title.strip() for _, title, *_ in insights)
     assert len(re.findall(r"^Recommended action: (?!None$)\S.*$", output, re.MULTILINE)) == insight_count
-    assert re.search(r"^Insight status after update: resolved$", output, re.MULTILINE)
-    assert re.search(r"^Insight status after reopening: active$", output, re.MULTILINE)
+    assert re.search(r"^Insight status after update: AgentInsightStatus\.RESOLVED$", output, re.MULTILINE)

@@ -1,13 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# Run this hook through New-TestResources.ps1 so the Az context is authenticated.
+# Run after Connect-AzAccount with the recording environment's model parameters.
 
 [CmdletBinding()]
 param (
-    [hashtable] $AdditionalParameters = @{},
-    [Parameter(ValueFromRemainingArguments = $true)]
-    $RemainingArguments
+    [hashtable] $AdditionalParameters = @{}
 )
 
 $ErrorActionPreference = "Stop"

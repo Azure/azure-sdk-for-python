@@ -8,6 +8,9 @@ Agent Insights unit tests, sample-output checks, and recording setup live in
 this directory. The shared sample runner remains in `tests/samples/` so existing
 recording paths do not change. The optional Azure deployment files are in
 `resources/`; they are not a general test environment for the package.
+Their filenames deliberately differ from `test-resources.bicep` and
+`test-resources-post.ps1` so the standard live-test pipeline does not discover
+or deploy them.
 
 From the package directory, run the offline tests and recorded samples with:
 
@@ -25,16 +28,22 @@ creates Foundry User and Monitoring Reader assignments by default. Protected
 trace content requires the additional assignment described below.
 
 An existing analysis-model deployment is required. The template defaults to
-GPT-5.4, model version `2026-03-05`, and the `GlobalStandard` SKU. The
-post-deployment hook checks those values with the authenticated Azure PowerShell
+GPT-5.4, model version `2026-03-05`, and the `GlobalStandard` SKU.
+`resources/validate-recording-model.ps1` checks those values with the authenticated Azure PowerShell
 context. It does not install Python packages or run the fixture.
 
-From the repository root, use the standard test-resource script. Supply your own
-resource names and IDs; do not commit them:
+This environment is deployed explicitly by a maintainer, not through
+`New-TestResources.ps1`. From the repository root, supply your own resource
+names and IDs; do not commit them:
 
 ```powershell
+$ErrorActionPreference = "Stop"
 Connect-AzAccount
+Set-AzContext -SubscriptionId "<test-subscription-id>"
 
+$resourceGroup = "<disposable-resource-group>"
+$location = "<supported-region>"
+$resourceDirectory = "sdk/ai/azure-ai-projects/tests/agent_insights/resources"
 $model = @{
     analysisModelSubscriptionId = "<model-subscription-id>"
     analysisModelResourceGroupName = "<model-resource-group>"
@@ -42,24 +51,30 @@ $model = @{
     analysisModelDeploymentName = "<model-deployment>"
 }
 
-./eng/common/TestResources/New-TestResources.ps1 `
-    -ServiceDirectory ai `
-    -TestResourcesDirectory sdk/ai/azure-ai-projects/tests/agent_insights/resources `
-    -SubscriptionId "<test-subscription-id>" `
-    -TestApplicationOid "<test-identity-object-id>" `
-    -ResourceGroupName "<disposable-resource-group>" `
-    -BaseName "<unique-test-name>" `
-    -Location "<supported-region>" `
-    -AdditionalParameters $model `
-    -OutFile
+& "$resourceDirectory/validate-recording-model.ps1" -AdditionalParameters $model
+
+$parameters = $model.Clone()
+$parameters.testApplicationOid = "<test-identity-object-id>"
+$parameters.baseName = "<unique-test-name>"
+$parameters.location = $location
+
+New-AzResourceGroup -Name $resourceGroup -Location $location | Out-Null
+$deployment = New-AzResourceGroupDeployment `
+    -Name "agent-insights-recording" `
+    -ResourceGroupName $resourceGroup `
+    -TemplateFile "$resourceDirectory/recording-resources.bicep" `
+    -TemplateParameterObject $parameters
+
+$deployment.Outputs.GetEnumerator() | ForEach-Object {
+    "$($_.Key)=$($_.Value.Value)"
+}
 ```
 
-The script writes an ignored `.env` file beside the template in
-`tests/agent_insights/resources/`. It contains the project endpoint,
-external-agent name, analysis-model name, and telemetry resource IDs. Copy those
-settings into the package-level `.env` file without replacing unrelated
-settings. Use the same test identity for the following steps, authenticated
-through Azure CLI or Azure PowerShell.
+The final command prints settings for the project endpoint, external-agent name,
+analysis-model name, and telemetry resource IDs. Copy those settings into the
+ignored package-level `.env` file without replacing unrelated settings. Use the
+same test identity for the following steps, authenticated through Azure CLI or
+Azure PowerShell.
 
 ### Access to protected trace content
 
@@ -115,7 +130,7 @@ AZURE_TEST_RUN_LIVE=true python -m pytest -q \
 ```
 
 The on-demand recording must show a successful run with at least one analyzed
-trace and one insight, then a resolved and reopened insight. The scheduled
+trace and one insight, then a resolved insight. The scheduled
 sample checks the schedule without waiting for analysis. Both samples disable
 scheduling, cancel any active run, and delete their monitors during cleanup.
 

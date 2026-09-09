@@ -3344,6 +3344,8 @@ namespace azure.ai.projects.models
                 **kwargs: Any
             ) -> AgentInsightRunLROPoller: ...
 
+        def status(self) -> str: ...
+
 
     class azure.ai.projects.models.AgentInsightRunResult(_Model):
         insights_created: int
@@ -4000,6 +4002,8 @@ namespace azure.ai.projects.models
                 continuation_token: str, 
                 **kwargs: Any
             ) -> AsyncAgentInsightRunLROPoller: ...
+
+        def status(self) -> str: ...
 
 
     class azure.ai.projects.models.AsyncAgentOptimizationLROPoller(AsyncLROPoller[AgentOptimizationJobResult]):

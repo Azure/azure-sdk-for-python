@@ -278,10 +278,7 @@ def on_demand_main(on_demand_sample, monkeypatch):
         "details": {"recommended_actions": {"proposed_fix": {"kind": "prose", "text": "Check approval first."}}},
     }
     operations.list_insights.return_value = [AgentInsight(insight)]
-    operations.update_insight.side_effect = [
-        AgentInsight({**insight, "status": "resolved"}),
-        AgentInsight(insight),
-    ]
+    operations.update_insight.return_value = AgentInsight({**insight, "status": "resolved"})
     client = MagicMock()
     client.return_value.__enter__.return_value.beta.agent_insight_monitors = operations
     monkeypatch.setitem(main.__globals__, "AIProjectClient", client)
@@ -335,14 +332,15 @@ def test_on_demand_cleanup_after_success(on_demand_main, capsys, severity):
     output = capsys.readouterr().out.splitlines()
     assert "Deleted monitor `new-monitor`." in output
     assert "Traces analyzed: 10" in output
-    assert "Run status: succeeded" in output
-    assert any(f"severity={severity}, status=active," in line for line in output)
-    assert "Insight status after update: resolved" in output
-    assert "Insight status after reopening: active" in output
+    assert "Run status: JobStatus.SUCCEEDED" in output
+    displayed_severity = operations.list_insights.return_value[0].severity
+    assert any(f"severity={displayed_severity}, status=AgentInsightStatus.ACTIVE," in line for line in output)
+    assert "Insight status after update: AgentInsightStatus.RESOLVED" in output
     assert "Recommended action: Check approval first." in output
     operations.get_insight.assert_not_called()
-    assert [args.args[2].status for args in operations.update_insight.call_args_list] == ["resolved", "active"]
-    assert all(args.args[:2] == ("new-monitor", "insight-test") for args in operations.update_insight.call_args_list)
+    operations.update_insight.assert_called_once()
+    assert operations.update_insight.call_args.args[:2] == ("new-monitor", "insight-test")
+    assert operations.update_insight.call_args.args[2].status == "resolved"
 
 
 def test_on_demand_allows_no_insights_for_customer_data(on_demand_main, capsys):
@@ -352,7 +350,7 @@ def test_on_demand_allows_no_insights_for_customer_data(on_demand_main, capsys):
     main()
 
     operations.update_insight.assert_not_called()
-    assert "No insights were available to demonstrate lifecycle updates." in capsys.readouterr().out
+    assert "No insights were available to resolve." in capsys.readouterr().out
 
 
 def test_on_demand_allows_insight_without_optional_details(on_demand_main, capsys):
@@ -364,7 +362,7 @@ def test_on_demand_allows_insight_without_optional_details(on_demand_main, capsy
     output = capsys.readouterr().out
     assert "Insight `insight-test`:" in output
     assert "Recommended action:" not in output
-    assert "Insight status after reopening: active" in output
+    assert "Insight status after update: AgentInsightStatus.RESOLVED" in output
 
 
 def test_on_demand_reports_creation_failure(on_demand_main):
