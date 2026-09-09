@@ -15,7 +15,7 @@ from azure.mgmt.providerhub import ProviderHubMgmtClient
     pip install azure-identity
     pip install azure-mgmt-providerhub
 # USAGE
-    python skus_get_nested_resource_type_second.py
+    python manifests_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,16 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.skus.get_nested_resource_type_second(
+    response = client.manifests.create_or_update(
         provider_namespace="Microsoft.Contoso",
-        resource_type="testResourceType",
-        nested_resource_type_first="nestedResourceTypeFirst",
-        nested_resource_type_second="nestedResourceTypeSecond",
-        sku="testSku",
+        environment="prod",
+        properties={"properties": {"manifest": "<<Core RP manifest>>"}},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/Skus_GetNestedResourceTypeSecond.json
+# x-ms-original-file: 2025-10-01/Manifests_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

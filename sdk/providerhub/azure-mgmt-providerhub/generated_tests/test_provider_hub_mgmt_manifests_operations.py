@@ -14,16 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestProviderHubMgmtAuthorizedApplicationsOperations(AzureMgmtRecordedTestCase):
+class TestProviderHubMgmtManifestsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ProviderHubMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_authorized_applications_get(self, resource_group):
-        response = self.client.authorized_applications.get(
+    def test_manifests_get(self, resource_group):
+        response = self.client.manifests.get(
             provider_namespace="str",
-            application_id="str",
+            environment="str",
         )
 
         # please add some check logic here by yourself
@@ -31,20 +31,14 @@ class TestProviderHubMgmtAuthorizedApplicationsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_authorized_applications_begin_create_or_update(self, resource_group):
-        response = self.client.authorized_applications.begin_create_or_update(
+    def test_manifests_create_or_update(self, resource_group):
+        response = self.client.manifests.create_or_update(
             provider_namespace="str",
-            application_id="str",
+            environment="str",
             properties={
                 "id": "str",
                 "name": "str",
-                "properties": {
-                    "dataAuthorizations": [
-                        {"role": "str", "excludeApplicationIdFromManifest": bool, "resourceTypes": ["str"]}
-                    ],
-                    "providerAuthorization": {"managedByRoleDefinitionId": "str", "roleDefinitionId": "str"},
-                    "provisioningState": "str",
-                },
+                "properties": {"commitId": "str", "manifest": "str", "manifestUri": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -55,28 +49,7 @@ class TestProviderHubMgmtAuthorizedApplicationsOperations(AzureMgmtRecordedTestC
                 },
                 "type": "str",
             },
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_authorized_applications_delete(self, resource_group):
-        response = self.client.authorized_applications.delete(
-            provider_namespace="str",
-            application_id="str",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_authorized_applications_list(self, resource_group):
-        response = self.client.authorized_applications.list(
-            provider_namespace="str",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
