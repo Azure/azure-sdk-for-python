@@ -42,7 +42,6 @@ def upload_blob(
     content_type: "str | None" = None,
     metadata: "dict[str, str] | None" = None,
     max_concurrency: "int | None" = None,
-    max_single_put_size: "int | None" = None,
     max_block_size: "int | None" = None,
 ) -> dict:
     """Upload a block blob using the native Rust extension.
@@ -69,7 +68,6 @@ def upload_blob(
     :keyword str content_type: The content type of the blob.
     :keyword dict metadata: Name-value pairs associated with the blob as metadata.
     :keyword int max_concurrency: Maximum number of parallel connections for chunked uploads.
-    :keyword int max_single_put_size: Maximum size for a single PUT operation before chunking.
     :keyword int max_block_size: Maximum size per block for chunked uploads.
     :returns: A dict with response headers (etag, last_modified, etc.).
     :rtype: dict
@@ -89,7 +87,6 @@ def upload_blob(
         content_type=content_type,
         metadata=metadata,
         max_concurrency=max_concurrency,
-        _max_single_put_size=max_single_put_size,
         max_block_size=max_block_size,
     )
 
