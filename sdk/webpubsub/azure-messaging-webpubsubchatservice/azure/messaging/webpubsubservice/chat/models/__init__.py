@@ -7,30 +7,42 @@
 # --------------------------------------------------------------------------
 # pylint: disable=wrong-import-position
 
-# The Chat client currently ships separately under this namespace. Extend the
-# path so both distributions can coexist; revisit after Architecture Board review.
-__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
-
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._client import WebPubSubServiceClient  # type: ignore
-from ._version import VERSION
 
-__version__ = VERSION
+from ._models import (  # type: ignore
+    ChatConversation,
+    ChatMessage,
+    ChatRole,
+    ChatRoom,
+    ChatRoomMember,
+    ChatUser,
+    HumanChatUser,
+    MessageContent,
+)
 
-try:
-    from ._patch import __all__ as _patch_all
-    from ._patch import *
-except ImportError:
-    _patch_all = []
+from ._enums import (  # type: ignore
+    ChatPermission,
+    ChatUserKind,
+)
+from ._patch import __all__ as _patch_all
+from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "WebPubSubServiceClient",
+    "ChatConversation",
+    "ChatMessage",
+    "ChatRole",
+    "ChatRoom",
+    "ChatRoomMember",
+    "ChatUser",
+    "HumanChatUser",
+    "MessageContent",
+    "ChatPermission",
+    "ChatUserKind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
-
 _patch_sdk()

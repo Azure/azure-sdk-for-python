@@ -1,0 +1,13 @@
+trigger: none
+
+extends:
+  template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+  parameters:
+    BuildTargetingString: azure-messaging-webpubsubchatservice
+    JobName: webpubsubchatservice
+    ServiceDirectory: webpubsub
+    Clouds: Public
+    MatrixReplace:
+      - TestSamples=.*/true
+    TestResourceDirectories:
+      - webpubsub/azure-messaging-webpubsubchatservice/
