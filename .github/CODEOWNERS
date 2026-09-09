@@ -222,6 +222,10 @@
 # PRLabel: %Device Update
 /sdk/deviceupdate/    @dpokluda @sedols
 
+# ServiceLabel: %Device Update
+# PRLabel: %Device Update
+/sdk/deviceregistry/azure-iot-deviceregistrysoftwareupdate/    @devlie @darkoa-msft @wuqiten
+
 # ServiceLabel: %Digital Twins
 # PRLabel: %Digital Twins
 /sdk/digitaltwins/    @Aashish93-stack @johngallardo @Satya-Kolluri @sjiherzig
