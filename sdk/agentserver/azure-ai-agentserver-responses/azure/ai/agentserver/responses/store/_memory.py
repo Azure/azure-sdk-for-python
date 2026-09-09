@@ -297,7 +297,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :type previous_response_id: str | None
         :param conversation_id: Optional conversation ID to scope history lookup.
         :type conversation_id: str | None
-        :param limit: Maximum number of item IDs to return (most recent N).
+        :param limit: Maximum number of item IDs to return (most recent N), or -1 for all items.
         :type limit: int
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
@@ -325,6 +325,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
                     resolved.extend(entry.input_item_ids or [])
                     resolved.extend(entry.output_item_ids or [])
 
+            if limit == -1:
+                return resolved
             if limit <= 0:
                 return []
             # Keep the most recent N item IDs from the resolved chain,

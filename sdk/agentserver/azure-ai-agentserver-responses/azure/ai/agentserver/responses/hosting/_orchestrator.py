@@ -1104,7 +1104,7 @@ async def _run_background_non_stream(
     store: bool = True,
     agent_session_id: str | None = None,
     conversation_id: str | None = None,
-    history_limit: int = 100,
+    history_limit: int = -1,
     runtime_state: _RuntimeState | None = None,
     runtime_options: ResponsesServerOptions | None = None,
 ) -> None:
