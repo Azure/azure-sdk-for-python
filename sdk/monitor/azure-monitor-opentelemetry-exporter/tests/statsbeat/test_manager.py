@@ -12,6 +12,8 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL,
+    _DEFAULT_EU_STATS_CONNECTION_STRING,
+    _DEFAULT_NON_EU_STATS_CONNECTION_STRING,
 )
 
 # cSpell:disable
@@ -276,6 +278,8 @@ class TestStatsbeatManager(unittest.TestCase):
             self.manager._meter_provider = None
         if hasattr(self.manager, "_warmup_timer"):
             self.manager._warmup_timer = None
+        if hasattr(self.manager, "_exporter"):
+            self.manager._exporter = None
 
     def tearDown(self):
         """Clean up after tests."""
@@ -653,8 +657,138 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertTrue(result)
         self.assertTrue(self.manager._initialized)
 
+    # ========================================================================
+    # UPDATE ENDPOINT (INGESTION REDIRECT) TESTS
+    # ========================================================================
+
+    def _setup_initialized_manager_for_update(self, connection_string=_DEFAULT_NON_EU_STATS_CONNECTION_STRING):
+        """Put the manager in an initialized state with a mock exporter attached."""
+        config = StatsbeatConfig(
+            endpoint="https://dc.services.visualstudio.com",
+            region="",
+            instrumentation_key="test-key",
+            connection_string=connection_string,
+            disable_offline_storage=True,
+        )
+        exporter = Mock()
+        exporter.client._config.host = "https://dc.services.visualstudio.com"
+        exporter._update_connection_string.return_value = True
+        self.manager._config = config
+        self.manager._exporter = exporter
+        self.manager._metrics = Mock()
+        self.manager._meter_provider = Mock()
+        self.manager._initialized = True
+        return exporter
+
+    def test_update_endpoint_empty_endpoint(self):
+        self._setup_initialized_manager_for_update()
+        self.assertFalse(self.manager.update_endpoint(""))
+
+    def test_update_endpoint_not_initialized(self):
+        self.manager._initialized = False
+        self.manager._config = None
+        self.assertFalse(self.manager.update_endpoint("https://westeurope-5.in.applicationinsights.azure.com/"))
+
+    def test_update_endpoint_statsbeat_disabled(self):
+        self._setup_initialized_manager_for_update()
+        os.environ[_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL] = "true"
+        try:
+            self.assertFalse(self.manager.update_endpoint("https://westeurope-5.in.applicationinsights.azure.com/"))
+        finally:
+            os.environ[_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL] = "false"
+
+    def test_update_endpoint_after_shutdown(self):
+        self._setup_initialized_manager_for_update()
+        with _STATSBEAT_STATE_LOCK:
+            _STATSBEAT_STATE["SHUTDOWN"] = True
+        try:
+            self.assertFalse(self.manager.update_endpoint("https://westeurope-5.in.applicationinsights.azure.com/"))
+        finally:
+            with _STATSBEAT_STATE_LOCK:
+                _STATSBEAT_STATE["SHUTDOWN"] = False
+
+    def test_update_endpoint_unchanged_endpoint(self):
+        self._setup_initialized_manager_for_update()
+        self.assertFalse(self.manager.update_endpoint("https://dc.services.visualstudio.com"))
+
+    def test_update_endpoint_row_to_eu_repoints_exporter(self):
+        """A redirect into the EU boundary swaps the statsbeat destination in place."""
+        exporter = self._setup_initialized_manager_for_update()
+        meter_provider = self.manager._meter_provider
+        metrics = self.manager._metrics
+
+        result = self.manager.update_endpoint("https://westeurope-5.in.applicationinsights.azure.com/")
+
+        self.assertTrue(result)
+        self.assertEqual(self.manager._config.connection_string, _DEFAULT_EU_STATS_CONNECTION_STRING)
+        self.assertEqual(self.manager._config.endpoint, "https://westeurope-5.in.applicationinsights.azure.com/")
+        self.assertEqual(self.manager._config.region, "westeurope")
+        exporter._update_connection_string.assert_called_once_with(_DEFAULT_EU_STATS_CONNECTION_STRING)
+        # Metric infrastructure is preserved, only the host dimension is refreshed.
+        self.assertIs(self.manager._meter_provider, meter_provider)
+        self.assertIs(self.manager._metrics, metrics)
+        metrics.update_endpoint_host.assert_called_once_with("https://westeurope-5.in.applicationinsights.azure.com/")
+
+    def test_update_endpoint_same_boundary_keeps_exporter_route(self):
+        """A redirect within the same data boundary refreshes host/config but not the destination."""
+        exporter = self._setup_initialized_manager_for_update()
+
+        result = self.manager.update_endpoint("https://eastus-8.in.applicationinsights.azure.com/")
+
+        self.assertTrue(result)
+        self.assertEqual(self.manager._config.connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
+        self.assertEqual(self.manager._config.endpoint, "https://eastus-8.in.applicationinsights.azure.com/")
+        self.assertEqual(self.manager._config.region, "eastus")
+        # Destination is unchanged - the exporter was never repointed.
+        self.assertEqual(exporter.client._config.host, "https://dc.services.visualstudio.com")
+        exporter._update_connection_string.assert_not_called()
+        self.manager._metrics.update_endpoint_host.assert_called_once_with(
+            "https://eastus-8.in.applicationinsights.azure.com/"
+        )
+
+    def test_update_endpoint_eu_to_row_repoints_exporter(self):
+        exporter = self._setup_initialized_manager_for_update(
+            connection_string=_DEFAULT_EU_STATS_CONNECTION_STRING,
+        )
+
+        result = self.manager.update_endpoint("https://westus-0.in.applicationinsights.azure.com/")
+
+        self.assertTrue(result)
+        self.assertEqual(self.manager._config.connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
+        exporter._update_connection_string.assert_called_once_with(_DEFAULT_NON_EU_STATS_CONNECTION_STRING)
+
+    def test_update_endpoint_no_exporter_available(self):
+        """Without a live exporter a boundary change cannot be applied, so nothing is mutated."""
+        self._setup_initialized_manager_for_update()
+        self.manager._exporter = None
+
+        result = self.manager.update_endpoint("https://westeurope-5.in.applicationinsights.azure.com/")
+
+        self.assertFalse(result)
+        self.assertEqual(self.manager._config.connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
+        self.assertEqual(self.manager._config.endpoint, "https://dc.services.visualstudio.com")
+
+    def test_update_endpoint_unparseable_connection_string_is_refused(self):
+        """If the derived statsbeat connection string is unusable, the route is left untouched."""
+        exporter = self._setup_initialized_manager_for_update()
+        exporter._update_connection_string.return_value = False
+
+        result = self.manager.update_endpoint("https://westeurope-5.in.applicationinsights.azure.com/")
+
+        self.assertFalse(result)
+        # Neither the exporter nor the stored config moved off the original ROW route.
+        self.assertEqual(exporter.client._config.host, "https://dc.services.visualstudio.com")
+        self.assertEqual(self.manager._config.connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
+        self.assertEqual(self.manager._config.endpoint, "https://dc.services.visualstudio.com")
+        self.manager._metrics.update_endpoint_host.assert_not_called()
+
+    def test_update_endpoint_swallows_exceptions(self):
+        self._setup_initialized_manager_for_update()
+        self.manager._metrics.update_endpoint_host.side_effect = Exception("boom")
+
+        self.assertFalse(self.manager.update_endpoint("https://eastus-8.in.applicationinsights.azure.com/"))
+
     def test_get_current_config_not_initialized(self):
-        """Test get_current_config when not initialized."""
         result = self.manager.get_current_config()
         self.assertIsNone(result)
 
