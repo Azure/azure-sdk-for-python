@@ -1,16 +1,12 @@
 # Release History
 
-## 1.8.10 (Unreleased)
+## 1.8.10 (2026-09-09)
 
 ### Features Added
 - Add support for the `httpx2` OpenTelemetry instrumentation entry point
   ([#48899](https://github.com/Azure/azure-sdk-for-python/pull/48899))
 - Add httpx instrumentation support
   ([#47953](https://github.com/Azure/azure-sdk-for-python/pull/47953))
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 - Contribute distro profile information (`component="dst"` and distro version) to the OneSettings control plane during `configure_azure_monitor`

@@ -41,9 +41,9 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.6.1" python-dotenv
+    pip install "azure-ai-projects>=2.7.0" python-dotenv
 
-    Version 2.6.1 contains the required run-poller fixes. Until it is published,
+    Version 2.7.0 contains the required run-poller fixes. Until it is published,
     install this package from the repository root instead:
 
     pip install -e sdk/ai/azure-ai-projects python-dotenv

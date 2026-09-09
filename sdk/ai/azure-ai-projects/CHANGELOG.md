@@ -1,10 +1,11 @@
 # Release History
 
-## 2.6.1 (Unreleased)
+## 2.7.0 (Unreleased)
 
 ### Sample updates
 
 * Added `sample_agent_insights_on_demand.py` and `sample_agent_insights_scheduled.py` under `samples/agent_insights/` to demonstrate repeatable on-demand analysis, insight lifecycle updates, and scheduled monitor setup.
+* Added `sample_agent_web_iq.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using the `WebIQPreviewTool`.
 
 ### Bugs Fixed
 
