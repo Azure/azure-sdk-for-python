@@ -41,7 +41,7 @@ def main():
                     "desiredLocations": ["eastus", "westus2"],
                     "desiredSizes": ["Standard_D2s_v5", "Standard_D4s_v5"],
                 },
-                "retryPolicy": {"onFailureAction": "Unknown", "retryCount": 2, "retryWindowInMinutes": 19},
+                "retryPolicy": {"onFailureAction": "Start", "retryCount": 2, "retryWindowInMinutes": 19},
             },
             "resourcesWithContext": {
                 "resources": [
@@ -56,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-06-preview/VirtualMachineBulkOperations_BulkStart_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-06-preview/VirtualMachineBulkOperations_BulkStart_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

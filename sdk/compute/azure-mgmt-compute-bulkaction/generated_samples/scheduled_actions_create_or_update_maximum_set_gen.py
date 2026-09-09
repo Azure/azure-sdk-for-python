@@ -37,21 +37,16 @@ def main():
             "location": "eastus",
             "properties": {
                 "actionType": "Start",
-                "disabled": True,
-                "endTime": "2025-04-17T00:23:55.286Z",
+                "disabled": False,
+                "endTime": "2026-04-17T00:23:55.281Z",
                 "notificationSettings": [
                     {"destination": "admin@contoso.com", "disabled": True, "language": "en-us", "type": "Email"}
                 ],
                 "resourceType": "VirtualMachine",
                 "schedule": {
-                    "deadlineType": "Unknown",
-                    "executionParameters": {
-                        "optimizationPreference": "Cost",
-                        "retryPolicy": {"retryCount": 17, "retryWindowInMinutes": 29},
-                    },
-                    "requestedDaysOfTheMonth": [15],
-                    "requestedMonths": ["January"],
-                    "requestedWeekDays": ["Monday"],
+                    "requestedDaysOfTheMonth": [1, 15],
+                    "requestedMonths": ["All"],
+                    "requestedWeekDays": ["All"],
                     "scheduledTime": "19:00:00",
                     "timeZone": "America/Los_Angeles",
                 },
@@ -63,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-06-preview/ScheduledActions_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-06-preview/ScheduledActions_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

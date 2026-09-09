@@ -34,17 +34,18 @@ def main():
     response = client.occurrences.begin_delay(
         resource_group_name="rgcompute",
         scheduled_action_name="myScheduledAction",
-        occurrence_id="CB26D7CB-3E27-465F-99C8-EAF7A4118245",
+        occurrence_id="67b5bada-4772-43fc-8dbb-402476d98a45",
         body={
-            "delay": "2025-05-22T17:00:00.000-07:00",
+            "delay": "2026-08-05T17:00:00.000-07:00",
             "resourceIds": [
-                "/subscriptions/CB26D7CB-3E27-465F-99C8-EAF7A4118245/resourceGroups/myRg/providers/Microsoft.Compute/virtualMachines/myVm"
+                "/subscriptions/CB26D7CB-3E27-465F-99C8-EAF7A4118245/resourceGroups/rgcompute/providers/Microsoft.Compute/virtualMachines/myVm",
+                "/subscriptions/CB26D7CB-3E27-465F-99C8-EAF7A4118245/resourceGroups/rgcompute/providers/Microsoft.Compute/virtualMachines/myVm2",
             ],
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-08-06-preview/Occurrences_Delay_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-06-preview/Occurrences_Delay_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

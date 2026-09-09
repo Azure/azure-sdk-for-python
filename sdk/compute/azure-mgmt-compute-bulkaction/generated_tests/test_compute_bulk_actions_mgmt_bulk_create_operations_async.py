@@ -15,14 +15,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeBulkActionsMgmtLaunchBulkInstancesOperationOperationsAsync(AzureMgmtRecordedTestCase):
+class TestComputeBulkActionsMgmtBulkCreateOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeBulkActionsMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_launch_bulk_instances_operation_get(self, resource_group):
-        response = await self.client.launch_bulk_instances_operation.get(
+    async def test_bulk_create_get(self, resource_group):
+        response = await self.client.bulk_create.get(
             resource_group_name=resource_group.name,
             location="str",
             name="str",
@@ -33,8 +33,8 @@ class TestComputeBulkActionsMgmtLaunchBulkInstancesOperationOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_launch_bulk_instances_operation_get_operation_status(self, resource_group):
-        response = await self.client.launch_bulk_instances_operation.get_operation_status(
+    async def test_bulk_create_get_async_operation_status(self, resource_group):
+        response = await self.client.bulk_create.get_async_operation_status(
             location="str",
             async_operation_id="str",
         )
@@ -44,9 +44,9 @@ class TestComputeBulkActionsMgmtLaunchBulkInstancesOperationOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_launch_bulk_instances_operation_begin_create_or_update(self, resource_group):
+    async def test_bulk_create_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.launch_bulk_instances_operation.begin_create_or_update(
+            await self.client.bulk_create.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 location="str",
                 name="str",
@@ -343,36 +343,22 @@ class TestComputeBulkActionsMgmtLaunchBulkInstancesOperationOperationsAsync(Azur
                         },
                         "capacityType": "str",
                         "createdTime": "2020-02-20 00:00:00",
-                        "provisioningState": "str",
-                        "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
-                        "vmAttributes": {
-                            "architectureTypes": ["str"],
-                            "memoryInGiB": {"max": 0.0, "min": 0.0},
-                            "vCpuCount": {"max": 0, "min": 0},
-                            "acceleratorCount": {"max": 0, "min": 0},
-                            "acceleratorManufacturers": ["str"],
-                            "acceleratorSupport": "str",
-                            "acceleratorTypes": ["str"],
-                            "allowedVMSizes": ["str"],
-                            "burstableSupport": "str",
-                            "cpuManufacturers": ["str"],
-                            "dataDiskCount": {"max": 0, "min": 0},
-                            "excludedVMSizes": ["str"],
-                            "hyperVGenerations": ["str"],
-                            "localStorageDiskTypes": ["str"],
-                            "localStorageInGiB": {"max": 0.0, "min": 0.0},
-                            "localStorageSupport": "str",
-                            "memoryInGiBPerVCpu": {"max": 0.0, "min": 0.0},
-                            "networkBandwidthInMbps": {"max": 0.0, "min": 0.0},
-                            "networkInterfaceCount": {"max": 0, "min": 0},
-                            "rdmaNetworkInterfaceCount": {"max": 0, "min": 0},
-                            "rdmaSupport": "str",
-                            "vmCategories": ["str"],
+                        "executionParameters": {
+                            "capacityRecommendationParameters": {
+                                "availabilityZones": bool,
+                                "desiredLocations": ["str"],
+                                "desiredSizes": ["str"],
+                            },
+                            "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
+                            "verifyVmAgentHealth": bool,
                         },
+                        "minCapacity": 0,
+                        "partialFulfillmentPolicy": {"fulfilledCapacity": 0, "mode": "str", "reason": "str"},
+                        "provisioningState": "str",
                         "vmSizesProfile": [{"name": "str", "rank": 0}],
                         "zoneAllocationPolicy": {
                             "distributionStrategy": "str",
-                            "zonePreferences": [{"rank": 0, "zone": "str"}],
+                            "zonePreferences": [{"rank": 0, "zone": "str", "targetMaxCapacity": 0}],
                         },
                     },
                     "systemData": {
@@ -395,9 +381,9 @@ class TestComputeBulkActionsMgmtLaunchBulkInstancesOperationOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_launch_bulk_instances_operation_begin_delete(self, resource_group):
+    async def test_bulk_create_begin_delete(self, resource_group):
         response = await (
-            await self.client.launch_bulk_instances_operation.begin_delete(
+            await self.client.bulk_create.begin_delete(
                 resource_group_name=resource_group.name,
                 location="str",
                 name="str",
@@ -409,9 +395,9 @@ class TestComputeBulkActionsMgmtLaunchBulkInstancesOperationOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_launch_bulk_instances_operation_begin_cancel(self, resource_group):
+    async def test_bulk_create_begin_cancel(self, resource_group):
         response = await (
-            await self.client.launch_bulk_instances_operation.begin_cancel(
+            await self.client.bulk_create.begin_cancel(
                 resource_group_name=resource_group.name,
                 location="str",
                 name="str",
@@ -423,32 +409,32 @@ class TestComputeBulkActionsMgmtLaunchBulkInstancesOperationOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_launch_bulk_instances_operation_list_by_resource_group(self, resource_group):
-        response = self.client.launch_bulk_instances_operation.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            location="str",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_launch_bulk_instances_operation_list_by_subscription(self, resource_group):
-        response = self.client.launch_bulk_instances_operation.list_by_subscription(
-            location="str",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_launch_bulk_instances_operation_list_virtual_machines(self, resource_group):
-        response = self.client.launch_bulk_instances_operation.list_virtual_machines(
+    async def test_bulk_create_virtual_machines_get_operation_status(self, resource_group):
+        response = self.client.bulk_create.virtual_machines_get_operation_status(
             resource_group_name=resource_group.name,
             location="str",
             name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_bulk_create_list_by_resource_group(self, resource_group):
+        response = self.client.bulk_create.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            location="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_bulk_create_list_by_subscription(self, resource_group):
+        response = self.client.bulk_create.list_by_subscription(
+            location="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
