@@ -140,9 +140,9 @@ dependencies = [
 
 [[package]]
 name = "azure_storage_blob"
-version = "1.1.0-beta.1"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ea46a35353e11e78c4feace9656cb81e2532d3e814c6ff512e9fbb629b00878"
+checksum = "17b10207ecf7d666df6940b50051f433b3cd5d2b9b1dd190613208d7a84e7eed"
 dependencies = [
  "async-stream",
  "async-trait",
@@ -160,9 +160,9 @@ dependencies = [
 
 [[package]]
 name = "azure_storage_common"
-version = "0.1.0"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f8d86465df4adce8ab1246205be0b99165683808701cd6f0f84e382ad7cd504"
+checksum = "0af2e6aeb8d76b17fc998f453c320913f73787b944e3cc29509d19411fa0321d"
 dependencies = [
  "azure_core",
  "serde",
