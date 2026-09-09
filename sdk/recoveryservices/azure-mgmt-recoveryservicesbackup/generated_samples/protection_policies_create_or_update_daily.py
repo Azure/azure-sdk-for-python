@@ -77,6 +77,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/AzureStorage/ProtectionPolicies_CreateOrUpdate_Daily.json
+# x-ms-original-file: 2026-08-01/AzureStorage/ProtectionPolicies_CreateOrUpdate_Daily.json
 if __name__ == "__main__":
     main()

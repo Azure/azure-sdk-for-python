@@ -1,5 +1,11 @@
 # Release History
 
+## 2.7.0 (Unreleased)
+
+### Sample updates
+
+* Added `sample_agent_web_iq.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using the `WebIQPreviewTool`.
+
 ## 2.6.0 (2026-09-04)
 
 ### Features Added
