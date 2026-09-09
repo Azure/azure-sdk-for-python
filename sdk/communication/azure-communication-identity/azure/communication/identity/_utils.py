@@ -12,10 +12,23 @@ from azure.core.credentials import AccessToken
 def to_access_token(access_token: Any) -> AccessToken:
     """Build an AccessToken from a generated CommunicationIdentityAccessToken.
 
-    ``expiresOn`` is read by key rather than via the ``.expires_on`` attribute. The
-    TypeSpec model types it as ``utcDateTime``, so attribute access deserializes it to a
-    ``datetime``, whereas the previously published SDK exposed the raw string. Reading the
-    key returns the untouched wire value, keeping the public surface unchanged.
+    ``expiresOn`` is read **by key**, not via the ``.expires_on`` attribute. Do not
+    "simplify" this to attribute access: the two are not equivalent.
+
+    The TypeSpec model declares ``expiresOn: utcDateTime``, so the generated model types it
+    as ``datetime.datetime`` and attribute access returns a deserialized ``datetime``. Every
+    previously published version of this SDK exposed the raw service string, so returning a
+    ``datetime`` would be a breaking change for callers. Item access on the generated model
+    returns the untouched wire value, which keeps the public surface unchanged.
+
+    This is a re-occurrence, not a new concern. The AutoRest configuration formerly at
+    ``swagger/SWAGGER.md`` carried a directive deleting ``format: date-time`` from this same
+    property, added because a generator upgrade had already turned it from string into
+    ``datetime`` once before. That directive acted on the swagger document and does not carry
+    over to TypeSpec, so this function is now the only thing preventing the same break.
+
+    ``.isoformat()`` is **not** an adequate substitute: it reformats the value (``Z`` becomes
+    ``+00:00``) and silently truncates the service's 7-digit fractional seconds to 6.
 
     :param access_token: A generated CommunicationIdentityAccessToken instance.
     :type access_token: ~azure.communication.identity._generated.models.CommunicationIdentityAccessToken
