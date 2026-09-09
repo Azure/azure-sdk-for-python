@@ -2,20 +2,16 @@
 > [!IMPORTANT]
 > We strongly recommend that customers use at least version 4.16.3 of `azure-cosmos`.
 
-### 4.17.0 (Unreleased)
+### 4.17.0 (2026-09-09)
 
 #### Features Added
 * Added the `enable_compact_utf8_item_writes` client option. Set it to `True` to reduce item write request sizes by
   serializing valid Unicode as compact UTF-8 for create, upsert, replace, patch, and transactional batch operations.
   See [PR 48914](https://github.com/Azure/azure-sdk-for-python/pull/48914).
 
-#### Breaking Changes
-
 #### Bugs Fixed
 * Fixed sync and async item PATCH requests to explicitly send the registered `application/json-patch+json`
   content type. See [PR 48914](https://github.com/Azure/azure-sdk-for-python/pull/48914).
-
-#### Other Changes
 
 ### 4.16.4 (2026-09-02)
 
