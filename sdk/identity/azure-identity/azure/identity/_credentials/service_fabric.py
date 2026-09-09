@@ -4,6 +4,8 @@
 # ------------------------------------
 import functools
 import os
+import requests
+import warnings
 from typing import Dict, Optional, Any
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
@@ -24,6 +26,14 @@ SERVICE_FABRIC_ERROR_MESSAGE = (
 class ServiceFabricCredential(MsalManagedIdentityClient):
     def get_unavailable_message(self, desc: str = "") -> str:
         return f"Service Fabric managed identity configuration not found in environment. {desc}"
+
+    def _create_http_client(self, **kwargs: Any) -> requests.Session:
+        if kwargs.get("transport") is not None:
+            warnings.warn(
+                "The transport argument is ignored for synchronous Service Fabric "
+                "managed identity credential because MSAL >= 1.38.0 requires a requests.Session for Service Fabric.",
+                UserWarning, stacklevel=3)
+        return requests.Session()  # Service Fabric requires requests.Session for MSAL >= 1.38.0, temporary workaround
 
     def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
