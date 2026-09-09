@@ -2747,7 +2747,6 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert blobs is not None
         assert blobs == ["a/b/blob2", "a/b/blob3", "a/b/blob4", "a/blob1"]
 
-
     @BlobPreparer()
     @recorded_by_proxy
     def test_create_session(self, **kwargs):
@@ -2762,6 +2761,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             use_session=True,
             api_version="2026-10-06",
         )
+        cache = _find_session_policy(service._pipeline)._session_provider._cache._entry
         container1_name = self.get_resource_name("utcontainer1")
         container1 = service.get_container_client(container1_name)
         try:
@@ -2780,7 +2780,9 @@ class TestStorageContainer(StorageRecordedTestCase):
         ).readall()
         assert blob1_data == blob1_actual
         assert capture_auth_header["c1_download"].startswith("Session ")
-        session1 = _parse_session_token(capture_auth_header["c1_download"])
+        session1 = cache[container1_name]
+        # Recorded expiration is stale so pinning it to a future time to test caching
+        session1.expires_at = datetime.now(session1.expires_at.tzinfo) + timedelta(hours=1)
 
         container2_name = self.get_resource_name("utcontainer2")
         container2 = service.get_container_client(container2_name)
@@ -2800,35 +2802,34 @@ class TestStorageContainer(StorageRecordedTestCase):
         ).readall()
         assert blob2_data == blob2_actual
         assert capture_auth_header["c2_download"].startswith("Session ")
-        session2 = _parse_session_token(capture_auth_header["c2_download"])
+        session2 = cache[container2_name]
+        session2.expires_at = datetime.now(session2.expires_at.tzinfo) + timedelta(hours=1)
 
-        assert session1 != session2
+        assert session1 is not session2
 
         blob1_actual = container1.download_blob(
             blob1_name, raw_response_hook=capture_auth_header.hook("c1_download2")
         ).readall()
         assert blob1_data == blob1_actual
         assert capture_auth_header["c1_download2"].startswith("Session ")
-        assert session1 == _parse_session_token(capture_auth_header["c1_download2"])
+        assert cache[container1_name] is session1
 
         blob2_actual = container2.download_blob(
             blob2_name, raw_response_hook=capture_auth_header.hook("c2_download2")
         ).readall()
         assert blob2_data == blob2_actual
         assert capture_auth_header["c2_download2"].startswith("Session ")
-        assert session2 == _parse_session_token(capture_auth_header["c2_download2"])
+        assert cache[container2_name] is session2
 
-        policy = _find_session_policy(service._pipeline)
-        cached = policy._session_provider._cache._entry[container1_name]
-        cached.expires_at = datetime.fromtimestamp(0, tz=cached.expires_at.tzinfo)
+        session1.expires_at = datetime.fromtimestamp(0, tz=session1.expires_at.tzinfo)
 
         blob1_actual = container1.download_blob(
             blob1_name, raw_response_hook=capture_auth_header.hook("c1_download3")
         ).readall()
         assert blob1_data == blob1_actual
         assert capture_auth_header["c1_download3"].startswith("Session ")
-        assert session1 != _parse_session_token(capture_auth_header["c1_download3"])
-        assert session2 != _parse_session_token(capture_auth_header["c1_download3"])
+        assert cache[container1_name] is not session1
+        assert cache[container1_name] is not session2
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2862,7 +2863,6 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert blob_data == blob_actual
         assert capture_auth_header["download"].startswith("Bearer ")
 
-
     @BlobPreparer()
     @recorded_by_proxy
     def test_create_session_with_session_provider(self, **kwargs):
@@ -2873,6 +2873,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         account_url = self.account_url(storage_account_name, "blob")
 
         session_provider = ContainerSessionProvider(account_url, credential, api_version="2026-10-06")
+        cache = session_provider._cache._entry
         service1 = BlobServiceClient(
             account_url,
             credential=credential,
@@ -2906,7 +2907,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         ).readall()
         assert blob_data == blob_actual
         assert capture_auth_header["c1_download"].startswith("Session ")
-        session = _parse_session_token(capture_auth_header["c1_download"])
+        session = cache[container_name]
+        session.expires_at = datetime.now(session.expires_at.tzinfo) + timedelta(hours=1)
 
         container2 = service2.get_container_client(container_name)
         blob_actual = container2.download_blob(
@@ -2914,4 +2916,4 @@ class TestStorageContainer(StorageRecordedTestCase):
         ).readall()
         assert blob_data == blob_actual
         assert capture_auth_header["c2_download"].startswith("Session ")
-        assert session == _parse_session_token(capture_auth_header["c2_download"])
+        assert cache[container_name] is session

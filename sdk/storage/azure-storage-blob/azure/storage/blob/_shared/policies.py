@@ -9,10 +9,9 @@ import logging
 import random
 import re
 import uuid
-from datetime import timezone
 from io import BytesIO, SEEK_SET, UnsupportedOperation
 from time import time
-from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from urllib.parse import (
     parse_qsl,
     unquote,
@@ -88,9 +87,7 @@ def encode_base64(data: Union[bytes, str]) -> str:
     return encoded.decode("utf-8")
 
 
-def _apply_session_auth(
-    request: "PipelineRequest", session_token: str, session_key: str, account_name: str
-) -> None:
+def _apply_session_auth(request: "PipelineRequest", session_token: str, session_key: str, account_name: str) -> None:
     """Sign an eligible request with the SharedKey protocol under the Session scheme.
 
     Shared by the sync and async session policies; ``account_name`` is passed in

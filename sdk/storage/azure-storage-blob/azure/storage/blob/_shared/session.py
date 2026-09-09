@@ -8,8 +8,9 @@ import logging
 from datetime import datetime, timedelta, timezone
 from threading import Lock
 from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING
-from typing_extensions import Protocol
 from urllib.parse import urlparse
+
+from typing_extensions import Protocol
 
 from azure.core.exceptions import AzureError, HttpResponseError
 
@@ -94,14 +95,11 @@ class Session:
 class SessionProvider(Protocol):
     """Creates, caches, and invalidates per-container sessions."""
 
-    def is_request_eligible(self, request: "PipelineRequest") -> bool:
-        ...
+    def is_request_eligible(self, request: "PipelineRequest") -> bool: ...
 
-    def get_session(self, request: "PipelineRequest") -> Optional[Session]:
-        ...
+    def get_session(self, request: "PipelineRequest") -> Optional[Session]: ...
 
-    def invalidate_session(self, request: "PipelineRequest", current: Session) -> None:
-        ...
+    def invalidate_session(self, request: "PipelineRequest", current: Session) -> None: ...
 
 
 class SessionCache:
@@ -174,9 +172,7 @@ class SessionCache:
 
         :param str container_name: The container name to mark for bearer fallback.
         """
-        self._entry[container_name] = Session(
-            None, None, datetime.now(UTC) + self.FALLBACK_COOLDOWN, is_fallback=True
-        )
+        self._entry[container_name] = Session(None, None, datetime.now(UTC) + self.FALLBACK_COOLDOWN, is_fallback=True)
 
     def invalidate(self, container_name: str, session_token: Optional[str] = None) -> None:
         """Drop the cached session if it still matches the rejected token.
