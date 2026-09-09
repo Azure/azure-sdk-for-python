@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-09-23",
+  "apiVersions": {
+    "Azure.Communication.Identity": "2026-09-23"
+  },
+  "commit": "1893171028aed5a757fc78c2d4aa439c14df4afc",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/communication/data-plane/Identity",
+  "emitterVersion": "0.63.6",
+  "httpClientPythonVersion": "^0.37.1"
+}

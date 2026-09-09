@@ -20,11 +20,12 @@ USAGE:
     4) AZURE_CLIENT_SECRET - the secret of your active directory application
     5) AZURE_TENANT_ID - the tenant ID of your active directory application
     6) COMMUNICATION_M365_APP_ID - the application id of Microsoft 365
-    7) COMMUNICATION_M365_AAD_AUTHORITY - the Azure AD authority of M365 
+    7) COMMUNICATION_M365_AAD_AUTHORITY - the Azure AD authority of M365
     8) COMMUNICATION_M365_AAD_TENANT - the tenant ID of Microsoft 365 application
     9) COMMUNICATION_MSAL_USERNAME - the username for authenticating via the MSAL library
     10) COMMUNICATION_MSAL_PASSWORD - the password for authenticating via the MSAL library
 """
+
 from datetime import timedelta
 from azure.communication.identity._shared.utils import parse_connection_str
 from msal import PublicClientApplication
