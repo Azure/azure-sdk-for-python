@@ -61,7 +61,6 @@ from azure.ai.projects.aio import AsyncRealtimeConnection, AIProjectClient  # py
 from azure.ai.projects.models import (
     AgentKind,
     GenerateVoiceAgentRequest,
-    VoiceAgentDefinition,
     RealtimeServerEventConversationItemInputAudioTranscriptionCompleted,
     RealtimeServerEventInputAudioBufferSpeechStarted,
     RealtimeServerEventResponseAudioDelta,
@@ -103,6 +102,21 @@ except ImportError:  # pragma: no cover - required audio dependency
     pyaudio: Any = None  # type: ignore[no-redef]
 
 
+def _format_size(num_bytes: int) -> str:
+    """Format a byte count as a human-readable string.
+
+    :param num_bytes: The size in bytes.
+    :type num_bytes: int
+    :return: A string like "12345 bytes (12.1 KB)" or "2097152 bytes (2.00 MB)".
+    :rtype: str
+    """
+    if num_bytes < 1024:
+        return f"{num_bytes} bytes"
+    if num_bytes < 1024 * 1024:
+        return f"{num_bytes} bytes ({num_bytes / 1024:.1f} KB)"
+    return f"{num_bytes} bytes ({num_bytes / (1024 * 1024):.2f} MB)"
+
+
 class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
     """Real-time mic capture and speaker playback via non-blocking pyaudio callbacks.
 
@@ -123,11 +137,14 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
         self._playback_queue: "queue.Queue[tuple[int, Optional[bytes]]]" = queue.Queue()
         self._playback_base = 0
         self._next_seq = 0
-        self._bytes = 0
+        self._output_bytes = 0
 
         # Bounds capture backpressure to a single in-flight send (see start_capture).
         self._pending_send: "Optional[concurrent.futures.Future[None]]" = None
         self._dropped_frames = 0
+        # Only counts bytes actually handed to input_audio_buffer.append() -- frames dropped
+        # above due to backpressure are never sent, so they must not be counted here.
+        self._input_bytes = 0
 
         self._input_stream = None
         self._output_stream = None
@@ -151,6 +168,7 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
             if self._pending_send is not None and not self._pending_send.done():
                 self._dropped_frames += 1
                 return (None, pyaudio.paContinue)
+            self._input_bytes += len(in_data)
             self._pending_send = asyncio.run_coroutine_threadsafe(
                 self._conn.input_audio_buffer.append(audio=in_data), self._loop
             )
@@ -226,7 +244,7 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
         :param pcm: Decoded PCM16 audio bytes.
         :type pcm: bytes
         """
-        self._bytes += len(pcm)
+        self._output_bytes += len(pcm)
         self._playback_queue.put((self._next_seq_num(), pcm))
 
     def skip_pending_audio(self) -> None:
@@ -250,12 +268,36 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
         self._audio.terminate()
 
     @property
+    def input_bytes_sent(self) -> int:
+        """Total raw PCM16 mic-audio bytes actually sent to the service (excludes dropped frames).
+
+        :rtype: int
+        """
+        return self._input_bytes
+
+    @property
+    def output_bytes_received(self) -> int:
+        """Total decoded PCM16 reply-audio bytes received from the service.
+
+        :rtype: int
+        """
+        return self._output_bytes
+
+    @property
+    def input_seconds(self) -> float:
+        """Total mic audio sent, in seconds (PCM16 = 2 bytes/sample).
+
+        :rtype: float
+        """
+        return self._input_bytes / 2 / _SAMPLE_RATE
+
+    @property
     def seconds(self) -> float:
         """Total reply audio received, in seconds (PCM16 = 2 bytes/sample).
 
         :rtype: float
         """
-        return self._bytes / 2 / _SAMPLE_RATE
+        return self._output_bytes / 2 / _SAMPLE_RATE
 
 
 async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> Optional[str]:
@@ -318,7 +360,18 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
             # Ctrl-C ends the session; read back whatever was persisted so far.
             print("\n(ending session...)")
         finally:
+            input_bytes = ap.input_bytes_sent
+            output_bytes = ap.output_bytes_received
             print(f"(received {ap.seconds:.2f}s of reply audio this session)")
+            print(
+                f"Input audio (mic -> service): format=PCM16, sample_rate={_SAMPLE_RATE} Hz, channels=1, "
+                f"duration={ap.input_seconds:.2f}s, size={_format_size(input_bytes)}"
+            )
+            print(
+                f"Output audio (service -> speakers): format=PCM16, sample_rate={_SAMPLE_RATE} Hz, channels=1, "
+                f"duration={ap.seconds:.2f}s, size={_format_size(output_bytes)}"
+            )
+            print(f"Total audio transferred: size={_format_size(input_bytes + output_bytes)}")
             ap.shutdown()
 
     return conversation_id
@@ -366,15 +419,13 @@ async def audio_conversation() -> None:
             definition = generated.versions.latest.definition  # type: ignore[attr-defined]
 
             # 2) Publish a new version with conversation persistence enabled (`store=True`) so the
-            #    session's conversation can be fetched back by id afterward.
+            #    session's conversation can be fetched back by id afterward. Reuse the generated
+            #    definition as-is (instead of reconstructing a new one from a few fields) so audio,
+            #    greeting, tools, and any other service-selected settings are preserved.
+            definition.store = True  # type: ignore[attr-defined]
             await project_client.agents.create_version(
                 agent_name=agent_name,
-                definition=VoiceAgentDefinition(
-                    model_type=definition.model_type,  # type: ignore[attr-defined]
-                    model=definition.model,  # type: ignore[attr-defined]
-                    instructions=definition.instructions,  # type: ignore[attr-defined]
-                    store=True,
-                ),
+                definition=definition,
             )
 
             # 3) Hold a live microphone conversation with the freshly created agent.

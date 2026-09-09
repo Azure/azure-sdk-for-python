@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import base64
 import json
-from urllib.parse import urlencode, urlparse
+from urllib.parse import quote, urlencode, urlparse
 from typing import (
     Any,
     Dict,
@@ -253,7 +253,7 @@ def _to_ws_url(endpoint: str, agent_name: str) -> str:
     base = endpoint.rstrip("/")
     if base.startswith("https://"):
         base = "wss://" + base[len("https://") :]
-    return f"{base}/agents/{agent_name}/endpoint/protocols/voice"
+    return f"{base}/agents/{quote(agent_name, safe='')}/endpoint/protocols/voice"
 
 
 _DEFAULT_PORT_BY_SCHEME = {"http": 80, "https": 443, "ws": 80, "wss": 443}
@@ -734,7 +734,7 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
 
         token = self._credential.get_token(*self._credential_scopes)
         headers: Dict[str, str] = {
-            "Authorization": f"Bearer {token.token}",
+            "Authorization": "Bearer " + token.token,
             _FOUNDRY_FEATURES_HEADER_NAME: self._foundry_features,
         }
         if self._structured_inputs is not None:

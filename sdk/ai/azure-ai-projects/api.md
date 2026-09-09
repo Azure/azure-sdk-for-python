@@ -3368,29 +3368,6 @@ namespace azure.ai.projects.aio.operations
             ) -> ToolboxObject: ...
 
 
-    class azure.ai.projects.aio.operations.VoiceAgentWebSocketOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def connect_voice_agent(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_version_override: Optional[str] = ..., 
-                foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = ..., 
-                store: Optional[bool] = ..., 
-                structured_input: Optional[str] = ..., 
-                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
-                websocket_subprotocol: Optional[Union[str, VoiceAgentWebSocketSubprotocol]] = ..., 
-                **kwargs: Any
-            ) -> None: ...
-
-
 namespace azure.ai.projects.models
 
     class azure.ai.projects.models.A2APreviewTool(Tool, discriminator='a2a_preview'):
@@ -19864,29 +19841,6 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ToolboxObject: ...
-
-
-    class azure.ai.projects.operations.VoiceAgentWebSocketOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def connect_voice_agent(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_version_override: Optional[str] = ..., 
-                foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = ..., 
-                store: Optional[bool] = ..., 
-                structured_input: Optional[str] = ..., 
-                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
-                websocket_subprotocol: Optional[Union[str, VoiceAgentWebSocketSubprotocol]] = ..., 
-                **kwargs: Any
-            ) -> None: ...
 
 
 namespace azure.ai.projects.telemetry

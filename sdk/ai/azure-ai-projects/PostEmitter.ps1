@@ -63,8 +63,12 @@ Set-Content $f $out
 # generated output across regenerations (previously wired directly on the top-level client as
 # `VoiceAgentWebSocketOperations`; now nested as `BetaVoiceAgentWebSocketOperations` under
 # `BetaOperations.__init__` in `_operations.py`) - this fixup targets wherever it currently lives,
-# matching either class name, so it keeps working if the spec relocates it again.
-$files = 'azure\ai\projects\_client.py', 'azure\ai\projects\aio\_client.py', 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
+# matching either class name, so it keeps working if the spec relocates it again. Also strips the
+# top-level `operations/__init__.py` re-export (import + __all__ entry) so the class isn't
+# reachable as public API even though it's still defined (dead code) in `_operations.py` -- without
+# this, `azure.ai.projects.operations.VoiceAgentWebSocketOperations` would still be importable and
+# its docstring would send users to a `client.voice_agent_web_socket` attribute that doesn't exist.
+$files = 'azure\ai\projects\_client.py', 'azure\ai\projects\aio\_client.py', 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py', 'azure\ai\projects\operations\__init__.py', 'azure\ai\projects\aio\operations\__init__.py'
 foreach ($f in $files) {
     $lines = Get-Content $f
     $out = New-Object System.Collections.Generic.List[string]
@@ -77,6 +81,8 @@ foreach ($f in $files) {
         if ($line -match '^\s*VoiceAgentWebSocketOperations,\s*$') { continue }
         if ($line -match '^\s*:ivar voice_agent_web_socket:') { continue }
         if ($line -match '^\s*:vartype voice_agent_web_socket:') { continue }
+        if ($line -match '^\s*from \._operations import (Beta)?VoiceAgentWebSocketOperations\s*(#.*)?$') { continue }
+        if ($line -match '^\s*"(Beta)?VoiceAgentWebSocketOperations",\s*$') { continue }
         if ($line -match '^\s*self\.voice_agent_web_socket = (Beta)?VoiceAgentWebSocketOperations\(\s*$') {
             $skipUntilCloseParen = $true
             continue

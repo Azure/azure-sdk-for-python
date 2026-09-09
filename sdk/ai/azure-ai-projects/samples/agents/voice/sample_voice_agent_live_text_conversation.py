@@ -52,7 +52,6 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentKind,
     GenerateVoiceAgentRequest,
-    VoiceAgentDefinition,
     RealtimeConversationItemMessageUser,
     RealtimeConversationItemMessageUserContent,
     RealtimeConversationItemType,
@@ -87,6 +86,22 @@ _RESPONSE_TIMEOUT: Final = 45
 
 # Reply audio format: PCM16, mono, 24 kHz.
 _SAMPLE_RATE: Final = 24000
+
+
+def _format_size(num_bytes: int) -> str:
+    """Format a byte count as a human-readable string.
+
+    :param num_bytes: The size in bytes.
+    :type num_bytes: int
+    :return: A string like "12345 bytes (12.1 KB)" or "2097152 bytes (2.00 MB)".
+    :rtype: str
+    """
+    if num_bytes < 1024:
+        return f"{num_bytes} bytes"
+    if num_bytes < 1024 * 1024:
+        return f"{num_bytes} bytes ({num_bytes / 1024:.1f} KB)"
+    return f"{num_bytes} bytes ({num_bytes / (1024 * 1024):.2f} MB)"
+
 
 try:
     import pyaudio  # type: ignore[import-not-found]
@@ -139,6 +154,14 @@ class _SpeakerPlayer:
             self._audio = None
 
     @property
+    def bytes_received(self) -> int:
+        """Total decoded PCM16 output-audio bytes received from the service.
+
+        :rtype: int
+        """
+        return self._bytes
+
+    @property
     def seconds(self) -> float:
         """Total audio received, in seconds (PCM16 = 2 bytes/sample).
 
@@ -147,13 +170,17 @@ class _SpeakerPlayer:
         return self._bytes / 2 / _SAMPLE_RATE
 
 
-def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Optional[str]:
+def _run_text_conversation(client: AIProjectClient, agent_name: str, has_greeting: bool) -> Optional[str]:
     """Hold a typed, multi-turn conversation.
 
     :param client: The Foundry project client.
     :param agent_name: The existing voice agent name.
+    :param has_greeting: Whether the agent has a configured greeting, which the service plays
+     automatically as soon as the session opens (before any user turn). When True, that greeting
+     is drained and displayed before the interactive loop starts.
     :type client: ~azure.ai.projects.AIProjectClient
     :type agent_name: str
+    :type has_greeting: bool
     :return: The persisted conversation id, if one is created.
     :rtype: str or None
     """
@@ -165,7 +192,6 @@ def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Optional
     try:
         # Open the realtime session on the voice agent's dedicated route.
         with client.realtime.connect(agent_name=agent_name) as conn:
-            print("Type a message and press Enter. Blank line (or 'exit') ends the session.")
 
             def pump() -> None:
                 nonlocal conversation_id, audio_delta_count
@@ -192,6 +218,18 @@ def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Optional
                     elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDone):
                         _safe_print(f"Agent: {event.transcript}")
 
+            if has_greeting:
+                # The service sends the configured greeting as its own response cycle the
+                # instant the session opens, entirely independent of any user turn. Drain and
+                # display it here, before the interactive loop starts: otherwise the first
+                # pump() call below (triggered by the user's own first message) could instead
+                # observe this unrelated, already in-flight response.done and return early,
+                # silently dropping the real reply to what the user actually typed.
+                print("(agent is greeting...)")
+                pump()
+
+            print("Type a message and press Enter. Blank line (or 'exit') ends the session.")
+
             while True:
                 prompt = input("You:  ").strip()
                 if not prompt or prompt.lower() in ("exit", "quit"):
@@ -213,7 +251,12 @@ def _run_text_conversation(client: AIProjectClient, agent_name: str) -> Optional
         player.close()
 
     detail = "played" if played else "received"
+    output_bytes = player.bytes_received
     print(f"(streamed {audio_delta_count} audio chunks, {detail} {player.seconds:.2f}s of audio)")
+    print(
+        f"Output audio: format=PCM16, sample_rate={_SAMPLE_RATE} Hz, channels=1, "
+        f"duration={player.seconds:.2f}s, size={_format_size(output_bytes)}"
+    )
     if not played:
         print("(install pyaudio to hear the reply: pip install pyaudio)")
     return conversation_id
@@ -261,20 +304,20 @@ def text_conversation() -> None:
             definition = generated.versions.latest.definition  # type: ignore[attr-defined]
 
             # 2) Publish a new version with conversation persistence enabled (`store=True`) so the
-            #    session's conversation can be fetched back by id afterward.
+            #    session's conversation can be fetched back by id afterward. Reuse the generated
+            #    definition as-is (instead of reconstructing a new one from a few fields) so audio,
+            #    greeting, tools, and any other service-selected settings are preserved.
+            definition.store = True  # type: ignore[attr-defined]
             project_client.agents.create_version(
                 agent_name=agent_name,
-                definition=VoiceAgentDefinition(
-                    model_type=definition.model_type,  # type: ignore[attr-defined]
-                    model=definition.model,  # type: ignore[attr-defined]
-                    instructions=definition.instructions,  # type: ignore[attr-defined]
-                    store=True,
-                ),
+                definition=definition,
             )
 
             # 3) Hold the realtime conversation against the freshly created agent.
             print(f"Starting realtime session with agent: {agent_name}")
-            conversation_id = _run_text_conversation(project_client, agent_name)
+            conversation_id = _run_text_conversation(
+                project_client, agent_name, has_greeting=definition.greeting is not None  # type: ignore[attr-defined]
+            )
 
             # 4) Fetch the persisted conversation back by id.
             if conversation_id:

@@ -19,7 +19,6 @@ from ._operations import ConnectionsOperations  # type: ignore
 from ._operations import DatasetsOperations  # type: ignore
 from ._operations import DeploymentsOperations  # type: ignore
 from ._operations import IndexesOperations  # type: ignore
-from ._operations import VoiceAgentWebSocketOperations  # type: ignore
 from ._operations import AgentEndpointConversationsOperations  # type: ignore
 from ._operations import AgentTelephonyOperations  # type: ignore
 from ._operations import ToolboxesOperations  # type: ignore
@@ -36,7 +35,6 @@ __all__ = [
     "DatasetsOperations",
     "DeploymentsOperations",
     "IndexesOperations",
-    "VoiceAgentWebSocketOperations",
     "AgentEndpointConversationsOperations",
     "AgentTelephonyOperations",
     "ToolboxesOperations",
