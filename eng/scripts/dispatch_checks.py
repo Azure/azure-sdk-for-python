@@ -64,7 +64,6 @@ COVERAGE_PRODUCING_CHECKS = {
     "whl_no_aio",
     "sdist",
     "devtest",
-    "optional",
 }
 SHARED_RESTORE_ENV = "__shared_restore__"
 
