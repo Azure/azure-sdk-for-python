@@ -415,6 +415,8 @@ class FileChunkUploader(_ChunkUploader):
 class SubStream(IOBase):
 
     def __init__(self, wrapped_stream, stream_begin_index, length, lockObj):
+        super(SubStream, self).__init__()
+
         # Python 2.7: file-like objects created with open() typically support seek(), but are not
         # derivations of io.IOBase and thus do not implement seekable().
         # Python > 3.0: file-like objects created with open() are derived from io.IOBase.
@@ -438,13 +440,12 @@ class SubStream(IOBase):
         )
         self._current_buffer_start = 0
         self._current_buffer_size = 0
-        super(SubStream, self).__init__()
 
     def __len__(self):
         return self._length
 
     def close(self):
-        if self._buffer:
+        if hasattr(self, "_buffer"):
             self._buffer.close()
         self._wrapped_stream = None
         IOBase.close(self)
