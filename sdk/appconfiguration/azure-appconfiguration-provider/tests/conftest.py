@@ -1,7 +1,6 @@
 import logging
 import os
 import time
-from urllib.parse import urlparse
 
 from devtools_testutils import (
     add_general_regex_sanitizer,
@@ -105,16 +104,16 @@ def add_sanitizers(test_proxy):
         (
             os.environ.get(
                 "APPCONFIGURATION_KEYVAULT_SECRET_URL2",
-                "https://sanitized.vault.azure.net/secrets/fake-secret2/",
+                "https://sanitized.vault.azure.net/secrets/SecondSecret/",
             ),
-            "https://sanitized.vault.azure.net/secrets/fake-secret2/",
+            "https://sanitized.vault.azure.net/secrets/SecondSecret/",
         ),
         (
             os.environ.get(
                 "APPCONFIGURATION_KEYVAULT_SECRET_URL",
-                "https://sanitized.vault.azure.net/secrets/fake-secret/",
+                "https://sanitized.vault.azure.net/secrets/TestSecret/",
             ),
-            "https://sanitized.vault.azure.net/secrets/fake-secret/",
+            "https://sanitized.vault.azure.net/secrets/TestSecret/",
         ),
     )
 
@@ -126,12 +125,12 @@ def add_sanitizers(test_proxy):
         value="sanitized",
         regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "https://sanitized.azconfig.io"),
     )
+    add_uri_string_sanitizer()
     for target, value in key_vault_references:
         target = target.rstrip("/") + "/"
         value = value.rstrip("/") + "/"
-        add_uri_string_sanitizer(target=urlparse(target).path, value=urlparse(value).path)
+        add_uri_string_sanitizer(target=target, value=value)
         add_general_string_sanitizer(target=target, value=value)
-    add_uri_string_sanitizer()
     add_remove_header_sanitizer(headers="Correlation-Context")
 
     add_general_regex_sanitizer(value="api-version=1970-01-01", regex="api-version=.+")
