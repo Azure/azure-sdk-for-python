@@ -173,9 +173,7 @@ def test_custom_hooks(environ, get_token_method):
             "token_type": "Bearer",
         }
     )
-    transport = validating_transport(
-        requests=[Request()] * 2, responses=[expected_response] * 2
-    )
+    transport = validating_transport(requests=[Request()] * 2, responses=[expected_response] * 2)
 
     with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
         credential = ManagedIdentityCredential(
@@ -213,9 +211,7 @@ def test_tenant_id(environ, get_token_method):
             "token_type": "Bearer",
         }
     )
-    transport = validating_transport(
-        requests=[Request()] * 2, responses=[expected_response] * 2
-    )
+    transport = validating_transport(requests=[Request()] * 2, responses=[expected_response] * 2)
 
     with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
         credential = ManagedIdentityCredential(
@@ -265,9 +261,7 @@ def test_cloud_shell(get_token_method):
     )
 
     with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}):
-        token = getattr(
-            ManagedIdentityCredential(transport=transport), get_token_method
-        )(scope)
+        token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
         assert token.token == expected_token
         assert abs(token.expires_on - expires_on) <= 1
 
@@ -306,9 +300,7 @@ def test_cloud_shell_tenant_id(get_token_method):
         kwargs = {"tenant_id": "tenant_id"}
         if get_token_method == "get_token_info":
             kwargs = {"options": kwargs}
-        token = getattr(
-            ManagedIdentityCredential(transport=transport), get_token_method
-        )(scope, **kwargs)
+        token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope, **kwargs)
         assert token.token == expected_token
         assert abs(token.expires_on - expires_on) <= 1
 
@@ -365,9 +357,7 @@ def test_azure_ml(get_token_method):
         },
         clear=True,
     ):
-        token = getattr(
-            ManagedIdentityCredential(transport=transport), get_token_method
-        )(scope)
+        token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
         assert token.token == expected_token
         assert abs(token.expires_on - expires_on) <= 1
 
@@ -432,9 +422,7 @@ def test_azure_ml_tenant_id(get_token_method):
         kwargs = {"tenant_id": "tenant_id"}
         if get_token_method == "get_token_info":
             kwargs = {"options": kwargs}
-        token = getattr(
-            ManagedIdentityCredential(transport=transport), get_token_method
-        )(scope, **kwargs)
+        token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope, **kwargs)
         assert token.token == expected_token
         assert abs(token.expires_on - expires_on) <= 1
 
@@ -484,15 +472,11 @@ def test_cloud_shell_identity_config(get_token_method):
         {EnvironmentVariables.MSI_ENDPOINT: endpoint},
         clear=True,
     ):
-        token = getattr(
-            ManagedIdentityCredential(transport=transport), get_token_method
-        )(scope)
+        token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
         assert token.token == expected_token
         assert abs(token.expires_on - expires_on) <= 1
 
-        credential = ManagedIdentityCredential(
-            transport=transport, identity_config={param_name: param_value}
-        )
+        credential = ManagedIdentityCredential(transport=transport, identity_config={param_name: param_value})
         token = getattr(credential, get_token_method)(scope)
         assert token.token == expected_token
         assert abs(token.expires_on - expires_on) <= 1
@@ -538,9 +522,7 @@ def test_prefers_app_service_2019_08_01(get_token_method):
         EnvironmentVariables.MSI_SECRET: secret,
     }
     with mock.patch.dict("os.environ", environ, clear=True):
-        token = getattr(
-            ManagedIdentityCredential(transport=transport), get_token_method
-        )(scope)
+        token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
     assert token.token == access_token
     assert abs(token.expires_on - expires_on) <= 1
 
@@ -588,9 +570,7 @@ def test_app_service_2019_08_01(get_token_method):
         },
         clear=True,
     ):
-        token = getattr(
-            ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method
-        )(scope)
+        token = getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(scope)
         assert token.token == access_token
         assert abs(token.expires_on - expires_on) <= 1
 
@@ -641,9 +621,7 @@ def test_app_service_2019_08_01_tenant_id(get_token_method):
         kwargs = {"tenant_id": "tenant_id"}
         if get_token_method == "get_token_info":
             kwargs = {"options": kwargs}
-        token = getattr(
-            ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method
-        )(scope, **kwargs)
+        token = getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(scope, **kwargs)
         assert token.token == access_token
         assert abs(token.expires_on - expires_on) <= 1
 
@@ -754,9 +732,7 @@ def test_imds(get_token_method):
 
     # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
     with mock.patch.dict("os.environ", clear=True):
-        token = getattr(
-            ManagedIdentityCredential(transport=transport), get_token_method
-        )(scope)
+        token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
     assert token.token == expected_token
 
 
@@ -795,9 +771,7 @@ def test_imds_tenant_id(get_token_method):
         kwargs = {"tenant_id": "tenant_id"}
         if get_token_method == "get_token_info":
             kwargs = {"options": kwargs}
-        token = getattr(
-            ManagedIdentityCredential(transport=transport), get_token_method
-        )(scope, **kwargs)
+        token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope, **kwargs)
     assert token.token == expected_token
 
 
@@ -908,17 +882,11 @@ def test_client_id_none(get_token_method):
         if request.data:
             assert "client_id" not in request.body  # Cloud Shell
         return mock_response(
-            json_payload=(
-                build_aad_response(
-                    access_token=expected_access_token, expires_on="42", resource=scope
-                )
-            )
+            json_payload=(build_aad_response(access_token=expected_access_token, expires_on="42", resource=scope))
         )
 
     # IMDS
-    credential = ManagedIdentityCredential(
-        client_id=None, transport=mock.Mock(send=send)
-    )
+    credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
     token = getattr(credential, get_token_method)(scope)
     assert token.token == expected_access_token
 
@@ -928,9 +896,7 @@ def test_client_id_none(get_token_method):
         {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"},
         clear=True,
     ):
-        credential = ManagedIdentityCredential(
-            client_id=None, transport=mock.Mock(send=send)
-        )
+        credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
         token = getattr(credential, get_token_method)(scope)
     assert token.token == expected_access_token
 
@@ -1165,9 +1131,7 @@ def test_token_exchange(tmpdir, get_token_method):
     )
 
     with mock.patch.dict("os.environ", mock_environ, clear=True):
-        credential = ManagedIdentityCredential(
-            client_id=nondefault_client_id, transport=transport
-        )
+        credential = ManagedIdentityCredential(client_id=nondefault_client_id, transport=transport)
         token = getattr(credential, get_token_method)(scope)
     assert token.token == access_token
 
@@ -1201,9 +1165,7 @@ def test_token_exchange(tmpdir, get_token_method):
         with pytest.raises(ValueError):
             ManagedIdentityCredential()
 
-        credential = ManagedIdentityCredential(
-            client_id=nondefault_client_id, transport=transport
-        )
+        credential = ManagedIdentityCredential(client_id=nondefault_client_id, transport=transport)
         token = getattr(credential, get_token_method)(scope)
     assert token.token == access_token
 
@@ -1276,17 +1238,11 @@ def test_validate_identity_config():
     with pytest.raises(ValueError):
         ManagedIdentityCredential(identity_config={"object_id": "bar"}, client_id="bar")
     with pytest.raises(ValueError):
-        ManagedIdentityCredential(
-            identity_config={"resource_id": "bar"}, client_id="bar"
-        )
+        ManagedIdentityCredential(identity_config={"resource_id": "bar"}, client_id="bar")
     with pytest.raises(ValueError):
-        ManagedIdentityCredential(
-            identity_config={"object_id": "bar", "resource_id": "foo"}
-        )
+        ManagedIdentityCredential(identity_config={"object_id": "bar", "resource_id": "foo"})
     with pytest.raises(ValueError):
-        ManagedIdentityCredential(
-            identity_config={"object_id": "bar", "client_id": "foo"}
-        )
+        ManagedIdentityCredential(identity_config={"object_id": "bar", "client_id": "foo"})
 
 
 def test_validate_identity_config_output():
@@ -1321,9 +1277,7 @@ def test_validate_cloud_shell_credential():
 
 
 def test_log(caplog):
-    with caplog.at_level(
-        logging.INFO, logger="azure.identity._credentials.managed_identity"
-    ):
+    with caplog.at_level(logging.INFO, logger="azure.identity._credentials.managed_identity"):
         ManagedIdentityCredential()
         assert "ManagedIdentityCredential will use IMDS" in caplog.text
 

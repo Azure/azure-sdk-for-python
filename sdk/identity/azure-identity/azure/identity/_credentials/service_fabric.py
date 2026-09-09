@@ -35,9 +35,7 @@ class ServiceFabricCredential(MsalManagedIdentityClient):
                 UserWarning,
                 stacklevel=3,
             )
-        return (
-            requests.Session()
-        )  # Service Fabric requires requests.Session for MSAL >= 1.38.0, temporary workaround
+        return requests.Session()  # Service Fabric requires requests.Session for MSAL >= 1.38.0, temporary workaround
 
     def get_token(
         self,
@@ -50,9 +48,7 @@ class ServiceFabricCredential(MsalManagedIdentityClient):
             raise ClientAuthenticationError(message=SERVICE_FABRIC_ERROR_MESSAGE)
         return super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
-    def get_token_info(
-        self, *scopes: str, options: Optional[TokenRequestOptions] = None
-    ) -> AccessTokenInfo:
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
         if self._settings.get("client_id") or self._settings.get("identity_config"):
             raise ClientAuthenticationError(message=SERVICE_FABRIC_ERROR_MESSAGE)
         return super().get_token_info(*scopes, options=options)
@@ -78,7 +74,5 @@ def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
     return HttpRequest(
         "GET",
         url,
-        params=dict(
-            {"api-version": "2019-07-01-preview", "resource": scope}, **identity_config
-        ),
+        params=dict({"api-version": "2019-07-01-preview", "resource": scope}, **identity_config),
     )
