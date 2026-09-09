@@ -2,7 +2,7 @@
 > [!IMPORTANT]
 > We strongly recommend that customers use at least version 4.16.3 of `azure-cosmos`.
 
-### 4.16.5 (Unreleased)
+### 4.17.0 (Unreleased)
 
 #### Features Added
 * Added the `enable_compact_utf8_item_writes` client option. Set it to `True` to reduce item write request sizes by

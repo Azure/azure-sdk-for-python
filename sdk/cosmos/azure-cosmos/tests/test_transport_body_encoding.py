@@ -218,7 +218,7 @@ class TestCompactBodyReachesTransportIntact(unittest.TestCase):
 
     def test_payload_constants_are_the_intended_characters(self):
         """Guard against this file being rewritten with the wrong encoding,
-        which would leave the tests passing against mojibake instead of the
+        which would leave the tests passing against garbled text instead of the
         characters they are meant to cover."""
         self.assertEqual(_CJK["x"].encode("utf-8"), b"\xe6\x97\xa5\xe6\x9c\xac")
         self.assertEqual(_LATIN1_REPRESENTABLE["x"].encode("utf-8"), b"\xc3\xa9")

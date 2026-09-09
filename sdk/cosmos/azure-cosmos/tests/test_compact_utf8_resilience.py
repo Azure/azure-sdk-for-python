@@ -113,7 +113,7 @@ class TestCompactUtf8Resilience(unittest.TestCase):
 
     def test_transient_retry_reuses_exact_bytes_and_content_length(self):
         """A throttled write must retry with the original UTF-8 bytes and
-        their matching Content-Length instead of reserializing the body."""
+        their matching Content-Length instead of serializing the body again."""
         request = _compact_request()
         attempts = []
 
