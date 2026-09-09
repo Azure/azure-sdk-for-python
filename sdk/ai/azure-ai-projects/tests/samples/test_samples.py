@@ -11,7 +11,6 @@ from devtools_testutils import (
     RecordedTransport,
 )
 from test_base import (
-    agentInsightsServicePreparer,
     fineTuningServicePreparer,
     modelsServicePreparer,
     servicePreparer,
@@ -23,7 +22,8 @@ from sample_executor import (
     get_sample_paths,
     SamplePathPasser,
 )
-from test_samples_helpers import assert_agent_insights_output, get_sample_env_vars
+from test_samples_helpers import get_sample_env_vars
+from agent_insights.sample_test_helpers import agentInsightsServicePreparer, assert_agent_insights_output
 from test_fine_tuning_samples_helpers import get_fine_tuning_sample_env_vars
 
 

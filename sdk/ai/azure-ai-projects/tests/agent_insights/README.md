@@ -4,6 +4,18 @@ This fixture is for SDK maintainers. Customer samples use an existing agent;
 they do not deploy resources or create trace data. Normal PR tests use recorded
 HTTP responses and do not call Azure.
 
+Agent Insights unit tests, sample-output checks, and recording setup live in
+this directory. The shared sample runner remains in `tests/samples/` so existing
+recording paths do not change. The optional Azure deployment files are in
+`resources/`; they are not a general test environment for the package.
+
+From the package directory, run the offline tests and recorded samples with:
+
+```bash
+AZURE_TEST_RUN_LIVE=false python -m pytest -q tests/agent_insights \
+    tests/samples/test_samples.py::TestSamples::test_agent_insights_samples
+```
+
 ## Prepare the environment
 
 Use a subscription and region where the current Agent Insights API is available.
@@ -32,7 +44,7 @@ $model = @{
 
 ./eng/common/TestResources/New-TestResources.ps1 `
     -ServiceDirectory ai `
-    -TestResourcesDirectory sdk/ai/azure-ai-projects `
+    -TestResourcesDirectory sdk/ai/azure-ai-projects/tests/agent_insights/resources `
     -SubscriptionId "<test-subscription-id>" `
     -TestApplicationOid "<test-identity-object-id>" `
     -ResourceGroupName "<disposable-resource-group>" `
@@ -42,9 +54,11 @@ $model = @{
     -OutFile
 ```
 
-The script writes an ignored `.env` file in the package directory. It contains
-the project endpoint, external-agent name, analysis-model name, and telemetry
-resource IDs. Use the same test identity for the following steps, authenticated
+The script writes an ignored `.env` file beside the template in
+`tests/agent_insights/resources/`. It contains the project endpoint,
+external-agent name, analysis-model name, and telemetry resource IDs. Copy those
+settings into the package-level `.env` file without replacing unrelated
+settings. Use the same test identity for the following steps, authenticated
 through Azure CLI or Azure PowerShell.
 
 ### Access to protected trace content

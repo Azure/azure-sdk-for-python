@@ -20,7 +20,7 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError, Resour
 
 @pytest.fixture
 def scheduled_sample(monkeypatch):
-    path = Path(__file__).parents[1] / "samples" / "agent_insights" / "sample_agent_insights_scheduled.py"
+    path = Path(__file__).parents[2] / "samples" / "agent_insights" / "sample_agent_insights_scheduled.py"
     sample = runpy.run_path(str(path))
     monkeypatch.setattr(sample["time"], "sleep", MagicMock())
     return sample
@@ -28,7 +28,7 @@ def scheduled_sample(monkeypatch):
 
 @pytest.fixture
 def on_demand_sample(monkeypatch):
-    path = Path(__file__).parents[1] / "samples" / "agent_insights" / "sample_agent_insights_on_demand.py"
+    path = Path(__file__).parents[2] / "samples" / "agent_insights" / "sample_agent_insights_on_demand.py"
     sample = runpy.run_path(str(path))
     monkeypatch.setattr(sample["time"], "sleep", MagicMock())
     return sample
@@ -354,22 +354,17 @@ def test_on_demand_allows_no_insights_for_customer_data(on_demand_main, capsys):
 
 
 @pytest.mark.parametrize("original_error", [None, RuntimeError("Polling failed"), KeyboardInterrupt()])
-def test_on_demand_reports_cleanup_error_without_replacing_original(on_demand_main, original_error, capsys):
+def test_on_demand_cleanup_error_retains_original_context(on_demand_main, original_error):
     main, operations = on_demand_main
     operations.begin_create_run.return_value.result.side_effect = original_error
     cleanup_error = HttpResponseError("Cleanup failed")
     operations.delete.side_effect = [None, cleanup_error]
 
-    expected_error = original_error if original_error is not None else cleanup_error
-    with pytest.raises(type(expected_error)) as exc_info:
+    with pytest.raises(HttpResponseError) as exc_info:
         main()
 
-    assert exc_info.value is expected_error
-    if original_error is not None:
-        if hasattr(original_error, "add_note"):
-            assert any("Cleanup failed" in note for note in original_error.__notes__)
-        else:
-            assert "Cleanup failed" in capsys.readouterr().out
+    assert exc_info.value is cleanup_error
+    assert exc_info.value.__context__ is original_error
     assert operations.delete.call_args_list == [call("old-monitor"), call("new-monitor")]
 
 
@@ -392,25 +387,20 @@ def test_on_demand_cleanup_timeout_is_reported(on_demand_main, cleanup_stage, ca
     active_runs = [SimpleNamespace(id="run-test", status="in_progress")]
     operations.list_runs.side_effect = ([[]] if cleanup_stage == "after" else []) + [active_runs] * 30
 
-    expected_error = TimeoutError if cleanup_stage == "before" else RuntimeError
-    with pytest.raises(expected_error) as exc_info:
+    with pytest.raises(TimeoutError, match="could not be deleted") as exc_info:
         main()
 
     if cleanup_stage == "before":
         operations.create.assert_not_called()
         operations.delete.assert_not_called()
     else:
-        assert exc_info.value is polling_error
-        if hasattr(polling_error, "add_note"):
-            assert any("could not be deleted" in note for note in polling_error.__notes__)
-        else:
-            assert "could not be deleted" in capsys.readouterr().out
+        assert exc_info.value.__context__ is polling_error
         operations.delete.assert_called_once_with("old-monitor")
     assert "Deleted monitor `new-monitor`." not in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("cleanup_error", [None, ResourceNotFoundError("Cleanup failed")])
-def test_scheduled_sample_cleans_up_after_configuration_error(scheduled_sample, monkeypatch, cleanup_error, capsys):
+def test_scheduled_sample_cleans_up_after_configuration_error(scheduled_sample, monkeypatch, cleanup_error):
     main = scheduled_sample["main"]
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list.return_value = [SimpleNamespace(id="old-monitor")]
@@ -427,14 +417,12 @@ def test_scheduled_sample_cleans_up_after_configuration_error(scheduled_sample, 
     monkeypatch.setenv("FOUNDRY_AGENT_NAME", "test-agent")
     monkeypatch.setenv("FOUNDRY_MODEL_NAME", "test-model")
 
-    with pytest.raises(RuntimeError, match="Schedule configuration failed") as exc_info:
+    expected_error = cleanup_error if cleanup_error is not None else operations.update.side_effect
+    with pytest.raises(type(expected_error)) as exc_info:
         main()
-    assert exc_info.value is operations.update.side_effect
+    assert exc_info.value is expected_error
     if cleanup_error is not None:
-        if hasattr(exc_info.value, "add_note"):
-            assert any("Cleanup failed" in note for note in exc_info.value.__notes__)
-        else:
-            assert "Cleanup failed" in capsys.readouterr().out
+        assert exc_info.value.__context__ is operations.update.side_effect
 
     assert cleanup.call_args_list == [
         call(operations, "old-monitor", "Existing"),

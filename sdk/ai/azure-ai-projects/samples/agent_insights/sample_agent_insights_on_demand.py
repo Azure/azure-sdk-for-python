@@ -97,7 +97,6 @@ def main() -> None:
             _delete_monitor(monitor_operations, existing_monitor.id, "Existing")
 
         monitor = None
-        original_error: BaseException | None = None
         try:
             # Keep scheduling disabled because this sample starts one explicit run.
             monitor = monitor_operations.create(
@@ -192,21 +191,9 @@ def main() -> None:
                 print(f"Insight status after reopening: {reopened_status}")
             else:
                 print("No insights were available to demonstrate lifecycle updates.")
-        except BaseException as error:
-            original_error = error
-            raise
         finally:
             if monitor is not None:
-                try:
-                    _delete_monitor(monitor_operations, monitor.id)
-                except Exception as cleanup_error:
-                    if original_error is None:
-                        raise
-                    message = f"Monitor cleanup also failed: {cleanup_error!r}"
-                    if hasattr(original_error, "add_note"):
-                        original_error.add_note(message)
-                    else:
-                        print(message)  # Python 3.10 does not support exception notes.
+                _delete_monitor(monitor_operations, monitor.id)
 
 
 def _delete_monitor(operations: BetaAgentInsightMonitorsOperations, monitor_id: str, label: str = "") -> None:

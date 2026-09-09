@@ -6,6 +6,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from agent_insights import sanitizers
+
 
 @pytest.fixture(name="sanitizer_calls")
 def _sanitizer_calls(monkeypatch, sanitized_values, sanitizer_configuration):
@@ -24,7 +26,7 @@ def _sanitizer_calls(monkeypatch, sanitized_values, sanitizer_configuration):
             "remove_batch_sanitizers",
         )
     }
-    with patch.dict(sanitizer_configuration.__globals__, mocks):
+    with patch.dict(sanitizer_configuration.__globals__, mocks), patch.dict(sanitizers.__dict__, mocks):
         sanitizer_configuration(None, sanitized_values)
     return mocks
 

@@ -5,7 +5,7 @@
 
 import pytest
 
-from test_samples_helpers import assert_agent_insights_output
+from agent_insights.sample_test_helpers import assert_agent_insights_output
 
 
 ON_DEMAND_OUTPUT = [

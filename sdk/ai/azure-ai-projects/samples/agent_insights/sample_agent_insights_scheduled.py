@@ -84,7 +84,6 @@ def main() -> None:
             _delete_monitor(monitor_operations, existing_monitor.id, "Existing")
 
         monitor = None
-        original_error: BaseException | None = None
         try:
             monitor = monitor_operations.create(
                 AgentInsightMonitorCreate(
@@ -112,21 +111,9 @@ def main() -> None:
             print(f"Scheduled monitor enabled: {scheduled_monitor.enabled}")
             print(f"Run interval hours: {scheduled_monitor.run_interval_hours}")
             print(f"Next scheduled run: {next_run.isoformat()}")
-        except BaseException as error:
-            original_error = error
-            raise
         finally:
             if monitor is not None:
-                try:
-                    _delete_monitor(monitor_operations, monitor.id, "Scheduled")
-                except Exception as cleanup_error:
-                    if original_error is None:
-                        raise
-                    message = f"Monitor cleanup also failed: {cleanup_error!r}"
-                    if hasattr(original_error, "add_note"):
-                        original_error.add_note(message)
-                    else:
-                        print(message)  # Python 3.10 does not support exception notes.
+                _delete_monitor(monitor_operations, monitor.id, "Scheduled")
 
 
 def _delete_monitor(operations: BetaAgentInsightMonitorsOperations, monitor_id: str, label: str) -> None:
