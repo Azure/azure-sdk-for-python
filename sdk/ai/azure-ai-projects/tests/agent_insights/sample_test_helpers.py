@@ -16,7 +16,10 @@ agentInsightsServicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
     foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    foundry_agent_name="sanitized-agent-name",
+    agent_insights_application_insights_resource_id=(
+        "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group"
+        "/providers/Microsoft.Insights/components/sanitized-application-insights"
+    ),
     foundry_model_name="sanitized-model-deployment-name",
 )
 
@@ -27,8 +30,11 @@ def assert_agent_insights_output(sample_path: str, print_output_calls: list[str]
     sample_name = os.path.basename(sample_path)
     scheduled = sample_name == "sample_agent_insights_scheduled.py"
     assert scheduled or sample_name == "sample_agent_insights_on_demand.py", sample_name
+    agent = re.search(r"^Created external agent `([^`]+)` \(version=[^)]+\)\.$", output, re.MULTILINE)
+    assert agent is not None, "The sample did not create its own external agent."
     created = re.search(r"^Created (?:disabled )?monitor `([^`]+)` for agent `([^`]+)`", output, re.MULTILINE)
     assert created is not None, "The sample did not create a monitor for an agent."
+    assert created.group(2) == agent.group(1), "The monitor must belong to the new external agent."
     monitor_id = re.escape(created.group(1))
     label = "scheduled monitor" if scheduled else "monitor"
     assert re.search(
@@ -36,6 +42,9 @@ def assert_agent_insights_output(sample_path: str, print_output_calls: list[str]
         output,
         re.MULTILINE,
     ), "The sample did not clean up its new monitor."
+    deleted_agent = f"Deleted external agent `{agent.group(1)}`."
+    assert deleted_agent in output.splitlines(), "The sample did not clean up its new external agent."
+    assert output.index(f"Deleted {label} `") < output.index(deleted_agent), "Delete the monitor before its agent."
 
     if scheduled:
         assert re.search(r"^Scheduled monitor enabled: True$", output, re.MULTILINE)

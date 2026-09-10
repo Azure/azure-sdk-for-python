@@ -1,159 +1,108 @@
-# Agent Insights recording fixture
+# Agent Insights samples and tests
 
-This fixture is for SDK maintainers. Customer samples use an existing agent;
-they do not deploy resources or create trace data. Normal PR tests use recorded
-HTTP responses and do not call Azure.
+Both samples are self-contained. Each invocation registers a uniquely named
+temporary external agent, emits eight fictional defect traces and two control
+traces, and waits for all root, chat, and tool spans to reach Application Insights.
+No real tool or inference call produces the seed data. The on-demand sample
+then runs analysis, reads results, and resolves an insight. The scheduled sample
+sets a six-hour interval and reads the next run time; it does not wait for analysis.
 
-Agent Insights unit tests, sample-output checks, and recording setup live in
-this directory. The shared sample runner remains in `tests/samples/` so existing
-recording paths do not change. The optional Azure deployment files are in
-`resources/`; they are not a general test environment for the package.
-Their filenames deliberately differ from `test-resources.bicep` and
-`test-resources-post.ps1` so the standard live-test pipeline does not discover
-or deploy them.
+The external agent is a metadata registration, not a deployed agent process.
+Each sample uses a local tracing provider, flushes it, and shuts it down without
+changing global telemetry configuration.
 
-From the package directory, run the offline tests and recorded samples with:
+## Existing-resource prerequisites
 
-```bash
-AZURE_TEST_RUN_LIVE=false python -m pytest -q tests/agent_insights \
-    tests/samples/test_samples.py::TestSamples::test_agent_insights_samples
+Use a project in a region where Agent Insights is available, with:
+
+- A connected Application Insights resource.
+- A suitable analysis-model deployment accessible to the project.
+- An identity that can create/delete agents and monitors, read the connected
+  telemetry configuration, ingest telemetry, and query Application Insights.
+- A project managed identity with model access and access to query trace content.
+  When content is stored in the protected `AppGenAIContent` table, this includes
+  **Privileged Monitoring Data Reader** at the Application Insights resource scope
+  in addition to the required read/query access.
+
+The samples do not provision resources, models, or role assignments, and do not
+wait for permission changes to propagate. Authentication and query failures
+surface immediately. Missing prerequisites must be resolved before execution.
+
+Set these values in the environment or the ignored package `.env` file:
+
+```text
+FOUNDRY_PROJECT_ENDPOINT=<existing-project-endpoint>
+FOUNDRY_MODEL_NAME=<analysis-model-deployment-name>
+AGENT_INSIGHTS_APPLICATION_INSIGHTS_RESOURCE_ID=<connected-application-insights-resource-id>
 ```
 
-## Prepare the environment
+Do not supply an existing agent name or OpenTelemetry agent ID. The samples get
+the connection string through the public project telemetry client and do not
+print it. Each unique agent ID also isolates its trace batch.
 
-Use a subscription and region where the current Agent Insights API is available.
-The deployment identity must be able to create Foundry and telemetry resources,
-assign roles, and read keys from the existing analysis-model account. The template
-creates Foundry User and Monitoring Reader assignments by default. Protected
-trace content requires the additional assignment described below.
-
-An existing analysis-model deployment is required. The template defaults to
-GPT-5.4, model version `2026-03-05`, and the `GlobalStandard` SKU.
-`resources/validate-recording-model.ps1` checks those values with the authenticated Azure PowerShell
-context. It does not install Python packages or run the fixture.
-
-This environment is deployed explicitly by a maintainer, not through
-`New-TestResources.ps1`. From the repository root, supply your own resource
-names and IDs; do not commit them:
-
-```powershell
-$ErrorActionPreference = "Stop"
-Connect-AzAccount
-Set-AzContext -SubscriptionId "<test-subscription-id>"
-
-$resourceGroup = "<disposable-resource-group>"
-$location = "<supported-region>"
-$resourceDirectory = "sdk/ai/azure-ai-projects/tests/agent_insights/resources"
-$model = @{
-    analysisModelSubscriptionId = "<model-subscription-id>"
-    analysisModelResourceGroupName = "<model-resource-group>"
-    analysisModelAccountName = "<model-account>"
-    analysisModelDeploymentName = "<model-deployment>"
-}
-
-& "$resourceDirectory/validate-recording-model.ps1" -AdditionalParameters $model
-
-$parameters = $model.Clone()
-$parameters.testApplicationOid = "<test-identity-object-id>"
-$parameters.baseName = "<unique-test-name>"
-$parameters.location = $location
-
-New-AzResourceGroup -Name $resourceGroup -Location $location | Out-Null
-$deployment = New-AzResourceGroupDeployment `
-    -Name "agent-insights-recording" `
-    -ResourceGroupName $resourceGroup `
-    -TemplateFile "$resourceDirectory/recording-resources.bicep" `
-    -TemplateParameterObject $parameters
-
-$deployment.Outputs.GetEnumerator() | ForEach-Object {
-    "$($_.Key)=$($_.Value.Value)"
-}
-```
-
-The final command prints settings for the project endpoint, external-agent name,
-analysis-model name, and telemetry resource IDs. Copy those settings into the
-ignored package-level `.env` file without replacing unrelated settings. Use the
-same test identity for the following steps, authenticated through Azure CLI or
-Azure PowerShell.
-
-### Access to protected trace content
-
-If the connected Application Insights resource uses the protected
-`AppGenAIContent` table, grant **Privileged Monitoring Data Reader** to the
-Foundry project's managed identity at the **Application Insights resource**
-scope. Use the project's principal ID, not the parent account's identity or the
-identity running the sample. Keep its existing read/query role: Monitoring
-Reader and Privileged Monitoring Data Reader provide different permissions.
-
-An administrator authorized to create role assignments at that resource can run:
-
-```bash
-az role assignment create \
-    --assignee-object-id "<project-managed-identity-principal-id>" \
-    --assignee-principal-type ServicePrincipal \
-    --role "Privileged Monitoring Data Reader" \
-    --scope "<application-insights-resource-id>"
-```
-
-Use the resource scope, not the subscription scope. If the command fails with
-`Microsoft.Authorization/roleAssignments/write`, an authorized role
-administrator must apply it, or the operator must activate an existing eligible
-administrative role. Allow the assignment to propagate before retrying.
-
-This grant lets the service read protected message/tool content; it does not
-grant the maintainer's own identity access to that content. Trace spans can be
-queryable while their referenced protected content is unavailable. A query
-returning no content rows does not by itself distinguish missing ingestion from
-missing access.
-
-## Create trace data and record the samples
-
-From `sdk/ai/azure-ai-projects`, with a Python 3.10+ virtual environment active:
+From `sdk/ai/azure-ai-projects`, with Python 3.10+:
 
 ```bash
 python -m pip install -e . -r dev_requirements.txt
-python tests/agent_insights/recording_fixture.py
+python samples/agent_insights/sample_agent_insights_on_demand.py
+python samples/agent_insights/sample_agent_insights_scheduled.py
 ```
 
-The helper creates or reuses one external-agent version. It emits eight
-fictional destructive-tool traces and two non-destructive control traces that
-decline to guess workspace status without a read tool. It waits until all ten
-traces, including their chat and tool spans, are queryable. No tool is actually
-executed. Run this helper again before refreshing recordings; the on-demand
-sample analyzes a recent three-hour window.
+Ingestion is checked for up to five minutes. A successful sample should normally
+take less than ten minutes, but ingestion and analysis depend on service load.
+This is not a global execution deadline.
 
-Record both samples:
+## Cleanup
+
+Both samples use `finally`, including after setup or analysis failure. They only
+delete resources they created: first disable the monitor, cancel any active
+runs, and delete the monitor; then delete the external agent. Cleanup checks at
+most 12 times with 10 seconds between checks. Enabling a schedule can start a run
+immediately, so scheduled cleanup may need to cancel that run.
+
+If monitor cleanup fails, the agent is retained to preserve the dependency order.
+Resource identifiers are printed for manual cleanup. Service failures, missing
+permissions, or forced process termination can leave resources behind. Later
+invocations use new names and do not change those leftovers.
+
+Deleting the monitor and external-agent registration does not purge ingested
+telemetry. The fictional traces remain under normal Application Insights retention.
+
+## Tests and recording refresh
+
+Run the focused offline unit tests from the package directory:
+
+```bash
+AZURE_TEST_RUN_LIVE=false python -m pytest -q tests/agent_insights
+```
+
+The recorded entry points remain in `tests/samples/test_samples.py`, using the
+existing sample executor, Test Proxy, and playback sleep fixture. Output checks
+verify agent/monitor ownership and deletion, successful on-demand analysis and
+resolution, and the six-hour schedule without a second model call.
+
+**The existing recordings predate this lifecycle. Their refresh is deferred.**
+They do not yet cover registration, connection lookup, export, ingestion queries,
+or agent deletion. Do not treat old playback as proof of the redesigned samples.
+No asset pointer is changed in this iteration.
+
+When a maintainer refreshes recordings against the prepared existing resources:
 
 ```bash
 AZURE_TEST_RUN_LIVE=true python -m pytest -q \
     tests/samples/test_samples.py::TestSamples::test_agent_insights_samples
 ```
 
-The on-demand recording must show a successful run with at least one analyzed
-trace and one insight, then a resolved insight. The scheduled
-sample checks the schedule without waiting for analysis. The selected agent
-must not already have a monitor. On success, the on-demand sample deletes its
-monitor; errors or interruptions leave it for manual cleanup. The scheduled
-sample uses `finally` to disable scheduling, cancel active runs, and delete
-only its own monitor. Cleanup checks at most 12 times, waiting 10 seconds
-between checks. Enabling schedules the first occurrence for now, so a run may
-already be active during cleanup.
-
-Tests check these outcomes directly from the sample output. They do not call a
-second model or require Code Interpreter to validate the samples.
-
-Review the recordings for secrets and live identifiers before publishing:
-
-```bash
-python ../../../scripts/manage_recordings.py locate
-python ../../../scripts/manage_recordings.py push
-python -m pytest -q tests/samples/test_samples.py::TestSamples::test_agent_insights_samples
-```
-
-The last command must run with `AZURE_TEST_RUN_LIVE` unset or set to `false`.
-Commit the updated `assets.json`, not the `.env` file. Delete the disposable
-resource group when finished. This removes the fixture agent and telemetry
-resources; the external analysis-model account is not part of that group.
+No separate provisioning fixture is needed. Record both complete lifecycles and
+check all exporter traffic, including background work, routes through Test Proxy.
+Inspect recordings for secrets and live identifiers, including connection
+strings, resource IDs, generated agent names, and telemetry payloads. Then publish
+with the normal repository recording workflow and replay with
+`AZURE_TEST_RUN_LIVE=false`. Playback must not need Azure credentials or send
+telemetry to Azure.
 
 Repository recording guide:
 https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#update-test-recordings
+
+SDK design guidance:
+https://azure.github.io/azure-sdk/python_design.html
