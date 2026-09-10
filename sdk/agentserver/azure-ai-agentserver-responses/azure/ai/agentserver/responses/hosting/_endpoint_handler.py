@@ -13,6 +13,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextvars
 import logging
+import os
 import threading
 from typing import TYPE_CHECKING, Any, cast
 
@@ -24,7 +25,9 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
     FoundryAgentRequestContext,
     flush_spans,
+    flush_spans_async,
     reset_request_context,
+    schedule_flush_spans,
     set_request_context,
 )
 from azure.ai.agentserver.core.tasks import (
@@ -949,11 +952,26 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             _conversation_id_var.reset(cid_token)
             _streaming_var.reset(str_token)
             reset_request_context(platform_ctx_token)
-            # Flush pending spans before the response is sent.
-            # BatchSpanProcessor exports on a timer; in hosted sandboxes
-            # the platform may freeze the process after the HTTP response,
-            # losing any buffered spans (e.g. LangGraph per-node spans).
-            flush_spans()
+            # Flush pending spans before the process may be frozen.
+            # ``force_flush`` blocks the calling thread until the exporter
+            # drains; doing that inline on this ``async`` handler blocks the
+            # event loop and serialises concurrent requests behind one export.
+            # AGENTSERVER_FLUSH_MODE selects the strategy:
+            #   "async" (default) -> await flush_spans_async(): off the event
+            #                        loop; same durability, no head-of-line
+            #                        blocking under concurrency.
+            #   "background"       -> schedule_flush_spans(): return the response
+            #                        first, flush in the background. Lowest
+            #                        latency, but requires the platform to grant
+            #                        a brief drain window before freezing.
+            #   "sync"             -> flush_spans(): legacy blocking behaviour.
+            _flush_mode = os.environ.get("AGENTSERVER_FLUSH_MODE", "async").lower()
+            if _flush_mode == "sync":
+                flush_spans()
+            elif _flush_mode == "background":
+                schedule_flush_spans()
+            else:
+                await flush_spans_async()
             try:
                 _otel_context.detach(baggage_token)
             except ValueError:

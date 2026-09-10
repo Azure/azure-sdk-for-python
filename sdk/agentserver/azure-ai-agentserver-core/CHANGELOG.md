@@ -4,6 +4,12 @@
 
 ### Features Added
 
+- Added `flush_spans_async`, a non-blocking variant of `flush_spans` that
+  offloads the blocking `TracerProvider.force_flush` to a worker thread so it
+  does not stall the asyncio event loop, and `schedule_flush_spans`, a
+  fire-and-forget helper that flushes in the background without delaying the
+  caller.
+
 ### Breaking Changes
 
 ### Bugs Fixed

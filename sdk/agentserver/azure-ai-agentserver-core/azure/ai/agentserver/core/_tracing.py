@@ -33,6 +33,7 @@ tracing exporters, and span operations:
 OpenTelemetry is a required dependency — these functions always create
 real spans.  Azure Monitor export is optional (auto-configured by the distro).
 """
+import asyncio  # pylint: disable=do-not-import-asyncio
 from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=import-error
 from contextlib import contextmanager, nullcontext
 import logging
@@ -581,6 +582,66 @@ def flush_spans(timeout_millis: int = 5000) -> None:
             flush(timeout_millis)
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("TracerProvider.force_flush() failed", exc_info=True)
+
+
+# Strong references to in-flight background flush tasks so they are not garbage
+# collected before completing (asyncio only holds weak references to tasks).
+_BG_FLUSH_TASKS: set = set()
+
+
+async def flush_spans_async(timeout_millis: int = 5000) -> None:
+    """Non-blocking variant of :func:`flush_spans`.
+
+    ``TracerProvider.force_flush`` blocks the calling thread until the exporter
+    drains its queue.  On the request hot path -- which runs inside an ``async``
+    handler -- that blocks the asyncio event loop, serialising every concurrent
+    request behind a single export (head-of-line blocking).  Offload the
+    blocking call to the default thread pool so the event loop stays free to
+    send the response and service other requests concurrently.
+
+    No-op when the OTel SDK is not installed or the provider does not support
+    ``force_flush``.
+
+    :param timeout_millis: Maximum time to wait for the flush, in milliseconds.
+        Defaults to 5000 (5 seconds).
+    :type timeout_millis: int
+    """
+    provider = trace.get_tracer_provider()
+    flush = getattr(provider, "force_flush", None)
+    if flush is None:
+        return
+    try:
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, flush, timeout_millis)
+    except Exception:  # pylint: disable=broad-exception-caught
+        logger.debug("TracerProvider.force_flush() (async) failed", exc_info=True)
+
+
+def schedule_flush_spans(timeout_millis: int = 5000) -> None:
+    """Schedule a span flush as a background task and return immediately.
+
+    Unlike :func:`flush_spans` / :func:`flush_spans_async`, this does not delay
+    the caller (i.e. the HTTP response) by the export duration.  A strong
+    reference to the task is retained until it completes so it is not garbage
+    collected.  Falls back to a synchronous flush when no event loop is running.
+
+    .. note::
+       Only safe when the hosting platform guarantees a brief drain window
+       before it suspends/freezes the process after sending a response;
+       otherwise the final request's spans may be lost.
+
+    :param timeout_millis: Maximum time to wait for the flush, in milliseconds.
+        Defaults to 5000 (5 seconds).
+    :type timeout_millis: int
+    """
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        flush_spans(timeout_millis)
+        return
+    task = loop.create_task(flush_spans_async(timeout_millis))
+    _BG_FLUSH_TASKS.add(task)
+    task.add_done_callback(_BG_FLUSH_TASKS.discard)
 
 
 def record_error(span: Any, exc: BaseException) -> None:
