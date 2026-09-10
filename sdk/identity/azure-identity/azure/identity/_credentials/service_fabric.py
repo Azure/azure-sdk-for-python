@@ -4,9 +4,10 @@
 # ------------------------------------
 import functools
 import os
-import requests
 import warnings
 from typing import Dict, Optional, Any
+
+import requests
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.exceptions import ClientAuthenticationError
