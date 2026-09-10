@@ -23,7 +23,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.7.0" python-dotenv
+    pip install "azure-ai-projects>=2.6.1" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Your Microsoft Foundry project endpoint.
