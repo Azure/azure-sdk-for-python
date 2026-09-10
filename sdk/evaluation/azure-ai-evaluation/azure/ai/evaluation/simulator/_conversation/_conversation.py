@@ -4,7 +4,7 @@
 
 import asyncio
 import logging
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union, Any
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator._constants import SupportedLanguages
@@ -102,7 +102,7 @@ async def simulate_conversation(
     :rtype: Tuple[Optional[str], List[ConversationTurn]]
     """
 
-    session_state = {}
+    session_state: Dict[str, Any] = {}
     # Read the first prompt.
     (first_response, request, _, full_response) = await bots[0].generate_response(
         session=session,
