@@ -35,6 +35,7 @@ def main():
         namespace_name="example-RelayNamespace-5849",
         parameters={
             "location": "South Central US",
+            "properties": {"minimumTlsVersion": "1.2"},
             "sku": {"name": "Standard", "tier": "Standard"},
             "tags": {"tag1": "value1", "tag2": "value2"},
         },
@@ -42,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-01-01/NameSpaces/RelayNameSpaceCreate.json
+# x-ms-original-file: 2026-07-01-preview/NameSpaces/RelayNameSpaceCreate.json
 if __name__ == "__main__":
     main()
