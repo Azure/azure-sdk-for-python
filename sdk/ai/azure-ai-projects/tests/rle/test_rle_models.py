@@ -315,6 +315,15 @@ def test_coerce_reset_body_uses_openenv_episode_id_wire_name():
     assert coerce_reset_body(None, "ep-1", {}) == {"episode_id": "ep-1"}
 
 
+def test_reset_request_model_uses_openenv_episode_id_wire_name():
+    from azure.ai.projects.models import RLEResetRequest
+
+    assert RLEResetRequest(seed=42, episode_id="ep-1").as_dict() == {
+        "seed": 42,
+        "episode_id": "ep-1",
+    }
+
+
 @pytest.mark.parametrize("reserved", ["seed", "episode_id", "episodeId"])
 def test_coerce_reset_body_rejects_reserved_extra_kwargs(reserved):
     with pytest.raises(TypeError):
