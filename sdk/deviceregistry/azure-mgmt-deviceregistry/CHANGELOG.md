@@ -1,5 +1,93 @@
 # Release History
 
+## 2.0.0 (2026-09-10)
+
+### Features Added
+
+  - Client `DeviceRegistryMgmtClient` added operation group `async_operation_status`
+  - Client `DeviceRegistryMgmtClient` added operation group `certificate_authorities`
+  - Client `DeviceRegistryMgmtClient` added operation group `certificate_policies`
+  - Client `DeviceRegistryMgmtClient` added operation group `registry_devices`
+  - Model `DeviceStatusEndpoint` added property `health_state`
+  - Enum `Format` added member `JSON_LD1_1`
+  - Model `MessagingEndpoint` added property `device_address`
+  - Model `MessagingEndpoint` added property `inbound_caller_identity`
+  - Model `MessagingEndpoint` added property `linking_error`
+  - Model `MessagingEndpoint` added property `linking_state`
+  - Model `MessagingEndpoint` added property `provisioning`
+  - Model `NamespaceAssetStatus` added property `health_state`
+  - Model `NamespaceProperties` added property `management`
+  - Model `NamespaceProperties` added property `outbound_identity`
+  - Model `NamespaceProperties` added property `provisioning`
+  - Model `NamespaceUpdateProperties` added property `management`
+  - Model `NamespaceUpdateProperties` added property `outbound_identity`
+  - Model `NamespaceUpdateProperties` added property `provisioning`
+  - Model `SchemaRegistryProperties` added property `outbound_identity`
+  - Model `SchemaRegistryUpdateProperties` added property `outbound_identity`
+  - Enum `SchemaType` added member `THING_DESCRIPTION`
+  - Enum `SchemaType` added member `THING_MODEL`
+  - Added model `ActivateCertificateAuthorityRequest`
+  - Added model `CertificateAuthority`
+  - Added model `CertificateAuthorityIssuer`
+  - Added enum `CertificateAuthorityIssuerType`
+  - Added enum `CertificateAuthorityKeyType`
+  - Added model `CertificateAuthorityProperties`
+  - Added enum `CertificateAuthorityStatus`
+  - Added enum `CertificateAuthorityType`
+  - Added model `CertificateAuthorityUpdate`
+  - Added model `CertificatePolicy`
+  - Added model `CertificatePolicyConfiguration`
+  - Added model `CertificatePolicyProperties`
+  - Added model `CertificatePolicyUpdate`
+  - Added model `CertificatePolicyUpdateProperties`
+  - Added model `ExternalCertificateAuthorityIssuer`
+  - Added model `HealthState`
+  - Added enum `HealthStatus`
+  - Added model `InboundCallerIdentity`
+  - Added enum `InboundCallerIdentityType`
+  - Added model `IntermediateCertificateAuthorityProperties`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `Management`
+  - Added model `ManagementEndpoint`
+  - Added enum `MessagingEndpointAvailability`
+  - Added model `MessagingEndpointProvisioning`
+  - Added model `MicrosoftCertificateAuthorityIssuer`
+  - Added model `NamespaceAssetExecuteActionRequest`
+  - Added model `NamespaceLinkingError`
+  - Added enum `NamespaceLinkingStateValue`
+  - Added model `NamespaceProvisioning`
+  - Added model `OptionalPropertiesCertificatePolicyConfiguration`
+  - Added model `OutboundIdentity`
+  - Added enum `OutboundIdentityType`
+  - Added model `ProvisioningEndpoint`
+  - Added enum `ProvisioningEndpointType`
+  - Added model `RegistryDevice`
+  - Added enum `RegistryDeviceEnablementState`
+  - Added model `RegistryDeviceProperties`
+  - Added model `RegistryDeviceUpdate`
+  - Added model `RegistryDeviceUpdateProperties`
+  - Added model `RootCertificateAuthorityProperties`
+  - Added model `UserAssignedIdentity`
+  - Model `NamespaceAssetsOperations` added method `begin_execute_action`
+  - Model `NamespaceAssetsOperations` added method `list_by_namespace`
+  - Model `NamespaceDevicesOperations` added method `list_by_namespace`
+  - Model `NamespaceDiscoveredAssetsOperations` added method `list_by_namespace`
+  - Model `NamespaceDiscoveredDevicesOperations` added method `list_by_namespace`
+  - Added operation group `AsyncOperationStatusOperations`
+  - Added operation group `CertificateAuthoritiesOperations`
+  - Added operation group `CertificatePoliciesOperations`
+  - Added operation group `RegistryDevicesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `SystemAssignedServiceIdentity`
+  - Deleted or renamed model `SystemAssignedServiceIdentityType`
+  - Deleted or renamed method `NamespaceAssetsOperations.list_by_resource_group`
+  - Deleted or renamed method `NamespaceDevicesOperations.list_by_resource_group`
+  - Deleted or renamed method `NamespaceDiscoveredAssetsOperations.list_by_resource_group`
+  - Deleted or renamed method `NamespaceDiscoveredDevicesOperations.list_by_resource_group`
+
 ## 1.2.0b1 (2026-03-27)
 
 ### Features Added

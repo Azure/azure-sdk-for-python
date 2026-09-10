@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_SchemaVersion.json
+# x-ms-original-file: 2026-11-01/CreateOrReplace_SchemaVersion.json
 if __name__ == "__main__":
     main()

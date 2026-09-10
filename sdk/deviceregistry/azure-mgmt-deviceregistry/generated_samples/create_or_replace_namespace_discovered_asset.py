@@ -42,7 +42,7 @@ def main():
             },
             "location": "West Europe",
             "properties": {
-                "assetTypeRefs": ["myAssetTypeRef1", "myAssetTypeRef2"],
+                "assetTypeRefs": ["myAssetTypeRef1"],
                 "attributes": {"floor": "1"},
                 "datasets": [
                     {
@@ -53,14 +53,7 @@ def main():
                                 "lastUpdatedOn": "2024-04-09T14:20:00.52Z",
                                 "name": "dataset1DataPoint1",
                                 "typeRef": "dataset1DataPoint1TypeRef",
-                            },
-                            {
-                                "dataPointConfiguration": '{"publishingInterval":8,"samplingInterval":8,"queueSize":4}',
-                                "dataSource": "nsu=http://microsoft.com/Opc/OpcPlc/;s=FastUInt4",
-                                "lastUpdatedOn": "2024-04-09T14:20:00.52Z",
-                                "name": "dataset1DataPoint2",
-                                "typeRef": "dataset1DataPoint2TypeRef",
-                            },
+                            }
                         ],
                         "dataSource": "nsu=http://microsoft.com/Opc/OpcPlc/Boiler;i=5",
                         "datasetConfiguration": '{"publishingInterval":10,"samplingInterval":15,"queueSize":20}',
@@ -87,6 +80,31 @@ def main():
                 "deviceRef": {"deviceName": "myDevice", "endpointName": "opcuaendpointname"},
                 "discoveryId": "11111111-1111-1111-1111-111111111111",
                 "documentationUri": "https://www.example.com/manual",
+                "eventGroups": [
+                    {
+                        "events": [
+                            {
+                                "dataSource": "nsu=http://microsoft.com/Opc/OpcPlc/;s=FastUInt3",
+                                "destinations": [
+                                    {
+                                        "configuration": {
+                                            "qos": "Qos0",
+                                            "retain": "Keep",
+                                            "topic": "/contoso/testEvent1",
+                                            "ttl": 7200,
+                                        },
+                                        "target": "Mqtt",
+                                    }
+                                ],
+                                "eventConfiguration": '{"publishingInterval":7,"samplingInterval":1,"queueSize":8}',
+                                "lastUpdatedOn": "2024-04-09T14:20:00.52Z",
+                                "name": "event1",
+                                "typeRef": "event1Ref",
+                            }
+                        ],
+                        "name": "default",
+                    }
+                ],
                 "hardwareRevision": "1.0",
                 "managementGroups": [
                     {
@@ -100,17 +118,7 @@ def main():
                                 "timeoutInSeconds": 60,
                                 "topic": "/contoso/managementGroup1/action1",
                                 "typeRef": "action1TypeRef",
-                            },
-                            {
-                                "actionConfiguration": '{"retryCount":5,"retryBackoffInterval":5}',
-                                "actionType": "Call",
-                                "lastUpdatedOn": "2024-04-09T14:20:00.52Z",
-                                "name": "action2",
-                                "targetUri": "/onvif/device_service?ONVIFProfile=Profile2",
-                                "timeoutInSeconds": 60,
-                                "topic": "/contoso/managementGroup1/action2",
-                                "typeRef": "action2TypeRef",
-                            },
+                            }
                         ],
                         "defaultTimeoutInSeconds": 100,
                         "defaultTopic": "/contoso/managementGroup1",
@@ -133,24 +141,7 @@ def main():
                         "name": "stream1",
                         "streamConfiguration": '{"publishingInterval":8,"samplingInterval":8,"queueSize":4}',
                         "typeRef": "stream1TypeRef",
-                    },
-                    {
-                        "destinations": [
-                            {
-                                "configuration": {
-                                    "qos": "Qos0",
-                                    "retain": "Never",
-                                    "topic": "/contoso/testStream2",
-                                    "ttl": 7200,
-                                },
-                                "target": "Mqtt",
-                            }
-                        ],
-                        "lastUpdatedOn": "2024-04-09T14:20:00.52Z",
-                        "name": "stream2",
-                        "streamConfiguration": '{"publishingInterval":8,"samplingInterval":8,"queueSize":4}',
-                        "typeRef": "stream2TypeRef",
-                    },
+                    }
                 ],
                 "version": 73766,
             },
@@ -160,6 +151,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_NamespaceDiscoveredAsset.json
+# x-ms-original-file: 2026-11-01/CreateOrReplace_NamespaceDiscoveredAsset.json
 if __name__ == "__main__":
     main()

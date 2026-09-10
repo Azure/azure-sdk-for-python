@@ -31,12 +31,12 @@ def main():
     )
 
     response = client.operation_status.get(
-        location="testLocation",
-        operation_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        location="eastus",
+        operation_id="00000000-0000-0000-0000-000000000001",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/Get_OperationStatus.json
+# x-ms-original-file: 2026-11-01/Get_OperationStatus.json
 if __name__ == "__main__":
     main()
