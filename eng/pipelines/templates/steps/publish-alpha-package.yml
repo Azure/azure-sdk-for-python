@@ -1,0 +1,47 @@
+# Publishes one package's alpha (daily dev build) wheel and sdist to the dev feed.
+#
+# Extracted from the Integration stage in archetype-python-release.yml so the package path can
+# vary per artifact. Packages built with `signBinaries: true` publish from their signed
+# artifact; everything else publishes from `packages_extended`.
+
+parameters:
+  - name: Artifact
+    type: object
+  # Folder holding this package's built files, already resolved by the caller.
+  - name: PackagePath
+    type: string
+
+steps:
+  - pwsh: |
+      # The signed artifact is absent when a Sign_* stage failed or was skipped. Skip this one
+      # package rather than failing the dev feed publish for every other package in the service.
+      if (-not (Test-Path "${{ parameters.PackagePath }}")) {
+        Write-Warning "No build output at '${{ parameters.PackagePath }}'. Skipping alpha publish for ${{ parameters.Artifact.name }}."
+        exit 0
+      }
+
+      # If BuildTargetingString is set, check whether this artifact matches any of the
+      # (possibly comma-separated) glob patterns before attempting to publish.
+      # This handles scoped builds where only a subset of packages are built.
+      $targetingString = $env:BUILDTARGETINGSTRING
+      if ($targetingString) {
+        $globs = $targetingString -split ","
+        $isTargeted = $globs | Where-Object { "${{ parameters.Artifact.name }}" -like $_.Trim() }
+        if (-not $isTargeted) {
+          Write-Host "Package '${{ parameters.Artifact.name }}' does not match BuildTargetingString '$targetingString'. Skipping integration publish."
+          exit 0
+        }
+      }
+
+      $fileCount = (Get-ChildItem ${{ parameters.PackagePath }} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
+
+      if ($fileCount -eq 0) {
+        Write-Host "No alpha packages for ${{ parameters.Artifact.name }} to publish."
+        exit 0
+      }
+
+      twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) ${{ parameters.PackagePath }}/*-*a*.whl
+      echo "Uploaded whl to devops feed $(DevFeedName)"
+      twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) ${{ parameters.PackagePath }}/*-*a*.tar.gz
+      echo "Uploaded sdist to devops feed $(DevFeedName)"
+    displayName: 'Publish ${{ parameters.Artifact.name }} alpha package'
