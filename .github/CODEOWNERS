@@ -821,11 +821,11 @@
 # Eng Sys and other
 ###########
 /eng/                                                                @JennyPng @l0lawrence @danieljurek
-/eng/common/                                                         @Azure/azure-sdk-eng
+/eng/common/                                                         @JennyPng @l0lawrence @Azure/azure-sdk-eng
 /eng/tools/                                                          @JennyPng @l0lawrence @danieljurek @mccoyp
-/.github/workflows/                                                  @Azure/azure-sdk-eng
-/.github/workflows/typespec-python-regenerate.yml                    @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
-/.github/CODEOWNERS                                                  @xirzec @kashifkhan @Azure/azure-sdk-eng
+/.github/workflows/                                                  @JennyPng @l0lawrence @Azure/azure-sdk-eng
+/.github/workflows/typespec-python-regenerate.yml                    @JennyPng @l0lawrence @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
+/.github/CODEOWNERS                                                  @xirzec @kashifkhan @JennyPng @l0lawrence @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
 /.github/prompts/                                                    @mccoyp @l0lawrence
 /.github/skills/                                                     @mccoyp @l0lawrence @Azure/azsdk-cli
@@ -839,7 +839,7 @@
 /doc/                                                                @JennyPng @l0lawrence @danieljurek @Azure/azure-python-sdk
 /conda/                                                              @JennyPng @l0lawrence @danieljurek @xiangyan99 @xirzec
 
-/shared_requirements.txt                                             @azure/azure-sdk-eng @kashifkhan @xirzec
+/shared_requirements.txt                                             @JennyPng @l0lawrence @azure/azure-sdk-eng @kashifkhan @xirzec
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @xirzec @mccoyp
