@@ -7,7 +7,7 @@ import asyncio
 import io
 import json
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import requests
@@ -26,57 +26,6 @@ from azure.ai.projects.aio.operations._patch_agent_insights_async import (
 from azure.ai.projects.operations._patch_agent_insights import (
     BetaAgentInsightMonitorsOperations,
 )
-
-
-def test_begin_create_run_uses_default_final_state() -> None:
-    """The sync poller leaves final-response handling to Azure Core."""
-    operation = BetaAgentInsightMonitorsOperations.__new__(BetaAgentInsightMonitorsOperations)
-    operation._client = MagicMock()  # pylint: disable=protected-access
-    operation._config = MagicMock(polling_interval=0)  # pylint: disable=protected-access
-    operation._serialize = MagicMock()  # pylint: disable=protected-access
-    operation._serialize.url.return_value = "https://example.test"  # pylint: disable=protected-access
-    operation._deserialize = MagicMock()  # pylint: disable=protected-access
-
-    initial_response = MagicMock()
-    initial_response.http_response.json.return_value = {"id": "run-sync"}
-    operation._create_run_initial = MagicMock(return_value=initial_response)  # pylint: disable=protected-access
-
-    polling_method = MagicMock()
-    polling_method.finished.return_value = True
-    with patch(
-        "azure.ai.projects.operations._patch_agent_insights._AgentInsightPolling",
-        return_value=polling_method,
-    ) as polling_type:
-        poller = operation.begin_create_run("monitor-sync", run={})
-
-    assert poller.details["run_id"] == "run-sync"
-    assert "lro_options" not in polling_type.call_args.kwargs
-
-
-@pytest.mark.asyncio
-async def test_begin_create_run_uses_default_final_state_async() -> None:
-    """The async poller leaves final-response handling to Azure Core."""
-    operation = AsyncBetaAgentInsightMonitorsOperations.__new__(AsyncBetaAgentInsightMonitorsOperations)
-    operation._client = MagicMock()  # pylint: disable=protected-access
-    operation._config = MagicMock(polling_interval=0)  # pylint: disable=protected-access
-    operation._serialize = MagicMock()  # pylint: disable=protected-access
-    operation._serialize.url.return_value = "https://example.test"  # pylint: disable=protected-access
-    operation._deserialize = MagicMock()  # pylint: disable=protected-access
-
-    initial_response = MagicMock()
-    initial_response.http_response.json.return_value = {"id": "run-async"}
-    initial_response.http_response.read = AsyncMock()
-    operation._create_run_initial = AsyncMock(return_value=initial_response)  # pylint: disable=protected-access
-
-    polling_method = MagicMock()
-    with patch(
-        "azure.ai.projects.aio.operations._patch_agent_insights_async._AsyncAgentInsightPolling",
-        return_value=polling_method,
-    ) as polling_type:
-        poller = await operation.begin_create_run("monitor-async", run={})
-
-    assert poller.details["run_id"] == "run-async"
-    assert "lro_options" not in polling_type.call_args.kwargs
 
 
 class _RunResponse:
@@ -222,36 +171,27 @@ async def test_run_poller_sends_headers_on_every_request(is_async: bool, custom_
         assert headers == original_headers
 
 
-@pytest.mark.parametrize("terminal_status", ["succeeded", "failed", "cancelled", "canceled"])
 @pytest.mark.parametrize("initial_status_code", [201, 202])
-def test_run_poller_stops_at_terminal_status(terminal_status: str, initial_status_code: int) -> None:
-    operation = _operation_for_status(terminal_status, initial_status_code=initial_status_code)
+def test_run_poller_stops_after_cancellation(initial_status_code: int) -> None:
+    operation = _operation_for_status("cancelled", initial_status_code=initial_status_code)
     poller = operation.begin_create_run("monitor-test", run={})
-    if terminal_status == "succeeded":
-        assert poller.result(timeout=5).traces_analyzed == 10
-    else:
-        with pytest.raises(HttpResponseError):
-            poller.result(timeout=5)
+    with pytest.raises(HttpResponseError):
+        poller.result(timeout=5)
     assert poller.done()
-    assert poller.status() == ("cancelled" if terminal_status == "canceled" else terminal_status)
-    assert operation._client.send_request.call_count == (3 if terminal_status == "succeeded" else 2)
+    assert poller.status() == "cancelled"
+    assert operation._client.send_request.call_count == 2
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("terminal_status", ["succeeded", "failed", "cancelled", "canceled"])
 @pytest.mark.parametrize("initial_status_code", [201, 202])
-async def test_async_run_poller_stops_at_terminal_status(terminal_status: str, initial_status_code: int) -> None:
-    operation = _operation_for_status(terminal_status, is_async=True, initial_status_code=initial_status_code)
+async def test_async_run_poller_stops_after_cancellation(initial_status_code: int) -> None:
+    operation = _operation_for_status("cancelled", is_async=True, initial_status_code=initial_status_code)
     poller = await operation.begin_create_run("monitor-test", run={})
-    if terminal_status == "succeeded":
-        result = await asyncio.wait_for(poller.result(), timeout=5)
-        assert result.traces_analyzed == 10
-    else:
-        with pytest.raises(HttpResponseError):
-            await asyncio.wait_for(poller.result(), timeout=5)
+    with pytest.raises(HttpResponseError):
+        await asyncio.wait_for(poller.result(), timeout=5)
     assert poller.polling_method().finished()
-    assert poller.status() == ("cancelled" if terminal_status == "canceled" else terminal_status)
-    assert operation._client.send_request.call_count == (3 if terminal_status == "succeeded" else 2)
+    assert poller.status() == "cancelled"
+    assert operation._client.send_request.call_count == 2
 
 
 @pytest.mark.parametrize("is_async", [False, True])

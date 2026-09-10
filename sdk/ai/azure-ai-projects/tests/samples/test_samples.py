@@ -108,6 +108,7 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm()
 
+    @pytest.mark.usefixtures("patch_sleep")
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
