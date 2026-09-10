@@ -6,9 +6,7 @@
 - Added `list` support to `BlobSasPermissions` for use with directory-scoped SAS tokens.
 
 ### Bugs Fixed
-- Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
-- Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning
-  an empty list.
+- Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning an empty list.
 - Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
 - Fixed an issue where a header name or value containing a `\r` or `\n` was written directly into a batch request body. Such headers are now rejected with a `ValueError`.
 
