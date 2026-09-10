@@ -83,6 +83,18 @@ _TRANSIENT_HEALTH_STATUS_CODES = frozenset(
 )
 
 
+class _RedactingWebSocketLogger(logging.LoggerAdapter):
+    def log(self, level: int, msg: object, *args: Any, **kwargs: Any) -> None:
+        if len(args) >= 2 and str(args[0]).lower() == "authorization":
+            args = (args[0], "REDACTED", *args[2:])
+        super().log(level, msg, *args, **kwargs)
+
+
+_WEBSOCKET_LOGGER = _RedactingWebSocketLogger(
+    logging.getLogger(f"{__name__}.websocket"), {}
+)
+
+
 class _OpenEnvWebSocketConfig:
     def __init__(
         self,
@@ -232,6 +244,7 @@ class OpenEnvWebSocket:
                 additional_headers={"Authorization": f"Bearer {token.token}"},
                 open_timeout=self._open_timeout,
                 subprotocols=self._subprotocols,
+                logger=_WEBSOCKET_LOGGER,
             )
         except BaseException:
             self.close()
@@ -611,7 +624,7 @@ def _acquire_instance(
     return instance
 
 
-class OpenEnvInstance:
+class OpenEnvInstance:  # pylint: disable=too-many-instance-attributes
     """A leased RLE instance that runs episodes under a resolved environment version.
 
     An instance is obtained from :meth:`OpenEnvClient.get_instance`. It wraps a single leased
@@ -664,6 +677,7 @@ class OpenEnvInstance:
         self._websocket_config = websocket_config
         self._websockets: set[OpenEnvWebSocket] = set()
         self._websocket_lock = threading.Lock()
+        self._releasing = False
 
     @property
     def id(self) -> str:
@@ -747,25 +761,27 @@ class OpenEnvInstance:
         :return: A WebSocket context manager for complete text or binary messages.
         :rtype: ~azure.ai.projects.operations.OpenEnvWebSocket
         """
-        config = self._websocket_config
-        if config is None:
-            raise RLEError("OpenEnv WebSocket configuration is unavailable")
-        websocket = OpenEnvWebSocket(
-            _build_openenv_websocket_url(
-                config,
-                self._environment_name,
-                self._environment_version,
-                self._instance_group_id,
-                self.id,
-                query_parameters,
-            ),
-            credential=config.credential,
-            credential_scopes=config.credential_scopes,
-            open_timeout=open_timeout,
-            subprotocols=subprotocols,
-            _on_close=self._remove_websocket,
-        )
         with self._websocket_lock:
+            if self._releasing or self._instance_id is None:
+                raise RLEError("instance has been released")
+            config = self._websocket_config
+            if config is None:
+                raise RLEError("OpenEnv WebSocket configuration is unavailable")
+            websocket = OpenEnvWebSocket(
+                _build_openenv_websocket_url(
+                    config,
+                    self._environment_name,
+                    self._environment_version,
+                    self._instance_group_id,
+                    self._instance_id,
+                    query_parameters,
+                ),
+                credential=config.credential,
+                credential_scopes=config.credential_scopes,
+                open_timeout=open_timeout,
+                subprotocols=subprotocols,
+                _on_close=self._remove_websocket,
+            )
             self._websockets.add(websocket)
         return websocket
 
@@ -880,10 +896,11 @@ class OpenEnvInstance:
 
     def _release(self) -> None:
         """Release the underlying instance, best effort."""
-        instance_id = self._instance_id
-        if instance_id is None:
-            return
         with self._websocket_lock:
+            instance_id = self._instance_id
+            if instance_id is None or self._releasing:
+                return
+            self._releasing = True
             websockets = tuple(self._websockets)
         for websocket in websockets:
             try:
@@ -896,6 +913,7 @@ class OpenEnvInstance:
                 )
         self._instance = None
         self._instance_id = None
+        self._releasing = False
         try:
             self._instances.delete_instance(
                 self._environment_name,

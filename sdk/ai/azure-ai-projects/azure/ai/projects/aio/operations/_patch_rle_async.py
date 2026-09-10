@@ -55,6 +55,7 @@ from ...operations._patch_rle import (
     _DEFAULT_POLL_INTERVAL_S,
     _OpenEnvWebSocketConfig,
     _TRANSIENT_HEALTH_STATUS_CODES,
+    _WEBSOCKET_LOGGER,
     _build_openenv_websocket_url,
     _capacity_retry,
     _error_code,
@@ -140,6 +141,7 @@ class AsyncOpenEnvWebSocket:
                 additional_headers={"Authorization": f"Bearer {token.token}"},
                 open_timeout=self._open_timeout,
                 subprotocols=self._subprotocols,
+                logger=_WEBSOCKET_LOGGER,
             )
         except BaseException:
             await self.close()
@@ -417,6 +419,7 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
         self._websockets: set[AsyncOpenEnvWebSocket] = set()
         self._instance: Optional[RLEInstance] = None
         self._released = False
+        self._releasing = False
         self._lock = asyncio.Lock()
 
     @property
@@ -532,6 +535,15 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
         :return: An async WebSocket context manager for complete text or binary messages.
         :rtype: ~azure.ai.projects.aio.operations.AsyncOpenEnvWebSocket
         """
+        if self._releasing or self._released:
+            raise RLEError("instance has been released")
+        instance = self._instance
+        if instance is None:
+            raise RLEError(
+                "enter the AsyncOpenEnvInstance context before accessing the instance"
+            )
+        if not instance.instance_id:
+            raise RLEError("service did not return an instance id")
         config = self._websocket_config
         if config is None:
             raise RLEError("OpenEnv WebSocket configuration is unavailable")
@@ -541,7 +553,7 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
                 self._environment_name,
                 self._environment_version,
                 self._instance_group_id,
-                self.id,
+                instance.instance_id,
                 query_parameters,
             ),
             credential=config.credential,
@@ -669,26 +681,32 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
             if instance is None:
                 return
             instance_id = self.id
-            for websocket in tuple(self._websockets):
-                try:
-                    await websocket.close()
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    _LOGGER.warning(
-                        "Failed to close OpenEnv WebSocket before releasing instance %s: %s",
-                        instance_id,
-                        type(exc).__name__,
-                    )
+            self._releasing = True
             try:
-                await self._instances.delete_instance(
-                    self._environment_name,
-                    self._environment_version,
-                    self._instance_group_id,
-                    instance_id,
-                )
-            except AzureError:
-                pass
+                for websocket in tuple(self._websockets):
+                    try:
+                        await websocket.close()
+                    except Exception as exc:  # pylint: disable=broad-exception-caught
+                        _LOGGER.warning(
+                            "Failed to close OpenEnv WebSocket before releasing instance %s: %s",
+                            instance_id,
+                            type(exc).__name__,
+                        )
+                try:
+                    await self._instances.delete_instance(
+                        self._environment_name,
+                        self._environment_version,
+                        self._instance_group_id,
+                        instance_id,
+                    )
+                except AzureError:
+                    pass
+            except BaseException:
+                self._releasing = False
+                raise
             self._instance = None
             self._released = True
+            self._releasing = False
 
 
 class AsyncOpenEnvClient:  # pylint: disable=too-many-instance-attributes,async-client-bad-name,client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs

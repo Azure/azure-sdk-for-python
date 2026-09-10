@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 
 import asyncio
+import logging
 from types import SimpleNamespace
 
 import pytest
@@ -33,6 +34,7 @@ from azure.ai.projects.operations import _operations as generated_operations
 from azure.ai.projects.aio.operations import _operations as generated_async_operations
 from azure.ai.projects.operations._patch_rle import (
     _OpenEnvWebSocketConfig,
+    _WEBSOCKET_LOGGER,
     _build_openenv_websocket_url,
     coerce_action,
     coerce_reset_body,
@@ -1784,11 +1786,23 @@ def test_openenv_websocket_authenticates_and_relays_text_and_binary(monkeypatch)
                 "additional_headers": {"Authorization": "Bearer token"},
                 "open_timeout": 23,
                 "subprotocols": ("openenv.v1", "openenv.v0"),
+                "logger": _WEBSOCKET_LOGGER,
             },
         )
     ]
     assert connection.sent == ["client-message", b"\x02\x03"]
     assert connection.closed
+
+
+def test_openenv_websocket_logger_redacts_authorization(caplog):
+    caplog.set_level(logging.DEBUG, logger=_WEBSOCKET_LOGGER.logger.name)
+
+    _WEBSOCKET_LOGGER.debug("> %s: %s", "Authorization", "Bearer sensitive-token")
+    _WEBSOCKET_LOGGER.debug("> %s: %s", "X-Test", "visible-value")
+
+    assert "sensitive-token" not in caplog.text
+    assert "> Authorization: REDACTED" in caplog.text
+    assert "> X-Test: visible-value" in caplog.text
 
 
 def test_openenv_websocket_rejects_insecure_project_endpoint():
@@ -1821,6 +1835,9 @@ def test_openenv_instance_release_closes_active_websocket_first(monkeypatch):
 
         def close(self):
             events.append("websocket-close")
+            with pytest.raises(RLEError, match="released"):
+                instance.open_websocket()
+            events.append("registration-rejected")
 
     class Instances(_FakeInstances):
         def delete_instance(self, *args):
@@ -1847,7 +1864,7 @@ def test_openenv_instance_release_closes_active_websocket_first(monkeypatch):
         instance.open_websocket().__enter__()
         instance.release()
 
-    assert events == ["websocket-close", "instance-delete"]
+    assert events == ["websocket-close", "registration-rejected", "instance-delete"]
 
 
 def test_openenv_websocket_requires_project_configuration():
@@ -1922,6 +1939,7 @@ def test_async_openenv_websocket_authenticates_and_relays_text_and_binary(monkey
                     "additional_headers": {"Authorization": "Bearer async-token"},
                     "open_timeout": 17,
                     "subprotocols": ("openenv.v1", "openenv.v0"),
+                    "logger": _WEBSOCKET_LOGGER,
                 },
             )
         ]
@@ -1940,6 +1958,9 @@ def test_async_openenv_instance_release_continues_after_websocket_close_failure(
         class Connection:
             async def close(self):
                 events.append("websocket-close")
+                with pytest.raises(RLEError, match="released"):
+                    instance.open_websocket()
+                events.append("registration-rejected")
                 raise RuntimeError("close failed")
 
         class Instances(_AsyncFakeInstances):
@@ -1972,7 +1993,11 @@ def test_async_openenv_instance_release_continues_after_websocket_close_failure(
             await instance.open_websocket().__aenter__()
             await instance.release()
 
-        assert events == ["websocket-close", "instance-delete"]
+        assert events == [
+            "websocket-close",
+            "registration-rejected",
+            "instance-delete",
+        ]
 
     asyncio.run(run())
 
