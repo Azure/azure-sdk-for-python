@@ -1,0 +1,17 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineComponent.schema.json
+type: pipeline
+name: pipeline_component_with_uri_file_default
+version: 1
+inputs:
+  default_data:
+    type: uri_file
+    default: azureml:placeholder:1
+jobs:
+  read_default_data:
+    type: command
+    command: >-
+      python -c "from pathlib import Path; path = Path(r'${{inputs.default_data}}');
+      assert path.is_file(); print(path.read_text()[:20])"
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    inputs:
+      default_data: ${{parent.inputs.default_data}}

@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import copy
 import logging
 import types
 from inspect import Parameter, Signature
@@ -24,14 +25,23 @@ class KwParameter(Parameter):
     :type _type: str
     :param _optional: Indicates if the parameter is optional, defaults to False.
     :type _optional: bool
+    :param _copy_default: Indicates if the default should be copied for each call, defaults to False.
+    :type _copy_default: bool
     """
 
     def __init__(
-        self, name: str, default: Any, annotation: Any = Parameter.empty, _type: str = "str", _optional: bool = False
+        self,
+        name: str,
+        default: Any,
+        annotation: Any = Parameter.empty,
+        _type: str = "str",
+        _optional: bool = False,
+        _copy_default: bool = False,
     ) -> None:
         super().__init__(name, Parameter.KEYWORD_ONLY, default=default, annotation=annotation)
         self._type = _type
         self._optional = _optional
+        self._copy_default = _copy_default
 
 
 def _replace_function_name(func: types.FunctionType, new_name: str) -> types.FunctionType:
@@ -165,12 +175,18 @@ def create_kw_function_from_parameters(
             target=ErrorTarget.COMPONENT,
         )
     default_kwargs = {p.name: p.default for p in parameters}
+    copied_default_keys = {
+        p.name for p in parameters if isinstance(p, KwParameter) and p._copy_default  # pylint: disable=protected-access
+    }
 
     def f(**kwargs: Any) -> Any:
         # We need to make sure all keys of kwargs are valid.
         # Merge valid group keys with original keys.
         _assert_arg_valid(kwargs, [*list(default_kwargs.keys()), *flattened_group_keys], func_name=func_name)
         # We need to put the default args to the kwargs before invoking the original function.
+        for key in copied_default_keys:
+            if key not in kwargs:
+                kwargs[key] = copy.deepcopy(default_kwargs[key])
         _update_dct_if_not_exist(kwargs, default_kwargs)
         return func(**kwargs)
 

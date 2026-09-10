@@ -108,6 +108,7 @@ class ComponentParameterTypes:
 
 
 class IOConstants:
+    ASSET_INPUT_TYPES = ("uri_file", "uri_folder", "mltable", "mlflow_model", "custom_model")
     PRIMITIVE_STR_2_TYPE = {
         ComponentParameterTypes.INTEGER: int,
         ComponentParameterTypes.STRING: str,
@@ -133,11 +134,11 @@ class IOConstants:
     }
     # For validation, indicates specific parameters combination for each type
     INPUT_TYPE_COMBINATION = {
-        "uri_folder": ["path", "mode"],
-        "uri_file": ["path", "mode"],
-        "mltable": ["path", "mode"],
-        "mlflow_model": ["path", "mode"],
-        "custom_model": ["path", "mode"],
+        "uri_folder": ["path", "mode", "default"],
+        "uri_file": ["path", "mode", "default"],
+        "mltable": ["path", "mode", "default"],
+        "mlflow_model": ["path", "mode", "default"],
+        "custom_model": ["path", "mode", "default"],
         "integer": ["default", "min", "max"],
         "number": ["default", "min", "max"],
         "string": ["default"],

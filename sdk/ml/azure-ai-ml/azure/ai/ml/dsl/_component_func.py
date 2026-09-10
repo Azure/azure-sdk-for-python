@@ -6,10 +6,12 @@
 
 from typing import Any, Callable, List, Mapping
 
+from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferImportComponent
+from azure.ai.ml.entities._inputs_outputs import Input
 
 
 def get_dynamic_input_parameter(inputs: Mapping) -> List:
@@ -24,8 +26,13 @@ def get_dynamic_input_parameter(inputs: Mapping) -> List:
         KwParameter(
             name=name,
             annotation=input._get_python_builtin_type_str(),
-            default=None,
+            default=(
+                Input(type=input.type, path=input.default, mode=input.mode)
+                if input.type in IOConstants.ASSET_INPUT_TYPES and input.default is not None
+                else None
+            ),
             _type=input._get_python_builtin_type_str(),
+            _copy_default=input.type in IOConstants.ASSET_INPUT_TYPES and input.default is not None,
         )
         for name, input in inputs.items()
     ]

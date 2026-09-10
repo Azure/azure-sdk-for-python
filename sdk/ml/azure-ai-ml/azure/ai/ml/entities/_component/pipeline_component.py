@@ -21,7 +21,7 @@ from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSch
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import hash_dict, is_data_binding_expression
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT, COMPONENT_TYPE
-from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.constants._component import ComponentSource, IOConstants, NodeType
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode, Command
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode, LoopNode
@@ -34,6 +34,9 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
+
+
+_ASSET_INPUT_DEFAULTS_PROPERTY = "_azureml_asset_input_defaults"
 
 
 class PipelineComponent(Component):
@@ -452,6 +455,18 @@ class PipelineComponent(Component):
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
+        serialized_defaults = (obj.properties.properties or {}).get(_ASSET_INPUT_DEFAULTS_PROPERTY)
+        if serialized_defaults:
+            try:
+                asset_input_defaults = json.loads(serialized_defaults)
+                if not isinstance(asset_input_defaults, dict):
+                    raise ValueError("Asset input defaults must be a mapping.")
+                for input_name, default in asset_input_defaults.items():
+                    input_spec = obj.properties.component_spec.get("inputs", {}).get(input_name)
+                    if input_spec is not None and input_spec.get("default") is None:
+                        input_spec["default"] = default
+            except (TypeError, ValueError):
+                module_logger.warning("Failed to restore pipeline component asset input defaults.")
         # Pop jobs to avoid it goes with schema load
         jobs = obj.properties.component_spec.pop("jobs", None)
         init_params_dict: dict = super()._from_rest_object_to_init_params(obj)
@@ -509,11 +524,21 @@ class PipelineComponent(Component):
             # hack while full pass through supported is worked on for IPP fields
             component.pop("intellectual_property")
             component["intellectualProperty"] = self._intellectual_property._to_rest_object()
+        properties = dict(self.properties) if self.properties else {}
+        asset_input_defaults = {
+            input_name: component_input.default
+            for input_name, component_input in self.inputs.items()
+            if component_input.type in IOConstants.ASSET_INPUT_TYPES and component_input.default is not None
+        }
+        if asset_input_defaults:
+            properties[_ASSET_INPUT_DEFAULTS_PROPERTY] = json.dumps(asset_input_defaults)
+        else:
+            properties.pop(_ASSET_INPUT_DEFAULTS_PROPERTY, None)
         properties = ComponentVersionProperties(
             component_spec=component,
             description=self.description,
             is_anonymous=self._is_anonymous,
-            properties=self.properties,
+            properties=properties,
             tags=self.tags,
         )
         result = ComponentVersion(properties=properties)
