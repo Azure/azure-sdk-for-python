@@ -1159,8 +1159,9 @@ class JobOperations(_ScopeDependentOperations):
         artifact_directory_name = "artifacts"
         output_directory_name = "named-outputs"
 
-        def log_missing_uri(what: str) -> None:
-            module_logger.debug(
+        def log_missing_uri(what: str, *, warn: bool = False) -> None:
+            log = module_logger.warning if warn else module_logger.debug
+            log(
                 'Could not download %s for job "%s" (job status: %s)',
                 what,
                 job_details.name,
@@ -1197,7 +1198,8 @@ class JobOperations(_ScopeDependentOperations):
             outputs = self._get_named_output_uri(name, output_name)
 
             if output_name not in outputs:
-                log_missing_uri(what=f'output "{output_name}"')
+                # The output was explicitly requested, so make the fact that nothing was downloaded visible.
+                log_missing_uri(what=f'output "{output_name}"', warn=True)
         elif all:
             outputs = self._get_named_output_uri(name)
 

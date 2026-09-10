@@ -7,6 +7,7 @@
 ### Bugs Fixed
 - Fixed `MLClient.jobs.download(output_name=...)` silently downloading nothing for a job's `uri_file` / `uri_folder` / `mltable` outputs (issue [#48941](https://github.com/Azure/azure-sdk-for-python/issues/48941)). RunHistory reports a job output's type in PascalCase (for example `UriFolder`), but the filter in `get_job_output_uris_from_dataplane` compared it against the snake_case values of the `arm_ml_service` `DataType` enum (`uri_folder`), so every data output was dropped from the resolution and the download completed without an error. Output types are now compared regardless of casing and separators, so both spellings resolve.
 - Fixed downloading a job's model output (`CustomModel` / `MLFlowModel` / `TritonModel`) failing with `TypeError: BatchGetResolvedUrisDto.__init__() got an unexpected keyword argument 'values'`, and then with `AttributeError: 'function' object has no attribute 'items'`. The migrated model dataplane request and response models name that field `values_property` (the `values` attribute is the mapping method inherited by the model), so the request is now built and the resolved paths are now read through it. The on-the-wire request body is unchanged (`{"values": [...]}`).
+- `MLClient.jobs.download` now logs a warning, rather than a debug message, when an explicitly requested `output_name` could not be resolved, so a download that produces nothing is no longer silent.
 
 ## 1.35.0 (2026-09-08)
 
