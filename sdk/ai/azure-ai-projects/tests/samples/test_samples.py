@@ -9,7 +9,9 @@ from devtools_testutils import (
     recorded_by_proxy,
     AzureRecordedTestCase,
     RecordedTransport,
+    remove_batch_sanitizers,
 )
+from devtools_testutils.helpers import get_recording_id
 from test_base import (
     fineTuningServicePreparer,
     modelsServicePreparer,
@@ -117,6 +119,8 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_insights_samples(self, sample_path: str, **kwargs) -> None:
+        # Preserve Location for the final GET; existing URL rules still redact resource identifiers.
+        remove_batch_sanitizers(["AZSDK2003"], headers={"x-recording-id": get_recording_id()})
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()

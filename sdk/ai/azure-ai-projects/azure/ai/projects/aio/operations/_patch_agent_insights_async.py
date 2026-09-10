@@ -99,8 +99,6 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
         cls = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        lro_options = dict(kwargs.pop("lro_options", {}) or {})
-        lro_options["final-state-via"] = "operation-location"
         continuation_token: Optional[str] = kwargs.pop("continuation_token", None)
         raw_result = None
         if continuation_token is None:
@@ -139,8 +137,8 @@ class BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGener
                 AsyncPollingMethod,
                 _AsyncAgentInsightPolling(
                     lro_delay,
-                    lro_options=lro_options,
                     path_format_arguments=path_format_arguments,
+                    headers=headers,
                     **kwargs,
                 ),
             )

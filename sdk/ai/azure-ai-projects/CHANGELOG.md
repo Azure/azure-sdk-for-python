@@ -9,8 +9,8 @@
 
 ### Bugs Fixed
 
-* Fixed Agent Insights run pollers to return the completed operation response without following the service's relative `Location` header.
 * Fixed Agent Insights run pollers to stop and raise an error when the service reports a cancelled run.
+* Fixed Agent Insights run pollers to preserve request headers, including the preview feature header, on polling requests.
 
 ## 2.6.0 (2026-09-04)
 
