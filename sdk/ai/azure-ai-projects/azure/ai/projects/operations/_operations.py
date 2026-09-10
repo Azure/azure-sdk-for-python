@@ -37,7 +37,7 @@ from .. import models as _models
 from .._configuration import AIProjectClientConfiguration
 from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
-from .._utils.utils import prepare_multipart_form_data
+from .._utils.utils import prep_if_match, prepare_multipart_form_data
 from ..models._enums import _AgentDefinitionOptInKeys
 
 if TYPE_CHECKING:
@@ -1671,7 +1671,7 @@ def build_beta_agents_update_telephony_binding_request(  # pylint: disable=name-
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    if_match = prep_if_match(etag, match_condition)
+    if_match = prep_if_match(etag)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1699,7 +1699,7 @@ def build_beta_agents_delete_telephony_binding_request(  # pylint: disable=name-
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if_match = prep_if_match(etag, match_condition)
+    if_match = prep_if_match(etag)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
 
@@ -1890,7 +1890,7 @@ def build_beta_agents_replace_telephony_transfer_targets_request(  # pylint: dis
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if_match = prep_if_match(etag, match_condition)
+    if_match = prep_if_match(etag)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if content_type is not None:
@@ -2600,7 +2600,7 @@ def build_beta_agent_telephony_cancel_call_job_request(  # pylint: disable=name-
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if_match = prep_if_match(etag, match_condition)
+    if_match = prep_if_match(etag)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")

@@ -24,6 +24,24 @@ FileType = Union[
 ]
 
 
+def prep_if_match(etag: Optional[str]) -> Optional[str]:
+    """Prepare the value of the "If-Match" header from an etag.
+
+    Set etag to ``None`` to skip the etag check (no "If-Match" header is added).
+
+    :param etag: The etag value to check, or ``None`` to skip the etag check.
+    :type etag: str or None
+    :return: The quoted etag value to use for the "If-Match" header, or ``None`` if
+        etag is ``None``.
+    :rtype: str or None
+    """
+    if not etag:
+        return None
+    if etag == "*" or (etag.startswith('"') and etag.endswith('"')) or (etag.startswith("'") and etag.endswith("'")):
+        return etag
+    return '"' + etag + '"'
+
+
 def serialize_multipart_data_entry(data_entry: Any) -> Any:
     if isinstance(data_entry, (list, tuple, dict, Model)):
         return json.dumps(data_entry, cls=SdkJSONEncoder, exclude_readonly=True)

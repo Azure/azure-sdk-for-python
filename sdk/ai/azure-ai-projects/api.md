@@ -12199,6 +12199,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.SimulationSeedDataGenerationJobOptions(DataGenerationJobOptions, discriminator='simulation_seed'):
+        max_samples: Optional[int]
         model_options: DataGenerationModelOptions
         train_split: float
         type: Literal[DataGenerationJobType.SIMULATION_SEED]
@@ -12208,7 +12209,8 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 model_options: Optional[DataGenerationModelOptions] = ..., 
-                train_split: Optional[float] = ...
+                train_split: Optional[float] = ..., 
+                max_samples: Optional[int] = ...
             ) -> None: ...
 
         @overload
