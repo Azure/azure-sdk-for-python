@@ -47,7 +47,6 @@ from ...models import (
     RLEnvironmentState,
     RLEnvironmentVersionBump,
     RLEPaginationOrder,
-    RLEResetRequest,
     RLEStepRequest,
     RLEStepResult,
 )
@@ -67,6 +66,7 @@ from ...operations._patch_rle import (
     _validate_poll_interval,
     _websocket_config_from_client_config,
     coerce_action,
+    coerce_reset_body,
     RLEError,
     RLEInstanceAcquireTimeoutError,
     RLEQuotaExceededError,
@@ -566,6 +566,11 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
         :type seed: int or None
         :param episode_id: Optional caller-supplied episode identifier.
         :type episode_id: str or None
+        :param kwargs: Environment-specific reset fields (for example, a task or config
+         override), forwarded to the environment as extra top-level fields alongside ``seed``/
+         ``episode_id``. Mirrors how :meth:`step` accepts environment-specific action fields as
+         keyword arguments.
+        :type kwargs: any
         :return: The initial step result for the new episode.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
@@ -575,8 +580,7 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
             self._environment_version,
             self._instance_group_id,
             self.id,
-            RLEResetRequest(seed=seed, episode_id=episode_id),
-            **kwargs,
+            coerce_reset_body(seed, episode_id, kwargs),
         )
 
     @distributed_trace_async
@@ -1229,4 +1233,5 @@ __all__ = [
     "RLEInstanceAcquireTimeoutError",
     "RLEOperations",
     "coerce_action",
+    "coerce_reset_body",
 ]

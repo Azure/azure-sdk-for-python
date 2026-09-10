@@ -416,6 +416,42 @@ def coerce_action(action: Any, action_kwargs: Mapping[str, Any]) -> dict:
     )
 
 
+def coerce_reset_body(
+    seed: Optional[int],
+    episode_id: Optional[str],
+    reset_kwargs: Mapping[str, Any],
+) -> Union["RLEResetRequest", dict]:
+    """Build the ``reset`` request body, folding in environment-specific reset kwargs.
+
+    Mirrors :func:`coerce_action` for ``step``: extra keyword arguments passed to ``reset`` are
+    environment-specific reset parameters (for example, a task or config override), not transport
+    options, so they are not forwarded as operation kwargs. When none are supplied, an
+    :class:`~azure.ai.projects.models.RLEResetRequest` is returned for the documented, strict
+    shape. When extras are present, a plain ``dict`` is returned instead: ``RLEResetRequest`` has
+    no field for arbitrary extras, but the generated ``reset`` operation also accepts a raw JSON
+    body.
+
+    :param seed: Optional deterministic seed for the next episode.
+    :type seed: int or None
+    :param episode_id: Optional caller-provided episode identifier.
+    :type episode_id: str or None
+    :param reset_kwargs: Environment-specific reset fields supplied as keyword arguments.
+    :type reset_kwargs: mapping[str, any]
+    :return: The reset request body.
+    :rtype: ~azure.ai.projects.models.RLEResetRequest or dict
+    """
+    if not reset_kwargs:
+        return RLEResetRequest(seed=seed, episode_id=episode_id)
+    reserved = sorted(reset_kwargs.keys() & {"seed", "episode_id"})
+    if reserved:
+        raise TypeError(
+            f"pass {reserved} as named parameters, not as extra keyword fields"
+        )
+    body: dict = {"seed": seed, "episodeId": episode_id}
+    body.update(reset_kwargs)
+    return body
+
+
 def _acquire_instance(
     instances: RLEInstancesOperations,
     runtime: RLEInstanceRuntimeOperations,
@@ -742,6 +778,11 @@ class OpenEnvInstance:
         :type seed: int or None
         :param episode_id: Optional caller-supplied episode identifier.
         :type episode_id: str or None
+        :param kwargs: Environment-specific reset fields (for example, a task or config
+         override), forwarded to the environment as extra top-level fields alongside ``seed``/
+         ``episode_id``. Mirrors how :meth:`step` accepts environment-specific action fields as
+         keyword arguments.
+        :type kwargs: any
         :return: The initial step result for the new episode.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
@@ -751,8 +792,7 @@ class OpenEnvInstance:
             self._environment_version,
             self._instance_group_id,
             self.id,
-            RLEResetRequest(seed=seed, episode_id=episode_id),
-            **kwargs,
+            coerce_reset_body(seed, episode_id, kwargs),
         )
 
     @distributed_trace
@@ -1409,4 +1449,5 @@ __all__ = [
     "OpenEnvInstance",
     "RLEOperations",
     "coerce_action",
+    "coerce_reset_body",
 ]

@@ -35,6 +35,7 @@ from azure.ai.projects.operations._patch_rle import (
     _OpenEnvWebSocketConfig,
     _build_openenv_websocket_url,
     coerce_action,
+    coerce_reset_body,
     OpenEnvClient,
     OpenEnvInstance,
     OpenEnvWebSocket,
@@ -192,6 +193,7 @@ def test_rle_sync_and_async_modules_export_common_helpers():
         "RLEQuotaExceededError",
         "RLEInstanceAcquireTimeoutError",
         "coerce_action",
+        "coerce_reset_body",
     }.issubset(async_rle_patch.__all__)
 
 
@@ -289,6 +291,32 @@ def test_coerce_action_rejects_ambiguous_or_invalid_actions():
 
     with pytest.raises(TypeError):
         coerce_action(42, {})
+
+
+def test_coerce_reset_body_with_no_extras_returns_strict_model():
+    from azure.ai.projects.models import RLEResetRequest
+
+    body = coerce_reset_body(42, "ep-1", {})
+    assert isinstance(body, RLEResetRequest)
+    assert body.seed == 42
+    assert body.episode_id == "ep-1"
+
+
+def test_coerce_reset_body_folds_environment_specific_kwargs_into_a_dict():
+    body = coerce_reset_body(42, None, {"task_id": "duke_energy", "difficulty": "hard"})
+    assert body == {
+        "seed": 42,
+        "episodeId": None,
+        "task_id": "duke_energy",
+        "difficulty": "hard",
+    }
+
+
+def test_coerce_reset_body_rejects_seed_or_episode_id_as_extra_kwargs():
+    with pytest.raises(TypeError):
+        coerce_reset_body(None, None, {"seed": 7})
+    with pytest.raises(TypeError):
+        coerce_reset_body(None, None, {"episode_id": "ep-2"})
 
 
 # ---------------------------------------------------------------------------
@@ -882,6 +910,22 @@ def test_openenv_instance_runtime_uses_resolved_environment_route():
     )
     reset_call = instances.calls[2]
     assert reset_call[5].get("seed") == 42
+
+
+def test_openenv_instance_reset_forwards_environment_specific_kwargs():
+    client, _groups, instances = _make_openenv_client(max_active_instances=1)
+    with client:
+        with client.get_instance() as instance:
+            assert isinstance(
+                instance.reset(seed=7, episode_id="ep-9", task_id="duke_energy"),
+                RLEStepResult,
+            )
+
+    reset_call = next(call for call in instances.calls if call[0] == "reset")
+    body = reset_call[5]
+    assert body["seed"] == 7
+    assert body["episodeId"] == "ep-9"
+    assert body["task_id"] == "duke_energy"
 
 
 def test_openenv_runtime_calls_use_runtime_operations_group():
@@ -1624,6 +1668,27 @@ def test_async_openenv_client_creates_group_and_runs():
             call[1:5] == ("env-1", "resolved-latest", "grp-1", "inst-0")
             for call in instances.calls
         )
+
+    asyncio.run(run())
+
+
+def test_async_openenv_instance_reset_forwards_environment_specific_kwargs():
+    async def run():
+        client, _groups, instances = _make_async_openenv_client(max_active_instances=1)
+        async with client:
+            async with client.get_instance() as instance:
+                assert isinstance(
+                    await instance.reset(
+                        seed=7, episode_id="ep-9", task_id="duke_energy"
+                    ),
+                    RLEStepResult,
+                )
+
+        reset_call = next(call for call in instances.calls if call[0] == "reset")
+        body = reset_call[5]
+        assert body["seed"] == 7
+        assert body["episodeId"] == "ep-9"
+        assert body["task_id"] == "duke_energy"
 
     asyncio.run(run())
 
