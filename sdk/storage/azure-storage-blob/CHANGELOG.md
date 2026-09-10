@@ -11,6 +11,11 @@ This version and all future versions will require Python 3.10+. Python 3.9 is no
 ### Bugs Fixed
 - Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
 
+## 12.30.2 (2026-09-16)
+
+### Bugs Fixed
+- Fixed an issue where a header name or value containing a `\r` or `\n` was written directly into a batch request body. Such headers are now rejected with a `ValueError`.
+
 ## 12.30.1 (2026-08-27)
 
 ### Bugs Fixed
