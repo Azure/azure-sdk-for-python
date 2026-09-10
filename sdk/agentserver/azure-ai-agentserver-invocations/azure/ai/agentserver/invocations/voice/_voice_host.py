@@ -588,19 +588,24 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] == "websocket":
-            scope = dict(scope)
-            raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
-            scope[_VOICE_PROPAGATION_HEADERS] = raw_headers
-            propagation_headers = {
-                b"baggage",
-                b"traceparent",
-                b"tracestate",
-                REQUEST_ID.encode("ascii"),
-            }
-            scope["headers"] = [
-                (name, value) for name, value in raw_headers if name.lower() not in propagation_headers
-            ]
             self._ensure_ws_route_registered()
+            voice_route = self._voice_route
+            if voice_route is not None:
+                match, child_scope = voice_route.matches(scope)
+                is_voice_endpoint = match is Match.FULL and _VOICE_AUTHORITY_ROUTE not in child_scope
+                if is_voice_endpoint:
+                    scope = dict(scope)
+                    raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
+                    scope[_VOICE_PROPAGATION_HEADERS] = raw_headers
+                    propagation_headers = {
+                        b"baggage",
+                        b"traceparent",
+                        b"tracestate",
+                        REQUEST_ID.encode("ascii"),
+                    }
+                    scope["headers"] = [
+                        (name, value) for name, value in raw_headers if name.lower() not in propagation_headers
+                    ]
         await super().__call__(scope, receive, send)
 
     def _ensure_ws_route_registered(self) -> None:
