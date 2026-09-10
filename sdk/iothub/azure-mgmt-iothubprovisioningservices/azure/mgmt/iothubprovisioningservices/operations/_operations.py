@@ -34,7 +34,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import IotDpsClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -42,7 +42,6 @@ from .._utils.utils import prep_if_match, prep_if_none_match
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -53,7 +52,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -69,9 +68,9 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
 
 
 def build_dps_certificate_get_request(
+    certificate_name: str,
     resource_group_name: str,
     provisioning_service_name: str,
-    certificate_name: str,
     subscription_id: str,
     *,
     etag: Optional[str] = None,
@@ -81,16 +80,16 @@ def build_dps_certificate_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}"
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "certificateName": _SERIALIZER.url("certificate_name", certificate_name, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, "str"),
-        "certificateName": _SERIALIZER.url("certificate_name", certificate_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -105,7 +104,7 @@ def build_dps_certificate_get_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -124,7 +123,7 @@ def build_dps_certificate_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -150,7 +149,7 @@ def build_dps_certificate_create_or_update_request(  # pylint: disable=name-too-
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -176,20 +175,19 @@ def build_dps_certificate_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}"
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, "str"),
         "certificateName": _SERIALIZER.url("certificate_name", certificate_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if certificate_name1 is not None:
         _params["certificate.name"] = _SERIALIZER.query("certificate_name1", certificate_name1, "str")
     if certificate_raw_bytes is not None:
@@ -212,6 +210,7 @@ def build_dps_certificate_delete_request(
         )
     if certificate_nonce is not None:
         _params["certificate.nonce"] = _SERIALIZER.query("certificate_nonce", certificate_nonce, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if_match = prep_if_match(etag, match_condition)
@@ -219,7 +218,7 @@ def build_dps_certificate_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -230,7 +229,7 @@ def build_dps_certificate_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -253,9 +252,9 @@ def build_dps_certificate_list_request(
 
 
 def build_dps_certificate_generate_verification_code_request(  # pylint: disable=name-too-long
+    certificate_name: str,
     resource_group_name: str,
     provisioning_service_name: str,
-    certificate_name: str,
     subscription_id: str,
     *,
     etag: str,
@@ -273,22 +272,21 @@ def build_dps_certificate_generate_verification_code_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/generateVerificationCode"
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "certificateName": _SERIALIZER.url("certificate_name", certificate_name, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, "str"),
-        "certificateName": _SERIALIZER.url("certificate_name", certificate_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if certificate_name1 is not None:
         _params["certificate.name"] = _SERIALIZER.query("certificate_name1", certificate_name1, "str")
     if certificate_raw_bytes is not None:
@@ -311,6 +309,7 @@ def build_dps_certificate_generate_verification_code_request(  # pylint: disable
         )
     if certificate_nonce is not None:
         _params["certificate.nonce"] = _SERIALIZER.query("certificate_nonce", certificate_nonce, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -319,15 +318,15 @@ def build_dps_certificate_generate_verification_code_request(  # pylint: disable
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_dps_certificate_verify_certificate_request(  # pylint: disable=name-too-long
+    certificate_name: str,
     resource_group_name: str,
     provisioning_service_name: str,
-    certificate_name: str,
     subscription_id: str,
     *,
     etag: str,
@@ -346,22 +345,21 @@ def build_dps_certificate_verify_certificate_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/verify"
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "certificateName": _SERIALIZER.url("certificate_name", certificate_name, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, "str"),
-        "certificateName": _SERIALIZER.url("certificate_name", certificate_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if certificate_name1 is not None:
         _params["certificate.name"] = _SERIALIZER.query("certificate_name1", certificate_name1, "str")
     if certificate_raw_bytes is not None:
@@ -384,6 +382,7 @@ def build_dps_certificate_verify_certificate_request(  # pylint: disable=name-to
         )
     if certificate_nonce is not None:
         _params["certificate.nonce"] = _SERIALIZER.query("certificate_nonce", certificate_nonce, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
@@ -394,17 +393,24 @@ def build_dps_certificate_verify_certificate_request(  # pylint: disable=name-to
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_iot_dps_resource_get_operation_result_request(  # pylint: disable=name-too-long
-    operation_id: str, resource_group_name: str, provisioning_service_name: str, *, asyncinfo: str, **kwargs: Any
+    operation_id: str,
+    resource_group_name: str,
+    provisioning_service_name: str,
+    subscription_id: str,
+    *,
+    asyncinfo: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -413,12 +419,14 @@ def build_iot_dps_resource_get_operation_result_request(  # pylint: disable=name
         "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["asyncinfo"] = _SERIALIZER.query("asyncinfo", asyncinfo, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -427,10 +435,12 @@ def build_iot_dps_resource_get_operation_result_request(  # pylint: disable=name
 
 
 def build_iot_dps_resource_get_request(
-    provisioning_service_name: str, resource_group_name: str, **kwargs: Any
+    provisioning_service_name: str, resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -438,14 +448,18 @@ def build_iot_dps_resource_get_request(
     path_format_arguments = {
         "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_iot_dps_resource_create_or_update_request(  # pylint: disable=name-too-long
@@ -455,7 +469,7 @@ def build_iot_dps_resource_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -486,7 +500,7 @@ def build_iot_dps_resource_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -511,18 +525,25 @@ def build_iot_dps_resource_update_request(
 
 
 def build_iot_dps_resource_delete_request(
-    provisioning_service_name: str, resource_group_name: str, **kwargs: Any
+    provisioning_service_name: str, resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}"
     path_format_arguments = {
         "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    return HttpRequest(method="DELETE", url=_url, **kwargs)
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_iot_dps_resource_list_by_resource_group_request(  # pylint: disable=name-too-long
@@ -531,7 +552,7 @@ def build_iot_dps_resource_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -558,7 +579,7 @@ def build_iot_dps_resource_list_by_subscription_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -579,10 +600,12 @@ def build_iot_dps_resource_list_by_subscription_request(  # pylint: disable=name
 
 
 def build_iot_dps_resource_list_valid_skus_request(  # pylint: disable=name-too-long
-    provisioning_service_name: str, resource_group_name: str, **kwargs: Any
+    provisioning_service_name: str, resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -590,21 +613,27 @@ def build_iot_dps_resource_list_valid_skus_request(  # pylint: disable=name-too-
     path_format_arguments = {
         "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_iot_dps_resource_list_keys_request(
-    provisioning_service_name: str, resource_group_name: str, **kwargs: Any
+    provisioning_service_name: str, resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -612,21 +641,27 @@ def build_iot_dps_resource_list_keys_request(
     path_format_arguments = {
         "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_iot_dps_resource_list_keys_for_key_name_request(  # pylint: disable=name-too-long
-    provisioning_service_name: str, key_name: str, resource_group_name: str, **kwargs: Any
+    provisioning_service_name: str, key_name: str, resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -635,14 +670,18 @@ def build_iot_dps_resource_list_keys_for_key_name_request(  # pylint: disable=na
         "provisioningServiceName": _SERIALIZER.url("provisioning_service_name", provisioning_service_name, "str"),
         "keyName": _SERIALIZER.url("key_name", key_name, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_iot_dps_resource_get_private_link_resources_request(  # pylint: disable=name-too-long
@@ -651,7 +690,7 @@ def build_iot_dps_resource_get_private_link_resources_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -680,7 +719,7 @@ def build_iot_dps_resource_list_private_link_resources_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -712,7 +751,7 @@ def build_iot_dps_resource_get_private_endpoint_connection_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -748,7 +787,7 @@ def build_iot_dps_resource_create_or_update_private_endpoint_connection_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -785,7 +824,7 @@ def build_iot_dps_resource_delete_private_endpoint_connection_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -816,7 +855,7 @@ def build_iot_dps_resource_list_private_endpoint_connections_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -845,7 +884,7 @@ def build_iot_dps_resource_check_provisioning_service_name_availability_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -867,7 +906,7 @@ def build_iot_dps_resource_check_provisioning_service_name_availability_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -931,7 +970,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -944,7 +986,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -960,7 +1005,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorDetails, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorDetails,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -968,7 +1016,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class DpsCertificateOperations:
+class DpsCertificateOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -988,9 +1036,9 @@ class DpsCertificateOperations:
     @distributed_trace
     def get(
         self,
+        certificate_name: str,
         resource_group_name: str,
         provisioning_service_name: str,
-        certificate_name: str,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -998,13 +1046,13 @@ class DpsCertificateOperations:
     ) -> _models.CertificateResponse:
         """Get the certificate from the provisioning service.
 
+        :param certificate_name: Name of the certificate to retrieve. Required.
+        :type certificate_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
-        :param certificate_name: Name of the certificate to retrieve. Required.
-        :type certificate_name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1034,9 +1082,9 @@ class DpsCertificateOperations:
         cls: ClsType[_models.CertificateResponse] = kwargs.pop("cls", None)
 
         _request = build_dps_certificate_get_request(
+            certificate_name=certificate_name,
             resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
-            certificate_name=certificate_name,
             subscription_id=self._config.subscription_id,
             etag=etag,
             match_condition=match_condition,
@@ -1049,6 +1097,7 @@ class DpsCertificateOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1063,11 +1112,14 @@ class DpsCertificateOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CertificateResponse, response.json())
 
@@ -1120,7 +1172,7 @@ class DpsCertificateOperations:
         resource_group_name: str,
         provisioning_service_name: str,
         certificate_name: str,
-        certificate_description: JSON,
+        certificate_description: _types.CertificateResponse,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1137,7 +1189,7 @@ class DpsCertificateOperations:
         :param certificate_name: Name of the certificate to retrieve. Required.
         :type certificate_name: str
         :param certificate_description: The certificate body. Required.
-        :type certificate_description: JSON
+        :type certificate_description: ~azure.mgmt.iothubprovisioningservices.types.CertificateResponse
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1194,7 +1246,7 @@ class DpsCertificateOperations:
         resource_group_name: str,
         provisioning_service_name: str,
         certificate_name: str,
-        certificate_description: Union[_models.CertificateResponse, JSON, IO[bytes]],
+        certificate_description: Union[_models.CertificateResponse, _types.CertificateResponse, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1209,10 +1261,11 @@ class DpsCertificateOperations:
         :type provisioning_service_name: str
         :param certificate_name: Name of the certificate to retrieve. Required.
         :type certificate_name: str
-        :param certificate_description: The certificate body. Is one of the following types:
-         CertificateResponse, JSON, IO[bytes] Required.
+        :param certificate_description: The certificate body. Is either a CertificateResponse type or a
+         IO[bytes] type. Required.
         :type certificate_description:
-         ~azure.mgmt.iothubprovisioningservices.models.CertificateResponse or JSON or IO[bytes]
+         ~azure.mgmt.iothubprovisioningservices.models.CertificateResponse or
+         ~azure.mgmt.iothubprovisioningservices.types.CertificateResponse or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1267,6 +1320,7 @@ class DpsCertificateOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1281,11 +1335,14 @@ class DpsCertificateOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CertificateResponse, response.json())
 
@@ -1295,7 +1352,7 @@ class DpsCertificateOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
+    def delete(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         resource_group_name: str,
         provisioning_service_name: str,
@@ -1404,7 +1461,10 @@ class DpsCertificateOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1413,7 +1473,7 @@ class DpsCertificateOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, provisioning_service_name: str, **kwargs: Any
-    ) -> ItemPaged["_models.CertificateResponse"]:
+    ) -> _models.CertificateListDescription:
         """Get all the certificates tied to the provisioning service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1421,16 +1481,11 @@ class DpsCertificateOperations:
         :type resource_group_name: str
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
-        :return: An iterator like instance of CertificateResponse
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.iothubprovisioningservices.models.CertificateResponse]
+        :return: CertificateListDescription. The CertificateListDescription is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.iothubprovisioningservices.models.CertificateListDescription
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.CertificateResponse]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1439,77 +1494,61 @@ class DpsCertificateOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
-                _request = build_dps_certificate_list_request(
-                    resource_group_name=resource_group_name,
-                    provisioning_service_name=provisioning_service_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        cls: ClsType[_models.CertificateListDescription] = kwargs.pop("cls", None)
 
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request = build_dps_certificate_list_request(
+            resource_group_name=resource_group_name,
+            provisioning_service_name=provisioning_service_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return _request
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CertificateResponse], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
+        response = pipeline_response.http_response
 
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
             )
-            response = pipeline_response.http_response
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorDetails, response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CertificateListDescription, response.json())
 
-            return pipeline_response
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return ItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def generate_verification_code(
+    def generate_verification_code(  # pylint: disable=too-many-locals
         self,
+        certificate_name: str,
         resource_group_name: str,
         provisioning_service_name: str,
-        certificate_name: str,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -1525,13 +1564,13 @@ class DpsCertificateOperations:
     ) -> _models.VerificationCodeResponse:
         """Generate verification code for Proof of Possession.
 
+        :param certificate_name: Name of the certificate to retrieve. Required.
+        :type certificate_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
-        :param certificate_name: Name of the certificate to retrieve. Required.
-        :type certificate_name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -1582,9 +1621,9 @@ class DpsCertificateOperations:
         cls: ClsType[_models.VerificationCodeResponse] = kwargs.pop("cls", None)
 
         _request = build_dps_certificate_generate_verification_code_request(
+            certificate_name=certificate_name,
             resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
-            certificate_name=certificate_name,
             subscription_id=self._config.subscription_id,
             etag=etag,
             match_condition=match_condition,
@@ -1605,6 +1644,7 @@ class DpsCertificateOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1619,11 +1659,14 @@ class DpsCertificateOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VerificationCodeResponse, response.json())
 
@@ -1635,9 +1678,9 @@ class DpsCertificateOperations:
     @overload
     def verify_certificate(
         self,
+        certificate_name: str,
         resource_group_name: str,
         provisioning_service_name: str,
-        certificate_name: str,
         request: _models.VerificationCodeRequest,
         *,
         etag: str,
@@ -1656,13 +1699,13 @@ class DpsCertificateOperations:
         """Verifies the certificate's private key possession by providing the leaf cert issued by the
         verifying pre uploaded certificate.
 
+        :param certificate_name: Name of the certificate to retrieve. Required.
+        :type certificate_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
-        :param certificate_name: Name of the certificate to retrieve. Required.
-        :type certificate_name: str
         :param request: The name of the certificate. Required.
         :type request: ~azure.mgmt.iothubprovisioningservices.models.VerificationCodeRequest
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
@@ -1701,10 +1744,10 @@ class DpsCertificateOperations:
     @overload
     def verify_certificate(
         self,
+        certificate_name: str,
         resource_group_name: str,
         provisioning_service_name: str,
-        certificate_name: str,
-        request: JSON,
+        request: _types.VerificationCodeRequest,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -1722,15 +1765,15 @@ class DpsCertificateOperations:
         """Verifies the certificate's private key possession by providing the leaf cert issued by the
         verifying pre uploaded certificate.
 
+        :param certificate_name: Name of the certificate to retrieve. Required.
+        :type certificate_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
-        :param certificate_name: Name of the certificate to retrieve. Required.
-        :type certificate_name: str
         :param request: The name of the certificate. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.iothubprovisioningservices.types.VerificationCodeRequest
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -1767,9 +1810,9 @@ class DpsCertificateOperations:
     @overload
     def verify_certificate(
         self,
+        certificate_name: str,
         resource_group_name: str,
         provisioning_service_name: str,
-        certificate_name: str,
         request: IO[bytes],
         *,
         etag: str,
@@ -1788,13 +1831,13 @@ class DpsCertificateOperations:
         """Verifies the certificate's private key possession by providing the leaf cert issued by the
         verifying pre uploaded certificate.
 
+        :param certificate_name: Name of the certificate to retrieve. Required.
+        :type certificate_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
-        :param certificate_name: Name of the certificate to retrieve. Required.
-        :type certificate_name: str
         :param request: The name of the certificate. Required.
         :type request: IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
@@ -1831,12 +1874,12 @@ class DpsCertificateOperations:
         """
 
     @distributed_trace
-    def verify_certificate(
+    def verify_certificate(  # pylint: disable=too-many-locals
         self,
+        certificate_name: str,
         resource_group_name: str,
         provisioning_service_name: str,
-        certificate_name: str,
-        request: Union[_models.VerificationCodeRequest, JSON, IO[bytes]],
+        request: Union[_models.VerificationCodeRequest, _types.VerificationCodeRequest, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -1853,17 +1896,17 @@ class DpsCertificateOperations:
         """Verifies the certificate's private key possession by providing the leaf cert issued by the
         verifying pre uploaded certificate.
 
+        :param certificate_name: Name of the certificate to retrieve. Required.
+        :type certificate_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
-        :param certificate_name: Name of the certificate to retrieve. Required.
-        :type certificate_name: str
-        :param request: The name of the certificate. Is one of the following types:
-         VerificationCodeRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.iothubprovisioningservices.models.VerificationCodeRequest or JSON or
-         IO[bytes]
+        :param request: The name of the certificate. Is either a VerificationCodeRequest type or a
+         IO[bytes] type. Required.
+        :type request: ~azure.mgmt.iothubprovisioningservices.models.VerificationCodeRequest or
+         ~azure.mgmt.iothubprovisioningservices.types.VerificationCodeRequest or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -1921,9 +1964,9 @@ class DpsCertificateOperations:
             _content = json.dumps(request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_dps_certificate_verify_certificate_request(
+            certificate_name=certificate_name,
             resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
-            certificate_name=certificate_name,
             subscription_id=self._config.subscription_id,
             etag=etag,
             match_condition=match_condition,
@@ -1946,6 +1989,7 @@ class DpsCertificateOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1960,11 +2004,14 @@ class DpsCertificateOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CertificateResponse, response.json())
 
@@ -1974,7 +2021,7 @@ class DpsCertificateOperations:
         return deserialized  # type: ignore
 
 
-class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
+class IotDpsResourceOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2036,7 +2083,9 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             operation_id=operation_id,
             resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
+            subscription_id=self._config.subscription_id,
             asyncinfo=asyncinfo,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -2045,6 +2094,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2059,11 +2109,14 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AsyncOperationResult, response.json())
 
@@ -2104,6 +2157,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         _request = build_iot_dps_resource_get_request(
             provisioning_service_name=provisioning_service_name,
             resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -2112,6 +2167,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2126,11 +2182,14 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ProvisioningServiceDescription, response.json())
 
@@ -2143,7 +2202,9 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         provisioning_service_name: str,
-        iot_dps_description: Union[_models.ProvisioningServiceDescription, JSON, IO[bytes]],
+        iot_dps_description: Union[
+            _models.ProvisioningServiceDescription, _types.ProvisioningServiceDescription, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2182,6 +2243,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2195,7 +2257,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2203,7 +2268,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2248,7 +2313,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         provisioning_service_name: str,
-        iot_dps_description: JSON,
+        iot_dps_description: _types.ProvisioningServiceDescription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2264,7 +2329,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         :type provisioning_service_name: str
         :param iot_dps_description: Description of the provisioning service to create or update.
          Required.
-        :type iot_dps_description: JSON
+        :type iot_dps_description:
+         ~azure.mgmt.iothubprovisioningservices.types.ProvisioningServiceDescription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2312,7 +2378,9 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         provisioning_service_name: str,
-        iot_dps_description: Union[_models.ProvisioningServiceDescription, JSON, IO[bytes]],
+        iot_dps_description: Union[
+            _models.ProvisioningServiceDescription, _types.ProvisioningServiceDescription, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ProvisioningServiceDescription]:
         """Create or update the metadata of the provisioning service. The usual pattern to modify a
@@ -2324,11 +2392,11 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
-        :param iot_dps_description: Description of the provisioning service to create or update. Is one
-         of the following types: ProvisioningServiceDescription, JSON, IO[bytes] Required.
+        :param iot_dps_description: Description of the provisioning service to create or update. Is
+         either a ProvisioningServiceDescription type or a IO[bytes] type. Required.
         :type iot_dps_description:
-         ~azure.mgmt.iothubprovisioningservices.models.ProvisioningServiceDescription or JSON or
-         IO[bytes]
+         ~azure.mgmt.iothubprovisioningservices.models.ProvisioningServiceDescription or
+         ~azure.mgmt.iothubprovisioningservices.types.ProvisioningServiceDescription or IO[bytes]
         :return: An instance of LROPoller that returns ProvisioningServiceDescription. The
          ProvisioningServiceDescription is compatible with MutableMapping
         :rtype:
@@ -2391,7 +2459,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         provisioning_service_name: str,
-        provisioning_service_tags: Union[_models.TagsResource, JSON, IO[bytes]],
+        provisioning_service_tags: Union[_models.TagsResource, _types.TagsResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2430,6 +2498,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2443,13 +2512,16 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2492,7 +2564,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         provisioning_service_name: str,
-        provisioning_service_tags: JSON,
+        provisioning_service_tags: _types.TagsResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2507,7 +2579,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         :type provisioning_service_name: str
         :param provisioning_service_tags: Updated tag information to set into the provisioning service
          instance. Required.
-        :type provisioning_service_tags: JSON
+        :type provisioning_service_tags: ~azure.mgmt.iothubprovisioningservices.types.TagsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2554,7 +2626,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         provisioning_service_name: str,
-        provisioning_service_tags: Union[_models.TagsResource, JSON, IO[bytes]],
+        provisioning_service_tags: Union[_models.TagsResource, _types.TagsResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ProvisioningServiceDescription]:
         """Update an existing provisioning service's tags. to update other fields use the CreateOrUpdate
@@ -2566,9 +2638,9 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
         :param provisioning_service_tags: Updated tag information to set into the provisioning service
-         instance. Is one of the following types: TagsResource, JSON, IO[bytes] Required.
+         instance. Is either a TagsResource type or a IO[bytes] type. Required.
         :type provisioning_service_tags: ~azure.mgmt.iothubprovisioningservices.models.TagsResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.iothubprovisioningservices.types.TagsResource or IO[bytes]
         :return: An instance of LROPoller that returns ProvisioningServiceDescription. The
          ProvisioningServiceDescription is compatible with MutableMapping
         :rtype:
@@ -2649,6 +2721,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         _request = build_iot_dps_resource_delete_request(
             provisioning_service_name=provisioning_service_name,
             resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -2657,6 +2731,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2670,7 +2745,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2678,7 +2756,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2797,7 +2875,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2810,7 +2891,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ProvisioningServiceDescription], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ProvisioningServiceDescription],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2826,7 +2910,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorDetails, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorDetails,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2882,7 +2969,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2895,7 +2985,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ProvisioningServiceDescription], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ProvisioningServiceDescription],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2911,7 +3004,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorDetails, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorDetails,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2953,6 +3049,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 _request = build_iot_dps_resource_list_valid_skus_request(
                     provisioning_service_name=provisioning_service_name,
                     resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -2974,7 +3072,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2987,7 +3088,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.IotDpsSkuDefinition], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.IotDpsSkuDefinition],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3003,7 +3107,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorDetails, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorDetails,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3048,6 +3155,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 _request = build_iot_dps_resource_list_keys_request(
                     provisioning_service_name=provisioning_service_name,
                     resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -3069,7 +3178,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3101,7 +3213,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorDetails, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorDetails,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3144,6 +3259,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             provisioning_service_name=provisioning_service_name,
             key_name=key_name,
             resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -3152,6 +3269,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3166,11 +3284,14 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription, response.json()
@@ -3225,6 +3346,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3239,11 +3361,14 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GroupIdInformation, response.json())
 
@@ -3255,7 +3380,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_private_link_resources(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
-    ) -> ItemPaged["_models.GroupIdInformation"]:
+    ) -> _models.PrivateLinkResources:
         """List private link resources for the given provisioning service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3263,16 +3388,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param resource_name: Name of the provisioning service to retrieve. Required.
         :type resource_name: str
-        :return: An iterator like instance of GroupIdInformation
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.iothubprovisioningservices.models.GroupIdInformation]
+        :return: PrivateLinkResources. The PrivateLinkResources is compatible with MutableMapping
+        :rtype: ~azure.mgmt.iothubprovisioningservices.models.PrivateLinkResources
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.GroupIdInformation]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3281,70 +3400,54 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
-                _request = build_iot_dps_resource_list_private_link_resources_request(
-                    resource_group_name=resource_group_name,
-                    resource_name=resource_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        cls: ClsType[_models.PrivateLinkResources] = kwargs.pop("cls", None)
 
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request = build_iot_dps_resource_list_private_link_resources_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return _request
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.GroupIdInformation], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
+        response = pipeline_response.http_response
 
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
             )
-            response = pipeline_response.http_response
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorDetails, response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PrivateLinkResources, response.json())
 
-            return pipeline_response
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return ItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_private_endpoint_connection(
@@ -3391,6 +3494,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3405,11 +3509,14 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
 
@@ -3423,7 +3530,9 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3463,6 +3572,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3476,7 +3586,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3484,7 +3597,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3531,7 +3644,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: JSON,
+        private_endpoint_connection: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3547,7 +3660,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection with updated properties.
          Required.
-        :type private_endpoint_connection: JSON
+        :type private_endpoint_connection:
+         ~azure.mgmt.iothubprovisioningservices.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3597,7 +3711,9 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Create or update the status of a private endpoint connection with the specified name.
@@ -3610,9 +3726,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection with updated properties. Is
-         one of the following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
+         either a PrivateEndpointConnection type or a IO[bytes] type. Required.
         :type private_endpoint_connection:
-         ~azure.mgmt.iothubprovisioningservices.models.PrivateEndpointConnection or JSON or IO[bytes]
+         ~azure.mgmt.iothubprovisioningservices.models.PrivateEndpointConnection or
+         ~azure.mgmt.iothubprovisioningservices.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -3702,6 +3819,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3715,7 +3833,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3723,7 +3844,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3840,6 +3961,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3854,11 +3976,14 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(List[_models.PrivateEndpointConnection], response.json())
 
@@ -3888,7 +4013,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def check_provisioning_service_name_availability(  # pylint: disable=name-too-long
-        self, arguments: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, arguments: _types.OperationInputs, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.NameAvailabilityInfo:
         """Check if a provisioning service name is available.
 
@@ -3896,7 +4021,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         syntactically valid and if the name is usable.
 
         :param arguments: The request body. Required.
-        :type arguments: JSON
+        :type arguments: ~azure.mgmt.iothubprovisioningservices.types.OperationInputs
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3926,17 +4051,17 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def check_provisioning_service_name_availability(  # pylint: disable=name-too-long
-        self, arguments: Union[_models.OperationInputs, JSON, IO[bytes]], **kwargs: Any
+        self, arguments: Union[_models.OperationInputs, _types.OperationInputs, IO[bytes]], **kwargs: Any
     ) -> _models.NameAvailabilityInfo:
         """Check if a provisioning service name is available.
 
         Check if a provisioning service name is available. This will validate if the name is
         syntactically valid and if the name is usable.
 
-        :param arguments: The request body. Is one of the following types: OperationInputs, JSON,
-         IO[bytes] Required.
-        :type arguments: ~azure.mgmt.iothubprovisioningservices.models.OperationInputs or JSON or
-         IO[bytes]
+        :param arguments: The request body. Is either a OperationInputs type or a IO[bytes] type.
+         Required.
+        :type arguments: ~azure.mgmt.iothubprovisioningservices.models.OperationInputs or
+         ~azure.mgmt.iothubprovisioningservices.types.OperationInputs or IO[bytes]
         :return: NameAvailabilityInfo. The NameAvailabilityInfo is compatible with MutableMapping
         :rtype: ~azure.mgmt.iothubprovisioningservices.models.NameAvailabilityInfo
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3975,6 +4100,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3989,11 +4115,14 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorDetails, response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetails,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NameAvailabilityInfo, response.json())
 

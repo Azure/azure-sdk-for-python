@@ -1,5 +1,58 @@
 # Release History
 
+## 4.1.0b1 (2026-09-03)
+
+### Features Added
+
+  - Client `ContainerServiceFleetMgmtClient` added operation group `cluster_mesh_profiles`
+  - Model `AutoUpgradeProfileStatus` added property `last_trigger_message`
+  - Model `ClusterResourcePlacementSpec` added property `rollout_strategy`
+  - Model `FleetManagedNamespacePatch` added property `properties`
+  - Model `FleetMemberProperties` added property `mesh_properties`
+  - Model `GateConfiguration` added property `scheduled_start_configuration`
+  - Model `GateProperties` added property `scheduled_start_properties`
+  - Enum `GateType` added member `SCHEDULED_START`
+  - Model `UpdateGroup` added property `max_allowed_failures`
+  - Model `UpdateGroup` added property `member_selector`
+  - Model `UpdateGroupStatus` added property `failure_count`
+  - Model `UpdateGroupStatus` added property `max_allowed_failures`
+  - Model `UpdateRunStatus` added property `failure_count`
+  - Model `UpdateStage` added property `max_allowed_failures`
+  - Model `UpdateStage` added property `member_selector`
+  - Model `UpdateStageStatus` added property `failure_count`
+  - Model `UpdateStageStatus` added property `max_allowed_failures`
+  - Enum `UpgradeChannel` added member `SECURITY_PATCH`
+  - Added model `AffinityPatch`
+  - Added model `CiliumProperties`
+  - Added model `ClusterAffinityPatch`
+  - Added model `ClusterMeshProfile`
+  - Added model `ClusterMeshProfileProperties`
+  - Added enum `ClusterMeshProfileProvisioningState`
+  - Added model `ClusterMeshProfileStatus`
+  - Added enum `ClusterMeshState`
+  - Added model `ClusterResourcePlacementSpecPatch`
+  - Added model `ClusterSelectorPatch`
+  - Added model `ClusterSelectorTermPatch`
+  - Added model `ClusterUpdateStrategyReference`
+  - Added enum `DayOfWeek`
+  - Added model `FleetManagedNamespacePropertiesPatch`
+  - Added model `LabelSelectorPatch`
+  - Added model `LabelSelectorRequirementPatch`
+  - Added model `MemberSelector`
+  - Added enum `MeshMemberState`
+  - Added model `MeshMemberStatus`
+  - Added model `MeshProperties`
+  - Added model `PlacementPolicyPatch`
+  - Added model `PlacementProfilePatch`
+  - Added model `PropagationPolicyPatch`
+  - Added model `PropertySelectorPatch`
+  - Added model `PropertySelectorRequirementPatch`
+  - Added model `RolloutStrategy`
+  - Added enum `RolloutStrategyType`
+  - Added model `ScheduledStartConfiguration`
+  - Added model `ScheduledStartProperties`
+  - Added operation group `ClusterMeshProfilesOperations`
+
 ## 4.0.0 (2026-08-03)
 
 ### Features Added
