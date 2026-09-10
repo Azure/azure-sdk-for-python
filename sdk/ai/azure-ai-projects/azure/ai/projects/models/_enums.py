@@ -12,7 +12,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
+    """Feature opt-in keys for agent definition operations supporting conditional preview features."""
 
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
     """WORKFLOW_AGENTS_V1_PREVIEW."""
@@ -24,6 +24,10 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VOICE_AGENTS_V1_PREVIEW."""
     DIGITAL_WORKER_V1_PREVIEW = "DigitalWorker=V1Preview"
     """DIGITAL_WORKER_V1_PREVIEW."""
+    GITHUB_COPILOT_V1_PREVIEW = "GitHubCopilot=V1Preview"
+    """GITHUB_COPILOT_V1_PREVIEW."""
+    SKILLS_V1_PREVIEW = "Skills=V1Preview"
+    """SKILLS_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -807,6 +811,21 @@ class GenerationWarningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INPUT_QUALITY = "input_quality"
     """The paired EvaluatorGenerationJob emitted one or more input-quality advisories. Follow
     ``generation_job_id`` to fetch the detailed warning payloads."""
+
+
+class GitHubCopilotBuiltInTool(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A customer-configurable GitHub Copilot built-in tool."""
+
+    FILESYSTEM_READ = "filesystem_read"
+    """Read and search files in the harness workspace."""
+    FILESYSTEM_WRITE = "filesystem_write"
+    """Create and modify files in the harness workspace."""
+    SHELL = "shell"
+    """Execute operating-system commands."""
+    WEB = "web"
+    """Fetch content and search external network resources."""
+    SUBAGENTS = "subagents"
+    """Delegate work to additional agents."""
 
 
 class GitHubIssueEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2061,6 +2080,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TOOLBOX_SEARCH_PREVIEW."""
     WEB_IQ_PREVIEW = "web_iq_preview"
     """WEB_IQ_PREVIEW."""
+    GITHUB_COPILOT_TOOLSET_PREVIEW = "github_copilot_toolset_preview"
+    """GITHUB_COPILOT_TOOLSET_PREVIEW."""
     A2_A = "a2a"
     """A2_A."""
     AZURE_AI_SEARCH = "azure_ai_search"

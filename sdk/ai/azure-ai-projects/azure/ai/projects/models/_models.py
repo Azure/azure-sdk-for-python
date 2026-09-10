@@ -172,10 +172,10 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
     BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationTool,
     BrowserAutomationPreviewTool, CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool,
     ComputerUsePreviewTool, CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool,
-    FileSearchTool, FunctionTool, ImageGenTool, LocalShellToolParam, MCPTool,
-    MemorySearchPreviewTool, NamespaceToolParam, OpenApiTool, ProgrammaticToolCallingParam,
-    SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam, WebIQPreviewTool,
-    WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    FileSearchTool, FunctionTool, GitHubCopilotToolsetPreview, ImageGenTool, LocalShellToolParam,
+    MCPTool, MemorySearchPreviewTool, NamespaceToolParam, OpenApiTool,
+    ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
+    ToolSearchToolParam, WebIQPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "programmatic_tool_calling",
@@ -183,8 +183,8 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      "web_search_preview", "apply_patch", "a2a_preview", "bing_custom_search_preview",
      "browser_automation_preview", "fabric_dataagent_preview", "sharepoint_grounding_preview",
      "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
-     "web_iq_preview", "a2a", "azure_ai_search", "azure_function", "bing_grounding",
-     "browser_automation", "capture_structured_outputs", and "openapi".
+     "web_iq_preview", "github_copilot_toolset_preview", "a2a", "azure_ai_search", "azure_function",
+     "bing_grounding", "browser_automation", "capture_structured_outputs", and "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -196,9 +196,9 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      \"namespace\", \"tool_search\", \"web_search_preview\", \"apply_patch\", \"a2a_preview\",
      \"bing_custom_search_preview\", \"browser_automation_preview\", \"fabric_dataagent_preview\",
      \"sharepoint_grounding_preview\", \"memory_search_preview\", \"work_iq_preview\",
-     \"fabric_iq_preview\", \"toolbox_search_preview\", \"web_iq_preview\", \"a2a\",
-     \"azure_ai_search\", \"azure_function\", \"bing_grounding\", \"browser_automation\",
-     \"capture_structured_outputs\", and \"openapi\"."""
+     \"fabric_iq_preview\", \"toolbox_search_preview\", \"web_iq_preview\",
+     \"github_copilot_toolset_preview\", \"a2a\", \"azure_ai_search\", \"azure_function\",
+     \"bing_grounding\", \"browser_automation\", \"capture_structured_outputs\", and \"openapi\"."""
 
     @overload
     def __init__(
@@ -999,6 +999,10 @@ class AgentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     :ivar state: The operational state of the agent. Controls whether the agent endpoint accepts or
      rejects requests. Required. Known values are: "enabled" and "disabled".
     :vartype state: str or ~azure.ai.projects.models.AgentState
+    :ivar configuration_state: The administrative configuration state of the agent. This reflects
+     whether the agent was explicitly enabled or disabled, independently of identity-derived
+     operational state. Required. Known values are: "enabled" and "disabled".
+    :vartype configuration_state: str or ~azure.ai.projects.models.AgentState
     :ivar state_source: The source of the agent's operational state. When the agent is disabled,
      indicates where the disabled state originates from. Empty when not derived from a specific
      source. Known values are: "agent_instance_identity" and "agent_blueprint".
@@ -1029,6 +1033,10 @@ class AgentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     state: Union[str, "_models.AgentState"] = rest_field(visibility=["read"])
     """The operational state of the agent. Controls whether the agent endpoint accepts or rejects
      requests. Required. Known values are: \"enabled\" and \"disabled\"."""
+    configuration_state: Union[str, "_models.AgentState"] = rest_field(visibility=["read"])
+    """The administrative configuration state of the agent. This reflects whether the agent was
+     explicitly enabled or disabled, independently of identity-derived operational state. Required.
+     Known values are: \"enabled\" and \"disabled\"."""
     state_source: Optional[Union[str, "_models.AgentStateSource"]] = rest_field(visibility=["read"])
     """The source of the agent's operational state. When the agent is disabled, indicates where the
      disabled state originates from. Empty when not derived from a specific source. Known values
@@ -1256,6 +1264,38 @@ class AgentEvaluatorGenerationJobSource(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = EvaluatorGenerationJobSourceType.AGENT  # type: ignore
+
+
+class AgentHarness(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A managed runtime and agent loop used to execute a prompt agent.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    GitHubCopilotHarness
+
+    :ivar type: The type of managed harness. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of managed harness. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class BaseCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -10237,6 +10277,148 @@ class GenerateVoiceAgentRequest(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
+class GitHubCopilotHarness(AgentHarness, discriminator="github_copilot_preview"):
+    """The GitHub Copilot managed harness for prompt agents.
+
+    :ivar type: The type of managed harness. Always ``github_copilot_preview``. Required. Default
+     value is "github_copilot_preview".
+    :vartype type: str
+    """
+
+    type: Literal["github_copilot_preview"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of managed harness. Always ``github_copilot_preview``. Required. Default value is
+     \"github_copilot_preview\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "github_copilot_preview"  # type: ignore
+
+
+class GitHubCopilotToolsetConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An enablement override for a GitHub Copilot built-in tool.
+
+    :ivar name: The built-in tool to configure. Required. Known values are: "filesystem_read",
+     "filesystem_write", "shell", "web", and "subagents".
+    :vartype name: str or ~azure.ai.projects.models.GitHubCopilotBuiltInTool
+    :ivar enabled: Whether the built-in tool is enabled. If omitted, the toolset default applies.
+    :vartype enabled: bool
+    """
+
+    name: Union[str, "_models.GitHubCopilotBuiltInTool"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The built-in tool to configure. Required. Known values are: \"filesystem_read\",
+     \"filesystem_write\", \"shell\", \"web\", and \"subagents\"."""
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the built-in tool is enabled. If omitted, the toolset default applies."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Union[str, "_models.GitHubCopilotBuiltInTool"],
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GitHubCopilotToolsetDefaultConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The default enablement setting for GitHub Copilot built-in tools.
+
+    :ivar enabled: Whether built-in tools are enabled by default. Defaults to true.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether built-in tools are enabled by default. Defaults to true."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GitHubCopilotToolsetPreview(
+    Tool, discriminator="github_copilot_toolset_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration overrides for GitHub Copilot built-in tools.
+
+    :ivar type: The type of the toolset. Always ``github_copilot_toolset_preview``. Required.
+     GITHUB_COPILOT_TOOLSET_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.GITHUB_COPILOT_TOOLSET_PREVIEW
+    :ivar default_config: The default configuration for built-in tools. If omitted, built-in tools
+     are enabled by default.
+    :vartype default_config: ~azure.ai.projects.models.GitHubCopilotToolsetDefaultConfig
+    :ivar configs: Per-tool configuration overrides. Duplicate built-in tool names are not allowed.
+    :vartype configs: list[~azure.ai.projects.models.GitHubCopilotToolsetConfig]
+    """
+
+    type: Literal[ToolType.GITHUB_COPILOT_TOOLSET_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the toolset. Always ``github_copilot_toolset_preview``. Required.
+     GITHUB_COPILOT_TOOLSET_PREVIEW."""
+    default_config: Optional["_models.GitHubCopilotToolsetDefaultConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default configuration for built-in tools. If omitted, built-in tools are enabled by
+     default."""
+    configs: Optional[list["_models.GitHubCopilotToolsetConfig"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per-tool configuration overrides. Duplicate built-in tool names are not allowed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        default_config: Optional["_models.GitHubCopilotToolsetDefaultConfig"] = None,
+        configs: Optional[list["_models.GitHubCopilotToolsetConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.GITHUB_COPILOT_TOOLSET_PREVIEW  # type: ignore
+
+
 class GitHubIssueRoutineTrigger(
     RoutineTrigger, discriminator="github_issue"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -14312,10 +14494,15 @@ class PromptAgentDefinition(
     :vartype rai_config: ~azure.ai.projects.models.RaiConfig
     :ivar kind: Required. PROMPT.
     :vartype kind: str or ~azure.ai.projects.models.PROMPT
+    :ivar harness: The managed runtime and agent loop used to execute this prompt agent.
+    :vartype harness: ~azure.ai.projects.models.AgentHarness
     :ivar model: The model deployment to use for this agent. Required.
     :vartype model: str
     :ivar instructions: A system (or developer) message inserted into the model's context.
     :vartype instructions: str
+    :ivar skills: The Foundry skills available to this prompt agent. An omitted skill version is
+     resolved and pinned when the agent version is created.
+    :vartype skills: list[~azure.ai.projects.models.SkillReference]
     :ivar temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
      will make the output more random, while lower values like 0.2 will make it more focused and
      deterministic. We generally recommend altering this or ``top_p`` but not both. Defaults to
@@ -14345,10 +14532,17 @@ class PromptAgentDefinition(
 
     kind: Literal[AgentKind.PROMPT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. PROMPT."""
+    harness: Optional["_models.AgentHarness"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The managed runtime and agent loop used to execute this prompt agent."""
     model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The model deployment to use for this agent. Required."""
     instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A system (or developer) message inserted into the model's context."""
+    skills: Optional[list["_models.SkillReference"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Foundry skills available to this prompt agent. An omitted skill version is resolved and
+     pinned when the agent version is created."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output
      more random, while lower values like 0.2 will make it more focused and deterministic. We
@@ -14385,7 +14579,9 @@ class PromptAgentDefinition(
         *,
         model: str,
         rai_config: Optional["_models.RaiConfig"] = None,
+        harness: Optional["_models.AgentHarness"] = None,
         instructions: Optional[str] = None,
+        skills: Optional[list["_models.SkillReference"]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         reasoning: Optional["_models.Reasoning"] = None,
@@ -20578,12 +20774,10 @@ class SessionLogEvent(_Model):  # pylint: disable=docstring-keyword-should-match
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
-    on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
-    connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -20978,6 +21172,41 @@ class SkillInlineContent(_Model):  # pylint: disable=docstring-keyword-should-ma
         compatibility: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         allowed_tools: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkillReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A reference to a versioned Foundry skill.
+
+    :ivar name: The name of the skill. Required.
+    :vartype name: str
+    :ivar version: The skill version. If omitted, the current default version is resolved and
+     pinned when the agent version is created.
+    :vartype version: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the skill. Required."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The skill version. If omitted, the current default version is resolved and pinned when the
+     agent version is created."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        version: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -23607,6 +23836,11 @@ class ToolboxObject(_Model):  # pylint: disable=docstring-keyword-should-match-k
     :vartype id: str
     :ivar name: The name of the toolbox. Required.
     :vartype name: str
+    :ivar updated_at: The Unix timestamp (seconds) when the toolbox was last updated. This value
+     changes when a new toolbox version is created or the toolbox is updated. Required.
+    :vartype updated_at: ~datetime.datetime
+    :ivar versions: The versions associated with the toolbox. Required.
+    :vartype versions: ~azure.ai.projects.models.ToolboxVersions
     :ivar default_version: The version identifier that the toolbox currently points to. Defaults to
      the latest version. Can be changed via updateToolbox. Required.
     :vartype default_version: str
@@ -23616,6 +23850,13 @@ class ToolboxObject(_Model):  # pylint: disable=docstring-keyword-should-match-k
     """The unique identifier of the toolbox. Required."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the toolbox. Required."""
+    updated_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The Unix timestamp (seconds) when the toolbox was last updated. This value changes when a new
+     toolbox version is created or the toolbox is updated. Required."""
+    versions: "_models.ToolboxVersions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The versions associated with the toolbox. Required."""
     default_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version identifier that the toolbox currently points to. Defaults to the latest version.
      Can be changed via updateToolbox. Required."""
@@ -23626,6 +23867,8 @@ class ToolboxObject(_Model):  # pylint: disable=docstring-keyword-should-match-k
         *,
         id: str,  # pylint: disable=redefined-builtin
         name: str,
+        updated_at: datetime.datetime,
+        versions: "_models.ToolboxVersions",
         default_version: str,
     ) -> None: ...
 
@@ -24048,6 +24291,34 @@ class ToolboxVersionObject(_Model):  # pylint: disable=docstring-keyword-should-
         description: Optional[str] = None,
         skills: Optional[list["_models.ToolboxSkill"]] = None,
         policies: Optional["_models.ToolboxPolicies"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ToolboxVersions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The versions associated with a toolbox.
+
+    :ivar latest: The latest version of the toolbox. Required.
+    :vartype latest: ~azure.ai.projects.models.ToolboxVersionObject
+    """
+
+    latest: "_models.ToolboxVersionObject" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The latest version of the toolbox. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        latest: "_models.ToolboxVersionObject",
     ) -> None: ...
 
     @overload

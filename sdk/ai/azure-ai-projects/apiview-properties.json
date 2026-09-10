@@ -24,6 +24,7 @@
         "azure.ai.projects.models.AgentEndpointConfig": "Azure.AI.Projects.AgentEndpointConfig",
         "azure.ai.projects.models.EvaluatorGenerationJobSource": "Azure.AI.Projects.EvaluatorGenerationJobSource",
         "azure.ai.projects.models.AgentEvaluatorGenerationJobSource": "Azure.AI.Projects.AgentEvaluatorGenerationJobSource",
+        "azure.ai.projects.models.AgentHarness": "Azure.AI.Projects.AgentHarness",
         "azure.ai.projects.models.BaseCredentials": "Azure.AI.Projects.BaseCredentials",
         "azure.ai.projects.models.AgenticIdentityPreviewCredentials": "Azure.AI.Projects.AgenticIdentityPreviewCredentials",
         "azure.ai.projects.models.AgentIdentity": "Azure.AI.Projects.AgentIdentity",
@@ -220,6 +221,10 @@
         "azure.ai.projects.models.FunctionTool": "OpenAI.FunctionTool",
         "azure.ai.projects.models.FunctionToolParam": "OpenAI.FunctionToolParam",
         "azure.ai.projects.models.GenerateVoiceAgentRequest": "Azure.AI.Projects.GenerateVoiceAgentRequest",
+        "azure.ai.projects.models.GitHubCopilotHarness": "Azure.AI.Projects.GitHubCopilotHarness",
+        "azure.ai.projects.models.GitHubCopilotToolsetConfig": "Azure.AI.Projects.GitHubCopilotToolsetConfig",
+        "azure.ai.projects.models.GitHubCopilotToolsetDefaultConfig": "Azure.AI.Projects.GitHubCopilotToolsetDefaultConfig",
+        "azure.ai.projects.models.GitHubCopilotToolsetPreview": "Azure.AI.Projects.GitHubCopilotToolsetPreview",
         "azure.ai.projects.models.GitHubIssueRoutineTrigger": "Azure.AI.Projects.GitHubIssueRoutineTrigger",
         "azure.ai.projects.models.TelemetryEndpointAuth": "Azure.AI.Projects.TelemetryEndpointAuth",
         "azure.ai.projects.models.HeaderTelemetryEndpointAuth": "Azure.AI.Projects.HeaderTelemetryEndpointAuth",
@@ -441,6 +446,7 @@
         "azure.ai.projects.models.SipTelephonyTransferDestination": "Azure.AI.Projects.SipTelephonyTransferDestination",
         "azure.ai.projects.models.SkillDetails": "Azure.AI.Projects.Skill",
         "azure.ai.projects.models.SkillInlineContent": "Azure.AI.Projects.SkillInlineContent",
+        "azure.ai.projects.models.SkillReference": "Azure.AI.Projects.SkillReference",
         "azure.ai.projects.models.SkillReferenceParam": "OpenAI.SkillReferenceParam",
         "azure.ai.projects.models.SkillVersion": "Azure.AI.Projects.SkillVersion",
         "azure.ai.projects.models.ToolChoiceParam": "OpenAI.ToolChoiceParam",
@@ -497,6 +503,7 @@
         "azure.ai.projects.models.ToolboxSkill": "Azure.AI.Projects.ToolboxSkill",
         "azure.ai.projects.models.ToolboxSkillReference": "Azure.AI.Projects.ToolboxSkillReference",
         "azure.ai.projects.models.ToolboxVersionObject": "Azure.AI.Projects.ToolboxVersionObject",
+        "azure.ai.projects.models.ToolboxVersions": "Azure.AI.Projects.ToolboxVersions",
         "azure.ai.projects.models.ToolChoiceAllowed": "OpenAI.ToolChoiceAllowed",
         "azure.ai.projects.models.ToolChoiceCodeInterpreter": "OpenAI.ToolChoiceCodeInterpreter",
         "azure.ai.projects.models.ToolChoiceComputer": "OpenAI.ToolChoiceComputer",
@@ -644,6 +651,7 @@
         "azure.ai.projects.models.CustomToolParamFormatType": "OpenAI.CustomToolParamFormatType",
         "azure.ai.projects.models.GrammarSyntax1": "OpenAI.GrammarSyntax1",
         "azure.ai.projects.models.RankerVersionType": "OpenAI.RankerVersionType",
+        "azure.ai.projects.models.GitHubCopilotBuiltInTool": "Azure.AI.Projects.GitHubCopilotBuiltInTool",
         "azure.ai.projects.models.InputFidelity": "OpenAI.InputFidelity",
         "azure.ai.projects.models.ImageGenAction": "OpenAI.ImageGenActionEnum",
         "azure.ai.projects.models.OpenApiAuthType": "Azure.AI.Projects.OpenApiAuthType",
@@ -884,6 +892,8 @@
         "azure.ai.projects.aio.operations.ToolboxesOperations.list_versions": "Azure.AI.Projects.Toolboxes.listToolboxVersions",
         "azure.ai.projects.operations.ToolboxesOperations.get_version": "Azure.AI.Projects.Toolboxes.getToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.get_version": "Azure.AI.Projects.Toolboxes.getToolboxVersion",
+        "azure.ai.projects.operations.ToolboxesOperations.invoke_latest_toolbox_mcp": "Azure.AI.Projects.Toolboxes.invokeLatestToolboxMcp",
+        "azure.ai.projects.aio.operations.ToolboxesOperations.invoke_latest_toolbox_mcp": "Azure.AI.Projects.Toolboxes.invokeLatestToolboxMcp",
         "azure.ai.projects.operations.ToolboxesOperations.update": "Azure.AI.Projects.Toolboxes.updateToolbox",
         "azure.ai.projects.aio.operations.ToolboxesOperations.update": "Azure.AI.Projects.Toolboxes.updateToolbox",
         "azure.ai.projects.operations.ToolboxesOperations.delete": "Azure.AI.Projects.Toolboxes.deleteToolbox",
@@ -891,5 +901,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "6d4ececfa1c7"
+    "CrossLanguageVersion": "3555de77680d"
 }
