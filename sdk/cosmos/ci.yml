@@ -31,5 +31,7 @@ extends:
     Artifacts:
     - name: azure-cosmos
       safeName: azurecosmos
+    - name: azure-cosmos-fabric-mapper
+      safeName: azurecosmosfabricmapper
     - name: azure-mgmt-cosmosdb
       safeName: azuremgmtcosmosdb
