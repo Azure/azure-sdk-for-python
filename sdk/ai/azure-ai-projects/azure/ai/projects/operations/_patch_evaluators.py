@@ -5,7 +5,6 @@
 # ------------------------------------
 """Custom evaluator operations."""
 
-from collections.abc import MutableMapping
 from typing import Any, IO, Optional, Union, cast, overload
 
 from azure.core.polling import NoPolling, PollingMethod
@@ -13,18 +12,16 @@ from azure.core.polling.base_polling import LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ._operations import BetaEvaluatorsOperations as BetaEvaluatorsOperationsGenerated
+from ._operations import BetaEvaluatorsOperations as BetaEvaluatorsOperationsGenerated, JSON
 from .. import models as _models
 from .._utils.model_base import _deserialize
 from ..models import EvaluatorGenerationLROPoller
-
-JSON = MutableMapping[str, Any]
 
 
 class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     """Custom operations for beta evaluator generation jobs."""
 
-    @overload
+    @overload  # type: ignore[override]
     def begin_create_generation_job(
         self,
         job: _models.EvaluatorGenerationJob,
@@ -55,7 +52,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     ) -> EvaluatorGenerationLROPoller: ...
 
     @distributed_trace
-    def begin_create_generation_job(
+    def begin_create_generation_job(  # type: ignore[reportIncompatibleMethodOverride, override]
         self,
         job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
         *,
@@ -84,7 +81,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         raw_result = None
         if continuation_token is None:
             raw_result = self._create_generation_job_initial(
-                job=job,
+                job=job,  # type: ignore[reportArgumentType, arg-type]
                 operation_id=operation_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,

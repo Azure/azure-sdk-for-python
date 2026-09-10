@@ -46,7 +46,7 @@ from .models import (
 )
 
 class _AzureEvalRuns(Runs):
-    def create(
+    def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         eval_id: str,
         *,
@@ -70,7 +70,7 @@ class _AzureEvalRuns(Runs):
     ) -> RunCreateResponse: ...
 
 class _AzureEvals(Evals):
-    def create(
+    def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         *,
         data_source_config: Union[
@@ -126,6 +126,8 @@ def _resolve_openai_default_headers(agent_name: Optional[str], kwargs: dict) -> 
 def _build_openai_user_agent(custom_user_agent: Optional[str], openai_default_user_agent: str) -> str: ...
 def _log_streaming_response_notice(logging_enabled: bool) -> bool: ...
 
-__all__: List[str] = ["AIProjectClient"]
+__all__: List[str] = [
+    "AIProjectClient",
+]
 
 def patch_sdk() -> None: ...

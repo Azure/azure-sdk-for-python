@@ -45,7 +45,7 @@ from ..models import (
 )
 
 class _AzureAsyncEvalRuns(AsyncRuns):
-    async def create(
+    async def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         eval_id: str,
         *,
@@ -69,7 +69,7 @@ class _AzureAsyncEvalRuns(AsyncRuns):
     ) -> RunCreateResponse: ...
 
 class _AzureAsyncEvals(AsyncEvals):
-    async def create(
+    async def create(  # type: ignore[reportIncompatibleMethodOverride]
         self,
         *,
         data_source_config: Union[
@@ -114,6 +114,8 @@ class _LoggingAsyncByteStream(httpx2.AsyncByteStream): ...
 def _log_streaming_response_notice(logging_enabled: bool) -> bool: ...
 
 # To make mypy happy... otherwise imports of the below result in mypy "attr-defined" error
-__all__: List[str] = ["AIProjectClient"]
+__all__: List[str] = [
+    "AIProjectClient",
+]
 
 def patch_sdk() -> None: ...

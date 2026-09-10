@@ -1,9 +1,32 @@
 # Release History
 
-## 2.7.0 (Unreleased)
+## 2.7.0b1 (Unreleased)
+
+### Features Added
+
+* Added Voice Agents, a new agent kind for speech-to-speech conversational AI unified with the rest of the Agents API. Define a voice agent's model, audio, turn detection, greeting, and tools; manage it like any other agent; and reach it through telephony (inbound bindings or outbound calls/campaigns).
+* The core voice agent definition, as a new `kind="voice"` on `AgentDefinition`:
+  * Define a voice agent with `VoiceAgentDefinition`, configuring its model (`VoiceModelType`), audio input/output (`VoiceAgentAudioConfig`, `VoiceAgentAudioInputConfig`, `VoiceAgentAudioOutputConfig`), turn detection (`VoiceAgentTurnDetectionConfig` and its `VoiceAgentServerVadTurnDetection` / `VoiceAgentAzureSemanticVadTurnDetection` / `VoiceAgentAzureSemanticVadEnTurnDetection` / `VoiceAgentAzureSemanticVadMultilingualTurnDetection` variants), greeting (`VoiceAgentGreetingConfig` and its `VoiceAgentTemplateGreetingConfig` / `VoiceAgentLlmGeneratedGreetingConfig` variants), tools (`VoiceAgentTool`, `VoiceAgentFunctionTool`, `VoiceAgentMcpTool`, `VoiceAgentSystemTool` and its `VoiceAgentEndConversationSystemTool` variant, `VoiceAgentToolboxTool`), and avatar (`VoiceAgentAvatarConfig`). Manage it like any other agent through `project_client.agents` (`create_version`, `get`, `list`, `disable`/`enable`, `delete`).
+  * Added guided authoring via `project_client.agents.generate_agent(GenerateVoiceAgentRequest(kind=AgentKind.VOICE, ...))`, which returns a service-generated starter definition that can be edited afterward through the standard `create_version`/`update` flow.
+  * Added the `agent_endpoint_conversations` operation group for reading back persisted voice-agent conversation transcripts and audio, for agents created with `store=True`.
+  * Added the underlying `RealtimeConversationItem*`, `RealtimeMCP*`, `RealtimeResponseUsage`, and related realtime event/session models used by the voice agent WebSocket protocol.
+* Telephony, WebRTC, and sub-agent consultation:
+  * Added telephony bindings so a voice agent can receive calls through Teams Phone or Twilio. `project_client.agents.create_telephony_binding`/`get_telephony_binding`/`update_telephony_binding`/`delete_telephony_binding`/`list_telephony_bindings` manage the binding (`TelephonyBinding` and its `TeamsPhoneExtensionTelephonyBinding`/`TwilioTelephonyBinding` variants), and `list_telephony_calls`/`get_telephony_call`/`transfer_telephony_call`/`end_telephony_call`/`get_telephony_transfer_targets`/`replace_telephony_transfer_targets` manage in-progress and historical calls (`TelephonyCallRecord`, `TelephonyCallSummary`, `TelephonyCallTrace`, `TelephonyTransferTarget` and its `PSTNTelephonyTransferDestination`/`SipTelephonyTransferDestination`/`TeamsTelephonyTransferDestination` variants).
+  * Added outbound telephony call jobs and campaigns through the new top-level `project_client.agent_telephony` operation group. `create_telephony_call_job`/`get_telephony_call_job`/`cancel_telephony_call_job` place and manage a single durable outbound call against a `TelephonyOutboundDestination` (`TelephonyCallJob`), and `create_telephony_campaign`/`get_telephony_campaign`/`cancel_telephony_campaign`/`pause_telephony_campaign`/`resume_telephony_campaign` manage a bulk outbound-calling campaign (`TelephonyCampaign`). A campaign's recipients are staged with `begin_import_telephony_campaign_recipients`, checked with `begin_validate_telephony_campaign`, and started with `begin_publish_telephony_campaign` - all long-running operations polled through `get_telephony_operation` (`TelephonyOperation`, `TelephonyOperationResource`, `TelephonyCampaignRecipientImport`).
+  * Added an optional WebRTC transport for realtime voice sessions (`VoiceAgentTransport.WEBRTC`), where only SDP signaling travels over the WebSocket connection while media flows peer-to-peer. The new `VoiceAgentClientEventRtcCallSdpCreate`, `VoiceAgentServerEventRtcCallSdpCreated`, and `VoiceAgentServerEventRtcCallError` events carry the signaling exchange.
+  * Added the `agent_endpoint_conversations.get_agent_conversation_item_generated_audio`/`get_agent_conversation_item_generated_audio_content` methods for reading back a conversation item's *generated* audio, a subordinate artifact that can differ from what the listener heard when playback was interrupted, returning `VoiceGeneratedItemAudioResponse`.
+  * Added sub-agent consultation, letting a voice agent consult sibling Foundry text agents as background specialists mid-conversation, through the new `subagent_config` property on `VoiceAgentDefinition` (`VoiceAgentSubagentConfig`, `VoiceAgentSubagent`, `VoiceAgentSubagentResponsePolicy`), and the new `session.subagent.started`/`session.subagent.completed`/`session.subagent.aborted` realtime server events.
+  * Added an optional `conversation_engine` property on `VoiceAgentDefinition` (`VoiceConversationEngine`, `VoiceHostedAgentConversationEngine`) to delegate a voice agent's conversation handling to another hosted agent instead of configuring a model directly.
 
 ### Sample updates
 
+* Added voice agent samples under `samples/agents/voice/`:
+  * `sample_voice_agent_basic.py` / `sample_voice_agent_basic_async.py` demonstrating the voice-agent management lifecycle: create, get, list, and delete.
+  * `sample_voice_agent_generate.py` demonstrating guided authoring of a voice agent via `generate_agent` with `kind="voice"`.
+  * `sample_voice_agent_with_tools.py` demonstrating a richer voice agent definition: audio configuration, turn detection, greeting, and tools.
+  * `sample_voice_agent_versions.py` demonstrating voice-agent versioning: creating, drafting, listing, and publishing versions.
+  * `sample_voice_agent_read_conversation.py` demonstrating reading a persisted voice conversation's transcript back via `agent_endpoint_conversations`.
+  * `sample_voice_agent_read_conversation_audio.py` demonstrating reading a persisted voice conversation's audio, both the merged whole-call recording and a single turn's segment, via `agent_endpoint_conversations`.
 * Added `sample_agent_web_iq.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using the `WebIQPreviewTool`.
 
 ## 2.6.0 (2026-09-04)

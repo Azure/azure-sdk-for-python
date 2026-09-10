@@ -13,6 +13,7 @@ import inspect
 from typing import Any, Callable, List
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _BETA_OPERATION_FEATURE_HEADERS, _has_header_case_insensitive
 from ._patch_agents import AgentsOperations, BetaAgentsOperations
+from ._patch_agent_endpoint_conversations import AgentEndpointConversationsOperations
 from ._patch_agent_insights import BetaAgentInsightMonitorsOperations
 from ._patch_datasets import BetaDatasetsOperations, DatasetsOperations
 from ._patch_evaluators import BetaEvaluatorsOperations
@@ -147,6 +148,7 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
+    "AgentEndpointConversationsOperations",
     "BetaAgentInsightMonitorsOperations",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",

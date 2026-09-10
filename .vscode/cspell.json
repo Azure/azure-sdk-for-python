@@ -2150,6 +2150,10 @@
       "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
     },
     {
+      "filename": "sdk/ai/azure-ai-projects/**",
+      "words": ["PSTN", "pstn", "BYOM", "BYOS", "DTMF", "dtmf", "MCPHTTP", "PCMA", "Pcma", "pcma", "PCMU", "Pcmu", "pcmu", "retriable"]
+    },
+    {
       "filename": ".github/**/ml/**",
       "words": ["envml", "paginators"]
     },
