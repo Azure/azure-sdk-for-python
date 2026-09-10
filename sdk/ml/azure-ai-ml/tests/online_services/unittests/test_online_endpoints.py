@@ -232,6 +232,16 @@ def mock_online_endpoint_operations(
 @pytest.mark.unittest
 @pytest.mark.production_experiences_test
 class TestOnlineEndpointsOperations:
+    def test_get_workspace_location_uses_cached_scope(
+        self,
+        mock_online_endpoint_operations: OnlineEndpointOperations,
+        mock_workspace_operations: WorkspaceOperations,
+    ) -> None:
+        mock_online_endpoint_operations._operation_scope._workspace_location = "eastus"
+
+        assert mock_online_endpoint_operations._get_workspace_location() == "eastus"
+        mock_workspace_operations._operation.get.assert_not_called()
+
     def test_online_list(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         mock_online_endpoint_operations.list()
         mock_online_endpoint_operations._online_operation.list.assert_called_once()

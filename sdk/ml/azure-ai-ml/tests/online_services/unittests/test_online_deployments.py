@@ -140,6 +140,16 @@ def mock_online_deployment_operations(
 @pytest.mark.unittest
 @pytest.mark.production_experiences_test
 class TestOnlineDeploymentOperations:
+    def test_get_workspace_location_uses_cached_scope(
+        self,
+        mock_online_deployment_operations: OnlineDeploymentOperations,
+        mock_workspace_operations: WorkspaceOperations,
+    ) -> None:
+        mock_online_deployment_operations._operation_scope._workspace_location = "eastus"
+
+        assert mock_online_deployment_operations._get_workspace_location() == "eastus"
+        mock_workspace_operations._operation.get.assert_not_called()
+
     def test_online_deployment_k8s_create(
         self,
         mock_online_deployment_operations: OnlineDeploymentOperations,

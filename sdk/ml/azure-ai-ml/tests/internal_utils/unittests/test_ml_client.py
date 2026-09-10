@@ -1,5 +1,6 @@
 import logging
 import os
+from contextlib import ExitStack
 from unittest import mock
 from unittest.mock import Mock, patch
 
@@ -470,6 +471,98 @@ class TestMachineLearningClient:
             )
         message = exception.value.args[0]
         assert message == "Both workspace_name and registry_name cannot be used together, for the ml_client."
+
+    def test_registry_backed_online_operations_keep_workspace_scope(self, mock_credential) -> None:
+        workspace_sub = "workspace-sub"
+        workspace_rg = "workspace-rg"
+        workspace_name = "workspace-name"
+        registry_sub = "registry-sub"
+        registry_rg = "registry-rg"
+        captured = {}
+        workspace_details = Mock(location="eastus", _workspace_id="workspace-id")
+
+        def make_fake_operation(name):
+            class FakeOperation:
+                def __init__(self, *args, **kwargs):
+                    captured[name] = {
+                        "args": args,
+                        "kwargs": kwargs,
+                        "scope": args[0] if args else kwargs.get("operation_scope"),
+                    }
+
+                def get(self, *args, **kwargs):
+                    return workspace_details
+
+            return FakeOperation
+
+        operation_names = [
+            "WorkspaceOperations",
+            "WorkspaceOutboundRuleOperations",
+            "RegistryOperations",
+            "WorkspaceConnectionsOperations",
+            "CapabilityHostsOperations",
+            "ComputeOperations",
+            "DatastoreOperations",
+            "ModelOperations",
+            "EvaluatorOperations",
+            "CodeOperations",
+            "EnvironmentOperations",
+            "OnlineEndpointOperations",
+            "BatchEndpointOperations",
+            "OnlineDeploymentOperations",
+            "BatchDeploymentOperations",
+            "DeploymentTemplateOperations",
+            "DataOperations",
+            "ComponentOperations",
+            "JobOperations",
+            "ScheduleOperations",
+            "IndexOperations",
+            "FeatureStoreOperations",
+            "FeatureSetOperations",
+            "FeatureStoreEntityOperations",
+            "AzureOpenAIDeploymentOperations",
+            "ServerlessEndpointOperations",
+            "MarketplaceSubscriptionOperations",
+        ]
+        with ExitStack() as stack:
+            for operation_name in operation_names:
+                stack.enter_context(
+                    patch(f"azure.ai.ml._ml_client.{operation_name}", make_fake_operation(operation_name))
+                )
+
+            stack.enter_context(patch("azure.ai.ml._ml_client.get_deployments_operation", return_value=Mock()))
+            stack.enter_context(
+                patch(
+                    "azure.ai.ml._ml_client.get_registry_client",
+                    return_value=(Mock(), registry_rg, registry_sub, Mock(), Mock()),
+                )
+            )
+
+            MLClient(
+                credential=mock_credential,
+                subscription_id=workspace_sub,
+                resource_group_name=workspace_rg,
+                workspace_name=workspace_name,
+                registry_reference="test-registry",
+            )
+
+        online_endpoint_scope = captured["OnlineEndpointOperations"]["scope"]
+        online_deployment_scope = captured["OnlineDeploymentOperations"]["scope"]
+        online_endpoint_client = captured["OnlineEndpointOperations"]["args"][2]
+        online_deployment_client = captured["OnlineDeploymentOperations"]["args"][2]
+        model_scope = captured["ModelOperations"]["scope"]
+
+        assert online_endpoint_client._config.subscription_id == workspace_sub
+        assert online_deployment_client._config.subscription_id == workspace_sub
+        assert online_endpoint_scope.subscription_id == workspace_sub
+        assert online_endpoint_scope.resource_group_name == workspace_rg
+        assert online_endpoint_scope.workspace_name == workspace_name
+        assert online_deployment_scope.subscription_id == workspace_sub
+        assert online_deployment_scope.resource_group_name == workspace_rg
+        assert online_deployment_scope.workspace_name == workspace_name
+        assert model_scope.subscription_id == registry_sub
+        assert model_scope.resource_group_name == registry_rg
+        assert online_endpoint_scope is not model_scope
 
     def test_ml_client_with_cli_config(self, mock_credential):
         # This cloud config should not work and it should NOT overwrite the hardcoded AzureCloud
