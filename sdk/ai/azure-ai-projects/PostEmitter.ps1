@@ -92,6 +92,14 @@ $c = Get-Content $f -Raw
 $c = $c -replace '(?m)^([A-Za-z_][A-Za-z0-9_]*\s*=\s*)"([^"\r\n]+)"\s*$', '$1Union["$2"]'
 Set-Content $f $c -NoNewline
 
+# Fix generated If-Match headers for TypeSpec Azure.Core.eTag parameters.
+# The emitter generates prep_if_match(etag, match_condition), but this package's
+# public methods expose only the etag keyword and do not emit the helper/import.
+$f = 'azure\ai\projects\operations\_operations.py'
+$c = Get-Content $f -Raw
+$c = $c -replace '    if_match = prep_if_match\(etag, match_condition\)\r?\n    if if_match is not None:\r?\n        _headers\["If-Match"\] = _SERIALIZER\.header\("if_match", if_match, "str"\)', "    if etag is not None:`r`n        _headers[`"If-Match`"] = _SERIALIZER.header(`"if_match`", etag, `"str`")"
+Set-Content $f $c -NoNewline
+
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .
