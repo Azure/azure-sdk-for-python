@@ -632,6 +632,9 @@ async def _coalesced_flush(timeout_millis: int) -> None:
     Because ``force_flush`` drains the provider globally, a single trailing
     flush captures the spans of every request that arrived while a flush was
     already running -- no need for a task (or export) per request.
+
+    :param timeout_millis: Maximum time to wait for each flush, in milliseconds.
+    :type timeout_millis: int
     """
     global _bg_flush_pending  # pylint: disable=global-statement
     await flush_spans_async(timeout_millis)

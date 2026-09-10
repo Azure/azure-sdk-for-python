@@ -33,7 +33,7 @@ _MODE_TO_HELPER = {
         # fail-safe fallback to async for empty / unknown values
         ("", "flush_spans_async"),
         ("bogus", "flush_spans_async"),
-        ("backgroundx", "flush_spans_async"),
+        ("background-typo", "flush_spans_async"),
     ],
 )
 async def test_flush_mode_dispatch(mode: str, expected_helper: str) -> None:
