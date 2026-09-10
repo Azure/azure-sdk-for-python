@@ -425,11 +425,11 @@ def coerce_reset_body(
 
     Mirrors :func:`coerce_action` for ``step``: extra keyword arguments passed to ``reset`` are
     environment-specific reset parameters (for example, a task or config override), not transport
-    options, so they are not forwarded as operation kwargs. When none are supplied, an
-    :class:`~azure.ai.projects.models.RLEResetRequest` is returned for the documented, strict
-    shape. When extras are present, a plain ``dict`` is returned instead: ``RLEResetRequest`` has
-    no field for arbitrary extras, but the generated ``reset`` operation also accepts a raw JSON
-    body.
+    options, so they are not forwarded as operation kwargs. A strict
+    :class:`~azure.ai.projects.models.RLEResetRequest` is returned when the body contains only an
+    optional seed. A plain ``dict`` is returned when an episode ID or environment-specific fields
+    are present so the request uses OpenEnv's ``episode_id`` wire name and can include arbitrary
+    extras.
 
     :param seed: Optional deterministic seed for the next episode.
     :type seed: int or None
@@ -440,14 +440,18 @@ def coerce_reset_body(
     :return: The reset request body.
     :rtype: ~azure.ai.projects.models.RLEResetRequest or dict
     """
-    if not reset_kwargs:
-        return RLEResetRequest(seed=seed, episode_id=episode_id)
-    reserved = sorted(reset_kwargs.keys() & {"seed", "episode_id"})
+    if not reset_kwargs and episode_id is None:
+        return RLEResetRequest(seed=seed)
+    reserved = sorted(reset_kwargs.keys() & {"seed", "episode_id", "episodeId"})
     if reserved:
         raise TypeError(
             f"pass {reserved} as named parameters, not as extra keyword fields"
         )
-    body: dict = {"seed": seed, "episodeId": episode_id}
+    body: dict = {}
+    if seed is not None:
+        body["seed"] = seed
+    if episode_id is not None:
+        body["episode_id"] = episode_id
     body.update(reset_kwargs)
     return body
 
@@ -774,15 +778,14 @@ class OpenEnvInstance:
     ) -> RLEStepResult:
         """Start a new episode on this instance and return the initial observation.
 
+        Additional keyword arguments are forwarded to the environment as extra top-level reset
+        fields alongside ``seed`` and ``episode_id``, mirroring environment-specific fields passed
+        to :meth:`step`.
+
         :param seed: Optional seed for deterministic episode initialization.
         :type seed: int or None
         :param episode_id: Optional caller-supplied episode identifier.
         :type episode_id: str or None
-        :param kwargs: Environment-specific reset fields (for example, a task or config
-         override), forwarded to the environment as extra top-level fields alongside ``seed``/
-         ``episode_id``. Mirrors how :meth:`step` accepts environment-specific action fields as
-         keyword arguments.
-        :type kwargs: any
         :return: The initial step result for the new episode.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """

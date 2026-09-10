@@ -562,15 +562,14 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
     ) -> RLEStepResult:
         """Start a new episode on this instance and return the initial observation.
 
+        Additional keyword arguments are forwarded to the environment as extra top-level reset
+        fields alongside ``seed`` and ``episode_id``, mirroring environment-specific fields passed
+        to :meth:`step`.
+
         :param seed: Optional seed for deterministic episode initialization.
         :type seed: int or None
         :param episode_id: Optional caller-supplied episode identifier.
         :type episode_id: str or None
-        :param kwargs: Environment-specific reset fields (for example, a task or config
-         override), forwarded to the environment as extra top-level fields alongside ``seed``/
-         ``episode_id``. Mirrors how :meth:`step` accepts environment-specific action fields as
-         keyword arguments.
-        :type kwargs: any
         :return: The initial step result for the new episode.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """

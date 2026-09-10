@@ -296,27 +296,29 @@ def test_coerce_action_rejects_ambiguous_or_invalid_actions():
 def test_coerce_reset_body_with_no_extras_returns_strict_model():
     from azure.ai.projects.models import RLEResetRequest
 
-    body = coerce_reset_body(42, "ep-1", {})
+    body = coerce_reset_body(42, None, {})
     assert isinstance(body, RLEResetRequest)
     assert body.seed == 42
-    assert body.episode_id == "ep-1"
+    assert body.episode_id is None
 
 
 def test_coerce_reset_body_folds_environment_specific_kwargs_into_a_dict():
     body = coerce_reset_body(42, None, {"task_id": "duke_energy", "difficulty": "hard"})
     assert body == {
         "seed": 42,
-        "episodeId": None,
         "task_id": "duke_energy",
         "difficulty": "hard",
     }
 
 
-def test_coerce_reset_body_rejects_seed_or_episode_id_as_extra_kwargs():
+def test_coerce_reset_body_uses_openenv_episode_id_wire_name():
+    assert coerce_reset_body(None, "ep-1", {}) == {"episode_id": "ep-1"}
+
+
+@pytest.mark.parametrize("reserved", ["seed", "episode_id", "episodeId"])
+def test_coerce_reset_body_rejects_reserved_extra_kwargs(reserved):
     with pytest.raises(TypeError):
-        coerce_reset_body(None, None, {"seed": 7})
-    with pytest.raises(TypeError):
-        coerce_reset_body(None, None, {"episode_id": "ep-2"})
+        coerce_reset_body(None, None, {reserved: "duplicate"})
 
 
 # ---------------------------------------------------------------------------
@@ -924,7 +926,7 @@ def test_openenv_instance_reset_forwards_environment_specific_kwargs():
     reset_call = next(call for call in instances.calls if call[0] == "reset")
     body = reset_call[5]
     assert body["seed"] == 7
-    assert body["episodeId"] == "ep-9"
+    assert body["episode_id"] == "ep-9"
     assert body["task_id"] == "duke_energy"
 
 
@@ -1687,7 +1689,7 @@ def test_async_openenv_instance_reset_forwards_environment_specific_kwargs():
         reset_call = next(call for call in instances.calls if call[0] == "reset")
         body = reset_call[5]
         assert body["seed"] == 7
-        assert body["episodeId"] == "ep-9"
+        assert body["episode_id"] == "ep-9"
         assert body["task_id"] == "duke_energy"
 
     asyncio.run(run())
