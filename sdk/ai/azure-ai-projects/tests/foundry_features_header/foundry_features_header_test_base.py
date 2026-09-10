@@ -35,7 +35,9 @@ FOUNDRY_FEATURES_HEADER = "Foundry-Features"
 # If a new sub-client is added to .beta and is missing from this mapping, the test will
 # fail at collection time with a message asking you to add it here.
 EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
+    "agent_endpoint_conversations": "VoiceAgents=V1Preview",
     "agent_insight_monitors": "AgentInsights=V1Preview",
+    "agent_telephony": "VoiceAgents=V1Preview",
     "evaluation_taxonomies": "Evaluations=V1Preview",
     "evaluators": "Evaluations=V1Preview",
     "insights": "Insights=V1Preview",
@@ -45,8 +47,9 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "routines": "Routines=V2Preview",
     "schedules": "Schedules=V1Preview",
     "skills": "Skills=V1Preview",
+    "voice_agent_web_socket": "VoiceAgents=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
 }
 
 # Methods on .beta sub-clients that are NOT simple one-HTTP-call wrappers and
@@ -84,7 +87,7 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     #   The test id is derived automatically from method_name.
     pytest.param(
         "agents.create_version",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "evaluation_rules.create_or_update",
