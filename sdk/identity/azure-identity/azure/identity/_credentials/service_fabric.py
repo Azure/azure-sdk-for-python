@@ -28,10 +28,16 @@ class ServiceFabricCredential(MsalManagedIdentityClient):
         return f"Service Fabric managed identity configuration not found in environment. {desc}"
 
     def _create_http_client(self, **kwargs: Any) -> requests.Session:
-        if kwargs.get("transport") is not None:
+        ignored_options = [
+            name
+            for name in ("transport", "raw_request_hook", "raw_response_hook", "retry_policy", "proxy_policy")
+            if kwargs.get(name) is not None
+        ]
+        if ignored_options:
             warnings.warn(
-                "The transport argument is ignored for synchronous Service Fabric "
-                "managed identity credential because MSAL >= 1.38.0 requires a requests.Session for Service Fabric.",
+                "The following arguments are ignored for synchronous Service Fabric managed identity credential "
+                "because MSAL >= 1.38.0 requires a requests.Session and does not support Azure Core pipeline "
+                "customization: {}.".format(", ".join(ignored_options)),
                 UserWarning,
                 stacklevel=3,
             )

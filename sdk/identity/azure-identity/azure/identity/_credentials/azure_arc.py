@@ -21,7 +21,7 @@ class AzureArcCredential(MsalManagedIdentityClient):
 
 def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
     params = {"api-version": "2020-06-01", "resource": scope}
-    # Azure Arc honors IMDS msi_res_id spelling
+    # Azure Arc requires the IMDS msi_res_id spelling for resource ID requests
     params.update({"msi_res_id" if name == "resource_id" else name: value for name, value in identity_config.items()})
     return HttpRequest("GET", url, params=params)
 
@@ -90,6 +90,8 @@ def _validate_user_assigned_identity(identity_config: Dict, content: Dict) -> No
         if identity_type not in identity_config:
             continue
         returned_id = content.get(response_field)
+        if identity_type == "resource_id":
+            returned_id = returned_id or content.get("mi_res_id")
         if not returned_id or str(identity_config[identity_type]).lower() != returned_id.lower():
             raise ClientAuthenticationError(
                 message="Azure Arc did not confirm the requested user-assigned managed identity "

@@ -135,10 +135,14 @@ def test_service_fabric_context_manager():
     close.assert_called_once_with()
 
 
-def test_service_fabric_warns_when_transport_is_ignored():
+@pytest.mark.parametrize(
+    "option",
+    ["transport", "raw_request_hook", "raw_response_hook", "retry_policy", "proxy_policy"],
+)
+def test_service_fabric_warns_when_pipeline_option_is_ignored(option):
     with mock.patch.dict("os.environ", SERVICE_FABRIC_ENVIRON, clear=True):
-        with pytest.warns(UserWarning, match="transport argument is ignored"):
-            ManagedIdentityCredential(transport=mock.Mock())
+        with pytest.warns(UserWarning, match=option):
+            ManagedIdentityCredential(**{option: mock.Mock()})
 
 
 def test_close_incomplete_configuration():

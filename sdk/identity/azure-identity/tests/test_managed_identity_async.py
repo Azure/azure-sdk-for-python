@@ -1074,16 +1074,17 @@ async def test_azure_arc_tenant_id(tmpdir, get_token_method):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 @pytest.mark.parametrize(
-    "identity_type,request_parameter",
+    "identity_type,request_parameter,response_parameter",
     [
-        ("client_id", "client_id"),
-        ("object_id", "object_id"),
-        ("resource_id", "msi_res_id"),
+        ("client_id", "client_id", "client_id"),
+        ("object_id", "object_id", "object_id"),
+        ("resource_id", "msi_res_id", "msi_res_id"),
+        ("resource_id", "msi_res_id", "mi_res_id"),
     ],
 )
 @pytest.mark.parametrize("response_identity", ["matching", "missing", "mismatched"])
 async def test_azure_arc_user_assigned_identity(
-    tmp_path, get_token_method, identity_type, request_parameter, response_identity
+    tmp_path, get_token_method, identity_type, request_parameter, response_parameter, response_identity
 ):
     access_token = "****"
     api_version = "2020-06-01"
@@ -1109,7 +1110,7 @@ async def test_azure_arc_user_assigned_identity(
         "token_type": "Bearer",
     }
     if response_identity != "missing":
-        response_payload[request_parameter] = (
+        response_payload[response_parameter] = (
             requested_identity.upper() if response_identity == "matching" else "another-identity"
         )
 
