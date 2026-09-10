@@ -245,7 +245,7 @@
 /sdk/durabletask/    @berndverst @cgillum @kaibocai @philliphoff @RyanLettieri @torosent
 
 # PRLabel: %EngSys
-/sdk/template/    @benbp @mikeharder @danieljurek 
+/sdk/template/    @JennyPng @l0lawrence @danieljurek 
 
 # PRLabel: %Evaluation
 /sdk/evaluation/    @Azure/azure-sdk-write-evaluation
@@ -820,32 +820,32 @@
 ###########
 # Eng Sys and other
 ###########
-/eng/                                                                @danieljurek @mikeharder @benbp
-/eng/common/                                                         @Azure/azure-sdk-eng
-/eng/tools/                                                          @danieljurek @mccoyp
-/.github/workflows/                                                  @Azure/azure-sdk-eng
-/.github/workflows/typespec-python-regenerate.yml                    @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
-/.github/CODEOWNERS                                                  @xirzec @kashifkhan @Azure/azure-sdk-eng
+/eng/                                                                @JennyPng @l0lawrence @danieljurek
+/eng/common/                                                         @JennyPng @l0lawrence @Azure/azure-sdk-eng
+/eng/tools/                                                          @JennyPng @l0lawrence @danieljurek @mccoyp
+/.github/workflows/                                                  @JennyPng @l0lawrence @Azure/azure-sdk-eng
+/.github/workflows/typespec-python-regenerate.yml                    @JennyPng @l0lawrence @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
+/.github/CODEOWNERS                                                  @xirzec @kashifkhan @JennyPng @l0lawrence @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
-/.github/prompts/                                                    @mccoyp @l0lawrence @benbp
-/.github/skills/                                                     @mccoyp @l0lawrence @benbp @Azure/azsdk-cli
-/sdk/pullrequest.yml                                                 @danieljurek @mikeharder @benbp
+/.github/prompts/                                                    @mccoyp @l0lawrence
+/.github/skills/                                                     @mccoyp @l0lawrence @Azure/azsdk-cli
+/sdk/pullrequest.yml                                                 @JennyPng @l0lawrence @danieljurek 
 
-/.config/1espt/                                                      @benbp @mikeharder
-/.devcontainer/                                                      @danieljurek @mccoyp @benbp @mikeharder
-/.vscode/                                                            @danieljurek @mccoyp @benbp @mikeharder
+/.config/1espt/                                                      @JennyPng @l0lawrence @danieljurek
+/.devcontainer/                                                      @JennyPng @l0lawrence @danieljurek @mccoyp
+/.vscode/                                                            @JennyPng @l0lawrence @danieljurek @mccoyp
 
-/scripts/                                                            @danieljurek @mccoyp
-/doc/                                                                @danieljurek @Azure/azure-python-sdk
-/conda/                                                              @danieljurek @xiangyan99 @xirzec
+/scripts/                                                            @JennyPng @l0lawrence @danieljurek @mccoyp
+/doc/                                                                @JennyPng @l0lawrence @danieljurek @Azure/azure-python-sdk
+/conda/                                                              @JennyPng @l0lawrence @danieljurek @xiangyan99 @xirzec
 
-/shared_requirements.txt                                             @azure/azure-sdk-eng @kashifkhan @xirzec
+/shared_requirements.txt                                             @JennyPng @l0lawrence @azure/azure-sdk-eng @kashifkhan @xirzec
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @xirzec @mccoyp
 /eng/pipelines/aggregate-reports.yml                                 @xirzec @mccoyp
 /eng/common/pipelines/codeowners-linter.yml                          @xirzec @mccoyp
-/eng/pipelines/docindex.yml                                          @danieljurek @benbp
+/eng/pipelines/docindex.yml                                          @JennyPng @l0lawrence @danieljurek
 
 # Add approvers for typespec-python emitter version updates
 /eng/emitter-package.json                                            @mccoyp @iscai-msft @msyyc @ChenxiJiang333
@@ -854,8 +854,8 @@
 # TypeSpec Python generated tests and regeneration workflow
 /eng/tools/emitter/                                                  @tadelesh @msyyc @iscai-msft @xirzec @lirenhe @ChenxiJiang333
 
-/pylintrc                                                            @l0lawrence @danieljurek @mccoyp
-/sdk/**/ci.yml                                                       @msyyc @xirzec @danieljurek
+/pylintrc                                                            @JennyPng @l0lawrence @danieljurek @mccoyp
+/sdk/**/ci.yml                                                       @JennyPng @l0lawrence @msyyc @xirzec @danieljurek
 
 # Add Johnathan Walker as code owner for Event Hubs SDK
 /sdk/eventhub/azure-eventhub/* @j7nw4r @SwayGom @sagar0207
