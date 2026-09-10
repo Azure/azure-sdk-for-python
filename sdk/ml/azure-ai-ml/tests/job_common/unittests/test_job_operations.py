@@ -1,6 +1,8 @@
 import json
+import logging
 import os
 import platform
+from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 import jwt
@@ -17,6 +19,7 @@ from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations, JobOperations, WorkspaceOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._job_ops_helper import get_git_properties
+from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.operations._run_operations import RunOperations
 from azure.core.credentials import AccessToken
 from azure.identity import DefaultAzureCredential
@@ -546,3 +549,14 @@ class TestJobOperations:
         with pytest.raises(Exception) as ex:
             mock_job_operation.download(None)
         assert "None is a invalid input for client.jobs.get()." in ex.value.message
+
+    def test_download_warns_when_named_output_could_not_be_resolved(self, mock_job_operation: JobOperations, caplog):
+        job_details = SimpleNamespace(name="mock-job", status=JobStatus.COMPLETED, properties={}, tags={})
+
+        with patch.object(JobOperations, "get", return_value=job_details), patch.object(
+            JobOperations, "_get_named_output_uri", return_value={}
+        ):
+            with caplog.at_level(logging.WARNING):
+                mock_job_operation.download("mock-job", output_name="my_output")
+
+        assert 'Could not download output "my_output"' in caplog.text
