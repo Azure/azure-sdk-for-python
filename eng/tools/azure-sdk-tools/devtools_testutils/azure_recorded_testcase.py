@@ -21,7 +21,6 @@ from .fake_credentials import SANITIZED
 from .fake_credentials_async import AsyncFakeCredential
 from .helpers import is_live, trim_kwargs_from_test_function
 
-
 _LOGGER = logging.getLogger()
 
 load_dotenv(find_dotenv())

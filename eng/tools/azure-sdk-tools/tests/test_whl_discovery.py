@@ -6,7 +6,6 @@ from tempfile import TemporaryDirectory
 
 from ci_tools.functions import find_whl, find_sdist
 
-
 integration_folder = os.path.join(os.path.dirname(__file__), "integration")
 tags_folder = os.path.join(integration_folder, "scenarios", "sample_interpreter_tags")
 

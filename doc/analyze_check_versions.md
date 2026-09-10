@@ -10,4 +10,4 @@ Pylint Guidelines Checker | 0.5.7 | 0.5.7 | 2026-07-13 |
 MyPy | 1.19.1 | 2.1.0 | 2026-10-05 |
 Pyright | 1.1.407 | 1.1.411 | 2026-10-05 |
 Sphinx | 8.2.0 | N/A | N/A |
-Black | 24.4.0 | N/A | N/A |
+Black | 26.3.1 | N/A | N/A |

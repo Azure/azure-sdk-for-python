@@ -1,5 +1,4 @@
-"""Github tools.
-"""
+"""Github tools."""
 
 from contextlib import contextmanager
 import logging

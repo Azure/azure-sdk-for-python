@@ -31,7 +31,6 @@ from .exceptions import AzureTestError
 from .resource_testcase import RESOURCE_GROUP_PARAM
 from .sanitizers import add_general_string_sanitizer
 
-
 FakeStorageAccount = FakeResource
 
 
@@ -120,12 +119,8 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                     # Occassionally a storage test will try to delete the
                     # resource before the previous operation has been completed
                     logger = logging.getLogger()
-                    logger.warning(
-                        "An error occurred while trying to delete storage account {}. Waiting \
-                            ten seconds and retrying the delete.".format(
-                            self.resource.name
-                        )
-                    )
+                    logger.warning("An error occurred while trying to delete storage account {}. Waiting \
+                            ten seconds and retrying the delete.".format(self.resource.name))
                     sleep(30)
 
     def _create_account(self, resource_group_name, account_name):
