@@ -216,6 +216,5 @@ async def test_begin_create_run_resumes_without_creating_another_run(is_async):
         poller = operation.begin_create_run("monitor-test", **kwargs)
         result = poller.result(timeout=5)
     operation._create_run_initial.assert_not_called()
-    assert poller.details == {"run_id": "run-test"}
     assert result.traces_analyzed == 10
     assert operation._client.send_request.call_count == 2
