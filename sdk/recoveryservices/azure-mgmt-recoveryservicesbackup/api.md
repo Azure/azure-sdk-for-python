@@ -1155,6 +1155,51 @@ namespace azure.mgmt.recoveryservicesbackup.aio.operations
             ) -> None: ...
 
         @overload
+        async def list_instant_item_recovery_operation_result(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                container_name: str, 
+                protected_item_name: str, 
+                recovery_point_id: str, 
+                body: InstantItemRecoveryOperationResultRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> InstantItemRecoveryTarget: ...
+
+        @overload
+        async def list_instant_item_recovery_operation_result(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                container_name: str, 
+                protected_item_name: str, 
+                recovery_point_id: str, 
+                body: InstantItemRecoveryOperationResultRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> InstantItemRecoveryTarget: ...
+
+        @overload
+        async def list_instant_item_recovery_operation_result(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                container_name: str, 
+                protected_item_name: str, 
+                recovery_point_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> InstantItemRecoveryTarget: ...
+
+        @overload
         async def provision(
                 self, 
                 vault_name: str, 
@@ -7421,6 +7466,20 @@ namespace azure.mgmt.recoveryservicesbackup.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryOperationResultRequest(_Model):
+        provision_instant_item_recovery_operation_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                provision_instant_item_recovery_operation_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryTarget(_Model):
         client_scripts: Optional[list[ClientScriptForConnect]]
 
@@ -10992,6 +11051,51 @@ namespace azure.mgmt.recoveryservicesbackup.operations
             ) -> None: ...
 
         @overload
+        def list_instant_item_recovery_operation_result(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                container_name: str, 
+                protected_item_name: str, 
+                recovery_point_id: str, 
+                body: InstantItemRecoveryOperationResultRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> InstantItemRecoveryTarget: ...
+
+        @overload
+        def list_instant_item_recovery_operation_result(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                container_name: str, 
+                protected_item_name: str, 
+                recovery_point_id: str, 
+                body: InstantItemRecoveryOperationResultRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> InstantItemRecoveryTarget: ...
+
+        @overload
+        def list_instant_item_recovery_operation_result(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                container_name: str, 
+                protected_item_name: str, 
+                recovery_point_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> InstantItemRecoveryTarget: ...
+
+        @overload
         def provision(
                 self, 
                 vault_name: str, 
@@ -13913,6 +14017,11 @@ namespace azure.mgmt.recoveryservicesbackup.types
         errorDetail: ErrorDetail
         protectableItemCount: Any
         status: str
+
+
+    class azure.mgmt.recoveryservicesbackup.types.InstantItemRecoveryOperationResultRequest(TypedDict, total=False):
+        key "provisionInstantItemRecoveryOperationId": Required[str]
+        provisionInstantItemRecoveryOperationId: str
 
 
     class azure.mgmt.recoveryservicesbackup.types.InstantRPAdditionalDetails(TypedDict, total=False):

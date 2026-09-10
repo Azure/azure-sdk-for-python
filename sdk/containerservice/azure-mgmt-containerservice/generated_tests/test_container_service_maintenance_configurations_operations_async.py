@@ -55,6 +55,7 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
                         "startDate": "2020-02-20",
                         "utcOffset": "str",
                     },
+                    "maintenanceWindowId": "str",
                     "notAllowedTime": [{"end": "2020-02-20 00:00:00", "start": "2020-02-20 00:00:00"}],
                     "timeInWeek": [{"day": "str", "hourSlots": [0]}],
                 },
