@@ -477,7 +477,9 @@ namespace azure.ai.projects.aio.operations
         def open_websocket(
                 self,
                 *,
-                open_timeout: Optional[float] = 10
+                open_timeout: Optional[float] = 10,
+                query_parameters: Optional[Mapping[str, str]] = ...,
+                subprotocols: Optional[Sequence[str]] = ...
             ) -> AsyncOpenEnvWebSocket: ...
 
         async def release(self) -> None: ...
@@ -505,6 +507,7 @@ namespace azure.ai.projects.aio.operations
 
 
     class azure.ai.projects.aio.operations.AsyncOpenEnvWebSocket: implements AsyncContextManager
+        property subprotocol: Optional[str]    # Read-only
 
         def __init__(
                 self,
@@ -513,14 +516,15 @@ namespace azure.ai.projects.aio.operations
                 _on_close: Optional[Callable[[AsyncOpenEnvWebSocket], None]] = ...,
                 credential: AsyncTokenCredential,
                 credential_scopes: Sequence[str],
-                open_timeout: Optional[float] = 10
+                open_timeout: Optional[float] = 10,
+                subprotocols: Optional[Sequence[str]] = ...
             ) -> None: ...
 
         async def close(self) -> None: ...
 
-        async def recv(self) -> str: ...
+        async def recv(self) -> Union[str, bytes]: ...
 
-        async def send(self, message: str) -> None: ...
+        async def send(self, message: Union[str, bytes]) -> None: ...
 
 
     class azure.ai.projects.aio.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
@@ -12363,7 +12367,9 @@ namespace azure.ai.projects.operations
         def open_websocket(
                 self,
                 *,
-                open_timeout: Optional[float] = 10
+                open_timeout: Optional[float] = 10,
+                query_parameters: Optional[Mapping[str, str]] = ...,
+                subprotocols: Optional[Sequence[str]] = ...
             ) -> OpenEnvWebSocket: ...
 
         def release(self) -> None: ...
@@ -12391,6 +12397,7 @@ namespace azure.ai.projects.operations
 
 
     class azure.ai.projects.operations.OpenEnvWebSocket: implements ContextManager
+        property subprotocol: Optional[str]    # Read-only
 
         def __init__(
                 self,
@@ -12399,14 +12406,15 @@ namespace azure.ai.projects.operations
                 _on_close: Optional[Callable[[OpenEnvWebSocket], None]] = ...,
                 credential: TokenCredential,
                 credential_scopes: Sequence[str],
-                open_timeout: Optional[float] = 10
+                open_timeout: Optional[float] = 10,
+                subprotocols: Optional[Sequence[str]] = ...
             ) -> None: ...
 
         def close(self) -> None: ...
 
-        def recv(self) -> str: ...
+        def recv(self) -> Union[str, bytes]: ...
 
-        def send(self, message: str) -> None: ...
+        def send(self, message: Union[str, bytes]) -> None: ...
 
 
     class azure.ai.projects.operations.RLEInstanceAcquireTimeoutError(RLEError):

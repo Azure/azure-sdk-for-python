@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     Connect to a leased OpenEnv instance over WebSocket, send one text message, and print the
-    response. The Slice 2 service contract supports complete text messages only.
+    response. The service also supports binary messages, query parameters, and subprotocols.
 
 USAGE:
     python sample_rle_websocket.py --name <rle-environment-name> --message <text>

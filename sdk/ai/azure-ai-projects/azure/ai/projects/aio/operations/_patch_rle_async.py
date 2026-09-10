@@ -15,9 +15,19 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import time
-from typing import Any, Callable, Dict, Optional, Sequence, TYPE_CHECKING, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Mapping,
+    Optional,
+    Sequence,
+    TYPE_CHECKING,
+    Union,
+)
 
 from websockets.asyncio.client import ClientConnection, connect as websocket_connect
+from websockets.typing import Subprotocol
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import AzureError, HttpResponseError
@@ -76,11 +86,12 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class AsyncOpenEnvWebSocket:
-    """An asynchronous text-only WebSocket connection to a leased OpenEnv instance.
+    """An asynchronous WebSocket connection to a leased OpenEnv instance.
 
     Create this connection with :meth:`AsyncOpenEnvInstance.open_websocket` and use it as an async
-    context manager. The Slice 2 service contract supports complete text messages only; binary
-    messages, subprotocol negotiation, and automatic reconnect are not supported.
+    context manager. Text and binary messages are supported. The service preserves message
+    fragmentation, negotiates requested subprotocols with the sandbox, and propagates peer close
+    status and reason. Automatic reconnect and application-level session resumption aren't supported.
 
     :param url: Public RLE WebSocket URL. Required.
     :type url: str
@@ -90,6 +101,8 @@ class AsyncOpenEnvWebSocket:
     :paramtype credential_scopes: tuple[str, ...]
     :keyword open_timeout: Maximum time in seconds to wait for the opening handshake. Defaults to 10.
     :paramtype open_timeout: float or None
+    :keyword subprotocols: WebSocket subprotocols to offer to the sandbox, in preference order.
+    :paramtype subprotocols: sequence[str] or None
     """
 
     def __init__(
@@ -99,12 +112,18 @@ class AsyncOpenEnvWebSocket:
         credential: "AsyncTokenCredential",
         credential_scopes: Sequence[str],
         open_timeout: Optional[float] = 10,
+        subprotocols: Optional[Sequence[str]] = None,
         _on_close: Optional[Callable[["AsyncOpenEnvWebSocket"], None]] = None,
     ) -> None:
         self._url = url
         self._credential = credential
         self._credential_scopes = tuple(credential_scopes)
         self._open_timeout = open_timeout
+        self._subprotocols = (
+            tuple(Subprotocol(value) for value in subprotocols)
+            if subprotocols
+            else None
+        )
         self._on_close = _on_close
         self._connection: Optional[ClientConnection] = None
         self._closed = False
@@ -120,6 +139,7 @@ class AsyncOpenEnvWebSocket:
                 self._url,
                 additional_headers={"Authorization": f"Bearer {token.token}"},
                 open_timeout=self._open_timeout,
+                subprotocols=self._subprotocols,
             )
         except BaseException:
             await self.close()
@@ -129,31 +149,34 @@ class AsyncOpenEnvWebSocket:
     async def __aexit__(self, *exc: Any) -> None:
         await self.close()
 
-    async def send(self, message: str) -> None:
-        """Send one complete text message.
+    async def send(self, message: Union[str, bytes]) -> None:
+        """Send one complete text or binary message.
 
-        :param message: Text to send. Required.
-        :type message: str
-        :raises TypeError: If ``message`` is not a string.
+        :param message: Text or binary data to send. Required.
+        :type message: str or bytes
+        :raises TypeError: If ``message`` is not a string or bytes.
         :raises ~azure.ai.projects.RLEError: If the connection is not open.
         """
-        if not isinstance(message, str):
-            raise TypeError("OpenEnv Slice 2 WebSocket messages must be strings")
+        if not isinstance(message, (str, bytes)):
+            raise TypeError("OpenEnv WebSocket messages must be strings or bytes")
         await self._require_connection().send(message)
 
-    async def recv(self) -> str:
-        """Receive one complete text message.
+    async def recv(self) -> Union[str, bytes]:
+        """Receive one complete text or binary message.
 
-        :return: The received text.
-        :rtype: str
-        :raises ~azure.ai.projects.RLEError: If the connection is not open or receives binary data.
+        :return: The received text or binary data.
+        :rtype: str or bytes
+        :raises ~azure.ai.projects.RLEError: If the connection is not open.
         """
-        message = await self._require_connection().recv()
-        if not isinstance(message, str):
-            raise RLEError(
-                "OpenEnv Slice 2 WebSocket received an unsupported binary message"
-            )
-        return message
+        return await self._require_connection().recv()
+
+    @property
+    def subprotocol(self) -> Optional[str]:
+        """The subprotocol selected by the sandbox, if any.
+
+        :rtype: str or None
+        """
+        return self._require_connection().subprotocol
 
     async def close(self) -> None:
         """Close the connection. This method is idempotent."""
@@ -487,17 +510,26 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
         await self._release()
 
     def open_websocket(
-        self, *, open_timeout: Optional[float] = 10
+        self,
+        *,
+        open_timeout: Optional[float] = 10,
+        subprotocols: Optional[Sequence[str]] = None,
+        query_parameters: Optional[Mapping[str, str]] = None,
     ) -> AsyncOpenEnvWebSocket:
-        """Create a text-only async WebSocket context manager for this leased instance.
+        """Create an async WebSocket context manager for this leased instance.
 
         The connection authenticates through the Foundry project endpoint. It performs no automatic
-        reconnect or message replay.
+        reconnect or message replay. Query parameters and requested subprotocols are forwarded to the
+        sandbox.
 
         :keyword open_timeout: Maximum time in seconds to wait for the opening handshake. Defaults
          to 10. Pass ``None`` to disable the timeout.
         :paramtype open_timeout: float or None
-        :return: An async WebSocket context manager for complete text messages.
+        :keyword subprotocols: WebSocket subprotocols to offer to the sandbox, in preference order.
+        :paramtype subprotocols: sequence[str] or None
+        :keyword query_parameters: Additional query parameters to forward to the sandbox.
+        :paramtype query_parameters: mapping[str, str] or None
+        :return: An async WebSocket context manager for complete text or binary messages.
         :rtype: ~azure.ai.projects.aio.operations.AsyncOpenEnvWebSocket
         """
         config = self._websocket_config
@@ -510,10 +542,12 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
                 self._environment_version,
                 self._instance_group_id,
                 self.id,
+                query_parameters,
             ),
             credential=config.credential,
             credential_scopes=config.credential_scopes,
             open_timeout=open_timeout,
+            subprotocols=subprotocols,
             _on_close=self._websockets.discard,
         )
         self._websockets.add(websocket)

@@ -9,7 +9,7 @@
 ### Features Added
 
 * Added private-preview Reinforcement Learning Environments (RLE) support through `AIProjectClient.rle` when constructed with `allow_preview=True`, including OpenEnv instance lifecycle management and environment management operations.
-* Added text-only WebSocket interactions for leased OpenEnv instances through `OpenEnvInstance.open_websocket()` and its asynchronous equivalent.
+* Added WebSocket interactions for leased OpenEnv instances through `OpenEnvInstance.open_websocket()` and its asynchronous equivalent, including text and binary messages, query parameters, and subprotocol negotiation.
 
 ### Sample updates
 

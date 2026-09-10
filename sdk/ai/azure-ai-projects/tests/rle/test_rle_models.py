@@ -1648,19 +1648,21 @@ def test_async_openenv_instance_entry_is_atomic():
     asyncio.run(run())
 
 
-def test_openenv_websocket_authenticates_and_relays_text(monkeypatch):
+def test_openenv_websocket_authenticates_and_relays_text_and_binary(monkeypatch):
     calls = []
 
     class Connection:
         def __init__(self):
             self.sent = []
             self.closed = False
+            self.subprotocol = "openenv.v1"
+            self.responses = iter(("sandbox-response", b"\x00\x01"))
 
         def send(self, message):
             self.sent.append(message)
 
         def recv(self):
-            return "sandbox-response"
+            return next(self.responses)
 
         def close(self):
             self.closed = True
@@ -1684,24 +1686,32 @@ def test_openenv_websocket_authenticates_and_relays_text(monkeypatch):
 
     with client:
         with client.get_instance() as instance:
-            with instance.open_websocket(open_timeout=23) as websocket:
+            with instance.open_websocket(
+                open_timeout=23,
+                subprotocols=("openenv.v1", "openenv.v0"),
+                query_parameters={"session": "a b"},
+            ) as websocket:
+                assert websocket.subprotocol == "openenv.v1"
                 websocket.send("client-message")
                 assert websocket.recv() == "sandbox-response"
-                with pytest.raises(TypeError, match="must be strings"):
-                    websocket.send(b"binary")
+                websocket.send(b"\x02\x03")
+                assert websocket.recv() == b"\x00\x01"
+                with pytest.raises(TypeError, match="strings or bytes"):
+                    websocket.send(123)
 
     assert calls == [
         (
             "wss://account.services.ai.azure.com/api/projects/project/"
             "rl_environments/env-1/versions/resolved-latest/instance_groups/grp-1/"
-            "instances/inst-0/openenv/ws?api-version=v1",
+            "instances/inst-0/openenv/ws?api-version=v1&session=a+b",
             {
                 "additional_headers": {"Authorization": "Bearer token"},
                 "open_timeout": 23,
+                "subprotocols": ("openenv.v1", "openenv.v0"),
             },
         )
     ]
-    assert connection.sent == ["client-message"]
+    assert connection.sent == ["client-message", b"\x02\x03"]
     assert connection.closed
 
 
@@ -1772,7 +1782,7 @@ def test_openenv_websocket_requires_project_configuration():
                 instance.open_websocket()
 
 
-def test_async_openenv_websocket_authenticates_and_relays_text(monkeypatch):
+def test_async_openenv_websocket_authenticates_and_relays_text_and_binary(monkeypatch):
     async def run():
         calls = []
 
@@ -1780,12 +1790,14 @@ def test_async_openenv_websocket_authenticates_and_relays_text(monkeypatch):
             def __init__(self):
                 self.sent = []
                 self.closed = False
+                self.subprotocol = "openenv.v1"
+                self.responses = iter(("sandbox-response", b"\x00\x01"))
 
             async def send(self, message):
                 self.sent.append(message)
 
             async def recv(self):
-                return "sandbox-response"
+                return next(self.responses)
 
             async def close(self):
                 self.closed = True
@@ -1812,24 +1824,32 @@ def test_async_openenv_websocket_authenticates_and_relays_text(monkeypatch):
 
         async with client:
             async with client.get_instance() as instance:
-                async with instance.open_websocket(open_timeout=17) as websocket:
+                async with instance.open_websocket(
+                    open_timeout=17,
+                    subprotocols=("openenv.v1", "openenv.v0"),
+                    query_parameters={"session": "a b"},
+                ) as websocket:
+                    assert websocket.subprotocol == "openenv.v1"
                     await websocket.send("client-message")
                     assert await websocket.recv() == "sandbox-response"
-                    with pytest.raises(TypeError, match="must be strings"):
-                        await websocket.send(b"binary")
+                    await websocket.send(b"\x02\x03")
+                    assert await websocket.recv() == b"\x00\x01"
+                    with pytest.raises(TypeError, match="strings or bytes"):
+                        await websocket.send(123)
 
         assert calls == [
             (
                 "wss://account.services.ai.azure.com/api/projects/project/"
                 "rl_environments/env-1/versions/resolved-latest/instance_groups/grp-1/"
-                "instances/inst-0/openenv/ws?api-version=v1",
+                "instances/inst-0/openenv/ws?api-version=v1&session=a+b",
                 {
                     "additional_headers": {"Authorization": "Bearer async-token"},
                     "open_timeout": 17,
+                    "subprotocols": ("openenv.v1", "openenv.v0"),
                 },
             )
         ]
-        assert connection.sent == ["client-message"]
+        assert connection.sent == ["client-message", b"\x02\x03"]
         assert connection.closed
 
     asyncio.run(run())
