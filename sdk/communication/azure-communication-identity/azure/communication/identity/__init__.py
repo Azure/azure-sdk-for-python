@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from ._communication_identity_client import CommunicationIdentityClient
-from ._generated.models import CommunicationIdentityTokenScope as CommunicationTokenScope
+from ._generated.models import CommunicationTokenScope
 
 from ._shared.models import (
     CommunicationCloudEnvironment,
