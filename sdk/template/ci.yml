@@ -61,3 +61,7 @@ extends:
     Artifacts:
     - name: azure-template
       safeName: azuretemplate
+      # TEST ONLY: exercises the per-artifact binary signing path end to end.
+      # azure-template is pure Python, so this validates the stage wiring rather
+      # than real binary signing. Do not merge.
+      signBinaries: true
