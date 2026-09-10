@@ -4,10 +4,11 @@
 
 ### Features Added
 
-* Added Voice Agents, a new agent kind for speech-to-speech conversational AI unified with the rest of the Agents API. Define a voice agent's model, audio, turn detection, greeting, and tools; manage it like any other agent; and reach it through telephony (inbound bindings or outbound calls/campaigns).
+* Added Voice Agents, a new agent kind for real-time, speech-to-speech conversational AI unified with the rest of the Agents API. Define a voice agent's model, audio, turn detection, greeting, and tools; manage it like any other agent; hold a live conversation with it over a WebSocket with barge-in and persisted conversation history/audio; and reach it through telephony (inbound bindings or outbound calls/campaigns).
 * The core voice agent definition, as a new `kind="voice"` on `AgentDefinition`:
   * Define a voice agent with `VoiceAgentDefinition`, configuring its model (`VoiceModelType`), audio input/output (`VoiceAgentAudioConfig`, `VoiceAgentAudioInputConfig`, `VoiceAgentAudioOutputConfig`), turn detection (`VoiceAgentTurnDetectionConfig` and its `VoiceAgentServerVadTurnDetection` / `VoiceAgentAzureSemanticVadTurnDetection` / `VoiceAgentAzureSemanticVadEnTurnDetection` / `VoiceAgentAzureSemanticVadMultilingualTurnDetection` variants), greeting (`VoiceAgentGreetingConfig` and its `VoiceAgentTemplateGreetingConfig` / `VoiceAgentLlmGeneratedGreetingConfig` variants), tools (`VoiceAgentTool`, `VoiceAgentFunctionTool`, `VoiceAgentMcpTool`, `VoiceAgentSystemTool` and its `VoiceAgentEndConversationSystemTool` variant, `VoiceAgentToolboxTool`), and avatar (`VoiceAgentAvatarConfig`). Manage it like any other agent through `project_client.agents` (`create_version`, `get`, `list`, `disable`/`enable`, `delete`).
   * Added guided authoring via `project_client.agents.generate_agent(GenerateVoiceAgentRequest(kind=AgentKind.VOICE, ...))`, which returns a service-generated starter definition that can be edited afterward through the standard `create_version`/`update` flow.
+  * Added a new `client.realtime` / `async_client.realtime` entry point for realtime speech-to-speech streaming. Use `with client.realtime.connect(agent_name=...) as connection:` to open a WebSocket connection, `connection.send(...)` to send strongly-typed client events (or use the `connection.response`, `connection.conversation.item`, and `connection.session` helpers), and iterate over `connection` to receive strongly-typed server events (`RealtimeServerEvent*`). Conversation items exchanged with `connection.conversation.item.create(...)` are `RealtimeConversationItemMessageSystem`, `RealtimeConversationItemMessageUser`, `RealtimeConversationItemMessageAssistant`, `RealtimeConversationItemFunctionCall`, `RealtimeConversationItemFunctionCallOutput`, `RealtimeMCPApprovalResponse`, or a raw `Mapping[str, Any]`. The new types `Realtime`, `RealtimeConnection`, and `RealtimeConnectionManager` (and their async equivalents `AsyncRealtime`, `AsyncRealtimeConnection`, `AsyncRealtimeConnectionManager`) are exported from `azure.ai.projects` / `azure.ai.projects.aio`. These WebSocket clients identify themselves to the service the same way the generated HTTP surface does, via a standard Azure SDK `User-Agent` header and an `x-ms-client-sdk` query parameter for paths where the header isn't forwarded, so service telemetry can attribute this traffic to the SDK; a caller-supplied `User-Agent` in `extra_headers` still takes precedence. Requires the optional `websockets` package for the sync client, or `aiohttp` for the async client.
   * Added the `agent_endpoint_conversations` operation group for reading back persisted voice-agent conversation transcripts and audio, for agents created with `store=True`.
   * Added the underlying `RealtimeConversationItem*`, `RealtimeMCP*`, `RealtimeResponseUsage`, and related realtime event/session models used by the voice agent WebSocket protocol.
 * Telephony, WebRTC, and sub-agent consultation:
@@ -18,6 +19,10 @@
   * Added sub-agent consultation, letting a voice agent consult sibling Foundry text agents as background specialists mid-conversation, through the new `subagent_config` property on `VoiceAgentDefinition` (`VoiceAgentSubagentConfig`, `VoiceAgentSubagent`, `VoiceAgentSubagentResponsePolicy`), and the new `session.subagent.started`/`session.subagent.completed`/`session.subagent.aborted` realtime server events.
   * Added an optional `conversation_engine` property on `VoiceAgentDefinition` (`VoiceConversationEngine`, `VoiceHostedAgentConversationEngine`) to delegate a voice agent's conversation handling to another hosted agent instead of configuring a model directly.
 
+### Dependency update
+
+* Added an optional dependency on `websockets` (sync `client.realtime`) and `aiohttp` (async `async_client.realtime`), required only when using the new voice agent realtime streaming APIs.
+
 ### Sample updates
 
 * Added voice agent samples under `samples/agents/voice/`:
@@ -25,6 +30,9 @@
   * `sample_voice_agent_generate.py` demonstrating guided authoring of a voice agent via `generate_agent` with `kind="voice"`.
   * `sample_voice_agent_with_tools.py` demonstrating a richer voice agent definition: audio configuration, turn detection, greeting, and tools.
   * `sample_voice_agent_versions.py` demonstrating voice-agent versioning: creating, drafting, listing, and publishing versions.
+  * `sample_voice_agent_live_text_conversation.py` / `sample_voice_agent_live_text_conversation_async.py` demonstrating a live, typed conversation with a voice agent over `client.realtime`/`async_client.realtime`.
+  * `sample_voice_agent_live_audio_conversation_async.py` demonstrating a hands-free, bidirectional live audio conversation over `async_client.realtime`.
+  * `sample_voice_agent_live_function_tool.py` demonstrating handling a client-executed function tool during a live voice-agent session.
   * `sample_voice_agent_read_conversation.py` demonstrating reading a persisted voice conversation's transcript back via `agent_endpoint_conversations`.
   * `sample_voice_agent_read_conversation_audio.py` demonstrating reading a persisted voice conversation's audio, both the merged whole-call recording and a single turn's segment, via `agent_endpoint_conversations`.
 * Added `sample_agent_web_iq.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using the `WebIQPreviewTool`.

@@ -32,6 +32,14 @@ from .operations import TelemetryOperations
 from ..operations._patch import _OperationMethodHeaderProxy, _method_accepts_keyword_headers
 from ..models._enums import _AgentDefinitionOptInKeys
 from ..models._patch import _has_header_case_insensitive
+from ._realtime import (
+    AsyncRealtime,
+    AsyncRealtimeConnection,
+    AsyncRealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 
 _OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
 logger = logging.getLogger(__name__)
@@ -184,6 +192,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             )
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
+        self._realtime: Optional[AsyncRealtime] = None
         # NOTE: voice-agent conversation reads (`agent_endpoint_conversations`) have round-tripped
         # between living directly on `self` (top-level) and being nested under `self.beta` across
         # several upstream TypeSpec regenerations. It is currently back to being a top-level,
@@ -204,6 +213,17 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             self.agent_endpoint_conversations = _AcceptEncodingIdentityProxy(  # type: ignore
                 self.agent_endpoint_conversations
             )
+
+    @property
+    def realtime(self) -> AsyncRealtime:
+        """Realtime streaming entry point for voice agents.
+
+        :return: The realtime namespace, exposing ``connect(...)``.
+        :rtype: ~azure.ai.projects.aio.AsyncRealtime
+        """
+        if self._realtime is None:
+            self._realtime = AsyncRealtime(self)
+        return self._realtime
 
     def _get_openai_api_key(self, kwargs: dict):
         """Resolve the API key for the AsyncOpenAI client.
@@ -432,7 +452,15 @@ class _OpenAILoggingTransport(httpx2.AsyncHTTPTransport):
             _openai_transport_logger.debug("Body: [Content exists]")
 
 
-__all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "AIProjectClient",
+    "AsyncRealtime",
+    "AsyncRealtimeConnection",
+    "AsyncRealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

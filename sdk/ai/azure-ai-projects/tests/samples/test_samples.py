@@ -389,6 +389,13 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents/voice",
             samples_to_skip=[
+                # These use client.realtime, a persistent WebSocket connection. recorded_by_proxy
+                # only supports the AZURE_CORE/HTTPX2 HTTP(S) transports used elsewhere in this
+                # file, so a WebSocket session can't be captured/replayed through this mechanism.
+                "sample_voice_agent_live_text_conversation.py",
+                "sample_voice_agent_live_text_conversation_async.py",
+                "sample_voice_agent_live_function_tool.py",
+                "sample_voice_agent_live_audio_conversation_async.py",
                 # These read back a conversation transcript/audio from a *pre-existing*,
                 # already-persisted voice session (FOUNDRY_VOICE_CONVERSATION_ID), which none of
                 # the runnable samples above create (they all use the skipped WebSocket path to

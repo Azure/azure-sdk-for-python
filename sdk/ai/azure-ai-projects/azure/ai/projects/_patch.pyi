@@ -34,6 +34,14 @@ from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
+from ._realtime import (
+    Realtime,
+    RealtimeConnection,
+    RealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 from .models import (
     AzureAIBenchmarkPreviewEvalRunDataSource,
     AzureAIDataSourceConfig,
@@ -102,6 +110,8 @@ class OpenAI(OpenAIClient):
 
 class AIProjectClient(AIProjectClientGenerated):
     telemetry: TelemetryOperations
+    @property
+    def realtime(self) -> Realtime: ...
     def get_openai_client(
         self, agent_name: Optional[str] = None, **kwargs: Any  # pylint: disable=unused-argument
     ) -> OpenAI: ...
@@ -128,6 +138,12 @@ def _log_streaming_response_notice(logging_enabled: bool) -> bool: ...
 
 __all__: List[str] = [
     "AIProjectClient",
+    "Realtime",
+    "RealtimeConnection",
+    "RealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
 ]
 
 def patch_sdk() -> None: ...
