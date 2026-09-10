@@ -73,7 +73,7 @@
         "azure.ai.projects.models.ApproximateLocation": "OpenAI.ApproximateLocation",
         "azure.ai.projects.models.ArtifactProfile": "Azure.AI.Projects.ArtifactProfile",
         "azure.ai.projects.models.AutoCodeInterpreterToolParam": "OpenAI.AutoCodeInterpreterToolParam",
-        "azure.ai.projects.models.EvaluationTarget": "Azure.AI.Projects.Target",
+        "azure.ai.projects.models.EvaluationTarget": "Azure.AI.Projects.FoundryEvaluationTarget",
         "azure.ai.projects.models.AzureAIAgentTarget": "Azure.AI.Projects.AzureAIAgentTarget",
         "azure.ai.projects.models.AzureAIModelTarget": "Azure.AI.Projects.AzureAIModelTarget",
         "azure.ai.projects.models.Index": "Azure.AI.Projects.Index",
@@ -101,6 +101,8 @@
         "azure.ai.projects.models.BotServiceTenantAuthorizationScheme": "Azure.AI.Projects.BotServiceTenantAuthorizationScheme",
         "azure.ai.projects.models.BrowserAutomationPreviewTool": "Azure.AI.Projects.BrowserAutomationPreviewTool",
         "azure.ai.projects.models.BrowserAutomationPreviewToolboxTool": "Azure.AI.Projects.BrowserAutomationPreviewToolboxTool",
+        "azure.ai.projects.models.BrowserAutomationTool": "Azure.AI.Projects.BrowserAutomationTool",
+        "azure.ai.projects.models.BrowserAutomationToolboxTool": "Azure.AI.Projects.BrowserAutomationToolboxTool",
         "azure.ai.projects.models.BrowserAutomationToolConnectionParameters": "Azure.AI.Projects.BrowserAutomationToolConnectionParameters",
         "azure.ai.projects.models.BrowserAutomationToolParameters": "Azure.AI.Projects.BrowserAutomationToolParameters",
         "azure.ai.projects.models.CaptureStructuredOutputsTool": "Azure.AI.Projects.CaptureStructuredOutputsTool",
@@ -549,8 +551,10 @@
         "azure.ai.projects.models.VoiceAgentClientEventSessionUpdate": "Azure.AI.Projects.VoiceAgentClientEventSessionUpdate",
         "azure.ai.projects.models.VoiceAgentDefinition": "Azure.AI.Projects.VoiceAgentDefinition",
         "azure.ai.projects.models.VoiceAgentEchoCancellation": "Azure.AI.Projects.VoiceAgentEchoCancellation",
-        "azure.ai.projects.models.VoiceAgentEndOfUtteranceDetection": "Azure.AI.Projects.VoiceAgentEndOfUtteranceDetection",
         "azure.ai.projects.models.VoiceAgentTool": "Azure.AI.Projects.VoiceAgentTool",
+        "azure.ai.projects.models.VoiceAgentSystemTool": "Azure.AI.Projects.VoiceAgentSystemTool",
+        "azure.ai.projects.models.VoiceAgentEndConversationSystemTool": "Azure.AI.Projects.VoiceAgentEndConversationSystemTool",
+        "azure.ai.projects.models.VoiceAgentEndOfUtteranceDetection": "Azure.AI.Projects.VoiceAgentEndOfUtteranceDetection",
         "azure.ai.projects.models.VoiceAgentFunctionTool": "Azure.AI.Projects.VoiceAgentFunctionTool",
         "azure.ai.projects.models.VoiceAgentGreetingConfig": "Azure.AI.Projects.VoiceAgentGreetingConfig",
         "azure.ai.projects.models.VoiceAgentInputTranscription": "Azure.AI.Projects.VoiceAgentInputTranscription",
@@ -589,7 +593,6 @@
         "azure.ai.projects.models.VoiceAgentSubagent": "Azure.AI.Projects.VoiceAgentSubagent",
         "azure.ai.projects.models.VoiceAgentSubagentConfig": "Azure.AI.Projects.VoiceAgentSubagentConfig",
         "azure.ai.projects.models.VoiceAgentSubagentResponsePolicy": "Azure.AI.Projects.VoiceAgentSubagentResponsePolicy",
-        "azure.ai.projects.models.VoiceAgentSystemTool": "Azure.AI.Projects.VoiceAgentSystemTool",
         "azure.ai.projects.models.VoiceAgentTemplateGreetingConfig": "Azure.AI.Projects.VoiceAgentTemplateGreetingConfig",
         "azure.ai.projects.models.VoiceAgentToolboxTool": "Azure.AI.Projects.VoiceAgentToolboxTool",
         "azure.ai.projects.models.VoiceAgentTranscriptionPhrase": "Azure.AI.Projects.VoiceAgentTranscriptionPhrase",
@@ -687,6 +690,7 @@
         "azure.ai.projects.models.DataGenerationJobType": "Azure.AI.Projects.DataGenerationJobType",
         "azure.ai.projects.models.SimpleQnAFineTuningQuestionType": "Azure.AI.Projects.SimpleQnAFineTuningQuestionType",
         "azure.ai.projects.models.DataGenerationJobScenario": "Azure.AI.Projects.DataGenerationJobScenario",
+        "azure.ai.projects.models.DataGenerationJobOutputWriteMode": "Azure.AI.Projects.DataGenerationJobOutputWriteMode",
         "azure.ai.projects.models.DataGenerationJobOutputType": "Azure.AI.Projects.DataGenerationJobOutputType",
         "azure.ai.projects.models.AgentOptimizationDatasetInputType": "Azure.AI.Projects.AgentOptimizationDatasetInputType",
         "azure.ai.projects.models.AgentObjectType": "Azure.AI.Projects.AgentObjectType",
@@ -967,5 +971,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "d6ddc3e85c2a"
+    "CrossLanguageVersion": "537ee1f6b30b"
 }

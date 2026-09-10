@@ -56,9 +56,7 @@ class TestVoiceAgentTelephonyCampaign(TestBase):
             model=model,
             instructions="You are a helpful voice assistant.",
             audio=VoiceAgentAudioConfig(
-                output=VoiceAgentAudioOutputConfig(
-                    voice="en-US-AvaNeural", voice_type="azure-standard"
-                )
+                output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type="azure-standard")
             ),
             output_modalities=[VoiceOutputModality.AUDIO],
         )
@@ -107,9 +105,7 @@ class TestVoiceAgentTelephonyCampaign(TestBase):
 
         fake_call_job_id = "nonexistent-call-job-id"
         with pytest.raises(ResourceNotFoundError):
-            project_client.agent_telephony.get_telephony_call_job(
-                agent_name=agent_name, call_job_id=fake_call_job_id
-            )
+            project_client.agent_telephony.get_telephony_call_job(agent_name=agent_name, call_job_id=fake_call_job_id)
         with pytest.raises(ResourceNotFoundError):
             project_client.agent_telephony.cancel_telephony_call_job(
                 agent_name=agent_name,
@@ -170,17 +166,13 @@ class TestVoiceAgentTelephonyCampaign(TestBase):
 
         fake_campaign_id = "nonexistent-campaign-id"
         with pytest.raises(ResourceNotFoundError):
-            project_client.agent_telephony.get_telephony_campaign(
-                agent_name=agent_name, campaign_id=fake_campaign_id
-            )
+            project_client.agent_telephony.get_telephony_campaign(agent_name=agent_name, campaign_id=fake_campaign_id)
         with pytest.raises(ResourceNotFoundError):
             project_client.agent_telephony.cancel_telephony_campaign(
                 agent_name=agent_name, campaign_id=fake_campaign_id
             )
         with pytest.raises(ResourceNotFoundError):
-            project_client.agent_telephony.pause_telephony_campaign(
-                agent_name=agent_name, campaign_id=fake_campaign_id
-            )
+            project_client.agent_telephony.pause_telephony_campaign(agent_name=agent_name, campaign_id=fake_campaign_id)
         with pytest.raises(ResourceNotFoundError):
             project_client.agent_telephony.resume_telephony_campaign(
                 agent_name=agent_name, campaign_id=fake_campaign_id

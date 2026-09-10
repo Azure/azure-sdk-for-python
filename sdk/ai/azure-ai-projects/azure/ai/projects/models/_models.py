@@ -65,6 +65,7 @@ from ._enums import (
     TriggerType,
     VersionIndicatorType,
     VersionSelectorType,
+    VoiceAgentSystemToolName,
     VoiceAgentTurnDetectionType,
 )
 
@@ -168,12 +169,13 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     A2ATool, A2APreviewTool, ApplyPatchToolParam, AzureAISearchTool, AzureFunctionTool,
-    BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationPreviewTool,
-    CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
-    CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
-    ImageGenTool, LocalShellToolParam, MCPTool, MemorySearchPreviewTool, NamespaceToolParam,
-    OpenApiTool, ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
-    ToolSearchToolParam, WebIQPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationTool,
+    BrowserAutomationPreviewTool, CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool,
+    ComputerUsePreviewTool, CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool,
+    FileSearchTool, FunctionTool, ImageGenTool, LocalShellToolParam, MCPTool,
+    MemorySearchPreviewTool, NamespaceToolParam, OpenApiTool, ProgrammaticToolCallingParam,
+    SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam, WebIQPreviewTool,
+    WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "programmatic_tool_calling",
@@ -182,7 +184,7 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      "browser_automation_preview", "fabric_dataagent_preview", "sharepoint_grounding_preview",
      "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
      "web_iq_preview", "a2a", "azure_ai_search", "azure_function", "bing_grounding",
-     "capture_structured_outputs", and "openapi".
+     "browser_automation", "capture_structured_outputs", and "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -195,8 +197,8 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      \"bing_custom_search_preview\", \"browser_automation_preview\", \"fabric_dataagent_preview\",
      \"sharepoint_grounding_preview\", \"memory_search_preview\", \"work_iq_preview\",
      \"fabric_iq_preview\", \"toolbox_search_preview\", \"web_iq_preview\", \"a2a\",
-     \"azure_ai_search\", \"azure_function\", \"bing_grounding\", \"capture_structured_outputs\",
-     and \"openapi\"."""
+     \"azure_ai_search\", \"azure_function\", \"bing_grounding\", \"browser_automation\",
+     \"capture_structured_outputs\", and \"openapi\"."""
 
     @overload
     def __init__(
@@ -278,7 +280,7 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
     """An abstract representation of a tool stored in a toolbox.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    A2AToolboxTool, A2APreviewToolboxTool, AzureAISearchToolboxTool,
+    A2AToolboxTool, A2APreviewToolboxTool, AzureAISearchToolboxTool, BrowserAutomationToolboxTool,
     BrowserAutomationPreviewToolboxTool, CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool,
     FileSearchToolboxTool, MCPToolboxTool, OpenApiToolboxTool, ReminderPreviewToolboxTool,
     ShellToolboxTool, ToolSearchToolboxTool, ToolboxSearchPreviewToolboxTool,
@@ -287,7 +289,7 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
     :ivar type: The type of tool. Required. Known values are: "code_interpreter", "file_search",
      "web_search", "mcp", "azure_ai_search", "openapi", "a2a_preview", "browser_automation_preview",
      "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search",
-     "toolbox_search_preview", "a2a", "shell", and "web_iq_preview".
+     "toolbox_search_preview", "a2a", "shell", "web_iq_preview", and "browser_automation".
     :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -304,8 +306,8 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
     """The type of tool. Required. Known values are: \"code_interpreter\", \"file_search\",
      \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a_preview\",
      \"browser_automation_preview\", \"reminder_preview\", \"work_iq_preview\",
-     \"fabric_iq_preview\", \"toolbox_search\", \"toolbox_search_preview\", \"a2a\", \"shell\", and
-     \"web_iq_preview\"."""
+     \"fabric_iq_preview\", \"toolbox_search\", \"toolbox_search_preview\", \"a2a\", \"shell\",
+     \"web_iq_preview\", and \"browser_automation\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4676,6 +4678,92 @@ class BrowserAutomationPreviewToolboxTool(
         self.type = ToolboxToolType.BROWSER_AUTOMATION_PREVIEW  # type: ignore
 
 
+class BrowserAutomationTool(
+    Tool, discriminator="browser_automation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The input definition information for a Browser Automation Tool, as used to configure an Agent.
+
+    :ivar type: The object type, which is always 'browser_automation'. Required.
+     BROWSER_AUTOMATION.
+    :vartype type: str or ~azure.ai.projects.models.BROWSER_AUTOMATION
+    :ivar browser_automation: The Browser Automation Tool parameters. Required.
+    :vartype browser_automation: ~azure.ai.projects.models.BrowserAutomationToolParameters
+    """
+
+    type: Literal[ToolType.BROWSER_AUTOMATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'browser_automation'. Required. BROWSER_AUTOMATION."""
+    browser_automation: "_models.BrowserAutomationToolParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Browser Automation Tool parameters. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        browser_automation: "_models.BrowserAutomationToolParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.BROWSER_AUTOMATION  # type: ignore
+
+
+class BrowserAutomationToolboxTool(
+    ToolboxTool, discriminator="browser_automation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A browser automation tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. BROWSER_AUTOMATION.
+    :vartype type: str or ~azure.ai.projects.models.BROWSER_AUTOMATION
+    :ivar browser_automation: The Browser Automation Tool parameters. Required.
+    :vartype browser_automation: ~azure.ai.projects.models.BrowserAutomationToolParameters
+    """
+
+    type: Literal[ToolboxToolType.BROWSER_AUTOMATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. BROWSER_AUTOMATION."""
+    browser_automation: "_models.BrowserAutomationToolParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Browser Automation Tool parameters. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        browser_automation: "_models.BrowserAutomationToolParameters",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.BROWSER_AUTOMATION  # type: ignore
+
+
 class BrowserAutomationToolConnectionParameters(
     _Model
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
@@ -6953,8 +7041,6 @@ class DataGenerationJobOptions(_Model):  # pylint: disable=docstring-keyword-sho
     :ivar type: The data generation job type. Required. Known values are: "simple_qna", "traces",
      "tool_use", and "simulation_seed".
     :vartype type: str or ~azure.ai.projects.models.DataGenerationJobType
-    :ivar max_samples: Maximum number of samples to generate. Required.
-    :vartype max_samples: int
     :ivar train_split: The proportion of the generated data to be used for training when the data
      is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
     :vartype train_split: float
@@ -6966,8 +7052,6 @@ class DataGenerationJobOptions(_Model):  # pylint: disable=docstring-keyword-sho
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The data generation job type. Required. Known values are: \"simple_qna\", \"traces\",
      \"tool_use\", and \"simulation_seed\"."""
-    max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Maximum number of samples to generate. Required."""
     train_split: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The proportion of the generated data to be used for training when the data is used for
      fine-tuning. The rest will be used for validation. Value should be between 0 and 1."""
@@ -6981,7 +7065,6 @@ class DataGenerationJobOptions(_Model):  # pylint: disable=docstring-keyword-sho
         self,
         *,
         type: str,
-        max_samples: int,
         train_split: Optional[float] = None,
         model_options: Optional["_models.DataGenerationModelOptions"] = None,
     ) -> None: ...
@@ -7041,6 +7124,10 @@ class DataGenerationJobOutputOptions(_Model):  # pylint: disable=docstring-keywo
     :ivar tags: Tags to assign to the output. Applies only to dataset outputs (evaluation
      scenario); ignored for Azure OpenAI file outputs.
     :vartype tags: dict[str, str]
+    :ivar write_mode: Controls how dataset outputs are written. If omitted, defaults to
+     ``overwrite`` and creates the next dataset version using only newly generated rows. Known
+     values are: "overwrite" and "merge".
+    :vartype write_mode: str or ~azure.ai.projects.models.DataGenerationJobOutputWriteMode
     """
 
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7052,6 +7139,12 @@ class DataGenerationJobOutputOptions(_Model):  # pylint: disable=docstring-keywo
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tags to assign to the output. Applies only to dataset outputs (evaluation scenario); ignored
      for Azure OpenAI file outputs."""
+    write_mode: Optional[Union[str, "_models.DataGenerationJobOutputWriteMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls how dataset outputs are written. If omitted, defaults to ``overwrite`` and creates the
+     next dataset version using only newly generated rows. Known values are: \"overwrite\" and
+     \"merge\"."""
 
     @overload
     def __init__(
@@ -7060,6 +7153,7 @@ class DataGenerationJobOutputOptions(_Model):  # pylint: disable=docstring-keywo
         name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
+        write_mode: Optional[Union[str, "_models.DataGenerationJobOutputWriteMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -20660,8 +20754,6 @@ class SimpleQnADataGenerationJobOptions(
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The options for a data generation job with SimpleQnA type.
 
-    :ivar max_samples: Maximum number of samples to generate. Required.
-    :vartype max_samples: int
     :ivar train_split: The proportion of the generated data to be used for training when the data
      is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
     :vartype train_split: float
@@ -20670,6 +20762,9 @@ class SimpleQnADataGenerationJobOptions(
     :ivar type: The data generation job type, which is SimpleQnA for this model. Required. Simple
      question and answers between user and agent.
     :vartype type: str or ~azure.ai.projects.models.SIMPLE_QNA
+    :ivar max_samples: Maximum number of samples to generate, up to service-defined limits.
+     Required.
+    :vartype max_samples: int
     :ivar question_types: The question types to generate. Used only for fine-tuning scenarios.
     :vartype question_types: list[str or ~azure.ai.projects.models.SimpleQnAFineTuningQuestionType]
     """
@@ -20677,6 +20772,8 @@ class SimpleQnADataGenerationJobOptions(
     type: Literal[DataGenerationJobType.SIMPLE_QNA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The data generation job type, which is SimpleQnA for this model. Required. Simple question and
      answers between user and agent."""
+    max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of samples to generate, up to service-defined limits. Required."""
     question_types: Optional[list[Union[str, "_models.SimpleQnAFineTuningQuestionType"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -20711,8 +20808,6 @@ class SimulationSeedDataGenerationJobOptions(
     and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
     ``category``, ``test_case_description``, and ``desired_num_turns``.
 
-    :ivar max_samples: Maximum number of samples to generate. Required.
-    :vartype max_samples: int
     :ivar train_split: The proportion of the generated data to be used for training when the data
      is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
     :vartype train_split: float
@@ -20731,7 +20826,6 @@ class SimulationSeedDataGenerationJobOptions(
     def __init__(
         self,
         *,
-        max_samples: int,
         train_split: Optional[float] = None,
         model_options: Optional["_models.DataGenerationModelOptions"] = None,
     ) -> None: ...
@@ -24559,8 +24653,6 @@ class ToolUseFineTuningDataGenerationJobOptions(
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The options for a data generation job with ToolUse type. Used only for fine-tuning scenarios.
 
-    :ivar max_samples: Maximum number of samples to generate. Required.
-    :vartype max_samples: int
     :ivar train_split: The proportion of the generated data to be used for training when the data
      is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
     :vartype train_split: float
@@ -24569,11 +24661,16 @@ class ToolUseFineTuningDataGenerationJobOptions(
     :ivar type: The data generation job type, which is ToolUse for this model. Required. Tool
      calling conversation between user and agent.
     :vartype type: str or ~azure.ai.projects.models.TOOL_USE
+    :ivar max_samples: Maximum number of samples to generate, up to service-defined limits.
+     Required.
+    :vartype max_samples: int
     """
 
     type: Literal[DataGenerationJobType.TOOL_USE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The data generation job type, which is ToolUse for this model. Required. Tool calling
      conversation between user and agent."""
+    max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of samples to generate, up to service-defined limits. Required."""
 
     @overload
     def __init__(
@@ -24601,8 +24698,6 @@ class TracesDataGenerationJobOptions(
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The options for a data generation job with Traces type.
 
-    :ivar max_samples: Maximum number of samples to generate. Required.
-    :vartype max_samples: int
     :ivar train_split: The proportion of the generated data to be used for training when the data
      is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
     :vartype train_split: float
@@ -24611,6 +24706,9 @@ class TracesDataGenerationJobOptions(
     :ivar type: The data generation job type, which is Traces for this model. Required. Single turn
      query and response from agent traces.
     :vartype type: str or ~azure.ai.projects.models.TRACES
+    :ivar max_samples: Maximum number of samples to generate, up to service-defined limits. If
+     omitted, sampling is turned off.
+    :vartype max_samples: int
     :ivar redact_private_content: Whether to redact private content from traces. When omitted or
      set to true, private content is redacted. Set to false to opt out of redaction.
     :vartype redact_private_content: bool
@@ -24619,6 +24717,9 @@ class TracesDataGenerationJobOptions(
     type: Literal[DataGenerationJobType.TRACES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The data generation job type, which is Traces for this model. Required. Single turn query and
      response from agent traces."""
+    max_samples: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of samples to generate, up to service-defined limits. If omitted, sampling is
+     turned off."""
     redact_private_content: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to redact private content from traces. When omitted or set to true, private content is
      redacted. Set to false to opt out of redaction."""
@@ -24627,9 +24728,9 @@ class TracesDataGenerationJobOptions(
     def __init__(
         self,
         *,
-        max_samples: int,
         train_split: Optional[float] = None,
         model_options: Optional["_models.DataGenerationModelOptions"] = None,
+        max_samples: Optional[int] = None,
         redact_private_content: Optional[bool] = None,
     ) -> None: ...
 
@@ -24671,6 +24772,8 @@ class TracesDataGenerationJobSource(
     :vartype start_time: ~datetime.datetime
     :ivar end_time: End of the time window (Unix timestamp in seconds). Defaults to current time.
     :vartype end_time: ~datetime.datetime
+    :ivar trace_ids: Optional explicit list of trace IDs to include.
+    :vartype trace_ids: list[str]
     """
 
     type: Literal[DataGenerationJobSourceType.TRACES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -24693,6 +24796,8 @@ class TracesDataGenerationJobSource(
         visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
     )
     """End of the time window (Unix timestamp in seconds). Defaults to current time."""
+    trace_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional explicit list of trace IDs to include."""
 
     @overload
     def __init__(
@@ -24704,6 +24809,7 @@ class TracesDataGenerationJobSource(
         agent_name: Optional[str] = None,
         agent_version: Optional[str] = None,
         end_time: Optional[datetime.datetime] = None,
+        trace_ids: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -26632,6 +26738,123 @@ class VoiceAgentEchoCancellation(_Model):  # pylint: disable=docstring-keyword-s
         self.type: Literal["server_echo_cancellation"] = "server_echo_cancellation"
 
 
+class VoiceAgentTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A tool usable by a voice agent.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentFunctionTool, VoiceAgentMcpTool, VoiceAgentSystemTool, VoiceAgentToolboxTool
+
+    :ivar type: The tool kind. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The tool kind. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentSystemTool(
+    VoiceAgentTool, discriminator="system"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A service-managed control that acts on the active voice session without customer code or
+    external authentication.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentEndConversationSystemTool
+
+    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
+    :vartype type: str
+    :ivar name: The service-managed control action. Known values are stable; additional values may
+     be added over time. Required. "end_conversation"
+    :vartype name: str or ~azure.ai.projects.models.VoiceAgentSystemToolName
+    :ivar description: An optional description of the system tool.
+    :vartype description: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: Literal["system"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``system``. Required. Default value is \"system\"."""
+    name: str = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])
+    """The service-managed control action. Known values are stable; additional values may be added
+     over time. Required. \"end_conversation\""""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional description of the system tool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "system"  # type: ignore
+
+
+class VoiceAgentEndConversationSystemTool(
+    VoiceAgentSystemTool, discriminator="end_conversation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A service-managed control that ends the active conversation.
+
+    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
+    :vartype type: str
+    :ivar description: An optional description of the system tool.
+    :vartype description: str
+    :ivar name: The service-managed control action. Always ``end_conversation``. Required. Ends the
+     active conversation.
+    :vartype name: str or ~azure.ai.projects.models.END_CONVERSATION
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    name: Literal[VoiceAgentSystemToolName.END_CONVERSATION] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The service-managed control action. Always ``end_conversation``. Required. Ends the active
+     conversation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = VoiceAgentSystemToolName.END_CONVERSATION  # type: ignore
+
+
 class VoiceAgentEndOfUtteranceDetection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Semantic end-of-utterance detection configuration.
 
@@ -26669,38 +26892,6 @@ class VoiceAgentEndOfUtteranceDetection(_Model):  # pylint: disable=docstring-ke
         model: Union[str, "_models.VoiceAgentEndOfUtteranceDetectionModel"],
         threshold_level: Optional[Union[str, "_models.VoiceAgentEndOfUtteranceThresholdLevel"]] = None,
         timeout_ms: Optional[datetime.timedelta] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VoiceAgentTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A tool usable by a voice agent.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    VoiceAgentFunctionTool, VoiceAgentMcpTool, VoiceAgentSystemTool, VoiceAgentToolboxTool
-
-    :ivar type: The tool kind. Required. Default value is None.
-    :vartype type: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The tool kind. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
     ) -> None: ...
 
     @overload
@@ -29099,51 +29290,6 @@ class VoiceAgentSubagentResponsePolicy(_Model):  # pylint: disable=docstring-key
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class VoiceAgentSystemTool(
-    VoiceAgentTool, discriminator="system"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A service-managed control that acts on the active voice session without customer code or
-    external authentication.
-
-    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
-    :vartype type: str
-    :ivar name: The service-managed control action. Known values are stable; additional values may
-     be added over time. Required. "end_conversation"
-    :vartype name: str or ~azure.ai.projects.models.VoiceAgentSystemToolName
-    :ivar description: An optional description of the system tool.
-    :vartype description: str
-    """
-
-    type: Literal["system"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the tool. Always ``system``. Required. Default value is \"system\"."""
-    name: Union[str, "_models.VoiceAgentSystemToolName"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The service-managed control action. Known values are stable; additional values may be added
-     over time. Required. \"end_conversation\""""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An optional description of the system tool."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Union[str, "_models.VoiceAgentSystemToolName"],
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = "system"  # type: ignore
 
 
 class VoiceAgentTemplateGreetingConfig(

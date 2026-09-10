@@ -48,13 +48,12 @@ from azure.ai.projects.models import (
     VoiceAgentAudioConfig,
     VoiceAgentAudioInputConfig,
     VoiceAgentAudioOutputConfig,
+    VoiceAgentEndConversationSystemTool,
     VoiceAgentInputTranscription,
     VoiceAgentInputTranscriptionModel,
     VoiceModelType,
     VoiceOutputModality,
     VoiceAgentServerVadTurnDetection,
-    VoiceAgentSystemTool,
-    VoiceAgentSystemToolName,
     VoiceAgentToolboxTool,
     VoiceType,
 )
@@ -85,7 +84,7 @@ get_weather = VoiceAgentFunctionTool(
 )
 
 # A service-managed control tool: the platform can end the call on the agent's behalf.
-end_call = VoiceAgentSystemTool(name=VoiceAgentSystemToolName.END_CONVERSATION)
+end_call = VoiceAgentEndConversationSystemTool()
 
 # An MCP tool is executed by the service against a remote MCP server you own.
 # It references an external server, so it is constructed here for illustration

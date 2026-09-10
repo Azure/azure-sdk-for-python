@@ -5319,6 +5319,21 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.BrowserAutomationTool(Tool, discriminator='browser_automation'):
+        browser_automation: BrowserAutomationToolParameters
+        type: Literal[ToolType.BROWSER_AUTOMATION]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                browser_automation: BrowserAutomationToolParameters
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.BrowserAutomationToolConnectionParameters(_Model):
         project_connection_id: str
 
@@ -5341,6 +5356,27 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 connection: BrowserAutomationToolConnectionParameters
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.BrowserAutomationToolboxTool(ToolboxTool, discriminator='browser_automation'):
+        browser_automation: BrowserAutomationToolParameters
+        description: str
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.BROWSER_AUTOMATION]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                browser_automation: BrowserAutomationToolParameters, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -6157,7 +6193,6 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.DataGenerationJobOptions(_Model):
-        max_samples: int
         model_options: Optional[DataGenerationModelOptions]
         train_split: Optional[float]
         type: str
@@ -6166,7 +6201,6 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                max_samples: int, 
                 model_options: Optional[DataGenerationModelOptions] = ..., 
                 train_split: Optional[float] = ..., 
                 type: str
@@ -6194,6 +6228,7 @@ namespace azure.ai.projects.models
         description: Optional[str]
         name: Optional[str]
         tags: Optional[dict[str, str]]
+        write_mode: Optional[Union[str, DataGenerationJobOutputWriteMode]]
 
         @overload
         def __init__(
@@ -6201,7 +6236,8 @@ namespace azure.ai.projects.models
                 *, 
                 description: Optional[str] = ..., 
                 name: Optional[str] = ..., 
-                tags: Optional[dict[str, str]] = ...
+                tags: Optional[dict[str, str]] = ..., 
+                write_mode: Optional[Union[str, DataGenerationJobOutputWriteMode]] = ...
             ) -> None: ...
 
         @overload
@@ -6211,6 +6247,11 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.DataGenerationJobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DATASET = "dataset"
         FILE = "file"
+
+
+    class azure.ai.projects.models.DataGenerationJobOutputWriteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MERGE = "merge"
+        OVERWRITE = "overwrite"
 
 
     class azure.ai.projects.models.DataGenerationJobResult(_Model):
@@ -12272,11 +12313,11 @@ namespace azure.ai.projects.models
         SHORT_ANSWER = "short_answer"
 
 
-    class azure.ai.projects.models.SimulationSeedDataGenerationJobOptions(DataGenerationJobOptions, discriminator='simulation_seed'):
+    class azure.ai.projects.models.SimulationSeedDataGenerationJobOptions(SimulationSeedDataGenerationJobOptionsGenerated, discriminator='simulation_seed'):
         max_samples: int
         model_options: DataGenerationModelOptions
         train_split: float
-        type: Literal[DataGenerationJobType.SIMULATION_SEED]
+        type: Union[str, azure.ai.projects.models.SIMULATION_SEED]
 
         @overload
         def __init__(
@@ -13885,6 +13926,7 @@ namespace azure.ai.projects.models
         AZURE_FUNCTION = "azure_function"
         BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
         BING_GROUNDING = "bing_grounding"
+        BROWSER_AUTOMATION = "browser_automation"
         BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
         CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
         CODE_INTERPRETER = "code_interpreter"
@@ -14111,6 +14153,7 @@ namespace azure.ai.projects.models
         A2A_PREVIEW = "a2a_preview"
         A2_A = "a2a"
         AZURE_AI_SEARCH = "azure_ai_search"
+        BROWSER_AUTOMATION = "browser_automation"
         BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
         CODE_INTERPRETER = "code_interpreter"
         FABRIC_IQ_PREVIEW = "fabric_iq_preview"
@@ -14157,7 +14200,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.TracesDataGenerationJobOptions(DataGenerationJobOptions, discriminator='traces'):
-        max_samples: int
+        max_samples: Optional[int]
         model_options: DataGenerationModelOptions
         redact_private_content: Optional[bool]
         train_split: float
@@ -14167,7 +14210,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                max_samples: int, 
+                max_samples: Optional[int] = ..., 
                 model_options: Optional[DataGenerationModelOptions] = ..., 
                 redact_private_content: Optional[bool] = ..., 
                 train_split: Optional[float] = ...
@@ -14184,6 +14227,7 @@ namespace azure.ai.projects.models
         description: str
         end_time: Optional[datetime]
         start_time: datetime
+        trace_ids: Optional[list[str]]
         type: Literal[DataGenerationJobSourceType.TRACES]
 
         @overload
@@ -14195,7 +14239,8 @@ namespace azure.ai.projects.models
                 agent_version: Optional[str] = ..., 
                 description: Optional[str] = ..., 
                 end_time: Optional[datetime] = ..., 
-                start_time: datetime
+                start_time: datetime, 
+                trace_ids: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -15019,6 +15064,22 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentEchoCancellationReferenceSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CLIENT = "client"
         SERVER = "server"
+
+
+    class azure.ai.projects.models.VoiceAgentEndConversationSystemTool(VoiceAgentSystemTool, discriminator='end_conversation'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.END_CONVERSATION]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.VoiceAgentEndOfUtteranceDetection(_Model):
@@ -16004,7 +16065,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceAgentSystemTool(VoiceAgentTool, discriminator='system'):
         description: Optional[str]
-        name: Union[str, VoiceAgentSystemToolName]
+        name: str
         type: Literal["system"]
 
         @overload
@@ -16012,7 +16073,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 description: Optional[str] = ..., 
-                name: Union[str, VoiceAgentSystemToolName]
+                name: str
             ) -> None: ...
 
         @overload

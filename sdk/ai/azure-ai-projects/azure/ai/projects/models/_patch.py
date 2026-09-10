@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
+from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple, overload
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -33,10 +33,13 @@ from ._patch_evaluation_typeddicts import (
     TracesPreviewEvalRunDataSource,
 )
 from ._models import CustomCredential as CustomCredentialGenerated
+from ._models import SimulationSeedDataGenerationJobOptions as SimulationSeedDataGenerationJobOptionsGenerated
+from .._utils.model_base import rest_field
 from ..models import (
     AgentInsightRunResult,
     AgentOptimizationJobResult,
     DataGenerationJobResult,
+    DataGenerationModelOptions,
     EvaluatorVersion,
     MemoryStoreUpdateCompletedResult,
     MemoryStoreUpdateResult,
@@ -146,6 +149,58 @@ class CustomCredential(CustomCredentialGenerated, discriminator="CustomKeys"):
             self.credential_keys = {k: v for k, v in args[0].items() if k != "type"}
         else:
             self.credential_keys = {}
+
+
+class SimulationSeedDataGenerationJobOptions(
+    SimulationSeedDataGenerationJobOptionsGenerated, discriminator="simulation_seed"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The options for a task generation data generation job. Use with multiturn evaluation scenarios
+    and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
+    ``category``, ``test_case_description``, and ``desired_num_turns``.
+
+    :ivar max_samples: Maximum number of samples to generate. Required.
+    :vartype max_samples: int
+    :ivar train_split: The proportion of the generated data to be used for training when the data
+     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
+    :vartype train_split: float
+    :ivar model_options: The LLM model options.
+    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
+    :ivar type: The data generation job type, which is SimulationSeed for this model. Required.
+     Simulation seed for evaluation scenarios.
+    :vartype type: str or ~azure.ai.projects.models.SIMULATION_SEED
+    """
+
+    # NOTE: `max_samples` was declared on every other DataGenerationJobOptions subclass
+    # (SimpleQnA, Traces, ToolUse) after the TypeSpec commit that moved this field down from the
+    # shared base class, but was dropped entirely (not merely made optional) for this one
+    # subclass -- almost certainly an authoring oversight in that commit rather than an
+    # intentional service-side removal, since nothing else about SimulationSeed jobs changed and
+    # there is no other way to bound how many seed scenarios are generated. Restoring it here
+    # keeps `sample_synthetic_multiturn_evaluation.py` (an existing, unrelated sample) working
+    # exactly as before. Uses the same `rest_field` mechanism the generator itself uses, so this
+    # is picked up automatically by `Model.__new__`'s per-class field discovery and serializes to
+    # the wire identically to a generated field.
+    max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of samples to generate. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_samples: int,
+        train_split: Optional[float] = None,
+        model_options: Optional["DataGenerationModelOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 _FINISHED: Final[FrozenSet[str]] = frozenset(["completed", "superseded", "failed"])
@@ -736,6 +791,7 @@ __all__: List[str] = [
     "ModelSamplingConfigParam",
     "RedTeamEvalRunDataSource",
     "ResponseRetrievalItemGenerationParams",
+    "SimulationSeedDataGenerationJobOptions",
     "TargetCompletionEvalRunDataSource",
     "ToolDescriptionParam",
     "TracesPreviewEvalRunDataSource",

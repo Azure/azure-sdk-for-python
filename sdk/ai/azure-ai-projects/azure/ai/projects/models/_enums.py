@@ -528,6 +528,18 @@ class DataGenerationJobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The generated data is a Dataset."""
 
 
+class DataGenerationJobOutputWriteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported write modes for data generation job outputs."""
+
+    OVERWRITE = "overwrite"
+    """Default behavior. Create the next dataset version using only newly generated rows, replacing
+    the previous version's rows in the new version."""
+    MERGE = "merge"
+    """Applicable only for trace data generation jobs that output evaluation datasets. Create the next
+    dataset version by merging newly generated rows with the latest existing dataset version and
+    de-duping trace rows."""
+
+
 class DataGenerationJobScenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported scenarios for a data generation job."""
 
@@ -1935,6 +1947,8 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHELL."""
     WEB_IQ_PREVIEW = "web_iq_preview"
     """WEB_IQ_PREVIEW."""
+    BROWSER_AUTOMATION = "browser_automation"
+    """BROWSER_AUTOMATION."""
 
 
 class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2055,6 +2069,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AZURE_FUNCTION."""
     BING_GROUNDING = "bing_grounding"
     """BING_GROUNDING."""
+    BROWSER_AUTOMATION = "browser_automation"
+    """BROWSER_AUTOMATION."""
     CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
     """CAPTURE_STRUCTURED_OUTPUTS."""
     OPENAPI = "openapi"

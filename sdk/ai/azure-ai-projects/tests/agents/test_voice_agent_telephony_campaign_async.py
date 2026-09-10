@@ -56,9 +56,7 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
             model=model,
             instructions="You are a helpful voice assistant.",
             audio=VoiceAgentAudioConfig(
-                output=VoiceAgentAudioOutputConfig(
-                    voice="en-US-AvaNeural", voice_type="azure-standard"
-                )
+                output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type="azure-standard")
             ),
             output_modalities=[VoiceOutputModality.AUDIO],
         )

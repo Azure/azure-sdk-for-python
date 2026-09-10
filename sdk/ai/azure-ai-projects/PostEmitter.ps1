@@ -99,6 +99,11 @@ foreach ($f in $files) {
 # value is discarded (not used to set _stream): this operation must always stream regardless of
 # what the caller passes, otherwise a caller-supplied stream=False would make the generated method
 # attempt normal deserialization of an open SSE response, which is invalid per its SSE contract.
+#
+# NOTE: the match below is intentionally narrow (only the raw generator's `_stream =
+# kwargs.pop(...)` form, never the already-fixed `_stream = True` this fixup itself produces) so
+# re-running this script against an already-fixed file is a true no-op instead of inserting a
+# second copy of the two replacement lines in front of the first.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
     $lines = Get-Content $f
@@ -113,7 +118,7 @@ foreach ($f in $files) {
         if ($inFunc -and $line -match '^\s*(async\s+)?def\s+\w+\(') {
             $inFunc = $false
         }
-        if ($inFunc -and $line -match '^\s*_stream = (True|kwargs\.pop\(.+\))\s*$') {
+        if ($inFunc -and $line -match '^\s*_stream = kwargs\.pop\(.+\)\s*$') {
             $indent = ([regex]::Match($line, '^\s*')).Value
             $out.Add($indent + 'kwargs.pop("stream", None)  # must always stream; discard any caller override')
             $out.Add($indent + '_stream = True')
