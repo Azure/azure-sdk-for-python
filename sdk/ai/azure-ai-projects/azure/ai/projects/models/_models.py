@@ -17109,7 +17109,7 @@ class RLEResetRequest(_Model):
 
     seed: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional deterministic seed for the next episode."""
-    episode_id: Optional[str] = rest_field(name="episodeId", visibility=["read", "create", "update", "delete", "query"])
+    episode_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional caller-provided episode identifier."""
 
     @overload

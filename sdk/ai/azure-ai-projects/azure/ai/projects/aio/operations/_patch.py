@@ -21,6 +21,7 @@ from ._patch_models_async import BetaModelsOperations
 from ._patch_rle_async import (
     AsyncOpenEnvClient,
     AsyncOpenEnvInstance,
+    AsyncOpenEnvWebSocket,
     RLEOperations,
 )
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
@@ -100,6 +101,7 @@ __all__: List[str] = [
     "AgentsOperations",
     "AsyncOpenEnvClient",
     "AsyncOpenEnvInstance",
+    "AsyncOpenEnvWebSocket",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",
     "BetaEvaluationTaxonomiesOperations",

@@ -9,6 +9,8 @@
 ### Features Added
 
 * Added private-preview Reinforcement Learning Environments (RLE) support through `AIProjectClient.rle` when constructed with `allow_preview=True`, including OpenEnv instance lifecycle management and environment management operations.
+* Added WebSocket interactions for leased OpenEnv instances through `OpenEnvInstance.open_websocket()` and its asynchronous equivalent, including text and binary messages, query parameters, and subprotocol negotiation.
+* Added environment-specific keyword fields to synchronous and asynchronous OpenEnv instance `reset()` operations.
 
 ### Sample updates
 
@@ -16,6 +18,7 @@
 * Added `sample_rle.py`, demonstrating a hosted RLE Wordle rollout.
 * Added `sample_rle_async.py`, demonstrating a hosted RLE Wordle rollout with an asynchronous client.
 * Added `sample_rle_environment_management.py`, demonstrating hosted RLE environment creation and pagination.
+* Added `sample_rle_websocket.py`, demonstrating a text round trip with a leased OpenEnv instance.
 
 ## 2.5.0 (2026-08-20)
 

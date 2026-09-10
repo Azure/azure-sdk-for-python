@@ -316,7 +316,10 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @pytest.mark.skip(reason="RLE samples require dedicated environments and recordings.")
     @pytest.mark.parametrize(
         "sample_path",
-        [os.path.join("samples", "rle", "sample_rle_async.py")],
+        [
+            os.path.join("samples", "rle", "sample_rle_async.py"),
+            os.path.join("samples", "rle", "sample_rle_websocket_async.py"),
+        ],
     )
     async def test_rle_samples(self, sample_path: str) -> None:
         """Register the RLE async sample as explicitly skipped until recordings are available."""

@@ -13,8 +13,21 @@ pipeline against the Foundry project endpoint, exactly like the other operation 
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import logging
 import time
-from typing import Any, Callable, Dict, Optional, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Mapping,
+    Optional,
+    Sequence,
+    TYPE_CHECKING,
+    Union,
+)
+
+from websockets.asyncio.client import ClientConnection, connect as websocket_connect
+from websockets.typing import Subprotocol
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import AzureError, HttpResponseError
@@ -34,14 +47,16 @@ from ...models import (
     RLEnvironmentState,
     RLEnvironmentVersionBump,
     RLEPaginationOrder,
-    RLEResetRequest,
     RLEStepRequest,
     RLEStepResult,
 )
 from ...operations._patch_rle import (
     _DEFAULT_INSTANCE_ACQUIRE_TIMEOUT_S,
     _DEFAULT_POLL_INTERVAL_S,
+    _OpenEnvWebSocketConfig,
     _TRANSIENT_HEALTH_STATUS_CODES,
+    _WEBSOCKET_LOGGER,
+    _build_openenv_websocket_url,
     _capacity_retry,
     _error_code,
     _is_quota_exceeded_error,
@@ -50,7 +65,9 @@ from ...operations._patch_rle import (
     _validate_instance_acquire_timeout,
     _validate_pagination_limit,
     _validate_poll_interval,
+    _websocket_config_from_client_config,
     coerce_action,
+    coerce_reset_body,
     RLEError,
     RLEInstanceAcquireTimeoutError,
     RLEQuotaExceededError,
@@ -61,6 +78,128 @@ from ._operations import (
     RLEInstancesOperations,
     RLEInstanceRuntimeOperations,
 )
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+
+
+_LOGGER = logging.getLogger(__name__)
+
+
+class AsyncOpenEnvWebSocket:
+    """An asynchronous WebSocket connection to a leased OpenEnv instance.
+
+    Create this connection with :meth:`AsyncOpenEnvInstance.open_websocket` and use it as an async
+    context manager. Text and binary messages are supported. The service preserves message
+    fragmentation, negotiates requested subprotocols with the sandbox, and propagates peer close
+    status and reason. Automatic reconnect and application-level session resumption aren't supported.
+
+    :param url: Public RLE WebSocket URL. Required.
+    :type url: str
+    :keyword credential: Credential used to authenticate the WebSocket handshake. Required.
+    :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword credential_scopes: OAuth scopes used to request the handshake token. Required.
+    :paramtype credential_scopes: tuple[str, ...]
+    :keyword open_timeout: Maximum time in seconds to wait for the opening handshake. Defaults to 10.
+    :paramtype open_timeout: float or None
+    :keyword subprotocols: WebSocket subprotocols to offer to the sandbox, in preference order.
+    :paramtype subprotocols: sequence[str] or None
+    """
+
+    def __init__(
+        self,
+        url: str,
+        *,
+        credential: "AsyncTokenCredential",
+        credential_scopes: Sequence[str],
+        open_timeout: Optional[float] = 10,
+        subprotocols: Optional[Sequence[str]] = None,
+        _on_close: Optional[Callable[["AsyncOpenEnvWebSocket"], None]] = None,
+    ) -> None:
+        self._url = url
+        self._credential = credential
+        self._credential_scopes = tuple(credential_scopes)
+        self._open_timeout = open_timeout
+        self._subprotocols = (
+            tuple(Subprotocol(value) for value in subprotocols)
+            if subprotocols
+            else None
+        )
+        self._on_close = _on_close
+        self._connection: Optional[ClientConnection] = None
+        self._closed = False
+
+    async def __aenter__(self) -> "AsyncOpenEnvWebSocket":
+        if self._closed:
+            raise RLEError("OpenEnv WebSocket is closed")
+        if self._connection is not None:
+            raise RLEError("OpenEnv WebSocket context is already entered")
+        try:
+            token = await self._credential.get_token(*self._credential_scopes)
+            self._connection = await websocket_connect(
+                self._url,
+                additional_headers={"Authorization": f"Bearer {token.token}"},
+                open_timeout=self._open_timeout,
+                subprotocols=self._subprotocols,
+                logger=_WEBSOCKET_LOGGER,
+            )
+        except BaseException:
+            await self.close()
+            raise
+        return self
+
+    async def __aexit__(self, *exc: Any) -> None:
+        await self.close()
+
+    async def send(self, message: Union[str, bytes]) -> None:
+        """Send one complete text or binary message.
+
+        :param message: Text or binary data to send. Required.
+        :type message: str or bytes
+        :raises TypeError: If ``message`` is not a string or bytes.
+        :raises ~azure.ai.projects.RLEError: If the connection is not open.
+        """
+        if not isinstance(message, (str, bytes)):
+            raise TypeError("OpenEnv WebSocket messages must be strings or bytes")
+        await self._require_connection().send(message)
+
+    async def recv(self) -> Union[str, bytes]:
+        """Receive one complete text or binary message.
+
+        :return: The received text or binary data.
+        :rtype: str or bytes
+        :raises ~azure.ai.projects.RLEError: If the connection is not open.
+        """
+        return await self._require_connection().recv()
+
+    @property
+    def subprotocol(self) -> Optional[str]:
+        """The subprotocol selected by the sandbox, if any.
+
+        :rtype: str or None
+        """
+        return self._require_connection().subprotocol
+
+    async def close(self) -> None:
+        """Close the connection. This method is idempotent."""
+        self._closed = True
+        connection = self._connection
+        self._connection = None
+        try:
+            if connection is not None:
+                await connection.close()
+        finally:
+            on_close = self._on_close
+            self._on_close = None
+            if on_close is not None:
+                on_close(self)
+
+    def _require_connection(self) -> ClientConnection:
+        if self._connection is None:
+            raise RLEError(
+                "enter the AsyncOpenEnvWebSocket context before sending or receiving"
+            )
+        return self._connection
 
 
 async def _sleep_before_deadline(delay: float, deadline: float) -> bool:
@@ -110,7 +249,9 @@ async def _acquire_instance(
     deadline = time.monotonic() + instance_acquire_timeout
     captured: Dict[str, Any] = {}
 
-    def _capture(pipeline_response: Any, deserialized: Any, _response_headers: Any) -> Any:
+    def _capture(
+        pipeline_response: Any, deserialized: Any, _response_headers: Any
+    ) -> Any:
         captured["response"] = pipeline_response.http_response
         return deserialized
 
@@ -143,7 +284,9 @@ async def _acquire_instance(
 
     # The initial (possibly 202) response may carry a Retry-After hint for the first poll.
     initial_retry_after = _parse_retry_after(captured.get("response"))
-    next_wait = initial_retry_after if initial_retry_after is not None else poll_interval_s
+    next_wait = (
+        initial_retry_after if initial_retry_after is not None else poll_interval_s
+    )
     try:
         while not _status_matches(instance.status, RLEInstanceStatus.RUNNING):
             if any(
@@ -222,7 +365,7 @@ async def _acquire_instance(
     return instance
 
 
-class AsyncOpenEnvInstance:
+class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
     """A leased RLE instance that runs episodes under a resolved environment version.
 
     An instance context is obtained from :meth:`AsyncOpenEnvClient.get_instance`. Entering it leases a
@@ -254,6 +397,7 @@ class AsyncOpenEnvInstance:
         instance_acquire_timeout: float,
         poll_interval_s: float,
         is_client_closed: Callable[[], bool],
+        websocket_config: Optional[_OpenEnvWebSocketConfig] = None,
     ) -> None:
         if not environment_name:
             raise ValueError("environment_name is required")
@@ -271,8 +415,11 @@ class AsyncOpenEnvInstance:
             _validate_poll_interval(poll_interval_s),
         )
         self._is_client_closed = is_client_closed
+        self._websocket_config = websocket_config
+        self._websockets: set[AsyncOpenEnvWebSocket] = set()
         self._instance: Optional[RLEInstance] = None
         self._released = False
+        self._releasing = False
         self._lock = asyncio.Lock()
 
     @property
@@ -339,8 +486,12 @@ class AsyncOpenEnvInstance:
             if self._is_client_closed():
                 raise RLEError("OpenEnv client is closed")
             instance = await _acquire_instance(
-                self._instances, self._runtime, self._environment_name, self._environment_version,
-                self._instance_group_id, instance_acquire_timeout=self._acquire_settings[0],
+                self._instances,
+                self._runtime,
+                self._environment_name,
+                self._environment_version,
+                self._instance_group_id,
+                instance_acquire_timeout=self._acquire_settings[0],
                 poll_interval_s=self._acquire_settings[1],
             )
             self._instance = instance
@@ -361,6 +512,59 @@ class AsyncOpenEnvInstance:
         """
         await self._release()
 
+    def open_websocket(
+        self,
+        *,
+        open_timeout: Optional[float] = 10,
+        subprotocols: Optional[Sequence[str]] = None,
+        query_parameters: Optional[Mapping[str, str]] = None,
+    ) -> AsyncOpenEnvWebSocket:
+        """Create an async WebSocket context manager for this leased instance.
+
+        The connection authenticates through the Foundry project endpoint. It performs no automatic
+        reconnect or message replay. Query parameters and requested subprotocols are forwarded to the
+        sandbox.
+
+        :keyword open_timeout: Maximum time in seconds to wait for the opening handshake. Defaults
+         to 10. Pass ``None`` to disable the timeout.
+        :paramtype open_timeout: float or None
+        :keyword subprotocols: WebSocket subprotocols to offer to the sandbox, in preference order.
+        :paramtype subprotocols: sequence[str] or None
+        :keyword query_parameters: Additional query parameters to forward to the sandbox.
+        :paramtype query_parameters: mapping[str, str] or None
+        :return: An async WebSocket context manager for complete text or binary messages.
+        :rtype: ~azure.ai.projects.aio.operations.AsyncOpenEnvWebSocket
+        """
+        if self._releasing or self._released:
+            raise RLEError("instance has been released")
+        instance = self._instance
+        if instance is None:
+            raise RLEError(
+                "enter the AsyncOpenEnvInstance context before accessing the instance"
+            )
+        if not instance.instance_id:
+            raise RLEError("service did not return an instance id")
+        config = self._websocket_config
+        if config is None:
+            raise RLEError("OpenEnv WebSocket configuration is unavailable")
+        websocket = AsyncOpenEnvWebSocket(
+            _build_openenv_websocket_url(
+                config,
+                self._environment_name,
+                self._environment_version,
+                self._instance_group_id,
+                instance.instance_id,
+                query_parameters,
+            ),
+            credential=config.credential,
+            credential_scopes=config.credential_scopes,
+            open_timeout=open_timeout,
+            subprotocols=subprotocols,
+            _on_close=self._websockets.discard,
+        )
+        self._websockets.add(websocket)
+        return websocket
+
     @distributed_trace_async
     async def reset(
         self,
@@ -369,6 +573,10 @@ class AsyncOpenEnvInstance:
         **kwargs: Any,
     ) -> RLEStepResult:
         """Start a new episode on this instance and return the initial observation.
+
+        Additional keyword arguments are forwarded to the environment as extra top-level reset
+        fields alongside ``seed`` and ``episode_id``, mirroring environment-specific fields passed
+        to :meth:`step`.
 
         :param seed: Optional seed for deterministic episode initialization.
         :type seed: int or None
@@ -383,8 +591,7 @@ class AsyncOpenEnvInstance:
             self._environment_version,
             self._instance_group_id,
             self.id,
-            RLEResetRequest(seed=seed, episode_id=episode_id),
-            **kwargs,
+            coerce_reset_body(seed, episode_id, kwargs),
         )
 
     @distributed_trace_async
@@ -474,17 +681,32 @@ class AsyncOpenEnvInstance:
             if instance is None:
                 return
             instance_id = self.id
+            self._releasing = True
             try:
-                await self._instances.delete_instance(
-                    self._environment_name,
-                    self._environment_version,
-                    self._instance_group_id,
-                    instance_id,
-                )
-            except AzureError:
-                pass
+                for websocket in tuple(self._websockets):
+                    try:
+                        await websocket.close()
+                    except Exception as exc:  # pylint: disable=broad-exception-caught
+                        _LOGGER.warning(
+                            "Failed to close OpenEnv WebSocket before releasing instance %s: %s",
+                            instance_id,
+                            type(exc).__name__,
+                        )
+                try:
+                    await self._instances.delete_instance(
+                        self._environment_name,
+                        self._environment_version,
+                        self._instance_group_id,
+                        instance_id,
+                    )
+                except AzureError:
+                    pass
+            except BaseException:
+                self._releasing = False
+                raise
             self._instance = None
             self._released = True
+            self._releasing = False
 
 
 class AsyncOpenEnvClient:  # pylint: disable=too-many-instance-attributes,async-client-bad-name,client-accepts-api-version-keyword,missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
@@ -532,6 +754,7 @@ class AsyncOpenEnvClient:  # pylint: disable=too-many-instance-attributes,async-
         instance_groups: RLEInstanceGroupsOperations,
         instances: RLEInstancesOperations,
         runtime: RLEInstanceRuntimeOperations,
+        websocket_config: Optional[_OpenEnvWebSocketConfig] = None,
         name: str,
         version: Optional[str] = None,
         max_active_instances: int = 1,
@@ -546,6 +769,7 @@ class AsyncOpenEnvClient:  # pylint: disable=too-many-instance-attributes,async-
         self._instance_groups = instance_groups
         self._instances = instances
         self._runtime = runtime
+        self._websocket_config = websocket_config
         self._name = name
         self._version = version
         self._max_active_instances = max_active_instances
@@ -613,7 +837,9 @@ class AsyncOpenEnvClient:  # pylint: disable=too-many-instance-attributes,async-
             if self._version is None:
                 environment = await self._environments.get_environment(self._name)
                 if not environment.version:
-                    raise RLEError("service did not return the environment's latest version")
+                    raise RLEError(
+                        "service did not return the environment's latest version"
+                    )
                 self._version = environment.version
             try:
                 group = await self._instance_groups.create_instance_group(
@@ -686,6 +912,7 @@ class AsyncOpenEnvClient:  # pylint: disable=too-many-instance-attributes,async-
             instance_acquire_timeout=self._acquire_settings[0],
             poll_interval_s=self._acquire_settings[1],
             is_client_closed=lambda: self._closed,
+            websocket_config=self._websocket_config,
         )
 
     async def close(self) -> None:
@@ -710,7 +937,9 @@ class AsyncOpenEnvClient:  # pylint: disable=too-many-instance-attributes,async-
             return
         environment_version = self._version
         if environment_version is None:
-            raise RLEError("service did not resolve the instance group's environment version")
+            raise RLEError(
+                "service did not resolve the instance group's environment version"
+            )
         try:
             await self._instance_groups.delete_instance_group(
                 self._name,
@@ -734,6 +963,8 @@ class RLEOperations:
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        config = args[1] if len(args) > 1 else kwargs.get("config")
+        self._websocket_config = _websocket_config_from_client_config(config)
         self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
         self._instance_groups = RLEInstanceGroupsOperations(*args, **kwargs)
         self._instances = RLEInstancesOperations(*args, **kwargs)
@@ -797,7 +1028,9 @@ class RLEOperations:
         _validate_pagination_limit(limit)
         operation_kwargs = dict(kwargs)
 
-        async def get_next(next_token: Optional[str] = None) -> ListRLEnvironmentsResponse:
+        async def get_next(
+            next_token: Optional[str] = None,
+        ) -> ListRLEnvironmentsResponse:
             return await self._environments.list_environments(
                 name=name,
                 limit=limit,
@@ -999,6 +1232,7 @@ class RLEOperations:
             instance_groups=self._instance_groups,
             instances=self._instances,
             runtime=self._runtime,
+            websocket_config=self._websocket_config,
             name=name,
             version=version,
             max_active_instances=max_active_instances,
@@ -1010,9 +1244,11 @@ class RLEOperations:
 __all__ = [
     "AsyncOpenEnvClient",
     "AsyncOpenEnvInstance",
+    "AsyncOpenEnvWebSocket",
     "RLEError",
     "RLEQuotaExceededError",
     "RLEInstanceAcquireTimeoutError",
     "RLEOperations",
     "coerce_action",
+    "coerce_reset_body",
 ]
