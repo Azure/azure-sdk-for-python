@@ -6385,25 +6385,6 @@ class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    async def generate(
-        self, body: _models.GenerateVoiceAgentRequest, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Generate an agent.
-
-        Generates and creates an agent from kind-specific high-level inputs. The generated definition
-        remains fully editable through the standard agent versioning operations.
-
-        :param body: The kind-specific inputs for generating and creating an agent. Required.
-        :type body: ~azure.ai.projects.models.GenerateVoiceAgentRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
     async def generate(self, body: "_unions.GenerateAgentRequest", **kwargs: Any) -> _models.AgentDetails:
         """Generate an agent.

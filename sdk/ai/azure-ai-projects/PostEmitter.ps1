@@ -90,7 +90,27 @@ foreach ($f in $files) {
 $f = 'azure\ai\projects\_unions.py'
 $c = Get-Content $f -Raw
 $c = $c -replace '(?m)^([A-Za-z_][A-Za-z0-9_]*\s*=\s*)"([^"\r\n]+)"\s*$', '$1Union["$2"]'
+# Remove the duplicate VoiceAgentToolChoice alias emitted by some TypeSpec versions.
+$duplicateVoiceAgentToolChoice = '(?ms)\r?\nVoiceAgentToolChoice = Union\[\r?\n    Literal\["none"\], Literal\["auto"\], Literal\["required"\], "_models\.ToolChoiceFunction", "_models\.ToolChoiceMCP"\r?\n\]'
+$firstVoiceAgentToolChoice = [regex]::Match($c, $duplicateVoiceAgentToolChoice)
+if ($firstVoiceAgentToolChoice.Success) {
+    $secondStart = $firstVoiceAgentToolChoice.Index + $firstVoiceAgentToolChoice.Length
+    $second = [regex]::Match($c.Substring($secondStart), $duplicateVoiceAgentToolChoice)
+    if ($second.Success) {
+        $removeStart = $secondStart + $second.Index
+        $c = $c.Remove($removeStart, $second.Length)
+    }
+}
 Set-Content $f $c -NoNewline
+
+# Remove invalid single overload stubs for BetaAgentsOperations.generate.
+$files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
+foreach ($f in $files) {
+    $c = Get-Content $f -Raw
+    $c = $c -replace '(?ms)\r?\n    @overload\r?\n    (?:async )?def generate\(\r?\n        self, body: _models\.GenerateVoiceAgentRequest, \*, content_type: str = "application/json", \*\*kwargs: Any\r?\n    \) -> _models\.AgentDetails:\r?\n        """Generate an agent\..*?        """\r?\n\r?\n(?=    @distributed_trace)', "`r`n"
+    $c = $c -replace '(?ms)\r?\n    @overload\r?\n    async def generate\(\r?\n        self, body: _models\.GenerateVoiceAgentRequest, \*, content_type: str = "application/json", \*\*kwargs: Any\r?\n    \) -> _models\.AgentDetails:\r?\n        """Generate an agent\..*?        """\r?\n\r?\n(?=    @distributed_trace_async)', "`r`n"
+    Set-Content $f $c -NoNewline
+}
 
 # Fix generated If-Match headers for TypeSpec Azure.Core.eTag parameters.
 # The emitter generates prep_if_match(etag, match_condition), but this package's

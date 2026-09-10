@@ -16,9 +16,6 @@ VoiceAgentToolChoice = Union[
 ]
 VoiceAgentMaxOutputTokens = Union[int, Literal["inf"]]
 RoutineRunStatus = str
-VoiceAgentToolChoice = Union[
-    Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
-]
 VoiceAgentSessionUpdate = Union["_models.VoiceAgentSessionUpdateConfig"]
 VoiceAgentSessionResponse = Union["_models.VoiceAgentSessionResponseConfig"]
 GenerateAgentRequest = Union["_models.GenerateVoiceAgentRequest"]
